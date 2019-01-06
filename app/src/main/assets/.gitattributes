@@ -1,0 +1,4 @@
+# Don't try to do any text parsing on these files
+# They need to match a whitelist of SHA256 checksums
+
+* -text

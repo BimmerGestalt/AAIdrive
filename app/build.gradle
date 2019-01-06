@@ -1,0 +1,53 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "me.hufman.androidautoidrive"
+        minSdkVersion 23
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+}
+
+repositories {
+    jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    testImplementation "org.mockito:mockito-core:2.22.0"
+    testImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
+    androidTestImplementation "org.mockito:mockito-android:2.22.0"
+    androidTestImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
+    implementation project(path: ':IDriveConnectKitAndroid')
+    implementation project(path: ':IDriveConnectKit')
+    androidTestImplementation project(path: ':IDriveConnectKitAndroid')
+    androidTestImplementation project(path: ':IDriveConnectKit')
+
+    implementation "org.bouncycastle:bcmail-jdk16:1.46"
+}

@@ -1,0 +1,6 @@
+[submodule "IDriveConnectKit"]
+	path = IDriveConnectKit
+	url = https://github.com/hufman/IDriveConnectKit.git
+[submodule "IDriveConnectKitAndroid"]
+	path = IDriveConnectKitAndroid
+	url = https://github.com/hufman/IDriveConnectKitAndroid.git
