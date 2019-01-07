@@ -36,6 +36,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	val stateList: RHMIState.PlainState     // show a list of active notifications
 	val stateView: RHMIState.ToolbarState   // view a notification with actions to do
 	val stateInput: RHMIState.PlainState    // show a reply input form
+	var listFocused = false                 // whether the notification list is showing
 	val INTERACTION_DEBOUNCE_MS = 5000              // how long to wait after lastInteractionTime to update the list
 	var lastInteractionTime: Long = 0             // timestamp when the user last navigated in the main list
 	var interactionDebounceTimer: Timer? = null    // a thread to refresh the list after an update
@@ -79,11 +80,6 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
 			it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id
-			it.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIAction.RHMIActionCallback {
-				override fun onActionEvent(args: Map<*, *>?) {
-					updateNotificationList()
-				}
-			}
 		}
 
 		// set up the list
@@ -124,7 +120,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		}
 	}
 
-	class CarAppListener: BaseBMWRemotingClient() {
+	inner class CarAppListener: BaseBMWRemotingClient() {
 		var server: BMWRemotingServer? = null
 		var app: RHMIApplication? = null
 		override fun rhmi_onActionEvent(handle: Int?, ident: String?, actionId: Int?, args: MutableMap<*, *>?) {
@@ -138,7 +134,19 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		}
 
 		override fun rhmi_onHmiEvent(handle: Int?, ident: String?, componentId: Int?, eventId: Int?, args: MutableMap<*, *>?) {
-			val msg = "Received rhmi_onHmiEvent: handle=$handle ident=$ident componentId=$componentId eventId=$eventId"
+			val msg = "Received rhmi_onHmiEvent: handle=$handle ident=$ident componentId=$componentId eventId=$eventId args=${args?.toString()}"
+			Log.w(TAG, msg)
+
+			// if the notification list is changing its focus state
+			if (componentId == stateList.id &&
+					eventId == 1  // FOCUS event
+				) {
+				listFocused = args?.get(4.toByte()) as? Boolean == true
+				// if the user opened the notification list
+				if (listFocused) {
+					updateNotificationList()
+				}
+			}
 		}
 	}
 
@@ -265,7 +273,9 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 				val interactionTimeRemaining = INTERACTION_DEBOUNCE_MS - interactionTimeAgo
 				interactionTimeRemaining
 			}, {
-				this@PhoneNotifications.updateNotificationList()
+				if (listFocused) {
+					this@PhoneNotifications.updateNotificationList()
+				}
 			})
 		}
 	}
