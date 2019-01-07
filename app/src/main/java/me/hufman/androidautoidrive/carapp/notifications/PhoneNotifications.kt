@@ -258,12 +258,12 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	open inner class PhoneNotificationListener {
 		fun onNotification(sbn: CarNotification) {
 			val appname = phoneAppResources.getAppName(sbn.packageName)
-			val label = statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().firstOrNull() ?: return
-			val bodyLabel = statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().getOrNull(1) ?: return
-			val title = "${appname}"
-			val body = "${sbn.title}\n${sbn.summary}"
-			label.getModel()?.asRaDataModel()?.value = title
-			bodyLabel.getModel()?.asRaDataModel()?.value = body
+			val titleLabel = statePopup.getTextModel()?.asRaDataModel() ?: return
+			val bodyLabel1 = statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().firstOrNull()?.getModel()?.asRaDataModel() ?: return
+			val bodyLabel2 = statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().getOrNull(1)?.getModel()?.asRaDataModel() ?: return
+			titleLabel.value = appname
+			bodyLabel1.value = sbn.title.toString()
+			bodyLabel2.value = sbn.text.toString()
 			carApp.events.values.filterIsInstance<RHMIEvent.PopupEvent>().firstOrNull { it.getTarget() == statePopup }?.triggerEvent()
 		}
 
