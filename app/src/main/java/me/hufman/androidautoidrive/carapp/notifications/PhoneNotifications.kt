@@ -160,7 +160,6 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	}
 
 	fun updateNotificationList() {
-		var foundSelectedNotification = false
 		val listData = RHMIModel.RaListModel.RHMIListConcrete(3)
 		synchronized(NotificationsState.notifications) {
 			NotificationsState.notifications.forEach {
@@ -171,18 +170,9 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			if (NotificationsState.notifications.isEmpty()) {
 				listData.addRow(arrayOf("", "", "No Notifications"))
 			}
-
-			foundSelectedNotification = NotificationsState.notifications.any {
-				it.key == NotificationsState.selectedNotification?.key
-			}
 		}
 		val listWidget = stateList.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull() ?: return
 		listWidget.getModel()?.value = listData
-
-		if (NotificationsState.selectedNotification != null && ! foundSelectedNotification) {
-			NotificationsState.selectedNotification = null
-			updateNotificationView()
-		}
 	}
 
 	fun updateNotificationView() {
@@ -275,6 +265,14 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			}, {
 				if (listFocused) {
 					this@PhoneNotifications.updateNotificationList()
+				}
+
+				// check if we should clear an old notification from the NotificationView
+				val currentNotifications = LinkedList(NotificationsState.notifications) // safe-from-other-thread-mutation view
+				val selectedNotification = NotificationsState.selectedNotification
+				if (NotificationsState.selectedNotification != null && ! currentNotifications.map { it.key }.contains(selectedNotification?.key)) {
+					NotificationsState.selectedNotification = null
+					updateNotificationView()
 				}
 			})
 		}
