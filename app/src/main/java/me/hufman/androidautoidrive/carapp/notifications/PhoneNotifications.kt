@@ -10,6 +10,7 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
+import me.hufman.androidautoidrive.DeferredUpdate
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.Utils
 import me.hufman.idriveconnectionkit.IDriveConnection
@@ -259,24 +260,13 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		}
 
 		fun updateNotificationList() {
-			val interactionTimeAgo = System.currentTimeMillis() - lastInteractionTime
-			if (interactionTimeAgo < INTERACTION_DEBOUNCE_MS) {
-				val interactionTimeRemaining = Math.max(0, INTERACTION_DEBOUNCE_MS - interactionTimeAgo)
-				interactionDebounceTimer?.cancel()
-				interactionDebounceTimer = Timer()
-				interactionDebounceTimer?.schedule(DebounceTimerTask(), interactionTimeRemaining)
-			} else {
-				interactionDebounceTimer?.cancel()
-				interactionDebounceTimer = null
+			DeferredUpdate.trigger("PhoneNotificationList", {
+				val interactionTimeAgo = System.currentTimeMillis() - lastInteractionTime
+				val interactionTimeRemaining = INTERACTION_DEBOUNCE_MS - interactionTimeAgo
+				interactionTimeRemaining
+			}, {
 				this@PhoneNotifications.updateNotificationList()
-			}
-		}
-	}
-
-	inner class DebounceTimerTask: TimerTask() {
-		override fun run() {
-			interactionDebounceTimer = null
-			updateNotificationList()
+			})
 		}
 	}
 
