@@ -39,7 +39,6 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	var listFocused = false                 // whether the notification list is showing
 	val INTERACTION_DEBOUNCE_MS = 5000              // how long to wait after lastInteractionTime to update the list
 	var lastInteractionTime: Long = 0             // timestamp when the user last navigated in the main list
-	var interactionDebounceTimer: Timer? = null    // a thread to refresh the list after an update
 
 	init {
 		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
@@ -51,8 +50,6 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 		// create the app in the car
 		val rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive", "me.hufman"))
-		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1)
-		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1, -1)
 		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getUiDescription()?.readBytes(), BMWRemoting.RHMIResourceType.DESCRIPTION)
 		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getTextsDB("common")?.readBytes(), BMWRemoting.RHMIResourceType.TEXTDB)
 		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getImagesDB("common")?.readBytes(), BMWRemoting.RHMIResourceType.IMAGEDB)
@@ -118,6 +115,10 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			setVisible(true)
 			setProperty(6, "55,0,*")
 		}
+
+		// register for events from the car
+		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1)
+		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1, -1)
 	}
 
 	inner class CarAppListener: BaseBMWRemotingClient() {
@@ -156,7 +157,10 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	}
 	fun onDestroy(context: Context) {
 		LocalBroadcastManager.getInstance(context).unregisterReceiver(notificationListener)
-
+		try {
+			Log.i(TAG, "Trying to shut down etch connection")
+			IDriveConnection.disconnectEtchConnection(carConnection)
+		} catch ( e: java.io.IOError) {}
 	}
 
 	fun updateNotificationList() {
