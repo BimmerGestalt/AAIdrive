@@ -10,6 +10,7 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
+import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.DeferredUpdate
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.Utils
@@ -18,6 +19,8 @@ import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.*
+import org.json.JSONException
+import org.json.JSONObject
 import java.util.*
 
 const val TAG = "PhoneNotifications"
@@ -37,6 +40,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	val stateView: RHMIState.ToolbarState   // view a notification with actions to do
 	val stateInput: RHMIState.PlainState    // show a reply input form
 	var listFocused = false                 // whether the notification list is showing
+	var passengerSeated = false             // whether a passenger is seated
 	val INTERACTION_DEBOUNCE_MS = 5000              // how long to wait after lastInteractionTime to update the list
 	var lastInteractionTime: Long = 0             // timestamp when the user last navigated in the main list
 
@@ -116,6 +120,11 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			setProperty(6, "55,0,*")
 		}
 
+		// subscribe to CDS for passenger seat info
+		val cdsHandle = carConnection.cds_create()
+		carConnection.cds_addPropertyChangedEventHandler(cdsHandle, "sensors.seatOccupiedPassenger", "76", 5000)
+		carConnection.cds_getPropertyAsync(cdsHandle, "76", "sensors.seatOccupiedPassenger")
+
 		// register for events from the car
 		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1)
 		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1, -1)
@@ -147,6 +156,21 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 				if (listFocused) {
 					updateNotificationList()
 				}
+			}
+		}
+
+		fun loadJSON(str: String?): JSONObject? {
+			if (str == null) return null
+			try {
+				return JSONObject(str)
+			} catch (e: JSONException) {
+				return null
+			}
+		}
+		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
+			if (propertyName == "sensors.seatOccupiedPassenger" && propertyValue != null && loadJSON(propertyValue) != null) {
+				val propertyData = loadJSON(propertyValue) ?: return
+				passengerSeated = propertyData.getInt("seatOccupiedPassenger") != 0
 			}
 		}
 	}
@@ -258,7 +282,12 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			titleLabel.value = appname
 			bodyLabel1.value = sbn.title.toString()
 			bodyLabel2.value = sbn.text.toString()
-			carApp.events.values.filterIsInstance<RHMIEvent.PopupEvent>().firstOrNull { it.getTarget() == statePopup }?.triggerEvent()
+			if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
+					(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
+							!passengerSeated)
+			) {
+				carApp.events.values.filterIsInstance<RHMIEvent.PopupEvent>().firstOrNull { it.getTarget() == statePopup }?.triggerEvent()
+			}
 		}
 
 		fun updateNotificationList() {

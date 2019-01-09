@@ -8,10 +8,14 @@ object AppSettings {
 
 	val PREFERENCES_NAME = "AndroidAutoIdrive"
 	enum class KEYS {
-		ENABLED_NOTIFICATIONS
+		ENABLED_NOTIFICATIONS,
+		ENABLED_NOTIFICATIONS_POPUP,
+		ENABLED_NOTIFICATIONS_POPUP_PASSENGER
 	}
 	private val DEFINITIONS = mapOf(
-			KEYS.ENABLED_NOTIFICATIONS to SettingDefinition("Enabled_Notifications", "false", "Show phone notifications in the car")
+			KEYS.ENABLED_NOTIFICATIONS to SettingDefinition("Enabled_Notifications", "false", "Show phone notifications in the car"),
+			KEYS.ENABLED_NOTIFICATIONS_POPUP to SettingDefinition("Enabled_Notifications_Popup", "true", "Show notification popups in the car"),
+			KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER to SettingDefinition("Enabled_Notifications_Popup_Passenger", "false", "Show notification popups in the car when a passenger is seated")
 	)
 
 	private val loadedSettings = HashMap<KEYS, String>()
@@ -44,5 +48,6 @@ object AppSettings {
 		val editor = preferences.edit()
 		editor.putString(setting.name, value)
 		editor.commit()
+		loadedSettings[key] = value
 	}
 }

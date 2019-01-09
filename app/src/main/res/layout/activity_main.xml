@@ -17,14 +17,30 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
             android:layout_marginStart="24dp"
-            android:text="Message Notifications"
+            android:text="@string/message_notifications"
             android:textOn="On"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:layout_editor_absoluteY="0dp" />
 
+        <Switch
+            android:id="@+id/swNotificationPopup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="48dp"
+            android:text="@string/notification_popups" />
+
+        <Switch
+            android:id="@+id/swNotificationPopupPassenger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="60dp"
+            android:text="@string/notification_popups_passenger" />
+
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btnTestNotification"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/spawn_test_notification"

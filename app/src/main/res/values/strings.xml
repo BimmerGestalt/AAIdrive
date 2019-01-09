@@ -10,4 +10,7 @@
     <string name="notification_description_mini">Connected to Mini</string>
 
     <string name="spawn_test_notification">Test Notification</string>
+    <string name="message_notifications">Message Notifications</string>
+    <string name="notification_popups">Notification Popups</string>
+    <string name="notification_popups_passenger">Popups with passenger</string>
 </resources>

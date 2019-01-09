@@ -12,10 +12,9 @@ import android.os.Bundle
 import android.provider.Settings
 import android.support.v4.app.NotificationManagerCompat
 import android.util.Log
-import android.widget.Button
 import android.widget.CompoundButton
-import android.widget.Switch
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,12 +29,18 @@ class MainActivity : AppCompatActivity() {
 		AppSettings.loadSettings(this)
 		setContentView(R.layout.activity_main)
 
-		findViewById<Switch>(R.id.swMessageNotifications).setOnCheckedChangeListener { buttonView, isChecked ->
+		swMessageNotifications.setOnCheckedChangeListener { buttonView, isChecked ->
 			if (buttonView != null) onChangedSwitchNotifications(buttonView, isChecked)
+		}
+		swNotificationPopup.setOnCheckedChangeListener { buttonView, isChecked ->
+			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, isChecked.toString())
+		}
+		swNotificationPopupPassenger.setOnCheckedChangeListener { buttonView, isChecked ->
+			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER, isChecked.toString())
 		}
 
 		// spawn a Test notification
-		findViewById<Button>(R.id.button).setOnClickListener {
+		btnTestNotification.setOnClickListener {
 			//val actionIntent = Intent(this, CustomActionListener::class.java)
 			val actionIntent = Intent(this, CustomActionListener::class.java)
 
@@ -87,8 +92,10 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	fun redraw() {
-		findViewById<Switch>(R.id.swMessageNotifications).isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
+		swMessageNotifications.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
 				UIState.notificationListenerConnected
+		swNotificationPopup.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
+		swNotificationPopupPassenger.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean()
 	}
 
 	fun startMainService() {
