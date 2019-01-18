@@ -6,16 +6,18 @@ import android.content.Context.MODE_PRIVATE
 object AppSettings {
 	class SettingDefinition (val name: String, val default: String, val comment: String)
 
-	val PREFERENCES_NAME = "AndroidAutoIdrive"
+	private const val PREFERENCES_NAME = "AndroidAutoIdrive"
 	enum class KEYS {
 		ENABLED_NOTIFICATIONS,
 		ENABLED_NOTIFICATIONS_POPUP,
-		ENABLED_NOTIFICATIONS_POPUP_PASSENGER
+		ENABLED_NOTIFICATIONS_POPUP_PASSENGER,
+		ENABLED_GMAPS
 	}
 	private val DEFINITIONS = mapOf(
 			KEYS.ENABLED_NOTIFICATIONS to SettingDefinition("Enabled_Notifications", "false", "Show phone notifications in the car"),
 			KEYS.ENABLED_NOTIFICATIONS_POPUP to SettingDefinition("Enabled_Notifications_Popup", "true", "Show notification popups in the car"),
-			KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER to SettingDefinition("Enabled_Notifications_Popup_Passenger", "false", "Show notification popups in the car when a passenger is seated")
+			KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER to SettingDefinition("Enabled_Notifications_Popup_Passenger", "false", "Show notification popups in the car when a passenger is seated"),
+			KEYS.ENABLED_GMAPS to SettingDefinition("Enabled_GMaps", "false", "Show Google Maps in the car")
 	)
 
 	private val loadedSettings = HashMap<KEYS, String>()

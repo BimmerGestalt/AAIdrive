@@ -31,7 +31,7 @@ class TestNotificationApp {
 
 	val carAppResources = mock<CarAppResources> {
 		on { getAppCertificate() } doReturn ByteArrayInputStream(ByteArray(0))
-		on { getUiDescription() } doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description.xml") }
+		on { getUiDescription() } doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_onlineservices_v1.xml") }
 		on { getImagesDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 		on { getTextsDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 	}

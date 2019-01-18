@@ -1,17 +1,23 @@
 package me.hufman.androidautoidrive
 
+import android.Manifest
 import android.app.Notification
 import android.app.Notification.PRIORITY_LOW
 import android.app.Service
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.IBinder
+import android.os.Looper
 import android.provider.Settings
+import android.support.v4.content.ContextCompat
 import android.util.Log
+import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
+import kotlin.concurrent.thread
 
 class MainService: Service() {
 	companion object {
@@ -24,6 +30,9 @@ class MainService: Service() {
 	var foregroundNotification: Notification? = null
 
 	var carappNotifications: PhoneNotifications? = null
+	var mapView: MapView? = null
+	var mapScreenCapture: VirtualDisplayScreenCapture? = null
+	var mapController: GMapsController? = null
 
 	override fun onBind(intent: Intent?): IBinder? {
 		return null
@@ -69,30 +78,18 @@ class MainService: Service() {
 
 	fun combinedCallback() {
 		synchronized(MainService::class.java) {
-			if (IDriveConnectionListener.isConnected && SecurityService.isConnected(IDriveConnectionListener.brand ?: "")) {
+			if (IDriveConnectionListener.isConnected && SecurityService.isConnected()) {
 				var startAny = false
 
 				AppSettings.loadSettings(this)
-				if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
-						Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true) {
-					startAny = true
-					if (carappNotifications == null) {
-						Log.i(TAG, "Starting notifications app")
-						carappNotifications = PhoneNotifications(CarAppAssetManager(this, "basecoreOnlineServices"),
-								PhoneAppResourcesAndroid(this),
-								CarNotificationControllerIntent(this))
-						carappNotifications?.onCreate(this)
-						sendBroadcast(Intent(this, NotificationListenerServiceImpl.IDriveNotificationInteraction::class.java)
-								.setAction(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
-					} else {}
-				} else {    // we should not run the service
-					if (carappNotifications != null) {
-						Log.i(TAG, "Notifications app needs to be shut down...")
-						carappNotifications?.onDestroy(this)
-						carappNotifications = null
-					}
-				}
 
+				// start notifications
+				startAny = startAny or startNotifications()
+
+				// start maps
+				startAny = startAny or startGMaps()
+
+				// check if we are idle and should shut down
 				if (startAny ){
 					startNotification(IDriveConnectionListener.brand)
 				} else {
@@ -101,8 +98,57 @@ class MainService: Service() {
 					stopSelf()
 				}
 			} else {
-				Log.d(TAG, "Not fully connected: IDrive:${IDriveConnectionListener.isConnected} SecurityService:${SecurityService.isConnected(IDriveConnectionListener.brand ?: "")}")
+				Log.d(TAG, "Not fully connected: IDrive:${IDriveConnectionListener.isConnected} SecurityService:${SecurityService.isConnected()}")
 			}
+		}
+	}
+
+	fun startNotifications(): Boolean {
+		if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
+				Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true) {
+			if (carappNotifications == null) {
+				Log.i(TAG, "Starting notifications app")
+				thread(true, true) {
+					Looper.prepare()
+					carappNotifications = PhoneNotifications(CarAppAssetManager(this, "basecoreOnlineServices"),
+							PhoneAppResourcesAndroid(this),
+							CarNotificationControllerIntent(this))
+					carappNotifications?.onCreate(this)
+					Looper.loop()
+				}
+
+				sendBroadcast(Intent(this, NotificationListenerServiceImpl.IDriveNotificationInteraction::class.java)
+						.setAction(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
+			}
+			return true
+		} else {    // we should not run the service
+			if (carappNotifications != null) {
+				Log.i(TAG, "Notifications app needs to be shut down...")
+				carappNotifications?.onDestroy(this)
+				carappNotifications = null
+			}
+			return false
+		}
+	}
+
+	fun startGMaps(): Boolean {
+		if (AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean() &&
+				ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+				== PackageManager.PERMISSION_GRANTED) {
+			if (mapController == null) {
+				val mapScreenCapture = VirtualDisplayScreenCapture(this)
+				this.mapScreenCapture = mapScreenCapture
+				this.mapController = GMapsController(this, mapScreenCapture)
+				thread(true, true) {
+					mapView = MapView(CarAppAssetManager(this, "smartthings"),
+							MapInteractionControllerIntent(this), mapScreenCapture)
+					mapView?.onCreate()
+				}
+			}
+			return true
+		} else {
+			mapView?.onDestroy()
+			return false
 		}
 	}
 
@@ -115,7 +161,11 @@ class MainService: Service() {
 			stopNotification()
 			carappNotifications?.onDestroy(this)
 			carappNotifications = null
+			mapView?.onDestroy()
+			mapController?.onDestroy()
+			mapScreenCapture?.onDestroy()
 			SecurityService.listener = Runnable {}
+
 		}
 	}
 

@@ -13,11 +13,15 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        // load api keys from ~/.gradle/gradle.properties
+        manifestPlaceholders = [gmaps_api_key:AndroidAutoIdrive_GmapsApiKey]
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
         }
     }
     testOptions {
@@ -50,4 +54,6 @@ dependencies {
     androidTestImplementation project(path: ':IDriveConnectKit')
 
     implementation "org.bouncycastle:bcmail-jdk16:1.46"
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
 }
