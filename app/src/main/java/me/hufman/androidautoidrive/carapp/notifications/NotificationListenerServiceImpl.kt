@@ -45,8 +45,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 			if (extras.getString(Notification.EXTRA_SUMMARY_TEXT) != null) {
 				summary = extras.getString(Notification.EXTRA_SUMMARY_TEXT).toString()
 			}
-			if (extras.getString(Notification.EXTRA_TEXT_LINES) != null) {
-				text = extras.getString(Notification.EXTRA_TEXT_LINES)
+			if (extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES) != null) {
+				text = extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES).joinToString("\n")
 			}
 			val summarized = CarNotification(sbn.packageName, sbn.key, sbn.notification.smallIcon, sbn.isClearable, sbn.notification.actions ?: arrayOf(),
 					title, summary, text)

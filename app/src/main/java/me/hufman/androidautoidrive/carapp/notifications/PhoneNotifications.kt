@@ -21,6 +21,7 @@ import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.RuntimeException
 import java.util.*
 
 const val TAG = "PhoneNotifications"
@@ -93,9 +94,13 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 				val index = Utils.etchAsInt(args?.get(1.toByte()))
 				val notification = NotificationsState.notifications.getOrNull(index)
 				if (notification != null) {
+					// set the list to go into the state
 					notificationListView?.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateView.id
+
+					val actionId = notificationListView?.getAction()?.asRAAction()?.id
+					carConnection?.rhmi_ackActionEvent(carApp.rhmiHandle, actionId ?: 0, 1, true)   // start screen transition
 					NotificationsState.selectedNotification = notification
-					updateNotificationView()
+					updateNotificationView()    // because updating this view would delay the transition too long
 				} else {
 					notificationListView?.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
 				}
@@ -251,19 +256,29 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			}
 		}
 
-		notification.actions.forEachIndexed { i, action ->
+		(0..2).forEach {i ->
+			val action = notification.actions.getOrNull(i)
 			var button = buttons[2+i]
-			button.setEnabled(true)
-			button.setSelectable(true)
-			if (action.remoteInputs != null && action.remoteInputs.isNotEmpty()) {
-				// TODO Implement <input> view reply
+			if (action == null) {
 				button.setEnabled(false)
-			}
-			button.getTooltipModel()?.asRaDataModel()?.value = action.title.toString()
-			button.getImageModel()?.asImageIdModel()?.imageId = 158
-			button.getAction()?.asRAAction()?.rhmiActionCallback = object : RHMIAction.RHMIActionCallback {
-				override fun onActionEvent(args: Map<*, *>?) {
-					controller.action(notification, action.title.toString())
+				button.setSelectable(false)
+				button.getImageModel()?.asImageIdModel()?.imageId = 0   // hide the icon
+				button.getAction()?.asRAAction()?.rhmiActionCallback = null // don't leak memory
+			} else {
+				button.setSelectable(true)
+				if (action.remoteInputs != null && action.remoteInputs.isNotEmpty()) {
+					// TODO Implement <input> view reply
+					button.setEnabled(false)
+				} else {
+					button.setEnabled(true)
+				}
+				button.getTooltipModel()?.asRaDataModel()?.value = action.title.toString()
+				button.getImageModel()?.asImageIdModel()?.imageId = 158
+				button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id  // usually the action will clear the notification
+				button.getAction()?.asRAAction()?.rhmiActionCallback = object : RHMIAction.RHMIActionCallback {
+					override fun onActionEvent(args: Map<*, *>?) {
+						controller.action(notification, action.title.toString())
+					}
 				}
 			}
 		}
@@ -319,6 +334,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 	class PhoneNotificationUpdate(val listener: PhoneNotificationListener): BroadcastReceiver() {
 		override fun onReceive(context: Context?, intent: Intent?) {
+
 			if (intent != null && intent.action == INTENT_NEW_NOTIFICATION) {
 				val notificationKey = intent.getStringExtra(EXTRA_NOTIFICATION)
 				if (notificationKey != null) {
