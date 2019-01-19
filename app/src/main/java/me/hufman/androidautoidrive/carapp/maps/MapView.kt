@@ -152,7 +152,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 	fun onDestroy() {
 		try {
 			IDriveConnection.disconnectEtchConnection(carConnection)
-		} catch (e: IOError) {}
+		} catch (e: java.lang.Exception) {}
 		frameUpdater.shutDown()
 	}
 
@@ -248,7 +248,6 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		}
 
 		private fun sendImage(bitmap: Bitmap) {
-			Log.i(TAG, "Sending image of size: ${bitmap.width}x${bitmap.height}")
 			val imageData = display.compressBitmap(bitmap)
 			if (bitmap.width >= 700)   // main map
 				viewFullMap.getModel()?.asRaImageModel()?.value = imageData
@@ -257,7 +256,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 				list.addRow(arrayOf(BMWRemoting.RHMIResourceData(BMWRemoting.RHMIResourceType.IMAGEDATA, imageData), "", ""))
 				menuMap.getModel()?.asRaListModel()?.setValue(list, 0, 1, 1)
 			} else {
-				Log.w(TAG, "Unknown image size: ${bitmap.width}x${bitmap.height} unknown mode: $currentMode")
+				Log.w(TAG, "Unknown image size: ${bitmap.width}x${bitmap.height} in mode: $currentMode")
 			}
 		}
 	}

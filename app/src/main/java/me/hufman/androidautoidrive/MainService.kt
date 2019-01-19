@@ -62,7 +62,7 @@ class MainService: Service() {
 		}
 	}
 
-	private fun startNotification(brand: String?) {
+	private fun startServiceNotification(brand: String?) {
 		Log.i(TAG, "Creating foreground notification")
 		val foregroundNotificationBuilder = Notification.Builder(this)
 				.setOngoing(true)
@@ -91,10 +91,10 @@ class MainService: Service() {
 
 				// check if we are idle and should shut down
 				if (startAny ){
-					startNotification(IDriveConnectionListener.brand)
+					startServiceNotification(IDriveConnectionListener.brand)
 				} else {
 					Log.i(TAG, "No apps are enabled, skipping the service start")
-					stopNotification()
+					stopServiceNotification()
 					stopSelf()
 				}
 			} else {
@@ -124,11 +124,15 @@ class MainService: Service() {
 		} else {    // we should not run the service
 			if (carappNotifications != null) {
 				Log.i(TAG, "Notifications app needs to be shut down...")
-				carappNotifications?.onDestroy(this)
-				carappNotifications = null
+				stopNotifications()
 			}
 			return false
 		}
+	}
+
+	fun stopNotifications() {
+		carappNotifications?.onDestroy(this)
+		carappNotifications = null
 	}
 
 	fun startGMaps(): Boolean {
@@ -147,9 +151,19 @@ class MainService: Service() {
 			}
 			return true
 		} else {
-			mapView?.onDestroy()
+			Log.i(TAG, "GMaps app needs to be shut down...")
+			stopGMaps()
 			return false
 		}
+	}
+
+	fun stopGMaps() {
+		mapView?.onDestroy()
+		mapController?.onDestroy()
+		mapScreenCapture?.onDestroy()
+		mapView = null
+		mapController = null
+		mapScreenCapture = null
 	}
 
 	/**
@@ -158,18 +172,15 @@ class MainService: Service() {
 	private fun handleActionStop() {
 		Log.i(TAG, "Shutting down service")
 		synchronized(MainService::class.java) {
-			stopNotification()
-			carappNotifications?.onDestroy(this)
-			carappNotifications = null
-			mapView?.onDestroy()
-			mapController?.onDestroy()
-			mapScreenCapture?.onDestroy()
+			stopServiceNotification()
+			stopNotifications()
+			stopGMaps()
 			SecurityService.listener = Runnable {}
 
 		}
 	}
 
-	private fun stopNotification() {
+	private fun stopServiceNotification() {
 		Log.i(TAG, "Hiding foreground notification")
 		stopForeground(true)
 	}
