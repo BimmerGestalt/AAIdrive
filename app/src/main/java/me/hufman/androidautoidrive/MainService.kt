@@ -176,7 +176,7 @@ class MainService: Service() {
 			stopNotifications()
 			stopGMaps()
 			SecurityService.listener = Runnable {}
-
+			SecurityService.disconnect()
 		}
 	}
 
