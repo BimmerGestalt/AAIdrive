@@ -288,8 +288,9 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		focusEvent?.triggerEvent(mapOf(0 to clearButton.id))
 	}
 
+	/** All open, so that we can mock them in tests */
 	open inner class PhoneNotificationListener {
-		fun onNotification(sbn: CarNotification) {
+		open fun onNotification(sbn: CarNotification) {
 			val appname = phoneAppResources.getAppName(sbn.packageName)
 			val titleLabel = statePopup.getTextModel()?.asRaDataModel() ?: return
 			val bodyLabel1 = statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().firstOrNull()?.getModel()?.asRaDataModel() ?: return
@@ -305,7 +306,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			}
 		}
 
-		fun updateNotificationList() {
+		open fun updateNotificationList() {
 			DeferredUpdate.trigger("PhoneNotificationList", {
 				val interactionTimeAgo = System.currentTimeMillis() - lastInteractionTime
 				val interactionTimeRemaining = INTERACTION_DEBOUNCE_MS - interactionTimeAgo

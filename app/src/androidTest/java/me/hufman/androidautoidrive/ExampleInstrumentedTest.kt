@@ -4,13 +4,12 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import android.util.Log
 import me.hufman.idriveconnectionkit.android.CertMangling
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
+import org.awaitility.Awaitility.await
 
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import org.junit.Assert.*
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -25,17 +24,16 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getTargetContext()
 
         val assets = CarAppAssetManager(appContext, "basecoreOnlineServices")
-        val appCert = assets.getAppCertificate("Mini")?.readBytes() as ByteArray
+        val appCert = assets.getAppCertificateRaw("Mini")?.readBytes() as ByteArray
         Log.i("Test", String(appCert))
         SecurityService.connect(appContext)
         SecurityService.subscribe(Runnable {
-            val signedCert = CertMangling.mergeBMWCert(appCert, SecurityService.fetchBMWCerts("Mini"))
+            val signedCert = CertMangling.mergeBMWCert(appCert, SecurityService.fetchBMWCerts(appContext.packageName))
             val certs = CertMangling.loadCerts(signedCert)
             certs?.forEach {
                 Log.i("Test", CertMangling.getCN(it))
             }
         })
-
-        Thread.sleep(2000)
+        await().until { SecurityService.isConnected() }
     }
 }

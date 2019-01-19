@@ -6,6 +6,7 @@ import android.graphics.drawable.Icon
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import android.support.v4.content.LocalBroadcastManager
+import android.util.Log
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
 
 import org.junit.Test
@@ -15,6 +16,7 @@ import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.carapp.notifications.CarNotification
 import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
+import org.awaitility.Awaitility.await
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -31,7 +33,7 @@ class InstrumentedTestNotificationApp {
 		val appContext = InstrumentationRegistry.getTargetContext()
 
 		// prepare to listen to updates from the phone
-		val mockListener = mock<PhoneNotifications.PhoneNotificationListener> { }
+		val mockListener = mock<PhoneNotifications.PhoneNotificationListener> {}
 		val updateListener = PhoneNotifications.PhoneNotificationUpdate(mockListener)
 		LocalBroadcastManager.getInstance(appContext).registerReceiver(updateListener, IntentFilter(PhoneNotifications.INTENT_NEW_NOTIFICATION))
 		LocalBroadcastManager.getInstance(appContext).registerReceiver(updateListener, IntentFilter(PhoneNotifications.INTENT_UPDATE_NOTIFICATIONS))
@@ -46,8 +48,8 @@ class InstrumentedTestNotificationApp {
 		controller.sendNotificationList()
 
 		// verify that it made it across
-		Thread.sleep(2000)
-		verify(mockListener, times(1)).updateNotificationList()
+		await().untilAsserted { verify(mockListener, times(1)).updateNotificationList() }
+		Log.i("Testing", "Finished the tests")
 	}
 
 	@Test
@@ -73,7 +75,7 @@ class InstrumentedTestNotificationApp {
 		carController.clear(notification)
 
 		// verify that it made it across
-		Thread.sleep(2000)
-		verify(mockListener, times(1)).cancelNotification(notification.key)
+		await().untilAsserted { verify(mockListener, times(1)).cancelNotification(notification.key) }
+
 	}
 }

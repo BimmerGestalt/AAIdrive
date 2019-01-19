@@ -25,8 +25,8 @@ class CarAppAssetManager(val context: Context, val name: String): CarAppResource
 	}
 
 	override fun getAppCertificate(brand: String): InputStream? {
-		val appCert = getAppCertificateRaw(IDriveConnectionListener.brand ?: "")?.readBytes() as ByteArray
-		val signedCert = CertMangling.mergeBMWCert(appCert, SecurityService.fetchBMWCerts(brandHint= IDriveConnectionListener.brand ?: ""))
+		val appCert = getAppCertificateRaw(brand)?.readBytes() as ByteArray
+		val signedCert = CertMangling.mergeBMWCert(appCert, SecurityService.fetchBMWCerts(brandHint= brand))
 		return ByteArrayInputStream(signedCert)
 	}
 

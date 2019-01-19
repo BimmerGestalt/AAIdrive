@@ -44,6 +44,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
     testImplementation "org.mockito:mockito-core:2.22.0"
     testImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     androidTestImplementation "org.mockito:mockito-android:2.22.0"
