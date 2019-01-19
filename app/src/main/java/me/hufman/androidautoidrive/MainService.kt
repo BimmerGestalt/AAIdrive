@@ -17,6 +17,7 @@ import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServ
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
+import java.lang.RuntimeException
 import kotlin.concurrent.thread
 
 class MainService: Service() {
@@ -110,11 +111,16 @@ class MainService: Service() {
 				Log.i(TAG, "Starting notifications app")
 				thread(true, true) {
 					Looper.prepare()
-					carappNotifications = PhoneNotifications(CarAppAssetManager(this, "basecoreOnlineServices"),
-							PhoneAppResourcesAndroid(this),
-							CarNotificationControllerIntent(this))
-					carappNotifications?.onCreate(this)
-					Looper.loop()
+					try {
+						carappNotifications = PhoneNotifications(CarAppAssetManager(this, "basecoreOnlineServices"),
+								PhoneAppResourcesAndroid(this),
+								CarNotificationControllerIntent(this))
+						carappNotifications?.onCreate(this)
+						Looper.loop()
+					} catch (e: RuntimeException) {
+					} catch (e: org.apache.etch.util.TimeoutException) {
+						// phone was unplugged, don't crash
+					}
 				}
 
 				sendBroadcast(Intent(this, NotificationListenerServiceImpl.IDriveNotificationInteraction::class.java)
@@ -144,9 +150,14 @@ class MainService: Service() {
 				this.mapScreenCapture = mapScreenCapture
 				this.mapController = GMapsController(this, mapScreenCapture)
 				thread(true, true) {
-					mapView = MapView(CarAppAssetManager(this, "smartthings"),
-							MapInteractionControllerIntent(this), mapScreenCapture)
-					mapView?.onCreate()
+					try {
+						mapView = MapView(CarAppAssetManager(this, "smartthings"),
+								MapInteractionControllerIntent(this), mapScreenCapture)
+						mapView?.onCreate()
+					} catch (e: RuntimeException) {
+					} catch (e: org.apache.etch.util.TimeoutException) {
+						// phone was unplugged during initialization
+					}
 				}
 			}
 			return true

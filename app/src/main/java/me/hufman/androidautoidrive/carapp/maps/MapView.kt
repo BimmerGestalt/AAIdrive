@@ -13,6 +13,7 @@ import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.io.IOError
+import java.lang.RuntimeException
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 
@@ -249,14 +250,19 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 
 		private fun sendImage(bitmap: Bitmap) {
 			val imageData = display.compressBitmap(bitmap)
-			if (bitmap.width >= 700)   // main map
-				viewFullMap.getModel()?.asRaImageModel()?.value = imageData
-			else if (bitmap.width >= 90) { // menu map
-				val list = RHMIModel.RaListModel.RHMIListConcrete(3)
-				list.addRow(arrayOf(BMWRemoting.RHMIResourceData(BMWRemoting.RHMIResourceType.IMAGEDATA, imageData), "", ""))
-				menuMap.getModel()?.asRaListModel()?.setValue(list, 0, 1, 1)
-			} else {
-				Log.w(TAG, "Unknown image size: ${bitmap.width}x${bitmap.height} in mode: $currentMode")
+			try {
+				if (bitmap.width >= 700)   // main map
+					viewFullMap.getModel()?.asRaImageModel()?.value = imageData
+				else if (bitmap.width >= 90) { // menu map
+					val list = RHMIModel.RaListModel.RHMIListConcrete(3)
+					list.addRow(arrayOf(BMWRemoting.RHMIResourceData(BMWRemoting.RHMIResourceType.IMAGEDATA, imageData), "", ""))
+					menuMap.getModel()?.asRaListModel()?.setValue(list, 0, 1, 1)
+				} else {
+					Log.w(TAG, "Unknown image size: ${bitmap.width}x${bitmap.height} in mode: $currentMode")
+				}
+			} catch (e: RuntimeException) {
+			} catch (e: org.apache.etch.util.TimeoutException) {
+				// don't crash if the phone is unplugged during a frame update
 			}
 		}
 	}

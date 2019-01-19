@@ -69,6 +69,11 @@ class MainActivity : AppCompatActivity() {
 		registerReceiver(redrawListener, IntentFilter(INTENT_REDRAW))
 	}
 
+	override fun onDestroy() {
+		super.onDestroy()
+		unregisterReceiver(redrawListener)
+	}
+
 	fun onChangedSwitchNotifications(buttonView: CompoundButton, isChecked: Boolean) {
 		AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS, isChecked.toString())
 		if (isChecked) {

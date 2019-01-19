@@ -296,16 +296,22 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 				val interactionTimeRemaining = INTERACTION_DEBOUNCE_MS - interactionTimeAgo
 				interactionTimeRemaining
 			}, {
-				if (listFocused) {
-					this@PhoneNotifications.updateNotificationList()
-				}
+				// timer runs in a separate thread, don't bubble car exceptions up
+				try {
+					if (listFocused) {
+						this@PhoneNotifications.updateNotificationList()
+					}
 
-				// check if we should clear an old notification from the NotificationView
-				val currentNotifications = LinkedList(NotificationsState.notifications) // safe-from-other-thread-mutation view
-				val selectedNotification = NotificationsState.selectedNotification
-				if (NotificationsState.selectedNotification != null && ! currentNotifications.map { it.key }.contains(selectedNotification?.key)) {
-					NotificationsState.selectedNotification = null
-					updateNotificationView()
+					// check if we should clear an old notification from the NotificationView
+					val currentNotifications = LinkedList(NotificationsState.notifications) // safe-from-other-thread-mutation view
+					val selectedNotification = NotificationsState.selectedNotification
+					if (NotificationsState.selectedNotification != null && !currentNotifications.map { it.key }.contains(selectedNotification?.key)) {
+						NotificationsState.selectedNotification = null
+						updateNotificationView()
+					}
+				} catch (e: RuntimeException) {
+				} catch (e: org.apache.etch.util.TimeoutException) {
+					// phone was unplugged, don't crash
 				}
 			})
 		}
