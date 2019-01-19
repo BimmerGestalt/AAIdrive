@@ -15,6 +15,7 @@
             android:id="@+id/swMessageNotifications"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:layout_marginEnd="24dp"
             android:layout_marginStart="24dp"
             android:text="@string/message_notifications"
@@ -34,6 +35,7 @@
             android:id="@+id/swNotificationPopupPassenger"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:layout_marginEnd="24dp"
             android:layout_marginStart="60dp"
             android:text="@string/notification_popups_passenger" />
@@ -44,6 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/spawn_test_notification"
+            android:layout_marginBottom="4dp"
             tools:layout_editor_absoluteX="76dp"
             tools:layout_editor_absoluteY="27dp" />
 
@@ -51,6 +54,7 @@
             android:id="@+id/swGMaps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:layout_marginEnd="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="10dp"
