@@ -35,8 +35,8 @@ class InstrumentedTestNotificationApp {
 		// prepare to listen to updates from the phone
 		val mockListener = mock<PhoneNotifications.PhoneNotificationListener> {}
 		val updateListener = PhoneNotifications.PhoneNotificationUpdate(mockListener)
-		LocalBroadcastManager.getInstance(appContext).registerReceiver(updateListener, IntentFilter(PhoneNotifications.INTENT_NEW_NOTIFICATION))
-		LocalBroadcastManager.getInstance(appContext).registerReceiver(updateListener, IntentFilter(PhoneNotifications.INTENT_UPDATE_NOTIFICATIONS))
+		appContext.registerReceiver(updateListener, IntentFilter(PhoneNotifications.INTENT_NEW_NOTIFICATION))
+		appContext.registerReceiver(updateListener, IntentFilter(PhoneNotifications.INTENT_UPDATE_NOTIFICATIONS))
 
 		// prepare a notification
 		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)
@@ -62,8 +62,8 @@ class InstrumentedTestNotificationApp {
 		val mockListener = mock<NotificationListenerServiceImpl.InteractionListener> { }
 		val controller = NotificationListenerServiceImpl.NotificationUpdater(appContext)
 		val interactionListener = NotificationListenerServiceImpl.IDriveNotificationInteraction(mockListener, controller)
-		LocalBroadcastManager.getInstance(appContext).registerReceiver(interactionListener, IntentFilter(NotificationListenerServiceImpl.INTENT_INTERACTION))
-		LocalBroadcastManager.getInstance(appContext).registerReceiver(interactionListener, IntentFilter(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
+		appContext.registerReceiver(interactionListener, IntentFilter(NotificationListenerServiceImpl.INTENT_INTERACTION))
+		appContext.registerReceiver(interactionListener, IntentFilter(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
 
 		// prepare a notification
 		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)

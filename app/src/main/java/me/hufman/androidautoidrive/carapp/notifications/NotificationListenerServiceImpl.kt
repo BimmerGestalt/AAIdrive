@@ -7,11 +7,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import me.hufman.androidautoidrive.UIState
 import me.hufman.androidautoidrive.MainActivity
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.EXTRA_NOTIFICATION
+import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.INTENT_NEW_NOTIFICATION
+import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.INTENT_UPDATE_NOTIFICATIONS
 
 class NotificationListenerServiceImpl: NotificationListenerService() {
 	companion object {
@@ -29,21 +30,21 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 			var text:String? = null
 			var summary:String? = null
 			val extras = sbn.notification.extras
-			if (extras.getString(Notification.EXTRA_TITLE) != null) {
-				title = extras.getString(Notification.EXTRA_TITLE)
+			if (extras.getCharSequence(Notification.EXTRA_TITLE) != null) {
+				title = extras.getCharSequence(Notification.EXTRA_TITLE).toString()
 			}
-			if (extras.getString(Notification.EXTRA_TEXT) != null) {
-				text = extras.getString(Notification.EXTRA_TEXT)
+			if (extras.getCharSequence(Notification.EXTRA_TEXT) != null) {
+				text = extras.getCharSequence(Notification.EXTRA_TEXT).toString()
 			}
 			// full expanded view, like an email body
-			if (extras.getString(Notification.EXTRA_TITLE_BIG) != null) {
-				title = extras.getString(Notification.EXTRA_TITLE_BIG)
+			if (extras.getCharSequence(Notification.EXTRA_TITLE_BIG) != null) {
+				title = extras.getCharSequence(Notification.EXTRA_TITLE_BIG).toString()
 			}
-			if (extras.getString(Notification.EXTRA_BIG_TEXT) != null) {
-				text = extras.getString(Notification.EXTRA_BIG_TEXT)
+			if (extras.getCharSequence(Notification.EXTRA_BIG_TEXT) != null) {
+				text = extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString()
 			}
-			if (extras.getString(Notification.EXTRA_SUMMARY_TEXT) != null) {
-				summary = extras.getString(Notification.EXTRA_SUMMARY_TEXT).toString()
+			if (extras.getCharSequence(Notification.EXTRA_SUMMARY_TEXT) != null) {
+				summary = extras.getCharSequence(Notification.EXTRA_SUMMARY_TEXT).toString()
 			}
 			if (extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES) != null) {
 				text = extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES).joinToString("\n")
@@ -60,21 +61,21 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	override fun onCreate() {
 		super.onCreate()
 		Log.i(TAG, "Registering CarNotificationInteraction listeners")
-		LocalBroadcastManager.getInstance(this).registerReceiver(interactionListener, IntentFilter(INTENT_INTERACTION))
-		LocalBroadcastManager.getInstance(this).registerReceiver(interactionListener, IntentFilter(INTENT_REQUEST_DATA))
+		this.registerReceiver(interactionListener, IntentFilter(INTENT_INTERACTION))
+		this.registerReceiver(interactionListener, IntentFilter(INTENT_REQUEST_DATA))
 	}
 
 	override fun onDestroy() {
 		super.onDestroy()
 		try {
-			LocalBroadcastManager.getInstance(this).unregisterReceiver(interactionListener)
+			this.unregisterReceiver(interactionListener)
 		} catch (e: Exception) {}
 	}
 
 	override fun onListenerConnected() {
 		super.onListenerConnected()
 		UIState.notificationListenerConnected = true
-		sendBroadcast(Intent(this, MainActivity::class.java).setAction(MainActivity.INTENT_REDRAW))
+		sendBroadcast(Intent(MainActivity.INTENT_REDRAW))
 		val notifications = this.activeNotifications
 		val notificationStrings = notifications.mapNotNull { it.notification.tickerText }.joinToString()
 		Log.i(TAG, "Notifications already showing: $notificationStrings")
@@ -115,15 +116,17 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	open class NotificationUpdater(private val context: Context) {
 		/** Sends data from the phone NotificationListenerService to the car service */
 		open fun sendNotificationList() {
-			val intent = Intent(context, PhoneNotifications.PhoneNotificationUpdate::class.java)
-					.setAction(PhoneNotifications.INTENT_UPDATE_NOTIFICATIONS)
-			LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+			Log.i(TAG, "Sending notification list to the car thread")
+			val intent = Intent(INTENT_UPDATE_NOTIFICATIONS)
+					.setPackage(context.packageName)
+			context.sendBroadcast(intent)
 		}
 		open fun sendNotification(notification: StatusBarNotification) {
-			val intent = Intent(context, PhoneNotifications.PhoneNotificationUpdate::class.java)
-					.setAction(PhoneNotifications.INTENT_NEW_NOTIFICATION)
+			Log.i(TAG, "Sending new notification to the car thread")
+			val intent = Intent(INTENT_NEW_NOTIFICATION)
+					.setPackage(context.packageName)
 					.putExtra(EXTRA_NOTIFICATION, notification.key)
-			LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+			context.sendBroadcast(intent)
 		}
 	}
 
@@ -152,10 +155,11 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 					val action = intent.getStringExtra(EXTRA_ACTION)
 					Log.i(TAG, "Received request to send action to $key of type $action")
 					listener.sendNotificationAction(key, action)
-				}
-				if (interaction == EXTRA_INTERACTION_CLEAR) {
+				} else if (interaction == EXTRA_INTERACTION_CLEAR) {
 					Log.i(TAG, "Received request to clear notification $key")
 					listener.cancelNotification(key)
+				} else {
+					Log.i(TAG, "Unknown interaction! $interaction")
 				}
 			} else if (intent?.action == INTENT_REQUEST_DATA) {
 				// send a full list of notifications to the car

@@ -30,6 +30,8 @@ class MainService: Service() {
 	val ONGOING_NOTIFICATION_ID = 20503
 	var foregroundNotification: Notification? = null
 
+	var threadNotifications: CarThread? = null
+	var threadGMaps: CarThread? = null
 	var carappNotifications: PhoneNotifications? = null
 	var mapView: MapView? = null
 	var mapScreenCapture: VirtualDisplayScreenCapture? = null
@@ -107,28 +109,23 @@ class MainService: Service() {
 	fun startNotifications(): Boolean {
 		if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
 				Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true) {
-			if (carappNotifications == null) {
-				Log.i(TAG, "Starting notifications app")
-				thread(true, true) {
-					Looper.prepare()
-					try {
+			synchronized(this) {
+				if (threadNotifications == null) {
+					threadNotifications = CarThread("Notifications") {
+						Log.i(TAG, "Starting notifications app")
 						carappNotifications = PhoneNotifications(CarAppAssetManager(this, "basecoreOnlineServices"),
 								PhoneAppResourcesAndroid(this),
 								CarNotificationControllerIntent(this))
-						carappNotifications?.onCreate(this)
-						Looper.loop()
-					} catch (e: RuntimeException) {
-					} catch (e: org.apache.etch.util.TimeoutException) {
-						// phone was unplugged, don't crash
+						carappNotifications?.onCreate(this, threadNotifications?.handler)
+						// request an initial draw
+						sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
 					}
+					threadNotifications?.start()
 				}
-
-				sendBroadcast(Intent(this, NotificationListenerServiceImpl.IDriveNotificationInteraction::class.java)
-						.setAction(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
 			}
 			return true
 		} else {    // we should not run the service
-			if (carappNotifications != null) {
+			if (threadNotifications != null) {
 				Log.i(TAG, "Notifications app needs to be shut down...")
 				stopNotifications()
 			}
@@ -139,25 +136,25 @@ class MainService: Service() {
 	fun stopNotifications() {
 		carappNotifications?.onDestroy(this)
 		carappNotifications = null
+		threadNotifications?.handler?.looper?.quitSafely()
 	}
 
 	fun startGMaps(): Boolean {
 		if (AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean() &&
 				ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
 				== PackageManager.PERMISSION_GRANTED) {
-			if (mapController == null) {
-				val mapScreenCapture = VirtualDisplayScreenCapture(this)
-				this.mapScreenCapture = mapScreenCapture
-				this.mapController = GMapsController(this, mapScreenCapture)
-				thread(true, true) {
-					try {
+			synchronized(this) {
+				if (threadGMaps == null) {
+					threadGMaps = CarThread("GMaps") {
+						Log.i(TAG, "Starting GMaps")
+						val mapScreenCapture = VirtualDisplayScreenCapture(this)
+						this.mapScreenCapture = mapScreenCapture
+						this.mapController = GMapsController(this, mapScreenCapture)
 						mapView = MapView(CarAppAssetManager(this, "smartthings"),
 								MapInteractionControllerIntent(this), mapScreenCapture)
 						mapView?.onCreate()
-					} catch (e: RuntimeException) {
-					} catch (e: org.apache.etch.util.TimeoutException) {
-						// phone was unplugged during initialization
 					}
+					threadGMaps?.start()
 				}
 			}
 			return true
@@ -172,9 +169,11 @@ class MainService: Service() {
 		mapView?.onDestroy()
 		mapController?.onDestroy()
 		mapScreenCapture?.onDestroy()
+		threadGMaps?.handler?.looper?.quitSafely()
 		mapView = null
 		mapController = null
 		mapScreenCapture = null
+		threadGMaps = null
 	}
 
 	/**

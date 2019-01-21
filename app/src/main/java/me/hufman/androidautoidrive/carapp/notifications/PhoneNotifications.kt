@@ -1,11 +1,10 @@
 package me.hufman.androidautoidrive.carapp.notifications
 
-import android.app.Notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.support.v4.content.LocalBroadcastManager
+import android.os.Handler
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
@@ -21,7 +20,6 @@ import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.*
 import org.json.JSONException
 import org.json.JSONObject
-import java.lang.RuntimeException
 import java.util.*
 
 const val TAG = "PhoneNotifications"
@@ -180,12 +178,19 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		}
 	}
 
-	fun onCreate(context: Context) {
-		LocalBroadcastManager.getInstance(context).registerReceiver(notificationListener, IntentFilter(INTENT_NEW_NOTIFICATION))
-		LocalBroadcastManager.getInstance(context).registerReceiver(notificationListener, IntentFilter(INTENT_UPDATE_NOTIFICATIONS))
+	fun onCreate(context: Context, handler: Handler? = null) {
+		Log.i(TAG, "Registering car thread listeners for notifications")
+		if (handler != null) {
+			context.registerReceiver(notificationListener, IntentFilter(INTENT_NEW_NOTIFICATION), null, handler)
+			context.registerReceiver(notificationListener, IntentFilter(INTENT_UPDATE_NOTIFICATIONS), null, handler)
+		} else {
+			context.registerReceiver(notificationListener, IntentFilter(INTENT_NEW_NOTIFICATION))
+			context.registerReceiver(notificationListener, IntentFilter(INTENT_UPDATE_NOTIFICATIONS))
+
+		}
 	}
 	fun onDestroy(context: Context) {
-		LocalBroadcastManager.getInstance(context).unregisterReceiver(notificationListener)
+		context.unregisterReceiver(notificationListener)
 		try {
 			Log.i(TAG, "Trying to shut down etch connection")
 			IDriveConnection.disconnectEtchConnection(carConnection)
@@ -291,6 +296,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	/** All open, so that we can mock them in tests */
 	open inner class PhoneNotificationListener {
 		open fun onNotification(sbn: CarNotification) {
+			Log.i(TAG, "Received a new notification to show in the car")
 			val appname = phoneAppResources.getAppName(sbn.packageName)
 			val titleLabel = statePopup.getTextModel()?.asRaDataModel() ?: return
 			val bodyLabel1 = statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().firstOrNull()?.getModel()?.asRaDataModel() ?: return
@@ -307,27 +313,26 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		}
 
 		open fun updateNotificationList() {
+			Log.i(TAG, "Received a list of new notifications to show")
 			DeferredUpdate.trigger("PhoneNotificationList", {
 				val interactionTimeAgo = System.currentTimeMillis() - lastInteractionTime
 				val interactionTimeRemaining = INTERACTION_DEBOUNCE_MS - interactionTimeAgo
 				interactionTimeRemaining
 			}, {
-				// timer runs in a separate thread, don't bubble car exceptions up
-				try {
-					if (listFocused) {
-						this@PhoneNotifications.updateNotificationList()
-					}
 
-					// check if we should clear an old notification from the NotificationView
-					val currentNotifications = LinkedList(NotificationsState.notifications) // safe-from-other-thread-mutation view
-					val selectedNotification = NotificationsState.selectedNotification
-					if (NotificationsState.selectedNotification != null && !currentNotifications.map { it.key }.contains(selectedNotification?.key)) {
-						NotificationsState.selectedNotification = null
-						updateNotificationView()
-					}
-				} catch (e: RuntimeException) {
-				} catch (e: org.apache.etch.util.TimeoutException) {
-					// phone was unplugged, don't crash
+				if (listFocused) {
+					Log.i(TAG, "Updating list of notifications")
+					this@PhoneNotifications.updateNotificationList()
+				} else {
+					Log.i(TAG, "Notification list is not on screen, skipping update")
+				}
+
+				// check if we should clear an old notification from the NotificationView
+				val currentNotifications = LinkedList(NotificationsState.notifications) // safe-from-other-thread-mutation view
+				val selectedNotification = NotificationsState.selectedNotification
+				if (NotificationsState.selectedNotification != null && !currentNotifications.map { it.key }.contains(selectedNotification?.key)) {
+					NotificationsState.selectedNotification = null
+					updateNotificationView()
 				}
 			})
 		}
