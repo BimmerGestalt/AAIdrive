@@ -15,6 +15,7 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import me.hufman.androidautoidrive.carapp.maps.VirtualDisplayScreenCapture
+import org.awaitility.Awaitility.await
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,7 +37,7 @@ class InstrumentedTestVirtualDisplay {
 		testCapture.registerImageListener(frameListener)
 		projection.show()
 
-		verify(frameListener).onImageAvailable(any())
+		await().untilAsserted { verify(frameListener).onImageAvailable(any()) }
 
 		testCapture.onDestroy()
 	}

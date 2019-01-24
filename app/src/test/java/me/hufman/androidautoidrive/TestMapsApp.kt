@@ -15,6 +15,7 @@ import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
 import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.ArgumentCaptor
+import org.awaitility.Awaitility.await
 import java.io.ByteArrayInputStream
 
 class TestMapsApp {
@@ -71,12 +72,12 @@ class TestMapsApp {
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
 		val imageCallbackCapture = ArgumentCaptor.forClass(ImageReader.OnImageAvailableListener::class.java)
-		verify(mockMap).registerImageListener(imageCallbackCapture.capture())
+		verify(mockMap).registerImageListener(imageCallbackCapture.capture() ?: ImageReader.OnImageAvailableListener { })
 		val imageCallback = imageCallbackCapture.value
 
 		// show the main screen
 		mockClient.rhmi_onHmiEvent(1, "", app.stateMenu.id, 1, mapOf(4.toByte() to true))
-		verify(mockMap).changeImageSize(400, 200)
+		verify(mockMap).changeImageSize(350, 90)
 		verify(mockController).showMap()
 
 		mockClient.rhmi_onHmiEvent(1, "", app.stateMenu.id, 1, mapOf(4.toByte() to false))
@@ -87,17 +88,34 @@ class TestMapsApp {
 
 		// show the map screen
 		mockClient.rhmi_onHmiEvent(1, "", app.stateMap.id, 1, mapOf(4.toByte() to true))
-		verify(mockMap).changeImageSize(1000, 500)
+		verify(mockMap).changeImageSize(700, 400)
 		verify(mockController).showMap()
 
 		// send a picture, but it's the wrong size so it shouldn't send to the car
 		whenever(mockMap.getFrame()).then {
-			mock<Bitmap>()
+			mock<Bitmap> {
+				on { width } doReturn 400
+				on { height } doReturn 90
+			}
+		}
+		whenever(mockMap.compressBitmap(any())).then {
+			doReturn(ByteArray(4))
 		}
 		imageCallback.onImageAvailable(null)
+		await().untilAsserted { verify(mockMap).getFrame() }
 		assertEquals("Didn't show map in full view", null, mockServer.data[app.viewFullMap.model])
 		// Now send the right picture
-		imageCallback.newFrame(ByteArray(5), 1000, 500)
+		whenever(mockMap.getFrame()).then {
+			mock<Bitmap> {
+				on { width } doReturn 700
+				on { height } doReturn 400
+			}
+		}
+		whenever(mockMap.compressBitmap(any())).then {
+			doReturn(ByteArray(5))
+		}
+		imageCallback.onImageAvailable(null)
+		await().untilAsserted { verify(mockMap).getFrame() }
 		assertArrayEquals("Sent map to car", ByteArray(5), (mockServer.data[app.viewFullMap.model] as BMWRemoting.RHMIResourceData).data as ByteArray)
 
 		// try changing the zoom

@@ -25,6 +25,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import kotlinx.android.synthetic.main.gmaps_projection.*
 import me.hufman.androidautoidrive.R
 
@@ -70,11 +71,12 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 		gmapView.onStart()
 		gmapView.onResume()
 
-		val locationRequest = LocationRequest()
-		locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-		locationRequest.fastestInterval = 5
-
 		if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+			val locationRequest = LocationRequest()
+			locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+			locationRequest.interval = 10000
+			locationRequest.fastestInterval = 100
+
 			locationProvider.requestLocationUpdates(locationRequest, locationCallback, null)
 		}
 	}
@@ -84,7 +86,7 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 		Log.i(TAG, "Projection Stopped")
 		gmapView.onPause()
 		gmapView.onStop()
-		gmapView.onDestroy()
+//		gmapView.onDestroy()
 		locationProvider.removeLocationUpdates(locationCallback)
 	}
 

@@ -31,11 +31,13 @@ class MainService: Service() {
 	var foregroundNotification: Notification? = null
 
 	var threadNotifications: CarThread? = null
-	var threadGMaps: CarThread? = null
 	var carappNotifications: PhoneNotifications? = null
+
+	var threadGMaps: CarThread? = null
 	var mapView: MapView? = null
 	var mapScreenCapture: VirtualDisplayScreenCapture? = null
 	var mapController: GMapsController? = null
+	var mapListener: MapsInteractionControllerListener? = null
 
 	override fun onBind(intent: Intent?): IBinder? {
 		return null
@@ -149,10 +151,14 @@ class MainService: Service() {
 						Log.i(TAG, "Starting GMaps")
 						val mapScreenCapture = VirtualDisplayScreenCapture(this)
 						this.mapScreenCapture = mapScreenCapture
-						this.mapController = GMapsController(this, mapScreenCapture)
+						val mapController = GMapsController(this, mapScreenCapture)
+						this.mapController = mapController
+						val mapListener = MapsInteractionControllerListener(this, mapController)
+						mapListener.onCreate()
+						this.mapListener = mapListener
 						mapView = MapView(CarAppAssetManager(this, "smartthings"),
 								MapInteractionControllerIntent(this), mapScreenCapture)
-						mapView?.onCreate()
+						mapView?.onCreate(this, threadGMaps?.handler)
 					}
 					threadGMaps?.start()
 				}
@@ -166,12 +172,14 @@ class MainService: Service() {
 	}
 
 	fun stopGMaps() {
-		mapView?.onDestroy()
-		mapController?.onDestroy()
+		mapView?.onDestroy(this)
+		mapListener?.onDestroy()
 		mapScreenCapture?.onDestroy()
 		threadGMaps?.handler?.looper?.quitSafely()
+
 		mapView = null
 		mapController = null
+		mapListener = null
 		mapScreenCapture = null
 		threadGMaps = null
 	}

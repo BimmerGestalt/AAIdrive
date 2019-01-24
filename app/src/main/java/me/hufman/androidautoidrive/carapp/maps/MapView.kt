@@ -1,18 +1,23 @@
 package me.hufman.androidautoidrive.carapp.maps
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.media.ImageReader
+import android.os.Handler
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.Utils.etchAsInt
+import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.*
-import java.io.IOError
 import java.lang.RuntimeException
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
@@ -23,6 +28,8 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
+	var mapResultsUpdater = MapResultsUpdater()
+	val mapListener = MapResultsReceiver(mapResultsUpdater)
 	val carApp: RHMIApplicationEtch
 	val stateMenu: RHMIState.PlainState
 	val menuMap: RHMIComponent.List // turns out you can set cells of a list to arbitrary images
@@ -30,7 +37,11 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 	val stateMap: RHMIState.PlainState
 	val viewFullMap: RHMIComponent.Image
 	val mapInputList: RHMIComponent.List
-	val menuEntries = arrayOf("View Full Map")
+	val stateInput: RHMIState.PlainState
+	val viewInput: RHMIComponent.Input
+	val stateInputState: InputState<MapResult>
+	var selectedResult: MapResult? = null
+	val menuEntries = arrayOf("View Full Map", "Search for Place")
 
 	// map state
 	val frameUpdater: FrameUpdater
@@ -68,6 +79,10 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		}
 		viewFullMap = stateMap.componentsList.filterIsInstance<RHMIComponent.Image>().first()
 		mapInputList = stateMap.componentsList.filterIsInstance<RHMIComponent.List>().first()
+		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first {
+			it.componentsList.filterIsInstance<RHMIComponent.Input>().filter { it.suggestAction > 0 }.isNotEmpty()
+		}
+		viewInput = stateInput.componentsList.filterIsInstance<RHMIComponent.Input>().first()
 
 		// connect buttons together
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach{
@@ -88,10 +103,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		}
 		menuMap.setVisible(true)
 		menuMap.setSelectable(true)
-//		menuMap.setProperty(18, -20)
-//		menuMap.setProperty(19, -100)
 		menuMap.setProperty(6, "350,0,*")
-//		menuMap.setProperty(42, 6)  // 6 == 200px
 		menuMap.setProperty(10, 90)
 		menuMap.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
 
@@ -101,13 +113,19 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 			override fun onActionEvent(args: Map<*, *>?) {
 				if (args == null) return
 				val listIndex = etchAsInt(args[1.toByte()])
-				if (listIndex == 0) {   // view full map
-					Log.i(TAG, "User pressed to view full map, setting target ${menuList.getAction()?.asHMIAction()?.getTargetModel()?.id} to ${stateMap.id}")
-					menuList.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
+				val destStateId = when (listIndex) {
+					0 -> stateMap.id
+					1 -> stateInput.id
+					else -> stateMenu.id
 				}
+				Log.i(TAG, "User pressed menu item $listIndex ${menuEntries.getOrNull(listIndex)}, setting target ${menuList.getAction()?.asHMIAction()?.getTargetModel()?.id} to $destStateId")
+				menuList.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = destStateId
 			}
 		}
+		// it seems that menuMap and menuList share the same HMI Action values, so use the same RA handler
+		menuMap.getAction()?.asRAAction()?.rhmiActionCallback = menuList.getAction()?.asRAAction()?.rhmiActionCallback
 
+		// set up the components on the map
 		viewFullMap.setVisible(true)
 		viewFullMap.setProperty(20, 0)    // positionX
 		viewFullMap.setProperty(21, 0)    // positionY
@@ -137,6 +155,17 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 			}
 		}
 
+		// set up the components for the input widget
+		stateInputState = InputState(viewInput, { query ->
+			interaction.searchLocations(query)
+		}, { result, i ->
+			selectedResult = result
+			interaction.stopNavigation()
+			interaction.resultInformation(result.id)    // ask for LatLong, to navigate to
+		})
+		viewInput.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
+		viewInput.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
+
 		// prepare the map transfer
 		Log.i(TAG, "Setting up map transfer")
 		frameUpdater = FrameUpdater(map)
@@ -147,10 +176,17 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.mapview", -1, -1)
 	}
 
-	fun onCreate() {
-
+	fun onCreate(context: Context, handler: Handler?) {
+		if (handler == null) {
+			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULTS))
+			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULT))
+		} else {
+			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULTS), null, handler)
+			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULT), null, handler)
+		}
 	}
-	fun onDestroy() {
+	fun onDestroy(context: Context) {
+		context.unregisterReceiver(mapListener)
 		try {
 			IDriveConnection.disconnectEtchConnection(carConnection)
 		} catch (e: java.lang.Exception) {}
@@ -185,6 +221,8 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 				} else {
 					Log.i(TAG, "Hiding map on menu")
 					frameUpdater.hideMode("menuMap")
+					if (frameUpdater.currentMode == "")
+						interaction.pauseMap()
 				}
 			}
 			// if the full map is changing its focus state
@@ -198,6 +236,8 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 				} else {
 					Log.i(TAG, "Hiding map on full screen")
 					frameUpdater.hideMode("mainMap")
+					if (frameUpdater.currentMode == "")
+						interaction.pauseMap()
 				}
 			}
 		}
@@ -263,6 +303,37 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 			} catch (e: RuntimeException) {
 			} catch (e: org.apache.etch.util.TimeoutException) {
 				// don't crash if the phone is unplugged during a frame update
+			}
+		}
+	}
+
+	/** Receives updates about the map search results and delegates to the given controller */
+	class MapResultsReceiver(val updater: MapResultsController): BroadcastReceiver() {
+		override fun onReceive(context: Context?, intent: Intent?) {
+			if (context?.packageName == null || intent?.`package` == null || context.packageName != intent.`package`) return
+			if (intent?.action == INTENT_MAP_RESULTS) {
+				Log.i(TAG, "Received map results: ${intent.getSerializableExtra(EXTRA_MAP_RESULTS)}")
+				updater.onSearchResults(intent.getSerializableExtra(EXTRA_MAP_RESULTS) as? Array<MapResult> ?: return)
+			}
+			if (intent?.action == INTENT_MAP_RESULT) {
+				updater.onPlaceResult(intent.getSerializableExtra(EXTRA_MAP_RESULT) as? MapResult ?: return)
+			}
+		}
+
+	}
+
+	inner class MapResultsUpdater: MapResultsController {
+		override fun onSearchResults(results: Array<MapResult>) {
+			Log.i(TAG, "Received query results")
+			stateInputState.sendSuggestions(results.toList())
+		}
+
+		override fun onPlaceResult(result: MapResult) {
+			if (result.id == selectedResult?.id) {
+				if (result.location != null)
+					interaction.navigateTo(result.location)
+			} else {
+				Log.i(TAG, "Received unexpected result info ${result.name}, but expected selectedResult ${selectedResult?.name}")
 			}
 		}
 	}
