@@ -47,6 +47,7 @@ class TestNotificationApp {
 	}
 
 	init {
+		AppSettings.loadDefaultSettings()
 		SecurityService.activeSecurityConnections["mock"] = mock {
 			on { signChallenge(any(), any() )} doReturn ByteArray(512)
 		}
@@ -93,9 +94,9 @@ class TestNotificationApp {
 		}
 		phoneNotification.tickerText = tickerText
 		phoneNotification.extras = mock<Bundle> {
-			on { getString(eq(Notification.EXTRA_TITLE)) } doReturn title
-			on { getString(eq(Notification.EXTRA_TEXT)) } doReturn text
-			on { getString(eq(Notification.EXTRA_SUMMARY_TEXT)) } doReturn summary
+			on { getCharSequence(eq(Notification.EXTRA_TITLE)) } doReturn title
+			on { getCharSequence(eq(Notification.EXTRA_TEXT)) } doReturn text
+			on { getCharSequence(eq(Notification.EXTRA_SUMMARY_TEXT)) } doReturn summary
 		}
 		phoneNotification.actions = arrayOf(mock<Notification.Action> {
 		})
@@ -148,10 +149,12 @@ class TestNotificationApp {
 		app.notificationListener.listener.onNotification(bundle)
 
 		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent
-		val expectedLabel = "Test AppName\n" +
-				"Title\n" +
-				"Summary"
-		assertEquals(expectedLabel, mockServer.data[405])
+		val expectedHeader = "Test AppName"
+		val expectedLabel1 = "Title"
+		val expectedLabel2 = "Text"
+		assertEquals(expectedHeader, mockServer.data[404])
+		assertEquals(expectedLabel1, mockServer.data[405])
+		assertEquals(expectedLabel2, mockServer.data[406])
 	}
 
 	@Test
@@ -218,7 +221,9 @@ class TestNotificationApp {
 		}
 
 		// now click the entry button
-		mockClient.rhmi_onActionEvent(0, "don't care", 255, mapOf(0 to true))
+		mockClient.rhmi_onActionEvent(0, "don't care", 255, mapOf(0.toByte() to true))
+		// and show the main list
+		mockClient.rhmi_onHmiEvent(0, "don't care", 8, 1, mapOf(4.toByte() to true))
 
 		// check that there are contents now
 		run {
@@ -262,12 +267,12 @@ class TestNotificationApp {
 		assertEquals(true, mockServer.properties[122]?.get(RHMIComponent.Property.ENABLED.propertyId))  // clear this notification button
 		assertEquals(true, mockServer.properties[122]?.get(RHMIComponent.Property.SELECTABLE.propertyId))  // clear this notification button
 		assertEquals("Clear", mockServer.data[523])
-		assertEquals(true, mockServer.properties[123]?.get(RHMIComponent.Property.ENABLED.propertyId))  // custom action button
-		assertEquals(true, mockServer.properties[123]?.get(RHMIComponent.Property.SELECTABLE.propertyId))  // clear this notification button
-		assertEquals("Custom Action", mockServer.data[524])
+		assertEquals(true, mockServer.properties[124]?.get(RHMIComponent.Property.ENABLED.propertyId))  // custom action button
+		assertEquals(true, mockServer.properties[124]?.get(RHMIComponent.Property.SELECTABLE.propertyId))  // clear this notification button
+		assertEquals("Custom Action", mockServer.data[525])
 
 		// now try clicking the custom action
-		callbacks.rhmi_onActionEvent(1, "Dont care", 330, mapOf(0.toByte() to 1))
+		callbacks.rhmi_onActionEvent(1, "Dont care", 334, mapOf(0.toByte() to 1))
 		verify(carNotificationController, times(1)).action(notification2, notification2.actions[0]?.title.toString())
 		callbacks.rhmi_onActionEvent(1, "Dont care", 326, mapOf(0.toByte() to 1))
 		verify(carNotificationController, times(1)).clear(notification2)

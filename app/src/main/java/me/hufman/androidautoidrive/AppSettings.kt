@@ -22,6 +22,16 @@ object AppSettings {
 
 	private val loadedSettings = HashMap<KEYS, String>()
 
+	fun loadDefaultSettings() {
+		synchronized(loadedSettings) {
+			loadedSettings.clear()
+			KEYS.values().forEach { key ->
+				val def = DEFINITIONS[key] ?: throw AssertionError("Missing SETTINGS definition: $key")
+				loadedSettings[key] = def.default
+			}
+		}
+	}
+
 	fun loadSettings(ctx: Context) {
 		val preferences = ctx.getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE)
 		synchronized(loadedSettings) {

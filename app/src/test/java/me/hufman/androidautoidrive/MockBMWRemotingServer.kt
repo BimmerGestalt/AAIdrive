@@ -59,4 +59,16 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 //		System.out.println("Updated data $modelId: $value")
 		data[modelId!!] = value!!
 	}
+
+	override fun cds_create(): Int {
+		return 1
+	}
+
+	override fun cds_addPropertyChangedEventHandler(handle: Int?, propertyName: String?, ident: String?, intervalLimit: Int?) {
+
+	}
+
+	override fun cds_getPropertyAsync(handle: Int?, ident: String?, propertyName: String?) {
+
+	}
 }

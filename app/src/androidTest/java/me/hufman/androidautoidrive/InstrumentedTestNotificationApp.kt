@@ -5,7 +5,6 @@ import android.content.IntentFilter
 import android.graphics.drawable.Icon
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
-import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
 
