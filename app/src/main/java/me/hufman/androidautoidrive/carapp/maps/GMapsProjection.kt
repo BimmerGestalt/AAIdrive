@@ -30,11 +30,12 @@ import kotlinx.android.synthetic.main.gmaps_projection.*
 import me.hufman.androidautoidrive.R
 
 class GMapsProjection(val parentContext: Context, display: Display): Presentation(parentContext, display) {
-	val TAG = "TestProjection"
+	val TAG = "GMapsProjection"
 	var map: GoogleMap? = null
 	var view: ImageView? = null
 	val locationProvider = LocationServices.getFusedLocationProviderClient(context)!!
 	val locationCallback = LocationCallbackImpl()
+	var lastLocation: LatLng? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -59,8 +60,12 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 			}
 
 			locationProvider.lastLocation.addOnCompleteListener { location ->
-				it.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.result?.latitude ?: 0.0, location.result?.longitude ?: 0.0), 10f))
-				it.animateCamera(CameraUpdateFactory.zoomTo(15f))
+				if (location.result != null) {
+					val result = location.result ?: return@addOnCompleteListener
+					lastLocation = LatLng(result.latitude, result.longitude)
+					it.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 10f))
+					it.animateCamera(CameraUpdateFactory.zoomTo(15f))
+				}
 			}
 		}
 	}
@@ -99,6 +104,7 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 	inner class LocationCallbackImpl: LocationCallback() {
 		override fun onLocationResult(location: LocationResult?) {
 			if (location != null && location.lastLocation != null) {
+				lastLocation = LatLng(location.lastLocation.latitude, location.lastLocation.longitude)
 				map?.animateCamera(CameraUpdateFactory.newLatLng(LatLng(location.lastLocation.latitude, location.lastLocation.longitude)))
 			}
 		}

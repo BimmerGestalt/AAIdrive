@@ -6,6 +6,7 @@ import android.app.Notification.PRIORITY_LOW
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.provider.Settings
@@ -151,7 +152,7 @@ class MainService: Service() {
 						Log.i(TAG, "Starting GMaps")
 						val mapScreenCapture = VirtualDisplayScreenCapture(this)
 						this.mapScreenCapture = mapScreenCapture
-						val mapController = GMapsController(this, mapScreenCapture)
+						val mapController = GMapsController(this, Handler(mainLooper), mapScreenCapture)
 						this.mapController = mapController
 						val mapListener = MapsInteractionControllerListener(this, mapController)
 						mapListener.onCreate()

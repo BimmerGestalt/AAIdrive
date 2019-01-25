@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager.GET_META_DATA
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import com.google.android.gms.location.places.*
@@ -12,7 +14,14 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.tasks.Task
+import com.google.maps.DirectionsApi
+import com.google.maps.GeoApiContext
+import com.google.maps.PendingResult
+import com.google.maps.model.DirectionsResult
+import com.google.maps.model.TravelMode
+import java.util.concurrent.TimeUnit
 
 const val INTENT_INTERACTION = "me.hufman.androidautoidrive.maps.INTERACTION"
 const val EXTRA_INTERACTION_TYPE = "me.hufman.androidautoidrive.maps.INTERACTION.ZOOM_AMOUNT"
@@ -84,6 +93,8 @@ class MapInteractionControllerIntent(val context: Context): MapInteractionContro
 
 
 class MapsInteractionControllerListener(val context: Context, val controller: MapInteractionController) {
+	val TAG = "MapControllerListener"
+
 	/** Registers for interaction intents and routes requests to the controller methods */
 	private val interactionListener = InteractionListener()
 
@@ -96,6 +107,7 @@ class MapsInteractionControllerListener(val context: Context, val controller: Ma
 			if (context == null || intent == null) return
 			Log.i(TAG, "Received interaction: ${intent.action}/${intent.getStringExtra(EXTRA_INTERACTION_TYPE)}")
 			if (intent.action != INTENT_INTERACTION) return
+
 			when (intent.getStringExtra(EXTRA_INTERACTION_TYPE)) {
 				INTERACTION_SHOW_MAP -> controller.showMap()
 				INTERACTION_PAUSE_MAP -> controller.pauseMap()
@@ -116,38 +128,52 @@ class MapsInteractionControllerListener(val context: Context, val controller: Ma
 	}
 }
 
-class GMapsController(val context: Context, screenCapture: VirtualDisplayScreenCapture): MapInteractionController {
+class GMapsController(val context: Context, val handler: Handler, val screenCapture: VirtualDisplayScreenCapture): MapInteractionController {
+	val TAG = "GMapsController"
+	var projection: GMapsProjection? = null
+	private val placesClient = Places.getGeoDataClient(context)!!
+	private val geoClient = GeoApiContext().setQueryRateLimit(3)
+			.setApiKey(context.packageManager.getApplicationInfo(context.packageName, GET_META_DATA)
+					.metaData.getString("com.google.android.geo.API_KEY"))
+			.setConnectTimeout(2, TimeUnit.SECONDS)
+			.setReadTimeout(2, TimeUnit.SECONDS)
+			.setWriteTimeout(2, TimeUnit.SECONDS)
 
-	val projection: GMapsProjection = GMapsProjection(context, screenCapture.virtualDisplay.display)
-	val placesClient = Places.getGeoDataClient(context)
 	var currentSearchResults: Task<AutocompletePredictionBufferResponse>? = null
 	var currentNavDestination: LatLong? = null
 
 	override fun showMap() {
 		Log.i(TAG, "Beginning map projection")
-		if (!projection.isShowing) {
+		handler.post {
 			Log.i(TAG, "First showing of the map")
-			projection.show()
+			if (projection == null) {
+				projection = GMapsProjection(context, screenCapture.virtualDisplay.display)
+			}
+			if (projection?.isShowing == false) {
+				projection?.show()
+			}
 		}
-		projection.map?.animateCamera(CameraUpdateFactory.scrollBy(1f, 1f))
+		// nudge the camera to trigger a redraw
+		projection?.map?.animateCamera(CameraUpdateFactory.scrollBy(1f, 1f))
 	}
 
 	override fun pauseMap() {
-		// TODO: can only be dismissed from the thread that started it
-//		projection.dismiss()
+//		handler.post {
+//			projection?.hide()
+//		}
 	}
 
 	override fun zoomIn(steps: Int) {
 		Log.i(TAG, "Zooming map in $steps steps")
-		projection.map?.animateCamera(CameraUpdateFactory.zoomBy(steps.toFloat()))
+		projection?.map?.animateCamera(CameraUpdateFactory.zoomBy(steps.toFloat()))
 	}
 	override fun zoomOut(steps: Int) {
 		Log.i(TAG, "Zooming map out $steps steps")
-		projection.map?.animateCamera(CameraUpdateFactory.zoomBy(-steps.toFloat()))
+		projection?.map?.animateCamera(CameraUpdateFactory.zoomBy(-steps.toFloat()))
 	}
 
 	override fun searchLocations(query: String) {
-		val bounds = projection.map?.projection?.visibleRegion?.latLngBounds
+		val bounds = projection?.map?.projection?.visibleRegion?.latLngBounds
 		val resultsTask = placesClient.getAutocompletePredictions(query, bounds, AutocompleteFilter.Builder().build())
 		currentSearchResults = resultsTask
 		resultsTask.addOnCompleteListener {
@@ -182,19 +208,48 @@ class GMapsController(val context: Context, screenCapture: VirtualDisplayScreenC
 	}
 
 	override fun navigateTo(dest: LatLong) {
+		Log.i(TAG, "Beginning navigation to $dest")
 		// clear out previous nav
-		projection.map?.clear()
+		projection?.map?.clear()
 		// show new nav destination icon
 		currentNavDestination = dest
+		val destLatLng = LatLng(dest.latitude, dest.longitude)
 		val marker = MarkerOptions()
-				.position(LatLng(dest.latitude, dest.longitude))
+				.position(destLatLng)
 				.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
 				.visible(true)
-		projection.map?.addMarker(marker)
+		projection?.map?.addMarker(marker)
+
+		// start a route search
+		val lastLocation = projection?.lastLocation ?: return
+		val origin = com.google.maps.model.LatLng(lastLocation.latitude, lastLocation.longitude)
+		val routeDest = com.google.maps.model.LatLng(dest.latitude, dest.longitude)
+		val directionsRequest = DirectionsApi.newRequest(geoClient)
+				.mode(TravelMode.DRIVING)
+				.origin(origin)
+				.destination(routeDest)
+		directionsRequest.setCallback(object: PendingResult.Callback<DirectionsResult> {
+			override fun onFailure(e: Throwable?) {
+				Log.w(TAG, "Failed to find route!")
+//				throw e ?: return
+			}
+
+			override fun onResult(result: DirectionsResult?) {
+				if (result == null || result.routes.isEmpty()) { return }
+				Log.i(TAG, "Adding route to map")
+				handler.post {
+					val decodedPath = result.routes[0].overviewPolyline.decodePath()
+					projection?.map?.addPolyline(PolylineOptions().addAll(decodedPath.map {
+						// convert from route LatLng to map LatLng
+						LatLng(it.lat, it.lng)
+					}))
+				}
+			}
+		})
 	}
 
 	override fun stopNavigation() {
 		// clear out previous nav
-		projection.map?.clear()
+		projection?.map?.clear()
 	}
 }
