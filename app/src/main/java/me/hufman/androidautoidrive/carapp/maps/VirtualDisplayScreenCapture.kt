@@ -36,7 +36,7 @@ class VirtualDisplayScreenCapture(context: Context, val width:Int = 700, val hei
 				null, Handler(Looper.getMainLooper()))
 	}
 
-	fun registerImageListener(listener: ImageReader.OnImageAvailableListener) {
+	fun registerImageListener(listener: ImageReader.OnImageAvailableListener?) {
 		this.imageCapture.setOnImageAvailableListener(listener, Handler(Looper.getMainLooper()))
 	}
 

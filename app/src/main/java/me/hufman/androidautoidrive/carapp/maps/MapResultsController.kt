@@ -2,7 +2,6 @@ package me.hufman.androidautoidrive.carapp.maps
 
 import android.content.Context
 import android.content.Intent
-import android.support.v4.content.LocalBroadcastManager
 import java.io.Serializable
 
 

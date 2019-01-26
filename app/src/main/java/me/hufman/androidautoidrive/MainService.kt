@@ -6,9 +6,7 @@ import android.app.Notification.PRIORITY_LOW
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
 import android.provider.Settings
 import android.support.v4.content.ContextCompat
 import android.util.Log
@@ -18,8 +16,6 @@ import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServ
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
-import java.lang.RuntimeException
-import kotlin.concurrent.thread
 
 class MainService: Service() {
 	companion object {
@@ -152,11 +148,12 @@ class MainService: Service() {
 						Log.i(TAG, "Starting GMaps")
 						val mapScreenCapture = VirtualDisplayScreenCapture(this)
 						this.mapScreenCapture = mapScreenCapture
-						val mapController = GMapsController(this, Handler(mainLooper), mapScreenCapture)
+						val mapController = GMapsController(this, MapResultsSender(this), mapScreenCapture)
 						this.mapController = mapController
 						val mapListener = MapsInteractionControllerListener(this, mapController)
 						mapListener.onCreate()
 						this.mapListener = mapListener
+
 						mapView = MapView(CarAppAssetManager(this, "smartthings"),
 								MapInteractionControllerIntent(this), mapScreenCapture)
 						mapView?.onCreate(this, threadGMaps?.handler)

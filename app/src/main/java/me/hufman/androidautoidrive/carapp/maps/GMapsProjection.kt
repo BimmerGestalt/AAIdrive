@@ -2,19 +2,12 @@ package me.hufman.androidautoidrive.carapp.maps
 
 import android.Manifest
 import android.app.Presentation
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.Display
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import com.google.android.gms.location.LocationCallback
@@ -60,7 +53,7 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 			}
 
 			locationProvider.lastLocation.addOnCompleteListener { location ->
-				if (location.result != null) {
+				if (location.isSuccessful && location.result != null) {
 					val result = location.result ?: return@addOnCompleteListener
 					lastLocation = LatLng(result.latitude, result.longitude)
 					it.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 10f))

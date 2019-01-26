@@ -263,7 +263,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 					sendImage(bitmap)
 				}
 				// wait for the next frame
-				frameIsReady.tryAcquire(1000, TimeUnit.SECONDS)
+				frameIsReady.tryAcquire(1, TimeUnit.SECONDS)
 			}
 		}
 
@@ -274,6 +274,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 
 		fun showMode(mode: String) {
 			currentMode = mode
+			Log.i(TAG, "Changing map mode to $mode")
 			when (mode) {
 				"menuMap" ->
 					map.changeImageSize(350, 90)
@@ -290,6 +291,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 
 		private fun sendImage(bitmap: Bitmap) {
 			val imageData = display.compressBitmap(bitmap)
+			Log.d(TAG, "Compressed bitmap to length ${imageData.size}")
 			try {
 				if (bitmap.width >= 700)   // main map
 					viewFullMap.getModel()?.asRaImageModel()?.value = imageData

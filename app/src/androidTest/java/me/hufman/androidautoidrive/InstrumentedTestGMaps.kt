@@ -2,8 +2,11 @@ package me.hufman.androidautoidrive
 
 import android.content.IntentFilter
 import android.support.test.InstrumentationRegistry
+import android.support.test.annotation.UiThreadTest
 import android.support.test.runner.AndroidJUnit4
+import com.google.android.gms.maps.model.LatLng
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.anyArray
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import junit.framework.Assert.assertEquals
@@ -47,10 +50,34 @@ class InstrumentedTestGMaps {
 		assertEquals(1, destinationResults.value.size)
 		assertEquals(MapResult("test", "Test Name"), destinationResults.value[0])
 
-
 		MapResultsSender(appContext).onPlaceResult(MapResult("test", "Test Name 2"))
 		val destinationResult = ArgumentCaptor.forClass(MapResult::class.java)
 		await().untilAsserted { verify(mockResultsReceiver).onPlaceResult(destinationResult.capture() ?: MapResult("null", "Null")) }
 		assertEquals(MapResult("test", "Test Name 2"), destinationResult.value)
+	}
+
+	@Test
+	fun testMapSearch() {
+		val appContext = InstrumentationRegistry.getTargetContext()
+		val virtualDisplay = VirtualDisplayScreenCapture(appContext)
+		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay)
+		mapController.searchLocations("test")
+		await().untilAsserted { verify(mockResultsReceiver).onSearchResults(anyArray()) }
+
+		mapController.resultInformation("ChIJDflB7BWuEmsRYPbx-Wh9AQ8")
+		await().untilAsserted { verify(mockResultsReceiver).onPlaceResult(any()) }
+	}
+
+	@Test
+	@UiThreadTest
+	fun testNavigation() {
+		val appContext = InstrumentationRegistry.getTargetContext()
+		val virtualDisplay = VirtualDisplayScreenCapture(appContext)
+		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay)
+		mapController.showMap()
+		await().until { mapController.projection != null }
+		mapController.projection?.lastLocation = LatLng(37.389444, -122.081944)
+		mapController.navigateTo(LatLong(37.429167, -122.138056))
+		await().until { mapController.currentNavRoute != null }
 	}
 }
