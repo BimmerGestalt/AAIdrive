@@ -188,9 +188,9 @@ class MainService: Service() {
 	private fun handleActionStop() {
 		Log.i(TAG, "Shutting down service")
 		synchronized(MainService::class.java) {
-			stopServiceNotification()
 			stopNotifications()
 			stopGMaps()
+			stopServiceNotification()
 			SecurityService.listener = Runnable {}
 			SecurityService.disconnect()
 		}

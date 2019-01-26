@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.media.ImageReader
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
@@ -180,6 +181,8 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		if (handler == null) {
 			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULTS))
 			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULT))
+
+			frameUpdater.start(Handler(Looper.myLooper()))
 		} else {
 			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULTS), null, handler)
 			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULT), null, handler)
@@ -257,14 +260,20 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 				frameIsReady.release()
 			})
 
-			while (isRunning) {
-				var bitmap = display.getFrame()
-				if (bitmap != null) {
-					sendImage(bitmap)
-				}
-				// wait for the next frame
-				frameIsReady.tryAcquire(1, TimeUnit.SECONDS)
+		override fun run() {
+			var bitmap = display.getFrame()
+			if (bitmap != null) {
+				sendImage(bitmap)
+				schedule()  // check if there's another frame ready for us right now
+			} else {
+				// wait for the next frame, unless the callback comes back sooner
+				schedule(1000)
 			}
+		}
+
+		fun schedule(delayMs: Int = 0) {
+			handler?.removeCallbacks(this)   // remove any previously-scheduled invocations
+			handler?.postDelayed(this, delayMs.toLong())
 		}
 
 		fun shutDown() {
@@ -291,7 +300,6 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 
 		private fun sendImage(bitmap: Bitmap) {
 			val imageData = display.compressBitmap(bitmap)
-			Log.d(TAG, "Compressed bitmap to length ${imageData.size}")
 			try {
 				if (bitmap.width >= 700)   // main map
 					viewFullMap.getModel()?.asRaImageModel()?.value = imageData
