@@ -19,6 +19,8 @@ import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
 import java.util.concurrent.TimeUnit
 import me.hufman.androidautoidrive.R
+import kotlin.math.max
+import kotlin.math.min
 
 const val INTENT_INTERACTION = "me.hufman.androidautoidrive.maps.INTERACTION"
 const val EXTRA_INTERACTION_TYPE = "me.hufman.androidautoidrive.maps.INTERACTION.ZOOM_AMOUNT"
@@ -129,6 +131,7 @@ class MapsInteractionControllerListener(val context: Context, val controller: Ma
 class GMapsController(private val context: Context, private val resultsController: MapResultsController, private val screenCapture: VirtualDisplayScreenCapture): MapInteractionController {
 	val TAG = "GMapsController"
 	var projection: GMapsProjection? = null
+
 	private val placesClient = Places.getGeoDataClient(context)!!
 	private val geoClient = GeoApiContext().setQueryRateLimit(3)
 			.setApiKey(context.packageManager.getApplicationInfo(context.packageName, GET_META_DATA)
@@ -137,6 +140,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 			.setReadTimeout(2, TimeUnit.SECONDS)
 			.setWriteTimeout(2, TimeUnit.SECONDS)
 
+	var currentZoom = 15
 	var currentSearchResults: Task<AutocompletePredictionBufferResponse>? = null
 	var currentNavDestination: LatLong? = null
 	var currentNavRoute: List<LatLng>? = null
@@ -160,11 +164,13 @@ class GMapsController(private val context: Context, private val resultsControlle
 
 	override fun zoomIn(steps: Int) {
 		Log.i(TAG, "Zooming map in $steps steps")
-		projection?.map?.animateCamera(CameraUpdateFactory.zoomBy(steps.toFloat()))
+		currentZoom = min(20, currentZoom + steps)
+		projection?.map?.animateCamera(CameraUpdateFactory.zoomTo(currentZoom.toFloat()))
 	}
 	override fun zoomOut(steps: Int) {
 		Log.i(TAG, "Zooming map out $steps steps")
-		projection?.map?.animateCamera(CameraUpdateFactory.zoomBy(-steps.toFloat()))
+		currentZoom = max(0, currentZoom - steps)
+		projection?.map?.animateCamera(CameraUpdateFactory.zoomTo(currentZoom.toFloat()))
 	}
 
 	override fun searchLocations(query: String) {
