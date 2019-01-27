@@ -37,6 +37,9 @@ const val EXTRA_QUERY = "me.hufman.androidautoidrive.maps.INTERACTION.QUERY"
 const val EXTRA_ID = "me.hufman.androidautoidrive.maps.INTERACTION.ID"
 const val EXTRA_LATLONG = "me.hufman.androidautoidrive.maps.INTERACTION.LATLONG"
 
+private const val NAVIGATION_MAP_STARTZOOM_TIME = 4000
+private const val NAVIGATION_MAP_STARTZOOM_PADDING = 50
+
 interface MapInteractionController {
 	fun showMap()
 	fun pauseMap()
@@ -130,6 +133,7 @@ class MapsInteractionControllerListener(val context: Context, val controller: Ma
 
 class GMapsController(private val context: Context, private val resultsController: MapResultsController, private val screenCapture: VirtualDisplayScreenCapture): MapInteractionController {
 	val TAG = "GMapsController"
+	var handler = Handler(context.mainLooper)
 	var projection: GMapsProjection? = null
 
 	private val placesClient = Places.getGeoDataClient(context)!!
@@ -144,6 +148,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 	var currentSearchResults: Task<AutocompletePredictionBufferResponse>? = null
 	var currentNavDestination: LatLong? = null
 	var currentNavRoute: List<LatLng>? = null
+	var currentAnimation: Runnable? = null
 
 	override fun showMap() {
 		Log.i(TAG, "Beginning map projection")
@@ -251,11 +256,29 @@ class GMapsController(private val context: Context, private val resultsControlle
 				}
 				this@GMapsController.currentNavRoute = currentNavRoute
 				// the results come on a network thread, but we need to draw them in the UI thread
-				Handler(context.mainLooper).post {
+				handler.post {
 					projection?.map?.addPolyline(PolylineOptions().color(context.getColor(R.color.mapRouteLine)).addAll(currentNavRoute))
 				}
 			}
 		})
+
+		// set up camera animations
+		val navigationBounds = LatLngBounds.builder()
+				.include(lastLocation)
+				.include(destLatLng)
+				.build()
+		projection?.map?.animateCamera(CameraUpdateFactory.newLatLngBounds(navigationBounds, NAVIGATION_MAP_STARTZOOM_PADDING))
+		scheduleAnimation(Runnable {
+			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, currentZoom.toFloat()))
+		}, NAVIGATION_MAP_STARTZOOM_TIME.toLong())
+	}
+
+	fun scheduleAnimation(animation: Runnable, delay: Long) {
+		if (this.currentAnimation != null) {
+			handler.removeCallbacks(this.currentAnimation)
+		}
+		this.currentAnimation = animation
+		handler.postDelayed(animation, delay)
 	}
 
 	override fun stopNavigation() {
