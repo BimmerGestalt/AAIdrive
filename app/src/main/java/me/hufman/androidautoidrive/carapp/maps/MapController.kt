@@ -148,7 +148,6 @@ class GMapsController(private val context: Context, private val resultsControlle
 	var currentSearchResults: Task<AutocompletePredictionBufferResponse>? = null
 	var currentNavDestination: LatLong? = null
 	var currentNavRoute: List<LatLng>? = null
-	var currentAnimation: Runnable? = null
 
 	override fun showMap() {
 		Log.i(TAG, "Beginning map projection")
@@ -160,7 +159,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 			projection?.show()
 		}
 		// nudge the camera to trigger a redraw
-		projection?.map?.animateCamera(CameraUpdateFactory.scrollBy(1f, 1f))
+		projection?.map?.moveCamera(CameraUpdateFactory.scrollBy(1f, 1f))
 	}
 
 	override fun pauseMap() {
@@ -267,18 +266,16 @@ class GMapsController(private val context: Context, private val resultsControlle
 				.include(lastLocation)
 				.include(destLatLng)
 				.build()
-		projection?.map?.animateCamera(CameraUpdateFactory.newLatLngBounds(navigationBounds, NAVIGATION_MAP_STARTZOOM_PADDING))
-		scheduleAnimation(Runnable {
+		val currentVisibleRegion = projection?.map?.projection?.visibleRegion?.latLngBounds
+		if (currentVisibleRegion == null || !currentVisibleRegion.contains(navigationBounds.northeast) || !currentVisibleRegion.contains(navigationBounds.southwest)) {
+			handler.postDelayed({
+				projection?.map?.animateCamera(CameraUpdateFactory.newLatLngBounds(navigationBounds, NAVIGATION_MAP_STARTZOOM_PADDING))
+			}, 100)
+		}
+
+		handler.postDelayed({
 			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, currentZoom.toFloat()))
 		}, NAVIGATION_MAP_STARTZOOM_TIME.toLong())
-	}
-
-	fun scheduleAnimation(animation: Runnable, delay: Long) {
-		if (this.currentAnimation != null) {
-			handler.removeCallbacks(this.currentAnimation)
-		}
-		this.currentAnimation = animation
-		handler.postDelayed(animation, delay)
 	}
 
 	override fun stopNavigation() {
