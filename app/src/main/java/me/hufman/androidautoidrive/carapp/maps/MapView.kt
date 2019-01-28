@@ -20,13 +20,11 @@ import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.lang.RuntimeException
-import java.util.concurrent.Semaphore
-import java.util.concurrent.TimeUnit
 
 const val TAG = "MapView"
 
 class MapView(val carAppAssets: CarAppResources, val interaction: MapInteractionController, val map: VirtualDisplayScreenCapture) {
-
+	var handler: Handler? = null    // will be set in onCreate()
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
 	var mapResultsUpdater = MapResultsUpdater()
@@ -41,6 +39,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 	val stateInput: RHMIState.PlainState
 	val viewInput: RHMIComponent.Input
 	val stateInputState: InputState<MapResult>
+	var searchResults = ArrayList<MapResult>()
 	var selectedResult: MapResult? = null
 	val menuEntries = arrayOf("View Full Map", "Search for Place")
 
@@ -162,7 +161,11 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		}, { result, i ->
 			selectedResult = result
 			interaction.stopNavigation()
-			interaction.resultInformation(result.id)    // ask for LatLong, to navigate to
+			if (result.location == null) {
+				interaction.resultInformation(result.id)    // ask for LatLong, to navigate to
+			} else {
+				interaction.navigateTo(result.location)
+			}
 		})
 		viewInput.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
 		viewInput.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
@@ -178,6 +181,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 	}
 
 	fun onCreate(context: Context, handler: Handler?) {
+		this.handler = handler
 		if (handler == null) {
 			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULTS))
 			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULT))
@@ -333,17 +337,41 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 	}
 
 	inner class MapResultsUpdater: MapResultsController {
+		val resultsAddressLocator = Runnable {
+			searchResults.forEach {
+				if (it.location == null) {
+					interaction.resultInformation(it.id)
+				}
+			}
+		}
 		override fun onSearchResults(results: Array<MapResult>) {
 			Log.i(TAG, "Received query results")
-			stateInputState.sendSuggestions(results.toList())
+			searchResults.clear()
+			searchResults.addAll(results)
+			stateInputState.sendSuggestions(searchResults)
+
+			handler?.removeCallbacks(resultsAddressLocator)
+			handler?.postDelayed(resultsAddressLocator, 3000)
 		}
 
-		override fun onPlaceResult(result: MapResult) {
-			if (result.id == selectedResult?.id) {
-				if (result.location != null)
-					interaction.navigateTo(result.location)
-			} else {
-				Log.i(TAG, "Received unexpected result info ${result.name}, but expected selectedResult ${selectedResult?.name}")
+		override fun onPlaceResult(updatedResult: MapResult) {
+			var updated = false
+			searchResults.forEachIndexed { index, searchResult ->
+				if (searchResult.id == updatedResult.id) {
+					Log.i(TAG, "Updating address information for ${searchResult.name}")
+					updated = true
+					searchResults[index] = updatedResult
+				}
+			}
+			if (updated) {
+				stateInputState.sendSuggestions(searchResults)
+			}
+			// check if we were trying to navigate to this destination
+			if (updatedResult.id == selectedResult?.id) {
+				if (updatedResult.location != null)
+					interaction.navigateTo(updatedResult.location)
+			} else if (!updated) {
+				Log.i(TAG, "Received unexpected result info ${updatedResult.name}, but expected selectedResult ${selectedResult?.name}")
 			}
 		}
 	}

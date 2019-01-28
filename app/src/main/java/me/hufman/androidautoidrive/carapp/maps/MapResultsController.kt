@@ -10,6 +10,9 @@ data class MapResult(val id: String, val name: String,
                 val address: String? = null,
                 val location: LatLong? = null): Serializable {
 	override fun toString(): String {
+		if (address != null) {
+			return "$name\n$address"
+		}
 		return name
 	}
 }
