@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="gmaps_styles">
+        <item>Auto</item>
+        <item>Day</item>
+        <item>Night</item>
+        <item>Aubergine</item>
+        <item>Midnight Commander</item> <!-- From https://snazzymaps.com/style/2/midnight-commander -->
+    </string-array>
+</resources>

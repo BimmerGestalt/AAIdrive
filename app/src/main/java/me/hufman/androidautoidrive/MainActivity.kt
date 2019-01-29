@@ -15,10 +15,13 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.CompoundButton
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.androidautoidrive.carapp.maps.INTENT_GMAP_RELOAD_SETTINGS
+import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,6 +48,17 @@ class MainActivity : AppCompatActivity() {
 		}
 		swGMaps.setOnCheckedChangeListener { buttonView, isChecked ->
 			if (buttonView != null) onChangedSwitchGMaps(buttonView, isChecked)
+		}
+		swGmapSyle.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+			override fun onNothingSelected(parent: AdapterView<*>?) {
+			}
+
+			override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+				val value = parent?.getItemAtPosition(position) ?: return
+				Log.i(TAG, "Setting gmaps style to $value")
+				AppSettings.saveSetting(this@MainActivity, AppSettings.KEYS.GMAPS_STYLE, value.toString().toLowerCase().replace(' ', '_'))
+				sendBroadcast(Intent(INTENT_GMAP_RELOAD_SETTINGS))
+			}
 		}
 
 		// spawn a Test notification
@@ -140,6 +154,11 @@ class MainActivity : AppCompatActivity() {
 		swNotificationPopup.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
 		swNotificationPopupPassenger.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean()
 		swGMaps.isChecked = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
+
+		val gmapStylePosition = resources.getStringArray(R.array.gmaps_styles).map { title ->
+			title.toLowerCase().replace(' ', '_')
+		}.indexOf(AppSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase())
+		swGmapSyle.setSelection(max(0, gmapStylePosition))
 	}
 
 	fun startMainService() {
