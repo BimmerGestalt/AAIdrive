@@ -1,13 +1,20 @@
 package me.hufman.androidautoidrive.carapp.maps
 
+import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Handler
+import android.support.v4.content.ContextCompat
 import android.util.Log
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.places.AutocompleteFilter
 import com.google.android.gms.location.places.AutocompletePredictionBufferResponse
 import com.google.android.gms.location.places.Places
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
 import com.google.android.gms.tasks.Task
 import com.google.maps.DirectionsApi
@@ -33,7 +40,22 @@ class GMapsController(private val context: Context, private val resultsControlle
 			.setReadTimeout(2, TimeUnit.SECONDS)
 			.setWriteTimeout(2, TimeUnit.SECONDS)
 
-	var currentZoom = 15
+	val locationProvider = LocationServices.getFusedLocationProviderClient(context)!!
+	val locationCallback = LocationCallbackImpl()
+	var currentLocation: LatLng? = null
+
+	var animatingCamera = false
+	var zoomingCamera = false   // whether the animation started with a zoom command, and thus should be cancelable
+	val animationFinishedCallback = object: GoogleMap.CancelableCallback {
+		override fun onFinish() {
+			animatingCamera = false
+			zoomingCamera = false
+		}
+		override fun onCancel() {
+			animatingCamera = false
+		}
+	}
+	var currentZoom = 15f
 	var currentSearchResults: Task<AutocompletePredictionBufferResponse>? = null
 	var currentNavDestination: LatLong? = null
 	var currentNavRoute: List<LatLng>? = null
@@ -42,28 +64,69 @@ class GMapsController(private val context: Context, private val resultsControlle
 		Log.i(TAG, "Beginning map projection")
 		if (projection == null) {
 			Log.i(TAG, "First showing of the map")
-			projection = GMapsProjection(context, screenCapture.virtualDisplay.display)
+			val projection = GMapsProjection(context, screenCapture.virtualDisplay.display)
+			this.projection = projection
 		}
 		if (projection?.isShowing == false) {
 			projection?.show()
 		}
-		// nudge the camera to trigger a redraw
-		projection?.map?.moveCamera(CameraUpdateFactory.scrollBy(1f, 1f))
+		// nudge the camera to trigger a redraw, in case we changed windows
+		if (!animatingCamera) {
+			projection?.map?.moveCamera(CameraUpdateFactory.scrollBy(1f, 1f))
+		}
+
+		// register for location updates
+		if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+			val locationRequest = LocationRequest()
+			locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+			locationRequest.interval = 3000
+			locationRequest.fastestInterval = 500
+
+			locationProvider.requestLocationUpdates(locationRequest, locationCallback, null)
+		}
 	}
 
 	override fun pauseMap() {
 //		projection?.hide()
+
+		locationProvider.removeLocationUpdates(locationCallback)
+	}
+
+	inner class LocationCallbackImpl: LocationCallback() {
+		override fun onLocationResult(location: LocationResult?) {
+			if (location != null && location.lastLocation != null) {
+				if (currentLocation == null) {  // first view
+					val cameraLocation = LatLng(location.lastLocation.latitude, location.lastLocation.longitude)
+					projection?.map?.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraLocation, 6f))
+				}
+
+				currentLocation = LatLng(location.lastLocation.latitude, location.lastLocation.longitude)
+				projection?.location = currentLocation
+				projection?.applySettings()
+
+				updateCamera()
+			}
+		}
 	}
 
 	override fun zoomIn(steps: Int) {
 		Log.i(TAG, "Zooming map in $steps steps")
-		currentZoom = min(20, currentZoom + steps)
-		projection?.map?.animateCamera(CameraUpdateFactory.zoomTo(currentZoom.toFloat()))
+		zoomingCamera = true
+		currentZoom = min(20f, currentZoom + steps)
+		updateCamera()
 	}
 	override fun zoomOut(steps: Int) {
 		Log.i(TAG, "Zooming map out $steps steps")
-		currentZoom = max(0, currentZoom - steps)
-		projection?.map?.animateCamera(CameraUpdateFactory.zoomTo(currentZoom.toFloat()))
+		zoomingCamera = true
+		currentZoom = max(0f, currentZoom - steps)
+		updateCamera()
+	}
+	private fun updateCamera() {
+		if (!animatingCamera || zoomingCamera) {
+			// if the camera is idle or we are zooming the camera already
+			animatingCamera = true
+			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, currentZoom), animationFinishedCallback)
+		}
 	}
 
 	override fun searchLocations(query: String) {
@@ -120,7 +183,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 		projection?.map?.addMarker(marker)
 
 		// start a route search
-		val lastLocation = projection?.lastLocation ?: return
+		val lastLocation = currentLocation ?: return
 		val origin = com.google.maps.model.LatLng(lastLocation.latitude, lastLocation.longitude)
 		val routeDest = com.google.maps.model.LatLng(dest.latitude, dest.longitude)
 		val directionsRequest = DirectionsApi.newRequest(geoClient)
@@ -151,6 +214,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 		})
 
 		// set up camera animations
+		animatingCamera = true
 		val navigationBounds = LatLngBounds.builder()
 				.include(lastLocation)
 				.include(destLatLng)
@@ -164,6 +228,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 
 		handler.postDelayed({
 			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, currentZoom.toFloat()))
+			animatingCamera = false
 		}, NAVIGATION_MAP_STARTZOOM_TIME.toLong())
 	}
 

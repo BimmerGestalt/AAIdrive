@@ -82,7 +82,7 @@ class InstrumentedTestGMaps {
 		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay)
 		mapController.showMap()
 		await().until { mapController.projection != null }
-		mapController.projection?.lastLocation = LatLng(37.389444, -122.081944)
+		mapController.currentLocation = LatLng(37.389444, -122.081944)
 		mapController.navigateTo(LatLong(37.429167, -122.138056))
 		await().until { mapController.currentNavRoute != null }
 	}

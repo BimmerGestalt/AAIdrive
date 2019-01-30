@@ -12,13 +12,6 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.Display
 import android.view.WindowManager
-import android.widget.ImageView
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -32,11 +25,9 @@ const val INTENT_GMAP_RELOAD_SETTINGS = "me.hufman.androidautoidrive.carapp.gmai
 class GMapsProjection(val parentContext: Context, display: Display): Presentation(parentContext, display) {
 	val TAG = "GMapsProjection"
 	var map: GoogleMap? = null
-	var view: ImageView? = null
 	val settingsListener = SettingsReload()
-	val locationProvider = LocationServices.getFusedLocationProviderClient(context)!!
-	val locationCallback = LocationCallbackImpl()
-	var lastLocation: LatLng? = null
+	var currentStyleId: Int? = null
+	var location: LatLng? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -45,35 +36,24 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 		setContentView(R.layout.gmaps_projection)
 
 		gmapView.onCreate(savedInstanceState)
-		gmapView.getMapAsync {
-			map = it
+		gmapView.getMapAsync { map ->
+			this.map = map
 
-			// load initial theme settings for the map
+			// load initial theme settings for the map, location might not be loaded yet though
 			applySettings()
 
-			it.isIndoorEnabled = false
-			it.isTrafficEnabled = true
+			map.isIndoorEnabled = false
+			map.isTrafficEnabled = true
 
 			if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-				it.isMyLocationEnabled = true
+				map.isMyLocationEnabled = true
 			}
 
-			with (it.uiSettings) {
+			with (map.uiSettings) {
 				isCompassEnabled = true
 				isMyLocationButtonEnabled = false
 			}
 
-			locationProvider.lastLocation.addOnCompleteListener { location ->
-				if (location.isSuccessful && location.result != null) {
-					val result = location.result ?: return@addOnCompleteListener
-					lastLocation = LatLng(result.latitude, result.longitude)
-					it.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 10f))
-					it.animateCamera(CameraUpdateFactory.zoomTo(15f))
-
-					// try to apply settings again, for auto day/night mode with location
-					applySettings()
-				}
-			}
 		}
 
 		// watch for map settings
@@ -86,21 +66,12 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 		gmapView.onStart()
 		gmapView.onResume()
 
-		if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-			val locationRequest = LocationRequest()
-			locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-			locationRequest.interval = 10000
-			locationRequest.fastestInterval = 100
-
-			locationProvider.requestLocationUpdates(locationRequest, locationCallback, null)
-		}
 	}
 
 	fun applySettings() {
 		val style = AppSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase()
-		Log.i(TAG, "Setting gmap style to $style")
 
-		val location = lastLocation
+		val location = this.location
 		val mapstyleId = when(style) {
 			"auto" -> if (location == null || TimeUtils.getDayMode(LatLong(location.latitude, location.longitude))) null else R.raw.gmaps_style_night
 			"night" -> R.raw.gmaps_style_night
@@ -108,8 +79,12 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 			"midnight_commander" -> R.raw.gmaps_style_midnight_commander
 			else -> null
 		}
-		val mapstyle = if (mapstyleId != null) MapStyleOptions.loadRawResourceStyle(parentContext, mapstyleId) else null
-		map?.setMapStyle(mapstyle)
+		if (mapstyleId != currentStyleId) {
+			Log.i(TAG, "Setting gmap style to $style")
+			val mapstyle = if (mapstyleId != null) MapStyleOptions.loadRawResourceStyle(parentContext, mapstyleId) else null
+			map?.setMapStyle(mapstyle)
+		}
+		currentStyleId = mapstyleId
 	}
 
 	override fun onStop() {
@@ -118,7 +93,6 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 		gmapView.onPause()
 		gmapView.onStop()
 //		gmapView.onDestroy()
-		locationProvider.removeLocationUpdates(locationCallback)
 		context.unregisterReceiver(settingsListener)
 	}
 
@@ -128,14 +102,6 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 		return output
 	}
 
-	inner class LocationCallbackImpl: LocationCallback() {
-		override fun onLocationResult(location: LocationResult?) {
-			if (location != null && location.lastLocation != null) {
-				lastLocation = LatLng(location.lastLocation.latitude, location.lastLocation.longitude)
-				map?.animateCamera(CameraUpdateFactory.newLatLng(LatLng(location.lastLocation.latitude, location.lastLocation.longitude)))
-			}
-		}
-	}
 
 	inner class SettingsReload: BroadcastReceiver() {
 		override fun onReceive(context: Context?, intent: Intent?) {
