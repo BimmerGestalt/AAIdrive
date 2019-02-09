@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive
 import android.Manifest
 import android.app.Notification
 import android.app.Notification.PRIORITY_LOW
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -66,12 +67,16 @@ class MainService: Service() {
 
 	private fun startServiceNotification(brand: String?) {
 		Log.i(TAG, "Creating foreground notification")
+		val notifyIntent = Intent(this, MainActivity::class.java).apply {
+			flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+		}
 		val foregroundNotificationBuilder = Notification.Builder(this)
 				.setOngoing(true)
 				.setContentTitle(getText(R.string.notification_title))
 				.setContentText(getText(R.string.notification_description))
 				.setSmallIcon(android.R.drawable.ic_menu_gallery)
 				.setPriority(PRIORITY_LOW)
+				.setContentIntent(PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT))
 		if (brand == "bmw") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_bmw))
 		if (brand == "mini") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_mini))
 		foregroundNotification = foregroundNotificationBuilder.build()
