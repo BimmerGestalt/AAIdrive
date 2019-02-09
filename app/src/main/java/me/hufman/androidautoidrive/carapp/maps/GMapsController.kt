@@ -40,6 +40,9 @@ class GMapsController(private val context: Context, private val resultsControlle
 			.setReadTimeout(2, TimeUnit.SECONDS)
 			.setWriteTimeout(2, TimeUnit.SECONDS)
 
+	var lastSettingsTime = 0L   // the last time we checked settings, for day/night check
+	val SETTINGS_TIME_INTERVAL = 5 * 60000  // milliseconds between checking day/night
+
 	val locationProvider = LocationServices.getFusedLocationProviderClient(context)!!
 	val locationCallback = LocationCallbackImpl()
 	var currentLocation: LatLng? = null
@@ -100,11 +103,18 @@ class GMapsController(private val context: Context, private val resultsControlle
 					projection?.map?.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraLocation, 6f))
 				}
 
+				// save the new location
 				currentLocation = LatLng(location.lastLocation.latitude, location.lastLocation.longitude)
 				projection?.location = currentLocation
-				projection?.applySettings()
 
+				// move the camera to the new location
 				updateCamera()
+
+				// check to re-apply day/night settings after an interval
+				if (lastSettingsTime + SETTINGS_TIME_INTERVAL < System.currentTimeMillis()) {
+					projection?.applySettings()
+					lastSettingsTime = System.currentTimeMillis()
+				}
 			}
 		}
 	}
@@ -121,6 +131,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 		currentZoom = max(0f, currentZoom - steps)
 		updateCamera()
 	}
+
 	private fun updateCamera() {
 		if (!animatingCamera || zoomingCamera) {
 			// if the camera is idle or we are zooming the camera already
