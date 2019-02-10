@@ -144,12 +144,11 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 			override fun onActionEvent(args: Map<*, *>?) {
 				if (args == null) return
 				val listIndex = etchAsInt(args[1.toByte()])
-				Log.i(TAG, "Detected scroll on map! to index $listIndex")
 				if (listIndex in 0..2) {
-					interaction.zoomIn()
+					interaction.zoomIn(1)   // each wheel click through the list will trigger another step of 1
 				}
 				if (listIndex in 4..6) {
-					interaction.zoomOut()
+					interaction.zoomOut(1)
 				}
 				carApp.triggerHMIEvent(carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().id, mapOf(0 to mapInputList.id, 41 to 3))  // set focus to the middle of the list
 			}
