@@ -25,6 +25,7 @@ const val INTENT_GMAP_RELOAD_SETTINGS = "me.hufman.androidautoidrive.carapp.gmai
 class GMapsProjection(val parentContext: Context, display: Display): Presentation(parentContext, display) {
 	val TAG = "GMapsProjection"
 	var map: GoogleMap? = null
+	var mapListener: Runnable? = null
 	val settingsListener = SettingsReload()
 	var currentStyleId: Int? = null
 	var location: LatLng? = null
@@ -54,6 +55,7 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 				isMyLocationButtonEnabled = false
 			}
 
+			mapListener?.run()
 		}
 
 		// watch for map settings
@@ -92,7 +94,7 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 		Log.i(TAG, "Projection Stopped")
 		gmapView.onPause()
 		gmapView.onStop()
-//		gmapView.onDestroy()
+		gmapView.onDestroy()
 		context.unregisterReceiver(settingsListener)
 	}
 

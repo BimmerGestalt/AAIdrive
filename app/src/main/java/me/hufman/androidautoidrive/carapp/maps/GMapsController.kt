@@ -32,6 +32,8 @@ class GMapsController(private val context: Context, private val resultsControlle
 	var handler = Handler(context.mainLooper)
 	var projection: GMapsProjection? = null
 
+	private val SHUTDOWN_WAIT_INTERVAL = 120000L   // milliseconds of inactivity before shutting down map
+
 	private val placesClient = Places.getGeoDataClient(context)!!
 	private val geoClient = GeoApiContext().setQueryRateLimit(3)
 			.setApiKey(context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
@@ -40,8 +42,8 @@ class GMapsController(private val context: Context, private val resultsControlle
 			.setReadTimeout(2, TimeUnit.SECONDS)
 			.setWriteTimeout(2, TimeUnit.SECONDS)
 
-	var lastSettingsTime = 0L   // the last time we checked settings, for day/night check
-	val SETTINGS_TIME_INTERVAL = 5 * 60000  // milliseconds between checking day/night
+	private var lastSettingsTime = 0L   // the last time we checked settings, for day/night check
+	private val SETTINGS_TIME_INTERVAL = 5 * 60000  // milliseconds between checking day/night
 
 	val locationProvider = LocationServices.getFusedLocationProviderClient(context)!!
 	val locationCallback = LocationCallbackImpl()
@@ -53,22 +55,34 @@ class GMapsController(private val context: Context, private val resultsControlle
 		override fun onFinish() {
 			animatingCamera = false
 			zoomingCamera = false
+			startZoom = currentZoom // restore a backgrounded map to this zoom level
 		}
 		override fun onCancel() {
 			animatingCamera = false
 		}
 	}
-	var currentZoom = 15f
-	var currentSearchResults: Task<AutocompletePredictionBufferResponse>? = null
-	var currentNavDestination: LatLong? = null
+	private var startZoom = 6f  // what zoom level we start the projection with
+	private var currentZoom = 15f
+	private var currentSearchResults: Task<AutocompletePredictionBufferResponse>? = null
+	private var currentNavDestination: LatLong? = null
 	var currentNavRoute: List<LatLng>? = null
 
 	override fun showMap() {
 		Log.i(TAG, "Beginning map projection")
+
+		// cancel a shutdown timer
+		handler.removeCallbacks(shutdownMapRunnable)
+
 		if (projection == null) {
 			Log.i(TAG, "First showing of the map")
 			val projection = GMapsProjection(context, screenCapture.virtualDisplay.display)
 			this.projection = projection
+			projection.mapListener = Runnable {
+				// when getMapAsync finishes
+				initCamera()
+				drawNavigation()    // restore navigation, if it's still going
+			}
+
 		}
 		if (projection?.isShowing == false) {
 			projection?.show()
@@ -90,17 +104,22 @@ class GMapsController(private val context: Context, private val resultsControlle
 	}
 
 	override fun pauseMap() {
-//		projection?.hide()
-
 		locationProvider.removeLocationUpdates(locationCallback)
+
+		handler.postDelayed(shutdownMapRunnable, SHUTDOWN_WAIT_INTERVAL)
+	}
+
+	private val shutdownMapRunnable = Runnable {
+		Log.i(TAG, "Shutting down GMapProjection due to inactivity of ${SHUTDOWN_WAIT_INTERVAL}ms")
+		projection?.hide()
+		projection = null
 	}
 
 	inner class LocationCallbackImpl: LocationCallback() {
 		override fun onLocationResult(location: LocationResult?) {
 			if (location != null && location.lastLocation != null) {
 				if (currentLocation == null) {  // first view
-					val cameraLocation = LatLng(location.lastLocation.latitude, location.lastLocation.longitude)
-					projection?.map?.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraLocation, 6f))
+					initCamera()
 				}
 
 				// save the new location
@@ -130,6 +149,17 @@ class GMapsController(private val context: Context, private val resultsControlle
 		zoomingCamera = true
 		currentZoom = max(0f, currentZoom - steps)
 		updateCamera()
+	}
+
+	private fun initCamera() {
+		// set the camera to the starting position
+		val location = currentLocation
+		if (location != null) {
+			val cameraLocation = LatLng(location.latitude, location.longitude)
+			projection?.map?.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraLocation, startZoom))
+		} else {
+			projection?.map?.moveCamera(CameraUpdateFactory.zoomTo(startZoom))
+		}
 	}
 
 	private fun updateCamera() {
@@ -186,24 +216,55 @@ class GMapsController(private val context: Context, private val resultsControlle
 		projection?.map?.clear()
 		// show new nav destination icon
 		currentNavDestination = dest
-		val destLatLng = LatLng(dest.latitude, dest.longitude)
-		val marker = MarkerOptions()
-				.position(destLatLng)
-				.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-				.visible(true)
-		projection?.map?.addMarker(marker)
+		drawNavigation()
 
+		// search for a route
+		routeNavigation()
+
+		// start zoom animation
+		animateNavigation()
+	}
+
+	private fun animateNavigation() {
+		// show a camera animation to zoom out to the whole navigation route
+		val dest = currentNavDestination ?: return
+		val lastLocation = currentLocation ?: return
+		animatingCamera = true
+		// zoom out to the full view
+		val destLatLng = LatLng(dest.latitude, dest.longitude)
+
+		val navigationBounds = LatLngBounds.builder()
+				.include(lastLocation)
+				.include(destLatLng)
+				.build()
+		val currentVisibleRegion = projection?.map?.projection?.visibleRegion?.latLngBounds
+		if (currentVisibleRegion == null || !currentVisibleRegion.contains(navigationBounds.northeast) || !currentVisibleRegion.contains(navigationBounds.southwest)) {
+			handler.postDelayed({
+				projection?.map?.animateCamera(CameraUpdateFactory.newLatLngBounds(navigationBounds, NAVIGATION_MAP_STARTZOOM_PADDING))
+			}, 100)
+		}
+
+		// then zoom back in to the user's chosen zoom
+		handler.postDelayed({
+			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, currentZoom))
+			animatingCamera = false
+		}, NAVIGATION_MAP_STARTZOOM_TIME.toLong())
+	}
+
+	private fun routeNavigation() {
 		// start a route search
 		val lastLocation = currentLocation ?: return
+		val dest = currentNavDestination ?: return
 		val origin = com.google.maps.model.LatLng(lastLocation.latitude, lastLocation.longitude)
 		val routeDest = com.google.maps.model.LatLng(dest.latitude, dest.longitude)
+
 		val directionsRequest = DirectionsApi.newRequest(geoClient)
 				.mode(TravelMode.DRIVING)
 				.origin(origin)
 				.destination(routeDest)
 		directionsRequest.setCallback(object: PendingResult.Callback<DirectionsResult> {
 			override fun onFailure(e: Throwable?) {
-				Log.w(TAG, "Failed to find route!")
+				Log.w(TAG, "Failed to find route! $e")
 //				throw e ?: return
 			}
 
@@ -217,36 +278,40 @@ class GMapsController(private val context: Context, private val resultsControlle
 					LatLng(it.lat, it.lng)
 				}
 				this@GMapsController.currentNavRoute = currentNavRoute
-				// the results come on a network thread, but we need to draw them in the UI thread
-				handler.post {
-					projection?.map?.addPolyline(PolylineOptions().color(context.getColor(R.color.mapRouteLine)).addAll(currentNavRoute))
-				}
+				drawNavigation()
 			}
 		})
+	}
 
-		// set up camera animations
-		animatingCamera = true
-		val navigationBounds = LatLngBounds.builder()
-				.include(lastLocation)
-				.include(destLatLng)
-				.build()
-		val currentVisibleRegion = projection?.map?.projection?.visibleRegion?.latLngBounds
-		if (currentVisibleRegion == null || !currentVisibleRegion.contains(navigationBounds.northeast) || !currentVisibleRegion.contains(navigationBounds.southwest)) {
-			handler.postDelayed({
-				projection?.map?.animateCamera(CameraUpdateFactory.newLatLngBounds(navigationBounds, NAVIGATION_MAP_STARTZOOM_PADDING))
-			}, 100)
+	private fun drawNavigation() {
+		// make sure we are in the UI thread, and then draw navigation lines onto it
+		// because route search comes back on a network thread
+		handler.post {
+			projection?.map?.clear()
+
+			// destination flag
+			val dest = currentNavDestination
+			if (dest != null) {
+				val destLatLng = LatLng(dest.latitude, dest.longitude)
+				val marker = MarkerOptions()
+						.position(destLatLng)
+						.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+						.visible(true)
+				projection?.map?.addMarker(marker)
+			}
+
+			// routing
+			val currentNavRoute = this.currentNavRoute
+			if (currentNavRoute != null) {
+				projection?.map?.addPolyline(PolylineOptions().color(context.getColor(R.color.mapRouteLine)).addAll(currentNavRoute))
+			}
 		}
-
-		handler.postDelayed({
-			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, currentZoom.toFloat()))
-			animatingCamera = false
-		}, NAVIGATION_MAP_STARTZOOM_TIME.toLong())
 	}
 
 	override fun stopNavigation() {
 		// clear out previous nav
-		projection?.map?.clear()
 		currentNavDestination = null
 		currentNavRoute = null
+		drawNavigation()
 	}
 }
