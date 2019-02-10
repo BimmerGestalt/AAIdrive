@@ -20,7 +20,6 @@ import android.widget.AdapterView
 import android.widget.CompoundButton
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
-import me.hufman.androidautoidrive.carapp.maps.INTENT_GMAP_RELOAD_SETTINGS
 import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {

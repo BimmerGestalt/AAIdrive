@@ -15,12 +15,11 @@ import android.view.WindowManager
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
-import kotlinx.android.synthetic.main.gmaps_projection.*
+import kotlinx.android.synthetic.gmap.gmaps_projection.*
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.INTENT_GMAP_RELOAD_SETTINGS
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.TimeUtils
-
-const val INTENT_GMAP_RELOAD_SETTINGS = "me.hufman.androidautoidrive.carapp.gmail.RELOAD_SETTINGS"
 
 class GMapsProjection(val parentContext: Context, display: Display): Presentation(parentContext, display) {
 	val TAG = "GMapsProjection"

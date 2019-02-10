@@ -10,8 +10,8 @@ interface CarNotificationController {
 	/**
 	 * When the user selects a thing in the car, this Controller reacts and updates the phone
 	 */
-	fun clear(sbn: CarNotification)
-	fun action(sbn: CarNotification, actionTitle: String)
+	fun clear(notification: CarNotification)
+	fun action(notification: CarNotification, actionTitle: String)
 }
 
 class CarNotificationControllerIntent(val context: Context): CarNotificationController {

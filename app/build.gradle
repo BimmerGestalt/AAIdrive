@@ -13,9 +13,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        // load api keys from ~/.gradle/gradle.properties
-        manifestPlaceholders = [gmaps_api_key:AndroidAutoIdrive_GmapsApiKey]
     }
     buildTypes {
         release {
@@ -27,6 +24,19 @@ android {
     testOptions {
         unitTests {
             includeAndroidResources = true
+        }
+    }
+
+    flavorDimensions "map"
+
+    productFlavors {
+        "nomap" {
+            dimension "map"
+        }
+        "gmap" {
+            dimension "map"
+            // load api keys from ~/.gradle/gradle.properties
+            manifestPlaceholders = [gmaps_api_key:AndroidAutoIdrive_GmapsApiKey]
         }
     }
 }
@@ -54,11 +64,11 @@ dependencies {
     implementation project(path: ':IDriveConnectKit')
     androidTestImplementation project(path: ':IDriveConnectKitAndroid')
     androidTestImplementation project(path: ':IDriveConnectKit')
+    androidTestImplementation "org.bouncycastle:bcmail-jdk16:1.46"
 
-    implementation "org.bouncycastle:bcmail-jdk16:1.46"
-    implementation 'com.google.android.gms:play-services-maps:16.0.0'
-    implementation 'com.google.android.gms:play-services-location:16.0.0'
-    implementation 'com.google.android.gms:play-services-places:16.0.0'
-    implementation 'com.google.maps:google-maps-services:0.1.20'
     implementation 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
+    gmapImplementation 'com.google.android.gms:play-services-maps:16.0.0'
+    gmapImplementation 'com.google.android.gms:play-services-location:16.0.0'
+    gmapImplementation 'com.google.android.gms:play-services-places:16.0.0'
+    gmapImplementation 'com.google.maps:google-maps-services:0.1.20'
 }

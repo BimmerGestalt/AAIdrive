@@ -3,6 +3,8 @@ package me.hufman.androidautoidrive
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 
+const val INTENT_GMAP_RELOAD_SETTINGS = "me.hufman.androidautoidrive.carapp.gmaps.RELOAD_SETTINGS"
+
 object AppSettings {
 	class SettingDefinition (val name: String, val default: String, val comment: String)
 

@@ -1,17 +1,13 @@
 package me.hufman.androidautoidrive
 
-import android.Manifest
 import android.app.Notification
 import android.app.Notification.PRIORITY_LOW
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.IBinder
 import android.provider.Settings
-import android.support.v4.content.ContextCompat
 import android.util.Log
-import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
@@ -31,11 +27,7 @@ class MainService: Service() {
 	var threadNotifications: CarThread? = null
 	var carappNotifications: PhoneNotifications? = null
 
-	var threadGMaps: CarThread? = null
-	var mapView: MapView? = null
-	var mapScreenCapture: VirtualDisplayScreenCapture? = null
-	var mapController: GMapsController? = null
-	var mapListener: MapsInteractionControllerListener? = null
+	var mapService = MapService(this)
 
 	override fun onBind(intent: Intent?): IBinder? {
 		return null
@@ -94,7 +86,7 @@ class MainService: Service() {
 				startAny = startAny or startNotifications()
 
 				// start maps
-				startAny = startAny or startGMaps()
+				startAny = startAny or startMaps()
 
 				// check if we are idle and should shut down
 				if (startAny ){
@@ -143,48 +135,12 @@ class MainService: Service() {
 		threadNotifications?.handler?.looper?.quitSafely()
 	}
 
-	fun startGMaps(): Boolean {
-		if (AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean() &&
-				ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-				== PackageManager.PERMISSION_GRANTED) {
-			synchronized(this) {
-				if (threadGMaps == null) {
-					threadGMaps = CarThread("GMaps") {
-						Log.i(TAG, "Starting GMaps")
-						val mapScreenCapture = VirtualDisplayScreenCapture(this)
-						this.mapScreenCapture = mapScreenCapture
-						val mapController = GMapsController(this, MapResultsSender(this), mapScreenCapture)
-						this.mapController = mapController
-						val mapListener = MapsInteractionControllerListener(this, mapController)
-						mapListener.onCreate()
-						this.mapListener = mapListener
-
-						mapView = MapView(CarAppAssetManager(this, "smartthings"),
-								MapInteractionControllerIntent(this), mapScreenCapture)
-						mapView?.onCreate(this, threadGMaps?.handler)
-					}
-					threadGMaps?.start()
-				}
-			}
-			return true
-		} else {
-			Log.i(TAG, "GMaps app needs to be shut down...")
-			stopGMaps()
-			return false
-		}
+	fun startMaps(): Boolean {
+		return mapService.start()
 	}
 
-	fun stopGMaps() {
-		mapView?.onDestroy(this)
-		mapListener?.onDestroy()
-		mapScreenCapture?.onDestroy()
-		threadGMaps?.handler?.looper?.quitSafely()
-
-		mapView = null
-		mapController = null
-		mapListener = null
-		mapScreenCapture = null
-		threadGMaps = null
+	fun stopMaps() {
+		mapService.stop()
 	}
 
 	/**
@@ -194,7 +150,7 @@ class MainService: Service() {
 		Log.i(TAG, "Shutting down service")
 		synchronized(MainService::class.java) {
 			stopNotifications()
-			stopGMaps()
+			stopMaps()
 			stopServiceNotification()
 			SecurityService.listener = Runnable {}
 			SecurityService.disconnect()

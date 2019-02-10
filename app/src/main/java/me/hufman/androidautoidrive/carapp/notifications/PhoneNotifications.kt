@@ -83,7 +83,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		}
 
 		// set up the list
-		stateList.componentsList.forEach { it?.setVisible(false) }
+		stateList.componentsList.forEach { it.setVisible(false) }
 		val notificationListView = stateList.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull()
 		notificationListView?.setVisible(true)
 		notificationListView?.setProperty(6, "55,0,*")
@@ -96,7 +96,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 					notificationListView?.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateView.id
 
 					val actionId = notificationListView?.getAction()?.asRAAction()?.id
-					carConnection?.rhmi_ackActionEvent(carApp.rhmiHandle, actionId ?: 0, 1, true)   // start screen transition
+					carConnection.rhmi_ackActionEvent(carApp.rhmiHandle, actionId ?: 0, 1, true)   // start screen transition
 					NotificationsState.selectedNotification = notification
 					updateNotificationView()    // because updating this view would delay the transition too long
 				} else {

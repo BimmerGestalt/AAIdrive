@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="optionGmapVisible">
+        <item name="android:visibility">gone</item>
+    </style>
+
 </resources>

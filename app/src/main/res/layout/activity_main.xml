@@ -50,38 +50,44 @@
             tools:layout_editor_absoluteX="76dp"
             tools:layout_editor_absoluteY="27dp" />
 
-        <Switch
-            android:id="@+id/swGMaps"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/enable_google_maps" />
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="4dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="48dp">
+            android:layout_height="match_parent"
+            style="@style/optionGmapVisible" >
 
-            <TextView
-                android:id="@+id/txtGmapStyleLabel"
-                android:layout_width="0dp"
+            <Switch
+                android:id="@+id/swGMaps"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/gmapStyleLabel" />
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/enable_google_maps"/>
 
-            <Spinner
-                android:id="@+id/swGmapSyle"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/gmaps_styles" />
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="48dp">
+
+                <TextView
+                    android:id="@+id/txtGmapStyleLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gmapStyleLabel" />
+
+                <Spinner
+                    android:id="@+id/swGmapSyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/gmaps_styles" />
+            </LinearLayout>
+
         </LinearLayout>
-
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

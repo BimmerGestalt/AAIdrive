@@ -357,24 +357,24 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 			handler?.postDelayed(resultsAddressLocator, 2000)
 		}
 
-		override fun onPlaceResult(updatedResult: MapResult) {
+		override fun onPlaceResult(result: MapResult) {
 			var updated = false
 			searchResults.forEachIndexed { index, searchResult ->
-				if (searchResult.id == updatedResult.id) {
+				if (searchResult.id == result.id) {
 					Log.i(TAG, "Updating address information for ${searchResult.name}")
 					updated = true
-					searchResults[index] = updatedResult
+					searchResults[index] = result
 				}
 			}
 			if (updated) {
 				stateInputState.sendSuggestions(searchResults)
 			}
 			// check if we were trying to navigate to this destination
-			if (updatedResult.id == selectedResult?.id) {
-				if (updatedResult.location != null)
-					interaction.navigateTo(updatedResult.location)
+			if (result.id == selectedResult?.id) {
+				if (result.location != null)
+					interaction.navigateTo(result.location)
 			} else if (!updated) {
-				Log.i(TAG, "Received unexpected result info ${updatedResult.name}, but expected selectedResult ${selectedResult?.name}")
+				Log.i(TAG, "Received unexpected result info ${result.name}, but expected selectedResult ${selectedResult?.name}")
 			}
 		}
 	}
