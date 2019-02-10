@@ -41,7 +41,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 	val stateInputState: InputState<MapResult>
 	var searchResults = ArrayList<MapResult>()
 	var selectedResult: MapResult? = null
-	val menuEntries = arrayOf("View Full Map", "Search for Place")
+	val menuEntries = arrayOf("View Full Map", "Search for Place", "Clear Navigation")
 
 	// map state
 	val frameUpdater: FrameUpdater
@@ -120,6 +120,10 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 				}
 				Log.i(TAG, "User pressed menu item $listIndex ${menuEntries.getOrNull(listIndex)}, setting target ${menuList.getAction()?.asHMIAction()?.getTargetModel()?.id} to $destStateId")
 				menuList.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = destStateId
+				if (listIndex == 2) {
+					// clear navigation
+					interaction.stopNavigation()
+				}
 			}
 		}
 		// it seems that menuMap and menuList share the same HMI Action values, so use the same RA handler
@@ -350,7 +354,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 			stateInputState.sendSuggestions(searchResults)
 
 			handler?.removeCallbacks(resultsAddressLocator)
-			handler?.postDelayed(resultsAddressLocator, 3000)
+			handler?.postDelayed(resultsAddressLocator, 2000)
 		}
 
 		override fun onPlaceResult(updatedResult: MapResult) {
