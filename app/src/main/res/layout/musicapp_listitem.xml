@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/imgMusicAppIcon"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginEnd="4dp"
+            android:scaleType="fitStart"
+            tools:srcCompat="@tools:sample/avatars"
+            android:contentDescription="@string/imgdescAppIcon" />
+
+        <TextView
+            android:id="@+id/txtMusicAppName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10" />
+
+        <ImageView
+            android:id="@+id/imgConnectable"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:srcCompat="@drawable/ic_play_circle_outline_black_24dp"
+            android:contentDescription="@string/imgdescConnectable" />
+
+        <ImageView
+            android:id="@+id/imgBrowseable"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:srcCompat="@drawable/ic_folder_open_black_24dp"
+            android:contentDescription="@string/imgdescBrowseable" />
+
+        <ImageView
+            android:id="@+id/imgSearchable"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:srcCompat="@drawable/ic_search_black_24dp"
+            android:contentDescription="@string/imgdescSearchable" />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

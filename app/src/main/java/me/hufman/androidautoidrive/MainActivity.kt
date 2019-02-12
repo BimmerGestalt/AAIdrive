@@ -10,16 +10,20 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.CompoundButton
-import android.widget.Toast
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import android.view.ViewGroup
+import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
+import me.hufman.androidautoidrive.music.MusicAppDiscovery
+import me.hufman.androidautoidrive.music.MusicAppInfo
 import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
@@ -27,9 +31,13 @@ class MainActivity : AppCompatActivity() {
 	companion object {
 		const val INTENT_REDRAW = "me.hufman.androidautoidrive.REDRAW"
 		const val TAG = "MainActivity"
+		const val REDRAW_INTERVAL = 5000L
 		const val REQUEST_LOCATION = 4000
 	}
+	val handler = Handler()
+	val discovery = MusicAppDiscovery(this)
 	val redrawListener = RedrawListener()
+	val redrawTask = RedrawTask()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -79,6 +87,30 @@ class MainActivity : AppCompatActivity() {
 			manager.notify(1, notification)
 		}
 
+		// build list of discovered music apps
+		discovery.discoverApps()
+		discovery.listener = Runnable {
+			redrawTask.schedule(50)
+		}
+		listMusicApps.adapter = object: ArrayAdapter<MusicAppInfo>(this, R.layout.musicapp_listitem, discovery.apps) {
+			override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+				val appInfo = getItem(position)
+				val layout = convertView ?: layoutInflater.inflate(R.layout.musicapp_listitem, parent,false)
+				return if (appInfo != null) {
+					layout.findViewById<ImageView>(R.id.imgMusicAppIcon).setImageDrawable(appInfo.icon)
+					layout.findViewById<TextView>(R.id.txtMusicAppName).setText(appInfo.name)
+					layout.findViewById<ImageView>(R.id.imgConnectable).visibility = if (appInfo.connectable) VISIBLE else GONE
+					layout.findViewById<ImageView>(R.id.imgBrowseable).visibility = if (appInfo.browseable) VISIBLE else GONE
+					layout.findViewById<ImageView>(R.id.imgSearchable).visibility = if (appInfo.searchable) VISIBLE else GONE
+					layout
+				} else {
+					layout.findViewById<TextView>(R.id.txtMusicAppName).setText("Error")
+					layout
+				}
+			}
+		}
+
+		redrawTask.schedule()
 		registerReceiver(redrawListener, IntentFilter(INTENT_REDRAW))
 	}
 
@@ -158,6 +190,8 @@ class MainActivity : AppCompatActivity() {
 			title.toLowerCase().replace(' ', '_')
 		}.indexOf(AppSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase())
 		swGmapSyle.setSelection(max(0, gmapStylePosition))
+
+		listMusicApps.invalidateViews()
 	}
 
 	fun startMainService() {
@@ -165,6 +199,17 @@ class MainActivity : AppCompatActivity() {
 		this.startService(Intent(this, MainService::class.java).setAction(MainService.ACTION_START))
 	}
 
+	inner class RedrawTask: Runnable {
+		fun schedule(delay:Long = REDRAW_INTERVAL) {
+			handler.removeCallbacks(this)
+			handler.postDelayed(this, delay)
+		}
+		override fun run() {
+			redraw()
+			schedule()
+		}
+
+	}
 	inner class RedrawListener: BroadcastReceiver() {
 		override fun onReceive(context: Context?, intent: Intent?) {
 			runOnUiThread { redraw() }
