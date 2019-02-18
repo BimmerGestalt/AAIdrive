@@ -29,6 +29,8 @@ class MainService: Service() {
 
 	var mapService = MapService(this)
 
+	var musicService = MusicService(this)
+
 	override fun onBind(intent: Intent?): IBinder? {
 		return null
 	}
@@ -88,6 +90,9 @@ class MainService: Service() {
 				// start maps
 				startAny = startAny or startMaps()
 
+				// start music
+				startAny = startAny or startMusic()
+
 				// check if we are idle and should shut down
 				if (startAny ){
 					startServiceNotification(IDriveConnectionListener.brand)
@@ -132,7 +137,7 @@ class MainService: Service() {
 	fun stopNotifications() {
 		carappNotifications?.onDestroy(this)
 		carappNotifications = null
-		threadNotifications?.handler?.looper?.quitSafely()
+		threadNotifications?.handler?.looper?.quit()
 	}
 
 	fun startMaps(): Boolean {
@@ -143,6 +148,13 @@ class MainService: Service() {
 		mapService.stop()
 	}
 
+	fun startMusic(): Boolean {
+		return musicService.start()
+	}
+	fun stopMusic() {
+		musicService.stop()
+	}
+
 	/**
 	 * Stop the service
 	 */
@@ -151,6 +163,7 @@ class MainService: Service() {
 		synchronized(MainService::class.java) {
 			stopNotifications()
 			stopMaps()
+			stopMusic()
 			stopServiceNotification()
 			SecurityService.listener = Runnable {}
 			SecurityService.disconnect()

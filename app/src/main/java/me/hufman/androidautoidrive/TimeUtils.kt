@@ -25,4 +25,12 @@ object TimeUtils {
 				calendar.get(Calendar.MINUTE) < sunset.get(Calendar.MINUTE))
 		return afterSunrise && beforeSunset
 	}
+
+	fun formatTime(timeMs: Long): String {
+		return if (timeMs < 0) {
+			" --:--"
+		} else {
+			String.format("%3d:%02d", timeMs/1000/60, timeMs/1000%60)
+		}
+	}
 }

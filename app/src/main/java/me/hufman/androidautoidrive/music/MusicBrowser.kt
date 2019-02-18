@@ -74,6 +74,16 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 		}
 	}
 
+	fun disconnect() {
+		if (Looper.myLooper() == handler.looper) {
+			mediaBrowser.disconnect()
+		} else {
+			runBlocking(handler.asCoroutineDispatcher()) {
+				mediaBrowser.disconnect()
+			}
+		}
+	}
+
 	suspend fun browse(path: String?): List<MediaBrowserCompat.MediaItem> {
 		val deferred = CompletableDeferred<List<MediaBrowserCompat.MediaItem>>()
 		withContext(handler.asCoroutineDispatcher()) {
@@ -117,5 +127,13 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 			}
 		}
 		return deferred.await()
+	}
+
+	fun getController(): MediaControllerCompat {
+		if (Looper.myLooper() != handler.looper) {
+			Log.w(TAG, "Fetching controller from a different thread, might cause problems")
+		}
+		val token = mediaBrowser.sessionToken
+		return MediaControllerCompat(context, token)
 	}
 }

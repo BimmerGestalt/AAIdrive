@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 		const val REQUEST_LOCATION = 4000
 	}
 	val handler = Handler()
-	val discovery = MusicAppDiscovery(this)
+	val discovery = MusicAppDiscovery(this, handler)
 	val redrawListener = RedrawListener()
 	val redrawTask = RedrawTask()
 
@@ -117,6 +117,7 @@ class MainActivity : AppCompatActivity() {
 	override fun onDestroy() {
 		super.onDestroy()
 		unregisterReceiver(redrawListener)
+		discovery.cancelDiscovery()
 	}
 
 	fun onChangedSwitchNotifications(buttonView: CompoundButton, isChecked: Boolean) {

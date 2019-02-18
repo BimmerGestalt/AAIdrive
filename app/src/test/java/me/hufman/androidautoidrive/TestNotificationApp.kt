@@ -14,6 +14,7 @@ import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
+import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -40,7 +41,7 @@ class TestNotificationApp {
 		on { getAppName(any()) } doReturn "Test AppName"
 		on { getAppIcon(any())} doReturn mock<Drawable>()
 		on { getIconDrawable(any())} doReturn mock<Drawable>()
-		on { getBitmap(any(), any(), any()) } doReturn ByteArray(0)
+		on { getBitmap(isA<Drawable>(), any(), any()) } doReturn ByteArray(0)
 	}
 
 	val carNotificationController = mock<CarNotificationController> {
@@ -69,7 +70,7 @@ class TestNotificationApp {
 		// test stateView setup
 		run {
 			val visibleWidgets = app.stateView.componentsList.filter {
-				mockServer.properties[it.id]?.get(RHMIComponent.Property.VISIBLE.propertyId) as Boolean
+				mockServer.properties[it.id]?.get(RHMIProperty.PropertyId.VISIBLE.id) as Boolean
 			}
 			assertEquals(1, visibleWidgets.size)
 			assertTrue(visibleWidgets[0] is RHMIComponent.List)
@@ -77,7 +78,7 @@ class TestNotificationApp {
 		// test stateList setup
 		run {
 			val visibleWidgets = app.stateList.componentsList.filter {
-				mockServer.properties[it.id]?.get(RHMIComponent.Property.VISIBLE.propertyId) as Boolean
+				mockServer.properties[it.id]?.get(RHMIProperty.PropertyId.VISIBLE.id) as Boolean
 			}
 			assertEquals(1, visibleWidgets.size)
 			assertTrue(visibleWidgets[0] is RHMIComponent.List)
@@ -264,11 +265,11 @@ class TestNotificationApp {
 		assertEquals("Test AppName", list.data[0][2])
 		assertEquals("Title2", list.data[1][2])
 		assertEquals("Text2", list.data[2][2])
-		assertEquals(true, mockServer.properties[122]?.get(RHMIComponent.Property.ENABLED.propertyId))  // clear this notification button
-		assertEquals(true, mockServer.properties[122]?.get(RHMIComponent.Property.SELECTABLE.propertyId))  // clear this notification button
+		assertEquals(true, mockServer.properties[122]?.get(RHMIProperty.PropertyId.ENABLED.id))  // clear this notification button
+		assertEquals(true, mockServer.properties[122]?.get(RHMIProperty.PropertyId.SELECTABLE.id))  // clear this notification button
 		assertEquals("Clear", mockServer.data[523])
-		assertEquals(true, mockServer.properties[124]?.get(RHMIComponent.Property.ENABLED.propertyId))  // custom action button
-		assertEquals(true, mockServer.properties[124]?.get(RHMIComponent.Property.SELECTABLE.propertyId))  // clear this notification button
+		assertEquals(true, mockServer.properties[124]?.get(RHMIProperty.PropertyId.ENABLED.id))  // custom action button
+		assertEquals(true, mockServer.properties[124]?.get(RHMIProperty.PropertyId.SELECTABLE.id))  // clear this notification button
 		assertEquals("Custom Action", mockServer.data[525])
 
 		// now try clicking the custom action
