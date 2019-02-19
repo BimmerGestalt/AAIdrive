@@ -27,6 +27,8 @@ class PlaybackView(val state: RHMIState,val controller: MusicController, val pho
 
 	val appTitleModel: RHMIModel.RaDataModel
 	val appLogoModel: RHMIModel.RaImageModel
+	val albumArtBigComponent: RHMIComponent.Image
+	val albumArtSmallComponent: RHMIComponent.Image
 	val albumArtBigModel: RHMIModel.RaImageModel
 	val albumArtSmallModel: RHMIModel.RaImageModel
 	val artistModel: RHMIModelMultiSetterData
@@ -62,12 +64,14 @@ class PlaybackView(val state: RHMIState,val controller: MusicController, val pho
 			val widePosition = (property as? RHMIProperty.LayoutBag)?.get(0)
 			widePosition is Int && widePosition < 1900
 		}
-		albumArtBigModel = wideComponents.filterIsInstance<RHMIComponent.Image>().first {
+		albumArtBigComponent = wideComponents.filterIsInstance<RHMIComponent.Image>().first {
 			(it.properties[10]?.value as? Int ?: 0) == 320
-		}.getModel()?.asRaImageModel()!!
-		albumArtSmallModel = smallComponents.filterIsInstance<RHMIComponent.Image>().first {
+		}
+		albumArtBigModel = albumArtBigComponent.getModel()?.asRaImageModel()!!
+		albumArtSmallComponent = smallComponents.filterIsInstance<RHMIComponent.Image>().first {
 			(it.properties[10]?.value as? Int ?: 0) == 200
-		}.getModel()?.asRaImageModel()!!
+		}
+		albumArtSmallModel = albumArtSmallComponent.getModel()?.asRaImageModel()!!
 
 		val artists = arrayOf(smallComponents, wideComponents).map { components ->
 			findAdjacentComponent(components) { it.asImage()?.getModel()?.asImageIdModel()?.imageId == IMAGEID_ARTIST}
@@ -168,11 +172,13 @@ class PlaybackView(val state: RHMIState,val controller: MusicController, val pho
 		albumModel.value = song?.album ?: ""
 		trackModel.value = song?.title ?: ""
 		if (song?.coverArt != null) {
+			albumArtBigComponent.setVisible(true)
+			albumArtSmallComponent.setVisible(true)
 			albumArtBigModel.value = phoneAppResources.getBitmap(song.coverArt, 320, 320)
 			albumArtSmallModel.value = phoneAppResources.getBitmap(song.coverArt, 200, 200)
 		} else {
-			albumArtBigModel.value = ByteArray(0)
-			albumArtSmallModel.value = ByteArray(0)
+			albumArtBigComponent.setVisible(false)
+			albumArtSmallComponent.setVisible(false)
 		}
 		displayedSong = song
 	}
