@@ -7,6 +7,7 @@ import android.os.SystemClock
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
+import me.hufman.androidautoidrive.carapp.music.AVContextHandler
 import me.hufman.androidautoidrive.carapp.music.MusicApp
 import me.hufman.androidautoidrive.carapp.music.views.AppSwitcherView
 import me.hufman.androidautoidrive.carapp.music.views.PlaybackView
@@ -31,6 +32,7 @@ class TestMusicApp {
 		const val APPLIST_TEXTMODEL = 390
 		const val APPLIST_COMPONENT = 27
 		const val APPLIST_LISTMODEL = 394
+		const val APPLIST_ACTION = 165
 
 		const val PLAYBACK_STATE = 16
 		const val APPICON_MODEL = 470
@@ -119,6 +121,7 @@ class TestMusicApp {
 		// click into the trigger a redraw
 		mockClient.rhmi_onActionEvent(1, "unused", IDs.ENTRYBUTTON_ACTION, mapOf(0 to 1))
 		mockClient.rhmi_onHmiEvent(1, "unused", IDs.APPLIST_STATE, 1, mapOf(4.toByte() to true))
+
 		// shows the applist on the first click through
 		println(mockServer.properties)
 		assertEquals(true, mockServer.properties[IDs.APPLIST_COMPONENT]!![RHMIProperty.PropertyId.VISIBLE.id])
@@ -127,11 +130,17 @@ class TestMusicApp {
 		assertEquals("Apps", mockServer.data[IDs.APPLIST_TEXTMODEL])
 		assertArrayEquals(arrayOf(arrayOf("", "", "<No Apps>")), (mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data)
 
-		// click entrybutton again with a list of apps
-		whenever(musicAppDiscovery.validApps). then {
+		// some apps are discovered
+		whenever(musicAppDiscovery.validApps).then {
 			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
 					MusicAppInfo("Test2", mock(), "package", "class"))
 		}
+		val discoveryListenerCapture = ArgumentCaptor.forClass(Runnable::class.java)
+		verify(musicAppDiscovery).listener = discoveryListenerCapture.capture()
+		discoveryListenerCapture.value.run()
+		assertEquals(2, mockServer.avConnections.size)
+
+		// click entrybutton again with a list of apps
 		mockClient.rhmi_onActionEvent(1, "unused", IDs.ENTRYBUTTON_ACTION, mapOf(0 to 1))
 		mockClient.rhmi_onHmiEvent(1, "unused", IDs.APPLIST_STATE, 1, mapOf(4.toByte() to true))
 		assertEquals(true, mockServer.properties[IDs.APPLIST_COMPONENT]!![RHMIProperty.PropertyId.SELECTABLE.id])
@@ -144,6 +153,12 @@ class TestMusicApp {
 		assertTrue(displayedIcons[0] is ByteArray && displayedIcons[0].isEmpty())
 		assertTrue(displayedIcons[1] is ByteArray && displayedIcons[1].isEmpty())
 		assertEquals(listOf("Test1", "Test2"), displayedNames)
+
+		// try clicking an app
+		mockClient.rhmi_onActionEvent(1, "unused", IDs.APPLIST_ACTION, mapOf(1.toByte() to 1))
+		assertEquals(1, mockServer.avCurrentContext)
+		mockClient.av_connectionGranted(1, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
+		verify(musicController).connectApp(argThat { this.name == "Test2" } )
 
 		// click entrybutton again after an active app is set
 		whenever(musicController.currentApp).then {
@@ -179,7 +194,7 @@ class TestMusicApp {
 		val app = RHMIApplicationConcrete()
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		var state = app.states[IDs.PLAYBACK_STATE] as RHMIState.ToolbarState
-		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_STATE]!!, musicAppDiscovery, musicController, phoneAppResources)
+		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_STATE]!!, musicAppDiscovery, mock(), phoneAppResources)
 		val playbackView = PlaybackView(state, musicController, phoneAppResources)
 		playbackView.initWidgets(appSwitcherView)
 		state.toolbarComponentsList[7].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))

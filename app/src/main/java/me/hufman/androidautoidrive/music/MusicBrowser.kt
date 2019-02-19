@@ -130,10 +130,14 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 	}
 
 	fun getController(): MediaControllerCompat {
+		val token = mediaBrowser.sessionToken
 		if (Looper.myLooper() != handler.looper) {
 			Log.w(TAG, "Fetching controller from a different thread, might cause problems")
+			return runBlocking(handler.asCoroutineDispatcher()) {
+				MediaControllerCompat(context, token)
+			}
+		} else {
+			return MediaControllerCompat(context, token)
 		}
-		val token = mediaBrowser.sessionToken
-		return MediaControllerCompat(context, token)
 	}
 }

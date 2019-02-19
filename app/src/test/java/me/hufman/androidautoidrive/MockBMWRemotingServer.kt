@@ -12,6 +12,9 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 	val properties = HashMap<Int, MutableMap<Int, Any>>()
 	val data = HashMap<Int, Any>()
 	val triggeredEvents = HashMap<Int, Map<*, *>>()
+	val avConnections = HashMap<Int, String>()
+	var avCurrentContext = -1
+	var avCurrentState = BMWRemoting.AVPlayerState.AV_PLAYERSTATE_STOP
 
 	override fun sas_certificate(data: ByteArray?): ByteArray {
 		return ByteArray(16)
@@ -70,5 +73,23 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 
 	override fun cds_getPropertyAsync(handle: Int?, ident: String?, propertyName: String?) {
 
+	}
+
+	override fun av_create(instanceID: Int?, id: String?): Int {
+		val handle = avConnections.size
+		avConnections[handle] = id!!
+		return handle
+	}
+
+	override fun av_requestConnection(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
+		avCurrentContext = handle ?: return
+	}
+
+	override fun av_dispose(handle: Int?) {
+		if (handle != null) avConnections.remove(handle)
+	}
+
+	override fun av_playerStateChanged(handle: Int?, connectionType: BMWRemoting.AVConnectionType?, playerState: BMWRemoting.AVPlayerState?) {
+		avCurrentState = playerState ?: return
 	}
 }

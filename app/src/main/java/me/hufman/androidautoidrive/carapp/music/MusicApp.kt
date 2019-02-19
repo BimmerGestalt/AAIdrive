@@ -1,7 +1,5 @@
 package me.hufman.androidautoidrive.carapp.music
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
@@ -27,6 +25,7 @@ const val TAG = "MusicApp"
 class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController) {
 	val carApp = createRHMIApp()
 
+	val avContext = AVContextHandler((carApp as RHMIApplicationEtch).remoteServer, musicController)
 	var playbackViewVisible = false
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
@@ -63,12 +62,17 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		// locate specific windows in the app
 		val unclaimedStates = LinkedList(carApp.states.values)
 		playbackView = PlaybackView(unclaimedStates.removeFirst { PlaybackView.fits(it) }, musicController, phoneAppResources)
-		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, musicController, phoneAppResources)
+		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, phoneAppResources)
 
 		Log.i(TAG, "Selected state ${appSwitcherView.state.id} for App Switcher")
 		Log.i(TAG, "Selected state ${playbackView.state.id} for Playback")
 
 		initWidgets()
+
+		musicAppDiscovery.listener = Runnable {
+			avContext.updateApps(musicAppDiscovery.validApps)
+		}
+		avContext.updateApps(musicAppDiscovery.validApps)
 
 		musicController.listener = Runnable {
 			redraw()
@@ -106,6 +110,36 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 				}
 			}
 		}
+
+		override fun av_connectionGranted(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
+			val msg = "Received av_connectionGranted: handle=$handle connectionType=$connectionType"
+			Log.i(TAG, msg)
+			synchronized(avContext) {
+				avContext.av_connectionGranted(handle, connectionType)
+			}
+		}
+
+		override fun av_connectionDeactivated(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
+			val msg = "Received av_connectionDeactivated: handle=$handle connectionType=$connectionType"
+			Log.i(TAG, msg)
+			synchronized(avContext) {
+				avContext.av_connectionDeactivated(handle, connectionType)
+			}
+		}
+
+		override fun av_requestPlayerState(handle: Int?, connectionType: BMWRemoting.AVConnectionType?, playerState: BMWRemoting.AVPlayerState?) {
+			val msg = "Received av_requestPlayerState: handle=$handle connectionType=$connectionType playerState=$playerState"
+			Log.i(TAG, msg)
+			synchronized(avContext) {
+				avContext.av_requestPlayerState(handle, connectionType, playerState)
+			}
+		}
+
+		override fun av_multimediaButtonEvent(handle: Int?, event: BMWRemoting.AVButtonEvent?) {
+			val msg = "Received av_multimediaButtonEvent: handle=$handle event=$event"
+			Log.i(TAG, msg)
+			avContext.av_multimediaButtonEvent(handle, event)
+		}
 	}
 
 	private fun initWidgets() {
@@ -116,6 +150,11 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 						it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
 					} else {
 						it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
+
+						val desiredApp = avContext.desiredApp
+						if (desiredApp != null) {
+							avContext.av_requestContext(desiredApp)
+						}
 					}
 				}
 			}

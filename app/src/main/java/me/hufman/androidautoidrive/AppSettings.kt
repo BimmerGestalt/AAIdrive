@@ -14,14 +14,16 @@ object AppSettings {
 		ENABLED_NOTIFICATIONS_POPUP,
 		ENABLED_NOTIFICATIONS_POPUP_PASSENGER,
 		ENABLED_GMAPS,
-		GMAPS_STYLE
+		GMAPS_STYLE,
+		AUDIO_ENABLE_CONTEXT
 	}
 	private val DEFINITIONS = mapOf(
 		KEYS.ENABLED_NOTIFICATIONS to SettingDefinition("Enabled_Notifications", "false", "Show phone notifications in the car"),
 		KEYS.ENABLED_NOTIFICATIONS_POPUP to SettingDefinition("Enabled_Notifications_Popup", "true", "Show notification popups in the car"),
 		KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER to SettingDefinition("Enabled_Notifications_Popup_Passenger", "false", "Show notification popups in the car when a passenger is seated"),
 		KEYS.ENABLED_GMAPS to SettingDefinition("Enabled_GMaps", "false", "Show Google Maps in the car"),
-		KEYS.GMAPS_STYLE to SettingDefinition("GMaps_Style", "auto", "GMaps stule")
+		KEYS.GMAPS_STYLE to SettingDefinition("GMaps_Style", "auto", "GMaps style"),
+		KEYS.AUDIO_ENABLE_CONTEXT to SettingDefinition("Audio_Enable_Context", "true", "Request audio context")
 	)
 
 	private val loadedSettings = HashMap<KEYS, String>()

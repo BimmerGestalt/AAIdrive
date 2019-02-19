@@ -67,6 +67,9 @@ class MainActivity : AppCompatActivity() {
 				sendBroadcast(Intent(INTENT_GMAP_RELOAD_SETTINGS))
 			}
 		}
+		swAudioContext.setOnCheckedChangeListener { buttonView, isChecked ->
+			AppSettings.saveSetting(this, AppSettings.KEYS.AUDIO_ENABLE_CONTEXT, isChecked.toString())
+		}
 
 		// spawn a Test notification
 		btnTestNotification.setOnClickListener {
@@ -191,6 +194,8 @@ class MainActivity : AppCompatActivity() {
 			title.toLowerCase().replace(' ', '_')
 		}.indexOf(AppSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase())
 		swGmapSyle.setSelection(max(0, gmapStylePosition))
+
+		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_ENABLE_CONTEXT].toBoolean()
 
 		listMusicApps.invalidateViews()
 	}

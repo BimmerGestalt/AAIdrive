@@ -5,15 +5,15 @@ import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.Utils
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import me.hufman.androidautoidrive.carapp.music.AVContextHandler
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
-import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.idriveconnectionkit.rhmi.RHMIAction
 import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
 import me.hufman.idriveconnectionkit.rhmi.RHMIModel
 import me.hufman.idriveconnectionkit.rhmi.RHMIState
 
-class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery, val controller: MusicController, val phoneAppResources: PhoneAppResources) {
+class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery, val avContext: AVContextHandler, val phoneAppResources: PhoneAppResources) {
 
 	private val TAG = "MusicAppSwitcherView"
 	companion object {
@@ -31,7 +31,7 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 			val appIcon = phoneAppResources.getBitmap(item.icon, 48, 48)
 			val checkbox = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 149)
 			return arrayOf(
-				if (item == controller.currentApp?.musicAppInfo) checkbox else "",
+				if (item == avContext.desiredApp) checkbox else "",
 				BMWRemoting.RHMIResourceData(BMWRemoting.RHMIResourceType.IMAGEDATA, appIcon),
 				item.name
 			)
@@ -70,6 +70,6 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 	private fun onClick(index: Int) {
 		val app = apps.getOrNull(index) ?: return
 		Log.i(TAG, "User selected app ${app.name}")
-		controller.connectApp(app)
+		avContext.av_requestContext(app)
 	}
 }

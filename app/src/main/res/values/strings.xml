@@ -20,4 +20,5 @@
     <string name="imgdescConnectable">Connectable</string>
     <string name="imgdescBrowseable">Browseable</string>
     <string name="imgdescSearchable">Searchable</string>
+    <string name="enable_audio_context">Request Audio Focus</string>
 </resources>

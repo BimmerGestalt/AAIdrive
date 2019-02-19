@@ -14,6 +14,7 @@ class MusicController(val context: Context, val handler: Handler) {
 	var controller: MediaControllerCompat? = null
 	private val controllerCallback = Callback()
 	var listener: Runnable? = null
+	var desiredPlayback = false  // if we should start playback as soon as connected
 
 	fun connectApp(app: MusicAppInfo) {
 		disconnectApp()
@@ -21,7 +22,8 @@ class MusicController(val context: Context, val handler: Handler) {
 		currentApp?.listener = Runnable {
 			controller = currentApp?.getController()
 			controller?.registerCallback(controllerCallback, handler)
-			play()
+			if (desiredPlayback)
+				play()
 			listener?.run() // redraw the ui
 		}
 	}
@@ -40,10 +42,16 @@ class MusicController(val context: Context, val handler: Handler) {
 		if (controller == null) {
 			Log.w(TAG, "Play request but no active music app connection")
 		}
-		controller?.transportControls?.play()
+		desiredPlayback = true
+		if (controller?.playbackState?.state != STATE_PLAYING) {
+			controller?.transportControls?.play()
+		}
 	}
 	fun pause() {
-		controller?.transportControls?.pause()
+		desiredPlayback = false
+		if (controller?.playbackState?.state != STATE_PAUSED) {
+			controller?.transportControls?.pause()
+		}
 	}
 	fun skipToPrevious() {
 		controller?.transportControls?.skipToPrevious()
