@@ -26,6 +26,7 @@ import java.util.*
 
 class TestMusicApp {
 	object IDs {
+		const val FOCUS_EVENT = 6
 		const val ENTRYBUTTON_ACTION = 382
 		const val ENTRYBUTTON_DEST_STATE = 384
 		const val APPLIST_STATE = 9
@@ -187,6 +188,10 @@ class TestMusicApp {
 		assertEquals("Album", mockServer.data[IDs.ALBUM_LARGE_MODEL])
 		assertEquals("Title", mockServer.data[IDs.TRACK_LARGE_MODEL])
 		assertEquals("Title", mockServer.data[IDs.TRACK_SMALL_MODEL])
+
+		// show the app window again, with an app selected
+		mockClient.rhmi_onHmiEvent(1, "unused", IDs.APPLIST_STATE, 1, mapOf(4.toByte() to true))
+		assertEquals(mockServer.triggeredEvents[IDs.FOCUS_EVENT], mapOf(0.toByte() to IDs.APPLIST_COMPONENT, 41.toByte() to 1))
 	}
 
 	@Test

@@ -8,10 +8,7 @@ import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.music.AVContextHandler
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
-import me.hufman.idriveconnectionkit.rhmi.RHMIAction
-import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
-import me.hufman.idriveconnectionkit.rhmi.RHMIModel
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
+import me.hufman.idriveconnectionkit.rhmi.*
 
 class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery, val avContext: AVContextHandler, val phoneAppResources: PhoneAppResources) {
 
@@ -64,6 +61,13 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 		} else {
 			listApps.setSelectable(true)
 			listApps.getModel()?.setValue(appsListAdapter, 0, appsListAdapter.height, appsListAdapter.height)
+
+			val index = apps.indexOfFirst { it == avContext.desiredApp }
+			if (index >= 0) {
+				state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
+						mapOf(0.toByte() to listApps.id, 41.toByte() to index)
+				)
+			}
 		}
 	}
 
