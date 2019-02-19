@@ -17,8 +17,7 @@ data class MusicMetadata(val mediaId: String?,
                     ) {
 	companion object {
 		fun fromMediaMetadata(metadata: MediaMetadataCompat): MusicMetadata {
-			Log.i(TAG, "Parsing MediaMetadata $metadata")
-			metadata.bundle
+			Log.i(TAG, "Parsing MediaMetadata ${metadata.bundle}")
 			return MusicMetadata(mediaId = metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID),
 					duration = metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION),
 					coverArt = metadata.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART) ?:
