@@ -159,7 +159,7 @@ class TestMusicApp {
 		mockClient.rhmi_onActionEvent(1, "unused", IDs.APPLIST_ACTION, mapOf(1.toByte() to 1))
 		assertEquals(1, mockServer.avCurrentContext)
 		mockClient.av_connectionGranted(1, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
-		verify(musicController).connectApp(argThat { this.name == "Test2" } )
+		verify(musicController, atLeastOnce()).connectApp(argThat { this.name == "Test2" } )
 
 		// click entrybutton again after an active app is set
 		whenever(musicController.currentApp).then {

@@ -43,21 +43,14 @@ class AVContextHandler(val carConnection: BMWRemotingServer, val controller: Mus
 			return
 		}
 		desiredApp = app
-		if (desiredState == BMWRemoting.AVPlayerState.AV_PLAYERSTATE_STOP) {
-			// force playback if we were stopped
-			// assuming PAUSED state is for interruptions
-			desiredState = BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY
-		}
 		val setting = AppSettings[AppSettings.KEYS.AUDIO_ENABLE_CONTEXT]
 		if (setting.toBoolean()) {
 			Log.i(TAG, "Sending requestContext to car for ${app.name}")
 			carConnection.av_requestConnection(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
-			val desiredState = this.desiredState
-			if (currentContext && desiredState != null) {
-				controller.connectApp(app)
-				enactPlayerState(desiredState)
-				carConnection.av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
-			}
+			// start playback anyways
+			controller.connectApp(app)
+			controller.play()
+			carConnection.av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 		} else {
 			// just assume the car has given us access, and play the app anyways
 			controller.connectApp(app)
