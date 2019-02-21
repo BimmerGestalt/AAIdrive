@@ -26,6 +26,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 	val carApp = createRHMIApp()
 
 	val avContext = AVContextHandler((carApp as RHMIApplicationEtch).remoteServer, musicController)
+	val globalMetadata = GlobalMetadata(carApp, musicController)
 	var playbackViewVisible = false
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
@@ -168,6 +169,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		if (playbackViewVisible) {
 			playbackView.redraw()
 		}
+		globalMetadata.redraw()
 	}
 
 }

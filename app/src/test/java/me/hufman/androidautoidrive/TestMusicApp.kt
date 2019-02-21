@@ -35,6 +35,16 @@ class TestMusicApp {
 		const val APPLIST_LISTMODEL = 394
 		const val APPLIST_ACTION = 165
 
+		const val NOTIFICATIONICON_EVENT = 5
+		const val MULTIMEDIA_EVENT = 576
+		const val STATUSBAR_EVENT = 577
+		const val GLOBAL_IMAGEID_MODEL = 565
+		const val GLOBAL_TRACK_MODEL = 569
+		const val GLOBAL_ARTIST_MODEL = 570
+		const val GLOBAL_APP_MODEL = 571
+		const val IC_TRACK_MODEL = 539
+		const val IMAGEID_AUDIO = 161
+
 		const val PLAYBACK_STATE = 16
 		const val APPICON_MODEL = 470
 		const val COVERART_LARGE_MODEL = 469
@@ -163,7 +173,9 @@ class TestMusicApp {
 
 		// click entrybutton again after an active app is set
 		whenever(musicController.currentApp).then {
-			mock<MusicBrowser>()
+			mock<MusicBrowser> {
+				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
+			}
 		}
 		mockClient.rhmi_onActionEvent(1, "unused", IDs.ENTRYBUTTON_ACTION, mapOf(0 to 1))
 		assertEquals(IDs.PLAYBACK_STATE, mockServer.data[IDs.ENTRYBUTTON_DEST_STATE])
@@ -175,7 +187,7 @@ class TestMusicApp {
 
 		// test that the playback view redraw didn't happen since it's not focused
 		assertFalse(app.playbackViewVisible)
-		verify(musicController, never()).getMetadata()
+		assertEquals(null, mockServer.data[IDs.ARTIST_LARGE_MODEL])
 
 		// now redraw with the playback view selected
 		mockClient.rhmi_onHmiEvent(1, "unused", IDs.PLAYBACK_STATE, 11, mapOf(23.toByte() to true))
@@ -188,6 +200,14 @@ class TestMusicApp {
 		assertEquals("Album", mockServer.data[IDs.ALBUM_LARGE_MODEL])
 		assertEquals("Title", mockServer.data[IDs.TRACK_LARGE_MODEL])
 		assertEquals("Title", mockServer.data[IDs.TRACK_SMALL_MODEL])
+
+		// verify global metadata happened
+		assertEquals("Artist", mockServer.data[IDs.GLOBAL_ARTIST_MODEL])
+		assertEquals("Title", mockServer.data[IDs.GLOBAL_TRACK_MODEL])
+		assertEquals("Test2", mockServer.data[IDs.GLOBAL_APP_MODEL])
+		assertEquals("Title", mockServer.data[IDs.IC_TRACK_MODEL])
+		assertTrue(mockServer.triggeredEvents.containsKey(IDs.MULTIMEDIA_EVENT))
+		assertTrue(mockServer.triggeredEvents.containsKey(IDs.STATUSBAR_EVENT))
 
 		// show the app window again, with an app selected
 		mockClient.rhmi_onHmiEvent(1, "unused", IDs.APPLIST_STATE, 1, mapOf(4.toByte() to true))
