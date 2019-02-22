@@ -14,7 +14,7 @@ private const val IMAGEID_ARTIST = 150
 private const val IMAGEID_ALBUM = 148
 private const val IMAGEID_SONG = 152
 
-class PlaybackView(val state: RHMIState,val controller: MusicController, val phoneAppResources: PhoneAppResources) {
+class PlaybackView(val state: RHMIState, val controller: MusicController, val phoneAppResources: PhoneAppResources) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.ToolbarState &&
@@ -37,6 +37,8 @@ class PlaybackView(val state: RHMIState,val controller: MusicController, val pho
 	val gaugeModel: RHMIModelMultiSetterInt
 	val currentTimeModel: RHMIModelMultiSetterData
 	val maximumTimeModel: RHMIModelMultiSetterData
+
+	val queueToolbarButton: RHMIComponent.ToolbarButton
 
 	var displayedApp: MusicAppInfo? = null
 	var displayedSong: MusicMetadata? = null
@@ -100,9 +102,11 @@ class PlaybackView(val state: RHMIState,val controller: MusicController, val pho
 			components.filterIsInstance<RHMIComponent.Gauge>().first()
 		}
 		gaugeModel = RHMIModelMultiSetterInt(gauges.map { it.getModel()?.asRaIntModel() })
+
+		queueToolbarButton = state.toolbarComponentsList[2]
 	}
 
-	fun initWidgets(appSwitcherView: AppSwitcherView) {
+	fun initWidgets(appSwitcherView: AppSwitcherView, enqueuedView: EnqueuedView) {
 		state as RHMIState.ToolbarState
 
 		val buttons = state.toolbarComponentsList
@@ -115,7 +119,7 @@ class PlaybackView(val state: RHMIState,val controller: MusicController, val pho
 
 		buttons[2].getTooltipModel()?.asRaDataModel()?.value = "Currently Playing"
 		buttons[2].setEnabled(false)
-		buttons[2].setSelectable(false)
+		buttons[2].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = enqueuedView.state.id
 
 		// the book icon
 		buttons[3].getImageModel()?.asImageIdModel()?.imageId = 0
@@ -180,6 +184,14 @@ class PlaybackView(val state: RHMIState,val controller: MusicController, val pho
 			albumArtBigComponent.setVisible(false)
 			albumArtSmallComponent.setVisible(false)
 		}
+
+		val queue = controller.getQueue()
+		if (queue?.isNotEmpty() == true) {
+			queueToolbarButton.setEnabled(true)
+		} else {
+			queueToolbarButton.setEnabled(false)
+		}
+
 		displayedSong = song
 	}
 

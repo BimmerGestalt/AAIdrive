@@ -1,0 +1,93 @@
+package me.hufman.androidautoidrive.carapp.music.views
+
+import de.bmw.idrive.BMWRemoting
+import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.Utils
+import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import me.hufman.androidautoidrive.music.MusicController
+import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.idriveconnectionkit.rhmi.*
+
+class EnqueuedView(val state: RHMIState, val musicController: MusicController, val phoneAppResources: PhoneAppResources) {
+	companion object {
+		private const val IMAGEID_CHECKMARK = 149
+		fun fits(state: RHMIState): Boolean {
+			return state is RHMIState.PlainState &&
+					state.componentsList.filterIsInstance<RHMIComponent.List>().isNotEmpty() &&
+					state.componentsList.filterIsInstance<RHMIComponent.Image>().isEmpty() &&
+					state.componentsList.filterIsInstance<RHMIComponent.Separator>().isEmpty()
+		}
+	}
+
+	val listComponent: RHMIComponent.List
+	var currentSong: MusicMetadata? = null
+	val songsList = ArrayList<MusicMetadata>()
+	val songsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3)
+	val songsListAdapter = object: RHMIListAdapter<MusicMetadata>(3, songsList) {
+		override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
+			val checkmark = if (item.queueId == currentSong?.queueId) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, IMAGEID_CHECKMARK) else ""
+			return if (item.coverArt != null) {
+				val icon = phoneAppResources.getBitmap(item.coverArt, 48, 48)
+				arrayOf(checkmark,
+						BMWRemoting.RHMIResourceData(BMWRemoting.RHMIResourceType.IMAGEDATA, icon),
+						item.title ?: "")
+			} else {
+				arrayOf(checkmark,
+						"",
+						item.title ?: "")
+			}
+		}
+	}
+
+	init {
+		state as RHMIState.PlainState
+
+		listComponent = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
+
+		songsEmptyList.addRow(arrayOf("", "", "<Empty Queue>"))
+	}
+
+	fun initWidgets(playbackView: PlaybackView) {
+		state.getTextModel()?.asRaDataModel()?.value = "Now Playing"
+		listComponent.setVisible(true)
+		listComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,50,*")
+		listComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
+		listComponent.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIAction.RHMIActionCallback {
+			override fun onActionEvent(args: Map<*, *>?) {
+				val index = Utils.etchAsInt(args?.get(1.toByte()))
+				onClick(index)
+			}
+		}
+	}
+
+	fun show() {
+		val currentSong = musicController.getMetadata()
+		songsList.clear()
+		val songs = musicController.getQueue()
+		if (songs?.isNotEmpty() == true) {
+			listComponent.setEnabled(true)
+			listComponent.setSelectable(true)
+			songsList.addAll(songs)
+			listComponent.getModel()?.setValue(songsListAdapter, 0, songsListAdapter.height, songsListAdapter.height)
+
+			// set the selection to the current song
+			val index = songs.indexOfFirst { it.queueId == currentSong?.queueId }
+			if (index >= 0) {
+				state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
+						mapOf(0.toByte() to listComponent.id, 41.toByte() to index)
+				)
+			}
+		} else {
+			listComponent.setEnabled(false)
+			listComponent.setSelectable(false)
+			listComponent.getModel()?.setValue(songsEmptyList, 0, songsEmptyList.height, songsEmptyList.height)
+		}
+	}
+
+	fun onClick(index: Int) {
+		val song = songsList.getOrNull(index)
+		if (song?.queueId != null) {
+			musicController.playQueue(song.queueId)
+		}
+	}
+}

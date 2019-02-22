@@ -60,14 +60,24 @@ class MusicController(val context: Context, val handler: Handler) {
 		controller?.transportControls?.skipToNext()
 	}
 
+	fun playQueue(queueId: Long) {
+		controller?.transportControls?.skipToQueueItem(queueId)
+	}
+
 	/* Current state */
+	/** Gets the current queue */
+	fun getQueue(): List<MusicMetadata>? {
+		val queue = controller?.queue
+		return queue?.map { MusicMetadata.fromQueueItem(it) }
+	}
 	/** Gets the current song's title and other metadata */
 	fun getMetadata(): MusicMetadata? {
 		if (controller == null) {
 			Log.w(TAG, "Can't load metadata from null music app connection")
 		}
 		val mediaMetadata = controller?.metadata ?: return null
-		return MusicMetadata.fromMediaMetadata(mediaMetadata)
+		val playbackState = controller?.playbackState
+		return MusicMetadata.fromMediaMetadata(mediaMetadata, playbackState)
 	}
 	/** Gets the song's playback position */
 	fun getPlaybackPosition(): PlaybackPosition {

@@ -6,6 +6,7 @@ import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.music.views.AppSwitcherView
+import me.hufman.androidautoidrive.carapp.music.views.EnqueuedView
 import me.hufman.androidautoidrive.carapp.music.views.PlaybackView
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicController
@@ -30,6 +31,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 	var playbackViewVisible = false
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
+	val enqueuedView: EnqueuedView
 
 	private fun createRHMIApp(): RHMIApplication {
 		val carappListener = CarAppListener()
@@ -64,9 +66,11 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		val unclaimedStates = LinkedList(carApp.states.values)
 		playbackView = PlaybackView(unclaimedStates.removeFirst { PlaybackView.fits(it) }, musicController, phoneAppResources)
 		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, phoneAppResources)
+		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, phoneAppResources)
 
 		Log.i(TAG, "Selected state ${appSwitcherView.state.id} for App Switcher")
 		Log.i(TAG, "Selected state ${playbackView.state.id} for Playback")
+		Log.i(TAG, "Selected state ${enqueuedView.state.id} for Enqueued")
 
 		initWidgets()
 
@@ -109,6 +113,12 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 				if (playbackViewVisible) {
 					playbackView.show()
 				}
+			}
+			if (componentId == enqueuedView.state.id &&
+					eventId == 1 &&
+					args?.get(4.toByte()) as? Boolean == true)   // Focus
+			{
+				enqueuedView.show()
 			}
 		}
 
@@ -161,8 +171,10 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 			}
 		}
 
+		globalMetadata.initWidgets()
 		appSwitcherView.initWidgets(playbackView)
-		playbackView.initWidgets(appSwitcherView)
+		playbackView.initWidgets(appSwitcherView, enqueuedView)
+		enqueuedView.initWidgets(playbackView)
 	}
 
 	fun redraw() {
