@@ -45,6 +45,11 @@ class MainService: Service() {
 		return Service.START_STICKY
 	}
 
+	override fun onDestroy() {
+		handleActionStop()
+		super.onDestroy()
+	}
+
 	/**
 	 * Start the service
 	 */
