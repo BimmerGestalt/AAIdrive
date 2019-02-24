@@ -114,13 +114,10 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		buttons[0].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
 
 		buttons[1].getTooltipModel()?.asRaDataModel()?.value = "Browse"
-		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback = object : RHMIAction.RHMIActionCallback {
-			override fun onActionEvent(args: Map<*, *>?) {
-				browseView.clearPages()
-				val page = browseView.pushBrowsePage(null)
-				buttons[1].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id
-			}
-		}
+		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+			browseView.clearPages()
+			val page = browseView.pushBrowsePage(null)
+			buttons[1].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id }
 
 		buttons[2].getTooltipModel()?.asRaDataModel()?.value = "Currently Playing"
 		buttons[2].setEnabled(false)
@@ -139,17 +136,10 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		buttons[5].setSelectable(false)
 
 		buttons[6].getTooltipModel()?.asRaDataModel()?.value = "Back"
-		buttons[6].getAction()?.asRAAction()?.rhmiActionCallback = object : RHMIAction.RHMIActionCallback {
-			override fun onActionEvent(args: Map<*, *>?) {
-				controller.skipToPrevious()
-			}
-		}
+		buttons[6].getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.skipToPrevious() }
+
 		buttons[7].getTooltipModel()?.asRaDataModel()?.value = "Next"
-		buttons[7].getAction()?.asRAAction()?.rhmiActionCallback = object : RHMIAction.RHMIActionCallback {
-			override fun onActionEvent(args: Map<*, *>?) {
-				controller.skipToNext()
-			}
-		}
+		buttons[7].getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.skipToNext() }
 
 	}
 

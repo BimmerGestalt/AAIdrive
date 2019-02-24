@@ -3,7 +3,6 @@ package me.hufman.androidautoidrive.carapp.music.views
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.PhoneAppResources
-import me.hufman.androidautoidrive.Utils
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.music.AVContextHandler
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
@@ -44,12 +43,7 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 		state.getTextModel()?.asRaDataModel()?.value = "Apps"
 		listApps.setVisible(true)
 		listApps.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
-		listApps.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIAction.RHMIActionCallback {
-			override fun onActionEvent(args: Map<*, *>?) {
-				val index = Utils.etchAsInt(args?.get(1.toByte()))
-				onClick(index)
-			}
-		}
+		listApps.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { onClick(it) }
 	}
 
 	fun show() {

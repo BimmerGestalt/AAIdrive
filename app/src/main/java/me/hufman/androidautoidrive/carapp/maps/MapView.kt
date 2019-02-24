@@ -109,21 +109,17 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 
 		menuList.setProperty(6, "100,0,*")
 		menuList.setVisible(true)
-		menuList.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIAction.RHMIActionCallback {
-			override fun onActionEvent(args: Map<*, *>?) {
-				if (args == null) return
-				val listIndex = etchAsInt(args[1.toByte()])
-				val destStateId = when (listIndex) {
-					0 -> stateMap.id
-					1 -> stateInput.id
-					else -> stateMenu.id
-				}
-				Log.i(TAG, "User pressed menu item $listIndex ${menuEntries.getOrNull(listIndex)}, setting target ${menuList.getAction()?.asHMIAction()?.getTargetModel()?.id} to $destStateId")
-				menuList.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = destStateId
-				if (listIndex == 2) {
-					// clear navigation
-					interaction.stopNavigation()
-				}
+		menuList.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {  listIndex ->
+			val destStateId = when (listIndex) {
+				0 -> stateMap.id
+				1 -> stateInput.id
+				else -> stateMenu.id
+			}
+			Log.i(TAG, "User pressed menu item $listIndex ${menuEntries.getOrNull(listIndex)}, setting target ${menuList.getAction()?.asHMIAction()?.getTargetModel()?.id} to $destStateId")
+			menuList.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = destStateId
+			if (listIndex == 2) {
+				// clear navigation
+				interaction.stopNavigation()
 			}
 		}
 		// it seems that menuMap and menuList share the same HMI Action values, so use the same RA handler
@@ -144,18 +140,14 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		(4..6).forEach { scrollList.addRow(arrayOf("-", "", "")) }  // zoom out
 		mapInputList.getModel()?.asRaListModel()?.setValue(scrollList, 0, scrollList.height, scrollList.height)
 		carApp.triggerHMIEvent(carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().id, mapOf(0 to mapInputList.id, 41 to 3))  // set focus to the middle of the list
-		mapInputList.getSelectAction()?.asRAAction()?.rhmiActionCallback = object: RHMIAction.RHMIActionCallback {
-			override fun onActionEvent(args: Map<*, *>?) {
-				if (args == null) return
-				val listIndex = etchAsInt(args[1.toByte()])
-				if (listIndex in 0..2) {
-					interaction.zoomIn(1)   // each wheel click through the list will trigger another step of 1
-				}
-				if (listIndex in 4..6) {
-					interaction.zoomOut(1)
-				}
-				carApp.triggerHMIEvent(carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().id, mapOf(0 to mapInputList.id, 41 to 3))  // set focus to the middle of the list
+		mapInputList.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {  listIndex ->
+			if (listIndex in 0..2) {
+				interaction.zoomIn(1)   // each wheel click through the list will trigger another step of 1
 			}
+			if (listIndex in 4..6) {
+				interaction.zoomOut(1)
+			}
+			carApp.triggerHMIEvent(carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().id, mapOf(0 to mapInputList.id, 41 to 3))  // set focus to the middle of the list
 		}
 
 		// set up the components for the input widget

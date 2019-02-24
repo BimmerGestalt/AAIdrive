@@ -1,15 +1,10 @@
 package me.hufman.androidautoidrive.carapp.music
 
-import me.hufman.androidautoidrive.Utils
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.idriveconnectionkit.rhmi.RHMIAction
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplication
-import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
-import me.hufman.idriveconnectionkit.rhmi.RHMIEvent
-import java.util.*
+import me.hufman.idriveconnectionkit.rhmi.*
 
 class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 	val multimediaInfoEvent: RHMIEvent.MultimediaInfoEvent
@@ -27,12 +22,7 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 	}
 
 	fun initWidgets() {
-		instrumentCluster.getSetTrackAction()?.asRAAction()?.rhmiActionCallback = object: RHMIAction.RHMIActionCallback {
-			override fun onActionEvent(args: Map<*, *>?) {
-				val index = Utils.etchAsInt(args?.get(1.toByte()))
-				onClick(index)
-			}
-		}
+		instrumentCluster.getSetTrackAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { onClick(it) }
 	}
 
 	fun redraw() {
@@ -84,7 +74,7 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 		} else {
 			instrumentCluster.getUseCaseModel()?.asRaDataModel()?.value = "EntICPlaylist"
 
-			val adapter = object: RHMIListAdapter<MusicMetadata>(7, queue ?: LinkedList()) {
+			val adapter = object: RHMIListAdapter<MusicMetadata>(7, queue) {
 				override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
 					val selected = item.queueId == displayedSong?.queueId
 					return arrayOf(

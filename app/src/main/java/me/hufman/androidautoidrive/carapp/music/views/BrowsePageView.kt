@@ -17,6 +17,8 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, val folde
 
 	companion object {
 		const val LOADING_TIMEOUT = 300
+		const val TAG = "BrowsePageView"
+
 		val emptyList = RHMIModel.RaListModel.RHMIListConcrete(3).apply {
 			this.addRow(arrayOf("", "", "<Empty>"))
 		}
@@ -53,11 +55,10 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, val folde
 
 	fun initWidgets(playbackView: PlaybackView) {
 		// handle clicks
-		musicListComponent.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIAction.RHMIActionCallback {
-			override fun onActionEvent(args: Map<*, *>?) {
-				val index = Utils.etchAsInt(args?.get(1.toByte()))
-				val entry = musicList.getOrNull(index) ?: return
-				println("User selected browse entry $entry")
+		musicListComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
+			val entry = musicList.getOrNull(index)
+			if (entry != null) {
+				Log.i(TAG,"User selected browse entry $entry")
 				previouslySelected = entry  // update the selection state for future redraws
 				if (entry.browseable) {
 					val nextPage = browseView.pushBrowsePage(entry)
@@ -69,6 +70,8 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, val folde
 					}
 					musicListComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
 				}
+			} else {
+				Log.w(TAG, "User selected index $index but the list is only ${musicList.size} long")
 			}
 		}
 	}
@@ -76,7 +79,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, val folde
 	fun show() {
 		// update the list whenever the car requests some more data
 		musicListComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
-			Log.i("BrowsePageView", "Car requested more data, $startIndex:${startIndex+numRows}")
+			Log.i(TAG, "Car requested more data, $startIndex:${startIndex+numRows}")
 			showList(startIndex, numRows)
 		}
 
@@ -89,6 +92,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, val folde
 			}
 			this@BrowsePageView.musicList.clear()
 			this@BrowsePageView.musicList.addAll(musicList)
+			Log.d(TAG, "Browsing ${folder?.mediaId} resulted in ${musicList.count()} items")
 
 			if (musicList.isEmpty()) {
 				currentListModel = emptyList

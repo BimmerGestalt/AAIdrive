@@ -87,27 +87,22 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		val notificationListView = stateList.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull()
 		notificationListView?.setVisible(true)
 		notificationListView?.setProperty(6, "55,0,*")
-		notificationListView?.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIAction.RHMIActionCallback {
-			override fun onActionEvent(args: Map<*, *>?) {
-				val index = Utils.etchAsInt(args?.get(1.toByte()))
-				val notification = NotificationsState.notifications.getOrNull(index)
-				if (notification != null) {
-					// set the list to go into the state
-					notificationListView?.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateView.id
+		notificationListView?.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {  index ->
+			val notification = NotificationsState.notifications.getOrNull(index)
+			if (notification != null) {
+				// set the list to go into the state
+				notificationListView?.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateView.id
 
-					val actionId = notificationListView?.getAction()?.asRAAction()?.id
-					carConnection.rhmi_ackActionEvent(carApp.rhmiHandle, actionId ?: 0, 1, true)   // start screen transition
-					NotificationsState.selectedNotification = notification
-					updateNotificationView()    // because updating this view would delay the transition too long
-				} else {
-					notificationListView?.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
-				}
+				val actionId = notificationListView?.getAction()?.asRAAction()?.id
+				carConnection.rhmi_ackActionEvent(carApp.rhmiHandle, actionId ?: 0, 1, true)   // start screen transition
+				NotificationsState.selectedNotification = notification
+				updateNotificationView()    // because updating this view would delay the transition too long
+			} else {
+				notificationListView?.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
 			}
 		}
-		notificationListView?.getSelectAction()?.asRAAction()?.rhmiActionCallback = object: RHMIAction.RHMIActionCallback {
-			override fun onActionEvent(args: Map<*, *>?) {
-				lastInteractionTime = System.currentTimeMillis()
-			}
+		notificationListView?.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {
+			lastInteractionTime = System.currentTimeMillis()
 		}
 
 		// set up the popup
@@ -251,13 +246,11 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			clearButton.getTooltipModel()?.asRaDataModel()?.value = "Clear"
 			clearButton.getImageModel()?.asImageIdModel()?.imageId = 150
 			clearButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id
-			clearButton.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIAction.RHMIActionCallback {
-				override fun onActionEvent(args: Map<*, *>?) {
-					controller.clear(notification)
-					Thread.sleep(200)
-					updateNotificationList()
-					carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to listWidget.id))
-				}
+			clearButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+				controller.clear(notification)
+				Thread.sleep(100)
+				updateNotificationList()
+				carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to listWidget.id))
 			}
 		}
 
@@ -280,10 +273,8 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 				button.getTooltipModel()?.asRaDataModel()?.value = action.title.toString()
 				button.getImageModel()?.asImageIdModel()?.imageId = 158
 				button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id  // usually the action will clear the notification
-				button.getAction()?.asRAAction()?.rhmiActionCallback = object : RHMIAction.RHMIActionCallback {
-					override fun onActionEvent(args: Map<*, *>?) {
-						controller.action(notification, action.title.toString())
-					}
+				button.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+					controller.action(notification, action.title.toString())
 				}
 			}
 		}

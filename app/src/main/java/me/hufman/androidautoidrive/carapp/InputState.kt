@@ -1,10 +1,7 @@
 package me.hufman.androidautoidrive.carapp
 
 import android.util.Log
-import me.hufman.androidautoidrive.Utils
-import me.hufman.idriveconnectionkit.rhmi.RHMIAction
-import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
-import me.hufman.idriveconnectionkit.rhmi.RHMIModel
+import me.hufman.idriveconnectionkit.rhmi.*
 
 const val TAG = "InputState"
 
@@ -14,29 +11,22 @@ class InputState<T:Any>(val inputComponent: RHMIComponent.Input, val onEntry: (S
 	var suggestions: MutableList<T> = ArrayList()
 
 	init {
-		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback = object:RHMIAction.RHMIActionCallback {
-			override fun onActionEvent(args: Map<*, *>?) {
-				val letter = args?.get(8.toByte()) as? String ?: return
-				Log.i(TAG, "Received speller input $letter")
-				when (letter) {
-					"delall" -> input = ""
-					"del" -> input = input.dropLast(1)
-					else -> input += letter
-				}
-				inputComponent.getResultModel()?.asRaDataModel()?.value = input
-				onEntry(input)
+		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionSpellerCallback { letter ->
+			Log.i(TAG, "Received speller input $letter")
+			when (letter) {
+				"delall" -> input = ""
+				"del" -> input = input.dropLast(1)
+				else -> input += letter
 			}
+			inputComponent.getResultModel()?.asRaDataModel()?.value = input
+			onEntry(input)
 		}
-		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback = object:RHMIAction.RHMIActionCallback {
-			override fun onActionEvent(args: Map<*, *>?) {
-				val data = args?.get(1.toByte()) ?: return
-				val index = Utils.etchAsInt(data)
-				val suggestion = suggestions.getOrNull(index)
-				if (suggestion == null) {
-					Log.w(TAG, "Car selected input suggestion $index which was not found in the list of suggestions")
-				} else {
-					onSelect(suggestion, index)
-				}
+		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
+			val suggestion = suggestions.getOrNull(index)
+			if (suggestion == null) {
+				Log.w(TAG, "Car selected input suggestion $index which was not found in the list of suggestions")
+			} else {
+				onSelect(suggestion, index)
 			}
 		}
 	}

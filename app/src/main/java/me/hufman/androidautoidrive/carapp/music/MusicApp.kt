@@ -16,10 +16,7 @@ import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
-import me.hufman.idriveconnectionkit.rhmi.RHMIAction
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplication
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationEtch
-import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
+import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*
 
 const val TAG = "MusicApp"
@@ -162,17 +159,15 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 
 	private fun initWidgets() {
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
-			it.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIAction.RHMIActionCallback {
-				override fun onActionEvent(args: Map<*, *>?) {
-					if (musicController.currentApp == null) {
-						it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
-					} else {
-						it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
+			it.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+				if (musicController.currentApp == null) {
+					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
+				} else {
+					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
 
-						val desiredApp = avContext.desiredApp
-						if (desiredApp != null) {
-							avContext.av_requestContext(desiredApp)
-						}
+					val desiredApp = avContext.desiredApp
+					if (desiredApp != null) {
+						avContext.av_requestContext(desiredApp)
 					}
 				}
 			}
