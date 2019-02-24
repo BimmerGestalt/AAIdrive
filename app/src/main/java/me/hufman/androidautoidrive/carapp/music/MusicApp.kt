@@ -6,6 +6,7 @@ import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.music.views.AppSwitcherView
+import me.hufman.androidautoidrive.carapp.music.views.BrowseView
 import me.hufman.androidautoidrive.carapp.music.views.EnqueuedView
 import me.hufman.androidautoidrive.carapp.music.views.PlaybackView
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
@@ -32,6 +33,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
 	val enqueuedView: EnqueuedView
+	val browseView: BrowseView
 
 	private fun createRHMIApp(): RHMIApplication {
 		val carappListener = CarAppListener()
@@ -67,6 +69,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		playbackView = PlaybackView(unclaimedStates.removeFirst { PlaybackView.fits(it) }, musicController, phoneAppResources)
 		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, phoneAppResources)
 		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, phoneAppResources)
+		browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController)
 
 		Log.i(TAG, "Selected state ${appSwitcherView.state.id} for App Switcher")
 		Log.i(TAG, "Selected state ${playbackView.state.id} for Playback")
@@ -98,8 +101,8 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		}
 
 		override fun rhmi_onHmiEvent(handle: Int?, ident: String?, componentId: Int?, eventId: Int?, args: MutableMap<*, *>?) {
-//			val msg = "Received rhmi_onHmiEvent: handle=$handle ident=$ident componentId=$componentId eventId=$eventId args=${args?.toString()}"
-//			Log.i(TAG, msg)
+			val msg = "Received rhmi_onHmiEvent: handle=$handle ident=$ident componentId=$componentId eventId=$eventId args=${args?.toString()}"
+			Log.i(TAG, msg)
 			if (componentId == appSwitcherView.state.id &&
 					eventId == 1 // FOCUS event
 			) {
@@ -120,6 +123,10 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 			{
 				enqueuedView.show()
 			}
+
+			// generic event handler
+			app?.states?.get(componentId)?.onHmiEvent(eventId, args)
+			app?.components?.get(componentId)?.onHmiEvent(eventId, args)
 		}
 
 		override fun av_connectionGranted(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
@@ -173,8 +180,9 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 
 		globalMetadata.initWidgets()
 		appSwitcherView.initWidgets(playbackView)
-		playbackView.initWidgets(appSwitcherView, enqueuedView)
+		playbackView.initWidgets(appSwitcherView, enqueuedView, browseView)
 		enqueuedView.initWidgets(playbackView)
+		browseView.initWidgets(playbackView)
 	}
 
 	fun redraw() {

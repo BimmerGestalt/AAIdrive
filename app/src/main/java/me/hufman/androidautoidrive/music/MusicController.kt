@@ -7,6 +7,10 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import android.util.Log
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import java.util.*
 
 class MusicController(val context: Context, val handler: Handler) {
 	private val TAG = "MusicController"
@@ -60,8 +64,25 @@ class MusicController(val context: Context, val handler: Handler) {
 		controller?.transportControls?.skipToNext()
 	}
 
+	fun playSong(song: MusicMetadata) {
+		val mediaId = song.mediaId ?: return
+		controller?.transportControls?.playFromMediaId(mediaId, null)
+	}
+
 	fun playQueue(queueId: Long) {
 		controller?.transportControls?.skipToQueueItem(queueId)
+	}
+
+	fun browseAsync(directory: MusicMetadata?): Deferred<List<MusicMetadata>> {
+		val app = currentApp
+		return GlobalScope.async {
+			if (app == null) LinkedList()
+			else {
+				app.browse(directory?.mediaId).map {
+					MusicMetadata.fromMediaItem(it)
+				}
+			}
+		}
 	}
 
 	/* Current state */

@@ -5,6 +5,9 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.withTimeout
 import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
 import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
 import java.io.ByteArrayOutputStream
@@ -66,10 +69,29 @@ inline fun <T> MutableList<T>.removeFirstOrNull(predicate: (T) -> Boolean): T? {
 	}
 }
 
-inline fun Bundle.toString(): String {
+inline fun Bundle.dumpToString(): String {
 	return "Bundle{ " + this.keySet().map {
 		"$it -> ${this.get(it)}"
 	}.joinToString(", ") + " }"
+}
+
+/** Wait for a Deferred to resolve
+ * if it takes longer than the timeout, run the timeoutHandler then continue waiting
+ */
+suspend inline fun <T> Deferred<T>.awaitPending(timeout: Long, timeoutHandler: () -> Unit): T {
+	val deferred = this
+	try {
+		return withTimeout(timeout) {
+			val result = deferred.await()
+			result
+		}
+	} catch (ex: CancellationException) {
+		timeoutHandler()
+		return deferred.await()
+	}
+}
+suspend inline fun <T> Deferred<T>.awaitPending(timeout: Int, timeoutHandler: () -> Unit): T {
+	return awaitPending(timeout.toLong(), timeoutHandler)
 }
 
 /**

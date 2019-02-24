@@ -106,7 +106,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		queueToolbarButton = state.toolbarComponentsList[2]
 	}
 
-	fun initWidgets(appSwitcherView: AppSwitcherView, enqueuedView: EnqueuedView) {
+	fun initWidgets(appSwitcherView: AppSwitcherView, enqueuedView: EnqueuedView, browseView: BrowseView) {
 		state as RHMIState.ToolbarState
 
 		val buttons = state.toolbarComponentsList
@@ -114,8 +114,13 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		buttons[0].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
 
 		buttons[1].getTooltipModel()?.asRaDataModel()?.value = "Browse"
-		buttons[1].setEnabled(false)
-		buttons[1].setSelectable(false)
+		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback = object : RHMIAction.RHMIActionCallback {
+			override fun onActionEvent(args: Map<*, *>?) {
+				browseView.clearPages()
+				val page = browseView.pushBrowsePage(null)
+				buttons[1].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id
+			}
+		}
 
 		buttons[2].getTooltipModel()?.asRaDataModel()?.value = "Currently Playing"
 		buttons[2].setEnabled(false)
