@@ -110,7 +110,7 @@ class MapsInteractionControllerListener(val context: Context, val controller: Ma
 		}
 	}
 
-	open fun onDestroy() {
+	fun onDestroy() {
 		context.unregisterReceiver(interactionListener)
 		controller.pauseMap()
 	}

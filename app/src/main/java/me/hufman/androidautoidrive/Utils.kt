@@ -69,7 +69,7 @@ inline fun <T> MutableList<T>.removeFirstOrNull(predicate: (T) -> Boolean): T? {
 	}
 }
 
-inline fun Bundle.dumpToString(): String {
+fun Bundle.dumpToString(): String {
 	return "Bundle{ " + this.keySet().map {
 		"$it -> ${this.get(it)}"
 	}.joinToString(", ") + " }"

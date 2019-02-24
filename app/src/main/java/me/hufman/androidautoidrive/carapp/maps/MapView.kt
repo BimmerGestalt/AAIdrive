@@ -330,11 +330,11 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 	class MapResultsReceiver(val updater: MapResultsController): BroadcastReceiver() {
 		override fun onReceive(context: Context?, intent: Intent?) {
 			if (context?.packageName == null || intent?.`package` == null || context.packageName != intent.`package`) return
-			if (intent?.action == INTENT_MAP_RESULTS) {
+			if (intent.action == INTENT_MAP_RESULTS) {
 				Log.i(TAG, "Received map results: ${intent.getSerializableExtra(EXTRA_MAP_RESULTS)}")
 				updater.onSearchResults(intent.getSerializableExtra(EXTRA_MAP_RESULTS) as? Array<MapResult> ?: return)
 			}
-			if (intent?.action == INTENT_MAP_RESULT) {
+			if (intent.action == INTENT_MAP_RESULT) {
 				updater.onPlaceResult(intent.getSerializableExtra(EXTRA_MAP_RESULT) as? MapResult ?: return)
 			}
 		}
