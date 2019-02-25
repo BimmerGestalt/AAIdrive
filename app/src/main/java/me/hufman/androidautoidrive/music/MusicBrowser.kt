@@ -64,9 +64,16 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 	}
 
 	suspend fun connect() {
-		if (connected) return
-		if (!connecting) {
-			connecting = true
+		val myThread = synchronized(this) {
+			if (connected) return
+			if (!connecting) {
+				connecting = true
+				true
+			} else {
+				false
+			}
+		}
+		if (myThread) {
 			mediaBrowser.connect()
 		}
 		while (connecting) {

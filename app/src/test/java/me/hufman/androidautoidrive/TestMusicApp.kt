@@ -367,7 +367,7 @@ class TestMusicApp {
 		state.components[IDs.QUEUE_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 5))
 		verify(musicController, never()).playQueue(any())
 		state.components[IDs.QUEUE_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
-		verify(musicController).playQueue(15)
+		verify(musicController).playQueue(MusicMetadata(queueId=15, title="Song 3"))
 	}
 
 	@Test
@@ -402,7 +402,7 @@ class TestMusicApp {
 		assertEquals("Song 6", list.data[2][1])
 
 		app.actions[IDs.IC_TRACK_ACTION]?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 2))
-		verify(musicController).playQueue(20)
+		verify(musicController).playQueue(MusicMetadata(queueId=20, title="Song 6"))
 	}
 
 	@Test

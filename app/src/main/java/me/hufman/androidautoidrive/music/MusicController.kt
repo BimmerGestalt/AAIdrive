@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.music
 
 import android.content.Context
+import android.os.DeadObjectException
 import android.os.Handler
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -20,7 +21,15 @@ class MusicController(val context: Context, val handler: Handler) {
 	var listener: Runnable? = null
 	var desiredPlayback = false  // if we should start playback as soon as connected
 
-	fun connectApp(app: MusicAppInfo) {
+	private inline fun rpcSafe(f: () -> Unit) {
+		try {
+			f()
+		} catch (e: DeadObjectException) {
+			// the controller disconnected
+			controller = null
+		}
+	}
+	fun connectApp(app: MusicAppInfo) = rpcSafe {
 		disconnectApp()
 		currentApp = MusicBrowser(context, handler, app)
 		currentApp?.listener = Runnable {
@@ -32,7 +41,7 @@ class MusicController(val context: Context, val handler: Handler) {
 		}
 	}
 
-	fun disconnectApp() {
+	fun disconnectApp() = rpcSafe {
 		if (controller != null) {
 			controller?.unregisterCallback(controllerCallback)
 			pause()
@@ -42,53 +51,58 @@ class MusicController(val context: Context, val handler: Handler) {
 	}
 
 	/* Controls */
-	fun play() {
+	fun play() = rpcSafe {
 		if (controller == null) {
 			Log.w(TAG, "Play request but no active music app connection")
 		}
 		desiredPlayback = true
-		if (controller?.playbackState?.state != STATE_PLAYING) {
-			controller?.transportControls?.play()
+		try {
+			if (controller?.playbackState?.state != STATE_PLAYING) {
+				controller?.transportControls?.play()
+			}
+		} catch (e: DeadObjectException) {
+			controller = null
 		}
 	}
-	fun pause() {
+	fun pause() = rpcSafe {
 		desiredPlayback = false
 		if (controller?.playbackState?.state != STATE_PAUSED) {
 			controller?.transportControls?.pause()
 		}
 	}
-	fun skipToPrevious() {
+	fun skipToPrevious() = rpcSafe {
 		controller?.transportControls?.skipToPrevious()
 	}
-	fun skipToNext() {
+	fun skipToNext() = rpcSafe {
 		controller?.transportControls?.skipToNext()
 	}
 
-	fun playSong(song: MusicMetadata) {
+	fun playSong(song: MusicMetadata) = rpcSafe {
 		val mediaId = song.mediaId ?: return
-		controller?.transportControls?.playFromMediaId(mediaId, null)
+		controller?.transportControls?.playFromMediaId(mediaId, song.extras)
 	}
 
-	fun playQueue(queueId: Long) {
-		controller?.transportControls?.skipToQueueItem(queueId)
+	fun playQueue(song: MusicMetadata) = rpcSafe {
+		if (song.queueId != null) {
+			controller?.transportControls?.skipToQueueItem(song.queueId)
+		}
 	}
 
 	fun browseAsync(directory: MusicMetadata?): Deferred<List<MusicMetadata>> {
 		val app = currentApp
 		return GlobalScope.async {
-			if (app == null) LinkedList()
-			else {
-				app.browse(directory?.mediaId).map {
-					MusicMetadata.fromMediaItem(it)
-				}
-			}
+			app?.browse(directory?.mediaId)?.map {
+				MusicMetadata.fromMediaItem(it)
+			} ?: LinkedList()
 		}
 	}
 
 	/* Current state */
 	/** Gets the current queue */
 	fun getQueue(): List<MusicMetadata>? {
-		val queue = controller?.queue
+		val queue = try {
+			controller?.queue
+		} catch (e: DeadObjectException) { null }
 		return queue?.map { MusicMetadata.fromQueueItem(it) }
 	}
 	/** Gets the current song's title and other metadata */
@@ -96,16 +110,20 @@ class MusicController(val context: Context, val handler: Handler) {
 		if (controller == null) {
 			Log.w(TAG, "Can't load metadata from null music app connection")
 		}
-		val mediaMetadata = controller?.metadata ?: return null
-		val playbackState = controller?.playbackState
-		return MusicMetadata.fromMediaMetadata(mediaMetadata, playbackState)
+		try {
+			val mediaMetadata = controller?.metadata ?: return null
+			val playbackState = controller?.playbackState
+			return MusicMetadata.fromMediaMetadata(mediaMetadata, playbackState)
+		} catch (e: DeadObjectException) { return null }
 	}
 	/** Gets the song's playback position */
 	fun getPlaybackPosition(): PlaybackPosition {
 		if (controller == null) {
 			Log.w(TAG, "Can't load playback position from null music app connection")
 		}
-		val playbackState = controller?.playbackState
+		val playbackState = try {
+			controller?.playbackState
+		} catch (e: DeadObjectException) { null }
 		return if (playbackState == null) {
 			PlaybackPosition(true, 0, 0, 0)
 		} else {

@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.music
 
 import android.graphics.Bitmap
+import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
@@ -20,7 +21,8 @@ data class MusicMetadata(val mediaId: String? = null,
                     val album: String? = null,
                     val title: String? = null,
                     val trackNumber: Long? = null,
-                    val trackCount: Long? = null
+                    val trackCount: Long? = null,
+                         val extras: Bundle? = null
                     ) {
 	companion object {
 		var lastLoggedMetadata: MediaMetadataCompat? = null
@@ -56,7 +58,8 @@ data class MusicMetadata(val mediaId: String? = null,
 					title = mediaItem.description.title?.toString(),
 					artist = desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST) ?:
 					         desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST),
-					album = desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM)
+					album = desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM),
+					extras = desc.extras
 			)
 		}
 
@@ -68,7 +71,8 @@ data class MusicMetadata(val mediaId: String? = null,
 					title = desc.title.toString(),
 					artist = desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST) ?:
 							desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST),
-					album = desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM)
+					album = desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM),
+					extras = desc.extras
 			)
 		}
 	}

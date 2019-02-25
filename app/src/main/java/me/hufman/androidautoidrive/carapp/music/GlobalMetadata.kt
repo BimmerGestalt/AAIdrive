@@ -96,7 +96,7 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 	private fun onClick(index: Int) {
 		val song = displayedQueue?.getOrNull(index)
 		if (song?.queueId != null) {
-			controller.playQueue(song.queueId)
+			controller.playQueue(song)
 		}
 	}
 

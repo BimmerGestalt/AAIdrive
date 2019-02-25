@@ -81,7 +81,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	fun onClick(index: Int) {
 		val song = songsList.getOrNull(index)
 		if (song?.queueId != null) {
-			musicController.playQueue(song.queueId)
+			musicController.playQueue(song)
 		}
 	}
 }
