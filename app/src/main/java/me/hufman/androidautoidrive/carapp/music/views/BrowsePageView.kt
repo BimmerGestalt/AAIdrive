@@ -40,6 +40,8 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, val folde
 			val musicListComponent = browsePageState.componentsList.filterIsInstance<RHMIComponent.List>().first()
 			musicListComponent.setVisible(true)
 			musicListComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,50,*")
+			// set up dynamic paging
+			musicListComponent.setProperty(RHMIProperty.PropertyId.VALID, false)
 		}
 	}
 
@@ -85,6 +87,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, val folde
 
 		// start loading data
 		loaderJob = launch(Dispatchers.IO) {
+			musicListComponent.setEnabled(false)
 			val musicListDeferred = browseView.musicController.browseAsync(folder)
 			val musicList = musicListDeferred.awaitPending(LOADING_TIMEOUT) {
 				currentListModel = loadingList
@@ -108,6 +111,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, val folde
 						)
 					}
 				}
+				musicListComponent.setEnabled(true)
 				showList()
 				val previouslySelected = this@BrowsePageView.previouslySelected
 				if (previouslySelected != null) {
@@ -127,16 +131,6 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, val folde
 	}
 
 	private fun showList(startIndex: Int = 0, numRows: Int = 20) {
-		if (currentListModel === emptyList || currentListModel === loadingList) {
-			musicListComponent.setEnabled(false)
-		} else {
-			musicListComponent.setEnabled(true)
-		}
-		if (numRows < currentListModel.height) {
-			musicListComponent.setProperty(RHMIProperty.PropertyId.VALID, false)
-		} else {
-			musicListComponent.setProperty(RHMIProperty.PropertyId.VALID, true)
-		}
 		musicListComponent.getModel()?.setValue(currentListModel, startIndex, numRows, currentListModel.height)
 	}
 
