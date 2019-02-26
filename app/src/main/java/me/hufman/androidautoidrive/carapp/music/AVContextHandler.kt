@@ -2,14 +2,16 @@ package me.hufman.androidautoidrive.carapp.music
 
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import de.bmw.idrive.BMWRemotingServer
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationEtch
 
-class AVContextHandler(val carConnection: BMWRemotingServer, val controller: MusicController) {
+class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: MusicController) {
 	val TAG = "AVContextHandler"
+	val carConnection = ((app.app) as RHMIApplicationEtch).remoteServer
 	val knownApps = HashMap<MusicAppInfo, Int>()
 	val appHandles = HashMap<Int, MusicAppInfo>()
 	var currentContext = false
@@ -17,46 +19,50 @@ class AVContextHandler(val carConnection: BMWRemotingServer, val controller: Mus
 	var desiredState: BMWRemoting.AVPlayerState? = null
 
 	fun updateApps(apps: List<MusicAppInfo>) {
-		for (app in knownApps.keys) {
-			if (!apps.contains(app)) {
-				Log.i(TAG, "Disposing avHandle for old app ${app.name}")
-				val oldHandle = knownApps.remove(app)
-				carConnection.av_dispose(oldHandle)
-				appHandles.remove(oldHandle)
+		synchronized(app) {
+			for (app in knownApps.keys) {
+				if (!apps.contains(app)) {
+					Log.i(TAG, "Disposing avHandle for old app ${app.name}")
+					val oldHandle = knownApps.remove(app)
+					carConnection.av_dispose(oldHandle)
+					appHandles.remove(oldHandle)
+				}
 			}
-		}
 
-		for (app in apps) {
-			if (!knownApps.containsKey(app)) {
-				Log.i(TAG, "Creating avHandle for new app ${app.name}")
-				val handle = carConnection.av_create(IDriveConnectionListener.instanceId, "androidautoidrive.${app.packageName}")
-				knownApps[app] = handle
-				appHandles[handle] = app
+			for (app in apps) {
+				if (!knownApps.containsKey(app)) {
+					Log.i(TAG, "Creating avHandle for new app ${app.name}")
+					val handle = carConnection.av_create(IDriveConnectionListener.instanceId, "androidautoidrive.${app.packageName}")
+					knownApps[app] = handle
+					appHandles[handle] = app
+				}
 			}
 		}
 	}
 
 	fun av_requestContext(app: MusicAppInfo) {
-		val handle = knownApps[app]
-		if (handle == null) {
-			Log.w(TAG, "Wanted to requestContext for missing app ${app.name}?")
-			return
-		}
-		desiredApp = app
-		val setting = AppSettings[AppSettings.KEYS.AUDIO_ENABLE_CONTEXT]
-		if (setting.toBoolean()) {
-			Log.i(TAG, "Sending requestContext to car for ${app.name}")
-			carConnection.av_requestConnection(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
-			// start playback anyways
-			controller.connectApp(app)
-			controller.play()
-			carConnection.av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
-		} else {
-			// just assume the car has given us access, and play the app anyways
-			controller.connectApp(app)
-			controller.play()
-			carConnection.av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
-		}
+			val handle = knownApps[app]
+			if (handle == null) {
+				Log.w(TAG, "Wanted to requestContext for missing app ${app.name}?")
+				return
+			}
+			desiredApp = app
+			val setting = AppSettings[AppSettings.KEYS.AUDIO_ENABLE_CONTEXT]
+			if (setting.toBoolean()) {
+				Log.i(TAG, "Sending requestContext to car for ${app.name}")
+				synchronized(this.app) {
+					carConnection.av_requestConnection(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
+				}
+				// start playback anyways
+				controller.connectApp(app)
+				controller.play()
+				av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
+			} else {
+				// just assume the car has given us access, and play the app anyways
+				controller.connectApp(app)
+				controller.play()
+				av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
+			}
 	}
 
 	fun av_connectionGranted(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
@@ -73,7 +79,7 @@ class AVContextHandler(val carConnection: BMWRemotingServer, val controller: Mus
 		}
 		if (desiredState != null) {
 			enactPlayerState(desiredState)
-			carConnection.av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
+			av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 		}
 		currentContext = true
 	}
@@ -84,17 +90,24 @@ class AVContextHandler(val carConnection: BMWRemotingServer, val controller: Mus
 		if (playerState != null) {
 			if (controller.currentApp?.musicAppInfo == app) {
 				enactPlayerState(playerState)
-				carConnection.av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, playerState)
+				av_playerStateChanged(handle, connectionType, playerState)
 			}
 			if (desiredApp == app || desiredApp == null) {
 				// car sent a command for the desired app
 				desiredState = playerState
 			} else if (desiredApp != null) {
 				// but still tell the car that it happened
-				carConnection.av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, playerState)
+				av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, playerState)
 			} else {
 				Log.w(TAG, "Unknown state! desiredApp=${desiredApp?.name} connectedApp=${controller.currentApp}")
 			}
+		}
+	}
+
+	private fun av_playerStateChanged(handle: Int?, connectionType: BMWRemoting.AVConnectionType?, playerState: BMWRemoting.AVPlayerState?) {
+		// helper function to help synchronize car accesses
+		synchronized(app) {
+			carConnection.av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, playerState)
 		}
 	}
 
