@@ -9,6 +9,13 @@ import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
 import kotlin.coroutines.CoroutineContext
 
+enum class BrowseAction(val label: String) {
+	JUMPBACK("Jump Back");
+
+	override fun toString(): String {
+		return label
+	}
+}
 class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folder: MusicMetadata?, var previouslySelected: MusicMetadata?): CoroutineScope {
 	override val coroutineContext: CoroutineContext
 		get() = Dispatchers.IO
@@ -38,7 +45,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 			// do any common initialization here
 			val actionsListComponent = browsePageState.componentsList.filterIsInstance<RHMIComponent.List>()[0]
 			actionsListComponent.setVisible(true)
-			actionsListComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,50,*")
+			actionsListComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "0,0,*")
 			val musicListComponent = browsePageState.componentsList.filterIsInstance<RHMIComponent.List>()[1]
 			musicListComponent.setVisible(true)
 			musicListComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,50,*")
@@ -59,6 +66,9 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 	private var currentListModel: RHMIModel.RaListModel.RHMIList = loadingList
 	private var shortcutSteps = 0
 
+	private val actions = ArrayList<BrowseAction>()
+	private val actionsListModel = RHMIListAdapter<BrowseAction>(3, actions)
+
 	init {
 		folderNameLabel = state.componentsList.filterIsInstance<RHMIComponent.Label>().first()
 		actionsListComponent = state.componentsList.filterIsInstance<RHMIComponent.List>()[0]
@@ -67,7 +77,17 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 
 	fun initWidgets(playbackView: PlaybackView) {
 		folderNameLabel.setVisible(true)
-		// handle clicks
+		// handle action clicks
+		actionsListComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
+			val action = actions.getOrNull(index)
+			when (action) {
+				BrowseAction.JUMPBACK -> {
+					val nextPage = browseView.pushBrowsePage(browseView.locationStack.last())
+					musicListComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
+				}
+			}
+		}
+		// handle song clicks
 		musicListComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 			val entry = musicList.getOrNull(index)
 			if (entry != null) {
@@ -92,10 +112,12 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 	fun show() {
 		// show the name of the directory
 		folderNameLabel.getModel()?.asRaDataModel()?.value = when(shortcutSteps) {
-			0 -> folder?.title ?: browseView.musicController?.currentApp?.musicAppInfo?.name ?: ""
+			0 -> folder?.title ?: browseView.musicController.currentApp?.musicAppInfo?.name ?: ""
 			1 -> "${initialFolder?.title ?: ""} / ${folder?.title ?: ""}"
 			else -> "${initialFolder?.title ?: ""} /../ ${folder?.title ?: ""}"
 		}
+
+		showActionsList()
 
 		// update the list whenever the car requests some more data
 		musicListComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
@@ -151,6 +173,9 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 							mapOf(0.toByte() to musicListComponent.id, 41.toByte() to 0)
 					)
 				}
+
+				// having the song list loaded may change the available actions
+				showActionsList()
 			}
 		}
 	}
@@ -161,6 +186,16 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 	 */
 	private fun isSingleFolder(musicList: List<MusicMetadata>): Boolean {
 		return musicList.indexOfFirst { it.browseable } == musicList.size - 1
+	}
+
+	private fun showActionsList() {
+		actions.clear()
+		if (initialFolder == null && browseView.locationStack.size > 1) {
+			// the top of locationStack is always a single null element for the root
+			// we have previously browsed somewhere if locationStack.size > 1
+			actions.add(BrowseAction.JUMPBACK)
+		}
+		actionsListComponent.getModel()?.setValue(actionsListModel, 0, actionsListModel.height, actionsListModel.height)
 	}
 
 	private fun showList(startIndex: Int = 0, numRows: Int = 20) {

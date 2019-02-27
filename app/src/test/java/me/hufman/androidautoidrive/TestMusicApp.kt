@@ -80,6 +80,8 @@ class TestMusicApp {
 		const val BROWSE2_STATE = 12
 		const val BROWSE1_LABEL_COMPONENT = 48
 		const val BROWSE1_LABEL_MODEL = 417
+		const val BROWSE1_ACTIONS_COMPONENT = 51
+		const val BROWSE1_ACTIONS_MODEL = 420
 		const val BROWSE1_MUSIC_COMPONENT = 53
 		const val BROWSE1_MUSIC_MODEL = 422
 		const val BROWSE2_LABEL_COMPONENT = 60
@@ -605,5 +607,54 @@ class TestMusicApp {
 
 		assertEquals(" / Folder", mockServer.data[IDs.BROWSE1_LABEL_MODEL])
 		assertEquals(MusicMetadata("folder1", title = "Folder", browseable = true, playable = false), page1.folder)
+	}
+
+	@Test
+	fun testBrowseJumpBack() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, phoneAppResources)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
+		browseView.initWidgets(playbackView)
+
+		whenever(musicController.browseAsync(null)) doAnswer {
+			CompletableDeferred(listOf (
+					MusicMetadata("specialId1", title = "Play All",	browseable = false, playable = true),
+					MusicMetadata("folder1", title = "Folder", browseable = true, playable = false),
+					MusicMetadata("testId1", title = "File1", browseable = false, playable = true)
+			))
+		}
+		whenever(musicController.browseAsync(MusicMetadata("folderDeep1", title = "Folder deep", browseable = true, playable = false))) doAnswer {
+			CompletableDeferred(listOf (
+					MusicMetadata("testId2", title = "Play All",	browseable = false, playable = true),
+					MusicMetadata("testId3", title = "File1", browseable = false, playable = true)
+			))
+		}
+
+		val page1 = browseView.pushBrowsePage(null)
+		page1.show()
+		await().untilAsserted {
+			assertEquals(3, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+		}
+		assertEquals(0, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)
+
+		// now show with a previous location stack
+		mockServer.data.remove(IDs.BROWSE1_MUSIC_MODEL)
+		browseView.locationStack.add(MusicMetadata("folderDeep1", title = "Folder deep", browseable = true, playable = false))
+		page1.show()
+		await().untilAsserted {
+			assertEquals(3, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+		}
+		assertArrayEquals(arrayOf(arrayOf("", "", "Jump Back")), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data)
+
+		// try clicking the action
+		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(2, browseView.pageStack.size)
+		val page2 = browseView.pageStack[1]
+		page2.show()
+		await().untilAsserted {
+			assertEquals(2, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+		}
 	}
 }
