@@ -76,9 +76,14 @@ class TestMusicApp {
 		const val QUEUE_MODEL = 407
 
 		const val BROWSE1_STATE = 11
+		const val BROWSE1_STATE_MODEL = 416
 		const val BROWSE2_STATE = 12
+		const val BROWSE1_LABEL_COMPONENT = 48
+		const val BROWSE1_LABEL_MODEL = 417
 		const val BROWSE1_MUSIC_COMPONENT = 51
 		const val BROWSE1_MUSIC_MODEL = 420
+		const val BROWSE2_LABEL_COMPONENT = 60
+		const val BROWSE2_LABEL_MODEL = 430
 		const val BROWSE2_MUSIC_COMPONENT = 63
 		const val BROWSE2_MUSIC_MODEL = 433
 	}
@@ -418,13 +423,22 @@ class TestMusicApp {
 		whenever(musicController.browseAsync(anyOrNull())) doAnswer {
 			browseResults
 		}
+		val musicAppInfo = mock<MusicBrowser> {
+			on { musicAppInfo } doAnswer {
+				MusicAppInfo("Test2", mock(), "package", "class")
+			}
+		}
+		whenever(musicController.currentApp) doReturn musicAppInfo
 		// start browsing
 		val page1 = browseView.pushBrowsePage(null)
 		assertEquals(listOf(page1), browseView.pageStack)
 		assertEquals(listOf(null), browseView.locationStack)
 		assertEquals(IDs.BROWSE1_STATE, page1.state.id)
+		assertEquals(true, mockServer.properties[IDs.BROWSE1_LABEL_COMPONENT]!![RHMIProperty.PropertyId.VISIBLE.id] as Boolean?)
 		assertEquals(true, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.VISIBLE.id] as Boolean?)
 		page1.show()
+		assertEquals("Browse", mockServer.data[IDs.BROWSE1_STATE_MODEL])
+		assertEquals("Test2", mockServer.data[IDs.BROWSE1_LABEL_MODEL]) // app name at the top
 
 		await().until { (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows == 1 }    // wait for loader to show
 
@@ -469,6 +483,7 @@ class TestMusicApp {
 		assertEquals(IDs.BROWSE2_STATE, page2.state.id)
 
 		page2.show()
+		assertEquals("Folder", mockServer.data[IDs.BROWSE2_LABEL_MODEL]) // folder name
 		await().until { (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows == 4 }
 		// browse results are still resolved from last page, so they show up immediately
 		assertEquals(true, mockServer.properties[IDs.BROWSE2_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id] as Boolean?)
@@ -588,6 +603,7 @@ class TestMusicApp {
 			assertEquals(2, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
 
+		assertEquals(" / Folder", mockServer.data[IDs.BROWSE1_LABEL_MODEL])
 		assertEquals(MusicMetadata("folder1", title = "Folder", browseable = true, playable = false), page1.folder)
 	}
 }

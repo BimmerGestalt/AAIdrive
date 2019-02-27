@@ -29,6 +29,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.PlainState &&
+					state.componentsList.filterIsInstance<RHMIComponent.Label>().isNotEmpty() &&
 					state.componentsList.filterIsInstance<RHMIComponent.List>().isNotEmpty() &&
 					state.componentsList.filterIsInstance<RHMIComponent.Image>().isEmpty()
 		}
@@ -40,21 +41,27 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 			musicListComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,50,*")
 			// set up dynamic paging
 			musicListComponent.setProperty(RHMIProperty.PropertyId.VALID, false)
+			// set the page title
+			browsePageState.getTextModel()?.asRaDataModel()?.value = "Browse"
 		}
 	}
 
 	private var loaderJob: Job? = null
+	private var folderNameLabel: RHMIComponent.Label
 	private var musicListComponent: RHMIComponent.List
 
 	private val initialFolder = folder
 	private var musicList = ArrayList<MusicMetadata>()
 	private var currentListModel: RHMIModel.RaListModel.RHMIList = loadingList
+	private var shortcutSteps = 0
 
 	init {
+		folderNameLabel = state.componentsList.filterIsInstance<RHMIComponent.Label>().first()
 		musicListComponent = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {
+		folderNameLabel.setVisible(true)
 		// handle clicks
 		musicListComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 			val entry = musicList.getOrNull(index)
@@ -78,6 +85,13 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 	}
 
 	fun show() {
+		// show the name of the directory
+		folderNameLabel.getModel()?.asRaDataModel()?.value = when(shortcutSteps) {
+			0 -> folder?.title ?: browseView.musicController?.currentApp?.musicAppInfo?.name ?: ""
+			1 -> "${initialFolder?.title ?: ""} / ${folder?.title ?: ""}"
+			else -> "${initialFolder?.title ?: ""} /../ ${folder?.title ?: ""}"
+		}
+
 		// update the list whenever the car requests some more data
 		musicListComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
 			Log.i(TAG, "Car requested more data, $startIndex:${startIndex+numRows}")
@@ -101,7 +115,9 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 				showList()
 			} else if (isSingleFolder(musicList)) {
 				// keep the loadingList in place
+				// navigate to the next deeper directory
 				folder = musicList.first { it.browseable }
+				shortcutSteps += 1
 				show()  // show the next page deeper
 				return@launch
 			} else {
