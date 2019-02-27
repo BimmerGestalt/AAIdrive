@@ -30,13 +30,16 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.PlainState &&
 					state.componentsList.filterIsInstance<RHMIComponent.Label>().isNotEmpty() &&
-					state.componentsList.filterIsInstance<RHMIComponent.List>().isNotEmpty() &&
+					state.componentsList.filterIsInstance<RHMIComponent.List>().size >= 2 &&
 					state.componentsList.filterIsInstance<RHMIComponent.Image>().isEmpty()
 		}
 
 		fun initWidgets(browsePageState: RHMIState, playbackView: PlaybackView) {
 			// do any common initialization here
-			val musicListComponent = browsePageState.componentsList.filterIsInstance<RHMIComponent.List>().first()
+			val actionsListComponent = browsePageState.componentsList.filterIsInstance<RHMIComponent.List>()[0]
+			actionsListComponent.setVisible(true)
+			actionsListComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,50,*")
+			val musicListComponent = browsePageState.componentsList.filterIsInstance<RHMIComponent.List>()[1]
 			musicListComponent.setVisible(true)
 			musicListComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,50,*")
 			// set up dynamic paging
@@ -48,6 +51,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 
 	private var loaderJob: Job? = null
 	private var folderNameLabel: RHMIComponent.Label
+	private var actionsListComponent: RHMIComponent.List
 	private var musicListComponent: RHMIComponent.List
 
 	private val initialFolder = folder
@@ -57,7 +61,8 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 
 	init {
 		folderNameLabel = state.componentsList.filterIsInstance<RHMIComponent.Label>().first()
-		musicListComponent = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
+		actionsListComponent = state.componentsList.filterIsInstance<RHMIComponent.List>()[0]
+		musicListComponent = state.componentsList.filterIsInstance<RHMIComponent.List>()[1]
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {

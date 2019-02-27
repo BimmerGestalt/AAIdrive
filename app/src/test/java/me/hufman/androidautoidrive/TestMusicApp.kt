@@ -80,12 +80,12 @@ class TestMusicApp {
 		const val BROWSE2_STATE = 12
 		const val BROWSE1_LABEL_COMPONENT = 48
 		const val BROWSE1_LABEL_MODEL = 417
-		const val BROWSE1_MUSIC_COMPONENT = 51
-		const val BROWSE1_MUSIC_MODEL = 420
+		const val BROWSE1_MUSIC_COMPONENT = 53
+		const val BROWSE1_MUSIC_MODEL = 422
 		const val BROWSE2_LABEL_COMPONENT = 60
 		const val BROWSE2_LABEL_MODEL = 430
-		const val BROWSE2_MUSIC_COMPONENT = 63
-		const val BROWSE2_MUSIC_MODEL = 433
+		const val BROWSE2_MUSIC_COMPONENT = 65
+		const val BROWSE2_MUSIC_MODEL = 435
 	}
 
 	val handler = mock<Handler> {
