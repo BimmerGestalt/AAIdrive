@@ -3,15 +3,13 @@ package me.hufman.androidautoidrive.carapp.music.views
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import kotlinx.coroutines.*
-import me.hufman.androidautoidrive.Utils
 import me.hufman.androidautoidrive.awaitPending
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
 import kotlin.coroutines.CoroutineContext
-import kotlin.math.min
 
-class BrowsePageView(val state: RHMIState, val browseView: BrowseView, val folder: MusicMetadata?, var previouslySelected: MusicMetadata?): CoroutineScope {
+class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folder: MusicMetadata?, var previouslySelected: MusicMetadata?): CoroutineScope {
 	override val coroutineContext: CoroutineContext
 		get() = Dispatchers.IO
 
@@ -48,6 +46,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, val folde
 	private var loaderJob: Job? = null
 	private var musicListComponent: RHMIComponent.List
 
+	private val initialFolder = folder
 	private var musicList = ArrayList<MusicMetadata>()
 	private var currentListModel: RHMIModel.RaListModel.RHMIList = loadingList
 
@@ -100,6 +99,11 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, val folde
 			if (musicList.isEmpty()) {
 				currentListModel = emptyList
 				showList()
+			} else if (isSingleFolder(musicList)) {
+				// keep the loadingList in place
+				folder = musicList.first { it.browseable }
+				show()  // show the next page deeper
+				return@launch
 			} else {
 				currentListModel = object: RHMIListAdapter<MusicMetadata>(3, musicList) {
 					override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
@@ -128,6 +132,14 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, val folde
 				}
 			}
 		}
+	}
+
+	/**
+	 * An single directory is defined as one with a single subdirectory inside it
+	 * Playable entries before this single folder are ignored, because they are usually "Play All" entries or something
+	 */
+	private fun isSingleFolder(musicList: List<MusicMetadata>): Boolean {
+		return musicList.indexOfFirst { it.browseable } == musicList.size - 1
 	}
 
 	private fun showList(startIndex: Int = 0, numRows: Int = 20) {

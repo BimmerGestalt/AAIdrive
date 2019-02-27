@@ -559,4 +559,35 @@ class TestMusicApp {
 			assertEquals(4, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
 	}
+
+	@Test
+	fun testBrowseShortcut() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, phoneAppResources)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
+		browseView.initWidgets(playbackView)
+
+		whenever(musicController.browseAsync(null)) doAnswer {
+			CompletableDeferred(listOf (
+					MusicMetadata("testId1", title = "Play All",	browseable = false, playable = true),
+					MusicMetadata("folder1", title = "Folder", browseable = true, playable = false)
+			))
+		}
+		whenever(musicController.browseAsync(MusicMetadata("folder1", title = "Folder", browseable = true, playable = false))) doAnswer {
+			CompletableDeferred(listOf (
+					MusicMetadata("testId2", title = "Play All",	browseable = false, playable = true),
+					MusicMetadata("testId3", title = "File1", browseable = false, playable = true)
+			))
+		}
+
+		val page1 = browseView.pushBrowsePage(null)
+		page1.show()
+		await().untilAsserted {
+			assertEquals(2, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+		}
+
+		assertEquals(MusicMetadata("folder1", title = "Folder", browseable = true, playable = false), page1.folder)
+	}
 }
