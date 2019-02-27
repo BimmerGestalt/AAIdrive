@@ -439,6 +439,7 @@ class TestMusicApp {
 		assertEquals(true, mockServer.properties[IDs.BROWSE1_LABEL_COMPONENT]!![RHMIProperty.PropertyId.VISIBLE.id] as Boolean?)
 		assertEquals(true, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.VISIBLE.id] as Boolean?)
 		page1.show()
+		assertEquals(listOf(page1), browseView.pageStack)
 		assertEquals("Browse", mockServer.data[IDs.BROWSE1_STATE_MODEL])
 		assertEquals("Test2", mockServer.data[IDs.BROWSE1_LABEL_MODEL]) // app name at the top
 
@@ -538,7 +539,7 @@ class TestMusicApp {
 		assertEquals(IDs.BROWSE2_MUSIC_COMPONENT, mockServer.triggeredEvents[6]!![0.toByte()])
 		assertEquals("Selects previouslySelected", 1, mockServer.triggeredEvents[6]!![41.toByte()])
 
-		// press back
+		// press back again
 		mockServer.data.remove(IDs.BROWSE1_MUSIC_MODEL)
 		app.states[IDs.BROWSE2_STATE]?.onHmiEvent(1, mapOf(4.toByte() to false))
 		app.states[IDs.BROWSE1_STATE]?.onHmiEvent(1, mapOf(4.toByte() to true))

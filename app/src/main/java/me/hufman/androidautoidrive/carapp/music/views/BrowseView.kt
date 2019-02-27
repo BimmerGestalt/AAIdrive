@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import android.util.Log
+import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.FocusCallback
@@ -18,6 +19,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	val pageStack = LinkedList<BrowsePageView>()    // the pages of browsing to pop off
 	val locationStack = ArrayList<MusicMetadata?>()   // the directories we navigated to before
 	var playbackView: PlaybackView? = null
+	var lastApp: MusicAppInfo? = null
 
 	init {
 	}
@@ -59,23 +61,36 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	 * When a state is shown, check whether we are expecting it
 	 */
 	private fun show(stateId: Int) {
-		if (pageStack.isEmpty()) {
-			pushBrowsePage(null)
+		// track the last app we played and reset if it changed
+		if (lastApp != null && lastApp != musicController.currentApp?.musicAppInfo) {
+			pageStack.clear()
+			locationStack.clear()
 		}
-		if (stateId == pageStack.last.state.id) {
-			// the system showed the page that was just added, load the info for it
-			pageStack.last.initWidgets(playbackView as PlaybackView)
-			pageStack.last.show()
-		} else {
+		lastApp = musicController.currentApp?.musicAppInfo
+
+		// handle back presses
+		if (pageStack.size > 0 && stateId != pageStack.last.state.id) {
 			// the system showed a page by the user pressing back, pop off the stack
 			pageStack.removeLast().hide()
 			pageStack.lastOrNull()?.initWidgets(playbackView as PlaybackView)
 			pageStack.lastOrNull()?.show()
 		}
+		// show the top of the stack if we popped off everything
+		if (pageStack.isEmpty()) {
+			// we might have backed out of the top of the browse, perhaps by switching apps
+			pushBrowsePage(null, stateId)
+		}
+		// show the content for the page that we are showing
+		if (stateId == pageStack.last.state.id) {
+			// the system showed the page that was just added, load the info for it
+			pageStack.last.initWidgets(playbackView as PlaybackView)
+			pageStack.last.show()
+		}
 	}
 
-	fun pushBrowsePage(directory: MusicMetadata?): BrowsePageView {
-		val state = states[pageStack.size % states.size]
+	fun pushBrowsePage(directory: MusicMetadata?, stateId: Int? = null): BrowsePageView {
+		val nextState = states[pageStack.size % states.size]
+		val state = states.find { it.id == stateId } ?: nextState
 		val index = pageStack.size  // what the next index will be
 
 		// if we are navigating through the list, clear out any previous alternate navigations
