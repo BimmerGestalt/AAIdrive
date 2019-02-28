@@ -44,7 +44,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 	val menuEntries = arrayOf("View Full Map", "Search for Place", "Clear Navigation")
 
 	// map state
-	val frameUpdater: FrameUpdater
+	var frameUpdater = FrameUpdater(map)
 
 	init {
 		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
@@ -173,10 +173,6 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		viewInput.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
 		viewInput.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
 
-		// prepare the map transfer
-		Log.i(TAG, "Setting up map transfer")
-		frameUpdater = FrameUpdater(map)
-		frameUpdater.start()
 
 		// register for events from the car
 		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.mapview", -1)
@@ -193,6 +189,10 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		} else {
 			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULTS), null, handler)
 			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULT), null, handler)
+
+			// prepare the map transfer
+			Log.i(TAG, "Setting up map transfer")
+			frameUpdater.start(handler)
 		}
 	}
 	fun onDestroy(context: Context) {
@@ -253,19 +253,21 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		}
 	}
 
-	inner class FrameUpdater(val display: VirtualDisplayScreenCapture): Thread("CarMapFrameUpdater") {
-		var frameIsReady = Semaphore(1)
+	inner class FrameUpdater(val display: VirtualDisplayScreenCapture): Runnable {
 		var currentMode = ""
 		var isRunning = true
+		private var handler: Handler? = null
 
-		override fun run() {
-			super.run()
-
+		fun start(handler: Handler) {
+			this.handler = handler
+			Log.i(TAG, "Starting FrameUpdater thread with handler $handler")
 			display.registerImageListener(ImageReader.OnImageAvailableListener // Called from the UI thread to say a new image is available
 			{
 				// let the car thread consume the image
-				frameIsReady.release()
+				schedule()
 			})
+			schedule()  // check for a first image
+		}
 
 		override fun run() {
 			var bitmap = display.getFrame()
@@ -285,7 +287,8 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 
 		fun shutDown() {
 			isRunning = false
-			frameIsReady.release()  // trigger an immediate loop
+			display.registerImageListener(null)
+			handler?.removeCallbacks(this)
 		}
 
 		fun showMode(mode: String) {
@@ -297,7 +300,6 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 				"mainMap" ->
 					map.changeImageSize(700, 400)
 			}
-			frameIsReady.release()
 		}
 		fun hideMode(mode: String) {
 			if (currentMode == mode) {
