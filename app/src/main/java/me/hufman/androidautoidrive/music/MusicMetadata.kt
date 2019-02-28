@@ -20,6 +20,7 @@ data class MusicMetadata(val mediaId: String? = null,
                     val artist: String? = null,
                     val album: String? = null,
                     val title: String? = null,
+                    val subtitle: String? = null,
                     val trackNumber: Long? = null,
                     val trackCount: Long? = null,
                          val extras: Bundle? = null
@@ -51,11 +52,13 @@ data class MusicMetadata(val mediaId: String? = null,
 
 		fun fromMediaItem(mediaItem: MediaBrowserCompat.MediaItem): MusicMetadata {
 			val desc = mediaItem.description
+			Log.i(TAG, "Parsing mediaitem ${desc.title} with extras ${desc.extras?.dumpToString()}")
 			return MusicMetadata(
 					mediaId = mediaItem.mediaId,
 					browseable = mediaItem.isBrowsable,
 					playable = mediaItem.isPlayable,
-					title = mediaItem.description.title?.toString(),
+					title = desc.title?.toString(),
+					subtitle = desc.subtitle?.toString(),
 					artist = desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST) ?:
 					         desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST),
 					album = desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM),
@@ -69,6 +72,7 @@ data class MusicMetadata(val mediaId: String? = null,
 			return MusicMetadata(queueId = id,
 					icon = desc.iconBitmap,
 					title = desc.title.toString(),
+					subtitle = desc.subtitle?.toString(),
 					artist = desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST) ?:
 							desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST),
 					album = desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM),
@@ -114,6 +118,4 @@ data class MusicMetadata(val mediaId: String? = null,
 	override fun toString(): String {
 		return title ?: mediaId ?: ""
 	}
-
-
 }

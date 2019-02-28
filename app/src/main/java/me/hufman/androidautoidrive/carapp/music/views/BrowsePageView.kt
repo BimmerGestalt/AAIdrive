@@ -12,7 +12,8 @@ import kotlin.coroutines.CoroutineContext
 
 enum class BrowseAction(val label: String) {
 	JUMPBACK("Jump Back"),
-	FILTER("Filter");
+	FILTER("Filter"),
+	SEARCH("Search");
 
 	override fun toString(): String {
 		return label
@@ -31,6 +32,9 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 		}
 		val loadingList = RHMIModel.RaListModel.RHMIListConcrete(3).apply {
 			this.addRow(arrayOf("", "", "<Loading>"))
+		}
+		val searchingList = RHMIModel.RaListModel.RHMIListConcrete(3).apply {
+			this.addRow(arrayOf("<Searching>"))
 		}
 		val checkmarkIcon = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 149)
 		val folderIcon = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 155)
@@ -59,6 +63,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 	}
 
 	private var loaderJob: Job? = null
+	private var searchJob: Job? = null
 	private lateinit var playbackView: PlaybackView
 	private var folderNameLabel: RHMIComponent.Label
 	private var actionsListComponent: RHMIComponent.List
@@ -93,6 +98,10 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 				BrowseAction.FILTER -> {
 					musicListComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputState.id
 					showFilterInput(inputComponent)
+				}
+				BrowseAction.SEARCH -> {
+					musicListComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputState.id
+					showSearchInput(inputComponent)
 				}
 			}
 		}
@@ -199,16 +208,21 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 	}
 
 	private fun showActionsList() {
-		actions.clear()
-		if (initialFolder == null && browseView.locationStack.size > 1) {
-			// the top of locationStack is always a single null element for the root
-			// we have previously browsed somewhere if locationStack.size > 1
-			actions.add(BrowseAction.JUMPBACK)
+		synchronized(actions) {
+			actions.clear()
+			if (initialFolder == null && browseView.locationStack.size > 1) {
+				// the top of locationStack is always a single null element for the root
+				// we have previously browsed somewhere if locationStack.size > 1
+				actions.add(BrowseAction.JUMPBACK)
+			}
+			if (musicList.isNotEmpty()) {
+				actions.add(BrowseAction.FILTER)
+			}
+			if (browseView.musicController.currentApp?.musicAppInfo?.searchable == true) {
+				actions.add(BrowseAction.SEARCH)
+			}
+			actionsListComponent.getModel()?.setValue(actionsListModel, 0, actionsListModel.height, actionsListModel.height)
 		}
-		if (musicList.isNotEmpty()) {
-			actions.add(BrowseAction.FILTER)
-		}
-		actionsListComponent.getModel()?.setValue(actionsListModel, 0, actionsListModel.height, actionsListModel.height)
 	}
 
 	private fun showList(startIndex: Int = 0, numRows: Int = 20) {
@@ -242,9 +256,48 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 		})
 	}
 
+	private fun showSearchInput(inputComponent: RHMIComponent.Input) {
+		var inputStateClosure: InputState<MusicMetadata>? = null
+		val inputState = object : InputState<MusicMetadata>(inputComponent, { query ->
+			if (query.length >= 2) {
+				searchJob?.cancel()
+				searchJob = launch(Dispatchers.IO) {
+					val suggestionsDeferred = browseView.musicController.searchAsync(query)
+					val suggestions = suggestionsDeferred.awaitPending(LOADING_TIMEOUT) {
+						inputComponent.getSuggestModel()?.asRaListModel()?.setValue(searchingList, 0, searchingList.height, searchingList.height)
+					}
+					inputStateClosure?.sendSuggestions(suggestions)
+				}
+			}
+			null    // have to wait for the results to come back
+		}, { entry, index ->
+			previouslySelected = entry  // update the selection state for future redraws
+			if (entry.browseable) {
+				val nextPage = browseView.pushBrowsePage(entry)
+				inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
+			}
+			else {
+				if (entry.playable) {
+					browseView.playSong(entry)
+				}
+				inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
+			}
+		}) {
+			override fun convertRow(row: MusicMetadata): String {
+				if (row.subtitle != null) {
+					return "${row.title}\n${row.subtitle}"
+				} else {
+					return row.title ?: ""
+				}
+			}
+		}
+		inputStateClosure = inputState
+	}
+
 	fun hide() {
 		// cancel any loading
 		loaderJob?.cancel()
+		searchJob?.cancel()
 		musicListComponent.requestDataCallback = null
 	}
 }

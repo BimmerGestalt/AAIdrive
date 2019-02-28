@@ -6,7 +6,7 @@ import me.hufman.idriveconnectionkit.rhmi.*
 const val TAG = "InputState"
 
 /** Handles letter entry from the car's input widget */
-class InputState<T:Any>(val inputComponent: RHMIComponent.Input, val onEntry: (String) -> List<T>?, val onSelect: (T, Int) -> Unit) {
+open class InputState<T:Any>(val inputComponent: RHMIComponent.Input, val onEntry: (String) -> List<T>?, val onSelect: (T, Int) -> Unit) {
 	var input = ""
 	var suggestions: MutableList<T> = ArrayList()
 
@@ -32,6 +32,8 @@ class InputState<T:Any>(val inputComponent: RHMIComponent.Input, val onEntry: (S
 				onSelect(suggestion, index)
 			}
 		}
+		inputComponent.getResultModel()?.asRaDataModel()?.value = ""
+		inputComponent.getSuggestModel()?.setValue(RHMIModel.RaListModel.RHMIListConcrete(1),0,0, 0)
 	}
 
 	fun sendSuggestions(newSuggestions: List<T>) {
@@ -41,7 +43,11 @@ class InputState<T:Any>(val inputComponent: RHMIComponent.Input, val onEntry: (S
 		}
 		val outputListModel = inputComponent.getSuggestModel() ?: return
 		val outputList = RHMIModel.RaListModel.RHMIListConcrete(1)
-		newSuggestions.forEach { outputList.addRow(arrayOf(it.toString())) }
+		newSuggestions.forEach { outputList.addRow(arrayOf(convertRow(it))) }
 		outputListModel.setValue(outputList, 0, outputList.height, outputList.height)
+	}
+
+	open fun convertRow(row: T): String {
+		return row.toString()
 	}
 }

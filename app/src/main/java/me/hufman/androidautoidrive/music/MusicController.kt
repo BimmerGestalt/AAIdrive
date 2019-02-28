@@ -97,6 +97,15 @@ class MusicController(val context: Context, val handler: Handler) {
 		}
 	}
 
+	fun searchAsync(query: String): Deferred<List<MusicMetadata>> {
+		val app = currentApp
+		return GlobalScope.async {
+			app?.search(query)?.map {
+				MusicMetadata.fromMediaItem(it)
+			} ?: LinkedList()
+		}
+	}
+
 	/* Current state */
 	/** Gets the current queue */
 	fun getQueue(): List<MusicMetadata>? {
