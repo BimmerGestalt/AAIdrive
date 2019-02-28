@@ -52,8 +52,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            style="@style/optionGmapVisible" >
+            android:layout_height="wrap_content"
+            style="@style/optionGmapVisible"
+            android:orientation="vertical">
 
             <Switch
                 android:id="@+id/swGMaps"
