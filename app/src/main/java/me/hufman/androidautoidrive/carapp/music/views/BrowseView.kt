@@ -6,7 +6,6 @@ import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.FocusCallback
 import me.hufman.idriveconnectionkit.rhmi.RHMIState
-import me.hufman.idriveconnectionkit.rhmi.VisibleCallback
 import java.util.*
 
 class BrowseView(val states: List<RHMIState>, val musicController: MusicController) {
@@ -18,13 +17,14 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 
 	val pageStack = LinkedList<BrowsePageView>()    // the pages of browsing to pop off
 	val locationStack = ArrayList<MusicMetadata?>()   // the directories we navigated to before
-	var playbackView: PlaybackView? = null
+	lateinit var playbackView: PlaybackView
+	lateinit var inputState: RHMIState
 	var lastApp: MusicAppInfo? = null
 
 	init {
 	}
 
-	fun initWidgets(playbackView: PlaybackView) {
+	fun initWidgets(playbackView: PlaybackView, inputState: RHMIState) {
 		// initialize common properties of the pages
 		states.forEach {
 			BrowsePageView.initWidgets(it, playbackView)
@@ -36,16 +36,9 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 					hide(it.id)
 				}
 			}
-			it.visibleCallback = VisibleCallback { visible ->
-				Log.d("BrowseView", "Received visibleCallback for ${it.id}: $visible")
-//				if (visible) {
-//					show(it.id)
-//				} else {
-//					hide(it.id)
-//				}
-			}
 		}
 		this.playbackView = playbackView
+		this.inputState = inputState
 	}
 
 	/**
@@ -72,7 +65,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		if (pageStack.size > 0 && stateId != pageStack.last.state.id) {
 			// the system showed a page by the user pressing back, pop off the stack
 			pageStack.removeLast().hide()
-			pageStack.lastOrNull()?.initWidgets(playbackView as PlaybackView)
+			pageStack.lastOrNull()?.initWidgets(playbackView, inputState)
 			pageStack.lastOrNull()?.show()
 		}
 		// show the top of the stack if we popped off everything
@@ -83,7 +76,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		// show the content for the page that we are showing
 		if (stateId == pageStack.last.state.id) {
 			// the system showed the page that was just added, load the info for it
-			pageStack.last.initWidgets(playbackView as PlaybackView)
+			pageStack.last.initWidgets(playbackView, inputState)
 			pageStack.last.show()
 		}
 	}
@@ -101,12 +94,8 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		}
 		val previouslySelected = locationStack.getOrNull(index+1)   // get the location for the next page, if present
 		val browsePage = BrowsePageView(state, this, directory, previouslySelected)
-		browsePage.initWidgets(playbackView as PlaybackView)
+		browsePage.initWidgets(playbackView, inputState)
 		pageStack.add(browsePage)
-		val playbackView = this.playbackView
-		if (playbackView != null) {
-			browsePage.initWidgets(playbackView)
-		}
 		return browsePage
 	}
 

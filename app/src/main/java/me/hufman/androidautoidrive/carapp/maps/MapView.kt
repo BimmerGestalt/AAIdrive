@@ -153,6 +153,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		// set up the components for the input widget
 		stateInputState = InputState(viewInput, { query ->
 			interaction.searchLocations(query)
+			null    // don't update the results now
 		}, { result, i ->
 			selectedResult = result
 			interaction.stopNavigation()

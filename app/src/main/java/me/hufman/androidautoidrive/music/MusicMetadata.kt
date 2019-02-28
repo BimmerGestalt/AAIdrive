@@ -111,5 +111,9 @@ data class MusicMetadata(val mediaId: String? = null,
 		return result
 	}
 
+	override fun toString(): String {
+		return title ?: mediaId ?: ""
+	}
+
 
 }

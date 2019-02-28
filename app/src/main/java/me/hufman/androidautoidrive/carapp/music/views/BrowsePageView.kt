@@ -4,13 +4,15 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.awaitPending
+import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
 import kotlin.coroutines.CoroutineContext
 
 enum class BrowseAction(val label: String) {
-	JUMPBACK("Jump Back");
+	JUMPBACK("Jump Back"),
+	FILTER("Filter");
 
 	override fun toString(): String {
 		return label
@@ -57,6 +59,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 	}
 
 	private var loaderJob: Job? = null
+	private lateinit var playbackView: PlaybackView
 	private var folderNameLabel: RHMIComponent.Label
 	private var actionsListComponent: RHMIComponent.List
 	private var musicListComponent: RHMIComponent.List
@@ -75,7 +78,9 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 		musicListComponent = state.componentsList.filterIsInstance<RHMIComponent.List>()[1]
 	}
 
-	fun initWidgets(playbackView: PlaybackView) {
+	fun initWidgets(playbackView: PlaybackView, inputState: RHMIState) {
+		this.playbackView = playbackView
+		val inputComponent = inputState.componentsList.filterIsInstance<RHMIComponent.Input>().first()
 		folderNameLabel.setVisible(true)
 		// handle action clicks
 		actionsListComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
@@ -85,6 +90,10 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 					val nextPage = browseView.pushBrowsePage(browseView.locationStack.last())
 					musicListComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
 				}
+				BrowseAction.FILTER -> {
+					musicListComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputState.id
+					showFilterInput(inputComponent)
+				}
 			}
 		}
 		// handle song clicks
@@ -92,6 +101,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 			val entry = musicList.getOrNull(index)
 			if (entry != null) {
 				Log.i(TAG,"User selected browse entry $entry")
+
 				previouslySelected = entry  // update the selection state for future redraws
 				if (entry.browseable) {
 					val nextPage = browseView.pushBrowsePage(entry)
@@ -195,11 +205,41 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 			// we have previously browsed somewhere if locationStack.size > 1
 			actions.add(BrowseAction.JUMPBACK)
 		}
+		if (musicList.isNotEmpty()) {
+			actions.add(BrowseAction.FILTER)
+		}
 		actionsListComponent.getModel()?.setValue(actionsListModel, 0, actionsListModel.height, actionsListModel.height)
 	}
 
 	private fun showList(startIndex: Int = 0, numRows: Int = 20) {
 		musicListComponent.getModel()?.setValue(currentListModel, startIndex, numRows, currentListModel.height)
+	}
+
+	private fun showFilterInput(inputComponent: RHMIComponent.Input) {
+		val inputState = InputState(inputComponent, { entry ->
+			if (entry.isNotEmpty()) {
+				val suggestions = musicList.asSequence().filter {
+					(it.title ?: "").split(Regex("\\s+")).any { word ->
+						word.toLowerCase().startsWith(entry.toLowerCase())
+					}
+				} + musicList.asSequence().filter {
+					it.title?.toLowerCase()?.contains(entry.toLowerCase()) ?: false
+				}
+				suggestions.take(15).distinct().toList()
+			} else { null }
+		}, { entry, index ->
+			previouslySelected = entry  // update the selection state for future redraws
+			if (entry.browseable) {
+				val nextPage = browseView.pushBrowsePage(entry)
+				inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
+			}
+			else {
+				if (entry.playable) {
+					browseView.playSong(entry)
+				}
+				inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
+			}
+		})
 	}
 
 	fun hide() {

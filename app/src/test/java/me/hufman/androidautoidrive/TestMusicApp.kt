@@ -19,10 +19,7 @@ import me.hufman.androidautoidrive.music.*
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.SecurityService
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationEtch
-import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
+import me.hufman.idriveconnectionkit.rhmi.*
 import org.awaitility.Awaitility.await
 import org.junit.Assert.*
 import org.junit.Test
@@ -88,6 +85,11 @@ class TestMusicApp {
 		const val BROWSE2_LABEL_MODEL = 430
 		const val BROWSE2_MUSIC_COMPONENT = 65
 		const val BROWSE2_MUSIC_MODEL = 435
+
+		const val INPUT_STATE = 17
+		const val INPUT_COMPONENT = 119
+		const val INPUT_RESULT_MODEL = 512
+		const val INPUT_SUGGEST_MODEL = 509
 	}
 
 	val handler = mock<Handler> {
@@ -117,6 +119,15 @@ class TestMusicApp {
 				icon=mock(), coverArt=mock(),
 				artist="Artist", album="Album", title="Title")
 		on { getPlaybackPosition() } doReturn PlaybackPosition(false, SystemClock.elapsedRealtime(), 5000L, 180000L)
+	}
+
+	val inputState = mock<RHMIState> {
+		on { componentsList } doAnswer {
+			mutableListOf(RHMIComponent.Input(mock(), IDs.INPUT_COMPONENT).apply {
+				resultModel = IDs.INPUT_RESULT_MODEL
+				suggestModel = IDs.INPUT_SUGGEST_MODEL
+			})
+		}
 	}
 
 	init {
@@ -419,7 +430,7 @@ class TestMusicApp {
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, phoneAppResources)
 		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
-		browseView.initWidgets(playbackView)
+		browseView.initWidgets(playbackView, inputState)
 
 		val browseResults = CompletableDeferred<List<MusicMetadata>>()
 		whenever(musicController.browseAsync(anyOrNull())) doAnswer {
@@ -585,7 +596,7 @@ class TestMusicApp {
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, phoneAppResources)
 		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
-		browseView.initWidgets(playbackView)
+		browseView.initWidgets(playbackView, inputState)
 
 		whenever(musicController.browseAsync(null)) doAnswer {
 			CompletableDeferred(listOf (
@@ -617,7 +628,7 @@ class TestMusicApp {
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, phoneAppResources)
 		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
-		browseView.initWidgets(playbackView)
+		browseView.initWidgets(playbackView, inputState)
 
 		whenever(musicController.browseAsync(null)) doAnswer {
 			CompletableDeferred(listOf (
@@ -638,7 +649,9 @@ class TestMusicApp {
 		await().untilAsserted {
 			assertEquals(3, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
-		assertEquals(0, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)
+		// make sure the Jump Back action isn't showing
+		assertEquals(1, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)
+		assertArrayEquals(arrayOf("", "", "Filter"), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data[0])
 
 		// now show with a previous location stack
 		mockServer.data.remove(IDs.BROWSE1_MUSIC_MODEL)
@@ -647,15 +660,66 @@ class TestMusicApp {
 		await().untilAsserted {
 			assertEquals(3, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
-		assertArrayEquals(arrayOf(arrayOf("", "", "Jump Back")), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data)
+		assertArrayEquals(arrayOf("", "", "Jump Back"), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data[0])
 
 		// try clicking the action
 		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(IDs.BROWSE2_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
 		assertEquals(2, browseView.pageStack.size)
 		val page2 = browseView.pageStack[1]
 		page2.show()
 		await().untilAsserted {
 			assertEquals(2, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
+	}
+
+	@Test
+	fun testBrowseFilter() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, phoneAppResources)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
+		browseView.initWidgets(playbackView, app.states[IDs.INPUT_STATE]!!)
+
+		val browseResults = CompletableDeferred<List<MusicMetadata>>()
+		whenever(musicController.browseAsync(anyOrNull())) doAnswer { browseResults }
+
+		val page1 = browseView.pushBrowsePage(null)
+		page1.show()
+
+		// wait for the loading screen to show up
+		await().untilAsserted {
+			assertEquals(1, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+		}
+		assertEquals(0, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // should not show Filter
+
+		// then finish loading
+		browseResults.complete(listOf (
+				MusicMetadata("testId2", title = "Play All",	browseable = false, playable = true),
+				MusicMetadata("testId3", title = "File1", browseable = false, playable = true),
+				MusicMetadata("testId5", title = "Best snew song", browseable = false, playable = true),
+				MusicMetadata("testId4", title = "New song", browseable = false, playable = true)
+		))
+		await().untilAsserted {
+			assertEquals(1, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+		}
+		assertArrayEquals(arrayOf("", "", "Filter"), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data[0])
+
+		// try clicking the action
+		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+		// there should be action handlers now
+		assertNotNull(app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction())
+		assertNotNull(app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction())
+
+		// try entering a query
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "n"))
+		assertArrayEquals(arrayOf(arrayOf("New song"), arrayOf("Best snew song")), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable).data)
+
+		// select a suggestion
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
+		assertEquals(IDs.PLAYBACK_STATE, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asHMIAction()?.getTargetState()?.id)
+		verify(musicController).playSong(MusicMetadata("testId5", title = "Best snew song", browseable = false, playable = true))
 	}
 }

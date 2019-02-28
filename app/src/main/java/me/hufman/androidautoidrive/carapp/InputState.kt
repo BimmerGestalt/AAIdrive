@@ -6,7 +6,7 @@ import me.hufman.idriveconnectionkit.rhmi.*
 const val TAG = "InputState"
 
 /** Handles letter entry from the car's input widget */
-class InputState<T:Any>(val inputComponent: RHMIComponent.Input, val onEntry: (String) -> Unit, val onSelect: (T, Int) -> Unit) {
+class InputState<T:Any>(val inputComponent: RHMIComponent.Input, val onEntry: (String) -> List<T>?, val onSelect: (T, Int) -> Unit) {
 	var input = ""
 	var suggestions: MutableList<T> = ArrayList()
 
@@ -19,7 +19,10 @@ class InputState<T:Any>(val inputComponent: RHMIComponent.Input, val onEntry: (S
 				else -> input += letter
 			}
 			inputComponent.getResultModel()?.asRaDataModel()?.value = input
-			onEntry(input)
+			val newSuggestions = onEntry(input)
+			if (newSuggestions != null) {
+				sendSuggestions(newSuggestions)
+			}
 		}
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 			val suggestion = suggestions.getOrNull(index)

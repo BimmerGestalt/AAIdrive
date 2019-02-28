@@ -32,6 +32,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 	val appSwitcherView: AppSwitcherView
 	val enqueuedView: EnqueuedView
 	val browseView: BrowseView
+	val inputState: RHMIState
 
 	private fun createRHMIApp(): RHMIApplicationSynchronized {
 		val carappListener = CarAppListener()
@@ -68,6 +69,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, phoneAppResources)
 		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, phoneAppResources)
 		browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController)
+		inputState = unclaimedStates.removeFirst { it.componentsList.filterIsInstance<RHMIComponent.Input>().firstOrNull()?.suggestModel ?: 0 > 0 }
 
 		Log.i(TAG, "Selected state ${appSwitcherView.state.id} for App Switcher")
 		Log.i(TAG, "Selected state ${playbackView.state.id} for Playback")
@@ -178,7 +180,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		appSwitcherView.initWidgets(playbackView)
 		playbackView.initWidgets(appSwitcherView, enqueuedView, browseView)
 		enqueuedView.initWidgets(playbackView)
-		browseView.initWidgets(playbackView)
+		browseView.initWidgets(playbackView, inputState)
 	}
 
 	fun redraw() {
