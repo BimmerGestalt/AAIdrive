@@ -76,8 +76,11 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 		if (myThread) {
 			mediaBrowser.connect()
 		}
-		while (connecting) {
+		(0..500).forEach { _ ->
 			delay(50)
+			if (!connecting) {
+				return
+			}
 		}
 	}
 

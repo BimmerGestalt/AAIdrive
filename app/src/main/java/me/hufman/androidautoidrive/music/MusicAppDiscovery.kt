@@ -36,7 +36,6 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 			Log.i(TAG, "Found music app $name")
 			val musicAppInfo = MusicAppInfo(name, icon, packageName, className)
 			discoveredApps.add(musicAppInfo)
-			probeApp(musicAppInfo)
 		}
 
 		// clear out any old apps
@@ -57,6 +56,11 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 				changed = true
 				this.apps.add(app)
 			}
+		}
+
+		// probe all apps
+		for (app in this.apps) {
+			probeApp(app)
 		}
 
 		apps.sortBy { it.name.toLowerCase() }

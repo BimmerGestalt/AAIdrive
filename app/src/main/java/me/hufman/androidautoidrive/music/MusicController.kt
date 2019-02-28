@@ -21,6 +21,10 @@ class MusicController(val context: Context, val handler: Handler) {
 	var listener: Runnable? = null
 	var desiredPlayback = false  // if we should start playback as soon as connected
 
+	init {
+		handler.post { scheduleRedrawProgress() }
+	}
+
 	private inline fun rpcSafe(f: () -> Unit) {
 		try {
 			f()
@@ -146,6 +150,28 @@ class MusicController(val context: Context, val handler: Handler) {
 					playbackState.state == STATE_CONNECTING ||
 					playbackState.state == STATE_BUFFERING,
 					playbackState.lastPositionUpdateTime, playbackState.position, metadata?.duration ?: -1)
+		}
+	}
+
+
+	val redrawProgressTask = Runnable {
+		redrawProgress()
+	}
+	fun redrawProgress() {
+		handler.removeCallbacks(redrawProgressTask)
+
+		listener?.run()
+		scheduleRedrawProgress()
+	}
+
+	fun scheduleRedrawProgress() {
+		val position = getPlaybackPosition()
+		if (position.playbackPaused) {
+			handler.postDelayed(redrawProgressTask, 500)
+		} else {
+			// the time until the next second interval
+			val delay = 1000 - position.getPosition() % 1000
+			handler.postDelayed(redrawProgressTask, delay)
 		}
 	}
 
