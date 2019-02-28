@@ -30,6 +30,11 @@ class MusicController(val context: Context, val handler: Handler) {
 		}
 	}
 	fun connectApp(app: MusicAppInfo) = rpcSafe {
+		if (currentApp?.musicAppInfo == app) {
+			play()
+			return
+		}
+
 		disconnectApp()
 		currentApp = MusicBrowser(context, handler, app)
 		currentApp?.listener = Runnable {
