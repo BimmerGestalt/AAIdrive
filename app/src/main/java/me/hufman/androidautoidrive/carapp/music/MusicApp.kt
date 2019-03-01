@@ -6,10 +6,7 @@ import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
-import me.hufman.androidautoidrive.carapp.music.views.AppSwitcherView
-import me.hufman.androidautoidrive.carapp.music.views.BrowseView
-import me.hufman.androidautoidrive.carapp.music.views.EnqueuedView
-import me.hufman.androidautoidrive.carapp.music.views.PlaybackView
+import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.removeFirst
@@ -33,6 +30,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 	val enqueuedView: EnqueuedView
 	val browseView: BrowseView
 	val inputState: RHMIState
+	val customActionsView: CustomActionsView
 
 	private fun createRHMIApp(): RHMIApplicationSynchronized {
 		val carappListener = CarAppListener()
@@ -70,6 +68,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, phoneAppResources)
 		browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController)
 		inputState = unclaimedStates.removeFirst { it.componentsList.filterIsInstance<RHMIComponent.Input>().firstOrNull()?.suggestModel ?: 0 > 0 }
+		customActionsView = CustomActionsView(unclaimedStates.removeFirst { CustomActionsView.fits(it) }, phoneAppResources, musicController)
 
 		Log.i(TAG, "Selected state ${appSwitcherView.state.id} for App Switcher")
 		Log.i(TAG, "Selected state ${playbackView.state.id} for Playback")
@@ -122,6 +121,11 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 					args?.get(4.toByte()) as? Boolean == true)   // Focus
 			{
 				enqueuedView.show()
+			}
+			if (componentId == customActionsView.state.id &&
+					eventId == 1 &&
+					args?.get(4.toByte()) as? Boolean == true) {
+				customActionsView.show()
 			}
 
 			// generic event handler
@@ -178,9 +182,10 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 
 		globalMetadata.initWidgets()
 		appSwitcherView.initWidgets(playbackView)
-		playbackView.initWidgets(appSwitcherView, enqueuedView, browseView)
+		playbackView.initWidgets(appSwitcherView, enqueuedView, browseView, customActionsView)
 		enqueuedView.initWidgets(playbackView)
 		browseView.initWidgets(playbackView, inputState)
+		customActionsView.initWidgets(playbackView)
 	}
 
 	fun redraw() {

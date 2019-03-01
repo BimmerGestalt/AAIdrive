@@ -97,6 +97,12 @@ class MusicController(val context: Context, val handler: Handler) {
 		}
 	}
 
+	fun customAction(action: CustomAction) = rpcSafe {
+		if (action.packageName == controller?.packageName) {
+			controller?.transportControls?.sendCustomAction(action.action, action.extras)
+		}
+	}
+
 	fun browseAsync(directory: MusicMetadata?): Deferred<List<MusicMetadata>> {
 		val app = currentApp
 		return GlobalScope.async {
@@ -151,6 +157,14 @@ class MusicController(val context: Context, val handler: Handler) {
 					playbackState.state == STATE_BUFFERING,
 					playbackState.lastPositionUpdateTime, playbackState.position, metadata?.duration ?: -1)
 		}
+	}
+	fun getCustomActions(): List<CustomAction> {
+		val playbackState = try {
+			controller?.playbackState
+		} catch (e: DeadObjectException) { null }
+		return playbackState?.customActions?.map {
+			CustomAction.fromFromCustomAction(context, currentApp?.musicAppInfo?.packageName ?: "", it)
+		} ?: LinkedList()
 	}
 
 

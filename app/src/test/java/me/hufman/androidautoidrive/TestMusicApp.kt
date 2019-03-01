@@ -11,10 +11,7 @@ import de.bmw.idrive.BMWRemotingClient
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.carapp.music.GlobalMetadata
 import me.hufman.androidautoidrive.carapp.music.MusicApp
-import me.hufman.androidautoidrive.carapp.music.views.AppSwitcherView
-import me.hufman.androidautoidrive.carapp.music.views.BrowseView
-import me.hufman.androidautoidrive.carapp.music.views.EnqueuedView
-import me.hufman.androidautoidrive.carapp.music.views.PlaybackView
+import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.*
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
@@ -71,6 +68,11 @@ class TestMusicApp {
 		const val QUEUE_STATE = 10
 		const val QUEUE_COMPONENT = 39
 		const val QUEUE_MODEL = 407
+
+		const val TOOLBAR_ACTION_BUTTON = 115
+		const val ACTION_STATE = 21
+		const val ACTION_LIST_COMPONENT = 141
+		const val ACTION_LIST_MODEL = 549
 
 		const val BROWSE1_STATE = 11
 		const val BROWSE1_STATE_MODEL = 416
@@ -147,6 +149,7 @@ class TestMusicApp {
 		testAppInitSwitcher(app.appSwitcherView)
 		testAppInitPlaybackView(app.playbackView)
 		testAppInitEnqueueView(app.enqueuedView)
+		testAppInitCustomActionsView(app.customActionsView)
 	}
 
 	fun testAppInitSwitcher(appSwitcherView: AppSwitcherView) {
@@ -156,6 +159,10 @@ class TestMusicApp {
 	}
 
 	fun testAppInitPlaybackView(playbackView: PlaybackView) {
+		val state = playbackView.state as RHMIState.ToolbarState
+		assertEquals(IDs.APPLIST_STATE, state.toolbarComponentsList[0].getAction()?.asHMIAction()?.getTargetState()?.id)
+		assertEquals(IDs.QUEUE_STATE, state.toolbarComponentsList[2].getAction()?.asHMIAction()?.getTargetState()?.id)
+		assertEquals(IDs.ACTION_STATE, state.toolbarComponentsList[4].getAction()?.asHMIAction()?.getTargetState()?.id)
 		assertEquals(IDs.APPICON_MODEL, playbackView.appLogoModel.id)
 		assertEquals(IDs.COVERART_LARGE_MODEL, playbackView.albumArtBigModel.id)
 		assertEquals(IDs.COVERART_SMALL_MODEL, playbackView.albumArtSmallModel.id)
@@ -172,6 +179,11 @@ class TestMusicApp {
 		assertEquals(IDs.QUEUE_COMPONENT, enqueuedView.listComponent.id)
 		assertEquals(true, enqueuedView.listComponent.properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
 		assertEquals("57,50,*", enqueuedView.listComponent.properties[RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id]?.value)
+	}
+
+	fun testAppInitCustomActionsView(customActionsView: CustomActionsView) {
+		assertEquals(IDs.ACTION_LIST_COMPONENT, customActionsView.listComponent.id)
+		assertEquals("57,0,*", customActionsView.listComponent.properties[RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id]?.value)
 	}
 
 	@Test
@@ -323,8 +335,10 @@ class TestMusicApp {
 		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_STATE]!!, musicAppDiscovery, mock(), phoneAppResources)
 		val playbackView = PlaybackView(state, musicController, phoneAppResources)
 		val enqueuedView = EnqueuedView(app.states[IDs.QUEUE_STATE]!!, musicController, phoneAppResources)
+		val actionView = CustomActionsView(app.states[IDs.ACTION_STATE]!!, phoneAppResources, musicController)
 
-		playbackView.initWidgets(appSwitcherView, enqueuedView, mock())
+		playbackView.initWidgets(appSwitcherView, enqueuedView, mock(), actionView)
+
 		state.toolbarComponentsList[7].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
 		verify(musicController).skipToNext()
 		state.toolbarComponentsList[6].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
@@ -810,5 +824,33 @@ class TestMusicApp {
 		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
 		assertEquals(IDs.PLAYBACK_STATE, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asHMIAction()?.getTargetState()?.id)
 		verify(musicController).playSong(MusicMetadata("testId4", title = "New song", browseable = false, playable = true))
+	}
+
+	@Test
+	fun testCustomActions() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, phoneAppResources)
+		val actionView = CustomActionsView(app.states[IDs.ACTION_STATE]!!, phoneAppResources, musicController)
+		actionView.initWidgets(playbackView)
+
+		whenever(musicController.getCustomActions()) doReturn listOf(CustomAction(
+				"packageName", "actionName", "Custom Name", null, null
+		))
+		actionView.show()
+		verify(musicController).getCustomActions()
+
+		assertArrayEquals(arrayOf(arrayOf("", "", "Custom Name")), (mockServer.data[IDs.ACTION_LIST_MODEL] as BMWRemoting.RHMIDataTable).data)
+		app.components[IDs.ACTION_LIST_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(
+				1.toByte() to 1
+		))
+		verify(musicController, never()).customAction(any())
+		app.components[IDs.ACTION_LIST_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(
+				1.toByte() to 0
+		))
+		verify(musicController).customAction(CustomAction(
+				"packageName", "actionName", "Custom Name", null, null
+		))
 	}
 }

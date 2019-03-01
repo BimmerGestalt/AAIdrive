@@ -39,6 +39,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 	val maximumTimeModel: RHMIModelMultiSetterData
 
 	val queueToolbarButton: RHMIComponent.ToolbarButton
+	val customActionButton: RHMIComponent.ToolbarButton
 
 	var displayedApp: MusicAppInfo? = null
 	var displayedSong: MusicMetadata? = null
@@ -104,9 +105,10 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		gaugeModel = RHMIModelMultiSetterInt(gauges.map { it.getModel()?.asRaIntModel() })
 
 		queueToolbarButton = state.toolbarComponentsList[2]
+		customActionButton = state.toolbarComponentsList[4]
 	}
 
-	fun initWidgets(appSwitcherView: AppSwitcherView, enqueuedView: EnqueuedView, browseView: BrowseView) {
+	fun initWidgets(appSwitcherView: AppSwitcherView, enqueuedView: EnqueuedView, browseView: BrowseView, customActionsView: CustomActionsView) {
 		state as RHMIState.ToolbarState
 
 		val buttons = state.toolbarComponentsList
@@ -129,7 +131,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 
 		buttons[4].getTooltipModel()?.asRaDataModel()?.value = "Actions"
 		buttons[4].setEnabled(false)
-		buttons[4].setSelectable(false)
+		buttons[4].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = customActionsView.state.id
 
 		buttons[5].getTooltipModel()?.asRaDataModel()?.value = "Shuffle"
 		buttons[5].setEnabled(false)
@@ -185,6 +187,13 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 			queueToolbarButton.setEnabled(true)
 		} else {
 			queueToolbarButton.setEnabled(false)
+		}
+
+		val customactions = controller.getCustomActions()
+		if (customactions.isNotEmpty()) {
+			customActionButton.setEnabled(true)
+		} else {
+			customActionButton.setEnabled(false)
 		}
 
 		displayedSong = song

@@ -20,6 +20,7 @@ import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.RuntimeException
 import java.util.*
 
 const val TAG = "PhoneNotifications"
@@ -189,7 +190,8 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		try {
 			Log.i(TAG, "Trying to shut down etch connection")
 			IDriveConnection.disconnectEtchConnection(carConnection)
-		} catch ( e: java.io.IOError) {}
+		} catch ( e: java.io.IOError) {
+		} catch (e: RuntimeException) {}
 	}
 
 	fun updateNotificationList() {
