@@ -1,7 +1,6 @@
 package me.hufman.androidautoidrive
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -14,31 +13,73 @@ import java.io.ByteArrayOutputStream
 import kotlin.math.abs
 
 object Utils {
-	fun getBitmap(bitmap: Bitmap, width: Int, height: Int): ByteArray {
-		if (bitmap.width == width && bitmap.height == height) {
-			return compressBitmap(bitmap)
+	private val FILTER_NEGATIVE = ColorMatrixColorFilter(floatArrayOf(
+		-1.0f,     0f,     0f,    0f, 255f, // red
+		   0f,  -1.0f,     0f,    0f, 255f, // green
+		   0f,     0f,  -1.0f,    0f, 255f, // blue
+		   0f,     0f,     0f,  1.0f,   0f  // alpha
+	))
+	fun getBitmap(bitmap: Bitmap, width: Int, height: Int, invert: Boolean = false): Bitmap {
+		if (bitmap.width == width && bitmap.height == height && invert == false) {
+			return bitmap
+		} else if (invert == false) {
+			return Bitmap.createScaledBitmap(bitmap, width, height, true)
 		} else {
-			val resizedBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false)
-			return compressBitmap(resizedBitmap)
+			val outBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+			val canvas = Canvas(outBitmap)
+			val paint = Paint()
+			paint.isFilterBitmap = true
+			if (invert) {
+				paint.colorFilter = FILTER_NEGATIVE
+			}
+			canvas.drawBitmap(bitmap, Rect(0, 0, bitmap.width, bitmap.height), Rect(0, 0, width, height), paint)
+			return outBitmap
 		}
 	}
-	fun getBitmap(drawable: Drawable, width: Int, height: Int): ByteArray {
-		if (drawable is BitmapDrawable) {
-			val bmp = Bitmap.createScaledBitmap(drawable.bitmap, 48, 48, true)
-			return compressBitmap(bmp)
+	fun getBitmap(drawable: Drawable, width: Int, height: Int, invert: Boolean = false): Bitmap {
+		if (drawable is BitmapDrawable && !invert) {
+			return getBitmap(drawable.bitmap, 48, 48, invert)
 		} else {
 			val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
 			val canvas = Canvas(bitmap)
 			drawable.setBounds(0, 0, width, height)
+			if (invert) {
+				drawable.colorFilter = FILTER_NEGATIVE
+			}
 			drawable.draw(canvas)
-			return compressBitmap(bitmap)
+			return bitmap
 		}
+	}
+	fun getBitmapAsPng(bitmap: Bitmap, width: Int, height: Int, invert: Boolean = false): ByteArray {
+		return compressBitmap(Utils.getBitmap(bitmap, width, height, invert))
+	}
+	fun getBitmapAsPng(drawable: Drawable, width: Int, height: Int, invert: Boolean = false): ByteArray {
+		return compressBitmap(getBitmap(drawable, width, height, invert))
 	}
 
 	fun compressBitmap(bitmap: Bitmap): ByteArray {
 		val png = ByteArrayOutputStream()
 		bitmap.compress(Bitmap.CompressFormat.PNG, 0, png)
 		return png.toByteArray()
+	}
+
+	val darkCache = HashMap<Int, Boolean>()
+	fun isDark(drawable: Drawable): Boolean {
+		return darkCache[drawable.hashCode()] ?: calculateDark(drawable).apply { darkCache[drawable.hashCode()] = this }
+	}
+	fun calculateDark(drawable: Drawable): Boolean {
+		var visiblePixels = 0
+		var darkPixels = 0
+		val bmp = getBitmap(drawable, 48, 48)
+		val allPixels = IntArray(bmp.width * bmp.height)
+		var hsv = FloatArray(3)
+		bmp.getPixels(allPixels, 0, bmp.width, 0, 0, bmp.width, bmp.height)
+		allPixels.filter{ Color.alpha(it) > 100 }.forEach {
+			visiblePixels++
+			Color.colorToHSV(it, hsv)
+			if (hsv[2] < 0.2) darkPixels++
+		}
+		return 1.0 * darkPixels / visiblePixels > .5
 	}
 
 	fun etchAsInt(obj: Any?): Int {

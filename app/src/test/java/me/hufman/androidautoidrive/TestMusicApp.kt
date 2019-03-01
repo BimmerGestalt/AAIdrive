@@ -109,8 +109,8 @@ class TestMusicApp {
 		on { getAppName(any()) } doReturn "Test AppName"
 		on { getAppIcon(any())} doReturn mock<Drawable>()
 		on { getIconDrawable(any())} doReturn mock<Drawable>()
-		on { getBitmap(isA<Drawable>(), any(), any()) } doReturn ByteArray(0)
-		on { getBitmap(isA<Bitmap>(), any(), any()) } doReturn ByteArray(0)
+		on { getBitmap(isA<Drawable>(), any(), any(), any()) } doReturn ByteArray(0)
+		on { getBitmap(isA<Bitmap>(), any(), any(), any()) } doReturn ByteArray(0)
 	}
 
 	val musicAppDiscovery = mock<MusicAppDiscovery>()

@@ -9,8 +9,8 @@ interface PhoneAppResources {
 	fun getAppIcon(packageName: String): Drawable
 	fun getAppName(packageName: String): String
 	fun getIconDrawable(icon: Icon): Drawable
-	fun getBitmap(drawable: Drawable, width: Int, height: Int): ByteArray
-	fun getBitmap(drawable: Bitmap, width: Int, height: Int): ByteArray
+	fun getBitmap(drawable: Drawable, width: Int, height: Int, invert: Boolean = false): ByteArray
+	fun getBitmap(drawable: Bitmap, width: Int, height: Int, invert: Boolean = false): ByteArray
 }
 
 class PhoneAppResourcesAndroid(val context: Context): PhoneAppResources {
@@ -23,10 +23,10 @@ class PhoneAppResourcesAndroid(val context: Context): PhoneAppResources {
 	override fun getIconDrawable(icon: Icon): Drawable {
 		return icon.loadDrawable(context)
 	}
-	override fun getBitmap(drawable: Drawable, width: Int, height: Int): ByteArray {
-		return Utils.getBitmap(drawable, width, height)
+	override fun getBitmap(drawable: Drawable, width: Int, height: Int, invert: Boolean): ByteArray {
+		return Utils.getBitmapAsPng(drawable, width, height, invert)
 	}
-	override fun getBitmap(drawable: Bitmap, width: Int, height: Int): ByteArray {
-		return Utils.getBitmap(drawable, width, height)
+	override fun getBitmap(drawable: Bitmap, width: Int, height: Int, invert: Boolean): ByteArray {
+		return Utils.getBitmapAsPng(drawable, width, height, invert)
 	}
 }

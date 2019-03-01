@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.Utils
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.MusicController
@@ -19,7 +20,8 @@ class CustomActionsView(val state: RHMIState, val phoneResources: PhoneAppResour
 	val listAdapter = object: RHMIListAdapter<CustomAction>(3, actionList) {
 		override fun convertRow(index: Int, item: CustomAction): Array<Any> {
 			if (item.icon != null) {
-				return arrayOf(phoneResources.getBitmap(item.icon, 48, 48), "", item.name)
+				val invert = Utils.isDark(item.icon)
+				return arrayOf(phoneResources.getBitmap(item.icon, 48, 48, invert), "", item.name)
 			} else {
 				return arrayOf("", "", item.name)
 			}
