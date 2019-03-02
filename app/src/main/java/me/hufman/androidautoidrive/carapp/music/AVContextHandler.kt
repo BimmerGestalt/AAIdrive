@@ -13,6 +13,7 @@ import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationEtch
 class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: MusicController, val phoneAppResources: PhoneAppResources) {
 	val TAG = "AVContextHandler"
 	val carConnection = ((app.app) as RHMIApplicationEtch).remoteServer
+	var mainHandle: Int? = null
 	val knownApps = HashMap<MusicAppInfo, Int>()
 	var amHandle: Int? = null
 	val appHandles = HashMap<Int, MusicAppInfo>()
@@ -33,9 +34,13 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 				}
 			}
 
+			val myIdent = "me.hufman.androidautoidrive.music"
 			if (amHandle == null) {
 				amHandle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
-				carConnection.am_addAppEventHandler(amHandle, "me.hufman.androidautoidrive.music")
+				carConnection.am_addAppEventHandler(amHandle, myIdent)
+			}
+			if (mainHandle == null) {
+				mainHandle = carConnection.av_create(IDriveConnectionListener.instanceId, myIdent)
 			}
 			for (app in apps) {
 				if (!knownApps.containsKey(app)) {
@@ -83,6 +88,9 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 			if (setting.toBoolean()) {
 				Log.i(TAG, "Sending requestContext to car for ${app.name}")
 				synchronized(this.app) {
+					if (!currentContext) {
+						carConnection.av_requestConnection(mainHandle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
+					}
 					carConnection.av_requestConnection(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
 				}
 				// start playback anyways
@@ -98,6 +106,12 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 	}
 
 	fun av_connectionGranted(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
+		if (handle == mainHandle) {
+			// claimed av context from some other source, trigger our actual requested context
+			val handle = knownApps[desiredApp] ?: return
+			carConnection.av_requestConnection(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
+			return
+		}
 		val app = appHandles[handle]
 		if (app == null) {
 			Log.w(TAG, "Successful connection request for unknown app handle $handle?")
