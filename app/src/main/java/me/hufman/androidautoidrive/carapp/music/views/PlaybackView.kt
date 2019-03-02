@@ -5,6 +5,7 @@ import me.hufman.androidautoidrive.TimeUtils.formatTime
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
 import me.hufman.androidautoidrive.findAdjacentComponent
+import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
@@ -40,6 +41,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 
 	val queueToolbarButton: RHMIComponent.ToolbarButton
 	val customActionButton: RHMIComponent.ToolbarButton
+	val skipBackButton: RHMIComponent.ToolbarButton
+	val skipNextButton: RHMIComponent.ToolbarButton
 
 	var displayedApp: MusicAppInfo? = null
 	var displayedSong: MusicMetadata? = null
@@ -106,6 +109,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 
 		queueToolbarButton = state.toolbarComponentsList[2]
 		customActionButton = state.toolbarComponentsList[4]
+		skipBackButton = state.toolbarComponentsList[6]
+		skipNextButton = state.toolbarComponentsList[7]
 	}
 
 	fun initWidgets(appSwitcherView: AppSwitcherView, enqueuedView: EnqueuedView, browseView: BrowseView, customActionsView: CustomActionsView) {
@@ -133,8 +138,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		buttons[4].setEnabled(false)
 		buttons[4].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = customActionsView.state.id
 
-		buttons[5].getTooltipModel()?.asRaDataModel()?.value = "Shuffle"
-		buttons[5].setEnabled(false)
+		// shuffle isn't supported with MediaController for some reason, maybe try parsing custom actions
+		buttons[5].getImageModel()?.asImageIdModel()?.imageId = 0
 		buttons[5].setSelectable(false)
 
 		buttons[6].getTooltipModel()?.asRaDataModel()?.value = "Back"
@@ -183,18 +188,13 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		}
 
 		val queue = controller.getQueue()
-		if (queue?.isNotEmpty() == true) {
-			queueToolbarButton.setEnabled(true)
-		} else {
-			queueToolbarButton.setEnabled(false)
-		}
+		queueToolbarButton.setEnabled(queue?.isNotEmpty() == true)
 
 		val customactions = controller.getCustomActions()
-		if (customactions.isNotEmpty()) {
-			customActionButton.setEnabled(true)
-		} else {
-			customActionButton.setEnabled(false)
-		}
+		customActionButton.setEnabled(customactions.isNotEmpty())
+
+		skipBackButton.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS))
+		skipNextButton.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_NEXT))
 
 		displayedSong = song
 	}

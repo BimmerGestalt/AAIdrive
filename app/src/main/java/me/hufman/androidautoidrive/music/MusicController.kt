@@ -166,6 +166,9 @@ class MusicController(val context: Context, val handler: Handler) {
 			CustomAction.fromFromCustomAction(context, currentApp?.musicAppInfo?.packageName ?: "", it)
 		} ?: LinkedList()
 	}
+	fun isSupportedAction(action: MusicAction): Boolean {
+		return (controller?.playbackState?.actions ?: 0) and action.flag > 0
+	}
 
 
 	val redrawProgressTask = Runnable {

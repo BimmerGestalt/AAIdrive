@@ -121,6 +121,7 @@ class TestMusicApp {
 				icon=mock(), coverArt=mock(),
 				artist="Artist", album="Album", title="Title")
 		on { getPlaybackPosition() } doReturn PlaybackPosition(false, SystemClock.elapsedRealtime(), 5000L, 180000L)
+		on { isSupportedAction(any()) } doReturn true
 	}
 
 	val inputState = mock<RHMIState> {
