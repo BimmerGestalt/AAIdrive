@@ -3,16 +3,18 @@ package me.hufman.androidautoidrive.carapp.music
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationEtch
 
-class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: MusicController) {
+class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: MusicController, val phoneAppResources: PhoneAppResources) {
 	val TAG = "AVContextHandler"
 	val carConnection = ((app.app) as RHMIApplicationEtch).remoteServer
 	val knownApps = HashMap<MusicAppInfo, Int>()
+	var amHandle: Int? = null
 	val appHandles = HashMap<Int, MusicAppInfo>()
 	var currentContext = false
 	var desiredApp: MusicAppInfo? = null    // the app that we want to play
@@ -24,22 +26,52 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 				if (!apps.contains(app)) {
 					Log.i(TAG, "Disposing avHandle for old app ${app.name}")
 					val oldHandle = knownApps.remove(app)
-					carConnection.av_dispose(oldHandle)
+					if (oldHandle != null) {
+						carConnection.av_dispose(oldHandle)
+					}
 					appHandles.remove(oldHandle)
 				}
 			}
 
+			if (amHandle == null) {
+				amHandle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
+				carConnection.am_addAppEventHandler(amHandle, "me.hufman.androidautoidrive.music")
+			}
 			for (app in apps) {
 				if (!knownApps.containsKey(app)) {
 					Log.i(TAG, "Creating avHandle for new app ${app.name}")
-					val handle = carConnection.av_create(IDriveConnectionListener.instanceId, "androidautoidrive.${app.packageName}")
+					val appId = "androidautoidrive.${app.packageName}"
+					val handle = carConnection.av_create(IDriveConnectionListener.instanceId, appId)
 					knownApps[app] = handle
 					appHandles[handle] = app
+
+					carConnection.am_registerApp(amHandle, appId, getAMInfo(app))
 				}
 			}
 		}
 	}
 
+	fun getAMInfo(app: MusicAppInfo): Map<Int, Any> {
+		val amInfo = mutableMapOf<Int, Any>(
+			0 to 145,   // basecore version
+			1 to app.name,  // app name
+			2 to phoneAppResources.getBitmap(app.icon, 48, 48), // icon
+			3 to "Multimedia",   // section
+			4 to true,
+			5 to 800,   // weight
+			8 to -1  // mainstateId
+		)
+		// language translations
+		for (languageCode in 101..123) {
+			amInfo[languageCode] = app.name
+		}
+
+		return amInfo
+	}
+
+	fun av_requestContext(ident: String) {
+		knownApps.keys.filter { ident == "androidautoidrive.${it.packageName}" }.firstOrNull()?.apply { av_requestContext(this) }
+	}
 	fun av_requestContext(app: MusicAppInfo) {
 			val handle = knownApps[app]
 			if (handle == null) {

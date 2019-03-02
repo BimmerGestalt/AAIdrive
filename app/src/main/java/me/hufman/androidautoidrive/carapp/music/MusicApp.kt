@@ -22,7 +22,7 @@ const val TAG = "MusicApp"
 class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController) {
 	val carApp = createRHMIApp()
 
-	val avContext = AVContextHandler(carApp, musicController)
+	val avContext = AVContextHandler(carApp, musicController, phoneAppResources)
 	val globalMetadata = GlobalMetadata(carApp, musicController)
 	var playbackViewVisible = false
 	val playbackView: PlaybackView
@@ -161,6 +161,15 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 			val msg = "Received av_multimediaButtonEvent: handle=$handle event=$event"
 			Log.i(TAG, msg)
 			avContext.av_multimediaButtonEvent(handle, event)
+		}
+
+		override fun am_onAppEvent(handle: Int?, ident: String?, appId: String?, event: BMWRemoting.AMEvent?) {
+			Log.i(TAG, "Received am_onAppEvent: handle=$handle ident=$ident appId=$appId event=$event")
+			if (appId != null) {
+				avContext.av_requestContext(appId)
+			}
+			app?.events?.values?.filterIsInstance<RHMIEvent.FocusEvent>()?.firstOrNull()?.triggerEvent(mapOf(0.toByte() to playbackView.state.id))
+			server?.am_showLoadedSuccessHint(avContext.amHandle)
 		}
 	}
 

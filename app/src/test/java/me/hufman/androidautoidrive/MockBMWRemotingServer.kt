@@ -12,6 +12,7 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 	val properties = HashMap<Int, MutableMap<Int, Any>>()
 	val data = HashMap<Int, Any>()
 	val triggeredEvents = HashMap<Int, Map<*, *>>()
+	val amApps = ArrayList<String>()
 	val avConnections = HashMap<Int, String>()
 	var avCurrentContext = -1
 	var avCurrentState = BMWRemoting.AVPlayerState.AV_PLAYERSTATE_STOP
@@ -73,6 +74,17 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 
 	override fun cds_getPropertyAsync(handle: Int?, ident: String?, propertyName: String?) {
 
+	}
+
+	override fun am_create(deviceId: String?, bluetoothAddress: ByteArray?): Int {
+		return 1
+	}
+	override fun am_addAppEventHandler(handle: Int?, ident: String?) {
+	}
+	override fun am_registerApp(handle: Int?, appId: String?, values: MutableMap<*, *>?) {
+		amApps.add(appId ?: "")
+	}
+	override fun am_showLoadedSuccessHint(handle: Int?) {
 	}
 
 	override fun av_create(instanceID: Int?, id: String?): Int {
