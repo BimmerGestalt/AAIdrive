@@ -73,6 +73,8 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		Log.i(TAG, "Selected state ${appSwitcherView.state.id} for App Switcher")
 		Log.i(TAG, "Selected state ${playbackView.state.id} for Playback")
 		Log.i(TAG, "Selected state ${enqueuedView.state.id} for Enqueued")
+		Log.i(TAG, "Selected state ${inputState.id} for Input")
+		Log.i(TAG, "Selected state ${customActionsView.state.id} for Custom Actions")
 
 		initWidgets()
 

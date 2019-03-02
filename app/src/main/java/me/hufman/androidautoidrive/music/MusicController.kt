@@ -14,12 +14,46 @@ import kotlinx.coroutines.async
 import java.util.*
 
 class MusicController(val context: Context, val handler: Handler) {
-	private val TAG = "MusicController"
+	companion object {
+		private const val TAG = "MusicController"
+
+		// how many milliseconds per half-second interval to seek, at each button-hold time threshold
+		private val SEEK_THRESHOLDS = listOf(
+				0 to 4000,
+				2000 to 7000,
+				5000 to 13000,
+				8000 to 30000
+		)
+	}
+
 	var currentApp: MusicBrowser? = null
 	var controller: MediaControllerCompat? = null
 	private val controllerCallback = Callback()
 	var listener: Runnable? = null
 	var desiredPlayback = false  // if we should start playback as soon as connected
+
+	// handles manual rewinding/fastforwarding
+	private var startedSeekingTime: Long = 0    // determine how long the user has been holding the seek button
+	private var seekingDirectionForward = true
+	private val seekingRunnable = object : Runnable {
+		override fun run() {
+			if (startedSeekingTime > 0) {
+				val holdTime = System.currentTimeMillis() - startedSeekingTime
+				val seekTime = SEEK_THRESHOLDS.lastOrNull { holdTime >= it.first }?.second ?: 2000
+				val curPos = getPlaybackPosition().getPosition()
+				val newPos = curPos + if (seekingDirectionForward) { 1 } else { -1 } * seekTime
+				// handle seeking past beginning of song
+				if (newPos < 0) {
+					controller?.transportControls?.skipToPrevious()
+					startedSeekingTime = 0  // cancel seeking, because skipToPrevious starts at the beginning of the previous song
+				} else {
+					controller?.transportControls?.seekTo(newPos)
+				}
+				handler.postDelayed(this, 500)
+			}
+		}
+	}
+
 
 	init {
 		handler.post { scheduleRedrawProgress() }
@@ -84,6 +118,28 @@ class MusicController(val context: Context, val handler: Handler) {
 	}
 	fun skipToNext() = rpcSafe {
 		controller?.transportControls?.skipToNext()
+	}
+	fun startRewind() = rpcSafe {
+		if (isSupportedAction(MusicAction.REWIND)) {
+			controller?.transportControls?.rewind()
+		} else {
+			startedSeekingTime = System.currentTimeMillis()
+			seekingDirectionForward = false
+			seekingRunnable.run()
+		}
+	}
+	fun startFastForward() = rpcSafe {
+		if (isSupportedAction(MusicAction.FAST_FORWARD)) {
+			controller?.transportControls?.fastForward()
+		} else {
+			startedSeekingTime = System.currentTimeMillis()
+			seekingDirectionForward = true
+			seekingRunnable.run()
+		}
+	}
+	fun stopSeeking() = rpcSafe {
+		startedSeekingTime = 0
+		play()
 	}
 
 	fun playSong(song: MusicMetadata) = rpcSafe {
