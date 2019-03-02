@@ -10,6 +10,7 @@ import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
+import java.io.IOError
 
 private const val IMAGEID_ARTIST = 150
 private const val IMAGEID_ALBUM = 148
@@ -173,6 +174,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 	}
 
 	private fun redrawSong() {
+		val blacklistedUriApps = setOf("Spotify")
 		val song = controller.getMetadata()
 		artistModel.value = song?.artist ?: ""
 		albumModel.value = song?.album ?: ""
@@ -182,6 +184,16 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 			albumArtSmallComponent.setVisible(true)
 			albumArtBigModel.value = phoneAppResources.getBitmap(song.coverArt, 320, 320)
 			albumArtSmallModel.value = phoneAppResources.getBitmap(song.coverArt, 200, 200)
+		} else if (song?.coverArtUri != null && !blacklistedUriApps.contains(controller.currentApp?.musicAppInfo?.name)) {
+			try {
+				albumArtBigModel.value = phoneAppResources.getBitmap(song.coverArtUri, 320, 320)
+				albumArtSmallModel.value = phoneAppResources.getBitmap(song.coverArtUri, 200, 200)
+				albumArtBigComponent.setVisible(true)
+				albumArtSmallComponent.setVisible(true)
+			} catch (e: IOError) {
+				albumArtBigComponent.setVisible(false)
+				albumArtSmallComponent.setVisible(false)
+			}
 		} else {
 			albumArtBigComponent.setVisible(false)
 			albumArtSmallComponent.setVisible(false)

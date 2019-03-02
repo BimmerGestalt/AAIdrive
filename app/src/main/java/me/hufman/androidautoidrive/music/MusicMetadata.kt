@@ -16,6 +16,7 @@ data class MusicMetadata(val mediaId: String? = null,
                          val browseable: Boolean = false,
                     val duration: Long? = null,
                     val coverArt: Bitmap? = null,
+                    val coverArtUri: String? = null,
                     val icon: Bitmap? = null,
                     val artist: String? = null,
                     val album: String? = null,
@@ -37,8 +38,10 @@ data class MusicMetadata(val mediaId: String? = null,
 					mediaId = metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID),
 					queueId = playbackState?.activeQueueItemId,
 					duration = metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION),
-					coverArt = metadata.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART) ?:
-							metadata.getBitmap(MediaMetadataCompat.METADATA_KEY_ART),
+					coverArt = metadata.getBitmap(MediaMetadataCompat.METADATA_KEY_ART) ?:
+							metadata.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART),
+					coverArtUri = metadata.getString(MediaMetadataCompat.METADATA_KEY_ART_URI) ?:
+							metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI),
 					icon = metadata.getBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON),
 					artist = metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST) ?:
 							metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST),
