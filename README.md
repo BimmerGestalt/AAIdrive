@@ -7,6 +7,14 @@ Android Auto for IDrive
 The BMW/Mini IDrive does not offer native Android Auto integration, but does provide a much more powerful Connected Apps connectivity option, which offers many exciting integration points into the car.
 This project is an effort to implement most of the features of Android Auto as an unofficial IDrive Connected App.
 
+Overview
+--------
+
+As part of the Connected Apps feature, when the phone connects over USB (or Bluetooth in 2017+ models), a tunnel to the car is created to allow other apps on the phone to interact with the car.
+A Connected App uses this connection to upload its widget layout to the car, receive event callbacks from user selections, and update widget contents in response.
+This remote UI framework effectively creates a custom application in the car, while enabling tight user integration and excellent data availability due to actually running all logic on the phone.
+Android Auto for IDrive, combined with the safety benefits of the tactile IDrive controller, allows the user to safely interact with their incoming notifications and control their phone's music, while the phone is tucked safely out of reach.
+
 Implemented Features
 --------------------
 
