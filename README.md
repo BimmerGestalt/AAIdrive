@@ -1,5 +1,4 @@
 Android Auto for IDrive
-
 =======================
 
 [![Build Status](https://travis-ci.org/hufman/AndroidAutoIdrive.svg?branch=master)](https://travis-ci.org/hufman/AndroidAutoIdrive)
