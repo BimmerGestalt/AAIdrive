@@ -14,6 +14,7 @@ import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.Utils.etchAsInt
 import me.hufman.androidautoidrive.carapp.InputState
+import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
@@ -29,7 +30,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 	val carConnection: BMWRemotingServer
 	var mapResultsUpdater = MapResultsUpdater()
 	val mapListener = MapResultsReceiver(mapResultsUpdater)
-	val carApp: RHMIApplicationEtch
+	val carApp: RHMIApplication
 	val stateMenu: RHMIState.PlainState
 	val menuMap: RHMIComponent.List // turns out you can set cells of a list to arbitrary images
 	val menuList: RHMIComponent.List
@@ -61,7 +62,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getImagesDB("common")?.readBytes(), BMWRemoting.RHMIResourceType.IMAGEDB)
 		carConnection.rhmi_initialize(rhmiHandle)
 
-		carApp = RHMIApplicationEtch(carConnection, rhmiHandle)
+		carApp = RHMIApplicationSynchronized(RHMIApplicationEtch(carConnection, rhmiHandle))
 		carappListener.app = carApp
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 

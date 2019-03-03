@@ -12,6 +12,7 @@ import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.DeferredUpdate
 import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
@@ -33,7 +34,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	val notificationListener = PhoneNotificationUpdate(PhoneNotificationListener())
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
-	val carApp: RHMIApplicationEtch
+	val carApp: RHMIApplication
 	val statePopup: RHMIState.PopupState    // notification about notification
 	val stateList: RHMIState.PlainState     // show a list of active notifications
 	val stateView: RHMIState.ToolbarState   // view a notification with actions to do
@@ -59,7 +60,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		// set up the app in the car
-		carApp = RHMIApplicationEtch(carConnection, rhmiHandle)
+		carApp = RHMIApplicationSynchronized( RHMIApplicationEtch(carConnection, rhmiHandle))
 		carappListener.app = carApp
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
@@ -94,7 +95,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 				notificationListView?.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateView.id
 
 				val actionId = notificationListView?.getAction()?.asRAAction()?.id
-				carConnection.rhmi_ackActionEvent(carApp.rhmiHandle, actionId ?: 0, 1, true)   // start screen transition
+				carConnection.rhmi_ackActionEvent(rhmiHandle, actionId ?: 0, 1, true)   // start screen transition
 				NotificationsState.selectedNotification = notification
 				updateNotificationView()    // because updating this view would delay the transition too long
 			} else {
