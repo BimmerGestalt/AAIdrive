@@ -10,3 +10,6 @@ android:
     - android-26
 
 script: ./gradlew check
+
+after_success:
+  - ./gradlew testGmapDebugUnitTestCoverage coveralls

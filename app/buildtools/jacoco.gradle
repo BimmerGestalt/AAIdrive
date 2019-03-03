@@ -1,0 +1,36 @@
+// Helpfully found at https://veskoiliev.com/how-to-setup-jacoco-for-android-project-with-java-kotlin-and-multiple-flavours/
+
+apply plugin: 'jacoco'
+
+project.afterEvaluate {
+    android.applicationVariants.all { variant ->
+        def testTaskName = "test${variant.name.capitalize()}UnitTest"
+        tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {
+            group = "Reporting"
+            description = "Generate Jacoco coverage reports for the ${variant.name.capitalize()} build"
+
+            reports {
+                xml.enabled = true
+                xml.destination = file("$buildDir/reports/jacoco/jacoco.xml")   // have this in a common location for coveralls to find
+                html.enabled = true
+            }
+
+            def excludes = [
+                    '**/R.class',
+                    '**/R$*.class'
+            ]
+            def kotlinClasses = fileTree(dir: "$buildDir/tmp/kotlin-classes/${variant.name}", excludes: excludes)
+            classDirectories = files([kotlinClasses])
+
+            sourceDirectories = files([
+                    "${project.projectDir}/src/main/java",
+                    "${project.projectDir}/src/${variant.name}/java"
+            ])
+            executionData = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+        }
+    }
+}
+
+coveralls {
+    jacocoReportPath 'build/reports/jacoco/jacoco.xml'
+}
