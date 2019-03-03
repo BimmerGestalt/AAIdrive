@@ -137,11 +137,11 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		mapInputList.setProperty(21, 50000)  // positionY, so that we don't see it but should still be interacting with it
 		val scrollList = RHMIModel.RaListModel.RHMIListConcrete(3)
 		(0..2).forEach { scrollList.addRow(arrayOf("+", "", "")) }  // zoom in
-		scrollList.addRow(arrayOf("=", "", "")) // neutral
+		scrollList.addRow(arrayOf("Map", "", "")) // neutral
 		(4..6).forEach { scrollList.addRow(arrayOf("-", "", "")) }  // zoom out
 		mapInputList.getModel()?.asRaListModel()?.setValue(scrollList, 0, scrollList.height, scrollList.height)
-		carApp.triggerHMIEvent(carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().id, mapOf(0 to mapInputList.id, 41 to 3))  // set focus to the middle of the list
-		mapInputList.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {  listIndex ->
+		carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().triggerEvent(mapOf(0 to mapInputList.id, 41 to 3))  // set focus to the middle of the list
+		mapInputList.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { listIndex ->
 			if (listIndex in 0..2) {
 				interaction.zoomIn(1)   // each wheel click through the list will trigger another step of 1
 			}
@@ -150,6 +150,16 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 			}
 			carApp.triggerHMIEvent(carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().id, mapOf(0 to mapInputList.id, 41 to 3))  // set focus to the middle of the list
 		}
+		mapInputList.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIActionButtonCallback {
+			override fun onAction(invokedBy: Int?) {
+				if (invokedBy == 2) {   // bookmark event
+					carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().triggerEvent(mapOf(0 to stateMap.id))
+				} else {
+					carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().triggerEvent(mapOf(0 to stateMenu.id))
+				}
+			}
+		}
+		mapInputList.setProperty(22, true)
 
 		// set up the components for the input widget
 		stateInputState = InputState(viewInput, { query ->
