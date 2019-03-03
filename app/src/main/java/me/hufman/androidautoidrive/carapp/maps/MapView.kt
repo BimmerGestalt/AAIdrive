@@ -42,7 +42,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 	val stateInputState: InputState<MapResult>
 	var searchResults = ArrayList<MapResult>()
 	var selectedResult: MapResult? = null
-	val menuEntries = arrayOf("View Full Map", "Search for Place", "Clear Navigation")
+	val menuEntries = arrayOf(L.MAP_ACTION_VIEWMAP, L.MAP_ACTION_SEARCH, L.MAP_ACTION_CLEARNAV)
 
 	// map state
 	var frameUpdater = FrameUpdater(map)

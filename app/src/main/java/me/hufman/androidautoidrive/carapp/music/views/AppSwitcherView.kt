@@ -36,11 +36,11 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 
 	init {
 		listApps = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
-		appsEmptyList.addRow(arrayOf("", "", "<No Apps>"))
+		appsEmptyList.addRow(arrayOf("", "", L.MUSIC_APPLIST_EMPTY))
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {
-		state.getTextModel()?.asRaDataModel()?.value = "Apps"
+		state.getTextModel()?.asRaDataModel()?.value = L.MUSIC_APPLIST_TITLE
 		listApps.setVisible(true)
 		listApps.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
 		listApps.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { onClick(it) }

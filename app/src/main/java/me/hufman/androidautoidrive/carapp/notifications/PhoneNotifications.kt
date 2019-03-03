@@ -203,7 +203,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 				listData.addRow(arrayOf(icon, "", text))
 			}
 			if (NotificationsState.notifications.isEmpty()) {
-				listData.addRow(arrayOf("", "", "No Notifications"))
+				listData.addRow(arrayOf("", "", L.NOTIFICATIONS_EMPTY_LIST))
 			}
 		}
 		val listWidget = stateList.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull() ?: return
@@ -245,7 +245,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		if (notification.isClearable) {
 			clearButton.setEnabled(true)
 			clearButton.setSelectable(true)
-			clearButton.getTooltipModel()?.asRaDataModel()?.value = "Clear"
+			clearButton.getTooltipModel()?.asRaDataModel()?.value = L.NOTIFICATION_CLEAR_ACTION
 			clearButton.getImageModel()?.asImageIdModel()?.imageId = 150
 			clearButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id
 			clearButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {

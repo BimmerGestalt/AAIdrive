@@ -10,13 +10,13 @@ import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
 import kotlin.coroutines.CoroutineContext
 
-enum class BrowseAction(val label: String) {
-	JUMPBACK("Jump Back"),
-	FILTER("Filter"),
-	SEARCH("Search");
+enum class BrowseAction(val getLabel: () -> String) {
+	JUMPBACK({ L.MUSIC_BROWSE_ACTION_JUMPBACK }),
+	FILTER({ L.MUSIC_BROWSE_ACTION_FILTER }),
+	SEARCH({ L.MUSIC_BROWSE_ACTION_SEARCH });
 
 	override fun toString(): String {
-		return label
+		return getLabel()
 	}
 }
 class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folder: MusicMetadata?, var previouslySelected: MusicMetadata?): CoroutineScope {
@@ -28,13 +28,13 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 		const val TAG = "BrowsePageView"
 
 		val emptyList = RHMIModel.RaListModel.RHMIListConcrete(3).apply {
-			this.addRow(arrayOf("", "", "<Empty>"))
+			this.addRow(arrayOf("", "", L.MUSIC_BROWSE_EMPTY))
 		}
 		val loadingList = RHMIModel.RaListModel.RHMIListConcrete(3).apply {
-			this.addRow(arrayOf("", "", "<Loading>"))
+			this.addRow(arrayOf("", "", L.MUSIC_BROWSE_LOADING))
 		}
 		val searchingList = RHMIModel.RaListModel.RHMIListConcrete(3).apply {
-			this.addRow(arrayOf("<Searching>"))
+			this.addRow(arrayOf(L.MUSIC_BROWSE_SEARCHING))
 		}
 		val checkmarkIcon = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 149)
 		val folderIcon = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 155)
@@ -58,7 +58,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 			// set up dynamic paging
 			musicListComponent.setProperty(RHMIProperty.PropertyId.VALID, false)
 			// set the page title
-			browsePageState.getTextModel()?.asRaDataModel()?.value = "Browse"
+			browsePageState.getTextModel()?.asRaDataModel()?.value = L.MUSIC_BROWSE_TITLE
 		}
 	}
 

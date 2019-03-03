@@ -118,16 +118,16 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		state as RHMIState.ToolbarState
 
 		val buttons = state.toolbarComponentsList
-		buttons[0].getTooltipModel()?.asRaDataModel()?.value = "Apps"
+		buttons[0].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_APPLIST_TITLE
 		buttons[0].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
 
-		buttons[1].getTooltipModel()?.asRaDataModel()?.value = "Browse"
+		buttons[1].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_BROWSE_TITLE
 		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 			browseView.clearPages()
 			val page = browseView.pushBrowsePage(null)
 			buttons[1].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id }
 
-		buttons[2].getTooltipModel()?.asRaDataModel()?.value = "Currently Playing"
+		buttons[2].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_QUEUE_TITLE
 		buttons[2].setEnabled(false)
 		buttons[2].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = enqueuedView.state.id
 
@@ -135,7 +135,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		buttons[3].getImageModel()?.asImageIdModel()?.imageId = 0
 		buttons[3].setSelectable(false)
 
-		buttons[4].getTooltipModel()?.asRaDataModel()?.value = "Actions"
+		buttons[4].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_CUSTOMACTIONS_TITLE
 		buttons[4].setEnabled(false)
 		buttons[4].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = customActionsView.state.id
 
@@ -143,10 +143,10 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		buttons[5].getImageModel()?.asImageIdModel()?.imageId = 0
 		buttons[5].setSelectable(false)
 
-		buttons[6].getTooltipModel()?.asRaDataModel()?.value = "Back"
+		buttons[6].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SKIP_PREVIOUS
 		buttons[6].getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.skipToPrevious() }
 
-		buttons[7].getTooltipModel()?.asRaDataModel()?.value = "Next"
+		buttons[7].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SKIP_NEXT
 		buttons[7].getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.skipToNext() }
 
 	}
@@ -174,7 +174,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 	}
 
 	private fun redrawSong() {
-		val blacklistedUriApps = setOf("Spotify")
+		val blacklistedUriApps = setOf("Spotify")   // apps that don't let us resolve URIs
+
 		val song = controller.getMetadata()
 		artistModel.value = song?.artist ?: ""
 		albumModel.value = song?.album ?: ""

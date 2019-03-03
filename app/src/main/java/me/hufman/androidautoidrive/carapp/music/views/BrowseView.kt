@@ -102,7 +102,6 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	fun playSong(song: MusicMetadata) {
 		val index = pageStack.size  // what the next index would be
 
-		println("Playing song $song")
 		// remember the song as the last selected item
 		if (locationStack.size == index || locationStack.getOrNull(index) != song) {
 			locationStack.subList(index, locationStack.size).clear()

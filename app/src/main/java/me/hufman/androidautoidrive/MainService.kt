@@ -13,6 +13,7 @@ import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServ
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
+import java.util.*
 
 class MainService: Service() {
 	companion object {
@@ -88,6 +89,7 @@ class MainService: Service() {
 				var startAny = false
 
 				AppSettings.loadSettings(this)
+				L.loadResources(this)
 
 				// start notifications
 				startAny = startAny or startNotifications()

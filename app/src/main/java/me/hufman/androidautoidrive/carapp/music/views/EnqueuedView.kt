@@ -43,11 +43,11 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 		listComponent = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 
-		songsEmptyList.addRow(arrayOf("", "", "<Empty Queue>"))
+		songsEmptyList.addRow(arrayOf("", "", L.MUSIC_QUEUE_EMPTY))
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {
-		state.getTextModel()?.asRaDataModel()?.value = "Now Playing"
+		state.getTextModel()?.asRaDataModel()?.value = L.MUSIC_QUEUE_TITLE
 		listComponent.setVisible(true)
 		listComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,50,*")
 		listComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id

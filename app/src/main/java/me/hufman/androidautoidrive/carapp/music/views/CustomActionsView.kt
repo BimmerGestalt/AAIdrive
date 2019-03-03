@@ -33,7 +33,7 @@ class CustomActionsView(val state: RHMIState, val phoneResources: PhoneAppResour
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {
-		state.getTextModel()?.asRaDataModel()?.value = "Actions"
+		state.getTextModel()?.asRaDataModel()?.value = L.MUSIC_CUSTOMACTIONS_TITLE
 		listComponent.asList()?.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 			val action = actionList.getOrNull(index)
 			if (action != null) {

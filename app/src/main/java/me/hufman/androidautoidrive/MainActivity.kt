@@ -42,6 +42,8 @@ class MainActivity : AppCompatActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		AppSettings.loadSettings(this)
+		L.loadResources(this)
+
 		setContentView(R.layout.activity_main)
 
 		swMessageNotifications.setOnCheckedChangeListener { buttonView, isChecked ->
