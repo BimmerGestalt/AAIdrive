@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply from: 'buildtools/ColoredOutput.gradle'
+
 android {
     compileSdkVersion 26
     defaultConfig {
@@ -20,6 +22,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
         }
+    }
+    lintOptions {
+        abortOnError false
     }
     testOptions {
         unitTests {
@@ -39,6 +44,10 @@ android {
             manifestPlaceholders = [gmaps_api_key:AndroidAutoIdrive_GmapsApiKey]
         }
     }
+}
+
+tasks.matching {it instanceof Test}.all {
+    it.outputs.upToDateWhen {false}
 }
 
 repositories {

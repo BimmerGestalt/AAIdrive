@@ -1,0 +1,12 @@
+language: android
+
+android:
+  components:
+    - extra-google-m2repository
+    - extra-android-m2repository
+    - platform-tools
+    - build-tools-28.0.3
+    - android-24
+    - android-26
+
+script: ./gradlew check
