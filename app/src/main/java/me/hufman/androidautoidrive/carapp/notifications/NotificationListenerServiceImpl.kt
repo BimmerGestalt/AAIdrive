@@ -97,8 +97,11 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		val details = extras?.keySet()?.map { "  ${it}=>${extras.get(it)}" }?.joinToString("\n") ?: ""
 		Log.i(TAG, "Notification posted: ${extras?.get("android.title")} with the ticker text ${sbn?.notification?.tickerText} and the keys:\n$details")
 		super.onNotificationPosted(sbn, rankingMap)
+		val alreadyShown = NotificationsState.notifications.any {
+			it.key == sbn?.key
+		}
 		updateNotificationList()
-		if (sbn != null && (sbn.isClearable || sbn.notification.actions?.isNotEmpty() == true)) controller.sendNotification(sbn)
+		if (sbn != null && sbn.isClearable && !alreadyShown) controller.sendNotification(sbn)
 	}
 
 	fun updateNotificationList() {
