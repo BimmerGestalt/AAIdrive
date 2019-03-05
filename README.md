@@ -42,6 +42,18 @@ Implemented Features
       - [Tidal](https://play.google.com/store/apps/details?id=com.aspiro.tidal)
       - [YouTube](https://play.google.com/store/apps/details?id=com.google.android.youtube) (only music previous/next control, no video)
 
+Integration Points
+------------------
+
+Besides showing a self-contained remote UI, the IDrive system offers many exciting integration points. Here are a few that this project supports:
+
+  - The Map View, Notification List, and Music Playback, can be assigned to the physical shortcut keys in the dashboard
+  - New notifications trigger a popup from anywhere in IDrive, not just in the main list
+  - New notification popups can be disabled if a passenger is detected in the seat
+  - The currently-playing app is displayed along the top of the IDrive screen
+  - The currently-playing song is shown in the Multimedia side panel of the IDrive
+  - Audio focus can be optionally enabled, which enables playback resuming when reconnecting on startup, pausing playback when pushing the mute button or during calls, handling physical back/next buttons including seeking support, and using the steering wheel controls to skip back/next from the instrument cluster
+
 Limitations
 -----------
 
@@ -62,6 +74,17 @@ Due to the unofficial reverse-engineered nature of this project, it has some lim
     - Pandora
     - Smart Audiobook Player
     - YouTube Music
+
+Requirements
+------------
+
+To communicate to the car, this project relies on the proxy connection that is created by the main Connected app on the phone. Both of the brand-specific Connected and the Connected Classic apps have been tested as compatible for this purpose.
+
+Additionally, the car proposes a security challenge during the connection process, and this project asks the Security Service provided by the Connected apps for the correct response.
+The Connected Classic app can be installed to easily provide this response. However, the newer Connected app disabled this ability in version 5.1, which means a workaround needs to be found if the user wants the features of the newer app.
+For example, the user can install BMW Connected for the cloud connectivity and better robustness with the Android memory manager, and install Mini Connected Classic to provide the Security Service for this project.
+
+It is not recommended to install both the Connected and Connected Classic apps of the same brand, they will fight over the connection to the car and undefined results may happen. Instead, install the Connected Classic app of the other brand that is not intended to be used regularly.
 
 Build Instructions
 ------------------
