@@ -43,10 +43,10 @@ android {
     flavorDimensions "map"
 
     productFlavors {
-        "nomap" {
+        nomap {
             dimension "map"
         }
-        "gmap" {
+        gmap {
             dimension "map"
             // load api keys from ~/.gradle/gradle.properties
             manifestPlaceholders = [gmaps_api_key:AndroidAutoIdrive_GmapsApiKey]

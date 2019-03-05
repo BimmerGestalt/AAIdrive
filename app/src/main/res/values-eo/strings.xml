@@ -5,7 +5,7 @@
     <string name="permdesc_accessNotifications">IDrive Novaĵoj Permeso</string>
     <string name="permdesc_bindNotificationListenerService">IDrive Novaĵoj Permeso</string>
     <string name="notification_title">Android Auto en IDrive</string>
-    <string name="notification_description">Ligita al Car</string>
+    <string name="notification_description">Ligita al Aŭto</string>
     <string name="notification_description_bmw">Ligita al BMW</string>
     <string name="notification_description_mini">Ligita al Mini</string>
 
@@ -22,7 +22,10 @@
     <string name="imgdescConnectable">Ligitebla</string>
     <string name="imgdescBrowseable">Navigebla</string>
     <string name="imgdescSearchable">Serĉeble</string>
+
     <string name="enable_audio_context">Petu Muzikan Kuntekson</string>
+    <string name="connectionStatusMissingConnectedApp">Ne trovas la Connected programeton</string>
+    <string name="connectionStatusWaiting">Trovadas la aŭton</string>
 
     <!-- car app strings -->
     <string name="NOTIFICATIONS_EMPTY_LIST">Neniuj Novaĵoj</string>

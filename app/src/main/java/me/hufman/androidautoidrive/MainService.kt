@@ -77,8 +77,8 @@ class MainService: Service() {
 				.setSmallIcon(android.R.drawable.ic_menu_gallery)
 				.setPriority(PRIORITY_LOW)
 				.setContentIntent(PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT))
-		if (brand == "bmw") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_bmw))
-		if (brand == "mini") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_mini))
+		if (brand?.toLowerCase() == "bmw") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_bmw))
+		if (brand?.toLowerCase() == "mini") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_mini))
 		foregroundNotification = foregroundNotificationBuilder.build()
 		startForeground(ONGOING_NOTIFICATION_ID, foregroundNotification)
 	}

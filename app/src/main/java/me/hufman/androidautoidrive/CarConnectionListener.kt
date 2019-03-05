@@ -16,5 +16,7 @@ class CarConnectionListener: BroadcastReceiver() {
 		if (intent.action == "com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_DETACHED") {
 			context.stopService(Intent(context, MainService::class.java).setAction(MainService.ACTION_STOP))
 		}
+
+		context.sendBroadcast(Intent(MainActivity.INTENT_REDRAW))
 	}
 }

@@ -4,4 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="mapRouteLine">#0f52ba</color>
+
+    <color name="connectionWaiting">#cccccc</color>
+    <color name="connectionConnected">#99cc99</color>
+    <color name="connectionError">#cc9999</color>
 </resources>

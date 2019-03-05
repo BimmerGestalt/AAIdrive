@@ -24,6 +24,8 @@ import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
+import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import me.hufman.idriveconnectionkit.android.SecurityService
 import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
@@ -200,6 +202,21 @@ class MainActivity : AppCompatActivity() {
 		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_ENABLE_CONTEXT].toBoolean()
 
 		listMusicApps.invalidateViews()
+
+		if (!SecurityService.isConnecting() && !SecurityService.isConnected()) {
+			txtConnectionStatus.text = resources.getString(R.string.connectionStatusMissingConnectedApp)
+			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionError, null))
+		} else if (!IDriveConnectionListener.isConnected) {
+			txtConnectionStatus.text = resources.getString(R.string.connectionStatusWaiting)
+			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionWaiting, null))
+		} else {
+			txtConnectionStatus.text = when (IDriveConnectionListener.brand) {
+				"bmw" -> resources.getString(R.string.notification_description_bmw)
+				"mini" -> resources.getString(R.string.notification_description_mini)
+				else -> resources.getString(R.string.notification_description)
+			}
+			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionConnected, null))
+		}
 	}
 
 	fun startMainService() {
