@@ -11,6 +11,7 @@ import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.HandlerThread
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.NotificationManagerCompat
@@ -37,9 +38,16 @@ class MainActivity : AppCompatActivity() {
 		const val REQUEST_LOCATION = 4000
 	}
 	val handler = Handler()
-	val discovery = MusicAppDiscovery(this, handler)
 	val redrawListener = RedrawListener()
 	val redrawTask = RedrawTask()
+	val displayedApps = ArrayList<MusicAppInfo>()
+	val appDiscoveryThread = AppDiscoveryThread(this) { apps ->
+		handler.post {
+			displayedApps.clear()
+			displayedApps.addAll(apps)
+			redrawTask.schedule(50)
+		}
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -95,11 +103,8 @@ class MainActivity : AppCompatActivity() {
 		}
 
 		// build list of discovered music apps
-		discovery.discoverApps()
-		discovery.listener = Runnable {
-			redrawTask.schedule(50)
-		}
-		listMusicApps.adapter = object: ArrayAdapter<MusicAppInfo>(this, R.layout.musicapp_listitem, discovery.apps) {
+		appDiscoveryThread.start()
+		listMusicApps.adapter = object: ArrayAdapter<MusicAppInfo>(this, R.layout.musicapp_listitem, displayedApps) {
 			override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 				val appInfo = getItem(position)
 				val layout = convertView ?: layoutInflater.inflate(R.layout.musicapp_listitem, parent,false)
@@ -124,7 +129,7 @@ class MainActivity : AppCompatActivity() {
 	override fun onDestroy() {
 		super.onDestroy()
 		unregisterReceiver(redrawListener)
-		discovery.cancelDiscovery()
+		appDiscoveryThread.stopDiscovery()
 	}
 
 	fun onChangedSwitchNotifications(buttonView: CompoundButton, isChecked: Boolean) {
@@ -233,8 +238,8 @@ class MainActivity : AppCompatActivity() {
 			redraw()
 			schedule()
 		}
-
 	}
+
 	inner class RedrawListener: BroadcastReceiver() {
 		override fun onReceive(context: Context?, intent: Intent?) {
 			runOnUiThread { redraw() }
@@ -245,6 +250,35 @@ class MainActivity : AppCompatActivity() {
 		override fun onReceive(context: Context?, intent: Intent?) {
 			Log.i(TAG, "Received custom action")
 			Toast.makeText(context, "Custom Action press", Toast.LENGTH_SHORT).show()
+		}
+	}
+
+	class AppDiscoveryThread(val context: Context, val callback: (List<MusicAppInfo>) -> Unit): HandlerThread("MusicAppDiscovery UI") {
+		private lateinit var handler: Handler
+		private lateinit var discovery: MusicAppDiscovery
+		private val redrawRunnable = Runnable {
+			println("Received new information from app discovery ${discovery.apps}")
+			callback(discovery.apps)
+		}
+
+		override fun onLooperPrepared() {
+			handler = Handler(this.looper)
+			discovery = MusicAppDiscovery(context, handler)
+			discovery.listener = Runnable {
+				println("Discovery callback")
+				scheduleRedraw()
+			}
+			discovery.discoverApps()
+		}
+
+		private fun scheduleRedraw() {
+			handler.removeCallbacks(redrawRunnable)
+			handler.postDelayed(redrawRunnable, 100)
+		}
+
+		fun stopDiscovery() {
+			discovery.cancelDiscovery()
+			quitSafely()
 		}
 	}
 }
