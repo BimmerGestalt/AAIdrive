@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
+import android.os.Looper
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.util.Log
@@ -80,6 +81,13 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 	}
 
 	private fun probeApp(appInfo: MusicAppInfo) {
+		if (Looper.myLooper() != handler.looper) {
+			handler.post {
+				probeApp(appInfo)
+			}
+			return
+		}
+
 		Log.i(TAG, "Testing ${appInfo.name} for connectivity")
 		val component = ComponentName(appInfo.packageName, appInfo.className)
 
@@ -89,9 +97,11 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 			override fun onConnected() {
 				Log.i(TAG, "Successfully connected to ${appInfo.name}")
 				appInfo.connectable = true
-				validApps.add(appInfo)
-				validApps.sortBy { it.name.toLowerCase() }
-				listener?.run()
+				if (!validApps.contains(appInfo)) {
+					validApps.add(appInfo)
+					validApps.sortBy { it.name.toLowerCase() }
+					listener?.run()
+				}
 
 				// check for browse and searching
 				GlobalScope.launch {

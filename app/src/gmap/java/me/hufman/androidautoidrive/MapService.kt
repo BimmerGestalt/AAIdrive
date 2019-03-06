@@ -49,7 +49,7 @@ class MapService(val context: Context) {
 		mapView?.onDestroy(context)
 		mapListener?.onDestroy()
 		mapScreenCapture?.onDestroy()
-		threadGMaps?.handler?.looper?.quit()
+		threadGMaps?.handler?.looper?.quitSafely()
 
 		mapView = null
 		mapController = null

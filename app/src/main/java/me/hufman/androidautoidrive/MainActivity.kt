@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
 	companion object {
 		const val INTENT_REDRAW = "me.hufman.androidautoidrive.REDRAW"
 		const val TAG = "MainActivity"
+		const val SECURITY_SERVICE_TIMEOUT = 3000
 		const val REDRAW_INTERVAL = 5000L
 		const val REQUEST_LOCATION = 4000
 	}
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity() {
 			redrawTask.schedule(50)
 		}
 	}
+	var whenActivityStarted = 0L
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -177,6 +179,8 @@ class MainActivity : AppCompatActivity() {
 	override fun onResume() {
 		super.onResume()
 
+		whenActivityStarted = System.currentTimeMillis()
+
 		// reset the Notification setting to false if we don't have permission
 		if (!hasNotificationPermission()) {
 			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS, "false")
@@ -208,7 +212,8 @@ class MainActivity : AppCompatActivity() {
 
 		listMusicApps.invalidateViews()
 
-		if (!SecurityService.isConnecting() && !SecurityService.isConnected()) {
+		val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
+		if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && !SecurityService.isConnecting() && !SecurityService.isConnected()) {
 			txtConnectionStatus.text = resources.getString(R.string.connectionStatusMissingConnectedApp)
 			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionError, null))
 		} else if (!IDriveConnectionListener.isConnected) {
@@ -256,19 +261,18 @@ class MainActivity : AppCompatActivity() {
 	class AppDiscoveryThread(val context: Context, val callback: (List<MusicAppInfo>) -> Unit): HandlerThread("MusicAppDiscovery UI") {
 		private lateinit var handler: Handler
 		private lateinit var discovery: MusicAppDiscovery
-		private val redrawRunnable = Runnable {
-			println("Received new information from app discovery ${discovery.apps}")
-			callback(discovery.apps)
-		}
 
 		override fun onLooperPrepared() {
 			handler = Handler(this.looper)
 			discovery = MusicAppDiscovery(context, handler)
 			discovery.listener = Runnable {
-				println("Discovery callback")
 				scheduleRedraw()
 			}
 			discovery.discoverApps()
+		}
+
+		private val redrawRunnable = Runnable {
+			callback(discovery.apps)
 		}
 
 		private fun scheduleRedraw() {

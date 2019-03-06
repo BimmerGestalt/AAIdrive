@@ -25,6 +25,8 @@ class MainService: Service() {
 	val ONGOING_NOTIFICATION_ID = 20503
 	var foregroundNotification: Notification? = null
 
+	val securityServiceThread = SecurityServiceThread(this)
+
 	var threadNotifications: CarThread? = null
 	var carappNotifications: PhoneNotifications? = null
 
@@ -56,9 +58,14 @@ class MainService: Service() {
 	 */
 	private fun handleActionStart() {
 		Log.i(TAG, "Starting up service")
-		SecurityService.connect(this)
+		if (!securityServiceThread.isAlive) {
+			securityServiceThread.start()
+		}
+		securityServiceThread.connect()
 		SecurityService.subscribe(Runnable {
 			combinedCallback()
+
+			sendBroadcast(Intent(MainActivity.INTENT_REDRAW))   // tell the UI we are connected
 		})
 		IDriveConnectionListener.callback = Runnable {
 			combinedCallback()
@@ -144,7 +151,7 @@ class MainService: Service() {
 	fun stopNotifications() {
 		carappNotifications?.onDestroy(this)
 		carappNotifications = null
-		threadNotifications?.handler?.looper?.quit()
+		threadNotifications?.handler?.looper?.quitSafely()
 	}
 
 	fun startMaps(): Boolean {
@@ -173,7 +180,7 @@ class MainService: Service() {
 			stopMusic()
 			stopServiceNotification()
 			SecurityService.listener = Runnable {}
-			SecurityService.disconnect()
+			securityServiceThread.disconnect()
 		}
 	}
 
