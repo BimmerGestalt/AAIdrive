@@ -64,6 +64,13 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 		data[modelId!!] = value!!
 	}
 
+	override fun rhmi_getCapabilities(component: String?, handle: Int?): Map<*, *> {
+		return mapOf(
+				"hmi.display-width" to "1280",
+				"hmi.display-height" to "480"
+		)
+	}
+
 	override fun cds_create(): Int {
 		return 1
 	}

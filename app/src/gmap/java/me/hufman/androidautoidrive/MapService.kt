@@ -46,15 +46,18 @@ class MapService(val context: Context) {
 	}
 
 	fun stop() {
-		mapView?.onDestroy(context)
-		mapListener?.onDestroy()
-		mapScreenCapture?.onDestroy()
-		threadGMaps?.handler?.looper?.quitSafely()
+		threadGMaps?.handler?.postDelayed({
+			mapView?.onDestroy(context)
+			mapListener?.onDestroy()
+			mapScreenCapture?.onDestroy()
+			threadGMaps?.handler?.looper?.quitSafely()
 
-		mapView = null
-		mapController = null
-		mapListener = null
-		mapScreenCapture = null
+			mapView = null
+			mapController = null
+			mapListener = null
+			mapScreenCapture = null
+		}, 1000)
+
 		threadGMaps = null
 	}
 }
