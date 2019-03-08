@@ -59,6 +59,8 @@
             style="@style/optionGmapVisible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
             android:orientation="vertical">
 
             <Switch
@@ -66,17 +68,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
                 android:layout_marginTop="10dp"
                 android:text="@string/enable_google_maps" />
+
+            <Switch
+                android:id="@+id/swGmapWidescreen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="4dp"
+                android:text="@string/lbl_widescreen_map" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginBottom="4dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="48dp"
                 android:orientation="horizontal">
 
                 <TextView

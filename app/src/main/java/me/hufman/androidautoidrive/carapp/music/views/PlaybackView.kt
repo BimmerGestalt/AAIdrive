@@ -125,7 +125,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 			browseView.clearPages()
 			val page = browseView.pushBrowsePage(null)
-			buttons[1].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id }
+			buttons[1].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id
+		}
 
 		buttons[2].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_QUEUE_TITLE
 		buttons[2].setEnabled(false)
@@ -148,7 +149,6 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 
 		buttons[7].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SKIP_NEXT
 		buttons[7].getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.skipToNext() }
-
 	}
 
 	fun show() {

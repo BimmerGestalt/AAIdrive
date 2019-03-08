@@ -12,7 +12,7 @@ import android.util.Log
 import java.io.ByteArrayOutputStream
 
 
-class VirtualDisplayScreenCapture(context: Context, val width:Int = 700, val height:Int = 400, val dpi:Int = 300) {
+class VirtualDisplayScreenCapture(context: Context, val width:Int = 1000, val height:Int = 400, val dpi:Int = 300) {
 	/** Prepares an ImageReader, and sends JPG-compressed images to a callback */
 	protected val imageCapture = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2)!!
 	val virtualDisplay: VirtualDisplay
@@ -42,7 +42,6 @@ class VirtualDisplayScreenCapture(context: Context, val width:Int = 700, val hei
 
 	fun changeImageSize(width: Int, height: Int) {
 		synchronized(this) {
-
 			resizedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
 			resizedCanvas = Canvas(resizedBitmap)
 			resizedRect = Rect(0, 0, resizedBitmap.width, resizedBitmap.height)

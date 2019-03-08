@@ -82,7 +82,7 @@ object Utils {
 		return 1.0 * darkPixels / visiblePixels > .5
 	}
 
-	fun etchAsInt(obj: Any?): Int {
+	fun etchAsInt(obj: Any?, default: Int = 0): Int {
 		/** Etch likes to shrink numbers to the smallest type that will fit
 		 * But JVM wants the number types to match in various places
 		 */
@@ -90,7 +90,7 @@ object Utils {
 			is Byte -> obj.toInt()
 			is Short -> obj.toInt()
 			is Int -> obj
-			else -> 0
+			else -> default
 		}
 	}
 }

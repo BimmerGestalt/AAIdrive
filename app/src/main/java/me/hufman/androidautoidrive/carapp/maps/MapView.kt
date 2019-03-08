@@ -12,7 +12,7 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
-import me.hufman.androidautoidrive.Utils.etchAsInt
+import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.idriveconnectionkit.IDriveConnection
@@ -21,6 +21,7 @@ import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.lang.RuntimeException
+import kotlin.math.min
 
 const val TAG = "MapView"
 
@@ -43,6 +44,11 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 	var searchResults = ArrayList<MapResult>()
 	var selectedResult: MapResult? = null
 	val menuEntries = arrayOf(L.MAP_ACTION_VIEWMAP, L.MAP_ACTION_SEARCH, L.MAP_ACTION_CLEARNAV)
+
+	val rhmiWidth: Int
+	val mapWidth: Int
+		get() = min(rhmiWidth - 280, if (AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()) 1000 else 700)
+	val mapHeight = 400
 
 	// map state
 	var frameUpdater = FrameUpdater(map)
@@ -91,6 +97,11 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 			Log.i(TAG, "Registering entry button ${it.id} model ${it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.id} to point to main state ${stateMenu.id}")
 		}
 
+		// get the car capabilities
+		val capabilities = carConnection.rhmi_getCapabilities("", 255)
+		rhmiWidth = (capabilities["hmi.display-width"] as? String?)?.toIntOrNull() ?: 720
+		Log.i(TAG, "Detected HMI width of $rhmiWidth")
+
 		// set up the components
 		Log.i(TAG, "Setting up component behaviors")
 		val rhmiListContents = RHMIModel.RaListModel.RHMIListConcrete(3)
@@ -127,11 +138,13 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		menuMap.getAction()?.asRAAction()?.rhmiActionCallback = menuList.getAction()?.asRAAction()?.rhmiActionCallback
 
 		// set up the components on the map
+		stateMap.app.setProperty(stateMap.id, 24, 3)    // set to wide-screen "tablestate"
+		stateMap.app.setProperty(stateMap.id, 24, "1,0,7")
 		viewFullMap.setVisible(true)
-		viewFullMap.setProperty(20, 0)    // positionX
+		viewFullMap.setProperty(20, -16)    // positionX
 		viewFullMap.setProperty(21, 0)    // positionY
-		viewFullMap.setProperty(9, 700)
-		viewFullMap.setProperty(10, 400)
+		viewFullMap.setProperty(9, mapWidth)
+		viewFullMap.setProperty(10, mapHeight)
 		mapInputList.setVisible(true)
 		mapInputList.setProperty(20, 50000)  // positionX, so that we don't see it but should still be interacting with it
 		mapInputList.setProperty(21, 50000)  // positionY, so that we don't see it but should still be interacting with it
@@ -302,7 +315,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 				"menuMap" ->
 					map.changeImageSize(350, 90)
 				"mainMap" ->
-					map.changeImageSize(700, 400)
+					map.changeImageSize(mapWidth, mapHeight)
 			}
 		}
 		fun hideMode(mode: String) {
@@ -314,9 +327,9 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		private fun sendImage(bitmap: Bitmap) {
 			val imageData = display.compressBitmap(bitmap)
 			try {
-				if (bitmap.width >= 700)   // main map
+				if (bitmap.height >= 150)   // main map
 					viewFullMap.getModel()?.asRaImageModel()?.value = imageData
-				else if (bitmap.width >= 90) { // menu map
+				else if (bitmap.height >= 80) { // menu map
 					val list = RHMIModel.RaListModel.RHMIListConcrete(3)
 					list.addRow(arrayOf(BMWRemoting.RHMIResourceData(BMWRemoting.RHMIResourceType.IMAGEDATA, imageData), "", ""))
 					menuMap.getModel()?.asRaListModel()?.setValue(list, 0, 1, 1)

@@ -81,6 +81,9 @@ class MainActivity : AppCompatActivity() {
 				sendBroadcast(Intent(INTENT_GMAP_RELOAD_SETTINGS))
 			}
 		}
+		swGmapWidescreen.setOnCheckedChangeListener { buttonView, isChecked ->
+			AppSettings.saveSetting(this, AppSettings.KEYS.MAP_WIDESCREEN, isChecked.toString())
+		}
 		swAudioContext.setOnCheckedChangeListener { buttonView, isChecked ->
 			AppSettings.saveSetting(this, AppSettings.KEYS.AUDIO_ENABLE_CONTEXT, isChecked.toString())
 		}
@@ -202,6 +205,7 @@ class MainActivity : AppCompatActivity() {
 		swNotificationPopup.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
 		swNotificationPopupPassenger.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean()
 		swGMaps.isChecked = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
+		swGmapWidescreen.isChecked = AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()
 
 		val gmapStylePosition = resources.getStringArray(R.array.gmaps_styles).map { title ->
 			title.toLowerCase().replace(' ', '_')

@@ -187,9 +187,6 @@ class MusicController(val context: Context, val handler: Handler) {
 	}
 	/** Gets the current song's title and other metadata */
 	fun getMetadata(): MusicMetadata? {
-		if (controller == null) {
-			Log.w(TAG, "Can't load metadata from null music app connection")
-		}
 		try {
 			val mediaMetadata = controller?.metadata ?: return null
 			val playbackState = controller?.playbackState
@@ -198,9 +195,6 @@ class MusicController(val context: Context, val handler: Handler) {
 	}
 	/** Gets the song's playback position */
 	fun getPlaybackPosition(): PlaybackPosition {
-		if (controller == null) {
-			Log.w(TAG, "Can't load playback position from null music app connection")
-		}
 		val playbackState = try {
 			controller?.playbackState
 		} catch (e: DeadObjectException) { null }

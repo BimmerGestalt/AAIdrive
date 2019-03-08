@@ -14,6 +14,7 @@ object AppSettings {
 		ENABLED_NOTIFICATIONS_POPUP,
 		ENABLED_NOTIFICATIONS_POPUP_PASSENGER,
 		ENABLED_GMAPS,
+		MAP_WIDESCREEN,
 		GMAPS_STYLE,
 		AUDIO_ENABLE_CONTEXT
 	}
@@ -22,6 +23,7 @@ object AppSettings {
 		KEYS.ENABLED_NOTIFICATIONS_POPUP to SettingDefinition("Enabled_Notifications_Popup", "true", "Show notification popups in the car"),
 		KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER to SettingDefinition("Enabled_Notifications_Popup_Passenger", "false", "Show notification popups in the car when a passenger is seated"),
 		KEYS.ENABLED_GMAPS to SettingDefinition("Enabled_GMaps", "false", "Show Google Maps in the car"),
+		KEYS.MAP_WIDESCREEN to SettingDefinition("Map_Widescreen", "true", "Show Map in widescreen"),
 		KEYS.GMAPS_STYLE to SettingDefinition("GMaps_Style", "auto", "GMaps style"),
 		KEYS.AUDIO_ENABLE_CONTEXT to SettingDefinition("Audio_Enable_Context", "true", "Request audio context")
 	)

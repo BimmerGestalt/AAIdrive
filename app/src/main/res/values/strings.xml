@@ -14,6 +14,7 @@
     <string name="notification_popups">Notification Popups</string>
     <string name="notification_popups_passenger">Popups with passenger</string>
     <string name="enable_google_maps">Enable Google Maps</string>
+    <string name="lbl_widescreen_map">Widescreen Map</string>
     <string name="gmapStyleLabel">Map Style</string>
     <string name="lbl_music_apps">Music Apps</string>
     <string name="imgdescAppIcon">App Icon</string>

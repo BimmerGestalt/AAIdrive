@@ -44,6 +44,7 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 
 			map.isIndoorEnabled = false
 			map.isTrafficEnabled = true
+			map.setPadding(150, 0, 150, 0)
 
 			if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 				map.isMyLocationEnabled = true
