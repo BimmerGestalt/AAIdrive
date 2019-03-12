@@ -13,6 +13,7 @@ import me.hufman.androidautoidrive.MainActivity
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.EXTRA_NOTIFICATION
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.INTENT_NEW_NOTIFICATION
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.INTENT_UPDATE_NOTIFICATIONS
+import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 
 class NotificationListenerServiceImpl: NotificationListenerService() {
 	companion object {
@@ -87,12 +88,14 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	}
 
 	override fun onNotificationRemoved(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
+		if (!IDriveConnectionListener.isConnected) return
 		Log.i(TAG, "Notification removed: ${sbn?.notification?.extras?.get("android.title")}")
 		super.onNotificationRemoved(sbn, rankingMap)
 		updateNotificationList()
 	}
 
 	override fun onNotificationPosted(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
+		if (!IDriveConnectionListener.isConnected) return
 		val extras = sbn?.notification?.extras
 		val details = extras?.keySet()?.map { "  ${it}=>${extras.get(it)}" }?.joinToString("\n") ?: ""
 		Log.i(TAG, "Notification posted: ${extras?.get("android.title")} with the ticker text ${sbn?.notification?.tickerText} and the keys:\n$details")
@@ -119,12 +122,14 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	open class NotificationUpdater(private val context: Context) {
 		/** Sends data from the phone NotificationListenerService to the car service */
 		open fun sendNotificationList() {
+			if (!IDriveConnectionListener.isConnected) return
 			Log.i(TAG, "Sending notification list to the car thread")
 			val intent = Intent(INTENT_UPDATE_NOTIFICATIONS)
 					.setPackage(context.packageName)
 			context.sendBroadcast(intent)
 		}
 		open fun sendNotification(notification: StatusBarNotification) {
+			if (!IDriveConnectionListener.isConnected) return
 			Log.i(TAG, "Sending new notification to the car thread")
 			val intent = Intent(INTENT_NEW_NOTIFICATION)
 					.setPackage(context.packageName)
