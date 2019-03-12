@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity() {
 		AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS, isChecked.toString())
 		if (isChecked) {
 			// make sure we have permissions to read the notifications
-			if (!hasNotificationPermission()) {
+			if (!hasNotificationPermission() || !UIState.notificationListenerConnected) {
 				startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
 			} else {
 				startMainService()
