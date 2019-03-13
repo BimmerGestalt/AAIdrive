@@ -84,6 +84,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		}
 
 		// set up the list
+		stateList.getTextModel()?.asRaDataModel()?.value = L.NOTIFICATIONS_TITLE
 		stateList.componentsList.forEach { it.setVisible(false) }
 		val notificationListView = stateList.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull()
 		notificationListView?.setVisible(true)
@@ -233,9 +234,13 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		val appname = phoneAppResources.getAppName(notification.packageName)
 		listData.addRow(arrayOf(icon, "", appname))
 		listData.addRow(arrayOf("", "", notification.title ?: ""))
-		listData.addRow(arrayOf("", "", notification.text ?: ""))
+		(notification.text ?: "").split(Regex("\n")).filter {
+			it.isNotEmpty()
+		}.forEach {
+			listData.addRow(arrayOf("", "", it))
+		}
 
-		stateView.getTextModel()?.asRaDataModel()?.value = appname
+		stateView.getTextModel()?.asRaDataModel()?.value = notification.title ?: appname
 
 		val listWidget = stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull() ?: return
 		listWidget.getModel()?.value = listData
@@ -296,7 +301,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			val bodyLabel2 = statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().getOrNull(1)?.getModel()?.asRaDataModel() ?: return
 			titleLabel.value = appname
 			bodyLabel1.value = sbn.title.toString()
-			bodyLabel2.value = sbn.text.toString()
+			bodyLabel2.value = sbn.text?.split(Regex("\n"))?.lastOrNull() ?: sbn.summary ?: ""
 			if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
 					(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
 							!passengerSeated)

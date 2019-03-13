@@ -26,6 +26,7 @@
     <string name="connectionStatusWaiting">Waiting for connection to car</string>
 
     <!-- car app strings -->
+    <string name="NOTIFICATIONS_TITLE">Notifications</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">No Notifications</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Clear</string>
 

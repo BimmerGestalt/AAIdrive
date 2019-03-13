@@ -5,8 +5,16 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
+import android.graphics.drawable.Icon
+import android.os.Build
+import android.os.Bundle
+import android.os.Parcelable
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.support.annotation.RequiresApi
+import android.support.v4.app.NotificationCompat.EXTRA_LARGE_ICON
+import android.support.v4.app.NotificationCompat.EXTRA_LARGE_ICON_BIG
 import android.util.Log
 import me.hufman.androidautoidrive.UIState
 import me.hufman.androidautoidrive.MainActivity
@@ -14,6 +22,11 @@ import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Compa
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.INTENT_NEW_NOTIFICATION
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.INTENT_UPDATE_NOTIFICATIONS
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+
+fun Notification.isGroupSummary(): Boolean {
+	val FLAG_GROUP_SUMMARY = 0x00000200     // hard-coded to work on old SDK
+	return this.group != null && (this.flags and FLAG_GROUP_SUMMARY) != 0
+}
 
 class NotificationListenerServiceImpl: NotificationListenerService() {
 	companion object {
@@ -26,11 +39,22 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		const val EXTRA_INTERACTION_ACTION = "EXTRA_INTERACTION_ACTION"
 		const val EXTRA_ACTION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotificationUpdate.EXTRA_ACTION"
 
+		/**
+		 * Summarize an Android Notification into what should be shown in the car
+		 */
 		fun summarizeNotification(sbn: StatusBarNotification): CarNotification {
 			var title:String? = null
 			var text:String? = null
 			var summary:String? = null
 			val extras = sbn.notification.extras
+			var icon = sbn.notification.smallIcon
+
+			// some extra handling for special notifications
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+					extras.getString(Notification.EXTRA_TEMPLATE) == "android.app.Notification\$MessagingStyle") {
+				return summarizeMessagingNotification(sbn)
+			}
+
 			if (extras.getCharSequence(Notification.EXTRA_TITLE) != null) {
 				title = extras.getCharSequence(Notification.EXTRA_TITLE).toString()
 			}
@@ -50,9 +74,64 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 			if (extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES) != null) {
 				text = extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES).joinToString("\n")
 			}
-			val summarized = CarNotification(sbn.packageName, sbn.key, sbn.notification.smallIcon, sbn.isClearable, sbn.notification.actions ?: arrayOf(),
+			if (extras.getParcelable<Parcelable>(EXTRA_LARGE_ICON) != null) {
+				// might have a user avatar, which might be an icon or a bitmap
+				val parcel: Parcelable = extras.getParcelable(EXTRA_LARGE_ICON)
+				if (parcel is Icon) icon = parcel
+				if (parcel is Bitmap) icon = Icon.createWithBitmap(parcel)
+			}
+			if (extras.getParcelable<Parcelable>(EXTRA_LARGE_ICON_BIG) != null) {
+				// might have a user avatar, which might be an icon or a bitmap
+				val parcel: Parcelable = extras.getParcelable(EXTRA_LARGE_ICON_BIG)
+				if (parcel is Icon) icon = parcel
+				if (parcel is Bitmap) icon = Icon.createWithBitmap(parcel)
+			}
+
+			val summarized = CarNotification(sbn.packageName, sbn.key, icon, sbn.isClearable, sbn.notification.actions ?: arrayOf(),
 					title, summary, text)
 			return summarized
+		}
+
+		@RequiresApi(Build.VERSION_CODES.O)
+		fun summarizeMessagingNotification(sbn: StatusBarNotification): CarNotification {
+			val extras = sbn.notification.extras
+			val title = extras.getCharSequence(Notification.EXTRA_TITLE).toString()
+			val historicMessages = extras.getParcelableArray(Notification.EXTRA_HISTORIC_MESSAGES) ?: arrayOf()
+			val messages = extras.getParcelableArray(Notification.EXTRA_MESSAGES) ?: arrayOf()
+			val summary = extras.getCharSequence(Notification.EXTRA_TEXT).toString()
+			val text = (historicMessages + messages).filterIsInstance<Bundle>().takeLast(5).joinToString("\n") {
+				"${it.getCharSequence("sender")}: ${it.getCharSequence("text")}"
+			}
+
+			var icon = sbn.notification.smallIcon
+			if (extras.getParcelable<Parcelable>(EXTRA_LARGE_ICON) != null) {
+				// might have a user avatar, which might be an icon or a bitmap
+				val parcel: Parcelable = extras.getParcelable(EXTRA_LARGE_ICON)
+				if (parcel is Icon) icon = parcel
+				if (parcel is Bitmap) icon = Icon.createWithBitmap(parcel)
+			}
+			if (extras.getParcelable<Parcelable>(EXTRA_LARGE_ICON_BIG) != null) {
+				// might have a user avatar, which might be an icon or a bitmap
+				val parcel: Parcelable = extras.getParcelable(EXTRA_LARGE_ICON_BIG)
+				if (parcel is Icon) icon = parcel
+				if (parcel is Bitmap) icon = Icon.createWithBitmap(parcel)
+			}
+			return CarNotification(sbn.packageName, sbn.key, icon, sbn.isClearable, sbn.notification.actions ?: arrayOf(),
+					title, summary, text)
+		}
+
+		fun shouldPopupNotification(sbn: StatusBarNotification?): Boolean {
+			if (sbn == null) return false
+			val alreadyShown = NotificationsState.notifications.any {
+				it.key == sbn.key && it.text == summarizeNotification(sbn).text
+			}
+			return sbn.isClearable && !alreadyShown
+		}
+
+		fun shouldShowNotification(sbn: StatusBarNotification): Boolean {
+			return !sbn.notification.isGroupSummary() && (
+				sbn.isClearable || sbn.notification.actions?.isNotEmpty() == true
+			)
 		}
 	}
 
@@ -98,20 +177,18 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		if (!IDriveConnectionListener.isConnected) return
 		val extras = sbn?.notification?.extras
 		val details = extras?.keySet()?.map { "  ${it}=>${extras.get(it)}" }?.joinToString("\n") ?: ""
-		Log.i(TAG, "Notification posted: ${extras?.get("android.title")} with the ticker text ${sbn?.notification?.tickerText} and the keys:\n$details")
+		Log.i(TAG, "Notification posted: ${extras?.get("android.title")} with the keys:\n$details")
 		super.onNotificationPosted(sbn, rankingMap)
-		val alreadyShown = NotificationsState.notifications.any {
-			it.key == sbn?.key
-		}
+		val shouldPopup = shouldPopupNotification(sbn)
 		updateNotificationList()
-		if (sbn != null && sbn.isClearable && !alreadyShown) controller.sendNotification(sbn)
+		if (sbn != null && shouldPopup) controller.sendNotification(sbn)
 	}
 
 	fun updateNotificationList() {
 		synchronized(NotificationsState.notifications) {
 			NotificationsState.notifications.clear()
 			NotificationsState.notifications.addAll(this.activeNotifications.filter {
-				it.isClearable || it.notification.actions?.isNotEmpty() == true
+				shouldShowNotification(it)
 			}.map {
 				summarizeNotification(it)
 			})

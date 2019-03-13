@@ -29,6 +29,7 @@ object L {
 	var MUSIC_QUEUE_EMPTY = "<Empty Queue>"
 	var MUSIC_SKIP_PREVIOUS = "Back"
 	var MUSIC_SKIP_NEXT = "Next"
+	val NOTIFICATIONS_TITLE = "Notifications"
 
 	fun loadResources(context: Context, locale: Locale? = null) {
 		val thisContext = if (locale == null) { context } else {

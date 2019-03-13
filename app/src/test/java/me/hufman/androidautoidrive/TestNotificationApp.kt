@@ -128,8 +128,28 @@ class TestNotificationApp {
 		assertEquals("Custom Action", notificationObject.actions[0].title)
 	}
 
-	fun createNotificationObject(title:String, text:String, summary:String, clearable:Boolean=false): CarNotification {
+	@Test
+	fun testSummaryMessaging() {
+		val message = mock<Bundle> {
+			on { getCharSequence(eq("sender")) } doReturn "Sender"
+			on { getCharSequence(eq("text")) } doReturn "Message"
+		}
+		val message2 = mock<Bundle> {
+			on { getCharSequence(eq("sender")) } doReturn "Sender"
+			on { getCharSequence(eq("text")) } doReturn "Message2"
+		}
+		val notification = createNotification("Ticker Text", "Title", "Text", "Summary", true)
+		whenever(notification.notification.extras.getString(eq(Notification.EXTRA_TEMPLATE))) doReturn "android.app.Notification\$MessagingStyle"
+		whenever(notification.notification.extras.getParcelableArray(eq(Notification.EXTRA_HISTORIC_MESSAGES))) doAnswer { null }
+		whenever(notification.notification.extras.getParcelableArray(eq(Notification.EXTRA_MESSAGES))) doReturn arrayOf(
+				message, message2
+		)
 
+		val notificationObject = NotificationListenerServiceImpl.summarizeNotification(notification)
+		assertEquals("Sender: Message\nSender: Message2", notificationObject.text)
+	}
+
+	fun createNotificationObject(title:String, text:String, summary:String, clearable:Boolean=false): CarNotification {
 		val actions = arrayOf(mock<Notification.Action> {
 		})
 		actions[0].title = "Custom Action"
