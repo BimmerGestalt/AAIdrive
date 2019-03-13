@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">AndroidAutoIdrive</string>
+    <string name="permlab_accessNotifications">Notification d\'accès iDrive</string>
+    <string name="permlab_bindNotificationListenerService">Notification d\'accès iDrive</string>
+    <string name="permdesc_accessNotifications">Notification d\'accès iDrive</string>
+    <string name="permdesc_bindNotificationListenerService">Notification d\'accès iDrive</string>
+    <string name="notification_title">Android Auto pour iDrive</string>
+    <string name="notification_description">Connecté à la Voiture</string>
+    <string name="notification_description_bmw">Connecté à votre BMW</string>
+    <string name="notification_description_mini">Connecté à votre Mini</string>
+
+    <string name="spawn_test_notification">Tester les Notifications</string>
+    <string name="message_notifications">Notifications de Message</string>
+    <string name="notification_popups">Popups de Notification</string>
+    <string name="notification_popups_passenger">Popups de Notification Passager</string>
+    <string name="enable_google_maps">Activer Google Maps</string>
+    <string name="lbl_widescreen_map">Carte Elargie</string>
+    <string name="gmapStyleLabel">Style de Carte</string>
+    <string name="lbl_music_apps">Applications de Musique</string>
+    <string name="imgdescAppIcon">Icône de l\'Application</string>
+    <string name="imgdescConnectable">Connectable</string>
+    <string name="imgdescBrowseable">Navigable</string>
+    <string name="imgdescSearchable">Consultable</string>
+    <string name="enable_audio_context">Demande de Focus Audio</string>
+    <string name="connectionStatusMissingConnectedApp">Applications Connected ou Connected Classic non trouvées</string>
+    <string name="connectionStatusWaiting">En Attente de Connection</string>
+
+    <!-- car app strings -->
+    <string name="NOTIFICATIONS_EMPTY_LIST">Pas de Notifications</string>
+    <string name="NOTIFICATION_CLEAR_ACTION">Supprimer</string>
+
+    <string name="MAP_ACTION_VIEWMAP">Plein Ecran</string>
+    <string name="MAP_ACTION_SEARCH">Rechercher un endroit</string>
+    <string name="MAP_ACTION_CLEARNAV">Effacer Itinéraire</string>
+
+    <string name="MUSIC_APPLIST_TITLE">Applications</string>
+    <string name="MUSIC_APPLIST_EMPTY">&lt;Liste Vide&gt;</string>
+    <string name="MUSIC_CUSTOMACTIONS_TITLE">Actions</string>
+    <string name="MUSIC_BROWSE_TITLE">Naviguer</string>
+    <string name="MUSIC_BROWSE_EMPTY">&lt;Vide&gt;</string>
+    <string name="MUSIC_BROWSE_LOADING">&lt;Chargement&gt;</string>
+    <string name="MUSIC_BROWSE_SEARCHING">&lt;Recherche en Cours&gt;</string>
+    <string name="MUSIC_BROWSE_ACTION_JUMPBACK">Retour au Précédent</string>
+    <string name="MUSIC_BROWSE_ACTION_FILTER">Filtrer</string>
+    <string name="MUSIC_BROWSE_ACTION_SEARCH">Rechercher</string>
+    <string name="MUSIC_QUEUE_TITLE">Lecture en Cours</string>
+    <string name="MUSIC_QUEUE_EMPTY">&lt;Liste Vide&gt;</string>
+    <string name="MUSIC_SKIP_PREVIOUS">Précédent</string>
+    <string name="MUSIC_SKIP_NEXT">Suivant</string>
+</resources>
