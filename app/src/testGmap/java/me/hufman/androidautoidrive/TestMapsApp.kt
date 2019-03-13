@@ -40,6 +40,7 @@ class TestMapsApp {
 	}
 
 	init {
+		AppSettings.loadDefaultSettings()
 		SecurityService.activeSecurityConnections["mock"] = mock {
 			on { signChallenge(any(), any() )} doReturn ByteArray(512)
 		}

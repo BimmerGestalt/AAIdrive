@@ -78,31 +78,31 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		knownApps.keys.filter { ident == "androidautoidrive.${it.packageName}" }.firstOrNull()?.apply { av_requestContext(this) }
 	}
 	fun av_requestContext(app: MusicAppInfo) {
-			val handle = knownApps[app]
-			if (handle == null) {
-				Log.w(TAG, "Wanted to requestContext for missing app ${app.name}?")
-				return
-			}
-			desiredApp = app
-			val setting = AppSettings[AppSettings.KEYS.AUDIO_ENABLE_CONTEXT]
-			if (setting.toBoolean()) {
-				Log.i(TAG, "Sending requestContext to car for ${app.name}")
-				synchronized(this.app) {
-					if (!currentContext) {
-						carConnection.av_requestConnection(mainHandle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
-					}
-					carConnection.av_requestConnection(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
+		val handle = knownApps[app]
+		if (handle == null) {
+			Log.w(TAG, "Wanted to requestContext for missing app ${app.name}?")
+			return
+		}
+		desiredApp = app
+		val setting = AppSettings[AppSettings.KEYS.AUDIO_ENABLE_CONTEXT]
+		if (setting.toBoolean()) {
+			Log.i(TAG, "Sending requestContext to car for ${app.name}")
+			synchronized(this.app) {
+				if (!currentContext) {
+					carConnection.av_requestConnection(mainHandle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
 				}
-				// start playback anyways
-				controller.connectApp(app)
-				controller.play()
-				av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
-			} else {
-				// just assume the car has given us access, and play the app anyways
-				controller.connectApp(app)
-				controller.play()
-				av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
+				carConnection.av_requestConnection(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
 			}
+			// start playback anyways
+			controller.connectApp(app)
+			controller.play()
+			av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
+		} else {
+			// just assume the car has given us access, and play the app anyways
+			controller.connectApp(app)
+			controller.play()
+			av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
+		}
 	}
 
 	fun av_connectionGranted(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
