@@ -91,7 +91,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 		Log.i(TAG, "Testing ${appInfo.name} for connectivity")
 		val component = ComponentName(appInfo.packageName, appInfo.className)
 
-		disconnectApp(appInfo)  // clear any previous connectino
+		disconnectApp(appInfo)  // clear any previous connection
 		val mediaBrowser = MediaBrowserCompat(
 				context, component, object: MediaBrowserCompat.ConnectionCallback() {
 			override fun onConnected() {
@@ -106,18 +106,22 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 				// check for browse and searching
 				GlobalScope.launch {
 					val browseJob = launch {
-						val browseResult = MusicBrowser(context, handler, appInfo).browse(null)
+						val browser = MusicBrowser(context, handler, appInfo)
+						val browseResult = browser.browse(null)
 						if (browseResult.isNotEmpty()) {
 							appInfo.browseable = true
 							listener?.run()
 						}
+						browser.disconnect()
 					}
 					val searchJob = launch {
-						val searchResult = MusicBrowser(context, handler, appInfo).search("query")
+						val browser = MusicBrowser(context, handler, appInfo)
+						val searchResult = browser.search("query")
 						if (searchResult != null) {
 							appInfo.searchable = true
 							listener?.run()
 						}
+						browser.disconnect()
 					}
 					browseJob.join()
 					searchJob.join()
