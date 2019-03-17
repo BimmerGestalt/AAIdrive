@@ -10,7 +10,7 @@ import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
-import java.io.IOError
+import java.io.IOException
 
 private const val IMAGEID_ARTIST = 150
 private const val IMAGEID_ALBUM = 148
@@ -191,7 +191,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 				albumArtSmallModel.value = phoneAppResources.getBitmap(song.coverArtUri, 200, 200)
 				albumArtBigComponent.setVisible(true)
 				albumArtSmallComponent.setVisible(true)
-			} catch (e: IOError) {
+			} catch (e: IOException) {
 				albumArtBigComponent.setVisible(false)
 				albumArtSmallComponent.setVisible(false)
 			}
