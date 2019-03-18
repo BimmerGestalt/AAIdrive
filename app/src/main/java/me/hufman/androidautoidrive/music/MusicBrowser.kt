@@ -95,7 +95,7 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 		}
 	}
 
-	suspend fun browse(path: String?): List<MediaBrowserCompat.MediaItem> {
+	suspend fun browse(path: String?, timeout: Long = 5000): List<MediaBrowserCompat.MediaItem> {
 		val deferred = CompletableDeferred<List<MediaBrowserCompat.MediaItem>>()
 		withContext(handler.asCoroutineDispatcher()) {
 			connect()
@@ -112,6 +112,16 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 						deferred.complete(children)
 					}
 				})
+				// now we wait for the results
+				withTimeout(timeout) {
+					while (!deferred.isCompleted) {
+						delay(100)
+					}
+				}
+				if (!deferred.isCompleted) {
+					deferred.complete(LinkedList())
+				}
+				true    // requires a boolean for this branch?
 			} else {
 				deferred.complete(LinkedList())
 			}
@@ -119,7 +129,7 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 		return deferred.await()
 	}
 
-	suspend fun search(query: String): List<MediaBrowserCompat.MediaItem>? {
+	suspend fun search(query: String, timeout: Long = 5000): List<MediaBrowserCompat.MediaItem>? {
 		val deferred = CompletableDeferred<List<MediaBrowserCompat.MediaItem>?>()
 		withContext(handler.asCoroutineDispatcher()) {
 			connect()
@@ -134,6 +144,15 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 					}
 				})
 			} else {
+				deferred.complete(null)
+			}
+			// now we wait for the results
+			withTimeout(timeout) {
+				while (!deferred.isCompleted) {
+					delay(100)
+				}
+			}
+			if (!deferred.isCompleted) {
 				deferred.complete(null)
 			}
 		}
