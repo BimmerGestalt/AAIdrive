@@ -13,7 +13,6 @@ import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServ
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
-import java.util.*
 
 class MainService: Service() {
 	companion object {
@@ -25,6 +24,14 @@ class MainService: Service() {
 	val ONGOING_NOTIFICATION_ID = 20503
 	var foregroundNotification: Notification? = null
 
+	val idriveConnectionListener = IDriveConnectionListener()   // start listening to car connection, if the AndroidManifest listener didn't start
+	val carProberThread by lazy {
+		CarProber(
+			CarAppAssetManager(this, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
+			CarAppAssetManager(this, "smartthings").getAppCertificateRaw("mini")!!.readBytes()
+		)
+	}
+
 	val securityServiceThread = SecurityServiceThread(this)
 
 	var threadNotifications: CarThread? = null
@@ -33,6 +40,7 @@ class MainService: Service() {
 	var mapService = MapService(this)
 
 	var musicService = MusicService(this)
+
 
 	override fun onBind(intent: Intent?): IBinder? {
 		return null
@@ -50,6 +58,9 @@ class MainService: Service() {
 
 	override fun onDestroy() {
 		handleActionStop()
+		// one time things
+		idriveConnectionListener.unsubscribe(this)
+		carProberThread.quitSafely()
 		super.onDestroy()
 	}
 
@@ -69,6 +80,13 @@ class MainService: Service() {
 		})
 		IDriveConnectionListener.callback = Runnable {
 			combinedCallback()
+		}
+		// start up car connection listener
+		idriveConnectionListener.subscribe(this)
+		if (!carProberThread.isAlive) {
+			carProberThread.start()
+		} else {
+			carProberThread.schedule(1000)
 		}
 	}
 

@@ -40,13 +40,14 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 				carConnection.am_addAppEventHandler(amHandle, myIdent)
 			}
 			if (mainHandle == null) {
-				mainHandle = carConnection.av_create(IDriveConnectionListener.instanceId, myIdent)
+					mainHandle = carConnection.av_create(IDriveConnectionListener.instanceId ?: 13, myIdent)
 			}
 			for (app in apps) {
 				if (!knownApps.containsKey(app)) {
 					Log.i(TAG, "Creating avHandle for new app ${app.name}")
 					val appId = "androidautoidrive.${app.packageName}"
-					val handle = carConnection.av_create(IDriveConnectionListener.instanceId, appId)
+					val handle = carConnection.av_create(IDriveConnectionListener.instanceId
+							?: 13, appId)
 					knownApps[app] = handle
 					appHandles[handle] = app
 
