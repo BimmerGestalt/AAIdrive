@@ -28,6 +28,7 @@ import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
+import java.lang.IllegalStateException
 import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
@@ -258,7 +259,12 @@ class MainActivity : AppCompatActivity() {
 
 	fun startMainService() {
 		/** Start the service after enabling an app */
-		this.startService(Intent(this, MainService::class.java).setAction(MainService.ACTION_START))
+		try {
+			this.startService(Intent(this, MainService::class.java).setAction(MainService.ACTION_START))
+		} catch (e: IllegalStateException) {
+			// Android Oreo strenuously objects to starting the service if the activity isn't visible
+			// for example, when Android Studio tries to start the Activity with the screen off
+		}
 	}
 
 	inner class RedrawTask: Runnable {

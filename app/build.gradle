@@ -26,7 +26,7 @@ android {
     defaultConfig {
         applicationId "me.hufman.androidautoidrive"
         minSdkVersion 23
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode androidGitVersion.code()
         versionName androidGitVersion.name()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

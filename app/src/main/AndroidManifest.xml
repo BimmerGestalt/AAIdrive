@@ -39,6 +39,8 @@
             <intent-filter>
                 <action android:name="com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_ATTACHED" />
                 <action android:name="com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_DETACHED" />
+                <action android:name="me.hufman.androidautoidrive.CarConnectionListener_START" />
+                <action android:name="me.hufman.androidautoidrive.CarConnectionListener_STOP" />
             </intent-filter>
         </receiver>
 
@@ -51,8 +53,16 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+
+        <provider
+            android:name="me.hufman.androidautoidrive.CarAPIAssetProvider"
+            android:exported="true"
+            android:authorities="me.hufman.androidautoidrive.provider"
+            android:grantUriPermissions="true" />
+
     </application>
 
     <permission android:label="@string/permlab_accessNotifications" android:name="android.permission.ACCESS_NOTIFICATIONS" android:description="@string/permdesc_accessNotifications" />
     <permission android:label="@string/permlab_bindNotificationListenerService" android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" android:description="@string/permdesc_bindNotificationListenerService" />
+    <permission android:name="android.permission.FOREGROUND_SERVICE" />
 </manifest>
