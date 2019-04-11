@@ -169,6 +169,7 @@ class MainService: Service() {
 		carappNotifications?.onDestroy(this)
 		carappNotifications = null
 		threadNotifications?.handler?.looper?.quitSafely()
+		threadNotifications = null
 	}
 
 	fun startMaps(): Boolean {
