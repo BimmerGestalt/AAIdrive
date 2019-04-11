@@ -8,6 +8,10 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+// firebase build plugins
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'io.fabric'
+
 apply from: 'buildtools/ColoredOutput.gradle'
 
 apply from: 'buildtools/jacoco.gradle'
@@ -40,9 +44,15 @@ android {
         }
     }
 
-    flavorDimensions "map"
+    flavorDimensions "map", "analytics"
 
     productFlavors {
+        nonalytics {
+            dimension "analytics"
+        }
+        firebase {
+            dimension "analytics"
+        }
         nomap {
             dimension "map"
         }
@@ -91,5 +101,8 @@ dependencies {
     gmapImplementation 'com.google.android.gms:play-services-location:16.0.0'
     gmapImplementation 'com.google.android.gms:play-services-places:16.0.0'
     gmapImplementation 'com.google.maps:google-maps-services:0.1.20'
+
+    firebaseImplementation 'com.google.firebase:firebase-core:16.0.8'
+    firebaseImplementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
 }
 

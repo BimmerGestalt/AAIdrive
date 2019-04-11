@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		Analytics.init(this)
 		AppSettings.loadSettings(this)
 		L.loadResources(this)
 

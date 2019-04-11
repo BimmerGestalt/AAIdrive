@@ -62,6 +62,8 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 			return
 		}
 		// try logging in as if it were a bmw or a mini
+		var success = false
+		var errorMessage: String? = null
 		for (brand in listOf("bmw", "mini")) {
 			try {
 				val cert = if (brand == "bmw") bmwCert else miniCert
@@ -71,21 +73,29 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 				val sas_login = SecurityService.signChallenge(challenge = sas_challenge)
 				conn.sas_login(sas_login)
 				val capabilities = conn.rhmi_getCapabilities("", 255)
-				val type = capabilities["hmi.type"] as? String?
-				Log.i(TAG, "Probing detected a HMI type $type")
-				if (type?.startsWith("BMW") == true) {
+				val vehicleType = capabilities["vehicle.type"] as? String?
+				val hmiType = capabilities["hmi.type"] as? String?
+				Analytics.reportCarProbeDiscovered(port, vehicleType, hmiType)
+				Log.i(TAG, "Probing detected a HMI type $hmiType")
+				if (hmiType?.startsWith("BMW") == true) {
 					// BMW brand
 					setConnectedState(port, "bmw")
+					success = true
 					break
 				}
-				if (type?.startsWith("MINI") == true) {
+				if (hmiType?.startsWith("MINI") == true) {
 					// MINI connected
 					setConnectedState(port, "mini")
+					success = true
 					break
 				}
 			} catch (e: BMWRemoting.SecurityException) {
 				// Car rejected this cert
+				errorMessage = e.message
 			}
+		}
+		if (!success) {
+			Analytics.reportCarProbeFailure(port, errorMessage)
 		}
 	}
 
