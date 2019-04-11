@@ -75,8 +75,6 @@ class MainService: Service() {
 		securityServiceThread.connect()
 		SecurityService.subscribe(Runnable {
 			combinedCallback()
-
-			sendBroadcast(Intent(MainActivity.INTENT_REDRAW))   // tell the UI we are connected
 		})
 		IDriveConnectionListener.callback = Runnable {
 			combinedCallback()
@@ -137,6 +135,7 @@ class MainService: Service() {
 				Log.d(TAG, "Not fully connected: IDrive:${IDriveConnectionListener.isConnected} SecurityService:${SecurityService.isConnected()}")
 			}
 		}
+		sendBroadcast(Intent(MainActivity.INTENT_REDRAW))   // tell the UI we are connected
 	}
 
 	fun startNotifications(): Boolean {
