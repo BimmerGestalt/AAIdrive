@@ -21,7 +21,7 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 		val TAG = "CarProber"
 	}
 
-	lateinit var handler: Handler
+	var handler: Handler? = null
 	val ProberTask = Runnable {
 		for (port in PORTS) {
 			try {
@@ -46,9 +46,9 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 	}
 
 	fun schedule(delay: Long) {
-		handler.removeCallbacks(ProberTask)
+		handler?.removeCallbacks(ProberTask)
 		if (!IDriveConnectionListener.isConnected) {
-			handler.postDelayed(ProberTask, delay)
+			handler?.postDelayed(ProberTask, delay)
 		}
 	}
 
