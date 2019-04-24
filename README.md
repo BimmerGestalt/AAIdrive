@@ -38,7 +38,8 @@ Implemented Features
       - [PowerAmp](https://play.google.com/store/apps/details?id=com.maxmpz.audioplayer)
       - [Rocket Player](https://play.google.com/store/apps/details?id=com.jrtstudio.AnotherMusicPlayer)
       - [Scanner Radio](https://play.google.com/store/apps/details?id=com.scannerradio)
-      - [Spotify](https://play.google.com/store/apps/details?id=com.spotify.music)
+      - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android)
+      - Spotify (up to [version 8.4.96.953](https://www.apkhere.com/down/com.spotify.music_8.4.96.953_free))
       - [Tidal](https://play.google.com/store/apps/details?id=com.aspiro.tidal)
       - [YouTube](https://play.google.com/store/apps/details?id=com.google.android.youtube) (only music previous/next control, no video)
 
