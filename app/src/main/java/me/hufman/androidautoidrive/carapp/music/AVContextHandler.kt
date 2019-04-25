@@ -9,6 +9,8 @@ import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationEtch
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: MusicController, val phoneAppResources: PhoneAppResources) {
 	val TAG = "AVContextHandler"
@@ -57,6 +59,13 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		}
 	}
 
+	fun getAppWeight(app: MusicAppInfo): Int {
+		val name = app.name.toLowerCase().toCharArray().filter { it.isLetter() }
+		var score = min(name[0].toInt() - 'a'.toInt(), 'z'.toInt())
+		score = score * 6 + ((name[1].toInt() / 6.0).roundToInt())
+		return score
+	}
+
 	fun getAMInfo(app: MusicAppInfo): Map<Int, Any> {
 		val amInfo = mutableMapOf<Int, Any>(
 			0 to 145,   // basecore version
@@ -64,7 +73,7 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 			2 to phoneAppResources.getBitmap(app.icon, 48, 48), // icon
 			3 to "Multimedia",   // section
 			4 to true,
-			5 to 800,   // weight
+			5 to 800 - getAppWeight(app),   // weight
 			8 to -1  // mainstateId
 		)
 		// language translations
