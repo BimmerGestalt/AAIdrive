@@ -648,7 +648,7 @@ class TestMusicApp {
 		whenever(musicController.browseAsync(null)) doAnswer {
 			CompletableDeferred(listOf (
 					MusicMetadata("specialId1", title = "Play All",	browseable = false, playable = true),
-					MusicMetadata("folder1", title = "Folder", browseable = true, playable = false),
+					MusicMetadata("folderDeep1", title = "Folder deep", browseable = true, playable = false),
 					MusicMetadata("testId1", title = "File1", browseable = false, playable = true)
 			))
 		}
@@ -657,6 +657,9 @@ class TestMusicApp {
 					MusicMetadata("testId2", title = "Play All",	browseable = false, playable = true),
 					MusicMetadata("testId3", title = "File1", browseable = false, playable = true)
 			))
+		}
+		whenever(musicController.browseAsync(MusicMetadata("testId3", title = "File1", browseable = false, playable = true))) doAnswer {
+			CompletableDeferred(listOf ())
 		}
 
 		val page1 = browseView.pushBrowsePage(null)
@@ -667,15 +670,19 @@ class TestMusicApp {
 		// make sure the Jump Back action isn't showing
 		assertEquals(1, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)
 		assertArrayEquals(arrayOf("", "", "Filter"), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data[0])
+		assertEquals("", (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data[0][0])    // not checked
 
 		// now show with a previous location stack
 		mockServer.data.remove(IDs.BROWSE1_MUSIC_MODEL)
 		browseView.locationStack.add(MusicMetadata("folderDeep1", title = "Folder deep", browseable = true, playable = false))
+		page1.previouslySelected = browseView.locationStack[1]
 		page1.show()
 		await().untilAsserted {
 			assertEquals(3, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
 		assertArrayEquals(arrayOf("", "", "Jump Back"), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data[0])
+		assertEquals("Folder deep", (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data[1][2]) // checked
+		assertNotEquals("", (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data[1][0]) // checked
 
 		// try clicking the action
 		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
@@ -683,6 +690,28 @@ class TestMusicApp {
 		assertEquals(2, browseView.pageStack.size)
 		val page2 = browseView.pageStack[1]
 		page2.show()
+		await().untilAsserted {
+			assertEquals(2, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+		}
+		// back out
+		app.states[IDs.BROWSE2_STATE]?.onHmiEvent(1, mapOf(4.toByte() to false))
+		app.states[IDs.BROWSE1_STATE]?.onHmiEvent(1, mapOf(4.toByte() to true))
+
+		// test what happens when a song is clicked
+		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
+		mockServer.data.remove(IDs.BROWSE1_MUSIC_MODEL)
+		mockServer.data.remove(IDs.BROWSE2_MUSIC_MODEL)
+		browseView.locationStack.add(MusicMetadata("testId3", title = "File1", browseable = false, playable = true))
+		page1.show()
+		await().untilAsserted {
+			assertEquals(3, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+		}
+		assertArrayEquals(arrayOf("", "", "Jump Back"), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data[0])
+		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(IDs.BROWSE2_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+		assertEquals(2, browseView.pageStack.size)
+		assertEquals("folderDeep1", browseView.pageStack.last().folder?.mediaId)
+		browseView.pageStack.last().show()
 		await().untilAsserted {
 			assertEquals(2, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}

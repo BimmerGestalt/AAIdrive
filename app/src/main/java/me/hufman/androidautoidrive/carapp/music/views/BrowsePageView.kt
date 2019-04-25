@@ -92,7 +92,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 			val action = actions.getOrNull(index)
 			when (action) {
 				BrowseAction.JUMPBACK -> {
-					val nextPage = browseView.pushBrowsePage(browseView.locationStack.last())
+					val nextPage = browseView.pushBrowsePage(browseView.locationStack.lastOrNull {it?.browseable == true})
 					musicListComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
 				}
 				BrowseAction.FILTER -> {
