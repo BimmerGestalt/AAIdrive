@@ -16,6 +16,8 @@ apply from: 'buildtools/ColoredOutput.gradle'
 
 apply from: 'buildtools/jacoco.gradle'
 
+apply from: 'buildtools/SentryProperties.gradle'
+
 android {
     compileSdkVersion 26
     defaultConfig {
@@ -51,6 +53,9 @@ android {
             dimension "analytics"
         }
         firebase {
+            dimension "analytics"
+        }
+        sentry {
             dimension "analytics"
         }
         nomap {
@@ -104,5 +109,7 @@ dependencies {
 
     firebaseImplementation 'com.google.firebase:firebase-core:16.0.8'
     firebaseImplementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
+    sentryImplementation 'io.sentry:sentry-android:1.7.16'
+    sentryImplementation 'org.slf4j:slf4j-nop:1.7.25'
 }
 
