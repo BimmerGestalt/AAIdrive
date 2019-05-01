@@ -1,0 +1,21 @@
+/** Automatically build the app's sentry.properties file from gradle.properties */
+
+project.task("sentryProperties") {
+    inputs.property("AndroidAutoIdrive_SentryDsn") {
+        AndroidAutoIdrive_SentryDsn
+    }
+    outputs.file("src/main/resources/sentry.properties")
+    doLast {
+        file("src/main/resources/sentry.properties").text = """dsn=${AndroidAutoIdrive_SentryDsn}
+"""
+    }
+}
+
+project.afterEvaluate {
+    tasks.each {
+        if (it.name.startsWith("assemble")) {
+            it.dependsOn(tasks.getByName("sentryProperties"))
+            it.mustRunAfter(tasks.getByName("sentryProperties"))
+        }
+    }
+}

@@ -34,6 +34,9 @@ class MainService: Service() {
 
 	val securityServiceThread = SecurityServiceThread(this)
 
+	var threadCapabilities: CarThread? = null
+	var carappCapabilities: CarInformationDiscovery? = null
+
 	var threadNotifications: CarThread? = null
 	var carappNotifications: PhoneNotifications? = null
 
@@ -47,6 +50,8 @@ class MainService: Service() {
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+		Analytics.init(this)
+
 		val action = intent?.action ?: ""
 		if (action == ACTION_START) {
 			handleActionStart()
@@ -114,6 +119,9 @@ class MainService: Service() {
 				AppSettings.loadSettings(this)
 				L.loadResources(this)
 
+				// report car capabilities
+				startCarCapabilities()
+
 				// start notifications
 				startAny = startAny or startNotifications()
 
@@ -136,6 +144,27 @@ class MainService: Service() {
 			}
 		}
 		sendBroadcast(Intent(MainActivity.INTENT_REDRAW))   // tell the UI we are connected
+	}
+
+	fun startCarCapabilities() {
+		synchronized(this) {
+			if (threadCapabilities == null) {
+				threadCapabilities = CarThread("Capabilities") {
+					Log.i(TAG, "Starting to discover car capabilities")
+
+					carappCapabilities = CarInformationDiscovery(CarAppAssetManager(this, "smartthings"))
+					carappCapabilities?.onCreate()
+				}
+				threadCapabilities?.start()
+			}
+		}
+	}
+
+	fun stopCarCapabilities() {
+		carappCapabilities?.onDestroy()
+		carappCapabilities = null
+		threadCapabilities?.handler?.looper?.quitSafely()
+		threadCapabilities = null
 	}
 
 	fun startNotifications(): Boolean {
@@ -193,6 +222,7 @@ class MainService: Service() {
 	private fun handleActionStop() {
 		Log.i(TAG, "Shutting down service")
 		synchronized(MainService::class.java) {
+			stopCarCapabilities()
 			stopNotifications()
 			stopMaps()
 			stopMusic()

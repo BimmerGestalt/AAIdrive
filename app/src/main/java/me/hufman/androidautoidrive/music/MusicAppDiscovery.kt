@@ -10,6 +10,7 @@ import android.support.v4.media.MediaBrowserServiceCompat
 import android.util.Log
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import me.hufman.androidautoidrive.Analytics
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -126,6 +127,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 					browseJob.join()
 					searchJob.join()
 					disconnectApp(appInfo)
+					Analytics.reportMusicAppProbe(appInfo)
 				}
 			}
 
@@ -133,6 +135,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 				appInfo.connectable = false
 				Log.i(TAG, "Failed to connect to ${appInfo.name}")
 				disconnectApp(appInfo)
+				Analytics.reportMusicAppProbe(appInfo)
 			}
 			}, null
 		)
