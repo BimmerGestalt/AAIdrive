@@ -121,14 +121,13 @@ fun Bundle.dumpToString(): String {
  */
 suspend inline fun <T> Deferred<T>.awaitPending(timeout: Long, timeoutHandler: () -> Unit): T {
 	val deferred = this
-	try {
+	return try {
 		return withTimeout(timeout) {
-			val result = deferred.await()
-			result
+			deferred.await()
 		}
 	} catch (ex: CancellationException) {
 		timeoutHandler()
-		return deferred.await()
+		deferred.await()
 	}
 }
 suspend inline fun <T> Deferred<T>.awaitPending(timeout: Int, timeoutHandler: () -> Unit): T {

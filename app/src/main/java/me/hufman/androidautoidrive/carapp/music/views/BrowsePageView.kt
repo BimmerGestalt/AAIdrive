@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.carapp.music.views
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import kotlinx.coroutines.*
+import kotlinx.coroutines.android.asCoroutineDispatcher
 import me.hufman.androidautoidrive.awaitPending
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
@@ -24,7 +25,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 		get() = Dispatchers.IO
 
 	companion object {
-		const val LOADING_TIMEOUT = 300
+		const val LOADING_TIMEOUT = 3000
 		const val TAG = "BrowsePageView"
 
 		val emptyList = RHMIModel.RaListModel.RHMIListConcrete(3).apply {
@@ -145,12 +146,14 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 		}
 
 		// start loading data
-		loaderJob = launch(Dispatchers.IO) {
+		loaderJob = launch(browseView.musicController.handler.asCoroutineDispatcher("BrowsePageLoader")) {
 			musicListComponent.setEnabled(false)
+			currentListModel = loadingList
 			val musicListDeferred = browseView.musicController.browseAsync(folder)
 			val musicList = musicListDeferred.awaitPending(LOADING_TIMEOUT) {
-				currentListModel = loadingList
-				showList()
+				Log.d(TAG, "Browsing ${folder?.mediaId} timed out, retrying")
+				show()
+				return@launch
 			}
 			this@BrowsePageView.musicList.clear()
 			this@BrowsePageView.musicList.addAll(musicList)
@@ -262,9 +265,12 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 			if (query.length >= 2) {
 				searchJob?.cancel()
 				searchJob = launch(Dispatchers.IO) {
+					inputComponent.getSuggestModel()?.asRaListModel()?.setValue(searchingList, 0, searchingList.height, searchingList.height)
 					val suggestionsDeferred = browseView.musicController.searchAsync(query)
 					val suggestions = suggestionsDeferred.awaitPending(LOADING_TIMEOUT) {
-						inputComponent.getSuggestModel()?.asRaListModel()?.setValue(searchingList, 0, searchingList.height, searchingList.height)
+						Log.d(TAG, "Searching ${browseView.musicController.currentApp?.musicAppInfo?.name} for \"$query\" timed out, retrying")
+						inputStateClosure?.onEntry?.invoke(query)
+						return@launch
 					}
 					inputStateClosure?.sendSuggestions(suggestions)
 				}
