@@ -146,9 +146,10 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 		}
 
 		// start loading data
-		loaderJob = launch(browseView.musicController.handler.asCoroutineDispatcher("BrowsePageLoader")) {
+		loaderJob = launch(Dispatchers.IO) {
 			musicListComponent.setEnabled(false)
 			currentListModel = loadingList
+			showList()
 			val musicListDeferred = browseView.musicController.browseAsync(folder)
 			val musicList = musicListDeferred.awaitPending(LOADING_TIMEOUT) {
 				Log.d(TAG, "Browsing ${folder?.mediaId} timed out, retrying")

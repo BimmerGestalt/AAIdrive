@@ -837,7 +837,6 @@ class TestMusicApp {
 		// enter a longer query
 		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "mario"))
 		await().untilAsserted { verify(musicController).searchAsync(any()) }
-		assertEquals(0, (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)    // nothing until we start showing the loader
 
 		await().untilAsserted {
 			assertArrayEquals(arrayOf(arrayOf("<Searching>")), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
