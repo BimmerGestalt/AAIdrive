@@ -3,7 +3,6 @@ package me.hufman.androidautoidrive
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
-import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CertMangling
@@ -24,20 +23,27 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 	var handler: Handler? = null
 	val ProberTask = Runnable {
 		for (port in PORTS) {
-			try {
-				val socket = Socket("127.0.0.1", port)
-				if (socket.isConnected) {
-					// we found a car proxy! probably
-					// let's try connecting to it
-					Log.i(TAG, "Found open socket at $port, detecting car brand")
-					probeCar(port)
-				}
-			} catch (e: IOException) {
-				// this port isn't open
+			if (probePort(port)) {
+				// we found a car proxy! probably
+				// let's try connecting to it
+				Log.i(TAG, "Found open socket at $port, detecting car brand")
+				probeCar(port)
+				// successful connection!
+				schedule(5000)
 			}
 		}
-
 		schedule(2000)
+	}
+
+	val KeepaliveTask = Runnable {
+		if (!probePort(IDriveConnectionListener.port ?: 0)) {
+			// car has disconnected
+			Log.i(TAG, "Previously-connected car has disconnected")
+			IDriveConnectionListener.reset()
+			schedule(5000)
+		}
+
+		schedule(5000)
 	}
 
 	override fun onLooperPrepared() {
@@ -50,6 +56,28 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 		if (!IDriveConnectionListener.isConnected) {
 			handler?.postDelayed(ProberTask, delay)
 		}
+
+		handler?.removeCallbacks(KeepaliveTask)
+		if (IDriveConnectionListener.isConnected) {
+			handler?.postDelayed(KeepaliveTask, delay)
+		}
+	}
+
+	/**
+	 * Detects whether a port is open
+	 */
+	private fun probePort(port: Int): Boolean {
+		try {
+			val socket = Socket("127.0.0.1", port)
+			if (socket.isConnected) {
+				socket.close()
+				return true
+			}
+		}
+		 catch (e: IOException) {
+			// this port isn't open
+		}
+		return false
 	}
 
 	/**
@@ -89,7 +117,7 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 					success = true
 					break
 				}
-			} catch (e: BMWRemoting.SecurityException) {
+			} catch (e: Exception) {
 				// Car rejected this cert
 				errorMessage = e.message
 			}

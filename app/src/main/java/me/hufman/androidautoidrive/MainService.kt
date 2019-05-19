@@ -141,6 +141,8 @@ class MainService: Service() {
 				}
 			} else {
 				Log.d(TAG, "Not fully connected: IDrive:${IDriveConnectionListener.isConnected} SecurityService:${SecurityService.isConnected()}")
+
+				stopCarApps()
 			}
 		}
 		sendBroadcast(Intent(MainActivity.INTENT_REDRAW))   // tell the UI we are connected
@@ -216,17 +218,21 @@ class MainService: Service() {
 		musicService.stop()
 	}
 
+	private fun stopCarApps() {
+		stopCarCapabilities()
+		stopNotifications()
+		stopMaps()
+		stopMusic()
+		stopServiceNotification()
+	}
+
 	/**
 	 * Stop the service
 	 */
 	private fun handleActionStop() {
 		Log.i(TAG, "Shutting down service")
 		synchronized(MainService::class.java) {
-			stopCarCapabilities()
-			stopNotifications()
-			stopMaps()
-			stopMusic()
-			stopServiceNotification()
+			stopCarApps()
 			SecurityService.listener = Runnable {}
 			securityServiceThread.disconnect()
 		}
