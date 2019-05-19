@@ -6,7 +6,7 @@ project.task("sentryProperties") {
     }
     outputs.file("src/main/resources/sentry.properties")
     doLast {
-        file("src/main/resources/sentry.properties").text = """dsn=${AndroidAutoIdrive_SentryDsn}
+        file("src/main/resources/sentry.properties").text = """dsn=${System.env.AndroidAutoIdrive_SentryDsn ? System.env.AndroidAutoIdrive_SentryDsn : AndroidAutoIdrive_SentryDsn}
 """
     }
 }
