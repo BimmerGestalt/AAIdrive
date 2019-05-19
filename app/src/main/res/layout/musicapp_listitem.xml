@@ -35,6 +35,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             app:srcCompat="@drawable/ic_play_circle_outline_black_24dp"
+            android:tint="?android:attr/textColorSecondary"
             android:contentDescription="@string/imgdescConnectable" />
 
         <ImageView
@@ -42,6 +43,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             app:srcCompat="@drawable/ic_folder_open_black_24dp"
+            android:tint="?android:attr/textColorSecondary"
             android:contentDescription="@string/imgdescBrowseable" />
 
         <ImageView
@@ -49,6 +51,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             app:srcCompat="@drawable/ic_search_black_24dp"
+            android:tint="?android:attr/textColorSecondary"
             android:contentDescription="@string/imgdescSearchable" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
