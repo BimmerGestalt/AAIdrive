@@ -28,10 +28,24 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        release
+    }
+    def isRunningOnTravis = System.getenv("CI") == "true"
+    if (isRunningOnTravis) {
+        // configure keystore
+        signingConfigs.release.storeFile = file("../keystore.jks")
+        signingConfigs.release.storePassword = System.getenv("keystore_password")
+        signingConfigs.release.keyAlias = System.getenv("keystore_alias")
+        signingConfigs.release.keyPassword = System.getenv("keystore_alias_password")
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
         debug {
             testCoverageEnabled true
