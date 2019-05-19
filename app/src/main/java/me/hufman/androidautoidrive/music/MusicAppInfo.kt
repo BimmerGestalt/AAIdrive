@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 
 data class MusicAppInfo(val name: String, val icon: Drawable,
                         val packageName: String, val className: String) {
+	var probed = false
 	var connectable = false
 	var browseable = false
 	var searchable = false
@@ -28,5 +29,14 @@ data class MusicAppInfo(val name: String, val icon: Drawable,
 		return result
 	}
 
-
+	fun toMap():Map<String, Any> {
+		return mapOf(
+				"name" to name,
+				"packageName" to packageName,
+				"className" to className,
+				"connectable" to connectable,
+				"browseable" to browseable,
+				"searchable" to searchable
+		)
+	}
 }

@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 		handler.post {
 			displayedApps.clear()
 			displayedApps.addAll(apps)
-			redrawTask.schedule(50)
+			listMusicApps.invalidateViews() // redraw the app list
 		}
 	}
 	var whenActivityStarted = 0L
@@ -126,6 +126,13 @@ class MainActivity : AppCompatActivity() {
 					layout
 				}
 			}
+		}
+
+		listMusicAppsRefresh.setOnRefreshListener {
+			appDiscoveryThread.forceDiscovery()
+			handler.postDelayed({
+				listMusicAppsRefresh.isRefreshing = false
+			}, 2000)
 		}
 
 		redrawTask.schedule()
@@ -215,8 +222,6 @@ class MainActivity : AppCompatActivity() {
 
 		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_ENABLE_CONTEXT].toBoolean()
 
-		listMusicApps.invalidateViews()
-
 		val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
 		if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && !SecurityService.isConnecting() && !SecurityService.isConnected()) {
 			txtConnectionStatus.text = resources.getString(R.string.connectionStatusMissingConnectedApp)
@@ -274,6 +279,7 @@ class MainActivity : AppCompatActivity() {
 				scheduleRedraw()
 			}
 			discovery.discoverApps()
+			discovery.probeApps(false)
 		}
 
 		private val redrawRunnable = Runnable {
@@ -283,6 +289,12 @@ class MainActivity : AppCompatActivity() {
 		private fun scheduleRedraw() {
 			handler.removeCallbacks(redrawRunnable)
 			handler.postDelayed(redrawRunnable, 100)
+		}
+
+		fun forceDiscovery() {
+			discovery.cancelDiscovery()
+			discovery.discoverApps()
+			discovery.probeApps(true)
 		}
 
 		fun stopDiscovery() {

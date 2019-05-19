@@ -13,8 +13,10 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@id/txtConnectionStatus"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
         <Switch
             android:id="@+id/swMessageNotifications"
@@ -75,15 +77,15 @@
                 android:id="@+id/swGmapWidescreen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginBottom="4dp"
+                android:layout_marginStart="16dp"
                 android:text="@string/lbl_widescreen_map" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginBottom="4dp"
+                android:layout_marginStart="16dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -119,12 +121,17 @@
             android:layout_marginStart="24dp"
             android:text="@string/enable_audio_context" />
 
-        <ListView
-            android:id="@+id/listMusicApps"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/listMusicAppsRefresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp" />
+            android:layout_height="match_parent">
+            <ListView
+                android:id="@+id/listMusicApps"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp" />
+        </android.support.v4.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 
