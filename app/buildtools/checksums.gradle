@@ -1,0 +1,35 @@
+import org.apache.commons.codec.digest.DigestUtils
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'commons-codec', name: 'commons-codec', version: '1.12'
+    }
+}
+
+task "generateApkChecksums" {
+    def packages = fileTree(dir: projectDir, includes: ["**/*.apk"])
+    inputs.files(packages)
+    outputs.files(packages.collect { new File(it.absolutePath + ".sha1") } )
+
+    doLast {
+        packages.each {File file ->
+            File fileSha1 = new File(file.absolutePath + ".sha1")
+            String checksum
+            file.withInputStream { ins -> checksum = DigestUtils.sha1Hex(ins) }
+            fileSha1.text = checksum
+        }
+    }
+}
+
+
+project.afterEvaluate {
+    tasks.each {
+        if (it.name.startsWith("assemble")) {
+//            generateApkChecksums.inputs.files(it.outputs.files)
+            it.finalizedBy(generateApkChecksums)
+        }
+    }
+}

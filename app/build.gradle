@@ -19,6 +19,8 @@ apply from: 'buildtools/jacoco.gradle'
 
 apply from: 'buildtools/SentryProperties.gradle'
 
+apply from: 'buildtools/checksums.gradle'
+
 android {
     compileSdkVersion 26
     defaultConfig {

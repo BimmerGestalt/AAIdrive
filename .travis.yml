@@ -25,7 +25,9 @@ deploy:
   file_glob: true
   file:
     - app/build/outputs/apk/nomapSentry/release/*apk
+    - app/build/outputs/apk/nomapSentry/release/*apk.sha1
     - app/build/outputs/apk/nomapNonalytics/release/*apk
+    - app/build/outputs/apk/nomapNonalytics/release/*apk.sha1
   on:
     tags: true
     repo: hufman/AndroidAutoIdrive
