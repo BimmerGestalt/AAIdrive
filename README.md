@@ -5,9 +5,9 @@ Android Auto for IDrive
 [![Coverage Status](https://coveralls.io/repos/github/hufman/AndroidAutoIdrive/badge.svg?branch=master)](https://coveralls.io/github/hufman/AndroidAutoIdrive?branch=master)
 [![Release Download](https://img.shields.io/github/release/hufman/AndroidAutoIdrive.svg)](https://github.com/hufman/AndroidAutoIdrive/releases/latest)
 
-The BMW/Mini IDrive does not offer native Android Auto integration, but does provide a much more powerful Connected Apps connectivity option, which offers many exciting integration points into the car.
+The BMW/Mini IDrive does not offer native Android Auto integration, but does provide a much more powerful Connected Apps connectivity option, which offers many exciting integration points into the car. This project is an effort to implement most of the features of Android Auto as unofficial BMW/Mini Connected Apps.
 
-This project is an effort to implement most of the features of Android Auto as an unofficial IDrive Connected App.
+By relying on the Connected Apps technology, this app is automatically themed to fit natively in the car and easily connects to the car without needing any modifications. Any MY2014 or newer BMW or Mini equipped with the "Navigation System Professional (S609A)" [option](https://www.mdecoder.com/) should be compatible.
 
 Overview
 --------
@@ -25,7 +25,7 @@ Implemented Features
     - Popup about new notifications
   - Google Maps
     - Basic search and routing
-    - Not enabled by default, showing Google Maps in a car is against the API EULA
+    - Not built by default, showing Google Maps in a car is against the Maps API license
   - Control of Android Auto compatible music apps
     - Supports browsing and searching apps' music libraries
     - Supports selecting from a list of currently-queued songs, as well as basic back/next control
@@ -50,7 +50,7 @@ Integration Points
 
 Besides showing a self-contained remote UI, the IDrive system offers many exciting integration points. Here are a few that this project supports:
 
-  - The Map View, Notification List, and Music Playback, can be assigned to the physical shortcut keys in the dashboard
+  - The Map View, Notification List, and Music Playback screens can be assigned to the physical shortcut keys in the dashboard
   - New notifications trigger a popup from anywhere in IDrive, not just in the main list
   - New notification popups can be disabled if a passenger is detected in the seat
   - The currently-playing app is displayed along the top of the IDrive screen
@@ -64,8 +64,8 @@ Due to the unofficial reverse-engineered nature of this project, it has some lim
 
   - The main menu entries' icons and text can't be altered, and so do not look exactly correct
   - The individual music app icons are not fully functional, but they do switch the active music source
-  - Android Oreo disabled Android Open Accessory Protocol 2 audio output, which is required to play audio over USB in IDrive 4++ used by Mini 2014-2017 and BMW i3 2014-2017. Please disable the app option "Request Audio Focus" and use Bluetooth audio
-  - Some Android Auto music apps enforce a whitelist of clients, preventing this app from connecting and controlling them. Some tested unavailable apps are:
+  - Android Oreo disabled Android Open Accessory Protocol 2 audio output, which is required to play audio over the app's USB connection in model years 2014-2017. Please disable the app option "Request Audio Focus" and use Bluetooth audio
+  - Some Android Auto music apps enforce a whitelist of clients, preventing this app from connecting and controlling them. These music apps are unavailable:
     - Audible
     - Bandcamp
     - CloudPlayer
@@ -77,6 +77,8 @@ Due to the unofficial reverse-engineered nature of this project, it has some lim
     - Pandora
     - Smart Audiobook Player
     - YouTube Music
+
+Additionally, BMW/Mini Connected seems to not be perfectly reliable on Android Pie. This app will lose connection to the car when Android kills the main Connected app, but will automatically reconnect when the connection is reestablished.
 
 Requirements
 ------------
