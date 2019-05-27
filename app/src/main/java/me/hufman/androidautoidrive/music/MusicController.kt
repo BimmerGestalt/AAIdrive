@@ -5,6 +5,7 @@ import android.os.DeadObjectException
 import android.os.Handler
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
+import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import android.util.Log
@@ -248,6 +249,10 @@ class MusicController(val context: Context, val handler: Handler) {
 		}
 
 		override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+			listener?.run()
+		}
+
+		override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
 			listener?.run()
 		}
 	}

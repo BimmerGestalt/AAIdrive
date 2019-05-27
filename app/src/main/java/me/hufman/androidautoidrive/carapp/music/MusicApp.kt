@@ -5,6 +5,7 @@ import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.carapp.RHMIApplicationIdempotent
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
@@ -22,7 +23,7 @@ const val TAG = "MusicApp"
 class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController) {
 	val carApp = createRHMIApp()
 
-	val avContext = AVContextHandler(carApp, musicController, phoneAppResources)
+	val avContext = AVContextHandler(((carApp.app as RHMIApplicationIdempotent).app as RHMIApplicationEtch), musicController, phoneAppResources)
 	val globalMetadata = GlobalMetadata(carApp, musicController)
 	var playbackViewVisible = false
 	val playbackView: PlaybackView
@@ -49,7 +50,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		// set up the app in the car
-		val carApp = RHMIApplicationSynchronized(RHMIApplicationEtch(carConnection, rhmiHandle))
+		val carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)))
 		carappListener.app = carApp
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 

@@ -162,6 +162,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		if (displayedSong != controller.getMetadata()) {
 			redrawSong()
 		}
+		redrawQueueButton()
 		redrawPosition()
 	}
 
@@ -171,6 +172,11 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		val image = phoneAppResources.getBitmap(app.icon, 48, 48)
 		appLogoModel.value = image
 		displayedApp = app
+	}
+
+	private fun redrawQueueButton() {
+		val queue = controller.getQueue()
+		queueToolbarButton.setEnabled(queue?.isNotEmpty() == true)
 	}
 
 	private fun redrawSong() {
@@ -199,9 +205,6 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 			albumArtBigComponent.setVisible(false)
 			albumArtSmallComponent.setVisible(false)
 		}
-
-		val queue = controller.getQueue()
-		queueToolbarButton.setEnabled(queue?.isNotEmpty() == true)
 
 		val customactions = controller.getCustomActions()
 		customActionButton.setEnabled(customactions.isNotEmpty())

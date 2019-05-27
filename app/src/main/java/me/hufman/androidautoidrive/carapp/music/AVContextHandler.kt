@@ -4,7 +4,6 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.PhoneAppResources
-import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
@@ -12,9 +11,9 @@ import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationEtch
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: MusicController, val phoneAppResources: PhoneAppResources) {
+class AVContextHandler(val app: RHMIApplicationEtch, val controller: MusicController, val phoneAppResources: PhoneAppResources) {
 	val TAG = "AVContextHandler"
-	val carConnection = ((app.app) as RHMIApplicationEtch).remoteServer
+	val carConnection = app.remoteServer
 	var mainHandle: Int? = null
 	val knownApps = HashMap<MusicAppInfo, Int>()
 	var amHandle: Int? = null
