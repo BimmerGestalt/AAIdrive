@@ -240,6 +240,7 @@ class TestMusicApp {
 		whenever(musicController.currentApp).then {
 			mock<MusicBrowser> {
 				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
+				on { connected } doReturn true
 			}
 		}
 		mockClient.rhmi_onActionEvent(1, "unused", IDs.ENTRYBUTTON_ACTION, mapOf(0 to 1))

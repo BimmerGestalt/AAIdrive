@@ -15,7 +15,8 @@ import java.util.*
 class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo: MusicAppInfo) {
 	private val TAG = "MusicBrowser"
 	private var connecting = false
-	private var connected = false   // whether we are still connected
+	var connected = false   // whether we are still connected
+		private set
 	private val mediaBrowser: MediaBrowserCompat    // all interactions with MediaBrowserCompat must be from the same thread
 	var listener: Runnable? = null
 		set(value) { field = value; if (connected) value?.run() }
