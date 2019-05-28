@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 	companion object {
 		const val INTENT_REDRAW = "me.hufman.androidautoidrive.REDRAW"
 		const val TAG = "MainActivity"
-		const val SECURITY_SERVICE_TIMEOUT = 3000
+		const val SECURITY_SERVICE_TIMEOUT = 1000
 		const val REDRAW_INTERVAL = 5000L
 		const val REQUEST_LOCATION = 4000
 	}
@@ -133,6 +133,11 @@ class MainActivity : AppCompatActivity() {
 			handler.postDelayed({
 				listMusicAppsRefresh.isRefreshing = false
 			}, 2000)
+		}
+
+		txtConnectionStatus.setOnClickListener {
+			val intent = Intent(this, SetupActivity::class.java)
+			startActivity(intent)
 		}
 
 		redrawTask.schedule()

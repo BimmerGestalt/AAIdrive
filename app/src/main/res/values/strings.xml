@@ -25,6 +25,16 @@
     <string name="connectionStatusMissingConnectedApp">Can\'t find Connected or Connected Classic app</string>
     <string name="connectionStatusWaiting">Waiting for connection to car</string>
 
+    <string name="txt_setup_bmw_ready">The app is ready to connect to a BMW</string>
+    <string name="txt_setup_mini_ready">The app is ready to connect to a Mini</string>
+    <string name="txt_setup_discovered_new_bmw">The BMW Connected app is detected, but Mini Connected Classic app also needs to be installed for this app to work:</string>
+    <string name="txt_setup_discovered_new_mini">The Mini Connected app is detected, but BMW Connected Classic app also needs to be installed for this app to work:</string>
+    <string name="txt_setup_bmw_missing">Not ready to connect to a BMW:</string>
+    <string name="txt_setup_mini_missing">Not ready to connect to a Mini:</string>
+    <string name="btn_install">Install</string>
+    <string name="btn_install_bmw">Install BMW Connected Classic</string>
+    <string name="btn_install_mini">Install Mini Connected Classic</string>
+
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notifications</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">No Notifications</string>
