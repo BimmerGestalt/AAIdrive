@@ -5,6 +5,7 @@ import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.Utils.loadZipfile
 import me.hufman.androidautoidrive.carapp.RHMIApplicationIdempotent
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.carapp.music.views.*
@@ -45,8 +46,8 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		// create the app in the car
 		val rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.music", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive.music", "me.hufman"))
 		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getUiDescription()?.readBytes(), BMWRemoting.RHMIResourceType.DESCRIPTION)
-		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getTextsDB("common")?.readBytes(), BMWRemoting.RHMIResourceType.TEXTDB)
-		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getImagesDB("common")?.readBytes(), BMWRemoting.RHMIResourceType.IMAGEDB)
+		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getTextsDB(IDriveConnectionListener.brand ?: "common")?.readBytes(), BMWRemoting.RHMIResourceType.TEXTDB)
+		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common")?.readBytes(), BMWRemoting.RHMIResourceType.IMAGEDB)
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		// set up the app in the car
@@ -63,8 +64,9 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 
 	init {
 		// locate specific windows in the app
+		val carAppImages = loadZipfile(carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
 		val unclaimedStates = LinkedList(carApp.states.values)
-		playbackView = PlaybackView(unclaimedStates.removeFirst { PlaybackView.fits(it) }, musicController, phoneAppResources)
+		playbackView = PlaybackView(unclaimedStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources)
 		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, phoneAppResources)
 		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, phoneAppResources)
 		browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController)

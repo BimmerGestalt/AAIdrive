@@ -12,11 +12,13 @@ import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.io.IOException
 
+private const val IMAGEID_COVERART_SMALL = 146
+private const val IMAGEID_COVERART_LARGE = 147
 private const val IMAGEID_ARTIST = 150
 private const val IMAGEID_ALBUM = 148
 private const val IMAGEID_SONG = 152
 
-class PlaybackView(val state: RHMIState, val controller: MusicController, val phoneAppResources: PhoneAppResources) {
+class PlaybackView(val state: RHMIState, val controller: MusicController, carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.ToolbarState &&
@@ -44,6 +46,9 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 	val customActionButton: RHMIComponent.ToolbarButton
 	val skipBackButton: RHMIComponent.ToolbarButton
 	val skipNextButton: RHMIComponent.ToolbarButton
+
+	val albumArtPlaceholderBig = carAppImages["$IMAGEID_COVERART_LARGE.png"]
+	val albumArtPlaceholderSmall = carAppImages["$IMAGEID_COVERART_SMALL.png"]
 
 	var displayedApp: MusicAppInfo? = null
 	var displayedSong: MusicMetadata? = null
@@ -187,10 +192,10 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		albumModel.value = song?.album ?: ""
 		trackModel.value = song?.title ?: ""
 		if (song?.coverArt != null) {
-			albumArtBigComponent.setVisible(true)
-			albumArtSmallComponent.setVisible(true)
 			albumArtBigModel.value = phoneAppResources.getBitmap(song.coverArt, 320, 320)
 			albumArtSmallModel.value = phoneAppResources.getBitmap(song.coverArt, 200, 200)
+			albumArtBigComponent.setVisible(true)
+			albumArtSmallComponent.setVisible(true)
 		} else if (song?.coverArtUri != null && !blacklistedUriApps.contains(controller.currentApp?.musicAppInfo?.name)) {
 			try {
 				albumArtBigModel.value = phoneAppResources.getBitmap(song.coverArtUri, 320, 320)
@@ -198,12 +203,10 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 				albumArtBigComponent.setVisible(true)
 				albumArtSmallComponent.setVisible(true)
 			} catch (e: IOException) {
-				albumArtBigComponent.setVisible(false)
-				albumArtSmallComponent.setVisible(false)
+				showPlaceholderCoverart()
 			}
 		} else {
-			albumArtBigComponent.setVisible(false)
-			albumArtSmallComponent.setVisible(false)
+			showPlaceholderCoverart()
 		}
 
 		val customactions = controller.getCustomActions()
@@ -213,6 +216,19 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ph
 		skipNextButton.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_NEXT))
 
 		displayedSong = song
+	}
+
+	private fun showPlaceholderCoverart() {
+		if (albumArtPlaceholderBig != null) {
+			albumArtBigModel.value = albumArtPlaceholderBig
+		} else {
+			albumArtBigComponent.setVisible(false)
+		}
+		if (albumArtPlaceholderSmall != null) {
+			albumArtSmallModel.value = albumArtPlaceholderSmall
+		} else {
+			albumArtSmallComponent.setVisible(false)
+		}
 	}
 
 	private fun redrawPosition() {

@@ -10,6 +10,8 @@ import kotlinx.coroutines.withTimeout
 import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
 import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
 import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.util.zip.ZipInputStream
 import kotlin.math.abs
 
 object Utils {
@@ -92,6 +94,17 @@ object Utils {
 			is Int -> obj
 			else -> default
 		}
+	}
+
+	fun loadZipfile(zipfile: InputStream?): Map<String, ByteArray> {
+		zipfile ?: return mapOf()
+		val contents = HashMap<String, ByteArray>()
+		val imageStream = ZipInputStream(zipfile)
+		while (true) {
+			val next = imageStream.nextEntry ?: break
+			contents[next.name] = imageStream.readBytes()
+		}
+		return contents
 	}
 }
 
