@@ -22,6 +22,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.ArgumentCaptor
 import java.io.ByteArrayInputStream
+import java.nio.charset.Charset
 import java.util.*
 
 class TestMusicApp {
@@ -109,8 +110,8 @@ class TestMusicApp {
 		on { getAppName(any()) } doReturn "Test AppName"
 		on { getAppIcon(any())} doReturn mock<Drawable>()
 		on { getIconDrawable(any())} doReturn mock<Drawable>()
-		on { getBitmap(isA<Drawable>(), any(), any(), any()) } doReturn ByteArray(0)
-		on { getBitmap(isA<Bitmap>(), any(), any(), any()) } doReturn ByteArray(0)
+		on { getBitmap(isA<Drawable>(), any(), any(), any()) } doAnswer {"Drawable{${it.arguments[1]}x${it.arguments[2]}}".toByteArray()}
+		on { getBitmap(isA<Bitmap>(), any(), any(), any()) } doAnswer {"Bitmap{${it.arguments[1]}x${it.arguments[2]}}".toByteArray()}
 	}
 
 	val musicAppDiscovery = mock<MusicAppDiscovery>()
@@ -226,8 +227,8 @@ class TestMusicApp {
 		val displayedNames = (mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data.map {
 			it[2]
 		}
-		assertTrue(displayedIcons[0] is ByteArray && displayedIcons[0].isEmpty())
-		assertTrue(displayedIcons[1] is ByteArray && displayedIcons[1].isEmpty())
+		assertEquals("Drawable{48x48}", (displayedIcons[0] as ByteArray).toString(Charset.defaultCharset()))
+		assertEquals("Drawable{48x48}", (displayedIcons[1] as ByteArray).toString(Charset.defaultCharset()))
 		assertEquals(listOf("Test1", "Test2"), displayedNames)
 
 		// try clicking an app
@@ -300,8 +301,8 @@ class TestMusicApp {
 		// verify things happened
 		verify(musicController, atLeastOnce()).getMetadata()
 		assertNotNull(mockServer.data[IDs.APPICON_MODEL])
-		assertNotNull(mockServer.data[IDs.COVERART_LARGE_MODEL])
-		assertNotNull(mockServer.data[IDs.COVERART_SMALL_MODEL])
+		assertEquals("Bitmap{320x320}", ((mockServer.data[IDs.COVERART_LARGE_MODEL] as BMWRemoting.RHMIResourceData).data as ByteArray).toString(Charset.defaultCharset()))
+		assertEquals("Bitmap{200x200}", ((mockServer.data[IDs.COVERART_SMALL_MODEL] as BMWRemoting.RHMIResourceData).data as ByteArray).toString(Charset.defaultCharset()))
 		assertEquals("Artist", mockServer.data[IDs.ARTIST_LARGE_MODEL])
 		assertEquals("Artist", mockServer.data[IDs.ARTIST_SMALL_MODEL])
 		assertEquals("Album", mockServer.data[IDs.ALBUM_LARGE_MODEL])
