@@ -8,6 +8,9 @@ import me.hufman.idriveconnectionkit.rhmi.FocusCallback
 import me.hufman.idriveconnectionkit.rhmi.RHMIState
 import java.util.*
 
+data class BrowseState(val location: MusicMetadata?,    // the directory the user selected
+                       var pageView: BrowsePageView? = null     // the PageView that is showing for this location
+)
 class BrowseView(val states: List<RHMIState>, val musicController: MusicController) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
@@ -15,8 +18,11 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		}
 	}
 
-	val pageStack = LinkedList<BrowsePageView>()    // the pages of browsing to pop off
-	val locationStack = ArrayList<MusicMetadata?>()   // the directories we navigated to before
+	val stack = LinkedList<BrowseState>()
+	val pageStack: List<BrowsePageView>    // the pages of browsing to pop off
+		get() = stack.map { it.pageView }.filterNotNull()
+	val locationStack: List<MusicMetadata?>   // the directories we navigated to before
+		get() = stack.map { it.location }
 	lateinit var playbackView: PlaybackView
 	lateinit var inputState: RHMIState
 	var lastApp: MusicAppInfo? = null
@@ -47,7 +53,9 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	 * Don't clear out the locationStack so that we can draw checkmarks later
 	 */
 	fun clearPages() {
-		pageStack.clear()
+		stack.forEach {
+			it.pageView = null
+		}
 	}
 
 	/**
@@ -56,17 +64,17 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	private fun show(stateId: Int) {
 		// track the last app we played and reset if it changed
 		if (lastApp != null && lastApp != musicController.currentApp?.musicAppInfo) {
-			pageStack.clear()
-			locationStack.clear()
+			stack.clear()
 		}
 		lastApp = musicController.currentApp?.musicAppInfo
 
 		// handle back presses
-		if (pageStack.size > 0 && stateId != pageStack.last.state.id) {
+		if (pageStack.isNotEmpty() && stateId != pageStack.last().state.id) {
 			// the system showed a page by the user pressing back, pop off the stack
-			pageStack.removeLast().hide()
-			pageStack.lastOrNull()?.initWidgets(playbackView, inputState)
-			pageStack.lastOrNull()?.show()
+			stack.last { it.pageView != null}.apply {
+				this.pageView?.hide()
+				this.pageView = null
+			}
 		}
 		// show the top of the stack if we popped off everything
 		if (pageStack.isEmpty()) {
@@ -74,40 +82,49 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 			pushBrowsePage(null, stateId)
 		}
 		// show the content for the page that we are showing
-		if (stateId == pageStack.last.state.id) {
+		val currentPage = pageStack.last()
+		if (stateId == currentPage.state.id) {
 			// the system showed the page that was just added, load the info for it
-			pageStack.last.initWidgets(playbackView, inputState)
-			pageStack.last.show()
+			currentPage.initWidgets(playbackView, inputState)
+			currentPage.show()
 		}
 	}
 
 	fun pushBrowsePage(directory: MusicMetadata?, stateId: Int? = null): BrowsePageView {
 		val nextState = states[pageStack.size % states.size]
 		val state = states.find { it.id == stateId } ?: nextState
-		val index = pageStack.size  // what the next index will be
+		val index = stack.indexOfLast { it.pageView != null } + 1 // what the next new index will be
 
-		// if we are navigating through the list, clear out any previous alternate navigations
-		// and then add this current selection
-		if (locationStack.size == index || locationStack.getOrNull(index) != directory) {
-			locationStack.subList(index, locationStack.size).clear()
-			locationStack.add(directory)
+		val stackSlot = if (stack.isNotEmpty() && directory == stack.lastOrNull { it.location?.browseable == true }?.location) {
+			// if we are doing a Jump Back to the last directory, don't clear out the stack
+			// just open up the target directory
+			stack.last {it.location?.browseable == true}
+		} else if (index < stack.size && stack.getOrNull(index)?.location == directory) {
+			// if we are navigating through the list along the same path, use the same slot
+			stack[index]
+		} else {
+			// if we are in a different browse path, clear the remainder of the path
+			// and then add this current selection
+			stack.subList(index, stack.size).clear()
+			BrowseState(directory).apply { stack.add(this) }
 		}
-		val previouslySelected = locationStack.getOrNull(index+1)   // get the location for the next page, if present
-		val browsePage = BrowsePageView(state, this, directory, previouslySelected)
+
+		val browsePage = BrowsePageView(state, this, directory, stack.getOrNull(index+1)?.location)
 		browsePage.initWidgets(playbackView, inputState)
-		pageStack.add(browsePage)
+		stackSlot.pageView = browsePage
 		return browsePage
 	}
 
 	fun playSong(song: MusicMetadata) {
-		val index = pageStack.size  // what the next index would be
+		// clear out any previous navigation past this song
+		val index = stack.indexOfLast { it.pageView != null } + 1
+		stack.subList(index, stack.size).clear()
 
 		// remember the song as the last selected item
-		if (locationStack.size == index || locationStack.getOrNull(index) != song) {
-			locationStack.subList(index, locationStack.size).clear()
-			locationStack.add(song)
-		}
+		pageStack.last().previouslySelected = song
+		stack.add(BrowseState(song))
 
+		// now actually play
 		musicController.playSong(song)
 	}
 

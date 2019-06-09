@@ -486,16 +486,18 @@ class TestMusicApp {
 		browseResults.complete(listOf(
 				MusicMetadata("testId1", title = "Folder",
 						browseable = true, playable = false),
-				MusicMetadata("bonusFolder1", title = "Folder2",
+				MusicMetadata("bonusFolder1", title = "BonusFolder1",
+						browseable = true, playable = false),
+				MusicMetadata("bonusFolder2", title = "BonusFolder2",
 						browseable = true, playable = false),
 				MusicMetadata("testId2", title = "File1",
 						browseable = false, playable = true),
 				MusicMetadata("testId3", title = "File2",
 						browseable = false, playable = true)
 		))
-		await().until { (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows == 4 }
+		await().until { (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows == 5 }
 		assertEquals(true, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id] as Boolean?)    // clickable
-		assertArrayEquals(arrayOf("Folder", "Folder2", "File1", "File2"),
+		assertArrayEquals(arrayOf("Folder", "BonusFolder1", "BonusFolder2", "File1", "File2"),
 				(mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data.map {
 					it[2]
 				}.toTypedArray()
@@ -504,13 +506,13 @@ class TestMusicApp {
 		// trigger a dynamic showList from the car
 		mockServer.data.remove(IDs.BROWSE1_MUSIC_MODEL)
 		app.components[IDs.BROWSE1_MUSIC_COMPONENT]?.requestDataCallback?.onRequestData(0, 10)
-		assertArrayEquals(arrayOf("Folder", "Folder2", "File1", "File2"),
+		assertArrayEquals(arrayOf("Folder", "BonusFolder1", "BonusFolder2", "File1", "File2"),
 				(mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data.map {
 					it[2]
 				}.toTypedArray()
 		)
 
-		// click the folder
+		// click the folder (testId1:Folder, to show in BROWSE2)
 		app.components[IDs.BROWSE1_MUSIC_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback!!.onActionEvent(mapOf(1.toByte() to 0))
 		assertEquals(2, browseView.pageStack.size)
 		assertEquals(2, browseView.locationStack.size)
@@ -521,86 +523,89 @@ class TestMusicApp {
 
 		page2.show()
 		assertEquals("Folder", mockServer.data[IDs.BROWSE2_LABEL_MODEL]) // folder name
-		await().until { (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows == 4 }
+		await().until { (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows == 5 }
 		// browse results are still resolved from last page, so they show up immediately
 		assertEquals(true, mockServer.properties[IDs.BROWSE2_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id] as Boolean?)
-		assertArrayEquals(arrayOf("Folder", "Folder2", "File1", "File2"),
+		assertArrayEquals(arrayOf("Folder", "BonusFolder1", "BonusFolder2", "File1", "File2"),
 				(mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data.map {
 					it[2]
 				}.toTypedArray()
 		)
 
-		// select a deep folder
+		// select a deep folder (bonusFolder1:BonusFolder1, to show in BROWSE1)
 		mockServer.data.remove(IDs.BROWSE1_MUSIC_MODEL)
 		app.components[IDs.BROWSE2_MUSIC_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback!!.onActionEvent(mapOf(1.toByte() to 1))
 		app.states[IDs.BROWSE2_STATE]?.onHmiEvent(1, mapOf(4.toByte() to false))
 		app.states[IDs.BROWSE1_STATE]?.onHmiEvent(1, mapOf(4.toByte() to true))
 		await().untilAsserted {
-			assertEquals(4, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+			assertEquals(5, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
 		assertEquals(3, browseView.pageStack.size)
 		assertEquals(listOf(null,
 				MusicMetadata("testId1", title = "Folder",	browseable = true, playable = false),
-				MusicMetadata("bonusFolder1", title = "Folder2", browseable = true, playable = false)),
+				MusicMetadata("bonusFolder1", title = "BonusFolder1", browseable = true, playable = false)),
 				browseView.locationStack)
 		assertEquals("should update previouslySelected",
-				MusicMetadata("bonusFolder1", title = "Folder2", browseable = true, playable = false),
+				MusicMetadata("bonusFolder1", title = "BonusFolder1", browseable = true, playable = false),
 				browseView.pageStack[1].previouslySelected)
 
 		// click the song
-		app.components[IDs.BROWSE1_MUSIC_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback!!.onActionEvent(mapOf(1.toByte() to 2))
+		app.components[IDs.BROWSE1_MUSIC_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback!!.onActionEvent(mapOf(1.toByte() to 3))
 		assertEquals(listOf(null,
 				MusicMetadata("testId1", title = "Folder",	browseable = true, playable = false),
-				MusicMetadata("bonusFolder1", title = "Folder2", browseable = true, playable = false),
+				MusicMetadata("bonusFolder1", title = "BonusFolder1", browseable = true, playable = false),
 				MusicMetadata("testId2", title = "File1", browseable = false, playable = true)),
 				browseView.locationStack)
 		verify(musicController).playSong(MusicMetadata("testId2", title = "File1",
 				browseable = false, playable = true))
 
-		// back out of deep folder
+		// back out of deep folder (now showing testId1:Folder)
+		mockServer.triggeredEvents.remove(6)
 		mockServer.data.remove(IDs.BROWSE2_MUSIC_MODEL)
 		app.states[IDs.BROWSE1_STATE]?.onHmiEvent(1, mapOf(4.toByte() to false))
 		app.states[IDs.BROWSE2_STATE]?.onHmiEvent(1, mapOf(4.toByte() to true))
 		await().untilAsserted {
-			assertEquals(4, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+			assertEquals(5, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
 		assertEquals(2, browseView.pageStack.size)
 		assertEquals("should retain locationStack when backing out", listOf(null,
 				MusicMetadata("testId1", title = "Folder",	browseable = true, playable = false),
-				MusicMetadata("bonusFolder1", title = "Folder2", browseable = true, playable = false),
+				MusicMetadata("bonusFolder1", title = "BonusFolder1", browseable = true, playable = false),
 				MusicMetadata("testId2", title = "File1", browseable = false, playable = true)),
 				browseView.locationStack)
+		assertEquals(MusicMetadata("bonusFolder1", title = "BonusFolder1", browseable = true, playable = false), browseView.pageStack.last().previouslySelected)
 		assertEquals(IDs.BROWSE2_MUSIC_COMPONENT, mockServer.triggeredEvents[6]!![0.toByte()])
 		assertEquals("Selects previouslySelected", 1, mockServer.triggeredEvents[6]!![41.toByte()])
 
-		// press back again
+		// press back again (now showing the null root)
 		mockServer.data.remove(IDs.BROWSE1_MUSIC_MODEL)
 		app.states[IDs.BROWSE2_STATE]?.onHmiEvent(1, mapOf(4.toByte() to false))
 		app.states[IDs.BROWSE1_STATE]?.onHmiEvent(1, mapOf(4.toByte() to true))
 		await().untilAsserted {
-			assertEquals(4, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+			assertEquals(5, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
+		assertEquals(0, mockServer.triggeredEvents[6]!![41.toByte()])
 		assertEquals(listOf(page1), browseView.pageStack)
 		assertEquals(listOf(null,
 				MusicMetadata("testId1", title = "Folder",	browseable = true, playable = false),
-				MusicMetadata("bonusFolder1", title = "Folder2", browseable = true, playable = false),
+				MusicMetadata("bonusFolder1", title = "BonusFolder1", browseable = true, playable = false),
 				MusicMetadata("testId2", title = "File1", browseable = false, playable = true)),
 				browseView.locationStack)
 
-		// select a different folder
+		// select a different folder (bonusFolder2:BonusFolder2)
 		mockServer.data.remove(IDs.BROWSE2_MUSIC_MODEL)
-		app.components[IDs.BROWSE1_MUSIC_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback!!.onActionEvent(mapOf(1.toByte() to 1))
+		app.components[IDs.BROWSE1_MUSIC_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback!!.onActionEvent(mapOf(1.toByte() to 2))
 		app.states[IDs.BROWSE1_STATE]?.onHmiEvent(1, mapOf(4.toByte() to false))
 		app.states[IDs.BROWSE2_STATE]?.onHmiEvent(1, mapOf(4.toByte() to true))
 		await().untilAsserted {
-			assertEquals(4, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+			assertEquals(5, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
 		assertEquals(2, browseView.pageStack.size)
 		assertEquals(listOf(null,
-				MusicMetadata("bonusFolder1", title = "Folder2", browseable = true, playable = false)),
+				MusicMetadata("bonusFolder2", title = "BonusFolder2", browseable = true, playable = false)),
 				browseView.locationStack)       // did we truncate the lastSelected stack properly?
 		assertEquals("updates previouslySelected",
-				MusicMetadata("bonusFolder1", title = "Folder2", browseable = true, playable = false),
+				MusicMetadata("bonusFolder2", title = "BonusFolder2", browseable = true, playable = false),
 				browseView.pageStack[0].previouslySelected)
 
 		// now if we go back, it should update the lastSelected of the main view of the first page
@@ -608,8 +613,9 @@ class TestMusicApp {
 		app.states[IDs.BROWSE2_STATE]?.onHmiEvent(1, mapOf(4.toByte() to false))
 		app.states[IDs.BROWSE1_STATE]?.onHmiEvent(1, mapOf(4.toByte() to true))
 		await().untilAsserted {
-			assertEquals(4, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+			assertEquals(5, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
+		assertEquals(2, mockServer.triggeredEvents[6]!![41.toByte()])
 	}
 
 	@Test
@@ -656,11 +662,25 @@ class TestMusicApp {
 		whenever(musicController.browseAsync(null)) doAnswer {
 			CompletableDeferred(listOf (
 					MusicMetadata("specialId1", title = "Play All",	browseable = false, playable = true),
-					MusicMetadata("folderDeep1", title = "Folder deep", browseable = true, playable = false),
+					MusicMetadata("folderDeep1", title = "Folder deep1", browseable = true, playable = false),
 					MusicMetadata("testId1", title = "File1", browseable = false, playable = true)
 			))
 		}
-		whenever(musicController.browseAsync(MusicMetadata("folderDeep1", title = "Folder deep", browseable = true, playable = false))) doAnswer {
+		whenever(musicController.browseAsync(MusicMetadata("folderDeep1", title = "Folder deep1", browseable = true, playable = false))) doAnswer {
+			CompletableDeferred(listOf (
+					MusicMetadata("folderDeep2", title = "Folder deep2", browseable = true, playable = false),
+					MusicMetadata("testId2", title = "Play All",	browseable = false, playable = true),
+					MusicMetadata("testId3", title = "File1", browseable = false, playable = true)
+			))
+		}
+		whenever(musicController.browseAsync(MusicMetadata("folderDeep2", title = "Folder deep2", browseable = true, playable = false))) doAnswer {
+			CompletableDeferred(listOf (
+					MusicMetadata("folderDeep3", title = "Folder deep3", browseable = true, playable = false),
+					MusicMetadata("testId2", title = "Play All",	browseable = false, playable = true),
+					MusicMetadata("testId3", title = "File1", browseable = false, playable = true)
+			))
+		}
+		whenever(musicController.browseAsync(MusicMetadata("folderDeep3", title = "Folder deep3", browseable = true, playable = false))) doAnswer {
 			CompletableDeferred(listOf (
 					MusicMetadata("testId2", title = "Play All",	browseable = false, playable = true),
 					MusicMetadata("testId3", title = "File1", browseable = false, playable = true)
@@ -682,14 +702,15 @@ class TestMusicApp {
 
 		// now show with a previous location stack
 		mockServer.data.remove(IDs.BROWSE1_MUSIC_MODEL)
-		browseView.locationStack.add(MusicMetadata("folderDeep1", title = "Folder deep", browseable = true, playable = false))
+		browseView.stack.add(BrowseState(MusicMetadata("folderDeep1", title = "Folder deep1", browseable = true, playable = false)))
+		browseView.stack.add(BrowseState(MusicMetadata("folderDeep2", title = "Folder deep2", browseable = true, playable = false)))
 		page1.previouslySelected = browseView.locationStack[1]
 		page1.show()
 		await().untilAsserted {
 			assertEquals(3, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
 		assertArrayEquals(arrayOf("", "", "Jump Back"), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data[0])
-		assertEquals("Folder deep", (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data[1][2]) // checked
+		assertEquals("Folder deep1", (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data[1][2]) // checked
 		assertNotEquals("", (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data[1][0]) // checked
 
 		// try clicking the action
@@ -699,17 +720,30 @@ class TestMusicApp {
 		val page2 = browseView.pageStack[1]
 		page2.show()
 		await().untilAsserted {
-			assertEquals(2, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+			assertEquals(3, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
-		// back out
+
+		// test what happens when a deeper directory is clicked inside Jump Back
+		browseView.pushBrowsePage(MusicMetadata("folderDeep3", title = "Folder deep3", browseable = true, playable = false))
+		assertEquals(4, browseView.locationStack.size)
+
+		// back out of deep dir
+		app.states[IDs.BROWSE1_STATE]?.onHmiEvent(1, mapOf(4.toByte() to false))
+		app.states[IDs.BROWSE2_STATE]?.onHmiEvent(1, mapOf(4.toByte() to true))
+
+		// back out of jump back
 		app.states[IDs.BROWSE2_STATE]?.onHmiEvent(1, mapOf(4.toByte() to false))
 		app.states[IDs.BROWSE1_STATE]?.onHmiEvent(1, mapOf(4.toByte() to true))
 
-		// test what happens when a song is clicked
+		// ensure that the browse stack didn't change after clicking Jump Back
+		assertEquals(4, browseView.locationStack.size)
+		assertEquals("folderDeep3", browseView.locationStack.last()?.mediaId)
+
+		// test what happens when a song is clicked after jumping back
 		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
 		mockServer.data.remove(IDs.BROWSE1_MUSIC_MODEL)
 		mockServer.data.remove(IDs.BROWSE2_MUSIC_MODEL)
-		browseView.locationStack.add(MusicMetadata("testId3", title = "File1", browseable = false, playable = true))
+		browseView.stack.add(BrowseState(MusicMetadata("testId3", title = "File1", browseable = false, playable = true)))
 		page1.show()
 		await().untilAsserted {
 			assertEquals(3, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
@@ -718,11 +752,18 @@ class TestMusicApp {
 		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		assertEquals(IDs.BROWSE2_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
 		assertEquals(2, browseView.pageStack.size)
-		assertEquals("folderDeep1", browseView.pageStack.last().folder?.mediaId)
+		assertEquals("folderDeep3", browseView.pageStack.last().folder?.mediaId)
+		assertEquals(listOf(null, "folderDeep1", "folderDeep2", "folderDeep3", "testId3"), browseView.stack.map {it.location?.mediaId})
 		browseView.pageStack.last().show()
 		await().untilAsserted {
 			assertEquals(2, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
+
+		// now test what happens at a fresh new browse, everything should all be in place
+		browseView.clearPages()
+		val freshpage = browseView.pushBrowsePage(null)
+		assertEquals(listOf(null, "folderDeep1", "folderDeep2", "folderDeep3", "testId3"), browseView.stack.map {it.location?.mediaId})
+		assertEquals("folderDeep1", freshpage.previouslySelected?.mediaId)
 	}
 
 	@Test
