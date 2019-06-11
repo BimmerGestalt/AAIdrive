@@ -129,9 +129,9 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		}
 
 		fun shouldShowNotification(sbn: StatusBarNotification): Boolean {
-			return !sbn.notification.isGroupSummary() && (
-				sbn.isClearable || sbn.notification.actions?.isNotEmpty() == true
-			)
+			return !sbn.notification.isGroupSummary() &&
+			       sbn.notification.extras.getCharSequence(Notification.EXTRA_TEXT) != null &&
+			       (sbn.isClearable || sbn.notification.actions?.isNotEmpty() == true)
 		}
 	}
 
