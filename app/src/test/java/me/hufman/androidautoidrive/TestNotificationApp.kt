@@ -87,7 +87,7 @@ class TestNotificationApp {
 		}
 	}
 
-	fun createNotification(tickerText:String, title:String, text:String, summary:String, clearable:Boolean=false): StatusBarNotification {
+	fun createNotification(tickerText:String, title:String?, text: String?, summary:String, clearable:Boolean=false): StatusBarNotification {
 
 		val phoneNotification = mock<Notification> {
 			on { getLargeIcon() } doReturn mock<Icon>()
@@ -149,13 +149,26 @@ class TestNotificationApp {
 		assertEquals("Sender: Message\nSender: Message2", notificationObject.text)
 	}
 
+	@Test
+	fun testShouldShow() {
+		val notification = createNotification("Ticker Text", "Title", "Text", "Summary", true)
+		assertTrue(NotificationListenerServiceImpl.shouldShowNotification(notification))
+
+		val nullTitle = createNotification("Ticker Text", null, null, "Summary", true)
+		assertFalse(NotificationListenerServiceImpl.shouldShowNotification(nullTitle))
+
+		val notificationMessage = createNotification("Ticker Text", "Title", "Text", "Summary", true)
+		whenever(notificationMessage.notification.isGroupSummary()) doAnswer { true }
+		assertTrue(NotificationListenerServiceImpl.shouldShowNotification(notification))
+	}
+
 	fun createNotificationObject(title:String, text:String, summary:String, clearable:Boolean=false): CarNotification {
 		val actions = arrayOf(mock<Notification.Action> {
 		})
 		actions[0].title = "Custom Action"
 		actions[0].actionIntent = mock()
 
-		return CarNotification("me.hufman.androidautoidrive", "test", mock<Icon>(), clearable, actions,
+		return CarNotification("me.hufman.androidautoidrive", "test$title", mock<Icon>(), clearable, actions,
 				title, summary, text)
 	}
 
@@ -298,5 +311,13 @@ class TestNotificationApp {
 		callbacks.rhmi_onActionEvent(1, "Dont care", 326, mapOf(0.toByte() to 1))
 		verify(carNotificationController, times(1)).clear(notification2)
 		assertEquals("Returns to main list", app.stateList.id, mockServer.data[328])
+
+		// test clicking surprise notifications
+		// which are added to the NotificationsState without showing in the UI
+		val statusbarNotificationSurprise = createNotificationObject("SurpriseTitle", "SurpriseText", "SurpriseSummary")
+		NotificationsState.notifications.add(0, statusbarNotificationSurprise)
+		app.notificationListView.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))   // clicks the first one
+		assertEquals(notification, NotificationsState.selectedNotification)
+
 	}
 }

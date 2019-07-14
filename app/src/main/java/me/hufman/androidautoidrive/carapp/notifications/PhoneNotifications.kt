@@ -13,6 +13,7 @@ import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.DeferredUpdate
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
+import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
@@ -39,10 +40,24 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	val stateList: RHMIState.PlainState     // show a list of active notifications
 	val stateView: RHMIState.ToolbarState   // view a notification with actions to do
 	val stateInput: RHMIState.PlainState    // show a reply input form
+	val notificationListView: RHMIComponent.List    // the list component of notifications
+	val shownNotifications = ArrayList<CarNotification>()   // which notifications are showing
+	val notificationListData = object: RHMIListAdapter<CarNotification>(3, shownNotifications) {
+		override fun convertRow(index: Int, item: CarNotification): Array<Any> {
+			val icon = phoneAppResources.getBitmap(phoneAppResources.getIconDrawable(item.icon), 48, 48)
+			val text = if (item.summary != null) "${item.title}\n${item.summary}" else "${item.title}\n${item.text}"
+			return arrayOf(icon, "", text)
+		}
+	}
+	val emptyListData = RHMIModel.RaListModel.RHMIListConcrete(3).apply {
+		addRow(arrayOf("", "", L.NOTIFICATIONS_EMPTY_LIST))
+	}
+
 	var listFocused = false                 // whether the notification list is showing
 	var passengerSeated = false             // whether a passenger is seated
 	val INTERACTION_DEBOUNCE_MS = 5000              // how long to wait after lastInteractionTime to update the list
 	var lastInteractionTime: Long = 0             // timestamp when the user last navigated in the main list
+	var lastInteractionIndex: Int = -1       // what index the user last selected
 
 	init {
 		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
@@ -86,25 +101,28 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		// set up the list
 		stateList.getTextModel()?.asRaDataModel()?.value = L.NOTIFICATIONS_TITLE
 		stateList.componentsList.forEach { it.setVisible(false) }
-		val notificationListView = stateList.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull()
-		notificationListView?.setVisible(true)
-		notificationListView?.setProperty(6, "55,0,*")
-		notificationListView?.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {  index ->
-			val notification = NotificationsState.notifications.getOrNull(index)
+		notificationListView = stateList.componentsList.filterIsInstance<RHMIComponent.List>().first()
+		notificationListView.setVisible(true)
+		notificationListView.setProperty(6, "55,0,*")
+		notificationListView.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
+			val notification = shownNotifications.getOrNull(index)
 			if (notification != null) {
 				// set the list to go into the state
-				notificationListView?.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateView.id
+				notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateView.id
 
-				val actionId = notificationListView?.getAction()?.asRAAction()?.id
+				val actionId = notificationListView.getAction()?.asRAAction()?.id
 				carConnection.rhmi_ackActionEvent(rhmiHandle, actionId ?: 0, 1, true)   // start screen transition
 				NotificationsState.selectedNotification = notification
 				updateNotificationView()    // because updating this view would delay the transition too long
 			} else {
-				notificationListView?.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
+				notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
 			}
 		}
-		notificationListView?.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {
-			lastInteractionTime = System.currentTimeMillis()
+		notificationListView.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {
+			if (it != lastInteractionIndex) {
+				lastInteractionIndex = it
+				lastInteractionTime = System.currentTimeMillis()
+			}
 		}
 
 		// set up the popup
@@ -196,19 +214,16 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	}
 
 	fun updateNotificationList() {
-		val listData = RHMIModel.RaListModel.RHMIListConcrete(3)
 		synchronized(NotificationsState.notifications) {
-			NotificationsState.notifications.forEach {
-				val icon = phoneAppResources.getBitmap(phoneAppResources.getIconDrawable(it.icon), 48, 48)
-				val text = if (it.summary != null) "${it.title}\n${it.summary}" else "${it.title}\n${it.text}"
-				listData.addRow(arrayOf(icon, "", text))
-			}
-			if (NotificationsState.notifications.isEmpty()) {
-				listData.addRow(arrayOf("", "", L.NOTIFICATIONS_EMPTY_LIST))
-			}
+			shownNotifications.clear()
+			shownNotifications.addAll(NotificationsState.notifications)
 		}
-		val listWidget = stateList.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull() ?: return
-		listWidget.getModel()?.value = listData
+
+		if (NotificationsState.notifications.isEmpty()) {
+			notificationListView.getModel()?.value = emptyListData
+		} else {
+			notificationListView.getModel()?.value = notificationListData
+		}
 	}
 
 	fun updateNotificationView() {
