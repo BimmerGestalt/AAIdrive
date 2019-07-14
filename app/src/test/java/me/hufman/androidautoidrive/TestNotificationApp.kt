@@ -301,13 +301,17 @@ class TestNotificationApp {
 		assertEquals(true, mockServer.properties[122]?.get(RHMIProperty.PropertyId.ENABLED.id))  // clear this notification button
 		assertEquals(true, mockServer.properties[122]?.get(RHMIProperty.PropertyId.SELECTABLE.id))  // clear this notification button
 		assertEquals("Clear", mockServer.data[523])
-		assertEquals(true, mockServer.properties[124]?.get(RHMIProperty.PropertyId.ENABLED.id))  // custom action button
-		assertEquals(true, mockServer.properties[124]?.get(RHMIProperty.PropertyId.SELECTABLE.id))  // clear this notification button
-		assertEquals("Custom Action", mockServer.data[525])
+		assertEquals(true, mockServer.properties[123]?.get(RHMIProperty.PropertyId.ENABLED.id))  // custom action button
+		assertEquals(true, mockServer.properties[123]?.get(RHMIProperty.PropertyId.SELECTABLE.id))  // clear this notification button
+		assertEquals("Custom Action", mockServer.data[524])
+		assertEquals(false, mockServer.properties[124]?.get(RHMIProperty.PropertyId.ENABLED.id))  // custom action button
+		assertEquals(false, mockServer.properties[124]?.get(RHMIProperty.PropertyId.SELECTABLE.id))  // clear this notification button
+		assertEquals(null, mockServer.data[525])
 
 		// now try clicking the custom action
-		callbacks.rhmi_onActionEvent(1, "Dont care", 334, mapOf(0.toByte() to 1))
-		verify(carNotificationController, times(1)).action(notification2, notification2.actions[0]?.title.toString())
+		callbacks.rhmi_onActionEvent(1, "Dont care", 330, mapOf(0.toByte() to 1))
+		verify(carNotificationController, times(1)).action(notification2, notification2.actions[0].title.toString())
+		// clicking the clear action
 		callbacks.rhmi_onActionEvent(1, "Dont care", 326, mapOf(0.toByte() to 1))
 		verify(carNotificationController, times(1)).clear(notification2)
 		assertEquals("Returns to main list", app.stateList.id, mockServer.data[328])

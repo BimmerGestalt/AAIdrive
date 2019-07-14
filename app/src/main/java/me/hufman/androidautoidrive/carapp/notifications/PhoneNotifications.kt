@@ -276,9 +276,9 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			}
 		}
 
-		(0..2).forEach {i ->
+		(0..4).forEach {i ->
 			val action = notification.actions.getOrNull(i)
-			var button = buttons[2+i]
+			var button = buttons[1+i]
 			if (action == null) {
 				button.setEnabled(false)
 				button.setSelectable(false)
