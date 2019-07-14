@@ -4,19 +4,22 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Handler
+import android.os.Looper
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.places.AutocompleteFilter
-import com.google.android.gms.location.places.AutocompletePredictionBufferResponse
-import com.google.android.gms.location.places.Places
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.model.*
-import com.google.android.gms.tasks.Task
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.*
+import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.maps.DirectionsApi
 import com.google.maps.GeoApiContext
 import com.google.maps.PendingResult
@@ -34,7 +37,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 
 	private val SHUTDOWN_WAIT_INTERVAL = 120000L   // milliseconds of inactivity before shutting down map
 
-	private val placesClient = Places.getGeoDataClient(context)!!
+	private val placesClient: PlacesClient
 	private val geoClient = GeoApiContext().setQueryRateLimit(3)
 			.setApiKey(context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
 					.metaData.getString("com.google.android.geo.API_KEY"))
@@ -63,9 +66,16 @@ class GMapsController(private val context: Context, private val resultsControlle
 	}
 	private var startZoom = 6f  // what zoom level we start the projection with
 	private var currentZoom = 15f
-	private var currentSearchResults: Task<AutocompletePredictionBufferResponse>? = null
+	private var searchSession: AutocompleteSessionToken? = null
 	private var currentNavDestination: LatLong? = null
 	var currentNavRoute: List<LatLng>? = null
+
+	init {
+		val api_key = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+				.metaData.getString("com.google.android.geo.API_KEY")
+		Places.initialize(context, api_key)
+		placesClient = Places.createClient(context)
+	}
 
 	override fun showMap() {
 		Log.i(TAG, "Beginning map projection")
@@ -171,42 +181,51 @@ class GMapsController(private val context: Context, private val resultsControlle
 	}
 
 	override fun searchLocations(query: String) {
-		val bounds = projection?.map?.projection?.visibleRegion?.latLngBounds
-		val resultsTask = placesClient.getAutocompletePredictions(query, bounds, AutocompleteFilter.Builder().build())
-		currentSearchResults = resultsTask
-		resultsTask.addOnCompleteListener {
-			if (currentSearchResults == resultsTask && it.isSuccessful) {
-				val results = it.result ?: return@addOnCompleteListener
-				Log.i(TAG, "Received ${results.count} results for query $query")
+		val latlngBounds = projection?.map?.projection?.visibleRegion?.latLngBounds ?: return
+		searchLocations(query, latlngBounds)
+	}
 
-				val mapResults = results.filter {
-					it.placeId != null
-				}.map {
-					MapResult(it.placeId!!, it.getPrimaryText(null).toString(), null)
-				}
-				results.release()
-				resultsController.onSearchResults(mapResults.toTypedArray())
-			} else if (! it.isSuccessful) {
-				Log.w(TAG, "Unsuccessful result when loading results for $query")
+	fun searchLocations(query: String, location: LatLngBounds) {
+		if (searchSession == null) {
+			searchSession = AutocompleteSessionToken.newInstance()
+		}
+
+		val bounds = RectangularBounds.newInstance(location)
+		Log.i(TAG, "Starting Place search for $query near $bounds")
+		val autocompleteRequest = FindAutocompletePredictionsRequest.builder()
+				.setLocationBias(bounds)
+				.setSessionToken(searchSession)
+				.setQuery(query)
+				.build()
+		placesClient.findAutocompletePredictions(autocompleteRequest).addOnSuccessListener { result ->
+			val results = result?.autocompletePredictions ?: return@addOnSuccessListener
+			Log.i(TAG, "Received ${results.size} results for query $query")
+
+			val mapResults = results.map {
+				MapResult(it.placeId, it.getPrimaryText(null).toString(), it.getSecondaryText(null).toString())
 			}
+			resultsController.onSearchResults(mapResults.toTypedArray())
+		}.addOnFailureListener {
+			Log.w(TAG, "Unsuccessful result when loading results for $query: $it")
 		}
 	}
 
 	override fun resultInformation(resultId: String) {
-		val resultTask = placesClient.getPlaceById(resultId)
-		resultTask.addOnCompleteListener {
-			if (it.isSuccessful && it.result?.count ?: 0 > 0) {
-				Log.i(TAG, "Received ${it.result?.count} results")
-				val results = it.result
-				Log.i(TAG, "Fetched buffer response $results")
-				val result = it.result?.get(0) ?: return@addOnCompleteListener
-				val mapResult = MapResult(resultId, result.name.toString(), result.address.toString(),
-						LatLong(result.latLng.latitude, result.latLng.longitude))
-				it.result?.release()
-				resultsController.onPlaceResult(mapResult)
-			} else {
-				Log.w(TAG, "Did not find Place info for Place ID $resultId")
+		val requestedFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS)
+		val request = FetchPlaceRequest.builder(resultId, requestedFields).build()
+		placesClient.fetchPlace(request).addOnSuccessListener { result ->
+			Log.i(TAG, "Received Place result for resultId $resultId: ${result?.place}")
+			val place = result?.place ?: return@addOnSuccessListener
+			val latLng = place.latLng
+			if (latLng == null) {
+				Log.w(TAG, "Place does not have a latlng location!")
+				return@addOnSuccessListener
 			}
+			val mapResult = MapResult(resultId, place.name.toString(), place.address.toString(),
+					LatLong(latLng.latitude, latLng.longitude))
+			resultsController.onPlaceResult(mapResult)
+		}.addOnFailureListener {
+			Log.w(TAG, "Did not find Place info for Place ID $resultId: $it")
 		}
 	}
 
@@ -286,7 +305,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 	private fun drawNavigation() {
 		// make sure we are in the UI thread, and then draw navigation lines onto it
 		// because route search comes back on a network thread
-		handler.post {
+		val action = {
 			projection?.map?.clear()
 
 			// destination flag
@@ -305,6 +324,11 @@ class GMapsController(private val context: Context, private val resultsControlle
 			if (currentNavRoute != null) {
 				projection?.map?.addPolyline(PolylineOptions().color(context.getColor(R.color.mapRouteLine)).addAll(currentNavRoute))
 			}
+		}
+		if (Looper.myLooper() != handler.looper) {
+			handler.post(action)
+		} else {
+			action()
 		}
 	}
 

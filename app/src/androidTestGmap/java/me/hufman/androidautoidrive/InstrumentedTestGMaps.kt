@@ -2,9 +2,10 @@ package me.hufman.androidautoidrive
 
 import android.content.IntentFilter
 import android.support.test.InstrumentationRegistry
-import android.support.test.annotation.UiThreadTest
+import android.support.test.internal.runner.junit4.statement.UiThreadStatement.runOnUiThread
 import android.support.test.runner.AndroidJUnit4
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.anyArray
 import com.nhaarman.mockito_kotlin.mock
@@ -67,7 +68,7 @@ class InstrumentedTestGMaps {
 		val appContext = InstrumentationRegistry.getTargetContext()
 		val virtualDisplay = VirtualDisplayScreenCapture(appContext)
 		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay)
-		mapController.searchLocations("test")
+		mapController.searchLocations("test", LatLngBounds(LatLng(37.333, -122.416), LatLng(37.783, -121.9)))
 		await().untilAsserted { verify(mockResultsReceiver).onSearchResults(anyArray()) }
 
 		mapController.resultInformation("ChIJDflB7BWuEmsRYPbx-Wh9AQ8")
@@ -75,15 +76,18 @@ class InstrumentedTestGMaps {
 	}
 
 	@Test
-	@UiThreadTest
 	fun testNavigation() {
 		val appContext = InstrumentationRegistry.getTargetContext()
 		val virtualDisplay = VirtualDisplayScreenCapture(appContext)
 		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay)
-		mapController.showMap()
-		await().until { mapController.projection != null }
-		mapController.currentLocation = LatLng(37.389444, -122.081944)
-		mapController.navigateTo(LatLong(37.429167, -122.138056))
+		runOnUiThread {
+			mapController.showMap()
+		}
+		await().until { mapController.projection?.map != null }
+		runOnUiThread {
+			mapController.currentLocation = LatLng(37.389444, -122.081944)
+			mapController.navigateTo(LatLong(37.429167, -122.138056))
+		}
 		await().until { mapController.currentNavRoute != null }
 	}
 }
