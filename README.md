@@ -108,3 +108,26 @@ Screenshots
 ![Music Playback Interface](https://hufman.github.io/AndroidAutoIdrive/screenshot-musicplayback.jpg)
 
 ![Music Browse](https://hufman.github.io/AndroidAutoIdrive/screenshot-musicbrowse.jpg)
+
+Demos
+-----
+
+![App List](https://hufman.github.io/AndroidAutoIdrive/demo-applist.gif)
+
+Android Auto music apps are added as music sources to the car
+
+![Now Playing](https://hufman.github.io/AndroidAutoIdrive/demo-nowplaying.gif)
+
+Select from a list of currently-queued songs
+
+![App Actions](https://hufman.github.io/AndroidAutoIdrive/demo-actions.gif)
+
+Supports app-specific song actions
+
+![Browse](https://hufman.github.io/AndroidAutoIdrive/demo-browse.gif)
+
+Navigates each app's music library
+
+![Filter](https://hufman.github.io/AndroidAutoIdrive/demo-filter.gif)
+
+Easy filtering of a list of music entries
