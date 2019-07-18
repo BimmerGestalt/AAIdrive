@@ -75,7 +75,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		// set up the app in the car
-		carApp = RHMIApplicationSynchronized( RHMIApplicationEtch(carConnection, rhmiHandle))
+		carApp = RHMIApplicationSynchronized(RHMIApplicationEtch(carConnection, rhmiHandle))
 		carappListener.app = carApp
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
@@ -129,7 +129,12 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().lastOrNull()?.setSelectable(true)
 
 		// set up the view
+		var buttons = ArrayList(stateView.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
 		stateView.toolbarComponentsList.forEach { it.setVisible(false) }
+		buttons[0].getImageModel()?.asImageIdModel()?.imageId = 150
+		buttons.subList(1, 6).forEach {
+			it.getImageModel()?.asImageIdModel()?.imageId = 158
+		}
 		stateView.componentsList.forEach { it.setVisible(false) }
 		stateView.componentsList.forEach { it.setEnabled(false) }
 		stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull()?.apply {
@@ -156,7 +161,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			try {
 				app?.actions?.get(actionId)?.asRAAction()?.rhmiActionCallback?.onActionEvent(args)
 			} catch (e: Exception) {
-				Log.e(TAG, "Exception while calling onActionEvent handler!", e)
+				Log.e(TAG, "Exception while calling onActionEvent handler! $e")
 			}
 			server?.rhmi_ackActionEvent(handle, actionId, 1, true)
 		}
@@ -230,7 +235,6 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		// clear the toolbar
 		var buttons = ArrayList(stateView.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
 		buttons.forEach { it.setEnabled(false) }
-		buttons.forEach { it.getImageModel()?.asImageIdModel()?.imageId = 0; it.setVisible(true) }
 
 		if (NotificationsState.selectedNotification == null) {
 			// if the selected notification is invalid
@@ -265,8 +269,8 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		if (notification.isClearable) {
 			clearButton.setEnabled(true)
 			clearButton.setSelectable(true)
+			clearButton.setVisible(true)
 			clearButton.getTooltipModel()?.asRaDataModel()?.value = L.NOTIFICATION_CLEAR_ACTION
-			clearButton.getImageModel()?.asImageIdModel()?.imageId = 150
 			clearButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id
 			clearButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 				controller.clear(notification)
@@ -274,26 +278,30 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 				updateNotificationList()
 				carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to listWidget.id))
 			}
+		} else {
+			clearButton.setVisible(false)
+			clearButton.setEnabled(false)
+			clearButton.setSelectable(false)
 		}
 
 		(0..4).forEach {i ->
 			val action = notification.actions.getOrNull(i)
 			var button = buttons[1+i]
 			if (action == null) {
+				button.setVisible(false)
 				button.setEnabled(false)
 				button.setSelectable(false)
-				button.getImageModel()?.asImageIdModel()?.imageId = 0   // hide the icon
 				button.getAction()?.asRAAction()?.rhmiActionCallback = null // don't leak memory
 			} else {
-				button.setSelectable(true)
 				if (action.remoteInputs != null && action.remoteInputs.isNotEmpty()) {
 					// TODO Implement <input> view reply
 					button.setEnabled(false)
 				} else {
 					button.setEnabled(true)
 				}
+				button.setSelectable(true)
+				button.setVisible(true)
 				button.getTooltipModel()?.asRaDataModel()?.value = action.title.toString()
-				button.getImageModel()?.asImageIdModel()?.imageId = 158
 				button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id  // usually the action will clear the notification
 				button.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 					controller.action(notification, action.title.toString())

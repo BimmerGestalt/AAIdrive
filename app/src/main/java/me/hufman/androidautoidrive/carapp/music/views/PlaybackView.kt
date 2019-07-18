@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
+import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.TimeUtils.formatTime
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
@@ -138,7 +139,11 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		buttons[2].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = enqueuedView.state.id
 
 		// the book icon
-		buttons[3].getImageModel()?.asImageIdModel()?.imageId = 0
+		try {
+			buttons[3].getImageModel()?.asImageIdModel()?.imageId = 0
+		} catch (e: BMWRemoting.ServiceException) {
+			buttons[3].setVisible(false)
+		}
 		buttons[3].setSelectable(false)
 
 		buttons[4].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_CUSTOMACTIONS_TITLE
@@ -146,7 +151,12 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		buttons[4].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = customActionsView.state.id
 
 		// shuffle isn't supported with MediaController for some reason, maybe try parsing custom actions
-		buttons[5].getImageModel()?.asImageIdModel()?.imageId = 0
+		try {
+			buttons[5].getImageModel()?.asImageIdModel()?.imageId = 0
+		} catch (e: BMWRemoting.ServiceException) {
+			buttons[5].setVisible(false)
+		}
+
 		buttons[5].setSelectable(false)
 
 		buttons[6].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SKIP_PREVIOUS

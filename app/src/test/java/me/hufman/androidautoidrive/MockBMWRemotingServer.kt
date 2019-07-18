@@ -2,16 +2,19 @@ package me.hufman.androidautoidrive
 
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BaseBMWRemotingServer
+import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
 import java.util.concurrent.CountDownLatch
 
 class MockBMWRemotingServer: BaseBMWRemotingServer() {
 	val waitForApp = CountDownLatch(1)
 	val resources = HashMap<BMWRemoting.RHMIResourceType, ByteArray>()
+	val rhmiApp = RHMIApplicationConcrete()
 	val addedActionHandler = HashMap<String, Boolean>()
 	val addedEventHandler = HashMap<String, Boolean>()
 	val properties = HashMap<Int, MutableMap<Int, Any>>()
 	val data = HashMap<Int, Any>()
 	val triggeredEvents = HashMap<Int, Map<*, *>>()
+
 	val amApps = ArrayList<String>()
 	val avConnections = HashMap<Int, String>()
 	var avCurrentContext = -1
@@ -36,6 +39,9 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 	override fun rhmi_setResource(handle: Int?, data: ByteArray?, type: BMWRemoting.RHMIResourceType?) {
 		if (type != null && data != null)
 			resources[type] = data
+		if (type == BMWRemoting.RHMIResourceType.DESCRIPTION && data != null) {
+			rhmiApp.loadFromXML(data)
+		}
 	}
 
 	override fun rhmi_addActionEventHandler(handle: Int?, ident: String?, actionId: Int?) {
@@ -61,6 +67,9 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 
 	override fun rhmi_setData(handle: Int?, modelId: Int?, value: Any?) {
 //		System.out.println("Updated data $modelId: $value")
+		// refuse to set any ImageID model to 0, according to model year 2019 behavior
+		if (rhmiApp.models[modelId]?.asImageIdModel() != null && value is BMWRemoting.RHMIResourceIdentifier && value.id == 0)
+			throw BMWRemoting.ServiceException(213, "SetData was not successful.")
 		data[modelId!!] = value!!
 	}
 

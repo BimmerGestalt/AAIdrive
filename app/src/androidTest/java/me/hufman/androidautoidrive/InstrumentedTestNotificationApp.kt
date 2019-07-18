@@ -15,7 +15,10 @@ import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.carapp.notifications.CarNotification
 import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
+import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import org.awaitility.Awaitility.await
+import org.junit.After
+import org.junit.Before
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -24,6 +27,16 @@ import org.awaitility.Awaitility.await
  */
 @RunWith(AndroidJUnit4::class)
 class InstrumentedTestNotificationApp {
+
+	@Before
+	fun setUp() {
+		/* NotificationListenerServiceImpl only sends announcements if the car is connected */
+		IDriveConnectionListener.setConnection("test", "127.0.0.1", 7000)
+	}
+	@After
+	fun tearDown() {
+		IDriveConnectionListener.reset()
+	}
 
 	@Test
 	fun testNotificationUpdate() {

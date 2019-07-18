@@ -74,6 +74,10 @@ class TestNotificationApp {
 			}
 			assertEquals(1, visibleWidgets.size)
 			assertTrue(visibleWidgets[0] is RHMIComponent.List)
+			assertEquals( 150, app.stateView.toolbarComponentsList[1].getImageModel()?.asImageIdModel()?.imageId)
+			app.stateView.toolbarComponentsList.subList(2, 7).forEach {
+				assertEquals(158, it.getImageModel()?.asImageIdModel()?.imageId)
+			}
 		}
 		// test stateList setup
 		run {
@@ -300,13 +304,16 @@ class TestNotificationApp {
 		assertEquals("Text2", list.data[2][2])
 		assertEquals(true, mockServer.properties[122]?.get(RHMIProperty.PropertyId.ENABLED.id))  // clear this notification button
 		assertEquals(true, mockServer.properties[122]?.get(RHMIProperty.PropertyId.SELECTABLE.id))  // clear this notification button
-		assertEquals("Clear", mockServer.data[523])
-		assertEquals(true, mockServer.properties[123]?.get(RHMIProperty.PropertyId.ENABLED.id))  // custom action button
-		assertEquals(true, mockServer.properties[123]?.get(RHMIProperty.PropertyId.SELECTABLE.id))  // clear this notification button
-		assertEquals("Custom Action", mockServer.data[524])
+		assertEquals(true, mockServer.properties[122]?.get(RHMIProperty.PropertyId.VISIBLE.id))
+		assertEquals("Clear", mockServer.data[523])  // clear this notification button
+		assertEquals(true, mockServer.properties[123]?.get(RHMIProperty.PropertyId.ENABLED.id))
+		assertEquals(true, mockServer.properties[123]?.get(RHMIProperty.PropertyId.SELECTABLE.id))
+		assertEquals(true, mockServer.properties[123]?.get(RHMIProperty.PropertyId.VISIBLE.id))
+		assertEquals("Custom Action", mockServer.data[524])  // custom action button
 		assertEquals(false, mockServer.properties[124]?.get(RHMIProperty.PropertyId.ENABLED.id))  // custom action button
 		assertEquals(false, mockServer.properties[124]?.get(RHMIProperty.PropertyId.SELECTABLE.id))  // clear this notification button
-		assertEquals(null, mockServer.data[525])
+		assertEquals(false, mockServer.properties[124]?.get(RHMIProperty.PropertyId.VISIBLE.id))
+		assertEquals(null, mockServer.data[525])    // empty button
 
 		// now try clicking the custom action
 		callbacks.rhmi_onActionEvent(1, "Dont care", 330, mapOf(0.toByte() to 1))
