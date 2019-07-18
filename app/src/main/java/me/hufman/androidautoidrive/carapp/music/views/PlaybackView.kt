@@ -156,7 +156,6 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		} catch (e: BMWRemoting.ServiceException) {
 			buttons[5].setVisible(false)
 		}
-
 		buttons[5].setSelectable(false)
 
 		buttons[6].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SKIP_PREVIOUS

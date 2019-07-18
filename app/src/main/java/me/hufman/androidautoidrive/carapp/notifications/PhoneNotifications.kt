@@ -129,18 +129,20 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().lastOrNull()?.setSelectable(true)
 
 		// set up the view
-		var buttons = ArrayList(stateView.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
-		stateView.toolbarComponentsList.forEach { it.setVisible(false) }
-		buttons[0].getImageModel()?.asImageIdModel()?.imageId = 150
-		buttons.subList(1, 6).forEach {
-			it.getImageModel()?.asImageIdModel()?.imageId = 158
-		}
 		stateView.componentsList.forEach { it.setVisible(false) }
 		stateView.componentsList.forEach { it.setEnabled(false) }
 		stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull()?.apply {
 			// text
 			setVisible(true)
 			setProperty(6, "55,0,*")
+		}
+		var buttons = ArrayList(stateView.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
+		stateView.toolbarComponentsList.forEach { it.setVisible(false) }
+		buttons[0].getImageModel()?.asImageIdModel()?.imageId = 150
+		buttons[0].setVisible(true)
+		buttons[0].setSelectable(true)
+		buttons.subList(1, 6).forEach {
+			it.getImageModel()?.asImageIdModel()?.imageId = 158
 		}
 
 		// subscribe to CDS for passenger seat info
@@ -268,8 +270,6 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 		if (notification.isClearable) {
 			clearButton.setEnabled(true)
-			clearButton.setSelectable(true)
-			clearButton.setVisible(true)
 			clearButton.getTooltipModel()?.asRaDataModel()?.value = L.NOTIFICATION_CLEAR_ACTION
 			clearButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id
 			clearButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
@@ -279,9 +279,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 				carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to listWidget.id))
 			}
 		} else {
-			clearButton.setVisible(false)
 			clearButton.setEnabled(false)
-			clearButton.setSelectable(false)
 		}
 
 		(0..4).forEach {i ->
