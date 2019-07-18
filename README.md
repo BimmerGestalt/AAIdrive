@@ -94,7 +94,7 @@ It is not recommended to install both the Connected and Connected Classic apps o
 Build Instructions
 ------------------
 
-  - (Optional) Add a [Google Maps API key](https://developers.google.com/maps/documentation/android-sdk/signup) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_GmapsApiKey`
+  - (Optional) Add a [Google Maps API key](https://developers.google.com/maps/documentation/android-sdk/signup) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_GmapsApiKey`. This key should have access to Maps SDK for Android, Places API, and Directions API.
   - Check out the project in Android Studio, then `Build > Make Project`
   - From the commandline, with an Android build environment set up, `./gradlew assemble` should work too
 
