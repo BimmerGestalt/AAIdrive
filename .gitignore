@@ -9,3 +9,5 @@
 /captures
 .externalNativeBuild
 sentry.properties
+_site
+.sass-cache

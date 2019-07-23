@@ -1,0 +1,17 @@
+.gallery {
+	overflow: auto
+}
+.gallery figure {
+	float: left;
+	display: block;
+	text-align: center;
+	padding: 2em;
+}
+.gallery figure img {
+	width: 100%;
+	display: block;
+	padding-bottom: 1ex;
+}
+.gallery figure figcaption {
+	white-space: nowrap;
+}
