@@ -109,6 +109,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			if (notification != null) {
 				// set the list to go into the state
 				notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateView.id
+//				carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to stateView.id))
 
 				val actionId = notificationListView.getAction()?.asRAAction()?.id
 				carConnection.rhmi_ackActionEvent(rhmiHandle, actionId ?: 0, 1, true)   // start screen transition
@@ -271,12 +272,12 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		if (notification.isClearable) {
 			clearButton.setEnabled(true)
 			clearButton.getTooltipModel()?.asRaDataModel()?.value = L.NOTIFICATION_CLEAR_ACTION
-			clearButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id
+			//clearButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id
 			clearButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 				controller.clear(notification)
 				Thread.sleep(100)
 				updateNotificationList()
-				carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to listWidget.id))
+				carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to stateList.id))
 			}
 		} else {
 			clearButton.setEnabled(false)
@@ -300,9 +301,11 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 				button.setSelectable(true)
 				button.setVisible(true)
 				button.getTooltipModel()?.asRaDataModel()?.value = action.title.toString()
-				button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id  // usually the action will clear the notification
+//				button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id  // usually the action will clear the notification
 				button.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 					controller.action(notification, action.title.toString())
+//					carApp.setProperty(stateView.id, RHMIProperty.PropertyId.VISIBLE.id, false)
+					carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to stateList.id))
 				}
 			}
 		}
