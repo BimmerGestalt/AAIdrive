@@ -14,7 +14,7 @@ class RHMIApplicationAsync(val app: RHMIApplication, val handler: Handler): RHMI
 		handler.post { app.setModel(modelId, value) }
 	}
 
-	override fun setProperty(componentId: Int, propertyId: Int, value: Any) {
+	override fun setProperty(componentId: Int, propertyId: Int, value: Any?) {
 		handler.post { app.setProperty(componentId, propertyId, value) }
 	}
 

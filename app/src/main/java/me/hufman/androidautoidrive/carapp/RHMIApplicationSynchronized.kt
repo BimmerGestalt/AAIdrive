@@ -13,7 +13,7 @@ class RHMIApplicationSynchronized(val app: RHMIApplication): RHMIApplication(), 
 		synchronized(this) { app.setModel(modelId, value) }
 	}
 
-	override fun setProperty(componentId: Int, propertyId: Int, value: Any) {
+	override fun setProperty(componentId: Int, propertyId: Int, value: Any?) {
 		synchronized(this) { app.setProperty(componentId, propertyId, value) }
 	}
 
