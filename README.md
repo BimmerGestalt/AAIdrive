@@ -9,6 +9,8 @@ The BMW/Mini IDrive does not offer native Android Auto integration, but does pro
 
 By relying on the Connected Apps technology, this app is automatically themed to fit natively in the car and easily connects to the car without needing any modifications. Any MY2014 or newer BMW or Mini equipped with the "Navigation System Professional (S609A)" [option](https://www.mdecoder.com/) should be compatible.
 
+[![App List](https://hufman.github.io/AndroidAutoIdrive/demo-applist.gif) Gallery](https://hufman.github.io/AndroidAutoIdrive/gallery.html)
+
 Overview
 --------
 
@@ -97,37 +99,3 @@ Build Instructions
   - (Optional) Add a [Google Maps API key](https://developers.google.com/maps/documentation/android-sdk/signup) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_GmapsApiKey`. This key should have access to Maps SDK for Android, Places API, and Directions API.
   - Check out the project in Android Studio, then `Build > Make Project`
   - From the commandline, with an Android build environment set up, `./gradlew assemble` should work too
-
-Screenshots
------------
-
-![Phone App Interface](https://hufman.github.io/AndroidAutoIdrive/screenshot-app.png)
-
-![Music App List](https://hufman.github.io/AndroidAutoIdrive/screenshot-musicapplist.jpg)
-
-![Music Playback Interface](https://hufman.github.io/AndroidAutoIdrive/screenshot-musicplayback.jpg)
-
-![Music Browse](https://hufman.github.io/AndroidAutoIdrive/screenshot-musicbrowse.jpg)
-
-Demos
------
-
-![App List](https://hufman.github.io/AndroidAutoIdrive/demo-applist.gif)
-
-Android Auto music apps are added as music sources to the car
-
-![Now Playing](https://hufman.github.io/AndroidAutoIdrive/demo-nowplaying.gif)
-
-Select from a list of currently-queued songs
-
-![App Actions](https://hufman.github.io/AndroidAutoIdrive/demo-actions.gif)
-
-Supports app-specific song actions
-
-![Browse](https://hufman.github.io/AndroidAutoIdrive/demo-browse.gif)
-
-Navigates each app's music library
-
-![Filter](https://hufman.github.io/AndroidAutoIdrive/demo-filter.gif)
-
-Easy filtering of a list of music entries
