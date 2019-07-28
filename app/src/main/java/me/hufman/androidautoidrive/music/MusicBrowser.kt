@@ -18,43 +18,69 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 	var connected = false   // whether we are still connected
 		private set
 	private val mediaBrowser: MediaBrowserCompat    // all interactions with MediaBrowserCompat must be from the same thread
+	var mediaController: MediaControllerCompat? = null  // after the connection, this will become valid
+		private set
+
 	var listener: Runnable? = null
 		set(value) { field = value; if (connected) value?.run() }
 
+	/**
+	 * runBlocking, but only if we need to switch to the handler thread
+	 */
+	private inline fun <T> runBlockingIfNecessary(crossinline task: () -> T): T {
+		return if (Looper.myLooper() == handler.looper) {
+			task()
+		} else {
+			runBlocking(handler.asCoroutineDispatcher()) {
+				task()
+			}
+		}
+	}
 	init {
 		val component = ComponentName(musicAppInfo.packageName, musicAppInfo.className)
 
 		// load the mediaBrowser on the UI thread
-		mediaBrowser = runBlocking(handler.asCoroutineDispatcher()) {
+		mediaBrowser = runBlockingIfNecessary {
 			Log.i(TAG, "Opening connection to ${musicAppInfo.name}")
-			MediaBrowserCompat(context, component, object : MediaBrowserCompat.ConnectionCallback() {
-				override fun onConnected() {
-					Log.i(TAG, "Connected to ${musicAppInfo.name}, triggering listener $listener")
-					connecting = false
-					connected = true
-
-					listener?.run()
-				}
-
-				override fun onConnectionSuspended() {
-					Log.i(TAG, "Disconnected from ${musicAppInfo.name}")
-					connecting = false
-					connected = false
-				}
-
-				override fun onConnectionFailed() {
-					Log.i(TAG, "Failed connecting to ${musicAppInfo.name}")
-					connecting = false
-					connected = false
-				}
-			}, null).apply {
+			MediaBrowserCompat(context, component, ConnectionCallback(), null).apply {
 				Log.i(TAG, "Connecting to the app ${musicAppInfo.name}")
-				connecting = true
 				connect()
 			}
 		}
+		Log.i(TAG, "Connecting state ${musicAppInfo.name}: connecting:$connecting connected:$connected")
 	}
 
+	private inner class ConnectionCallback: MediaBrowserCompat.ConnectionCallback() {
+		override fun onConnected() {
+			Log.i(TAG, "Connected to ${musicAppInfo.name}, triggering listener $listener")
+			synchronized(this@MusicBrowser) {
+				connecting = false
+				connected = true
+			}
+
+			// load up the controller
+			mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken)
+
+			// trigger any listener callbacks
+			listener?.run()
+		}
+
+		override fun onConnectionSuspended() {
+			Log.i(TAG, "Disconnected from ${musicAppInfo.name}")
+			synchronized(this@MusicBrowser) {
+				connecting = false
+				connected = false
+			}
+		}
+
+		override fun onConnectionFailed() {
+			Log.i(TAG, "Failed connecting to ${musicAppInfo.name}")
+			synchronized(this@MusicBrowser) {
+				connecting = false
+				connected = false
+			}
+		}
+	}
 
 	private fun getRoot(): String {
 		if (!connected) return "disconnected root"
@@ -65,32 +91,28 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 		}
 	}
 
-	suspend fun connect() {
-		val myThread = synchronized(this) {
-			if (connected) return
-			if (!connecting) {
-				connecting = true
-				true
-			} else {
-				false
-			}
-		}
-		if (myThread) {
-			mediaBrowser.connect()
-		}
+	fun connect() {
+		Log.i(TAG, "Starting to connect ${musicAppInfo.name}")
+		mediaBrowser.connect()
+	}
+
+	suspend fun waitForConnect() {
 		(0..500).forEach { _ ->
 			delay(50)
-			if (!connecting) {
-				return
+			synchronized(this) {
+				if (!connecting) {
+					return
+				}
 			}
 		}
 	}
 
 	fun disconnect() {
+		mediaController = null
 		if (Looper.myLooper() == handler.looper) {
 			mediaBrowser.disconnect()
 		} else {
-			runBlocking(handler.asCoroutineDispatcher()) {
+			handler.post {
 				mediaBrowser.disconnect()
 			}
 		}
@@ -99,7 +121,7 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 	suspend fun browse(path: String?, timeout: Long = 5000): List<MediaBrowserCompat.MediaItem> {
 		val deferred = CompletableDeferred<List<MediaBrowserCompat.MediaItem>>()
 		withContext(handler.asCoroutineDispatcher()) {
-			connect()
+			waitForConnect()
 			if (connected) {
 				val browsePath = path ?: getRoot()
 				mediaBrowser.subscribe(browsePath, object : MediaBrowserCompat.SubscriptionCallback() {
@@ -133,7 +155,7 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 	suspend fun search(query: String, timeout: Long = 5000): List<MediaBrowserCompat.MediaItem>? {
 		val deferred = CompletableDeferred<List<MediaBrowserCompat.MediaItem>?>()
 		withContext(handler.asCoroutineDispatcher()) {
-			connect()
+			waitForConnect()
 			if (connected) {
 				mediaBrowser.search(query, null, object : MediaBrowserCompat.SearchCallback() {
 					override fun onError(query: String, extras: Bundle?) {
@@ -158,17 +180,5 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 			}
 		}
 		return deferred.await()
-	}
-
-	fun getController(): MediaControllerCompat {
-		val token = mediaBrowser.sessionToken
-		if (Looper.myLooper() != handler.looper) {
-			Log.w(TAG, "Fetching controller from a different thread, might cause problems")
-			return runBlocking(handler.asCoroutineDispatcher()) {
-				MediaControllerCompat(context, token)
-			}
-		} else {
-			return MediaControllerCompat(context, token)
-		}
 	}
 }

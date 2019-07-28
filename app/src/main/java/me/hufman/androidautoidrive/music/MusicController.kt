@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.music
 import android.content.Context
 import android.os.DeadObjectException
 import android.os.Handler
+import android.os.Looper
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
@@ -50,7 +51,7 @@ class MusicController(val context: Context, val handler: Handler) {
 				} else {
 					controller?.transportControls?.seekTo(newPos)
 				}
-				handler.postDelayed(this, 500)
+				handler.postDelayed(this, 300)
 			}
 		}
 	}
@@ -60,7 +61,10 @@ class MusicController(val context: Context, val handler: Handler) {
 		handler.post { scheduleRedrawProgress() }
 	}
 
-	private inline fun rpcSafe(f: () -> Unit) {
+	/**
+	 * don't crash for RPC disconnections
+	 */
+	private inline fun safeRpc(crossinline f: () -> Unit) {
 		try {
 			f()
 		} catch (e: DeadObjectException) {
@@ -68,59 +72,109 @@ class MusicController(val context: Context, val handler: Handler) {
 			controller = null
 		}
 	}
-	fun connectApp(app: MusicAppInfo) = rpcSafe {
-		if (currentApp?.musicAppInfo == app) {
-			play()
-			return
+	/**
+	 * Run on the handler's thread, and don't crash for RPC disconnections
+	 */
+	private inline fun asyncRpc(crossinline f: () -> Unit) {
+		handler.post {
+			try {
+				f()
+			} catch (e: DeadObjectException) {
+				// the controller disconnected
+				controller = null
+			}
 		}
-
-		disconnectApp()
-		currentApp = MusicBrowser(context, handler, app)
-		currentApp?.listener = Runnable {
-			controller = currentApp?.getController()
-			controller?.registerCallback(controllerCallback, handler)
-			if (desiredPlayback)
-				play()
-			listener?.run() // redraw the ui
+	}
+	/**
+	 * If we are on the handler's thread, run the task
+	 * else, schedule it for the handler to run
+	 */
+	private inline fun syncRpc(crossinline f: () -> Unit) {
+		if (Looper.myLooper() == handler.looper) {
+			try {
+				f()
+			} catch (e: DeadObjectException) {
+				// the controller disconnected
+				controller = null
+			}
+		} else {
+			asyncRpc(f)
+		}
+	}
+	/**
+	 * Run this controller task on the handler's thread, and don't crash for RPC disconnections
+	 */
+	private inline fun asyncControl(crossinline f: (MediaControllerCompat?) -> Unit) {
+		handler.post {
+			try {
+				f(controller)
+			} catch (e: DeadObjectException) {
+				// the controller disconnected
+				controller = null
+			}
 		}
 	}
 
-	fun disconnectApp() = rpcSafe {
-		if (controller != null) {
-			controller?.unregisterCallback(controllerCallback)
-			pause()
+	fun connectApp(app: MusicAppInfo) = asyncRpc {
+		if (currentApp?.musicAppInfo == app) {
+			play()
+		} else {
+			Log.i(TAG, "Switching current app connection from ${currentApp?.musicAppInfo} to $app")
+			disconnectApp()
+			currentApp = MusicBrowser(context, handler, app)
+			currentApp?.listener = Runnable {
+				Log.d(TAG, "Notified of new music connection")
+				controller = currentApp?.mediaController
+				controller?.registerCallback(controllerCallback, handler)
+				if (desiredPlayback) {
+					Log.i(TAG, "Resuming playback on new music connection")
+					play()
+				}
+				scheduleRedraw()
+			}
 		}
+	}
+
+	fun disconnectApp() {
+		// trigger a pause of the current connected app
+		disconnectAppAsync()
+
+		// then clear out the saved controller object, to defer future play() calls
 		controller = null
 		currentApp?.disconnect()
+		currentApp = null
+	}
+	fun disconnectAppAsync() = safeRpc { // all calls are already in the handler thread, don't go async
+		if (controller != null) {
+			controller?.unregisterCallback(controllerCallback)
+			controller?.transportControls?.pause()
+		}
 	}
 
 	/* Controls */
-	fun play() = rpcSafe {
+	fun play() = asyncControl {
+		desiredPlayback = true
 		if (controller == null) {
 			Log.w(TAG, "Play request but no active music app connection")
-		}
-		desiredPlayback = true
-		try {
+		} else {
 			if (controller?.playbackState?.state != STATE_PLAYING) {
 				controller?.transportControls?.play()
 			}
-		} catch (e: DeadObjectException) {
-			controller = null
 		}
 	}
-	fun pause() = rpcSafe {
+	fun pause() = asyncControl {
 		desiredPlayback = false
 		if (controller?.playbackState?.state != STATE_PAUSED) {
 			controller?.transportControls?.pause()
 		}
 	}
-	fun skipToPrevious() = rpcSafe {
+	fun skipToPrevious() = asyncControl { controller ->
 		controller?.transportControls?.skipToPrevious()
 	}
-	fun skipToNext() = rpcSafe {
+	fun skipToNext() = asyncControl { controller ->
 		controller?.transportControls?.skipToNext()
 	}
-	fun startRewind() = rpcSafe {
+	fun startRewind() = asyncControl { controller ->
 		if (isSupportedAction(MusicAction.REWIND)) {
 			controller?.transportControls?.rewind()
 		} else {
@@ -129,7 +183,7 @@ class MusicController(val context: Context, val handler: Handler) {
 			seekingRunnable.run()
 		}
 	}
-	fun startFastForward() = rpcSafe {
+	fun startFastForward() = asyncControl { controller ->
 		if (isSupportedAction(MusicAction.FAST_FORWARD)) {
 			controller?.transportControls?.fastForward()
 		} else {
@@ -138,25 +192,26 @@ class MusicController(val context: Context, val handler: Handler) {
 			seekingRunnable.run()
 		}
 	}
-	fun stopSeeking() = rpcSafe {
+	fun stopSeeking() = asyncControl { controller ->
 		startedSeekingTime = 0
 		play()
 	}
 
-	fun playSong(song: MusicMetadata) = rpcSafe {
-		val mediaId = song.mediaId ?: return
-		controller?.transportControls?.playFromMediaId(mediaId, song.extras)
+	fun playSong(song: MusicMetadata) = asyncControl { controller ->
+		if (song.mediaId != null) {
+			controller?.transportControls?.playFromMediaId(song.mediaId, song.extras)
+		}
 	}
 
-	fun playQueue(song: MusicMetadata) = rpcSafe {
+	fun playQueue(song: MusicMetadata) = asyncControl { controller ->
 		if (song.queueId != null) {
 			controller?.transportControls?.skipToQueueItem(song.queueId)
 		}
 	}
 
-	fun customAction(action: CustomAction) = rpcSafe {
+	fun customAction(action: CustomAction) = asyncControl { controller ->
 		if (action.packageName == controller?.packageName) {
-			controller?.transportControls?.sendCustomAction(action.action, action.extras)
+			controller.transportControls?.sendCustomAction(action.action, action.extras)
 		}
 	}
 
@@ -218,7 +273,11 @@ class MusicController(val context: Context, val handler: Handler) {
 		} ?: LinkedList()
 	}
 	fun isSupportedAction(action: MusicAction): Boolean {
-		return (controller?.playbackState?.actions ?: 0) and action.flag > 0
+		return try {
+			(controller?.playbackState?.actions ?: 0) and action.flag > 0
+		} catch (e: DeadObjectException) {
+			false
+		}
 	}
 
 
@@ -231,7 +290,6 @@ class MusicController(val context: Context, val handler: Handler) {
 		listener?.run()
 		scheduleRedrawProgress()
 	}
-
 	fun scheduleRedrawProgress() {
 		val position = getPlaybackPosition()
 		if (position.playbackPaused) {
@@ -243,17 +301,26 @@ class MusicController(val context: Context, val handler: Handler) {
 		}
 	}
 
+	val redrawTask = Runnable {
+		listener?.run()
+	}
+	fun scheduleRedraw() {
+		handler.removeCallbacks(redrawTask)
+		handler.postDelayed(redrawTask, 100)
+	}
+
+
 	private inner class Callback: MediaControllerCompat.Callback() {
 		override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
-			listener?.run()
+			scheduleRedraw()
 		}
 
 		override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
-			listener?.run()
+			scheduleRedraw()
 		}
 
 		override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
-			listener?.run()
+			scheduleRedraw()
 		}
 	}
 }

@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive.carapp
 import android.os.Handler
 import me.hufman.idriveconnectionkit.rhmi.*
 
-class RHMIApplicationAsync(val app: RHMIApplication, val handler: Handler): RHMIApplication() {
+class RHMIApplicationAsync(val app: RHMIApplication, val handler: Handler): RHMIApplication(), RHMIApplicationWrapper {
 	override val models = app.models
 	override val actions = app.actions
 	override val events = app.events
@@ -20,5 +20,9 @@ class RHMIApplicationAsync(val app: RHMIApplication, val handler: Handler): RHMI
 
 	override fun triggerHMIEvent(eventId: Int, args: Map<Any, Any?>) {
 		handler.post { app.triggerHMIEvent(eventId, args) }
+	}
+
+	override fun unwrap(): RHMIApplication {
+		return (app as? RHMIApplicationWrapper)?.unwrap() ?: app
 	}
 }

@@ -92,7 +92,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 
 	fun pushBrowsePage(directory: MusicMetadata?, stateId: Int? = null): BrowsePageView {
 		val nextState = states[pageStack.size % states.size]
-		val state = states.find { it.id == stateId } ?: nextState
+		val state = states.firstOrNull { it.id == stateId } ?: nextState
 		val index = stack.indexOfLast { it.pageView != null } + 1 // what the next new index will be
 
 		val stackSlot = if (stack.isNotEmpty() && directory == stack.lastOrNull { it.location?.browseable == true }?.location) {

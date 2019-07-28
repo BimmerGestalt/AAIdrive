@@ -24,7 +24,7 @@ const val TAG = "MusicApp"
 class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController) {
 	val carApp = createRHMIApp()
 
-	val avContext = AVContextHandler(((carApp.app as RHMIApplicationIdempotent).app as RHMIApplicationEtch), musicController, phoneAppResources)
+	val avContext = AVContextHandler(carApp, musicController, phoneAppResources)
 	val globalMetadata = GlobalMetadata(carApp, musicController)
 	var playbackViewVisible = false
 	val playbackView: PlaybackView
@@ -84,7 +84,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		musicAppDiscovery.listener = Runnable {
 			avContext.updateApps(musicAppDiscovery.validApps)
 		}
-		avContext.updateApps(musicAppDiscovery.validApps)
+		musicAppDiscovery.discoverApps()    // trigger the discovery, to show the apps when the handler starts running
 
 		musicController.listener = Runnable {
 			redraw()
@@ -141,25 +141,24 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		override fun av_connectionGranted(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
 			val msg = "Received av_connectionGranted: handle=$handle connectionType=$connectionType"
 			Log.i(TAG, msg)
-			synchronized(avContext) {
-				avContext.av_connectionGranted(handle, connectionType)
-			}
+			avContext.av_connectionGranted(handle, connectionType)
 		}
 
 		override fun av_connectionDeactivated(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
 			val msg = "Received av_connectionDeactivated: handle=$handle connectionType=$connectionType"
 			Log.i(TAG, msg)
-			synchronized(avContext) {
-				avContext.av_connectionDeactivated(handle, connectionType)
-			}
+			avContext.av_connectionDeactivated(handle, connectionType)
+		}
+
+		override fun av_connectionDenied(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
+			val msg = "Received av_connectionDenied: handle=$handle connectionType=$connectionType"
+			Log.i(TAG, msg)
 		}
 
 		override fun av_requestPlayerState(handle: Int?, connectionType: BMWRemoting.AVConnectionType?, playerState: BMWRemoting.AVPlayerState?) {
 			val msg = "Received av_requestPlayerState: handle=$handle connectionType=$connectionType playerState=$playerState"
 			Log.i(TAG, msg)
-			synchronized(avContext) {
-				avContext.av_requestPlayerState(handle, connectionType, playerState)
-			}
+			avContext.av_requestPlayerState(handle, connectionType, playerState)
 		}
 
 		override fun av_multimediaButtonEvent(handle: Int?, event: BMWRemoting.AVButtonEvent?) {
