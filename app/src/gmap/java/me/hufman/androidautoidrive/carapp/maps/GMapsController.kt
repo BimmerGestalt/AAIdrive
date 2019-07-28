@@ -36,6 +36,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 	var projection: GMapsProjection? = null
 
 	private val SHUTDOWN_WAIT_INTERVAL = 120000L   // milliseconds of inactivity before shutting down map
+	private val SEARCH_SESSION_TTL = 180000L    // number of milliseconds that a search session can live   https://stackoverflow.com/a/52339858
 
 	private val placesClient: PlacesClient
 	private val geoClient = GeoApiContext().setQueryRateLimit(3)
@@ -66,7 +67,9 @@ class GMapsController(private val context: Context, private val resultsControlle
 	}
 	private var startZoom = 6f  // what zoom level we start the projection with
 	private var currentZoom = 15f
-	private var searchSession: AutocompleteSessionToken? = null
+	private var searchSessionStart: Long = 0    // when the search session started
+	private var searchSessionConsumed = true    // if we used the search session for a Place Info lookup
+	private var searchSession: AutocompleteSessionToken? = null // the search session token
 	private var currentNavDestination: LatLong? = null
 	var currentNavRoute: List<LatLng>? = null
 
@@ -185,10 +188,19 @@ class GMapsController(private val context: Context, private val resultsControlle
 		searchLocations(query, latlngBounds)
 	}
 
-	fun searchLocations(query: String, location: LatLngBounds) {
+	private fun generateSearchSession() {
+		// the search session only should live for 3 minutes
+		if (searchSessionStart + SEARCH_SESSION_TTL < System.currentTimeMillis()) {
+			searchSession = null
+		}
 		if (searchSession == null) {
 			searchSession = AutocompleteSessionToken.newInstance()
+			searchSessionStart = System.currentTimeMillis()
+			searchSessionConsumed = false
 		}
+	}
+	fun searchLocations(query: String, location: LatLngBounds) {
+		generateSearchSession()
 
 		val bounds = RectangularBounds.newInstance(location)
 		Log.i(TAG, "Starting Place search for $query near $bounds")
@@ -212,7 +224,13 @@ class GMapsController(private val context: Context, private val resultsControlle
 
 	override fun resultInformation(resultId: String) {
 		val requestedFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS)
-		val request = FetchPlaceRequest.builder(resultId, requestedFields).build()
+		val requestBuilder = FetchPlaceRequest.builder(resultId, requestedFields)
+		if (!searchSessionConsumed) {
+			requestBuilder.setSessionToken(searchSession)
+			searchSessionConsumed = true
+		}
+		val request = requestBuilder.build()
+
 		placesClient.fetchPlace(request).addOnSuccessListener { result ->
 			Log.i(TAG, "Received Place result for resultId $resultId: ${result?.place}")
 			val place = result?.place ?: return@addOnSuccessListener

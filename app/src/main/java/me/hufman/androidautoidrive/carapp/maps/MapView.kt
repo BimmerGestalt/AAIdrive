@@ -359,21 +359,11 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 	}
 
 	inner class MapResultsUpdater: MapResultsController {
-		val resultsAddressLocator = Runnable {
-			searchResults.forEach {
-				if (it.location == null) {
-					interaction.resultInformation(it.id)
-				}
-			}
-		}
 		override fun onSearchResults(results: Array<MapResult>) {
 			Log.i(TAG, "Received query results")
 			searchResults.clear()
 			searchResults.addAll(results)
 			stateInputState.sendSuggestions(searchResults)
-
-			handler?.removeCallbacks(resultsAddressLocator)
-			handler?.postDelayed(resultsAddressLocator, 2000)
 		}
 
 		override fun onPlaceResult(result: MapResult) {
