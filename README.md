@@ -80,8 +80,6 @@ Due to the unofficial reverse-engineered nature of this project, it has some lim
     - Smart Audiobook Player
     - YouTube Music
 
-Additionally, BMW/Mini Connected seems to not be perfectly reliable on Android Pie. This app will lose connection to the car when Android kills the main Connected app, but will automatically reconnect when the connection is reestablished.
-
 Requirements
 ------------
 
