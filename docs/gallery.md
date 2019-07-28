@@ -4,8 +4,6 @@ title: Gallery
 permalink: /gallery
 ---
 
-### Gallery
-
 <div class="gallery">
 <figure>
 	<img src="screenshot-app.png" alt="Phone App Interface" width="270" height="480"/>

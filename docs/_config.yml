@@ -10,6 +10,7 @@ title: Android Auto for IDrive
 email: hufman@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
   Implementations of some Android Auto features as unofficial IDrive apps
+homeurl: "https://github.com/hufman/AndroidAutoIdrive"
 baseurl: "/AndroidAutoIdrive" # the subpath of your site, e.g. /blog
 url: "https://hufman.github.io" # the base hostname & protocol for your site
 github_username:  hufman
