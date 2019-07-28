@@ -309,7 +309,11 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 		val focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()
 		focusEvent?.getTargetModel()?.asRaDataModel()?.value = clearButton.id.toString()
-		focusEvent?.triggerEvent(mapOf(0 to clearButton.id))
+		if (notification.isClearable) {
+			focusEvent?.triggerEvent(mapOf(0 to clearButton.id))
+		} else {
+			focusEvent?.triggerEvent(mapOf(0 to buttons[1].id))
+		}
 	}
 
 	/** All open, so that we can mock them in tests */
