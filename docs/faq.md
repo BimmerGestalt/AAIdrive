@@ -22,5 +22,12 @@ What does "Request Audio Focus" mean?
 Why aren't Google Maps compiled into the app by default?
 : Google Maps support is mainly to demonstrate Android Auto features being implemented as a Connected App. It is against the [license](https://cloud.google.com/maps-platform/terms/#3-license) to show Google Maps in the car. The performance is also poor, because it is taking a screenshot of Google Maps on the phone and uploading it to the car as fast as possible, which goes about 10fps over USB and 1fps over Bluetooth.
 
+Which version should I install?
+: To help test this app, the APK labelled `sentry` should be installed, which will automatically upload crash reports to Sentry. The `nonalytics` version has all crash reporting functionality removed.
+: The `release` and `debug` versions are signed by different keys, as some phones may refuse to install apps without a release signature.
+
+Why isn't this available on the Google Play Store?
+: During this early stage, the app needs further testing before releasing to a wider anonymous public. Additionally, it relies on a feature which enables to app to stay completely shut down until the car connects, which was removed in Android Oreo.
+
 How do I get past this other problem?
 : Please [reach out](mailto:hufman+androidautoidrive@gmail.com?subject=Android Auto IDrive Question) for support!
