@@ -228,7 +228,7 @@ class MainActivity : AppCompatActivity() {
 		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_ENABLE_CONTEXT].toBoolean()
 
 		val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
-		if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && !SecurityService.isConnecting() && !SecurityService.isConnected()) {
+		if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && !SecurityService.success) {
 			txtConnectionStatus.text = resources.getString(R.string.connectionStatusMissingConnectedApp)
 			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionError, null))
 		} else if (!IDriveConnectionListener.isConnected) {
