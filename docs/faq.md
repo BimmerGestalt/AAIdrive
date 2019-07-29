@@ -4,6 +4,9 @@ title: Foreseen Anticipated Queries
 permalink: /faq
 ---
 
+Is my phone compatible?
+: The app has been successfully tested on Android Nougat, Oreo, and Pi. It is only developed for Android, however: There isn't a similar app available for iPhone.
+
 Is my car compatible?
 : Any model-year 2015 or later BMW or Mini with the navigation option should be compatible. There should be a Connected Apps menu in the car, and the official BMW or Mini Connected phone app should add a Calendar app to the car.
 
