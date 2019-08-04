@@ -8,10 +8,10 @@ Is my phone compatible?
 : The app has been successfully tested on Android Nougat, Oreo, and Pi. It is only developed for Android, however: There isn't a similar app available for iPhone.
 
 Is my car compatible?
-: Any model-year 2015 or later BMW or Mini with the navigation option should be compatible. There should be a Connected Apps menu in the car, and the official BMW or Mini Connected phone app should add a Calendar app to the car.
+: Any model-year 2015 or later BMW or Mini with the navigation option should be compatible. As a sure test of compatibility, the official BMW or Mini Connected phone app should add a Calendar to the car's Connected Apps menu: This app uses that same protocol.
 
 Do I really need the Connected Classic app?
-: Yes, the Connected Classic app provides the security module that this app uses to respond to the car's authentication challenge. The new Connected app doesn't export it for other apps on the phone to use.
+: Yes, the Connected Classic app provides the security module that this app uses to respond to the car's authentication challenge. The new Connected app doesn't export it for other apps on the phone to use. However, it is permissible to install the Connected Classic app for the other brand than the car, such as the BMW Connected and Mini Connected Classic app at the same time.
 
 How does the app detect passengers in the car?
 : The car detects weight on the seat and tells the app if someone is sitting on it.
@@ -23,14 +23,14 @@ What does "Request Audio Focus" mean?
 : This feature tells the car to listen to the app connection for music, and enables a few tighter integrations like automatic music resuming and the seek buttons. However, cars that run the Connected Apps over USB also listen to the music over USB, which is only compatible with Android phones before Oreo. In this situation, the car should be set to play from Bluetooth and the "Request Audio Focus" should be disabled.
 
 Why aren't Google Maps compiled into the app by default?
-: Google Maps support is mainly to demonstrate Android Auto features being implemented as a Connected App. It is against the [license](https://cloud.google.com/maps-platform/terms/#3-license) to show Google Maps in the car. The performance is also poor, because it is taking a screenshot of Google Maps on the phone and uploading it to the car as fast as possible, which goes about 10fps over USB and 1fps over Bluetooth.
+: Google Maps support is mainly to demonstrate Android Auto features being implemented as Connected Apps. It is against the [general license](https://cloud.google.com/maps-platform/terms/#3-license) to show Google Maps in the car. The performance is also poor, because it is taking a screenshot of Google Maps on the phone and uploading it to the car as fast as possible, which goes about 10fps over USB and 1fps over Bluetooth.
 
 Which version should I install?
 : To help test this app, the APK labelled `sentry` should be installed, which will automatically upload crash reports to Sentry. The `nonalytics` version has all crash reporting functionality removed.
 : The `release` and `debug` versions are signed by different keys, as some phones may refuse to install apps without a release signature.
 
 Why isn't this available on the Google Play Store?
-: During this early stage, the app needs further testing before releasing to a wider anonymous public. Additionally, it relies on a feature which enables to app to stay completely shut down until the car connects, which was removed in Android Oreo.
+: During this early stage, the app needs further testing before releasing to a wider anonymous public. Additionally, it relies on a feature which enables to app to stay completely shut down until the car connects, which was removed in Android Oreo, and Google Play Store does not allow uploading apps that are targeting old API versions.
 
 How do I get past this other problem?
 : Please [reach out](mailto:hufman+androidautoidrive@gmail.com?subject=Android Auto IDrive Question) for support!
