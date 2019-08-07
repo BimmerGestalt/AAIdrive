@@ -10,6 +10,9 @@
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@id/txtConnectionStatus"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,9 +25,7 @@
             android:id="@+id/swMessageNotifications"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/message_notifications"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,26 +35,25 @@
             android:id="@+id/paneNotifications"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginStart="24dp">
             <Switch
                 android:id="@+id/swNotificationPopup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="48dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/notification_popups" />
             <LinearLayout
                 android:id="@+id/paneNotificationPopup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginStart="24dp">
                 <Switch
                     android:id="@+id/swNotificationPopupPassenger"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginStart="60dp"
                     android:text="@string/notification_popups_passenger" />
             </LinearLayout>
 
@@ -73,8 +73,6 @@
             style="@style/optionGmapVisible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
             android:orientation="vertical">
 
             <Switch
@@ -89,20 +87,19 @@
                 android:id="@+id/paneGMaps"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
                 android:orientation="vertical">
                 <Switch
                     android:id="@+id/swGmapWidescreen"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
-                    android:layout_marginStart="16dp"
                     android:text="@string/lbl_widescreen_map" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
-                    android:layout_marginStart="16dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -125,8 +122,6 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
             android:layout_marginTop="10dp"
             android:text="@string/lbl_music_apps" />
 
@@ -134,9 +129,8 @@
             android:id="@+id/swAudioContext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
-            android:text="@string/enable_audio_context" />
+            android:text="@string/enable_audio_context"
+            android:layout_marginBottom="8dp" />
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/listMusicAppsRefresh"
@@ -145,9 +139,7 @@
             <ListView
                 android:id="@+id/listMusicApps"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp" />
+                android:layout_height="match_parent" />
         </android.support.v4.widget.SwipeRefreshLayout>
 
     </LinearLayout>
