@@ -156,9 +156,6 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		super.onListenerConnected()
 		UIState.notificationListenerConnected = true
 		sendBroadcast(Intent(MainActivity.INTENT_REDRAW))
-		val notifications = this.activeNotifications
-		val notificationStrings = notifications.mapNotNull { it.notification.tickerText }.joinToString()
-		Log.i(TAG, "Notifications already showing: $notificationStrings")
 		updateNotificationList()
 	}
 
@@ -187,11 +184,15 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	fun updateNotificationList() {
 		synchronized(NotificationsState.notifications) {
 			NotificationsState.notifications.clear()
-			NotificationsState.notifications.addAll(this.activeNotifications.filter {
-				shouldShowNotification(it)
-			}.map {
-				summarizeNotification(it)
-			})
+			try {
+				NotificationsState.notifications.addAll(this.activeNotifications.filter {
+					shouldShowNotification(it)
+				}.map {
+					summarizeNotification(it)
+				})
+			} catch (e: SecurityException) {
+				Log.w(TAG, "Unable to fetch activeNotifications: $e")
+			}
 		}
 		controller.sendNotificationList()
 	}
@@ -221,10 +222,14 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 			this@NotificationListenerServiceImpl.cancelNotification(key)
 		}
 		open fun sendNotificationAction(key: String, action: String?) {
-			val notification = this@NotificationListenerServiceImpl.activeNotifications.find { it.key == key }
-			val intent = notification?.notification?.actions?.find { it.title == action }?.actionIntent
-			if (intent != null) {
-				intent.send()
+			try {
+				val notification = this@NotificationListenerServiceImpl.activeNotifications.find { it.key == key }
+				val intent = notification?.notification?.actions?.find { it.title == action }?.actionIntent
+				if (intent != null) {
+					intent.send()
+				}
+			} catch (e: SecurityException) {
+				Log.w(TAG, "Unable to send action $action to notification $key: $e")
 			}
 		}
 	}
