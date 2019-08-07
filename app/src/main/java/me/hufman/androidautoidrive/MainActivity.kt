@@ -61,15 +61,18 @@ class MainActivity : AppCompatActivity() {
 
 		swMessageNotifications.setOnCheckedChangeListener { buttonView, isChecked ->
 			if (buttonView != null) onChangedSwitchNotifications(buttonView, isChecked)
+			redraw()
 		}
 		swNotificationPopup.setOnCheckedChangeListener { buttonView, isChecked ->
 			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, isChecked.toString())
+			redraw()
 		}
 		swNotificationPopupPassenger.setOnCheckedChangeListener { buttonView, isChecked ->
 			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER, isChecked.toString())
 		}
 		swGMaps.setOnCheckedChangeListener { buttonView, isChecked ->
 			if (buttonView != null) onChangedSwitchGMaps(buttonView, isChecked)
+			redraw()
 		}
 		swGmapSyle.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
 			override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -215,9 +218,12 @@ class MainActivity : AppCompatActivity() {
 	fun redraw() {
 		swMessageNotifications.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
 				UIState.notificationListenerConnected
+		paneNotifications.visible = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
 		swNotificationPopup.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
+		paneNotificationPopup.visible = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
 		swNotificationPopupPassenger.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean()
 		swGMaps.isChecked = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
+		paneGMaps.visible = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
 		swGmapWidescreen.isChecked = AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()
 
 		val gmapStylePosition = resources.getStringArray(R.array.gmaps_styles).map { title ->
