@@ -102,7 +102,7 @@ class MainService: Service() {
 				.setOngoing(true)
 				.setContentTitle(getText(R.string.notification_title))
 				.setContentText(getText(R.string.notification_description))
-				.setSmallIcon(android.R.drawable.ic_menu_gallery)
+				.setSmallIcon(R.drawable.ic_notify)
 				.setPriority(PRIORITY_LOW)
 				.setContentIntent(PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT))
 		if (brand?.toLowerCase() == "bmw") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_bmw))
