@@ -96,7 +96,7 @@ class TestMapsApp {
 
 		// show the map screen
 		mockClient.rhmi_onHmiEvent(1, "", app.stateMap.id, 1, mapOf(4.toByte() to true))
-		verify(mockMap).changeImageSize(1000, 400)
+		verify(mockMap).changeImageSize(700, 400)
 		verify(mockController).showMap()
 
 		// send a picture, but it's the wrong size so it shouldn't send to the car's map
@@ -123,7 +123,7 @@ class TestMapsApp {
 		reset(mockMap)
 		whenever(mockMap.getFrame()).then {
 			mock<Bitmap> {
-				on { width } doReturn 1000
+				on { width } doReturn 700
 				on { height } doReturn 400
 			}
 		}.thenReturn(null)
