@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -109,6 +110,11 @@ class MainActivity : AppCompatActivity() {
 					.build()
 			val manager = NotificationManagerCompat.from(this)
 			manager.notify(1, notification)
+		}
+
+		btnHelp.setOnClickListener {
+			val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://hufman.github.io/AndroidAutoIdrive/faq.html"))
+			startActivity(intent)
 		}
 
 		// build list of discovered music apps
