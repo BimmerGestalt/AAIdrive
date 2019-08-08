@@ -9,7 +9,7 @@ The BMW/Mini IDrive does not offer native Android Auto integration, but does pro
 
 By relying on the Connected Apps technology, this app is automatically themed to fit natively in the car and easily connects to the car without needing any modifications. Any MY2014 or newer BMW or Mini equipped with the "Navigation System Professional (S609A)" [option](https://www.mdecoder.com/) should be compatible.
 
-[![App List](https://hufman.github.io/AndroidAutoIdrive/demo-applist.gif) Gallery](https://hufman.github.io/AndroidAutoIdrive/gallery.html)
+[![App List](https://hufman.github.io/AndroidAutoIdrive/demo-applist.gif)<br />Gallery](https://hufman.github.io/AndroidAutoIdrive/gallery.html)
 
 Overview
 --------
