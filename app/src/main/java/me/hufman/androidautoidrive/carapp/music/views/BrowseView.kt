@@ -95,7 +95,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		val state = states.firstOrNull { it.id == stateId } ?: nextState
 		val index = stack.indexOfLast { it.pageView != null } + 1 // what the next new index will be
 
-		val stackSlot = if (stack.isNotEmpty() && directory == stack.lastOrNull { it.location?.browseable == true }?.location) {
+		val stackSlot = if (directory != null && directory == stack.lastOrNull { it.location?.browseable == true }?.location) {
 			// if we are doing a Jump Back to the last directory, don't clear out the stack
 			// just open up the target directory
 			stack.last {it.location?.browseable == true}
