@@ -30,13 +30,13 @@ class MusicService(val context: Context) {
 
 	fun stop() {
 		val handler = threadMusic?.handler
-		handler?.postDelayed({
+		handler?.post {
 			carappMusic?.musicController?.disconnectApp()
 			carappMusic?.musicAppDiscovery?.cancelDiscovery()
 			carappMusic = null
 
 			handler.looper?.quitSafely()
-		}, 100)
+		}
 		threadMusic = null
 	}
 

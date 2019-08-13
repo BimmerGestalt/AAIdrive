@@ -46,7 +46,7 @@ class MapService(val context: Context) {
 	}
 
 	fun stop() {
-		threadGMaps?.handler?.postDelayed({
+		threadGMaps?.handler?.post {
 			mapView?.onDestroy(context)
 			mapListener?.onDestroy()
 			mapScreenCapture?.onDestroy()
@@ -56,7 +56,7 @@ class MapService(val context: Context) {
 			mapController = null
 			mapListener = null
 			mapScreenCapture = null
-		}, 1000)
+		}
 
 		threadGMaps = null
 	}
