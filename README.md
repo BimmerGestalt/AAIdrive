@@ -45,15 +45,17 @@ Implemented Features
       - [Black Player](https://play.google.com/store/apps/details?id=com.kodarkooperativet.blackplayerfree)
       - [Dash Player](https://play.google.com/store/apps/details?id=com.dashradio.dash)
       - [DSub](https://play.google.com/store/apps/details?id=github.daneren2005.dsub)
+      - [iVooz](https://play.google.com/store/apps/details?id=com.ivoox.app)
       - [Media Monkey](https://play.google.com/store/apps/details?id=com.ventismedia.android.mediamonkey)
       - [Player FM](https://play.google.com/store/apps/details?id=fm.player)
-      - [Plex](https://play.google.com/store/apps/details?id=com.plexapp.android) (only music)
+      - [Plex](https://play.google.com/store/apps/details?id=com.plexapp.android) (only music and podcasts)
       - [PowerAmp](https://play.google.com/store/apps/details?id=com.maxmpz.audioplayer)
       - [Rocket Player](https://play.google.com/store/apps/details?id=com.jrtstudio.AnotherMusicPlayer)
       - [Scanner Radio](https://play.google.com/store/apps/details?id=com.scannerradio)
       - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android)
       - Spotify (up to [version 8.4.96.953](https://www.apkhere.com/down/com.spotify.music_8.4.96.953_free))
       - [Tidal](https://play.google.com/store/apps/details?id=com.aspiro.tidal)
+      - [VLC For Android](https://play.google.com/store/apps/details?id=org.videolan.vlc)
       - [YouTube](https://play.google.com/store/apps/details?id=com.google.android.youtube) (only music previous/next control, no video)
 
 Integration Points
@@ -77,6 +79,7 @@ Due to the unofficial reverse-engineered nature of this project, it has some lim
   - The individual music app icons are not fully functional, but they do switch the active music source
   - Android Oreo disabled Android Open Accessory Protocol 2 audio output, which is required to play audio over the app's USB connection in model years 2014-2017. Please disable the app option "Request Audio Focus" and use Bluetooth audio
   - Some Android Auto music apps enforce a whitelist of clients, preventing this app from connecting and controlling them. These music apps are unavailable:
+    - Amazon Music
     - Audible
     - Bandcamp
     - CloudPlayer
@@ -86,6 +89,7 @@ Due to the unofficial reverse-engineered nature of this project, it has some lim
     - iHeartAuto
     - TuneIn Radio
     - Pandora
+    - Scribd
     - Smart Audiobook Player
     - YouTube Music
 
