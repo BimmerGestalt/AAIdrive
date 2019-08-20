@@ -39,8 +39,10 @@ class MapService(val context: Context) {
 			}
 			return true
 		} else {
-			Log.i(MainService.TAG, "GMaps app needs to be shut down...")
-			stop()
+			if (threadGMaps != null) {
+				Log.i(MainService.TAG, "GMaps app needs to be shut down...")
+				stop()
+			}
 			return false
 		}
 	}
