@@ -7,6 +7,7 @@ import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
 
 class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
+	val TAG = "GlobalMetadata"
 	val multimediaInfoEvent: RHMIEvent.MultimediaInfoEvent
 	val statusbarEvent: RHMIEvent.StatusbarEvent
 	val instrumentCluster: RHMIComponent.InstrumentCluster
@@ -23,6 +24,7 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 
 	fun initWidgets() {
 		instrumentCluster.getSetTrackAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { onClick(it) }
+		instrumentCluster.getISpeechSupport()?.asRaBoolModel()?.value = true
 	}
 
 	fun redraw() {

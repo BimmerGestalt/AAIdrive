@@ -11,6 +11,7 @@ open class InputState<T:Any>(val inputComponent: RHMIComponent.Input, val onEntr
 	var suggestions: MutableList<T> = ArrayList()
 
 	init {
+		inputComponent.setProperty(23, 1)
 		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionSpellerCallback { letter ->
 			Log.i(TAG, "Received speller input $letter")
 			when (letter) {
