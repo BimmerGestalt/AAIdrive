@@ -56,8 +56,10 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
 		// register for events from the car
-		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1)
-		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1, -1)
+		carApp.runSynchronized {
+			carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1)
+			carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1, -1)
+		}
 
 		return carApp
 	}
@@ -101,7 +103,9 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 			} catch (e: Exception) {
 				Log.e(TAG, "Exception while calling onActionEvent handler!", e)
 			}
-			server?.rhmi_ackActionEvent(handle, actionId, 1, true)
+			carApp.runSynchronized {
+				server?.rhmi_ackActionEvent(handle, actionId, 1, true)
+			}
 		}
 
 		override fun rhmi_onHmiEvent(handle: Int?, ident: String?, componentId: Int?, eventId: Int?, args: MutableMap<*, *>?) {
@@ -173,7 +177,9 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 				avContext.av_requestContext(appId)
 			}
 			app?.events?.values?.filterIsInstance<RHMIEvent.FocusEvent>()?.firstOrNull()?.triggerEvent(mapOf(0.toByte() to playbackView.state.id))
-			server?.am_showLoadedSuccessHint(avContext.amHandle)
+			carApp.runSynchronized {
+				server?.am_showLoadedSuccessHint(avContext.amHandle)
+			}
 		}
 	}
 
