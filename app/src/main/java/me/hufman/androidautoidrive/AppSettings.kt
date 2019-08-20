@@ -52,6 +52,11 @@ object AppSettings {
 		}
 	}
 
+	fun tempSetSetting(key: KEYS, value: String) {
+		synchronized(loadedSettings) {
+			loadedSettings[key] = value
+		}
+	}
 	operator fun get(key: KEYS): String {
 		return getSetting(key)
 	}

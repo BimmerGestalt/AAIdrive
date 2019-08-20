@@ -138,6 +138,7 @@ class TestMusicApp {
 
 	init {
 		AppSettings.loadDefaultSettings()
+		AppSettings.tempSetSetting(AppSettings.KEYS.AUDIO_ENABLE_CONTEXT, "true")
 		SecurityService.activeSecurityConnections["mock"] = mock {
 			on { signChallenge(any(), any() )} doReturn ByteArray(512)
 		}
