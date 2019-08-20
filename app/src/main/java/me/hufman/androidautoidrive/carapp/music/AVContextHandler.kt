@@ -42,6 +42,12 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 				amHandle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
 				carConnection.am_addAppEventHandler(amHandle, myIdent)
 			}
+
+			if (IDriveConnectionListener.instanceId == null) {
+				Log.w(TAG, "instanceId is null! av handles won't be usable")
+			} else {
+				Log.d(TAG, "instanceId == ${IDriveConnectionListener.instanceId}")
+			}
 			if (mainHandle == null) {
 					mainHandle = carConnection.av_create(IDriveConnectionListener.instanceId ?: 13, myIdent)
 			}
@@ -110,8 +116,9 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 				}
 				carConnection.av_requestConnection(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
 			}
-			if (currentContext) {
+			if (currentContext || IDriveConnectionListener.instanceId == null) {
 				// start playback anyways
+				// the car will respond with av_connectionDenied if instanceId is incorrect (null coalesced to a random guess)
 				controller.connectApp(app)
 				controller.play()
 				av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
