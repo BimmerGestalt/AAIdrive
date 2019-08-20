@@ -119,7 +119,11 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 
 		loadCache() // load previously-probed states
 
-		if (changed) listener?.run()
+		if (changed) {
+			handler.post {
+				listener?.run()
+			}
+		}
 	}
 
 	/**
