@@ -112,7 +112,8 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 			val msg = "Received rhmi_onHmiEvent: handle=$handle ident=$ident componentId=$componentId eventId=$eventId args=${args?.toString()}"
 			Log.i(TAG, msg)
 			if (componentId == appSwitcherView.state.id &&
-					eventId == 1 // FOCUS event
+					eventId == 1 && // FOCUS event
+					args?.get(4.toByte()) as? Boolean == true
 			) {
 				appSwitcherView.show()
 			}
@@ -126,9 +127,9 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 				}
 			}
 			if (componentId == enqueuedView.state.id &&
-					eventId == 1 &&
-					args?.get(4.toByte()) as? Boolean == true)   // Focus
-			{
+					eventId == 1 &&     //Focus
+					args?.get(4.toByte()) as? Boolean == true
+			) {
 				enqueuedView.show()
 			}
 			if (componentId == customActionsView.state.id &&
