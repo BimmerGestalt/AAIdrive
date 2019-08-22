@@ -192,9 +192,9 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 				} else {
 					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
 
-					val desiredApp = avContext.desiredApp
-					if (desiredApp != null) {
-						avContext.av_requestContext(desiredApp)
+					val currentApp = musicController.currentApp?.musicAppInfo
+					if (currentApp != null) {
+						avContext.av_requestContext(currentApp)
 					}
 				}
 			}

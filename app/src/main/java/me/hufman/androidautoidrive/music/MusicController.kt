@@ -13,6 +13,7 @@ import android.util.Log
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import me.hufman.androidautoidrive.AppSettings
 import java.util.*
 
 class MusicController(val context: Context, val handler: Handler) {
@@ -131,8 +132,19 @@ class MusicController(val context: Context, val handler: Handler) {
 					play()
 				}
 				scheduleRedraw()
+				saveDesiredApp(app)
 			}
 		}
+	}
+
+	/** Remember this app as the last one to play */
+	fun saveDesiredApp(app: MusicAppInfo) {
+		AppSettings.saveSetting(context, AppSettings.KEYS.AUDIO_DESIRED_APP, app.packageName)
+	}
+
+	/** Return the packageName of the last app to play */
+	fun loadDesiredApp(): String {
+		return AppSettings[AppSettings.KEYS.AUDIO_DESIRED_APP]
 	}
 
 	fun disconnectApp() {
