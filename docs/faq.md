@@ -31,6 +31,9 @@ What does "Request Audio Focus" mean?
 Why should I use this app's version of Spotify?
 : The official Connected App of Spotify is not allowed to run when the phone is connected over USB, because the necessary Android Open Accessory 2.0 protocol was removed in Android Oreo. This app provides a workaround to play Spotify over Bluetooth audio.
 
+Why does Spotify sometimes not show cover art?
+: Sometimes Spotify sends the cover art as a URI link, and then blocks the request to download the cover art image. Other times, it sends the cover art as a regular image, and then it can be shown in the car.
+
 Why aren't Google Maps compiled into the app by default?
 : Google Maps support is mainly to demonstrate Android Auto features being implemented as Connected Apps. It is against the [general license](https://cloud.google.com/maps-platform/terms/#3-license) to show Google Maps in the car. The performance is also poor, because it is taking a screenshot of Google Maps on the phone and uploading it to the car as fast as possible, which goes about 10fps over USB and 1fps over Bluetooth.
 
