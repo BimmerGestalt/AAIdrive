@@ -73,8 +73,9 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 	private fun getRoot(): String {
 		if (!connected) return "disconnected root"
 		return when (musicAppInfo.packageName) {
-			"com.spotify.music" -> "com.google.android.projection.gearhead---spotify_media_browser_root_android_auto"   // the Android Auto root
+			"com.spotify.music" -> "com.google.android.projection.gearhead---spotify_media_browser_root_android_auto"   // the Android Auto root for Spotify
 			"com.aspiro.tidal" -> "__ROOT_LOGGED_IN__"   // Tidal Music
+			"com.apple.android.music" -> "__ROOT__"     // Apple Music
 			else -> mediaBrowser?.root ?: "disconnected root"
 		}
 	}
