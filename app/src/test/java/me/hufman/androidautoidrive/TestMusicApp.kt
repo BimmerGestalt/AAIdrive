@@ -468,6 +468,7 @@ class TestMusicApp {
 			}
 		}
 		whenever(musicController.currentApp) doReturn musicAppInfo
+
 		// start browsing
 		val page1 = browseView.pushBrowsePage(null)
 		assertEquals(listOf(page1), browseView.pageStack)
@@ -499,7 +500,12 @@ class TestMusicApp {
 						browseable = false, playable = true)
 		))
 		await().until { (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows == 5 }
-		assertEquals(true, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id] as Boolean?)    // clickable
+		assertEquals(true, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id] as Boolean?)    // clickable+
+		assertArrayEquals(arrayOf("Filter"),
+				(mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data.map {
+					it[2]
+				}.toTypedArray()
+		)
 		assertArrayEquals(arrayOf("Folder", "BonusFolder1", "BonusFolder2", "File1", "File2"),
 				(mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data.map {
 					it[2]
@@ -511,6 +517,14 @@ class TestMusicApp {
 		app.components[IDs.BROWSE1_MUSIC_COMPONENT]?.requestDataCallback?.onRequestData(0, 10)
 		assertArrayEquals(arrayOf("Folder", "BonusFolder1", "BonusFolder2", "File1", "File2"),
 				(mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data.map {
+					it[2]
+				}.toTypedArray()
+		)
+
+		// go back into the top level browse, it should not have Jump Back
+		page1.show()
+		assertArrayEquals(arrayOf("Filter"),
+				(mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data.map {
 					it[2]
 				}.toTypedArray()
 		)
