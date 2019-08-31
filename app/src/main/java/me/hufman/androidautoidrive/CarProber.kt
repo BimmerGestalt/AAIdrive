@@ -92,6 +92,7 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 		// try logging in as if it were a bmw or a mini
 		var success = false
 		var errorMessage: String? = null
+		var errorException: Throwable? = null
 		for (brand in listOf("bmw", "mini")) {
 			try {
 				val cert = if (brand == "bmw") bmwCert else miniCert
@@ -120,10 +121,11 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 			} catch (e: Exception) {
 				// Car rejected this cert
 				errorMessage = e.message
+				errorException = e
 			}
 		}
 		if (!success) {
-			Analytics.reportCarProbeFailure(port, errorMessage)
+			Analytics.reportCarProbeFailure(port, errorMessage, errorException)
 		}
 	}
 

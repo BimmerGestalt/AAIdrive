@@ -23,7 +23,7 @@ object Analytics: AnalyticsProvider {
 		firebaseAnalytics.logEvent("MusicAppProbe", bundle)
 	}
 
-	override fun reportCarProbeFailure(port: Int, message: String?) {
+	override fun reportCarProbeFailure(port: Int, message: String?, throwable: Throwable?) {
 		val bundle = Bundle().apply {
 			putLong("port", port.toLong())
 			putString("message", message)

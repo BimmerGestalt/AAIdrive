@@ -10,7 +10,7 @@ object Analytics: AnalyticsProvider {
 	override fun reportMusicAppProbe(appInfo: MusicAppInfo) {
 	}
 
-	override fun reportCarProbeFailure(port: Int, message: String?) {
+	override fun reportCarProbeFailure(port: Int, message: String?, throwable: Throwable?) {
 	}
 
 	override fun reportCarProbeDiscovered(port: Int?, vehicleType: String?, hmiType: String?) {

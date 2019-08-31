@@ -5,6 +5,7 @@ import io.sentry.Sentry
 import io.sentry.android.AndroidSentryClientFactory
 import io.sentry.event.Event
 import io.sentry.event.EventBuilder
+import io.sentry.event.interfaces.ExceptionInterface
 import me.hufman.androidautoidrive.music.MusicAppInfo
 
 object Analytics: AnalyticsProvider {
@@ -24,12 +25,18 @@ object Analytics: AnalyticsProvider {
 		Sentry.capture(event)
 	}
 
-	override fun reportCarProbeFailure(port: Int, message: String?) {
+	override fun reportCarProbeFailure(port: Int, message: String?, throwable: Throwable?) {
 		val event = EventBuilder()
 				.withMessage("Failed to probe car: $message")
 				.withTag("port", port.toString())
 				.withLevel(Event.Level.WARNING)
-		Sentry.capture(event)
+		if (throwable != null) {
+			val crash = event
+					.withSentryInterface(ExceptionInterface(throwable))
+			Sentry.capture(crash)
+		} else {
+			Sentry.capture(event)
+		}
 	}
 
 	override fun reportCarProbeDiscovered(port: Int?, vehicleType: String?, hmiType: String?) {
