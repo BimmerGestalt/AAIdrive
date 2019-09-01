@@ -111,48 +111,60 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		override fun rhmi_onHmiEvent(handle: Int?, ident: String?, componentId: Int?, eventId: Int?, args: MutableMap<*, *>?) {
 			val msg = "Received rhmi_onHmiEvent: handle=$handle ident=$ident componentId=$componentId eventId=$eventId args=${args?.toString()}"
 			Log.i(TAG, msg)
-			if (componentId == appSwitcherView.state.id &&
-					eventId == 1 && // FOCUS event
-					args?.get(4.toByte()) as? Boolean == true
-			) {
-				appSwitcherView.show()
-			}
-			if (componentId == playbackView.state.id &&
-					eventId == 11 // VISIBLE event
-			) {
-				playbackViewVisible = args?.get(23.toByte()) as? Boolean == true
-				// redraw after a new window is shown
-				if (playbackViewVisible) {
-					playbackView.show()
+			try {
+				if (componentId == appSwitcherView.state.id &&
+						eventId == 1 && // FOCUS event
+						args?.get(4.toByte()) as? Boolean == true
+				) {
+					appSwitcherView.show()
 				}
-			}
-			if (componentId == enqueuedView.state.id &&
-					eventId == 1 &&     //Focus
-					args?.get(4.toByte()) as? Boolean == true
-			) {
-				enqueuedView.show()
-			}
-			if (componentId == customActionsView.state.id &&
-					eventId == 1 &&
-					args?.get(4.toByte()) as? Boolean == true) {
-				customActionsView.show()
-			}
+				if (componentId == playbackView.state.id &&
+						eventId == 11 // VISIBLE event
+				) {
+					playbackViewVisible = args?.get(23.toByte()) as? Boolean == true
+					// redraw after a new window is shown
+					if (playbackViewVisible) {
+						playbackView.show()
+					}
+				}
+				if (componentId == enqueuedView.state.id &&
+						eventId == 1 &&     //Focus
+						args?.get(4.toByte()) as? Boolean == true
+				) {
+					enqueuedView.show()
+				}
+				if (componentId == customActionsView.state.id &&
+						eventId == 1 &&
+						args?.get(4.toByte()) as? Boolean == true) {
+					customActionsView.show()
+				}
 
-			// generic event handler
-			app?.states?.get(componentId)?.onHmiEvent(eventId, args)
-			app?.components?.get(componentId)?.onHmiEvent(eventId, args)
+				// generic event handler
+				app?.states?.get(componentId)?.onHmiEvent(eventId, args)
+				app?.components?.get(componentId)?.onHmiEvent(eventId, args)
+			} catch (e: Exception) {
+				Log.e(TAG, "Received exception while handling rhmi_onHmiEvent", e)
+			}
 		}
 
 		override fun av_connectionGranted(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
 			val msg = "Received av_connectionGranted: handle=$handle connectionType=$connectionType"
 			Log.i(TAG, msg)
-			avContext.av_connectionGranted(handle, connectionType)
+			try {
+				avContext.av_connectionGranted(handle, connectionType)
+			} catch (e: Exception) {
+				Log.e(TAG, "Received exception while handling av_connectionGranted", e)
+			}
 		}
 
 		override fun av_connectionDeactivated(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
 			val msg = "Received av_connectionDeactivated: handle=$handle connectionType=$connectionType"
 			Log.i(TAG, msg)
-			avContext.av_connectionDeactivated(handle, connectionType)
+			try {
+				avContext.av_connectionDeactivated(handle, connectionType)
+			} catch (e: Exception) {
+				Log.e(TAG, "Received exception while handling av_connectionDeactivated", e)
+			}
 		}
 
 		override fun av_connectionDenied(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
@@ -163,23 +175,35 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		override fun av_requestPlayerState(handle: Int?, connectionType: BMWRemoting.AVConnectionType?, playerState: BMWRemoting.AVPlayerState?) {
 			val msg = "Received av_requestPlayerState: handle=$handle connectionType=$connectionType playerState=$playerState"
 			Log.i(TAG, msg)
-			avContext.av_requestPlayerState(handle, connectionType, playerState)
+			try {
+				avContext.av_requestPlayerState(handle, connectionType, playerState)
+			} catch (e: Exception) {
+				Log.e(TAG, "Received exception while handling av_requestPlayerState", e)
+			}
 		}
 
 		override fun av_multimediaButtonEvent(handle: Int?, event: BMWRemoting.AVButtonEvent?) {
 			val msg = "Received av_multimediaButtonEvent: handle=$handle event=$event"
 			Log.i(TAG, msg)
-			avContext.av_multimediaButtonEvent(handle, event)
+			try {
+				avContext.av_multimediaButtonEvent(handle, event)
+			} catch (e: Exception) {
+				Log.e(TAG, "Received exception while handling av_multimediaButtonEvent", e)
+			}
 		}
 
 		override fun am_onAppEvent(handle: Int?, ident: String?, appId: String?, event: BMWRemoting.AMEvent?) {
 			Log.i(TAG, "Received am_onAppEvent: handle=$handle ident=$ident appId=$appId event=$event")
-			if (appId != null) {
-				avContext.av_requestContext(appId)
-			}
-			app?.events?.values?.filterIsInstance<RHMIEvent.FocusEvent>()?.firstOrNull()?.triggerEvent(mapOf(0.toByte() to playbackView.state.id))
-			carApp.runSynchronized {
-				server?.am_showLoadedSuccessHint(avContext.amHandle)
+			try {
+				if (appId != null) {
+					avContext.av_requestContext(appId)
+				}
+				app?.events?.values?.filterIsInstance<RHMIEvent.FocusEvent>()?.firstOrNull()?.triggerEvent(mapOf(0.toByte() to playbackView.state.id))
+				carApp.runSynchronized {
+					server?.am_showLoadedSuccessHint(avContext.amHandle)
+				}
+			} catch (e: Exception) {
+				Log.e(TAG, "Received exception while handling am_onAppEvent", e)
 			}
 		}
 	}

@@ -215,7 +215,9 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		} else {
 			Log.i(TAG, "Deactivating app ${app?.name}, which isn't our current connection")
 		}
-		desiredStates.remove(app)   // forget any saved state for this app
+		if (app != null) {
+			desiredStates.remove(app)   // forget any saved state for this app
+		}
 		synchronized(this) {
 			if (desiredApp == app) {
 				// User didn't select a different app, so the car is switching away

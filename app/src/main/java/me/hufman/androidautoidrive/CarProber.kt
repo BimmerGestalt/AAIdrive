@@ -122,6 +122,7 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 				// Car rejected this cert
 				errorMessage = e.message
 				errorException = e
+				Log.w(TAG, "Exception while probing car", e)
 			}
 		}
 		if (!success) {
