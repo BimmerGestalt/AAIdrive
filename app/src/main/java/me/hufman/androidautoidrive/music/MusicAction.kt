@@ -3,6 +3,8 @@ package me.hufman.androidautoidrive.music
 import android.support.v4.media.session.PlaybackStateCompat
 
 enum class MusicAction(val flag: Long) {
+	PLAY(PlaybackStateCompat.ACTION_PLAY),
+	PAUSE(PlaybackStateCompat.ACTION_PAUSE),
 	REWIND(PlaybackStateCompat.ACTION_REWIND),
 	FAST_FORWARD(PlaybackStateCompat.ACTION_FAST_FORWARD),
 	SEEK_TO(PlaybackStateCompat.ACTION_SEEK_TO),

@@ -30,6 +30,7 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 		// load the mediaBrowser on the UI thread
 		handler.post {
 			Log.i(TAG, "Connecting to the app ${musicAppInfo.name}")
+			connecting = true
 			mediaBrowser = MediaBrowserCompat(context, component, ConnectionCallback(), null)
 			mediaBrowser?.connect()
 		}
@@ -88,6 +89,26 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 					return
 				}
 			}
+		}
+	}
+
+	/** Reconnect to this app manually */
+	fun reconnect() {
+		handler.post {
+			if (connected) {
+				Log.i(TAG, "Reconnecting to existing app ${mediaBrowser?.serviceComponent?.packageName}")
+			}
+			synchronized(this@MusicBrowser) {
+				mediaController = null
+				connected = false
+				connecting = true
+			}
+			mediaBrowser?.disconnect()
+
+			Log.i(TAG, "Connecting to the app ${musicAppInfo.name}")
+			val component = ComponentName(musicAppInfo.packageName, musicAppInfo.className)
+			mediaBrowser = MediaBrowserCompat(context, component, ConnectionCallback(), null)
+			mediaBrowser?.connect()
 		}
 	}
 
