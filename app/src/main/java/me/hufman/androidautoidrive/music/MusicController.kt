@@ -272,29 +272,41 @@ class MusicController(val context: Context, val handler: Handler) {
 			CustomAction.fromFromCustomAction(context, currentApp?.musicAppInfo?.packageName ?: "", it)
 		} ?: LinkedList()
 
-		return customActions.map {cleanupCustomActionName(it) }
+		return customActions.map {formatCustomActionDisplay(it) }
 	}
 
-	private fun cleanupCustomActionName(ca: CustomAction): CustomAction{
+	private fun formatCustomActionDisplay(ca: CustomAction): CustomAction{
 		if(ca.packageName == "com.spotify.music")
 		{
+			val niceName: String
+
 			when(ca.action)
 			{
 				"TURN_SHUFFLE_ON" ->
-					return CustomAction(ca.packageName, ca.action, L.MUSIC_SPOTIFY_TURN_SHUFFLE_ON, ca.icon, ca.extras);
-				"REMOVE_FROM_COLLECTION" ->
-					return CustomAction(ca.packageName, ca.action, L.MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION, ca.icon, ca.extras);
-				"START_RADIO" ->
-					return CustomAction(ca.packageName, ca.action, L.MUSIC_SPOTIFY_START_RADIO, ca.icon, ca.extras);
-				"TURN_REPEAT_ALL_ON" ->
-					return CustomAction(ca.packageName, ca.action, L.MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON, ca.icon, ca.extras);
+					niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_ON
 				"TURN_REPEAT_SHUFFLE_OFF" ->
-					return CustomAction(ca.packageName, ca.action, L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF, ca.icon, ca.extras);
+					niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF
+
+				"REMOVE_FROM_COLLECTION" ->
+					niceName = L.MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION
+
+				"START_RADIO" ->
+					niceName = L.MUSIC_SPOTIFY_START_RADIO
+
+				"TURN_REPEAT_ALL_ON" ->
+					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON
 				"TURN_REPEAT_ONE_ON" ->
-					return CustomAction(ca.packageName, ca.action, L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON, ca.icon, ca.extras);
+					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON
+				"TURN_REPEAT_OFF" ->
+					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_OFF
+				else ->
+					niceName = ca.name
 			}
+
+			return CustomAction(ca.packageName, ca.action, niceName, ca.icon, ca.extras);
 		}
-		return return CustomAction(ca.packageName, ca.action, "NAME:" + ca.name, ca.icon, ca.extras);
+
+		return ca
 	}
 
 	fun isSupportedAction(action: MusicAction): Boolean {

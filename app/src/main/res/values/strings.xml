@@ -65,4 +65,5 @@
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Turn Repeat All On</string>
     <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_OFF">Turn Shuffle On</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Turn Repeat One On</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_OFF">Turn Repeat Off</string>
 </resources>

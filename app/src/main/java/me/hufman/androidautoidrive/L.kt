@@ -37,6 +37,7 @@ object L {
 	var MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON = "Turn Repeat All On"
 	var MUSIC_SPOTIFY_TURN_SHUFFLE_OFF = "Turn Shuffle Off"
 	var MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON = "Turn Repeat One On"
+	var MUSIC_SPOTIFY_TURN_REPEAT_OFF = "Turn Repeat Off"
 
 
 	fun loadResources(context: Context, locale: Locale? = null) {
