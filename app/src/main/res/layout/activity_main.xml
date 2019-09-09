@@ -67,6 +67,16 @@
                 tools:layout_editor_absoluteX="76dp"
                 tools:layout_editor_absoluteY="27dp" />
 
+            <Button
+                android:id="@+id/btnTestLaunchGoogleAssitant"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="4dp"
+                android:text="Launch Google Assitant"
+                tools:layout_editor_absoluteX="76dp"
+                tools:layout_editor_absoluteY="27dp" />
+
         </LinearLayout>
 
         <LinearLayout

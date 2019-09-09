@@ -14,6 +14,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import java.util.*
+import android.content.Intent
 
 class MusicController(val context: Context, val handler: Handler) {
 	companion object {
@@ -213,6 +214,13 @@ class MusicController(val context: Context, val handler: Handler) {
 		if (action.packageName == controller?.packageName) {
 			controller.transportControls?.sendCustomAction(action.action, action.extras)
 		}
+		else if(action.packageName == "custom_commands"){
+
+			when(action.action){
+				"LAUNCH_GOOGLE_ASSISTANT" ->
+					this.context.startActivity(Intent(Intent.ACTION_VOICE_COMMAND).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+			}
+		}
 	}
 
 	fun browseAsync(directory: MusicMetadata?): Deferred<List<MusicMetadata>> {
@@ -272,10 +280,11 @@ class MusicController(val context: Context, val handler: Handler) {
 			CustomAction.fromFromCustomAction(context, currentApp?.musicAppInfo?.packageName ?: "", it)
 		} ?: LinkedList()
 
-		return customActions.map {formatCustomActionDisplay(it) }
+		return (customActions.map {formatCustomActionForDisplay(it) })
+				.plus(CustomAction("custom_commands", "LAUNCH_GOOGLE_ASSISTANT", "Google Assistant", null, null))
 	}
 
-	private fun formatCustomActionDisplay(ca: CustomAction): CustomAction{
+	private fun formatCustomActionForDisplay(ca: CustomAction): CustomAction{
 		if(ca.packageName == "com.spotify.music")
 		{
 			val niceName: String
