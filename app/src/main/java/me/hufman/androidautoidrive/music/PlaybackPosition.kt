@@ -9,7 +9,7 @@ class PlaybackPosition(val playbackPaused: Boolean,
                        val lastPosition: Long,
                        val maximumPosition: Long) {
 	fun getPosition(): Long {
-		return if (playbackPaused) {
+		return if (playbackPaused || lastPositionUpdateTime == 0L) {
 			lastPosition
 		} else {
 			val estimatedPosition = lastPosition + (SystemClock.elapsedRealtime() - lastPositionUpdateTime)
