@@ -268,10 +268,35 @@ class MusicController(val context: Context, val handler: Handler) {
 		val playbackState = try {
 			controller?.playbackState
 		} catch (e: DeadObjectException) { null }
-		return playbackState?.customActions?.map {
+		val customActions = playbackState?.customActions?.map {
 			CustomAction.fromFromCustomAction(context, currentApp?.musicAppInfo?.packageName ?: "", it)
 		} ?: LinkedList()
+
+		return customActions.map {cleanupCustomActionName(it) }
 	}
+
+	private fun cleanupCustomActionName(ca: CustomAction): CustomAction{
+		if(ca.packageName == "com.spotify.music")
+		{
+			when(ca.action)
+			{
+				"TURN_SHUFFLE_ON" ->
+					return CustomAction(ca.packageName, ca.action, L.MUSIC_SPOTIFY_TURN_SHUFFLE_ON, ca.icon, ca.extras);
+				"REMOVE_FROM_COLLECTION" ->
+					return CustomAction(ca.packageName, ca.action, L.MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION, ca.icon, ca.extras);
+				"START_RADIO" ->
+					return CustomAction(ca.packageName, ca.action, L.MUSIC_SPOTIFY_START_RADIO, ca.icon, ca.extras);
+				"TURN_REPEAT_ALL_ON" ->
+					return CustomAction(ca.packageName, ca.action, L.MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON, ca.icon, ca.extras);
+				"TURN_REPEAT_SHUFFLE_OFF" ->
+					return CustomAction(ca.packageName, ca.action, L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF, ca.icon, ca.extras);
+				"TURN_REPEAT_ONE_ON" ->
+					return CustomAction(ca.packageName, ca.action, L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON, ca.icon, ca.extras);
+			}
+		}
+		return return CustomAction(ca.packageName, ca.action, "NAME:" + ca.name, ca.icon, ca.extras);
+	}
+
 	fun isSupportedAction(action: MusicAction): Boolean {
 		return try {
 			(controller?.playbackState?.actions ?: 0) and action.flag > 0
