@@ -14,7 +14,6 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import java.util.*
-import android.content.Intent
 
 class MusicController(val context: Context, val handler: Handler) {
 	companion object {
@@ -273,7 +272,6 @@ class MusicController(val context: Context, val handler: Handler) {
 			CustomAction.fromFromCustomAction(context, currentApp?.musicAppInfo?.packageName ?: "", it)
 		} ?: LinkedList()
 	}
-
 	fun isSupportedAction(action: MusicAction): Boolean {
 		return try {
 			(controller?.playbackState?.actions ?: 0) and action.flag > 0
