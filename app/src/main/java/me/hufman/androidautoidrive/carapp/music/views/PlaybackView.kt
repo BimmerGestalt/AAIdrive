@@ -12,7 +12,6 @@ import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.io.IOException
-import android.content.Intent
 
 private const val IMAGEID_COVERART_SMALL = 146
 private const val IMAGEID_COVERART_LARGE = 147
