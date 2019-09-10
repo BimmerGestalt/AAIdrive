@@ -214,13 +214,6 @@ class MusicController(val context: Context, val handler: Handler) {
 		if (action.packageName == controller?.packageName) {
 			controller.transportControls?.sendCustomAction(action.action, action.extras)
 		}
-		else if(action.packageName == "custom_commands"){
-
-			when(action.action){
-				"LAUNCH_GOOGLE_ASSISTANT" ->
-					this.context.startActivity(Intent(Intent.ACTION_VOICE_COMMAND).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-			}
-		}
 	}
 
 	fun browseAsync(directory: MusicMetadata?): Deferred<List<MusicMetadata>> {
@@ -276,46 +269,9 @@ class MusicController(val context: Context, val handler: Handler) {
 		val playbackState = try {
 			controller?.playbackState
 		} catch (e: DeadObjectException) { null }
-		val customActions = playbackState?.customActions?.map {
+		return playbackState?.customActions?.map {
 			CustomAction.fromFromCustomAction(context, currentApp?.musicAppInfo?.packageName ?: "", it)
 		} ?: LinkedList()
-
-		return (customActions.map {formatCustomActionForDisplay(it) })
-				.plus(CustomAction("custom_commands", "LAUNCH_GOOGLE_ASSISTANT", "Google Assistant", null, null))
-	}
-
-	private fun formatCustomActionForDisplay(ca: CustomAction): CustomAction{
-		if(ca.packageName == "com.spotify.music")
-		{
-			val niceName: String
-
-			when(ca.action)
-			{
-				"TURN_SHUFFLE_ON" ->
-					niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_ON
-				"TURN_REPEAT_SHUFFLE_OFF" ->
-					niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF
-
-				"REMOVE_FROM_COLLECTION" ->
-					niceName = L.MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION
-
-				"START_RADIO" ->
-					niceName = L.MUSIC_SPOTIFY_START_RADIO
-
-				"TURN_REPEAT_ALL_ON" ->
-					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON
-				"TURN_REPEAT_ONE_ON" ->
-					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON
-				"TURN_REPEAT_OFF" ->
-					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_OFF
-				else ->
-					niceName = ca.name
-			}
-
-			return CustomAction(ca.packageName, ca.action, niceName, ca.icon, ca.extras);
-		}
-
-		return ca
 	}
 
 	fun isSupportedAction(action: MusicAction): Boolean {

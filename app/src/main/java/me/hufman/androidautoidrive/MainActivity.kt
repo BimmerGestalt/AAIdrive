@@ -93,10 +93,6 @@ class MainActivity : AppCompatActivity() {
 			AppSettings.saveSetting(this, AppSettings.KEYS.AUDIO_ENABLE_CONTEXT, isChecked.toString())
 		}
 
-		btnTestLaunchGoogleAssitant.setOnClickListener {
-			startActivity(Intent(Intent.ACTION_VOICE_COMMAND).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-		}
-
 		// spawn a Test notification
 		btnTestNotification.setOnClickListener {
 			//val actionIntent = Intent(this, CustomActionListener::class.java)

@@ -6,13 +6,39 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.media.session.PlaybackStateCompat
 
-class CustomAction(val packageName: String, val action: String, val name: String, val icon: Drawable?, val extras: Bundle?) {
+class CustomAction(val packageName: String, val action: String, var name: String, val icon: Drawable?, val extras: Bundle?) {
 	companion object {
 		fun fromFromCustomAction(context: Context, packageName: String, action: PlaybackStateCompat.CustomAction): CustomAction {
 			val resources = context.packageManager.getResourcesForApplication(packageName)
 			val icon = resources.getDrawable(action.icon, null) ?:
 					Resources.getSystem().getDrawable(action.icon, null)
 			return CustomAction(packageName, action.action, action.name.toString(), icon, action.extras)
+		}
+	}
+	init {
+		//format that names of the actions nicely
+		if (packageName == "com.spotify.music") {
+			when (action) {
+				"TURN_SHUFFLE_ON" ->
+					name = L.MUSIC_SPOTIFY_TURN_SHUFFLE_ON
+				"TURN_REPEAT_SHUFFLE_OFF" ->
+					name = L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF
+
+				"REMOVE_FROM_COLLECTION" ->
+					name = L.MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION
+				"ADD_TO_COLLECTION" ->
+					name = L.MUSIC_SPOTIFY_ADD_TO_COLLECTION
+
+				"START_RADIO" ->
+					name = L.MUSIC_SPOTIFY_START_RADIO
+
+				"TURN_REPEAT_ALL_ON" ->
+					name = L.MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON
+				"TURN_REPEAT_ONE_ON" ->
+					name = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON
+				"TURN_REPEAT_ONE_OFF" ->
+					name = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF
+			}
 		}
 	}
 
