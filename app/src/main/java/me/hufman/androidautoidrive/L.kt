@@ -31,8 +31,6 @@ object L {
 	var MUSIC_SKIP_NEXT = "Next"
 	val NOTIFICATIONS_TITLE = "Notifications"
 
-	var MUSIC_GOOGLE_ASSISTANT = "Voice"
-
 	val MUSIC_SPOTIFY_TURN_SHUFFLE_ON = "Turn Shuffle On"
 	val MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION = "Dislike"
 	var MUSIC_SPOTIFY_START_RADIO = "Make Radio Station"
