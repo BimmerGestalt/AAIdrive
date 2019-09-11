@@ -125,7 +125,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 			val alreadyShown = NotificationsState.notifications.any {
 				it.key == sbn.key && it.text == summarizeNotification(sbn).text
 			}
-			return sbn.isClearable && !alreadyShown
+			val isMusic = sbn.notification.extras.getString(Notification.EXTRA_TEMPLATE) == "android.app.Notification\$MediaStyle"
+			return sbn.isClearable && !alreadyShown && !isMusic
 		}
 
 		fun shouldShowNotification(sbn: StatusBarNotification): Boolean {

@@ -161,6 +161,11 @@ class TestNotificationApp {
 		val nullTitle = createNotification("Ticker Text", null, null, "Summary", true)
 		assertFalse(NotificationListenerServiceImpl.shouldShowNotification(nullTitle))
 
+		val musicApp = createNotification("Ticker Text", "Title", "Text", "Summary", true)
+		whenever(musicApp.notification.extras.getString(eq(Notification.EXTRA_TEMPLATE))) doReturn "android.app.Notification\$MediaStyle"
+		assertTrue(NotificationListenerServiceImpl.shouldShowNotification(musicApp))
+		assertFalse(NotificationListenerServiceImpl.shouldPopupNotification(musicApp))
+
 		val notificationMessage = createNotification("Ticker Text", "Title", "Text", "Summary", true)
 		whenever(notificationMessage.notification.isGroupSummary()) doAnswer { true }
 		assertTrue(NotificationListenerServiceImpl.shouldShowNotification(notification))
