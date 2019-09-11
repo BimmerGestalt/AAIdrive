@@ -7,9 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.drawable.Icon
-import android.os.Build
-import android.os.Bundle
-import android.os.Parcelable
+import android.os.*
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.support.annotation.RequiresApi
@@ -135,6 +133,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		}
 	}
 
+	val handler = Handler(Looper.myLooper())
 	val controller = NotificationUpdater(this)
 	val interactionListener = IDriveNotificationInteraction(InteractionListener(), controller)
 
@@ -171,14 +170,37 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	}
 
 	override fun onNotificationPosted(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
-		if (!IDriveConnectionListener.isConnected) return
 		val extras = sbn?.notification?.extras
 		val details = extras?.keySet()?.map { "  ${it}=>${extras.get(it)}" }?.joinToString("\n") ?: ""
 		Log.i(TAG, "Notification posted: ${extras?.get("android.title")} with the keys:\n$details")
 		super.onNotificationPosted(sbn, rankingMap)
-		val shouldPopup = shouldPopupNotification(sbn)
+		if (!IDriveConnectionListener.isConnected) return
 		updateNotificationList()
-		if (sbn != null && shouldPopup) controller.sendNotification(sbn)
+		val shouldPopup = shouldPopupNotification(sbn)
+		if (sbn != null && shouldPopup) {
+			sendBufferedNotification(sbn)
+		}
+	}
+
+	var bufferedNotificationTask: Runnable? = null
+	fun sendBufferedNotification(sbn: StatusBarNotification) {
+		synchronized(this) {
+			if (bufferedNotificationTask != null) {
+				handler.removeCallbacks(bufferedNotificationTask)
+			}
+			bufferedNotificationTask = Runnable {
+				val matching = synchronized(this) {
+					NotificationsState.notifications.firstOrNull { it.key == sbn.key }
+				}
+
+				if (matching?.isClearable == true) {
+					// The notification still exists and is still clearable
+					controller.sendNotification(sbn)
+				}
+			}
+
+			handler.postDelayed(bufferedNotificationTask, 500)
+		}
 	}
 
 	fun updateNotificationList() {
