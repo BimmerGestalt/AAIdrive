@@ -26,12 +26,8 @@ class MusicController(val context: Context, val handler: Handler) {
 				5000 to 13000,
 				8000 to 30000
 		)
-
-		// how often to reconnect to an app if it returns NULL metadata
-		private const val RECONNECT_TIMEOUT = 1000
 	}
 
-	var lastConnectTime = 0L
 	var currentApp: MusicBrowser? = null
 	var controller: MediaControllerCompat? = null
 	private val controllerCallback = Callback()
@@ -124,7 +120,6 @@ class MusicController(val context: Context, val handler: Handler) {
 			play()
 		} else {
 			Log.i(TAG, "Switching current app connection from ${currentApp?.musicAppInfo} to $app")
-			lastConnectTime = System.currentTimeMillis()
 			disconnectApp()
 			currentApp = MusicBrowser(context, handler, app)
 			currentApp?.listener = Runnable {
@@ -273,10 +268,49 @@ class MusicController(val context: Context, val handler: Handler) {
 		val playbackState = try {
 			controller?.playbackState
 		} catch (e: DeadObjectException) { null }
-		return playbackState?.customActions?.map {
+		val customActions = playbackState?.customActions?.map {
 			CustomAction.fromFromCustomAction(context, currentApp?.musicAppInfo?.packageName ?: "", it)
 		} ?: LinkedList()
+
+		return customActions.map {formatCustomActionDisplay(it) }
 	}
+
+	private fun formatCustomActionDisplay(ca: CustomAction): CustomAction{
+		if(ca.packageName == "com.spotify.music")
+		{
+			val niceName: String
+
+			when(ca.action)
+			{
+				"TURN_SHUFFLE_ON" ->
+					niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_ON
+				"TURN_REPEAT_SHUFFLE_OFF" ->
+					niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF
+
+				"REMOVE_FROM_COLLECTION" ->
+					niceName = L.MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION
+
+				"START_RADIO" ->
+					niceName = L.MUSIC_SPOTIFY_START_RADIO
+
+				"TURN_REPEAT_ALL_ON" ->
+					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON
+				"TURN_REPEAT_ONE_ON" ->
+					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON
+				"TURN_REPEAT_OFF" ->
+					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF
+				"ADD_TO_COLLECTION" ->
+					niceName = L.MUSIC_SPOTIFY_ADD_TO_COLLECTION
+				else ->
+					niceName = ca.name
+			}
+
+			return CustomAction(ca.packageName, ca.action, niceName, ca.icon, ca.extras);
+		}
+
+		return ca
+	}
+
 	fun isSupportedAction(action: MusicAction): Boolean {
 		return try {
 			(controller?.playbackState?.actions ?: 0) and action.flag > 0
@@ -294,9 +328,6 @@ class MusicController(val context: Context, val handler: Handler) {
 
 		listener?.run()
 		scheduleRedrawProgress()
-
-		// detect buggy youtube MediaController
-		assertPlayingMetadata()
 	}
 	fun scheduleRedrawProgress() {
 		val position = getPlaybackPosition()
@@ -311,25 +342,12 @@ class MusicController(val context: Context, val handler: Handler) {
 
 	val redrawTask = Runnable {
 		listener?.run()
-
-		// detect buggy youtube MediaController
-		assertPlayingMetadata()
 	}
 	fun scheduleRedraw() {
 		handler.removeCallbacks(redrawTask)
 		handler.postDelayed(redrawTask, 100)
 	}
 
-	/** If the current app is playing, make sure the metadata is valid */
-	fun assertPlayingMetadata() {
-		val controller = controller
-		val metadata = controller?.metadata
-		if (controller != null && metadata == null && System.currentTimeMillis() > lastConnectTime + RECONNECT_TIMEOUT) {
-			Log.w(TAG, "Detected NULL metadata for an app, reconnecting")
-			lastConnectTime = System.currentTimeMillis()
-			currentApp?.reconnect()
-		}
-	}
 
 	private inner class Callback: MediaControllerCompat.Callback() {
 		override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
