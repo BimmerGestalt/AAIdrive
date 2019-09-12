@@ -299,6 +299,8 @@ class MusicController(val context: Context, val handler: Handler) {
 					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON
 				"TURN_REPEAT_OFF" ->
 					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF
+				"ADD_TO_COLLECTION" ->
+					niceName = L.MUSIC_SPOTIFY_ADD_TO_COLLECTION
 				else ->
 					niceName = ca.name
 			}
