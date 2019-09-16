@@ -11,7 +11,7 @@ class CustomAction(val packageName: String, val action: String, val name: String
 		fun fromFromCustomAction(context: Context, packageName: String, action: PlaybackStateCompat.CustomAction): CustomAction {
 			val resources = context.packageManager.getResourcesForApplication(packageName)
 			val icon = resources.getDrawable(action.icon, null) ?:
-			Resources.getSystem().getDrawable(action.icon, null)
+				Resources.getSystem().getDrawable(action.icon, null)
 			return CustomAction(packageName, action.action, action.name.toString(), icon, action.extras)
 		}
 	}
