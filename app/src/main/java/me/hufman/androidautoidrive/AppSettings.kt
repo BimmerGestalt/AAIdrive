@@ -16,7 +16,8 @@ object AppSettings {
 		ENABLED_GMAPS,
 		MAP_WIDESCREEN,
 		GMAPS_STYLE,
-		AUDIO_ENABLE_CONTEXT
+		AUDIO_ENABLE_CONTEXT,
+		AUDIO_DESIRED_APP
 	}
 	private val DEFINITIONS = mapOf(
 		KEYS.ENABLED_NOTIFICATIONS to SettingDefinition("Enabled_Notifications", "false", "Show phone notifications in the car"),
@@ -25,7 +26,8 @@ object AppSettings {
 		KEYS.ENABLED_GMAPS to SettingDefinition("Enabled_GMaps", "false", "Show Google Maps in the car"),
 		KEYS.MAP_WIDESCREEN to SettingDefinition("Map_Widescreen", "false", "Show Map in widescreen"),
 		KEYS.GMAPS_STYLE to SettingDefinition("GMaps_Style", "auto", "GMaps style"),
-		KEYS.AUDIO_ENABLE_CONTEXT to SettingDefinition("Audio_Enable_Context", "true", "Request audio context")
+		KEYS.AUDIO_ENABLE_CONTEXT to SettingDefinition("Audio_Enable_Context", "false", "Request audio context"),
+		KEYS.AUDIO_DESIRED_APP to SettingDefinition("Audio_Desired_App", "", "Last music app that was playing")
 	)
 
 	private val loadedSettings = HashMap<KEYS, String>()

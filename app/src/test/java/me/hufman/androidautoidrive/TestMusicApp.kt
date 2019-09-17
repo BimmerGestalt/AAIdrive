@@ -218,7 +218,7 @@ class TestMusicApp {
 		val discoveryListenerCapture = ArgumentCaptor.forClass(Runnable::class.java)
 		verify(musicAppDiscovery).listener = discoveryListenerCapture.capture()
 		discoveryListenerCapture.value.run()
-		assertEquals(3, mockServer.avConnections.size)
+		assertEquals(1, mockServer.avConnections.size)
 
 		// click entrybutton again with a list of apps
 		mockClient.rhmi_onActionEvent(1, "unused", IDs.ENTRYBUTTON_ACTION, mapOf(0 to 1))
@@ -236,10 +236,10 @@ class TestMusicApp {
 
 		// try clicking an app
 		mockClient.rhmi_onActionEvent(1, "unused", IDs.APPLIST_ACTION, mapOf(1.toByte() to 1))
-		assertEquals(2, mockServer.avCurrentContext)
-		mockClient.av_connectionGranted(2, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
+		assertEquals(0, mockServer.avCurrentContext)
+		mockClient.av_connectionGranted(0, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
 		verify(musicController, atLeastOnce()).connectApp(argThat { this.name == "Test2" } )
-		mockClient.av_requestPlayerState(2, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
+		mockClient.av_requestPlayerState(0, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 		verify(musicController, atLeastOnce()).play()
 
 		// click entrybutton again after an active app is set
