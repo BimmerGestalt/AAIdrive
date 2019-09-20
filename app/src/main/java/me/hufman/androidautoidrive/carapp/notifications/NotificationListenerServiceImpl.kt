@@ -104,15 +104,14 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 			}
 
 			var icon = sbn.notification.smallIcon
-			if (extras.getParcelable<Parcelable>(EXTRA_LARGE_ICON) != null) {
-				// might have a user avatar, which might be an icon or a bitmap
-				val parcel: Parcelable = extras.getParcelable(EXTRA_LARGE_ICON)
-				if (parcel is Icon) icon = parcel
-				if (parcel is Bitmap) icon = Icon.createWithBitmap(parcel)
-			}
 			if (extras.getParcelable<Parcelable>(EXTRA_LARGE_ICON_BIG) != null) {
 				// might have a user avatar, which might be an icon or a bitmap
 				val parcel: Parcelable = extras.getParcelable(EXTRA_LARGE_ICON_BIG)
+				if (parcel is Icon) icon = parcel
+				if (parcel is Bitmap) icon = Icon.createWithBitmap(parcel)
+			} else if (extras.getParcelable<Parcelable>(EXTRA_LARGE_ICON) != null) {
+				// might have a user avatar, which might be an icon or a bitmap
+				val parcel: Parcelable = extras.getParcelable(EXTRA_LARGE_ICON)
 				if (parcel is Icon) icon = parcel
 				if (parcel is Bitmap) icon = Icon.createWithBitmap(parcel)
 			}
@@ -122,11 +121,14 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 
 		fun shouldPopupNotification(sbn: StatusBarNotification?): Boolean {
 			if (sbn == null) return false
-			val alreadyShown = NotificationsState.notifications.any {
-				it.key == sbn.key && it.text == summarizeNotification(sbn).text
-			}
+			if (!sbn.isClearable) return false
+			if (sbn.notification.isGroupSummary()) return false
 			val isMusic = sbn.notification.extras.getString(Notification.EXTRA_TEMPLATE) == "android.app.Notification\$MediaStyle"
-			return sbn.isClearable && !alreadyShown && !isMusic
+			if (isMusic) return false
+
+			val notification = summarizeNotification(sbn)
+			val alreadyShown = NotificationsState.poppedNotifications.contains(notification)
+			return !alreadyShown
 		}
 
 		fun shouldShowNotification(sbn: StatusBarNotification): Boolean {
@@ -169,6 +171,9 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		Log.i(TAG, "Notification removed: ${sbn?.notification?.extras?.get("android.title")}")
 		super.onNotificationRemoved(sbn, rankingMap)
 		updateNotificationList()
+		if (sbn != null) {
+			NotificationsState.poppedNotifications.remove(summarizeNotification(sbn))
+		}
 	}
 
 	override fun onNotificationPosted(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
@@ -179,7 +184,10 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		super.onNotificationPosted(sbn, rankingMap)
 		val shouldPopup = shouldPopupNotification(sbn)
 		updateNotificationList()
-		if (sbn != null && shouldPopup) controller.sendNotification(sbn)
+		if (sbn != null && shouldPopup) {
+			controller.sendNotification(sbn)
+			NotificationsState.poppedNotifications.add(summarizeNotification(sbn))
+		}
 	}
 
 	fun updateNotificationList() {
