@@ -55,7 +55,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 	var listFocused = false                 // whether the notification list is showing
 	var passengerSeated = false             // whether a passenger is seated
-	val INTERACTION_DEBOUNCE_MS = 5000              // how long to wait after lastInteractionTime to update the list
+	val INTERACTION_DEBOUNCE_MS = 2000              // how long to wait after lastInteractionTime to update the list
 	var lastInteractionTime: Long = 0             // timestamp when the user last navigated in the main list
 	var lastInteractionIndex: Int = -1       // what index the user last selected
 
@@ -99,6 +99,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		}
 
 		// set up the list
+		stateList.app.setProperty(stateList.id, 24, 3)    // set to wide-screen "tablestate"
 		stateList.getTextModel()?.asRaDataModel()?.value = L.NOTIFICATIONS_TITLE
 		stateList.componentsList.forEach { it.setVisible(false) }
 		notificationListView = stateList.componentsList.filterIsInstance<RHMIComponent.List>().first()
@@ -129,11 +130,13 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().lastOrNull()?.setSelectable(true)
 
 		// set up the view
+		stateView.app.setProperty(stateView.id, 24, 3)    // set to wide-screen "tablestate"
 		stateView.componentsList.forEach { it.setVisible(false) }
 		stateView.componentsList.forEach { it.setEnabled(false) }
 		stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull()?.apply {
 			// text
 			setVisible(true)
+			setEnabled(true)
 			setProperty(6, "55,0,*")
 		}
 		var buttons = ArrayList(stateView.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
@@ -320,17 +323,17 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	open inner class PhoneNotificationListener {
 		open fun onNotification(sbn: CarNotification) {
 			Log.i(TAG, "Received a new notification to show in the car")
-			val appname = phoneAppResources.getAppName(sbn.packageName)
-			val titleLabel = statePopup.getTextModel()?.asRaDataModel() ?: return
-			val bodyLabel1 = statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().firstOrNull()?.getModel()?.asRaDataModel() ?: return
-			val bodyLabel2 = statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().getOrNull(1)?.getModel()?.asRaDataModel() ?: return
-			titleLabel.value = appname
-			bodyLabel1.value = sbn.title.toString()
-			bodyLabel2.value = sbn.text?.split(Regex("\n"))?.lastOrNull() ?: sbn.summary ?: ""
 			if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
 					(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
 							!passengerSeated)
 			) {
+				val appname = phoneAppResources.getAppName(sbn.packageName)
+				val titleLabel = statePopup.getTextModel()?.asRaDataModel() ?: return
+				val bodyLabel1 = statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().firstOrNull()?.getModel()?.asRaDataModel() ?: return
+				val bodyLabel2 = statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().getOrNull(1)?.getModel()?.asRaDataModel() ?: return
+				titleLabel.value = appname
+				bodyLabel1.value = sbn.title.toString()
+				bodyLabel2.value = sbn.text?.split(Regex("\n"))?.lastOrNull() ?: sbn.summary ?: ""
 				carApp.events.values.filterIsInstance<RHMIEvent.PopupEvent>().firstOrNull { it.getTarget() == statePopup }?.triggerEvent()
 			}
 		}
