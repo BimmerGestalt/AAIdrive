@@ -140,7 +140,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 
 		// set up the components on the map
 		stateMap.app.setProperty(stateMap.id, 24, 3)    // set to wide-screen "tablestate"
-		stateMap.app.setProperty(stateMap.id, 24, "1,0,7")
+		stateMap.app.setProperty(stateMap.id, 26, "1,0,7")
 		viewFullMap.setVisible(true)
 		viewFullMap.setProperty(20, -16)    // positionX
 		viewFullMap.setProperty(21, 0)    // positionY
