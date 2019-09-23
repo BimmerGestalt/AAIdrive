@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 			val notification = Notification.Builder(this)
 					.setSmallIcon(android.R.drawable.ic_menu_gallery)
 					.setContentTitle("Test Notification")
-					.setContentText("Text")
+					.setContentText("This is a test notification")
 					.setSubText("SubText")
 					.addAction(action)
 					.build()

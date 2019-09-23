@@ -132,12 +132,18 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		// set up the view
 		stateView.app.setProperty(stateView.id, 24, 3)    // set to wide-screen "tablestate"
 		stateView.componentsList.forEach { it.setVisible(false) }
-		stateView.componentsList.forEach { it.setEnabled(false) }
 		stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull()?.apply {
-			// text
+			// app icon and notification title
 			setVisible(true)
 			setEnabled(true)
 			setProperty(6, "55,0,*")
+		}
+		stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull {
+			it.getModel()?.modelType == "Richtext"
+		}?.apply {
+			// text
+			setVisible(true)
+			setEnabled(true)
 		}
 		var buttons = ArrayList(stateView.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
 		stateView.toolbarComponentsList.forEach { it.setVisible(false) }
@@ -253,22 +259,29 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		}
 
 		val notification = NotificationsState.selectedNotification ?: return
-		val listData = RHMIModel.RaListModel.RHMIListConcrete(3)
+
+		// prepare the app icon and title
 		val icon = phoneAppResources.getBitmap(phoneAppResources.getIconDrawable(notification.icon), 48, 48)
 		val appname = phoneAppResources.getAppName(notification.packageName)
-		listData.addRow(arrayOf(icon, "", appname))
-		listData.addRow(arrayOf("", "", notification.title ?: ""))
-		(notification.text ?: "").split(Regex("\n")).filter {
-			it.isNotEmpty()
-		}.forEach {
-			listData.addRow(arrayOf("", "", it))
-		}
+		val iconListData = RHMIModel.RaListModel.RHMIListConcrete(3)
+		iconListData.addRow(arrayOf(icon, "", appname))
 
+		// prepare the notification text
+		val listData = RHMIModel.RaListModel.RHMIListConcrete(1)
+		listData.addRow(arrayOf("${notification.title}\n${notification.text}"))
+
+		// find the widgets to use
+		val iconWidget = stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull() ?: return
+		val listWidget = stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull {
+			it.getModel()?.modelType == "Richtext"
+		} ?: return
+
+		// set the values
 		stateView.getTextModel()?.asRaDataModel()?.value = notification.title ?: appname
-
-		val listWidget = stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull() ?: return
+		iconWidget.getModel()?.value = iconListData
 		listWidget.getModel()?.value = listData
 
+		// find and enable the clear button
 		val clearButton = buttons[0]
 
 		if (notification.isClearable) {
@@ -285,6 +298,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			clearButton.setEnabled(false)
 		}
 
+		// enable any custom actions
 		(0..4).forEach {i ->
 			val action = notification.actions.getOrNull(i)
 			var button = buttons[1+i]

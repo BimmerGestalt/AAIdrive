@@ -80,8 +80,10 @@ class TestNotificationApp {
 			val visibleWidgets = app.stateView.componentsList.filter {
 				mockServer.properties[it.id]?.get(RHMIProperty.PropertyId.VISIBLE.id) as Boolean
 			}
-			assertEquals(1, visibleWidgets.size)
+			assertEquals(2, visibleWidgets.size)
 			assertTrue(visibleWidgets[0] is RHMIComponent.List)
+			assertTrue(visibleWidgets[1] is RHMIComponent.List)
+			assertEquals("Richtext", visibleWidgets[1].asList()?.getModel()?.modelType)
 			assertEquals( 150, app.stateView.toolbarComponentsList[1].getImageModel()?.asImageIdModel()?.imageId)
 			app.stateView.toolbarComponentsList.subList(2, 7).forEach {
 				assertEquals(158, it.getImageModel()?.asImageIdModel()?.imageId)
@@ -339,12 +341,18 @@ class TestNotificationApp {
 		assertEquals(notification2, NotificationsState.selectedNotification)
 
 		// verify that the right information is shown
-		val list = mockServer.data[519] as BMWRemoting.RHMIDataTable
-		assertNotNull(list)
-		assertEquals(3, list.numRows)
-		assertEquals("Test AppName", list.data[0][2])
-		assertEquals("Title2", list.data[1][2])
-		assertEquals("Text2", list.data[2][2])
+		val appTitleList = mockServer.data[519] as BMWRemoting.RHMIDataTable
+		assertNotNull(appTitleList)
+		assertEquals(1, appTitleList.numRows)
+		assertEquals(3, appTitleList.numColumns)
+		assertEquals("Test AppName", appTitleList.data[0][2])
+
+		val bodyList = mockServer.data[521] as BMWRemoting.RHMIDataTable
+		assertEquals(1, bodyList.numRows)
+		assertEquals(1, bodyList.numColumns)
+		assertEquals("Title2\nText2", bodyList.data[0][0])
+
+		// verify the right buttons are enabled
 		assertEquals(true, mockServer.properties[122]?.get(RHMIProperty.PropertyId.ENABLED.id))  // clear this notification button
 		assertEquals(true, mockServer.properties[122]?.get(RHMIProperty.PropertyId.SELECTABLE.id))  // clear this notification button
 		assertEquals(true, mockServer.properties[122]?.get(RHMIProperty.PropertyId.VISIBLE.id))
