@@ -287,7 +287,7 @@ class MusicController(val context: Context, val handler: Handler) {
 		} catch (e: DeadObjectException) { null }
 
 		val customActions = playbackState?.customActions?.map {
-			CustomAction.fromFromCustomAction(context, currentApp?.musicAppInfo?.packageName ?: "", it)
+			CustomAction.fromMediaCustomAction(context, currentApp?.musicAppInfo?.packageName ?: "", it)
 		} ?: LinkedList()
 
 		return customActions.map {formatCustomActionDisplay(it) }

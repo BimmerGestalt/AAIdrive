@@ -8,7 +8,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 
 class CustomAction(val packageName: String, val action: String, val name: String, val icon: Drawable?, val extras: Bundle?) {
 	companion object {
-		fun fromFromCustomAction(context: Context, packageName: String, action: PlaybackStateCompat.CustomAction): CustomAction {
+		fun fromMediaCustomAction(context: Context, packageName: String, action: PlaybackStateCompat.CustomAction): CustomAction {
 			val resources = context.packageManager.getResourcesForApplication(packageName)
 			val icon = resources.getDrawable(action.icon, null) ?:
 					Resources.getSystem().getDrawable(action.icon, null)
