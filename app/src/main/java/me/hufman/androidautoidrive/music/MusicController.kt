@@ -328,6 +328,14 @@ class MusicController(val context: Context, val handler: Handler) {
 			return CustomAction(ca.packageName, ca.action, niceName, ca.icon, ca.extras);
 		}
 
+		if (ca.packageName == "com.jrtstudio.AnotherMusicPlayer") {
+			val rocketPlayerActionPattern = Regex("([A-Za-z]+)[0-9]+")
+			val match = rocketPlayerActionPattern.matchEntire(ca.name)
+			if (match != null) {
+				return CustomAction(ca.packageName, ca.action, match.groupValues[1], ca.icon, ca.extras)
+			}
+		}
+
 		return ca
 	}
 
