@@ -304,6 +304,8 @@ class MusicController(val context: Context, val handler: Handler) {
 					niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_ON
 				"TURN_REPEAT_SHUFFLE_OFF" ->
 					niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF
+				"TURN_SHUFFLE_OFF" ->
+					niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF
 
 				"REMOVE_FROM_COLLECTION" ->
 					niceName = L.MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION
@@ -315,7 +317,7 @@ class MusicController(val context: Context, val handler: Handler) {
 					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON
 				"TURN_REPEAT_ONE_ON" ->
 					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON
-				"TURN_REPEAT_OFF" ->
+				"TURN_REPEAT_ONE_OFF" ->
 					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF
 				"ADD_TO_COLLECTION" ->
 					niceName = L.MUSIC_SPOTIFY_ADD_TO_COLLECTION
