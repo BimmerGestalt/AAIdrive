@@ -51,7 +51,7 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 			}
 			if (avHandle == null) {
 				avHandle = carConnection.av_create(IDriveConnectionListener.instanceId
-						?: 13, myIdent)
+						?: 8, myIdent)
 				Log.d(TAG, "AV handle: $avHandle")
 			}
 		}
