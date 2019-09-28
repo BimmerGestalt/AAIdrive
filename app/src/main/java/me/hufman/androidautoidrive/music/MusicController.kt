@@ -192,22 +192,14 @@ class MusicController(val context: Context, val handler: Handler) {
 		controller?.transportControls?.skipToNext()
 	}
 	fun startRewind() = asyncControl { controller ->
-		if (isSupportedAction(MusicAction.REWIND)) {
-			controller?.transportControls?.rewind()
-		} else {
-			startedSeekingTime = System.currentTimeMillis()
-			seekingDirectionForward = false
-			seekingRunnable.run()
-		}
+		startedSeekingTime = System.currentTimeMillis()
+		seekingDirectionForward = false
+		seekingRunnable.run()
 	}
 	fun startFastForward() = asyncControl { controller ->
-		if (isSupportedAction(MusicAction.FAST_FORWARD)) {
-			controller?.transportControls?.fastForward()
-		} else {
-			startedSeekingTime = System.currentTimeMillis()
-			seekingDirectionForward = true
-			seekingRunnable.run()
-		}
+		startedSeekingTime = System.currentTimeMillis()
+		seekingDirectionForward = true
+		seekingRunnable.run()
 	}
 	fun stopSeeking() = asyncControl { controller ->
 		startedSeekingTime = 0
