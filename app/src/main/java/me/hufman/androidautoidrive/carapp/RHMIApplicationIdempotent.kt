@@ -15,7 +15,7 @@ class RHMIApplicationIdempotent(val app: RHMIApplication): RHMIApplication(), RH
 	}
 
 	override fun setProperty(componentId: Int, propertyId: Int, value: Any?) {
-		if (components[componentId]?.properties?.get(propertyId) != value)
+		if (components[componentId]?.properties?.get(propertyId)?.value != value)
 			app.setProperty(componentId, propertyId, value)
 	}
 
