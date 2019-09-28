@@ -328,6 +328,14 @@ class TestMusicApp {
 		playbackView.redraw()
 		assertEquals(true, mockServer.properties[IDs.TOOLBAR_QUEUE_BUTTON]!![RHMIProperty.PropertyId.ENABLED.id])
 
+		// don't enable the Custom Actions button for empty custom actions
+		assertEquals(false, mockServer.properties[IDs.TOOLBAR_ACTION_BUTTON]!![RHMIProperty.PropertyId.ENABLED.id])
+		// add an action
+		whenever(musicController.getCustomActions()).doAnswer { listOf(CustomAction("test", "test", "Name", null, null)) }
+		// we should redraw even if the song hasn't changed, and the button should be enabled
+		playbackView.redraw()
+		assertEquals(true, mockServer.properties[IDs.TOOLBAR_ACTION_BUTTON]!![RHMIProperty.PropertyId.ENABLED.id])
+
 		// now test a different song with missing cover art
 		whenever(musicController.getMetadata()).doAnswer {
 			MusicMetadata("testId", duration = 180000L,

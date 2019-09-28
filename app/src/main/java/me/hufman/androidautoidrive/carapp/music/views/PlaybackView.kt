@@ -177,6 +177,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 			redrawSong()
 		}
 		redrawQueueButton()
+		redrawActions()
 		redrawPosition()
 	}
 
@@ -186,11 +187,6 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		val image = phoneAppResources.getBitmap(app.icon, 48, 48)
 		appLogoModel.value = image
 		displayedApp = app
-	}
-
-	private fun redrawQueueButton() {
-		val queue = controller.getQueue()
-		queueToolbarButton.setEnabled(queue?.isNotEmpty() == true)
 	}
 
 	private fun redrawSong() {
@@ -218,12 +214,6 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 			showPlaceholderCoverart()
 		}
 
-		val customactions = controller.getCustomActions()
-		customActionButton.setEnabled(customactions.isNotEmpty())
-
-		skipBackButton.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS))
-		skipNextButton.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_NEXT))
-
 		displayedSong = song
 	}
 
@@ -238,6 +228,19 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		} else {
 			albumArtSmallComponent.setVisible(false)
 		}
+	}
+
+	private fun redrawQueueButton() {
+		val queue = controller.getQueue()
+		queueToolbarButton.setEnabled(queue?.isNotEmpty() == true)
+	}
+
+	private fun redrawActions() {
+		val customactions = controller.getCustomActions()
+		customActionButton.setEnabled(customactions.isNotEmpty())
+
+		skipBackButton.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS))
+		skipNextButton.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_NEXT))
 	}
 
 	private fun redrawPosition() {
