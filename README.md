@@ -42,6 +42,7 @@ Implemented Features
     - Supports selecting from a list of currently-queued songs, as well as basic back/next control
     - Integrates into the car's audio context, for automatic resume and hardware button control
     - Tested working apps:
+      - [AP News](https://play.google.com/store/apps/details?id=mnn.Android)
       - [Black Player](https://play.google.com/store/apps/details?id=com.kodarkooperativet.blackplayerfree)
       - [Dash Player](https://play.google.com/store/apps/details?id=com.dashradio.dash)
       - [DSub](https://play.google.com/store/apps/details?id=github.daneren2005.dsub)
@@ -52,6 +53,7 @@ Implemented Features
       - [PowerAmp](https://play.google.com/store/apps/details?id=com.maxmpz.audioplayer)
       - [Rocket Player](https://play.google.com/store/apps/details?id=com.jrtstudio.AnotherMusicPlayer)
       - [Scanner Radio](https://play.google.com/store/apps/details?id=com.scannerradio)
+      - [SiriusXM](https://play.google.com/store/apps/details?id=com.sirius)
       - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android)
       - Spotify (up to [version 8.4.96.953](https://www.apkhere.com/down/com.spotify.music_8.4.96.953_free))
       - [Tidal](https://play.google.com/store/apps/details?id=com.aspiro.tidal)
