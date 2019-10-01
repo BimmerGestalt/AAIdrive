@@ -9,6 +9,7 @@ android:
   - build-tools-28.0.3
   - android-24
   - android-26
+  - android-28
 before_install:
 - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then openssl aes-256-cbc -K $encrypted_2fe89d330fd2_key -iv $encrypted_2fe89d330fd2_iv
   -in keystore.jks.enc -out keystore.jks -d; fi'

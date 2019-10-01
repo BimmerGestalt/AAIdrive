@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -61,8 +62,4 @@
             android:grantUriPermissions="true" />
 
     </application>
-
-    <permission android:label="@string/permlab_accessNotifications" android:name="android.permission.ACCESS_NOTIFICATIONS" android:description="@string/permdesc_accessNotifications" />
-    <permission android:label="@string/permlab_bindNotificationListenerService" android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" android:description="@string/permdesc_bindNotificationListenerService" />
-    <permission android:name="android.permission.FOREGROUND_SERVICE" />
 </manifest>

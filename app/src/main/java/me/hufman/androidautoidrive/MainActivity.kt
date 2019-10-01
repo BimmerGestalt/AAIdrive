@@ -1,6 +1,8 @@
 package me.hufman.androidautoidrive
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.BroadcastReceiver
@@ -9,6 +11,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -39,6 +42,9 @@ class MainActivity : AppCompatActivity() {
 		const val SECURITY_SERVICE_TIMEOUT = 1000
 		const val REDRAW_INTERVAL = 5000L
 		const val REQUEST_LOCATION = 4000
+
+		const val NOTIFICATION_CHANNEL_ID = "TestNotification"
+		const val NOTIFICATION_CHANNEL_NAME = "Test Notification"
 	}
 	val handler = Handler()
 	val redrawListener = RedrawListener()
@@ -95,6 +101,7 @@ class MainActivity : AppCompatActivity() {
 		}
 
 		// spawn a Test notification
+		createNotificationChannel()
 		btnTestNotification.setOnClickListener {
 			//val actionIntent = Intent(this, CustomActionListener::class.java)
 			val actionIntent = Intent(this, CustomActionListener::class.java)
@@ -102,13 +109,16 @@ class MainActivity : AppCompatActivity() {
 			val action = Notification.Action.Builder(null, "Custom action test",
 					PendingIntent.getBroadcast(this, 0, actionIntent, FLAG_UPDATE_CURRENT ))
 					.build()
-			val notification = Notification.Builder(this)
+			val notificationBuilder = Notification.Builder(this)
 					.setSmallIcon(android.R.drawable.ic_menu_gallery)
 					.setContentTitle("Test Notification")
 					.setContentText("This is a test notification")
 					.setSubText("SubText")
 					.addAction(action)
-					.build()
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				notificationBuilder.setChannelId(NOTIFICATION_CHANNEL_ID)
+			}
+			val notification = notificationBuilder.build()
 			val manager = NotificationManagerCompat.from(this)
 			manager.notify(1, notification)
 		}
@@ -160,6 +170,17 @@ class MainActivity : AppCompatActivity() {
 		appDiscoveryThread.stopDiscovery()
 	}
 
+	private fun createNotificationChannel() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID,
+					NOTIFICATION_CHANNEL_NAME,
+					NotificationManager.IMPORTANCE_DEFAULT)
+
+			val notificationManager = getSystemService(NotificationManager::class.java)
+			notificationManager.createNotificationChannel(channel)
+
+		}
+	}
 	fun onChangedSwitchNotifications(buttonView: CompoundButton, isChecked: Boolean) {
 		AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS, isChecked.toString())
 		if (isChecked) {
