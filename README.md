@@ -48,6 +48,7 @@ Implemented Features
       - [DSub](https://play.google.com/store/apps/details?id=github.daneren2005.dsub)
       - [iVooz](https://play.google.com/store/apps/details?id=com.ivoox.app)
       - [Media Monkey](https://play.google.com/store/apps/details?id=com.ventismedia.android.mediamonkey)
+      - [ntv Nachrichten](https://play.google.com/store/apps/details?id=de.lineas.lit.ntv.android)
       - [Player FM](https://play.google.com/store/apps/details?id=fm.player)
       - [Plex](https://play.google.com/store/apps/details?id=com.plexapp.android) (only music and podcasts)
       - [PowerAmp](https://play.google.com/store/apps/details?id=com.maxmpz.audioplayer)
