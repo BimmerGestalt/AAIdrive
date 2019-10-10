@@ -42,8 +42,11 @@ Implemented Features
     - Supports selecting from a list of currently-queued songs, as well as basic back/next control
     - Integrates into the car's audio context, for automatic resume and hardware button control
     - Tested working apps:
+      - [AntennaPod](https://play.google.com/store/apps/details?id=de.danoeh.antennapod)
       - [AP News](https://play.google.com/store/apps/details?id=mnn.Android)
+      - [Apple Music](https://play.google.com/store/apps/details?id=com.apple.android.music)
       - [Black Player](https://play.google.com/store/apps/details?id=com.kodarkooperativet.blackplayerfree)
+      - [Castbox](https://play.google.com/store/apps/details?id=fm.castbox.audiobook.radio.podcast)
       - [Dash Player](https://play.google.com/store/apps/details?id=com.dashradio.dash)
       - [DSub](https://play.google.com/store/apps/details?id=github.daneren2005.dsub)
       - [iVooz](https://play.google.com/store/apps/details?id=com.ivoox.app)
@@ -52,14 +55,16 @@ Implemented Features
       - [Player FM](https://play.google.com/store/apps/details?id=fm.player)
       - [Plex](https://play.google.com/store/apps/details?id=com.plexapp.android) (only music and podcasts)
       - [PowerAmp](https://play.google.com/store/apps/details?id=com.maxmpz.audioplayer)
+      - [Retro Music Player](https://play.google.com/store/apps/details?id=code.name.monkey.retromusic)
       - [Rocket Player](https://play.google.com/store/apps/details?id=com.jrtstudio.AnotherMusicPlayer)
       - [Scanner Radio](https://play.google.com/store/apps/details?id=com.scannerradio)
       - [SiriusXM](https://play.google.com/store/apps/details?id=com.sirius)
       - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android)
       - Spotify (up to [version 8.4.96.953](https://www.apkhere.com/down/com.spotify.music_8.4.96.953_free))
       - [Tidal](https://play.google.com/store/apps/details?id=com.aspiro.tidal)
+      - [Virgin Radio Italy](https://play.google.com/store/apps/details?id=it.froggy.android.virginradio)
       - [VLC For Android](https://play.google.com/store/apps/details?id=org.videolan.vlc)
-      - [YouTube](https://play.google.com/store/apps/details?id=com.google.android.youtube) (only music previous/next control, no video)
+      - [YouTube](https://play.google.com/store/apps/details?id=com.google.android.youtube) (only back/next control, no video display)
 
 Integration Points
 ------------------
