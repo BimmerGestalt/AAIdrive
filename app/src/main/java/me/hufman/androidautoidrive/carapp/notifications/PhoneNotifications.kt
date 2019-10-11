@@ -137,6 +137,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			// app icon and notification title
 			setVisible(true)
 			setEnabled(true)
+			setSelectable(true)
 			setProperty(6, "55,0,*")
 		}
 		stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull {
@@ -147,7 +148,13 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			setEnabled(true)
 		}
 		var buttons = ArrayList(stateView.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
-		stateView.toolbarComponentsList.forEach { it.setVisible(false) }
+		stateView.toolbarComponentsList.forEach {
+			if (it.getAction() != null) {
+				it.setSelectable(false)
+				it.setEnabled(false)
+				it.setVisible(true)
+			}
+		}
 		buttons[0].getImageModel()?.asImageIdModel()?.imageId = 150
 		buttons[0].setVisible(true)
 		buttons[0].setSelectable(true)
@@ -309,7 +316,6 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			val action = notification.actions.getOrNull(i)
 			var button = buttons[1+i]
 			if (action == null) {
-				button.setVisible(false)
 				button.setEnabled(false)
 				button.setSelectable(false)
 				button.getAction()?.asRAAction()?.rhmiActionCallback = null // don't leak memory
@@ -321,7 +327,6 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 					button.setEnabled(true)
 				}
 				button.setSelectable(true)
-				button.setVisible(true)
 				button.getTooltipModel()?.asRaDataModel()?.value = action.title.toString()
 				button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id  // usually the action will clear the notification
 				button.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {

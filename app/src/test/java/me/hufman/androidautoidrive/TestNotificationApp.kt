@@ -363,7 +363,7 @@ class TestNotificationApp {
 		assertEquals("Custom Action", mockServer.data[524])  // custom action button
 		assertEquals(false, mockServer.properties[124]?.get(RHMIProperty.PropertyId.ENABLED.id))  // custom action button
 		assertEquals(false, mockServer.properties[124]?.get(RHMIProperty.PropertyId.SELECTABLE.id))  // clear this notification button
-		assertEquals(false, mockServer.properties[124]?.get(RHMIProperty.PropertyId.VISIBLE.id))
+		assertEquals(true, mockServer.properties[124]?.get(RHMIProperty.PropertyId.VISIBLE.id))
 		assertEquals(null, mockServer.data[525])    // empty button
 
 		// now try clicking the custom action
