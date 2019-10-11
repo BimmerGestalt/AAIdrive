@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">AndroidAutoIdrive</string>
+    <string name="permlab_accessNotifications">IDrive Notification Access</string>
+    <string name="permlab_bindNotificationListenerService">IDrive Notification Access</string>
+    <string name="permdesc_accessNotifications">IDrive Notification Access</string>
+    <string name="permdesc_bindNotificationListenerService">IDrive Notification Access</string>
+    <string name="notification_title">Android Auto for IDrive</string>
+    <string name="notification_description">Połączona z samochodem</string>
+    <string name="notification_description_bmw">Połączono z BMW</string>
+    <string name="notification_description_mini">Połączono z  Mini</string>
+
+    <string name="spawn_test_notification">Testowe powiadomienie</string>
+    <string name="message_notifications">Tresc powiadomienia</string>
+    <string name="notification_popups">Wyskakujace okno powiadomień</string>
+    <string name="notification_popups_passenger">powidomienie z siedzacym pasarzerem</string>
+    <string name="enable_google_maps">Wlacz Google Maps</string>
+    <string name="lbl_widescreen_map">Mapy w trybie pełnoekranowym</string>
+    <string name="gmapStyleLabel">Styl map</string>
+    <string name="lbl_music_apps">Aplikacje muzyczne</string>
+    <string name="imgdescAppIcon">Ikony aplikacji</string>
+    <string name="imgdescConnectable">Podłączalny</string>
+    <string name="imgdescBrowseable">Przegladalny</string>
+    <string name="imgdescSearchable">Przeszukiwalny</string>
+    <string name="enable_audio_context">Przełącz na audio z telefonu</string>
+    <string name="connectionStatusMissingConnectedApp">Nie moge znależć aplikacji Connected lub Connected Classic</string>
+    <string name="connectionStatusWaiting">Oczekiwanie na połączenie z samochodem</string>
+
+    <string name="txt_setup_bmw_ready">Aplikacja gotowa do połączenia z BMW</string>
+    <string name="txt_setup_mini_ready">Aplikacja gotowa do połączenia z Mini</string>
+    <string name="txt_setup_discovered_new_bmw">Aplikacja BMW Connected wykryta, but Mini Connected Classic app also needs to be installed for this app to work:</string>
+    <string name="txt_setup_discovered_new_mini">Aplikacja Mini Connected wykryta, but BMW Connected Classic app also needs to be installed for this app to work:</string>
+    <string name="txt_setup_bmw_missing">Nie gotowy do połączenia z BMW:</string>
+    <string name="txt_setup_mini_missing">Nie gotowy do połączenia z Mini:</string>
+    <string name="btn_install">Instalacja</string>
+    <string name="btn_install_bmw">Zainstaluj BMW Connected Classic</string>
+    <string name="btn_install_mini">Zainstaluj Mini Connected Classic</string>
+
+    <!-- car app strings -->
+    <string name="NOTIFICATIONS_TITLE">Powiadomienia</string>
+    <string name="NOTIFICATIONS_EMPTY_LIST">Brak powiadomień</string>
+    <string name="NOTIFICATION_CLEAR_ACTION">Wyczyść</string>
+
+    <string name="MAP_ACTION_VIEWMAP">Zobacz całą mapę</string>
+    <string name="MAP_ACTION_SEARCH">Szukaj miejsca</string>
+    <string name="MAP_ACTION_CLEARNAV">Wyczysc nawigacja</string>
+
+    <string name="MUSIC_APPLIST_TITLE">Aplikacje</string>
+    <string name="MUSIC_APPLIST_EMPTY">&lt;Brak aplikacji&gt;</string>
+    <string name="MUSIC_CUSTOMACTIONS_TITLE">Akcje</string>
+    <string name="MUSIC_BROWSE_TITLE">Przegladaj</string>
+    <string name="MUSIC_BROWSE_EMPTY">&lt;Pusto&gt;</string>
+    <string name="MUSIC_BROWSE_LOADING">&lt;Ładowanie&gt;</string>
+    <string name="MUSIC_BROWSE_SEARCHING">&lt;Wyszukiwanie&gt;</string>
+    <string name="MUSIC_BROWSE_ACTION_JUMPBACK">Powrót</string>
+    <string name="MUSIC_BROWSE_ACTION_FILTER">Filtruj</string>
+    <string name="MUSIC_BROWSE_ACTION_SEARCH">Szukaj</string>
+    <string name="MUSIC_QUEUE_TITLE">Aktualnie odtwarzane</string>
+    <string name="MUSIC_QUEUE_EMPTY">&lt;Pusta kolejka&gt;</string>
+    <string name="MUSIC_SKIP_PREVIOUS">Poprzednia</string>
+    <string name="MUSIC_SKIP_NEXT">Następna</string>
+
+    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_ON">Odtwarzanie losowe włączone</string>
+    <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Usuń z kolekcji</string>
+    <string name="MUSIC_SPOTIFY_START_RADIO">Radio</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Powtarzaj wszystkie</string>
+    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_OFF">Odtwarzanie losowe wyłączone</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Powtarzaj pojedynczo </string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Wyłącz powtarzanie</string>
+    <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Polub</string>
+</resources>
