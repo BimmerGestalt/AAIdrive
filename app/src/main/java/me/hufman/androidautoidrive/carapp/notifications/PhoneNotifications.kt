@@ -32,7 +32,8 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		const val INTENT_NEW_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.NEW_NOTIFICATION"
 		const val EXTRA_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.EXTRA_NOTIFICATION"
 	}
-	val notificationListener = PhoneNotificationUpdate(PhoneNotificationListener())
+	val notificationListener = PhoneNotificationListener()
+	var notificationReceiver: PhoneNotificationUpdate? = null
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
 	val carApp: RHMIApplication
@@ -211,17 +212,22 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 	fun onCreate(context: Context, handler: Handler? = null) {
 		Log.i(TAG, "Registering car thread listeners for notifications")
+		val notificationReceiver = this.notificationReceiver ?:
+			PhoneNotificationUpdate(notificationListener)
+		this.notificationReceiver = notificationReceiver
 		if (handler != null) {
-			context.registerReceiver(notificationListener, IntentFilter(INTENT_NEW_NOTIFICATION), null, handler)
-			context.registerReceiver(notificationListener, IntentFilter(INTENT_UPDATE_NOTIFICATIONS), null, handler)
+			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_NEW_NOTIFICATION), null, handler)
+			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_UPDATE_NOTIFICATIONS), null, handler)
 		} else {
-			context.registerReceiver(notificationListener, IntentFilter(INTENT_NEW_NOTIFICATION))
-			context.registerReceiver(notificationListener, IntentFilter(INTENT_UPDATE_NOTIFICATIONS))
-
+			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_NEW_NOTIFICATION))
+			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_UPDATE_NOTIFICATIONS))
 		}
 	}
 	fun onDestroy(context: Context) {
-		context.unregisterReceiver(notificationListener)
+		val notificationReceiver = this.notificationReceiver
+		if (notificationReceiver != null) {
+			context.unregisterReceiver(notificationReceiver)
+		}
 		try {
 			Log.i(TAG, "Trying to shut down etch connection")
 			IDriveConnection.disconnectEtchConnection(carConnection)

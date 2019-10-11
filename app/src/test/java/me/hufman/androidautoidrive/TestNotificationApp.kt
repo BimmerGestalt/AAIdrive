@@ -229,7 +229,7 @@ class TestNotificationApp {
 
 		val bundle = createNotificationObject("Title", "Text", "Summary")
 
-		app.notificationListener.listener.onNotification(bundle)
+		app.notificationListener.onNotification(bundle)
 
 		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent
 		val expectedHeader = "Test AppName"
