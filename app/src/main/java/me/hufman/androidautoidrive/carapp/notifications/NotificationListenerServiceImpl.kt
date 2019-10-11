@@ -88,7 +88,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 			}
 
 			val summarized = CarNotification(sbn.packageName, sbn.key, icon, sbn.isClearable, sbn.notification.actions ?: arrayOf(),
-					title, summary, text)
+					title, summary, text?.trim())
 			return summarized
 		}
 

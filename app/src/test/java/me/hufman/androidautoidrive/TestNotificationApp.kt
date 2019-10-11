@@ -127,12 +127,12 @@ class TestNotificationApp {
 
 	@Test
 	fun testSummary() {
-		val notification = createNotification("Ticker Text", "Title", "Text", "Summary", true)
+		val notification = createNotification("Ticker Text", "Title", "Text\nTwo\n", "Summary", true)
 		val notificationObject = NotificationListenerServiceImpl.summarizeNotification(notification)
 		assertEquals("testKey", notificationObject.key)
 		assertEquals("me.hufman.androidautoidrive", notificationObject.packageName)
 		assertEquals("Title", notificationObject.title)
-		assertEquals("Text", notificationObject.text)
+		assertEquals("Text\nTwo", notificationObject.text)
 		assertEquals("Summary", notificationObject.summary)
 		assertEquals(notification.notification.smallIcon, notificationObject.icon)
 		assertTrue(notificationObject.isClearable)
