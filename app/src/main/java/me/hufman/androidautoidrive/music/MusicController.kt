@@ -152,9 +152,12 @@ class MusicController(val context: Context, val handler: Handler) {
 		return AppSettings[AppSettings.KEYS.AUDIO_DESIRED_APP]
 	}
 
-	fun disconnectApp() {
+	fun disconnectApp(pause: Boolean = true) {
+		controller?.unregisterCallback(controllerCallback)
 		// trigger a pause of the current connected app
-		disconnectAppAsync()
+		if (pause) {
+			disconnectAppAsync()
+		}
 
 		// then clear out the saved controller object, to defer future play() calls
 		controller = null
@@ -163,7 +166,6 @@ class MusicController(val context: Context, val handler: Handler) {
 	}
 	fun disconnectAppAsync() = safeRpc { // all calls are already in the handler thread, don't go async
 		if (controller != null) {
-			controller?.unregisterCallback(controllerCallback)
 			controller?.transportControls?.pause()
 		}
 	}
