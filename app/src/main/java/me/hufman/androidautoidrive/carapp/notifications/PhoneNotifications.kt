@@ -132,6 +132,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 		// set up the view
 		stateView.app.setProperty(stateView.id, 24, 3)    // set to wide-screen "tablestate"
+		stateView.app.setProperty(stateView.id, 36, false)    // disable SPEEDLOCK
 		stateView.componentsList.forEach { it.setVisible(false) }
 		stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull()?.apply {
 			// app icon and notification title

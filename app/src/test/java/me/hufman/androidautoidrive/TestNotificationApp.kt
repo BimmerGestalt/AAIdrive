@@ -77,6 +77,8 @@ class TestNotificationApp {
 		}
 		// test stateView setup
 		run {
+			assertEquals(3, mockServer.properties[app.stateView.id]?.get(24))
+			assertEquals(false, mockServer.properties[app.stateView.id]?.get(36))
 			val visibleWidgets = app.stateView.componentsList.filter {
 				mockServer.properties[it.id]?.get(RHMIProperty.PropertyId.VISIBLE.id) as Boolean
 			}
@@ -91,6 +93,7 @@ class TestNotificationApp {
 		}
 		// test stateList setup
 		run {
+			assertEquals(3, mockServer.properties[app.stateList.id]?.get(24))
 			val visibleWidgets = app.stateList.componentsList.filter {
 				mockServer.properties[it.id]?.get(RHMIProperty.PropertyId.VISIBLE.id) as Boolean
 			}
