@@ -269,7 +269,7 @@ class MainActivity : AppCompatActivity() {
 			txtConnectionStatus.text = resources.getString(R.string.connectionStatusWaiting)
 			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionWaiting, null))
 		} else {
-			txtConnectionStatus.text = when (IDriveConnectionListener.brand) {
+			txtConnectionStatus.text = when (IDriveConnectionListener.brand?.toLowerCase()) {
 				"bmw" -> resources.getString(R.string.notification_description_bmw)
 				"mini" -> resources.getString(R.string.notification_description_mini)
 				else -> resources.getString(R.string.notification_description)
