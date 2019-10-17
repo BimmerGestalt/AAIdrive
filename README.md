@@ -49,6 +49,7 @@ Implemented Features
       - [Castbox](https://play.google.com/store/apps/details?id=fm.castbox.audiobook.radio.podcast)
       - [Dash Player](https://play.google.com/store/apps/details?id=com.dashradio.dash)
       - [DSub](https://play.google.com/store/apps/details?id=github.daneren2005.dsub)
+      - [Energy Radio](https://play.google.com/store/apps/details?id=radioenergy.app)
       - [iVooz](https://play.google.com/store/apps/details?id=com.ivoox.app)
       - [Media Monkey](https://play.google.com/store/apps/details?id=com.ventismedia.android.mediamonkey)
       - [ntv Nachrichten](https://play.google.com/store/apps/details?id=de.lineas.lit.ntv.android)
