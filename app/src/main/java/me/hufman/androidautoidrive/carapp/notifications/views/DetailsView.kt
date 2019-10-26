@@ -5,6 +5,7 @@ import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControlle
 import me.hufman.androidautoidrive.carapp.notifications.NotificationsState
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.ArrayList
+import kotlin.math.min
 
 class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val controller: CarNotificationController) {
 	companion object {
@@ -15,7 +16,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 					} != null
 		}
 
-		const val MAX_LENGTH = 500
+		const val MAX_LENGTH = 10000
 	}
 
 	var listViewId: Int = 0                // where to set the focus when the active notification disappears
@@ -112,7 +113,8 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 
 		// prepare the notification text
 		val listData = RHMIModel.RaListModel.RHMIListConcrete(1)
-		listData.addRow(arrayOf("${notification.title}\n${notification.text}"))
+		val trimmedText = notification.text?.substring(0, min(MAX_LENGTH, (notification.text ?: "").length))
+		listData.addRow(arrayOf("${notification.title}\n${trimmedText}"))
 
 		state.getTextModel()?.asRaDataModel()?.value = notification.title ?: appname
 		iconWidget.getModel()?.value = iconListData
