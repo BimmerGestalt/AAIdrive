@@ -10,6 +10,7 @@ import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
 import me.hufman.androidautoidrive.carapp.notifications.*
+import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
 
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
@@ -17,6 +18,7 @@ import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
 import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
 import me.hufman.idriveconnectionkit.rhmi.RHMIState
+import me.hufman.idriveconnectionkit.rhmi.mocking.RHMIApplicationMock
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -388,6 +390,46 @@ class TestNotificationApp {
 		NotificationsState.notifications.add(0, statusbarNotificationSurprise)
 		app.viewList.notificationListView.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))   // clicks the first one
 		assertEquals(notification, NotificationsState.selectedNotification)
+	}
 
+	@Test
+	fun testViewEmptyNotification() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(carAppResources, phoneAppResources, carNotificationController)
+
+		NotificationsState.notifications.clear()
+		val notification = createNotificationObject("Title", "Text", "Summary", false)
+		NotificationsState.notifications.add(notification)
+		NotificationsState.selectedNotification = notification
+
+		// show the viewDetails
+		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(1, "unused", 20, 1, mapOf(4.toByte() to true))
+
+		// verify that it shows the notification
+		run {
+			val bodyList = mockServer.data[521] as BMWRemoting.RHMIDataTable
+			assertEquals(1, bodyList.numRows)
+			assertEquals(1, bodyList.numColumns)
+			assertEquals("Title\nText", bodyList.data[0][0])
+		}
+
+		// swap out the notification
+		NotificationsState.notifications.clear()
+		val notification2 = createNotificationObject("Title2", "Text", "Summary2", false)
+		NotificationsState.notifications.add(notification2)
+		NotificationsState.selectedNotification = notification  // still viewing the old notification
+
+		// now redraw the view
+		app.viewDetails.redraw()
+		// verify that it didn't change any labels
+		run {
+			val bodyList = mockServer.data[521] as BMWRemoting.RHMIDataTable
+			assertEquals(1, bodyList.numRows)
+			assertEquals(1, bodyList.numColumns)
+			assertEquals("Title\nText", bodyList.data[0][0])
+		}
+		// it should trigger a transition to the main list
+		assertEquals(app.viewList.state.id, mockServer.triggeredEvents[5]?.get(0))
 	}
 }

@@ -18,6 +18,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		const val MAX_LENGTH = 500
 	}
 
+	var listViewId: Int = 0                // where to set the focus when the active notification disappears
 	val iconWidget: RHMIComponent.List     // the widget to display the notification app's icon
 	val listWidget: RHMIComponent.List     // the widget to display the text
 
@@ -75,6 +76,8 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			// go back to the main list when an action is clicked
 			it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listView.state.id
 		}
+
+		listViewId = listView.state.id
 	}
 
 	fun show() {
@@ -94,12 +97,10 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			return
 		}
 
-		// find the notification, or bail out
+		// find the notification, or bail to the list
 		val notification = NotificationsState.fetchSelectedNotification()
 		if (notification == null) {
-			ArrayList(state.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}.forEach {
-				it.setEnabled(false)
-			}
+			state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to listViewId))
 			return
 		}
 
