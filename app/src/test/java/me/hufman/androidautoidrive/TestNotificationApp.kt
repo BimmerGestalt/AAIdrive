@@ -16,6 +16,7 @@ import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
 import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
+import me.hufman.idriveconnectionkit.rhmi.RHMIState
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -72,29 +73,30 @@ class TestNotificationApp {
 		run {
 			val buttons = app.carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>()
 			buttons.forEach {
-				assertEquals(app.stateList.id, it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
+				assertEquals(app.viewList.state.id, it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
 			}
 		}
 		// test stateView setup
 		run {
-			assertEquals(3, mockServer.properties[app.stateView.id]?.get(24))
-			assertEquals(false, mockServer.properties[app.stateView.id]?.get(36))
-			val visibleWidgets = app.stateView.componentsList.filter {
+			assertEquals(3, mockServer.properties[app.viewDetails.state.id]?.get(24))
+			assertEquals(false, mockServer.properties[app.viewDetails.state.id]?.get(36))
+			val visibleWidgets = app.viewDetails.state.componentsList.filter {
 				mockServer.properties[it.id]?.get(RHMIProperty.PropertyId.VISIBLE.id) as Boolean
 			}
 			assertEquals(2, visibleWidgets.size)
 			assertTrue(visibleWidgets[0] is RHMIComponent.List)
 			assertTrue(visibleWidgets[1] is RHMIComponent.List)
 			assertEquals("Richtext", visibleWidgets[1].asList()?.getModel()?.modelType)
-			assertEquals( 150, app.stateView.toolbarComponentsList[1].getImageModel()?.asImageIdModel()?.imageId)
-			app.stateView.toolbarComponentsList.subList(2, 7).forEach {
+			val state = app.viewDetails.state as RHMIState.ToolbarState
+			assertEquals( 150, state.toolbarComponentsList[1].getImageModel()?.asImageIdModel()?.imageId)
+			state.toolbarComponentsList.subList(2, 7).forEach {
 				assertEquals(158, it.getImageModel()?.asImageIdModel()?.imageId)
 			}
 		}
 		// test stateList setup
 		run {
-			assertEquals(3, mockServer.properties[app.stateList.id]?.get(24))
-			val visibleWidgets = app.stateList.componentsList.filter {
+			assertEquals(3, mockServer.properties[app.viewList.state.id]?.get(24))
+			val visibleWidgets = app.viewList.state.componentsList.filter {
 				mockServer.properties[it.id]?.get(RHMIProperty.PropertyId.VISIBLE.id) as Boolean
 			}
 			assertEquals(1, visibleWidgets.size)
@@ -250,7 +252,7 @@ class TestNotificationApp {
 		val app = PhoneNotifications(carAppResources, phoneAppResources, carNotificationController)
 
 		NotificationsState.notifications.clear()
-		app.updateNotificationList()
+		app.viewList.redrawNotificationList()
 
 		val list = mockServer.data[386] as BMWRemoting.RHMIDataTable
 		assertNotNull(list)
@@ -272,7 +274,7 @@ class TestNotificationApp {
 		NotificationsState.notifications.add(statusbarNotification)
 		val statusbarNotification2 = createNotificationObject("Title2", "Text2", "Summary2")
 		NotificationsState.notifications.add(statusbarNotification2)
-		app.updateNotificationList()
+		app.viewList.redrawNotificationList()
 
 		val list = mockServer.data[386] as BMWRemoting.RHMIDataTable
 		assertNotNull(list)
@@ -330,7 +332,7 @@ class TestNotificationApp {
 		NotificationsState.notifications.add(notification)
 		val notification2 = createNotificationObject("Title2", "Text2", "Summary2", true)
 		NotificationsState.notifications.add(notification2)
-		app.updateNotificationList()
+		app.viewList.redrawNotificationList()
 
 		val notificationsList = mockServer.data[386] as BMWRemoting.RHMIDataTable
 		assertNotNull(notificationsList)
@@ -340,8 +342,11 @@ class TestNotificationApp {
 		val callbacks = IDriveConnection.mockRemotingClient as BMWRemotingClient
 		callbacks.rhmi_onActionEvent(1, "Dont care", 161, mapOf(1.toByte() to 1))
 
-		assertEquals(app.stateView.id, mockServer.data[163])
+		assertEquals(app.viewDetails.state.id, mockServer.data[163])
 		assertEquals(notification2, NotificationsState.selectedNotification)
+
+		// the car shows the view state
+		callbacks.rhmi_onHmiEvent(1, "unused", 20, 1, mapOf(4.toByte() to true))
 
 		// verify that the right information is shown
 		val appTitleList = mockServer.data[519] as BMWRemoting.RHMIDataTable
@@ -375,13 +380,13 @@ class TestNotificationApp {
 		// clicking the clear action
 		callbacks.rhmi_onActionEvent(1, "Dont care", 326, mapOf(0.toByte() to 1))
 		verify(carNotificationController, times(1)).clear(notification2)
-		assertEquals("Returns to main list", app.stateList.id, mockServer.data[328])
+		assertEquals("Returns to main list", app.viewList.state.id, mockServer.data[328])
 
 		// test clicking surprise notifications
 		// which are added to the NotificationsState without showing in the UI
 		val statusbarNotificationSurprise = createNotificationObject("SurpriseTitle", "SurpriseText", "SurpriseSummary")
 		NotificationsState.notifications.add(0, statusbarNotificationSurprise)
-		app.notificationListView.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))   // clicks the first one
+		app.viewList.notificationListView.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))   // clicks the first one
 		assertEquals(notification, NotificationsState.selectedNotification)
 
 	}
