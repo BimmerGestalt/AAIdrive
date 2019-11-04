@@ -76,7 +76,7 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 		return when (musicAppInfo.packageName) {
 			"com.spotify.music" -> "com.google.android.projection.gearhead---spotify_media_browser_root_android_auto"   // the Android Auto root for Spotify
 			"com.aspiro.tidal" -> "__ROOT_LOGGED_IN__"   // Tidal Music
-			"com.apple.android.music" -> "__ROOT__"     // Apple Music
+			"com.apple.android.music" -> "__AUTO_ROOT__"     // Apple Music
 			else -> mediaBrowser?.root ?: "disconnected root"
 		}
 	}
@@ -136,7 +136,16 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 						mediaBrowser?.unsubscribe(browsePath)
 						deferred.complete(children)
 					}
+
+					override fun onError(parentId: String, options: Bundle) {
+						onError(parentId)
+					}
+
+					override fun onChildrenLoaded(parentId: String, children: MutableList<MediaBrowserCompat.MediaItem>, options: Bundle) {
+						onChildrenLoaded(parentId, children)
+					}
 				})
+
 				// now we wait for the results
 				withTimeout(timeout) {
 					while (!deferred.isCompleted) {
