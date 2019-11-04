@@ -156,6 +156,15 @@ class MainActivity : AppCompatActivity() {
 			}, 2000)
 		}
 
+		listMusicApps.setOnItemClickListener { adapterView, view, i, l ->
+			val appInfo = adapterView.adapter.getItem(i) as? MusicAppInfo
+			if (appInfo != null) {
+				UIState.selectedMusicApp = appInfo
+				val intent = Intent(this, MusicActivity::class.java)
+				startActivity(intent)
+			}
+		}
+
 		txtConnectionStatus.setOnClickListener {
 			val intent = Intent(this, SetupActivity::class.java)
 			startActivity(intent)
