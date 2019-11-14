@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.phoneui
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -27,6 +27,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
+import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
@@ -153,6 +154,15 @@ class MainActivity : AppCompatActivity() {
 			handler.postDelayed({
 				listMusicAppsRefresh.isRefreshing = false
 			}, 2000)
+		}
+
+		listMusicApps.setOnItemClickListener { adapterView, view, i, l ->
+			val appInfo = adapterView.adapter.getItem(i) as? MusicAppInfo
+			if (appInfo != null) {
+				UIState.selectedMusicApp = appInfo
+				val intent = Intent(this, MusicActivity::class.java)
+				startActivity(intent)
+			}
 		}
 
 		txtConnectionStatus.setOnClickListener {

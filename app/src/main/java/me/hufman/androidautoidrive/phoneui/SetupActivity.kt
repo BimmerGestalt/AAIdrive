@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.phoneui
 
 import android.content.Intent
 import android.net.Uri
@@ -8,6 +8,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import kotlinx.android.synthetic.main.activity_setup.*
+import me.hufman.androidautoidrive.R
 import me.hufman.idriveconnectionkit.android.SecurityService
 
 class SetupActivity : AppCompatActivity() {

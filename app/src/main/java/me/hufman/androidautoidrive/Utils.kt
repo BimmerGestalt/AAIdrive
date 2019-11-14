@@ -1,9 +1,13 @@
 package me.hufman.androidautoidrive
 
+import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.support.annotation.AttrRes
+import android.support.annotation.ColorInt
+import android.util.TypedValue
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.withTimeout
@@ -15,12 +19,20 @@ import java.util.zip.ZipInputStream
 import kotlin.math.abs
 
 object Utils {
-	private val FILTER_NEGATIVE = ColorMatrixColorFilter(floatArrayOf(
+	val FILTER_NEGATIVE = ColorMatrixColorFilter(floatArrayOf(
 		-1.0f,     0f,     0f,    0f, 255f, // red
 		   0f,  -1.0f,     0f,    0f, 255f, // green
 		   0f,     0f,  -1.0f,    0f, 255f, // blue
 		   0f,     0f,     0f,  1.0f,   0f  // alpha
 	))
+	val FILTER_BLACKMASK_VALUES = floatArrayOf(
+		1.0f,     0f,     0f,    0f,   0f, // red
+		  0f,   1.0f,     0f,    0f,   0f, // green
+		  0f,     0f,   1.0f,    0f,   0f, // blue
+		1.0f,   1.0f,   1.0f,    0f,   0f  // alpha
+	)
+	val FILTER_BLACKMASK = ColorMatrixColorFilter(FILTER_BLACKMASK_VALUES)
+
 	fun getBitmap(bitmap: Bitmap, width: Int, height: Int, invert: Boolean = false): Bitmap {
 		if (bitmap.width == width && bitmap.height == height && invert == false) {
 			return bitmap
@@ -84,6 +96,14 @@ object Utils {
 		return 1.0 * darkPixels / visiblePixels > .5
 	}
 
+	fun getIconMask(tint: Int): ColorFilter {
+		val values = FILTER_BLACKMASK_VALUES.clone()
+		values[0] = values[0] * Color.red(tint) / 255f
+		values[6] = values[6] * Color.green(tint) / 255f
+		values[12] = values[12] * Color.blue(tint) / 255f
+		return ColorMatrixColorFilter(values)
+	}
+
 	fun etchAsInt(obj: Any?, default: Int = 0): Int {
 		/** Etch likes to shrink numbers to the smallest type that will fit
 		 * But JVM wants the number types to match in various places
@@ -145,6 +165,17 @@ suspend inline fun <T> Deferred<T>.awaitPending(timeout: Long, timeoutHandler: (
 }
 suspend inline fun <T> Deferred<T>.awaitPending(timeout: Int, timeoutHandler: () -> Unit): T {
 	return awaitPending(timeout.toLong(), timeoutHandler)
+}
+
+/** Resolve a Color Attribute to a color int */
+@ColorInt
+fun Context.getThemeColor(
+		@AttrRes attrColor: Int
+): Int {
+	val typedValue = TypedValue()
+	theme.resolveAttribute(attrColor, typedValue, true)
+	val colorRes = typedValue.resourceId
+	return resources.getColor(colorRes, theme)
 }
 
 /**

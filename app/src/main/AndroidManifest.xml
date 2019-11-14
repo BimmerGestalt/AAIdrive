@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".phoneui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,7 +24,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SetupActivity">
+        <activity android:name=".phoneui.SetupActivity">
+        </activity>
+        <activity android:name=".phoneui.MusicActivity">
         </activity>
 
         <service android:name=".MainService"
@@ -45,7 +47,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".MainActivity$CustomActionListener" />
+        <receiver android:name=".phoneui.MainActivity$CustomActionListener" />
 
         <service android:name=".carapp.notifications.NotificationListenerServiceImpl"
             android:label="@string/app_name"

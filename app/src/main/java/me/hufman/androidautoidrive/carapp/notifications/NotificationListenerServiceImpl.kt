@@ -16,8 +16,8 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat.EXTRA_LARGE_ICON
 import android.support.v4.app.NotificationCompat.EXTRA_LARGE_ICON_BIG
 import android.util.Log
-import me.hufman.androidautoidrive.UIState
-import me.hufman.androidautoidrive.MainActivity
+import me.hufman.androidautoidrive.phoneui.UIState
+import me.hufman.androidautoidrive.phoneui.MainActivity
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.EXTRA_NOTIFICATION
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.INTENT_NEW_NOTIFICATION
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.INTENT_UPDATE_NOTIFICATIONS
