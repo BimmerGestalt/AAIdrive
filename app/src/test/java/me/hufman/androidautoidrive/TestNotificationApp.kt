@@ -268,6 +268,32 @@ class TestNotificationApp {
 	}
 
 	@Test
+	fun testDismissPopup() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(carAppResources, phoneAppResources, carNotificationController)
+
+		val bundle = createNotificationObject("Title", "Text", "Summary")
+
+		NotificationsState.notifications.add(bundle)
+		app.notificationListener.onNotification(bundle)
+
+		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent
+		assertEquals(null, mockServer.triggeredEvents[1]?.get(0))
+		val expectedHeader = "Test AppName"
+		val expectedLabel1 = "Title"
+		val expectedLabel2 = "Text"
+		assertEquals(expectedHeader, mockServer.data[404])
+		assertEquals(expectedLabel1, mockServer.data[405])
+		assertEquals(expectedLabel2, mockServer.data[406])
+
+		// swipe it away
+		NotificationsState.notifications.clear()
+		app.notificationListener.updateNotificationList()
+		assertEquals(false, mockServer.triggeredEvents[1]?.get(0))
+	}
+
+	@Test
 	fun testViewEmptyNotifications() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer

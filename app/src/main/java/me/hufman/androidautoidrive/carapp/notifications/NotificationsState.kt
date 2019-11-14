@@ -13,7 +13,8 @@ object NotificationsState {
 	})
 	var selectedNotification: CarNotification? = null
 
-	fun getNotificationByKey(key: String): CarNotification? {
+	fun getNotificationByKey(key: String?): CarNotification? {
+		key ?: return null
 		return notifications.find { it.key == key }
 	}
 

@@ -76,6 +76,10 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 
 	/** Only redraw if the user hasn't clicked it recently */
 	fun gentlyUpdateNotificationList() {
+		if (!visible) {
+			return
+		}
+
 		DeferredUpdate.trigger("PhoneNotificationList", {
 			val interactionTimeAgo = System.currentTimeMillis() - lastInteractionTime
 			val interactionTimeRemaining = INTERACTION_DEBOUNCE_MS - interactionTimeAgo

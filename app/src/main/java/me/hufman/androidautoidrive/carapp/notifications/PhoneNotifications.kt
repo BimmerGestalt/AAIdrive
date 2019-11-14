@@ -45,6 +45,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	val stateInput: RHMIState.PlainState    // show a reply input form
 
 	var passengerSeated = false             // whether a passenger is seated
+	var lastPopup: CarNotification? = null  // the last notification that we popped up
 
 	init {
 		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
@@ -173,6 +174,8 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 					(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
 							!passengerSeated)
 			) {
+				lastPopup = sbn
+
 				if (!sbn.equalsKey(NotificationsState.selectedNotification)) {
 					viewPopup.showNotification(sbn)
 				}
@@ -184,6 +187,11 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			viewList.gentlyUpdateNotificationList()
 
 			viewDetails.redraw()
+
+			// if the notification we popped up disappeared, clear the popup
+			if (NotificationsState.getNotificationByKey(lastPopup?.key) == null) {
+				viewPopup.hideNotification()
+			}
 		}
 	}
 

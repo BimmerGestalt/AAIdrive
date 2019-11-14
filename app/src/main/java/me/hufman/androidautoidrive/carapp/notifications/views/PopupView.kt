@@ -35,4 +35,8 @@ class PopupView(val state: RHMIState, val phoneAppResources: PhoneAppResources) 
 		bodyLabel2.value = sbn.text?.trim()?.split(Regex("\n"))?.lastOrNull() ?: sbn.summary ?: ""
 		state.app.events.values.filterIsInstance<RHMIEvent.PopupEvent>().firstOrNull { it.getTarget() == state }?.triggerEvent()
 	}
+
+	fun hideNotification() {
+		state.app.events.values.filterIsInstance<RHMIEvent.PopupEvent>().firstOrNull { it.getTarget() == state }?.triggerEvent(mapOf(0 to false))
+	}
 }
