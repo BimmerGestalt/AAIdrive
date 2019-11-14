@@ -173,7 +173,9 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 					(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
 							!passengerSeated)
 			) {
-				viewPopup.showNotification(sbn)
+				if (!sbn.equalsKey(NotificationsState.selectedNotification)) {
+					viewPopup.showNotification(sbn)
+				}
 			}
 		}
 

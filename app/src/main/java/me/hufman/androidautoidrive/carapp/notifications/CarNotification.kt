@@ -24,6 +24,18 @@ class CarNotification(val packageName: String, val key: String, val icon: Icon, 
 		return true
 	}
 
+	fun equalsKey(other: Any?): Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
+
+		other as CarNotification
+
+		if (packageName != other.packageName) return false
+		if (key != other.key) return false
+
+		return true
+	}
+
 	override fun hashCode(): Int {
 		var result = packageName.hashCode()
 		result = 31 * result + key.hashCode()

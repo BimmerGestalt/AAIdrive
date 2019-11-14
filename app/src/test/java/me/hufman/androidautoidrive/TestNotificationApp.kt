@@ -63,6 +63,7 @@ class TestNotificationApp {
 	fun setUp() {
 		NotificationsState.notifications.clear()
 		NotificationsState.poppedNotifications.clear()
+		NotificationsState.selectedNotification = null
 	}
 
 	@Test
@@ -229,7 +230,7 @@ class TestNotificationApp {
 	}
 
 	@Test
-	fun testNewNotification() {
+	fun testPopupNewNotification() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(carAppResources, phoneAppResources, carNotificationController)
@@ -245,6 +246,25 @@ class TestNotificationApp {
 		assertEquals(expectedHeader, mockServer.data[404])
 		assertEquals(expectedLabel1, mockServer.data[405])
 		assertEquals(expectedLabel2, mockServer.data[406])
+	}
+
+	/**
+	 * Don't popup if we are currently reading the relevant notification
+	 */
+	@Test
+	fun testPopupExistingNotification() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(carAppResources, phoneAppResources, carNotificationController)
+
+		val bundle = createNotificationObject("Title", "Text", "Summary")
+
+		NotificationsState.selectedNotification = bundle
+
+		val bundle2 = createNotificationObject("Title", "Text\nNext Message", "Summary")
+		app.notificationListener.onNotification(bundle2)
+
+		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
 	}
 
 	@Test
