@@ -170,7 +170,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	}
 
 	fun redraw() {
-		if (displayedApp != controller.currentApp?.musicAppInfo) {
+		if (displayedApp != controller.musicBrowser?.musicAppInfo) {
 			redrawApp()
 		}
 		if (displayedSong != controller.getMetadata()) {
@@ -182,7 +182,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	}
 
 	private fun redrawApp() {
-		val app = controller.currentApp?.musicAppInfo ?: return
+		val app = controller.musicBrowser?.musicAppInfo ?: return
 		appTitleModel.value = app.name
 		val image = phoneAppResources.getBitmap(app.icon, 48, 48)
 		appLogoModel.value = image
@@ -201,7 +201,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 			albumArtSmallModel.value = phoneAppResources.getBitmap(song.coverArt, 200, 200)
 			albumArtBigComponent.setVisible(true)
 			albumArtSmallComponent.setVisible(true)
-		} else if (song?.coverArtUri != null && !blacklistedUriApps.contains(controller.currentApp?.musicAppInfo?.name)) {
+		} else if (song?.coverArtUri != null && !blacklistedUriApps.contains(controller.musicBrowser?.musicAppInfo?.name)) {
 			try {
 				albumArtBigModel.value = phoneAppResources.getBitmap(song.coverArtUri, 320, 320)
 				albumArtSmallModel.value = phoneAppResources.getBitmap(song.coverArtUri, 200, 200)

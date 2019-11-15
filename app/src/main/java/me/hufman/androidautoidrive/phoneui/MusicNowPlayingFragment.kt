@@ -56,7 +56,7 @@ class MusicNowPlayingFragment: Fragment() {
 		seekProgress.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
 			override fun onProgressChanged(seekbar: SeekBar?, value: Int, fromUser: Boolean) {
 				if (fromUser) {
-					musicController.controller?.transportControls?.seekTo(value * 1000L)
+					musicController.seekTo(value * 1000L)
 				}
 			}
 
@@ -76,7 +76,7 @@ class MusicNowPlayingFragment: Fragment() {
 		} else {
 			imgCoverArt.setImageBitmap(placeholderCoverArt)
 		}
-		txtArtist.text = metadata?.artist ?: (if (musicController.controller == null) getString(R.string.nowplaying_notconnected) else "")
+		txtArtist.text = metadata?.artist ?: (if (musicController.musicBrowser?.mediaController == null) getString(R.string.nowplaying_notconnected) else "")
 		txtAlbum.text = metadata?.album
 		txtSong.text = metadata?.title ?: getString(R.string.nowplaying_unknown)
 

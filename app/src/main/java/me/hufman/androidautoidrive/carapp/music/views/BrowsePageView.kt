@@ -131,7 +131,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 	fun show() {
 		// show the name of the directory
 		folderNameLabel.getModel()?.asRaDataModel()?.value = when(shortcutSteps) {
-			0 -> folder?.title ?: browseView.musicController.currentApp?.musicAppInfo?.name ?: ""
+			0 -> folder?.title ?: browseView.musicController.musicBrowser?.musicAppInfo?.name ?: ""
 			1 -> "${initialFolder?.title ?: ""} / ${folder?.title ?: ""}"
 			else -> "${initialFolder?.title ?: ""} /../ ${folder?.title ?: ""}"
 		}
@@ -221,7 +221,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 			if (musicList.isNotEmpty()) {
 				actions.add(BrowseAction.FILTER)
 			}
-			if (browseView.musicController.currentApp?.musicAppInfo?.searchable == true) {
+			if (browseView.musicController.musicBrowser?.musicAppInfo?.searchable == true) {
 				actions.add(BrowseAction.SEARCH)
 			}
 			actionsListComponent.getModel()?.setValue(actionsListModel, 0, actionsListModel.height, actionsListModel.height)
@@ -268,7 +268,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 					inputComponent.getSuggestModel()?.asRaListModel()?.setValue(searchingList, 0, searchingList.height, searchingList.height)
 					val suggestionsDeferred = browseView.musicController.searchAsync(query)
 					val suggestions = suggestionsDeferred.awaitPending(LOADING_TIMEOUT) {
-						Log.d(TAG, "Searching ${browseView.musicController.currentApp?.musicAppInfo?.name} for \"$query\" timed out, retrying")
+						Log.d(TAG, "Searching ${browseView.musicController.musicBrowser?.musicAppInfo?.name} for \"$query\" timed out, retrying")
 						inputStateClosure?.onEntry?.invoke(query)
 						return@launch
 					}

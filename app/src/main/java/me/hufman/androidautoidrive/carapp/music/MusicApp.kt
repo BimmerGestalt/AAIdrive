@@ -211,12 +211,12 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 	private fun initWidgets() {
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
 			it.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-				if (musicController.currentApp == null || musicController.currentApp?.connected != true) {
+				if (musicController.musicBrowser == null || musicController.musicBrowser?.connected != true) {
 					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
 				} else {
 					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
 
-					val currentApp = musicController.currentApp?.musicAppInfo
+					val currentApp = musicController.musicBrowser?.musicAppInfo
 					if (currentApp != null) {
 						avContext.av_requestContext(currentApp)
 					}

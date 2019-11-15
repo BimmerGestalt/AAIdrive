@@ -243,7 +243,7 @@ class TestMusicApp {
 		verify(musicController, atLeastOnce()).play()
 
 		// click entrybutton again after an active app is set
-		whenever(musicController.currentApp).then {
+		whenever(musicController.musicBrowser).then {
 			mock<MusicBrowser> {
 				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
 				on { connected } doReturn true
@@ -295,7 +295,7 @@ class TestMusicApp {
 		val playbackView = PlaybackView(state, musicController, mapOf("147.png" to "Placeholder".toByteArray()), phoneAppResources)
 
 		whenever(musicController.getQueue()).doAnswer {null}
-		whenever(musicController.currentApp).then {
+		whenever(musicController.musicBrowser).then {
 			mock<MusicBrowser> {
 				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
 			}
@@ -475,7 +475,7 @@ class TestMusicApp {
 				MusicAppInfo("Test2", mock(), "package", "class")
 			}
 		}
-		whenever(musicController.currentApp) doReturn musicAppInfo
+		whenever(musicController.musicBrowser) doReturn musicAppInfo
 
 		// start browsing
 		val page1 = browseView.pushBrowsePage(null)
@@ -857,7 +857,7 @@ class TestMusicApp {
 		whenever(musicController.searchAsync(anyOrNull())) doAnswer { searchResults }
 
 		// pretend that the app isn't searchable
-		whenever(musicController.currentApp).then {
+		whenever(musicController.musicBrowser).then {
 			mock<MusicBrowser> {
 				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
 			}
@@ -872,7 +872,7 @@ class TestMusicApp {
 		assertEquals(0, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // should not show Filter or Search
 
 		// now pretend that the app IS searchable
-		whenever(musicController.currentApp).then {
+		whenever(musicController.musicBrowser).then {
 			mock<MusicBrowser> {
 				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class").apply { searchable = true }
 			}
