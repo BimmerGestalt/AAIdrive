@@ -84,17 +84,12 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 		val packageManager = context.packageManager
 		val intent = Intent(MediaBrowserServiceCompat.SERVICE_INTERFACE)
 		val services = packageManager.queryIntentServices(intent, 0)
-		services.forEach {
+		discoveredApps.addAll(services.map {
 			val appInfo = it.serviceInfo.applicationInfo
 			val name = packageManager.getApplicationLabel(appInfo).toString()
-			val icon = packageManager.getApplicationIcon(appInfo)
-			val packageName = appInfo.packageName
-			val className = it.serviceInfo.name
-
 			Log.i(TAG, "Found music app $name")
-			val musicAppInfo = MusicAppInfo(name, icon, packageName, className)
-			discoveredApps.add(musicAppInfo)
-		}
+			MusicAppInfo.getInstance(context, appInfo.packageName, it.serviceInfo.name)
+		})
 
 		// clear out any old apps
 		var changed = false

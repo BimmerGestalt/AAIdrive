@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.music
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 
 data class MusicAppInfo(val name: String, val icon: Drawable,
@@ -8,6 +9,17 @@ data class MusicAppInfo(val name: String, val icon: Drawable,
 	var connectable = false
 	var browseable = false
 	var searchable = false
+
+	companion object {
+		fun getInstance(context: Context, packageName: String, className: String): MusicAppInfo {
+			val packageManager = context.packageManager
+
+			val appInfo = packageManager.getApplicationInfo(packageName, 0)
+			val name = packageManager.getApplicationLabel(appInfo).toString()
+			val icon = packageManager.getApplicationIcon(appInfo)
+			return MusicAppInfo(name, icon, packageName, className)
+		}
+	}
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
