@@ -138,6 +138,7 @@ class MainActivity : AppCompatActivity() {
 				return if (appInfo != null) {
 					layout.findViewById<ImageView>(R.id.imgMusicAppIcon).setImageDrawable(appInfo.icon)
 					layout.findViewById<TextView>(R.id.txtMusicAppName).setText(appInfo.name)
+					layout.findViewById<ImageView>(R.id.imgControllable).visibility = if (appInfo.controllable && !appInfo.connectable) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgConnectable).visibility = if (appInfo.connectable) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgBrowseable).visibility = if (appInfo.browseable) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgSearchable).visibility = if (appInfo.searchable) VISIBLE else GONE

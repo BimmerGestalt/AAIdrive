@@ -7,6 +7,7 @@ data class MusicAppInfo(val name: String, val icon: Drawable,
                         val packageName: String, val className: String) {
 	var probed = false
 	var connectable = false
+	var controllable = false
 	var browseable = false
 	var searchable = false
 
@@ -47,6 +48,7 @@ data class MusicAppInfo(val name: String, val icon: Drawable,
 				"packageName" to packageName,
 				"className" to className,
 				"connectable" to connectable,
+				"controllable" to controllable,
 				"browseable" to browseable,
 				"searchable" to searchable
 		)

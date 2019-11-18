@@ -34,7 +34,7 @@ class MusicController(val context: Context, val handler: Handler) {
 
 	var lastConnectTime = 0L
 	var musicBrowser: MusicBrowser? = null
-	val musicSessions = MusicSessions()
+	val musicSessions = MusicSessions(context)
 
 	private val controllerCallback = Callback()
 	var listener: Runnable? = null
@@ -119,11 +119,10 @@ class MusicController(val context: Context, val handler: Handler) {
 	}
 
 	fun connectApp(app: MusicAppInfo) = asyncRpc {
-		if (musicBrowser?.musicAppInfo == app) {
-			play()
-		} else {
+		if (musicBrowser?.musicAppInfo != app) {
 			Log.i(TAG, "Switching current app connection from ${musicBrowser?.musicAppInfo} to $app")
 			disconnectApp()
+			musicSessions.connectApp(app)
 			lastConnectTime = System.currentTimeMillis()
 			musicBrowser = MusicBrowser(context, handler, app)
 			musicBrowser?.listener = Runnable {

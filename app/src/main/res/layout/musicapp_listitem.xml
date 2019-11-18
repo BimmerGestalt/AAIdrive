@@ -30,6 +30,15 @@
             android:layout_weight="1"
             android:ems="10" />
 
+
+        <ImageView
+            android:id="@+id/imgControllable"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:srcCompat="@drawable/ic_slow_motion_video_black_24dp"
+            android:tint="?android:attr/textColorSecondary"
+            android:contentDescription="@string/imgdescControllable" />
+
         <ImageView
             android:id="@+id/imgConnectable"
             android:layout_width="24dp"

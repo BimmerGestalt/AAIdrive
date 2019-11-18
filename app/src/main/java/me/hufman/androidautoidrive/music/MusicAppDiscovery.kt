@@ -21,9 +21,10 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 	val TAG = "MusicAppDiscovery"
 	val apps:MutableList<MusicAppInfo> = LinkedList()
 	val validApps
-		get() = apps.filter {it.connectable}
+		get() = apps.filter {it.connectable || it.controllable}
 	private val activeConnections = HashMap<MusicAppInfo, MediaBrowserCompat>()
 	var listener: Runnable? = null
+
 	private val saveCacheTask = Runnable {
 		saveCache()
 	}
@@ -110,9 +111,26 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 			}
 		}
 
-		apps.sortBy { it.name.toLowerCase() }
-
 		loadCache() // load previously-probed states
+
+		// also discover Music Sessions
+		val appsByName = this.apps.associateBy { it.packageName }
+		val mediaSessionApps = MusicSessions(context).discoverApps()
+		for (app in mediaSessionApps) {
+			Log.i(TAG, "Found music session ${app.name}")
+			val discoveredApp = appsByName[app.packageName]
+			if (discoveredApp != null) {
+				// update this discovered app to be controllable
+				discoveredApp.controllable = true
+			} else {
+				// don't try to probe this new app, it doesn't advertise browse support
+				app.probed = true
+				this.apps.add(app)
+			}
+			changed = true
+		}
+
+		this.apps.sortBy { it.name.toLowerCase() }
 
 		if (changed) {
 			handler.post {
@@ -195,10 +213,10 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 			}
 
 			override fun onConnectionFailed() {
-				appInfo.connectable = false
 				Log.i(TAG, "Failed to connect to ${appInfo.name}")
 				disconnectApp(appInfo)
 				appInfo.probed = true
+				appInfo.connectable = false
 				scheduleSave()
 				Analytics.reportMusicAppProbe(appInfo)
 			}
