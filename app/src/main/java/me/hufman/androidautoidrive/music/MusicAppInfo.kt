@@ -53,4 +53,13 @@ data class MusicAppInfo(val name: String, val icon: Drawable,
 				"searchable" to searchable
 		)
 	}
+
+	fun clone(): MusicAppInfo {
+		return MusicAppInfo(name, icon, packageName, className).also {
+			it.connectable = this.connectable
+			it.controllable = this.controllable
+			it.browseable = this.browseable
+			it.searchable = this.searchable
+		}
+	}
 }

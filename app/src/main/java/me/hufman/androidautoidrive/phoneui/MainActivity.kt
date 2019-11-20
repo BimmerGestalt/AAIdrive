@@ -249,6 +249,9 @@ class MainActivity : AppCompatActivity() {
 		}
 		redraw()
 
+		// update the music apps list, including any music sessions
+		appDiscoveryThread.discovery()
+
 		// try starting the service, to try connecting to the car with current app settings
 		// for example, after we resume from enabling the notification
 		startMainService()
@@ -338,7 +341,7 @@ class MainActivity : AppCompatActivity() {
 		}
 
 		private val redrawRunnable = Runnable {
-			callback(discovery.apps)
+			callback(discovery.combinedApps)
 		}
 
 		private fun scheduleRedraw() {
@@ -346,10 +349,18 @@ class MainActivity : AppCompatActivity() {
 			handler.postDelayed(redrawRunnable, 100)
 		}
 
+		fun discovery() {
+			handler.post {
+				discovery.discoverApps()
+			}
+		}
+
 		fun forceDiscovery() {
-			discovery.cancelDiscovery()
-			discovery.discoverApps()
-			discovery.probeApps(true)
+			handler.post {
+				discovery.cancelDiscovery()
+				discovery.discoverApps()
+				discovery.probeApps(true)
+			}
 		}
 
 		fun stopDiscovery() {

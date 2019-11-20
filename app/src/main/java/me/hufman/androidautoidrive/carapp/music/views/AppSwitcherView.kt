@@ -63,9 +63,6 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 				)
 			}
 		}
-
-		// trigger another discovery in the background
-		appDiscovery.discoverApps()
 	}
 
 	private fun onClick(index: Int) {

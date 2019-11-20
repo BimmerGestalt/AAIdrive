@@ -19,18 +19,23 @@ import kotlin.collections.HashSet
 
 class MusicAppDiscovery(val context: Context, val handler: Handler) {
 	val TAG = "MusicAppDiscovery"
-	val apps:MutableList<MusicAppInfo> = LinkedList()
+
+	val browseApps: MutableList<MusicAppInfo> = LinkedList()
+	val combinedApps: MutableList<MusicAppInfo> = LinkedList()
 	val validApps
-		get() = apps.filter {it.connectable || it.controllable}
+		get() = combinedApps.filter {it.connectable || it.controllable}
+
 	private val activeConnections = HashMap<MusicAppInfo, MediaBrowserCompat>()
 	var listener: Runnable? = null
+
+	val musicSessions = MusicSessions(context)
 
 	private val saveCacheTask = Runnable {
 		saveCache()
 	}
 
 	fun loadCache() {
-		val appsByName = apps.associateBy { it.packageName }
+		val appsByName = browseApps.associateBy { it.packageName }
 		try {
 			context.openFileInput("app_discovery.json").use {
 				val data = it.readBytes().toString(Charsets.UTF_8)
@@ -65,7 +70,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 
 	fun saveCache() {
 		val json = JSONArray().apply {
-			apps.forEach {
+			browseApps.forEach {
 				this.put(JSONObject(it.toMap()))
 			}
 		}
@@ -77,10 +82,11 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 	/**
 	 * Discover what apps are installed on the phone that implement MediaBrowserServer
 	 * Loads a cache of previous probe results
+	 * Also adds a list of active Media Sessions
 	 */
 	fun discoverApps() {
 		val discoveredApps = HashSet<MusicAppInfo>()
-		val previousApps = HashSet<MusicAppInfo>(apps)
+		val previousApps = HashSet<MusicAppInfo>(browseApps)
 
 		val packageManager = context.packageManager
 		val intent = Intent(MediaBrowserServiceCompat.SERVICE_INTERFACE)
@@ -93,12 +99,10 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 		})
 
 		// clear out any old apps
-		var changed = false
 		for (app in previousApps) {
 			if (!discoveredApps.contains(app)) {
 				Log.i(TAG, "Removing previously-discovered app that has disappeared ${app.name}")
-				changed = true
-				this.apps.remove(app)
+				this.browseApps.remove(app)
 			}
 		}
 
@@ -106,16 +110,34 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 		for (app in discoveredApps) {
 			if (!previousApps.contains(app)) {
 				Log.i(TAG, "Adding newly-discovered app ${app.name}")
-				changed = true
-				this.apps.add(app)
+				this.browseApps.add(app)
 			}
 		}
 
 		loadCache() // load previously-probed states
 
-		// also discover Music Sessions
-		val appsByName = this.apps.associateBy { it.packageName }
-		val mediaSessionApps = MusicSessions(context).discoverApps()
+		this.browseApps.sortBy { it.name.toLowerCase() }
+
+		// load up music session info, and register for updates
+		addSessionApps()
+		musicSessions.registerCallback(Runnable { addSessionApps() })
+	}
+
+	/**
+	 * Run the discovery from the given handler thread
+	 * This can be used to initiate discovery from a car event callback thread
+	 */
+	fun discoverAppsAsync() {
+		handler.post { discoverApps() }
+	}
+
+	fun addSessionApps() {
+		// discover Music Sessions
+		this.combinedApps.clear()
+		this.combinedApps.addAll(this.browseApps.map { it.clone() })
+
+		val appsByName = this.combinedApps.associateBy { it.packageName }
+		val mediaSessionApps = musicSessions.discoverApps()
 		for (app in mediaSessionApps) {
 			Log.i(TAG, "Found music session ${app.name}")
 			val discoveredApp = appsByName[app.packageName]
@@ -125,17 +147,14 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 			} else {
 				// don't try to probe this new app, it doesn't advertise browse support
 				app.probed = true
-				this.apps.add(app)
+				this.combinedApps.add(app)
 			}
-			changed = true
 		}
 
-		this.apps.sortBy { it.name.toLowerCase() }
+		this.combinedApps.sortBy { it.name.toLowerCase() }
 
-		if (changed) {
-			handler.post {
-				listener?.run()
-			}
+		handler.post {
+			listener?.run()
 		}
 	}
 
@@ -145,7 +164,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 	 */
 	fun probeApps(force: Boolean = true) {
 		// probe all apps
-		for (app in this.apps) {
+		for (app in this.browseApps) {
 			if (force || !app.probed) {
 				probeApp(app)
 			}
@@ -153,9 +172,10 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 	}
 
 	fun cancelDiscovery() {
-		for (app in apps) {
+		for (app in browseApps) {
 			disconnectApp(app)
 		}
+		musicSessions.unregisterCallback()
 	}
 
 	private fun disconnectApp(appInfo: MusicAppInfo) {
