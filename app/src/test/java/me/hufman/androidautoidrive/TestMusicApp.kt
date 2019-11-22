@@ -957,4 +957,43 @@ class TestMusicApp {
 				"packageName", "actionName", "Custom Name", null, null
 		))
 	}
+
+	@Test
+	fun testMusicSessions() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = MusicApp(carAppResources, phoneAppResources, musicAppDiscovery, musicController)
+		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
+
+		val discoveryListenerCapture = ArgumentCaptor.forClass(Runnable::class.java)
+		verify(musicAppDiscovery).listener = discoveryListenerCapture.capture()
+		verify(musicAppDiscovery, atLeastOnce()).discoverApps() // discover apps when it starts up
+
+		// tell the app about the current list of apps, without showing the app list
+		whenever(musicAppDiscovery.validApps).then {
+			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
+					MusicAppInfo("Test2", mock(), "package", "class"))
+		}
+		discoveryListenerCapture.value.run()
+		assertNull("Didn't send an app list to the car", mockServer.data[IDs.APPLIST_LISTMODEL])
+
+		// show the app list
+		mockClient.rhmi_onHmiEvent(1, "unused", IDs.APPLIST_STATE, 1, mapOf(4.toByte() to true))
+		verify(musicAppDiscovery, atLeastOnce()).discoverAppsAsync() // discover apps when the App List is shown
+		val displayedNames = (mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data.map {
+			it[2]
+		}
+		assertEquals("Updates the app list in the car", listOf("Test1", "Test2"), displayedNames)
+
+		// add a new app to the list
+		whenever(musicAppDiscovery.validApps).then {
+			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
+					MusicAppInfo("Test3", mock(), "package3", "class"))
+		}
+		discoveryListenerCapture.value.run()
+		val displayedNamesNew = (mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data.map {
+			it[2]
+		}
+		assertEquals("Updates the app list in the car", listOf("Test1", "Test3"), displayedNamesNew)
+	}
 }
