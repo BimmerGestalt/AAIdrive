@@ -46,7 +46,24 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 		listApps.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { onClick(it) }
 	}
 
+	/**
+	 * When the AppSwitcherView is first displayed
+	 * draw the current list of apps, and set the cursor to the connected app
+	 */
 	fun show() {
+		redraw()
+
+		if (apps.isNotEmpty()) {
+			val index = apps.indexOfFirst { it == avContext.controller.musicBrowser?.musicAppInfo }
+			if (index >= 0) {
+				state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
+						mapOf(0.toByte() to listApps.id, 41.toByte() to index)
+				)
+			}
+		}
+	}
+
+	fun redraw() {
 		apps.clear()
 		apps.addAll(appDiscovery.validApps)
 		if (apps.size == 0) {
@@ -56,12 +73,6 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 			listApps.setSelectable(true)
 			listApps.getModel()?.setValue(appsListAdapter, 0, appsListAdapter.height, appsListAdapter.height)
 
-			val index = apps.indexOfFirst { it == avContext.controller.musicBrowser?.musicAppInfo }
-			if (index >= 0) {
-				state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
-						mapOf(0.toByte() to listApps.id, 41.toByte() to index)
-				)
-			}
 		}
 	}
 

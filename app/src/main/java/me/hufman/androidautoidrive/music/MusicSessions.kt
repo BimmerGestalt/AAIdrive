@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.media.session.MediaController
 import android.media.session.MediaSessionManager
+import android.media.session.PlaybackState.*
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
@@ -43,8 +44,11 @@ class MusicSessions(val context: Context) {
 	fun discoverApps(): List<MusicAppInfo> {
 		return try {
 			val sessions = mediaManager.getActiveSessions(ComponentName(context, NotificationListenerServiceImpl::class.java))
-			return sessions.map {
-				MusicAppInfo.getInstance(context, it.packageName, "UNAVAILABLE").apply {
+			return sessions.filter {
+				val actions = it.playbackState?.actions ?: 0
+				actions and (ACTION_PLAY or ACTION_PAUSE) > 0
+			}.map {
+				MusicAppInfo.getInstance(context, it.packageName, null).apply {
 					this.controllable = true
 				}
 			}
@@ -53,6 +57,26 @@ class MusicSessions(val context: Context) {
 			Log.i(TAG, "Can't discoverApps, user hasn't granted Notification Access yet")
 			LinkedList()
 		}
+	}
+
+	/** Returns the music session that is playing music, if any */
+	fun getPlayingApp(): MusicAppInfo? {
+		try {
+			val sessions = mediaManager.getActiveSessions(ComponentName(context, NotificationListenerServiceImpl::class.java))
+			for (session in sessions) {
+				val actions = session.playbackState?.actions ?: 0
+				val state = session.playbackState?.state ?: 0
+				if (actions and (ACTION_PLAY or ACTION_PAUSE) > 0 && state == STATE_PLAYING) {
+					Log.i(TAG, "Returning mediaSession ${session.packageName}")
+					return MusicAppInfo.getInstance(context, session.packageName, null).apply {
+						this.controllable = true
+					}
+				}
+			}
+		} catch (e: SecurityException) {
+			// user hasn't granted Notification Access yet
+		}
+		return null
 	}
 
 	/**

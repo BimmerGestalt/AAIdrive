@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 
 data class MusicAppInfo(val name: String, val icon: Drawable,
-                        val packageName: String, val className: String) {
+                        val packageName: String, val className: String?) {
 	var probed = false
 	var connectable = false
 	var controllable = false
@@ -12,7 +12,7 @@ data class MusicAppInfo(val name: String, val icon: Drawable,
 	var searchable = false
 
 	companion object {
-		fun getInstance(context: Context, packageName: String, className: String): MusicAppInfo {
+		fun getInstance(context: Context, packageName: String, className: String?): MusicAppInfo {
 			val packageManager = context.packageManager
 
 			val appInfo = packageManager.getApplicationInfo(packageName, 0)
@@ -30,7 +30,6 @@ data class MusicAppInfo(val name: String, val icon: Drawable,
 
 		if (name != other.name) return false
 		if (packageName != other.packageName) return false
-		if (className != other.className) return false
 
 		return true
 	}
@@ -42,7 +41,7 @@ data class MusicAppInfo(val name: String, val icon: Drawable,
 		return result
 	}
 
-	fun toMap():Map<String, Any> {
+	fun toMap():Map<String, Any?> {
 		return mapOf(
 				"name" to name,
 				"packageName" to packageName,

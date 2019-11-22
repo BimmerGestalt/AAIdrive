@@ -18,6 +18,7 @@
     <string name="gmapStyleLabel">Map Style</string>
     <string name="lbl_music_apps">Music Apps</string>
     <string name="imgdescAppIcon">App Icon</string>
+    <string name="imgdescNowPlaying">Now Playing</string>
     <string name="imgdescConnectable">Connectable</string>
     <string name="imgdescControllable">Controllable</string>
     <string name="imgdescBrowseable">Browseable</string>

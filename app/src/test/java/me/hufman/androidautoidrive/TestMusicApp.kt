@@ -995,5 +995,15 @@ class TestMusicApp {
 			it[2]
 		}
 		assertEquals("Updates the app list in the car", listOf("Test1", "Test3"), displayedNamesNew)
+
+		// a new music app starts playing
+		val nowPlayingApp = MusicAppInfo("Test3", mock(), "package4", "UNUSED")
+		whenever(musicController.musicSessions).then {
+			mock<MusicSessions> {
+				on { getPlayingApp() } doReturn nowPlayingApp
+			}
+		}
+		discoveryListenerCapture.value.run()
+		verify(musicController).connectApp(eq(nowPlayingApp))
 	}
 }

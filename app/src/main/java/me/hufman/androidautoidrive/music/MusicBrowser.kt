@@ -25,14 +25,18 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 		set(value) { field = value; if (connected) value?.run() }
 
 	init {
-		val component = ComponentName(musicAppInfo.packageName, musicAppInfo.className)
-		Log.i(TAG, "Opening connection to ${musicAppInfo.name}")
-		// load the mediaBrowser on the UI thread
-		handler.post {
-			Log.i(TAG, "Connecting to the app ${musicAppInfo.name}")
-			connecting = true
-			mediaBrowser = MediaBrowserCompat(context, component, ConnectionCallback(), null)
-			mediaBrowser?.connect()
+		if (musicAppInfo.className == null) {
+			Log.i(TAG, "Skipping connection to ${musicAppInfo.name}, no className found")
+		} else {
+			val component = ComponentName(musicAppInfo.packageName, musicAppInfo.className)
+			Log.i(TAG, "Opening connection to ${musicAppInfo.name}")
+			// load the mediaBrowser on the UI thread
+			handler.post {
+				Log.i(TAG, "Connecting to the app ${musicAppInfo.name}")
+				connecting = true
+				mediaBrowser = MediaBrowserCompat(context, component, ConnectionCallback(), null)
+				mediaBrowser?.connect()
+			}
 		}
 	}
 
@@ -105,10 +109,12 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 			}
 			mediaBrowser?.disconnect()
 
-			Log.i(TAG, "Connecting to the app ${musicAppInfo.name}")
-			val component = ComponentName(musicAppInfo.packageName, musicAppInfo.className)
-			mediaBrowser = MediaBrowserCompat(context, component, ConnectionCallback(), null)
-			mediaBrowser?.connect()
+			if (musicAppInfo.className != null) {
+				Log.i(TAG, "Connecting to the app ${musicAppInfo.name}")
+				val component = ComponentName(musicAppInfo.packageName, musicAppInfo.className)
+				mediaBrowser = MediaBrowserCompat(context, component, ConnectionCallback(), null)
+				mediaBrowser?.connect()
+			}
 		}
 	}
 

@@ -87,7 +87,12 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		musicAppDiscovery.listener = Runnable {
 			avContext.updateApps(musicAppDiscovery.validApps)
 			if (appListViewVisible) {
-				appSwitcherView.show()
+				appSwitcherView.redraw()
+			}
+			// switch the interface to the currently playing app
+			val nowPlaying = musicController.musicSessions.getPlayingApp()
+			if (nowPlaying != null) {
+				musicController.connectApp(nowPlaying)
 			}
 		}
 		musicAppDiscovery.discoverApps()    // trigger the discovery, to show the apps when the handler starts running

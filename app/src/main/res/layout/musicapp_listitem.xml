@@ -32,6 +32,14 @@
 
 
         <ImageView
+            android:id="@+id/imgNowPlaying"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:srcCompat="@drawable/ic_equalizer_black_24dp"
+            android:tint="?android:attr/textColorSecondary"
+            android:contentDescription="@string/imgdescNowPlaying" />
+
+        <ImageView
             android:id="@+id/imgControllable"
             android:layout_width="24dp"
             android:layout_height="24dp"

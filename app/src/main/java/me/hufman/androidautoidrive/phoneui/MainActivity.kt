@@ -138,6 +138,8 @@ class MainActivity : AppCompatActivity() {
 				return if (appInfo != null) {
 					layout.findViewById<ImageView>(R.id.imgMusicAppIcon).setImageDrawable(appInfo.icon)
 					layout.findViewById<TextView>(R.id.txtMusicAppName).setText(appInfo.name)
+
+					layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = if (appInfo.packageName == appDiscoveryThread.discovery.musicSessions.getPlayingApp()?.packageName) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgControllable).visibility = if (appInfo.controllable && !appInfo.connectable) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgConnectable).visibility = if (appInfo.connectable) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgBrowseable).visibility = if (appInfo.browseable) VISIBLE else GONE
@@ -328,7 +330,8 @@ class MainActivity : AppCompatActivity() {
 
 	class AppDiscoveryThread(val context: Context, val callback: (List<MusicAppInfo>) -> Unit): HandlerThread("MusicAppDiscovery UI") {
 		private lateinit var handler: Handler
-		private lateinit var discovery: MusicAppDiscovery
+		lateinit var discovery: MusicAppDiscovery
+			private set
 
 		override fun onLooperPrepared() {
 			handler = Handler(this.looper)
