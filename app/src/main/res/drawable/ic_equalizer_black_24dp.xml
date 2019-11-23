@@ -5,6 +5,7 @@
         android:viewportHeight="24.0">
     <path
         android:name="bars"
-        android:fillColor="#FF000000"
-        android:pathData="M10,20h4L14,4h-4v16zM4,20h4v-8L4,12v8zM16,9v11h4L20,9h-4z"/>
+        android:strokeColor="#FF000000"
+        android:strokeWidth="4"
+        android:pathData="M6,20v-8M12,20v-16M18,20v-11"/>
 </vector>

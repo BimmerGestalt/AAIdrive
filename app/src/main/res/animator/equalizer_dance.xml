@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android" android:ordering="sequentially">
+    <objectAnimator android:propertyName="pathData" android:valueType="pathType"
+        android:duration="200"
+        android:valueFrom="M6,20v-8 M12,20v-16 M18,20v-11"
+        android:valueTo="M6,20v-12 M12,20v-6 M18,20v-16" />
+    <objectAnimator android:propertyName="pathData" android:valueType="pathType"
+        android:duration="150"
+        android:valueFrom="M6,20v-12 M12,20v-6 M18,20v-16"
+        android:valueTo="M6,20v-4 M12,20v-12 M18,20v-6" />
+    <objectAnimator android:propertyName="pathData" android:valueType="pathType"
+        android:duration="100"
+        android:valueFrom="M6,20v-4 M12,20v-12 M18,20v-6"
+        android:valueTo="M6,20v-18 M12,20v-10 M18,20v-12" />
+    <objectAnimator android:propertyName="pathData" android:valueType="pathType"
+        android:duration="100"
+        android:valueFrom="M6,20v-18 M12,20v-10 M18,20v-12"
+        android:valueTo="M6,20v-8 M12,20v-16 M18,20v-11" />
+</set>

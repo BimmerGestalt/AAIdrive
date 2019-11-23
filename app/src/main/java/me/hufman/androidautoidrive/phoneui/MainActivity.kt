@@ -10,6 +10,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -132,6 +135,16 @@ class MainActivity : AppCompatActivity() {
 		// build list of discovered music apps
 		appDiscoveryThread.start()
 		listMusicApps.adapter = object: ArrayAdapter<MusicAppInfo>(this, R.layout.musicapp_listitem, displayedApps) {
+			val animationLoopCallback = object: Animatable2.AnimationCallback() {
+				override fun onAnimationEnd(drawable: Drawable?) {
+					handler.post { (drawable as AnimatedVectorDrawable).start() }
+				}
+			}
+			val equalizerStatic = resources.getDrawable(R.drawable.ic_equalizer_black_24dp, null)
+			val equalizerAnimated = (resources.getDrawable(R.drawable.ic_dancing_equalizer, null) as AnimatedVectorDrawable).apply {
+				this.registerAnimationCallback(animationLoopCallback)
+			}
+
 			override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 				val appInfo = getItem(position)
 				val layout = convertView ?: layoutInflater.inflate(R.layout.musicapp_listitem, parent,false)
@@ -139,7 +152,14 @@ class MainActivity : AppCompatActivity() {
 					layout.findViewById<ImageView>(R.id.imgMusicAppIcon).setImageDrawable(appInfo.icon)
 					layout.findViewById<TextView>(R.id.txtMusicAppName).setText(appInfo.name)
 
-					layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = if (appInfo.packageName == appDiscoveryThread.discovery.musicSessions.getPlayingApp()?.packageName) VISIBLE else GONE
+					if (appInfo.packageName == appDiscoveryThread.discovery.musicSessions.getPlayingApp()?.packageName) {
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).setImageDrawable(equalizerAnimated)
+						equalizerAnimated.start()
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = VISIBLE
+					} else {
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).setImageDrawable(equalizerStatic)
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = GONE
+					}
 					layout.findViewById<ImageView>(R.id.imgControllable).visibility = if (appInfo.controllable && !appInfo.connectable) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgConnectable).visibility = if (appInfo.connectable) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgBrowseable).visibility = if (appInfo.browseable) VISIBLE else GONE
