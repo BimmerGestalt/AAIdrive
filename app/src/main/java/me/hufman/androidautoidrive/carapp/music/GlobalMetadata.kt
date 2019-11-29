@@ -100,4 +100,12 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 		}
 	}
 
+	/**
+	 * Indicate that the remembered App and Song may be incorrect, and we should redraw fully next time
+	 */
+	fun hide() {
+		displayedApp = null
+		displayedQueue = null
+		displayedSong = null
+	}
 }

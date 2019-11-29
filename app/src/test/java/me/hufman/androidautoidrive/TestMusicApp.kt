@@ -126,6 +126,7 @@ class TestMusicApp {
 		on { getPlaybackPosition() } doReturn PlaybackPosition(false, SystemClock.elapsedRealtime(), 5000L, 180000L)
 		on { isSupportedAction(any()) } doReturn true
 		on { musicSessions } doReturn mock<MusicSessions>()
+		on { loadDesiredApp() } doReturn ""
 	}
 
 	val inputState = mock<RHMIState> {
@@ -202,6 +203,9 @@ class TestMusicApp {
 		// click into the trigger a redraw
 		mockClient.rhmi_onActionEvent(1, "unused", IDs.ENTRYBUTTON_ACTION, mapOf(0 to 1))
 		mockClient.rhmi_onHmiEvent(1, "unused", IDs.APPLIST_STATE, 1, mapOf(4.toByte() to true))
+
+		// car is listening to our app now
+		mockClient.cds_onPropertyChangedEvent(0, "54", "entertainment.multimedia", """{"multimedia": {"source": 32}}""")
 
 		// shows the applist on the first click through
 		println(mockServer.properties)
@@ -965,6 +969,9 @@ class TestMusicApp {
 		val app = MusicApp(carAppResources, phoneAppResources, musicAppDiscovery, musicController)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
+		// car is listening to our app
+		mockClient.cds_onPropertyChangedEvent(0, "54", "entertainment.multimedia", """{"multimedia": {"source": 32}}""")
+
 		val discoveryListenerCapture = ArgumentCaptor.forClass(Runnable::class.java)
 		verify(musicAppDiscovery).listener = discoveryListenerCapture.capture()
 		verify(musicAppDiscovery, atLeastOnce()).discoverApps() // discover apps when it starts up
@@ -1003,7 +1010,27 @@ class TestMusicApp {
 				on { getPlayingApp() } doReturn nowPlayingApp
 			}
 		}
+		whenever(musicController.musicBrowser).then {
+			mock<MusicBrowser> {
+				on { musicAppInfo } doReturn nowPlayingApp
+			}
+		}
 		discoveryListenerCapture.value.run()
 		verify(musicController).connectApp(eq(nowPlayingApp))
+
+		// verify that it updated the global metadata, when listening to A4A multimedia source
+		app.redraw()
+		assertEquals("Updates the global music source name", "Test3", mockServer.data[IDs.GLOBAL_APP_MODEL])
+
+		// car starts listening to Radio (15) instead of the app
+		mockClient.cds_onPropertyChangedEvent(0, "54", "entertainment.multimedia", """{"multimedia": {"source": 15}}""")
+		mockServer.data[IDs.GLOBAL_APP_MODEL] = "Radio"
+		app.redraw()
+		assertEquals("Didn't update the global music source name", "Radio", mockServer.data[IDs.GLOBAL_APP_MODEL])
+
+		// car starts listening to A4A again
+		mockClient.cds_onPropertyChangedEvent(0, "54", "entertainment.multimedia", """{"multimedia": {"source": 32}}""")
+		app.redraw()
+		assertEquals("Updates the global music source name", "Test3", mockServer.data[IDs.GLOBAL_APP_MODEL])
 	}
 }

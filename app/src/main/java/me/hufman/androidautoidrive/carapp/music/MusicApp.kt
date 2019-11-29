@@ -17,9 +17,15 @@ import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.*
+import org.json.JSONException
+import org.json.JSONObject
 import java.util.*
 
 const val TAG = "MusicApp"
+val WHITELIST_MULTIMEDIA_SOURCES = arrayOf(
+		21,     // Aux in the Mini, even though it is documented as AS_TEL_Ring
+		32      // Bluetooth in the Mini, even though it is documented as AS_ES_USB_3
+)
 
 class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController) {
 	val carApp = createRHMIApp()
@@ -34,6 +40,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 	val browseView: BrowseView
 	val inputState: RHMIState
 	val customActionsView: CustomActionsView
+	var multimediaSource: Int = -1
 
 	private fun createRHMIApp(): RHMIApplicationSynchronized {
 		val carappListener = CarAppListener()
@@ -56,10 +63,15 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		carappListener.app = carApp
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
-		// register for events from the car
+		// register for events from the car after initialization is complete
 		carApp.runSynchronized {
 			carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1)
 			carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1, -1)
+
+			// subscribe to CDS for music source info
+			val cdsHandle = carConnection.cds_create()
+			carConnection.cds_addPropertyChangedEventHandler(cdsHandle, "entertainment.multimedia", "54", 5000)
+			carConnection.cds_getPropertyAsync(cdsHandle, "54", "entertainment.multimedia")
 		}
 
 		return carApp
@@ -89,7 +101,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 			if (appListViewVisible) {
 				appSwitcherView.redraw()
 			}
-			// switch the interface to the currently playing app
+			// switch the interface to the currently playing app, if the car is listening to us
 			val nowPlaying = musicController.musicSessions.getPlayingApp()
 			if (nowPlaying != null) {
 				musicController.connectApp(nowPlaying)
@@ -218,6 +230,32 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 				Log.e(TAG, "Received exception while handling am_onAppEvent", e)
 			}
 		}
+
+		fun loadJSON(str: String?): JSONObject? {
+			if (str == null) return null
+			try {
+				return JSONObject(str)
+			} catch (e: JSONException) {
+				return null
+			}
+		}
+		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
+			Log.i(TAG, "Received cds_onPropertyChangedEvent: handle=$handle ident=$ident propertyName=$propertyName propertyValue=$propertyValue")
+			if (propertyName == "entertainment.multimedia" && propertyValue != null && loadJSON(propertyValue) != null) {
+				val propertyData = loadJSON(propertyValue) ?: return
+				val multimediaData = propertyData.getJSONObject("multimedia")
+				val newMultimediaSource = multimediaData.getInt("source")
+				if (multimediaSource != newMultimediaSource) {
+					multimediaSource = newMultimediaSource
+					Log.i(TAG, "Car reports multimedia source changed to $multimediaSource")
+					redraw()
+				}
+			} else if (propertyName == "entertainment.multimedia") {
+				Log.w(TAG, "Problem parsing entertainment.multimedia value: $propertyValue")
+			} else {
+				Log.i(TAG, "Unexpected propertyName $propertyName")
+			}
+		}
 	}
 
 	private fun initWidgets() {
@@ -248,7 +286,10 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		if (playbackViewVisible) {
 			playbackView.redraw()
 		}
-		globalMetadata.redraw()
+		if (WHITELIST_MULTIMEDIA_SOURCES.contains(multimediaSource)) {
+			globalMetadata.redraw()
+		} else {
+			globalMetadata.hide()
+		}
 	}
-
 }
