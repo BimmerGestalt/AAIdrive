@@ -86,6 +86,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 
 		musicAppDiscovery.listener = Runnable {
 			avContext.updateApps(musicAppDiscovery.validApps)
+			// redraw the app list
 			if (appListViewVisible) {
 				appSwitcherView.redraw()
 			}
@@ -245,6 +246,9 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 	}
 
 	fun redraw() {
+		if (appListViewVisible) {
+			appSwitcherView.redraw()
+		}
 		if (playbackViewVisible) {
 			playbackView.redraw()
 		}

@@ -995,9 +995,12 @@ class TestMusicApp {
 			it[2]
 		}
 		assertEquals("Updates the app list in the car", listOf("Test1", "Test3"), displayedNamesNew)
+		(mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data.forEach { row ->
+			assertEquals("No checkbox in app list", "", row[0])
+		}
 
 		// a new music app starts playing
-		val nowPlayingApp = MusicAppInfo("Test3", mock(), "package4", "UNUSED")
+		val nowPlayingApp = MusicAppInfo("Test3", mock(), "package3", "UNUSED")
 		whenever(musicController.musicSessions).then {
 			mock<MusicSessions> {
 				on { getPlayingApp() } doReturn nowPlayingApp
@@ -1005,5 +1008,11 @@ class TestMusicApp {
 		}
 		discoveryListenerCapture.value.run()
 		verify(musicController).connectApp(eq(nowPlayingApp))
+		// async sets the musicBrowser to the correct connection
+		whenever(musicController.musicBrowser).then { mock<MusicBrowser> {
+			on { musicAppInfo } doReturn nowPlayingApp
+		}}
+		app.redraw()
+		assertNotEquals("Sets the checkbox in the app list", "", (mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data[1][0])
 	}
 }

@@ -19,9 +19,11 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 		}
 	}
 
-	val listApps: RHMIComponent.List
+	val listApps: RHMIComponent.List = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
+	val appsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3).apply {
+		this.addRow(arrayOf("", "", L.MUSIC_APPLIST_EMPTY))
+	}
 	val apps = ArrayList<MusicAppInfo>()
-	val appsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3)
 	val appsListAdapter = object: RHMIListAdapter<MusicAppInfo>(3, apps) {
 		override fun convertRow(index: Int, item: MusicAppInfo): Array<Any> {
 			val appIcon = phoneAppResources.getBitmap(item.icon, 48, 48)
@@ -34,10 +36,6 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 		}
 	}
 
-	init {
-		listApps = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
-		appsEmptyList.addRow(arrayOf("", "", L.MUSIC_APPLIST_EMPTY))
-	}
 
 	fun initWidgets(playbackView: PlaybackView) {
 		state.getTextModel()?.asRaDataModel()?.value = L.MUSIC_APPLIST_TITLE
