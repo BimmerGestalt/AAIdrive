@@ -169,7 +169,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	/** All open, so that we can mock them in tests */
 	open inner class PhoneNotificationListener {
 		open fun onNotification(sbn: CarNotification) {
-			Log.i(TAG, "Received a new notification to show in the car")
+			Log.i(TAG, "Received a new notification to show in the car: $sbn")
 			if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
 					(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
 							!passengerSeated)

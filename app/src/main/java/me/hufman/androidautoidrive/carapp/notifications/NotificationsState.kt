@@ -15,14 +15,16 @@ object NotificationsState {
 
 	fun getNotificationByKey(key: String?): CarNotification? {
 		key ?: return null
-		return notifications.find { it.key == key }
+		return synchronized(notifications) {
+			notifications.find { it.key == key }
+		}
 	}
 
 	/**
 	 * Return the selected notification, but only if it is still active
 	 */
 	fun fetchSelectedNotification(): CarNotification? {
-		return synchronized(NotificationsState) {
+		return synchronized(notifications) {
 			val key = selectedNotification?.key
 			if (key != null) {
 				val currentNotification = getNotificationByKey(key)

@@ -181,13 +181,14 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		val extras = sbn?.notification?.extras
 		val details = extras?.keySet()?.map { "  ${it}=>${extras.get(it)}" }?.joinToString("\n") ?: ""
 		Log.i(TAG, "Notification posted: ${extras?.get("android.title")} with the keys:\n$details")
-		super.onNotificationPosted(sbn, rankingMap)
 		val shouldPopup = shouldPopupNotification(sbn)
 		updateNotificationList()
 		if (sbn != null && shouldPopup) {
 			controller.sendNotification(sbn)
 			NotificationsState.poppedNotifications.add(summarizeNotification(sbn))
 		}
+
+		super.onNotificationPosted(sbn, rankingMap)
 	}
 
 	fun updateNotificationList() {
