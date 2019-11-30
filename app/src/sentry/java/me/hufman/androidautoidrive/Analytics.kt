@@ -18,6 +18,7 @@ object Analytics: AnalyticsProvider {
 				.withMessage("Probed music app")
 				.withTag("appId", appInfo.packageName)
 				.withTag("appName", appInfo.name)
+				.withTag("controllable", if (appInfo.controllable) "true" else "false")
 				.withTag("connectable", if (appInfo.connectable) "true" else "false")
 				.withTag("browseable", if (appInfo.browseable) "true" else "false")
 				.withTag("searchable", if (appInfo.searchable) "true" else "false")

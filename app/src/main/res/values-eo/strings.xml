@@ -18,12 +18,15 @@
     <string name="lbl_widescreen_map">Larĝa Mapo</string>
     <string name="gmapStyleLabel">Map-stilo</string>
     <string name="lbl_music_apps">Muzikaj Programetoj</string>
+    <string name="lbl_grant_sessions">Permesu regi nunmuzikludantojn</string>
+    <string name="lbl_grant">Permesu</string>
 
     <!-- screen reader icon labels -->
-    <string name="imgdescAppIcon">Programetoj Bildsimbolo</string>
-    <string name="imgdescConnectable">Ligitebla</string>
-    <string name="imgdescBrowseable">Navigebla</string>
-    <string name="imgdescSearchable">Serĉeble</string>
+    <string name="musicAppIcon">Programetoj Bildsimbolo</string>
+    <string name="musicAppConnectable">Ligitebla</string>
+    <string name="musicAppBrowseable">Navigebla</string>
+    <string name="musicAppSearchable">Serĉebla</string>
+    <string name="musicAppUnavailable">Ne havebla</string>
 
     <string name="enable_audio_context">Petu Muzikan Kuntekson</string>
     <string name="connectionStatusMissingConnectedApp">Ne trovas la Connected programeton</string>

@@ -10,6 +10,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -124,6 +127,9 @@ class MainActivity : AppCompatActivity() {
 			manager.notify(1, notification)
 		}
 
+		btnGrantSessions.setOnClickListener {
+			promptNotificationPermission()
+		}
 		btnHelp.setOnClickListener {
 			val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://hufman.github.io/AndroidAutoIdrive/faq.html"))
 			startActivity(intent)
@@ -132,15 +138,48 @@ class MainActivity : AppCompatActivity() {
 		// build list of discovered music apps
 		appDiscoveryThread.start()
 		listMusicApps.adapter = object: ArrayAdapter<MusicAppInfo>(this, R.layout.musicapp_listitem, displayedApps) {
+			val animationLoopCallback = object: Animatable2.AnimationCallback() {
+				override fun onAnimationEnd(drawable: Drawable?) {
+					handler.post { (drawable as AnimatedVectorDrawable).start() }
+				}
+			}
+			val equalizerStatic = resources.getDrawable(R.drawable.ic_equalizer_black_24dp, null)
+			val equalizerAnimated = (resources.getDrawable(R.drawable.ic_dancing_equalizer, null) as AnimatedVectorDrawable).apply {
+				this.registerAnimationCallback(animationLoopCallback)
+			}
+
 			override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 				val appInfo = getItem(position)
 				val layout = convertView ?: layoutInflater.inflate(R.layout.musicapp_listitem, parent,false)
 				return if (appInfo != null) {
 					layout.findViewById<ImageView>(R.id.imgMusicAppIcon).setImageDrawable(appInfo.icon)
 					layout.findViewById<TextView>(R.id.txtMusicAppName).setText(appInfo.name)
+
+					if (appInfo.packageName == appDiscoveryThread.discovery.musicSessions.getPlayingApp()?.packageName) {
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).setImageDrawable(equalizerAnimated)
+						equalizerAnimated.start()
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = VISIBLE
+					} else {
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).setImageDrawable(equalizerStatic)
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = GONE
+					}
+					layout.findViewById<ImageView>(R.id.imgControllable).visibility = if (appInfo.controllable && !appInfo.connectable) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgConnectable).visibility = if (appInfo.connectable) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgBrowseable).visibility = if (appInfo.browseable) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgSearchable).visibility = if (appInfo.searchable) VISIBLE else GONE
+					layout.findViewById<ImageView>(R.id.imgBlock).visibility = if (appInfo.controllable || appInfo.connectable) GONE else VISIBLE
+					val features = listOfNotNull(
+							if (appInfo.controllable && !appInfo.connectable) getString(R.string.musicAppControllable) else null,
+							if (appInfo.connectable) getString(R.string.musicAppConnectable) else null,
+							if (appInfo.browseable) getString(R.string.musicAppBrowseable) else null,
+							if (appInfo.searchable) getString(R.string.musicAppSearchable) else null,
+							if (appInfo.controllable || appInfo.connectable) null else getString(R.string.musicAppUnavailable)
+					).joinToString(", ")
+					layout.findViewById<TextView>(R.id.txtMusicAppFeatures).text = features
+					layout.findViewById<LinearLayout>(R.id.paneMusicAppFeatures).setOnClickListener {
+						val txtFeatures = layout.findViewById<TextView>(R.id.txtMusicAppFeatures)
+						txtFeatures.visibility = if (txtFeatures.visibility == VISIBLE) GONE else VISIBLE
+					}
 					layout
 				} else {
 					layout.findViewById<TextView>(R.id.txtMusicAppName).setText("Error")
@@ -196,13 +235,17 @@ class MainActivity : AppCompatActivity() {
 		if (isChecked) {
 			// make sure we have permissions to read the notifications
 			if (!hasNotificationPermission() || !UIState.notificationListenerConnected) {
-				startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+				promptNotificationPermission()
 			} else {
 				startMainService()
 			}
 		} else {
 			startMainService()
 		}
+	}
+
+	fun promptNotificationPermission() {
+		startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
 	}
 
 	fun hasNotificationPermission(): Boolean {
@@ -248,6 +291,9 @@ class MainActivity : AppCompatActivity() {
 		}
 		redraw()
 
+		// update the music apps list, including any music sessions
+		appDiscoveryThread.discovery()
+
 		// try starting the service, to try connecting to the car with current app settings
 		// for example, after we resume from enabling the notification
 		startMainService()
@@ -270,6 +316,7 @@ class MainActivity : AppCompatActivity() {
 		swGmapSyle.setSelection(max(0, gmapStylePosition))
 
 		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_ENABLE_CONTEXT].toBoolean()
+		paneGrantSessions.visibility = if (hasNotificationPermission()) GONE else VISIBLE
 
 		val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
 		if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && !SecurityService.success) {
@@ -324,7 +371,8 @@ class MainActivity : AppCompatActivity() {
 
 	class AppDiscoveryThread(val context: Context, val callback: (List<MusicAppInfo>) -> Unit): HandlerThread("MusicAppDiscovery UI") {
 		private lateinit var handler: Handler
-		private lateinit var discovery: MusicAppDiscovery
+		lateinit var discovery: MusicAppDiscovery
+			private set
 
 		override fun onLooperPrepared() {
 			handler = Handler(this.looper)
@@ -337,7 +385,7 @@ class MainActivity : AppCompatActivity() {
 		}
 
 		private val redrawRunnable = Runnable {
-			callback(discovery.apps)
+			callback(discovery.combinedApps)
 		}
 
 		private fun scheduleRedraw() {
@@ -345,10 +393,18 @@ class MainActivity : AppCompatActivity() {
 			handler.postDelayed(redrawRunnable, 100)
 		}
 
+		fun discovery() {
+			handler.post {
+				discovery.discoverApps()
+			}
+		}
+
 		fun forceDiscovery() {
-			discovery.cancelDiscovery()
-			discovery.discoverApps()
-			discovery.probeApps(true)
+			handler.post {
+				discovery.cancelDiscovery()
+				discovery.discoverApps()
+				discovery.probeApps(true)
+			}
 		}
 
 		fun stopDiscovery() {

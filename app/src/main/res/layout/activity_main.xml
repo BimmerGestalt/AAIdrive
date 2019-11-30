@@ -64,6 +64,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="4dp"
                 android:text="@string/spawn_test_notification"
+                android:visibility="gone"
                 tools:layout_editor_absoluteX="76dp"
                 tools:layout_editor_absoluteY="27dp" />
 
@@ -131,6 +132,30 @@
             android:layout_height="wrap_content"
             android:text="@string/enable_audio_context"
             android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:id="@+id/paneGrantSessions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone" >
+
+            <TextView
+                android:id="@+id/txtGrantSessionsLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/lbl_grant_sessions" />
+
+            <Button
+                android:id="@+id/btnGrantSessions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_grant"
+                android:textSize="12sp" />
+        </LinearLayout>
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/listMusicAppsRefresh"

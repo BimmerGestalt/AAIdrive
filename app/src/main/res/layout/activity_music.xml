@@ -22,7 +22,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_weight="0"
-                android:contentDescription="@string/imgdescAppIcon"
+                android:contentDescription="@string/musicAppIcon"
                 app:srcCompat="@android:drawable/alert_dark_frame" />
 
             <TextView

@@ -63,10 +63,10 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	 */
 	private fun show(stateId: Int) {
 		// track the last app we played and reset if it changed
-		if (lastApp != null && lastApp != musicController.currentApp?.musicAppInfo) {
+		if (lastApp != null && lastApp != musicController.musicBrowser?.musicAppInfo) {
 			stack.clear()
 		}
-		lastApp = musicController.currentApp?.musicAppInfo
+		lastApp = musicController.musicBrowser?.musicAppInfo
 
 		// handle back presses
 		if (pageStack.isNotEmpty() && stateId != pageStack.last().state.id) {

@@ -26,6 +26,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 
 	val avContext = AVContextHandler(carApp, musicController, phoneAppResources)
 	val globalMetadata = GlobalMetadata(carApp, musicController)
+	var appListViewVisible = false
 	var playbackViewVisible = false
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
@@ -85,6 +86,15 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 
 		musicAppDiscovery.listener = Runnable {
 			avContext.updateApps(musicAppDiscovery.validApps)
+			// redraw the app list
+			if (appListViewVisible) {
+				appSwitcherView.redraw()
+			}
+			// switch the interface to the currently playing app
+			val nowPlaying = musicController.musicSessions.getPlayingApp()
+			if (nowPlaying != null) {
+				musicController.connectApp(nowPlaying)
+			}
 		}
 		musicAppDiscovery.discoverApps()    // trigger the discovery, to show the apps when the handler starts running
 
@@ -113,10 +123,13 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 			Log.i(TAG, msg)
 			try {
 				if (componentId == appSwitcherView.state.id &&
-						eventId == 1 && // FOCUS event
-						args?.get(4.toByte()) as? Boolean == true
+						eventId == 1 // FOCUS event
 				) {
-					appSwitcherView.show()
+					appListViewVisible = args?.get(4.toByte()) as? Boolean == true
+					if (appListViewVisible) {
+						appSwitcherView.show()
+						musicAppDiscovery.discoverAppsAsync()
+					}
 				}
 				if (componentId == playbackView.state.id &&
 						eventId == 11 // VISIBLE event
@@ -211,12 +224,12 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 	private fun initWidgets() {
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
 			it.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-				if (musicController.currentApp == null || musicController.currentApp?.connected != true) {
+				if (musicController.musicSessions.mediaController == null && musicController.musicBrowser?.connected != true) {
 					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
 				} else {
 					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
 
-					val currentApp = musicController.currentApp?.musicAppInfo
+					val currentApp = musicController.musicBrowser?.musicAppInfo
 					if (currentApp != null) {
 						avContext.av_requestContext(currentApp)
 					}
@@ -233,6 +246,9 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 	}
 
 	fun redraw() {
+		if (appListViewVisible) {
+			appSwitcherView.redraw()
+		}
 		if (playbackViewVisible) {
 			playbackView.redraw()
 		}

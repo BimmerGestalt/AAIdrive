@@ -17,11 +17,17 @@
     <string name="lbl_widescreen_map">Widescreen Map</string>
     <string name="gmapStyleLabel">Map Style</string>
     <string name="lbl_music_apps">Music Apps</string>
-    <string name="imgdescAppIcon">App Icon</string>
-    <string name="imgdescConnectable">Connectable</string>
-    <string name="imgdescBrowseable">Browseable</string>
-    <string name="imgdescSearchable">Searchable</string>
+    <string name="musicAppIcon">App Icon</string>
+    <string name="musicAppNowPlaying">Now Playing</string>
+    <string name="musicAppControllable">Controllable While Running</string>
+    <string name="musicAppConnectable">Fully Controllable</string>
+    <string name="musicAppBrowseable">Browseable</string>
+    <string name="musicAppSearchable">Searchable</string>
+    <string name="musicAppUnavailable">Unavailable</string>
     <string name="enable_audio_context">Request Audio Focus</string>
+    <string name="lbl_grant_sessions">Control over active music apps:</string>
+    <string name="lbl_grant">Grant</string>
+
     <string name="connectionStatusMissingConnectedApp">Can\'t find Connected or Connected Classic app</string>
     <string name="connectionStatusWaiting">Waiting for connection to car</string>
 

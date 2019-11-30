@@ -19,19 +19,23 @@ import java.util.zip.ZipInputStream
 import kotlin.math.abs
 
 object Utils {
-	val FILTER_NEGATIVE = ColorMatrixColorFilter(floatArrayOf(
-		-1.0f,     0f,     0f,    0f, 255f, // red
-		   0f,  -1.0f,     0f,    0f, 255f, // green
-		   0f,     0f,  -1.0f,    0f, 255f, // blue
-		   0f,     0f,     0f,  1.0f,   0f  // alpha
-	))
+	val FILTER_NEGATIVE by lazy {
+		ColorMatrixColorFilter(floatArrayOf(
+				-1.0f,     0f,     0f,    0f, 255f, // red
+				0f,  -1.0f,     0f,    0f, 255f, // green
+				0f,     0f,  -1.0f,    0f, 255f, // blue
+				0f,     0f,     0f,  1.0f,   0f  // alpha
+		))
+	}
 	val FILTER_BLACKMASK_VALUES = floatArrayOf(
 		1.0f,     0f,     0f,    0f,   0f, // red
 		  0f,   1.0f,     0f,    0f,   0f, // green
 		  0f,     0f,   1.0f,    0f,   0f, // blue
 		1.0f,   1.0f,   1.0f,    0f,   0f  // alpha
 	)
-	val FILTER_BLACKMASK = ColorMatrixColorFilter(FILTER_BLACKMASK_VALUES)
+	val FILTER_BLACKMASK by lazy {
+		ColorMatrixColorFilter(FILTER_BLACKMASK_VALUES)
+	}
 
 	fun getBitmap(bitmap: Bitmap, width: Int, height: Int, invert: Boolean = false): Bitmap {
 		if (bitmap.width == width && bitmap.height == height && invert == false) {
