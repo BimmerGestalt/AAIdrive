@@ -82,6 +82,15 @@
                     android:contentDescription="@string/musicAppSearchable"
                     android:tint="?android:attr/textColorSecondary"
                     app:srcCompat="@drawable/ic_search_black_24dp" />
+
+                <ImageView
+                    android:id="@+id/imgBlock"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/musicAppUnavailable"
+                    android:tint="?android:attr/textColorSecondary"
+                    android:alpha="0.5"
+                    app:srcCompat="@drawable/ic_block_black_24dp" />
             </LinearLayout>
 
         </LinearLayout>

@@ -25,7 +25,8 @@
     <string name="musicAppIcon">Programetoj Bildsimbolo</string>
     <string name="musicAppConnectable">Ligitebla</string>
     <string name="musicAppBrowseable">Navigebla</string>
-    <string name="musicAppSearchable">Serĉeble</string>
+    <string name="musicAppSearchable">Serĉebla</string>
+    <string name="musicAppUnavailable">Ne havebla</string>
 
     <string name="enable_audio_context">Petu Muzikan Kuntekson</string>
     <string name="connectionStatusMissingConnectedApp">Ne trovas la Connected programeton</string>

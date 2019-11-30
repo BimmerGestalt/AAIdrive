@@ -23,6 +23,7 @@
     <string name="musicAppConnectable">Fully Controllable</string>
     <string name="musicAppBrowseable">Browseable</string>
     <string name="musicAppSearchable">Searchable</string>
+    <string name="musicAppUnavailable">Unavailable</string>
     <string name="enable_audio_context">Request Audio Focus</string>
     <string name="lbl_grant_sessions">Control over active music apps:</string>
     <string name="lbl_grant">Grant</string>
