@@ -18,6 +18,8 @@
     <string name="lbl_widescreen_map">Larĝa Mapo</string>
     <string name="gmapStyleLabel">Map-stilo</string>
     <string name="lbl_music_apps">Muzikaj Programetoj</string>
+    <string name="lbl_grant_sessions">Permesu regi nunmuzikludantojn</string>
+    <string name="lbl_grant">Permesu</string>
 
     <!-- screen reader icon labels -->
     <string name="imgdescAppIcon">Programetoj Bildsimbolo</string>

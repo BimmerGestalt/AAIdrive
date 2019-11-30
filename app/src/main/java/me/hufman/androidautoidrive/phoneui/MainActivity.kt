@@ -127,6 +127,9 @@ class MainActivity : AppCompatActivity() {
 			manager.notify(1, notification)
 		}
 
+		btnGrantSessions.setOnClickListener {
+			promptNotificationPermission()
+		}
 		btnHelp.setOnClickListener {
 			val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://hufman.github.io/AndroidAutoIdrive/faq.html"))
 			startActivity(intent)
@@ -219,13 +222,17 @@ class MainActivity : AppCompatActivity() {
 		if (isChecked) {
 			// make sure we have permissions to read the notifications
 			if (!hasNotificationPermission() || !UIState.notificationListenerConnected) {
-				startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+				promptNotificationPermission()
 			} else {
 				startMainService()
 			}
 		} else {
 			startMainService()
 		}
+	}
+
+	fun promptNotificationPermission() {
+		startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
 	}
 
 	fun hasNotificationPermission(): Boolean {
@@ -296,6 +303,7 @@ class MainActivity : AppCompatActivity() {
 		swGmapSyle.setSelection(max(0, gmapStylePosition))
 
 		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_ENABLE_CONTEXT].toBoolean()
+		paneGrantSessions.visibility = if (hasNotificationPermission()) GONE else VISIBLE
 
 		val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
 		if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && !SecurityService.success) {
