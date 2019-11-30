@@ -17,10 +17,10 @@
     <string name="lbl_widescreen_map">Mapa ecrã completo</string>
     <string name="gmapStyleLabel">Estilo do mapa</string>
     <string name="lbl_music_apps">Apps de música</string>
-    <string name="imgdescAppIcon">Icone da app</string>
-    <string name="imgdescConnectable">Conectável</string>
-    <string name="imgdescBrowseable">Exploravel</string>
-    <string name="imgdescSearchable">Busca possível</string>
+    <string name="musicAppIcon">Icone da app</string>
+    <string name="musicAppConnectable">Conectável</string>
+    <string name="musicAppBrowseable">Exploravel</string>
+    <string name="musicAppSearchable">Busca possível</string>
     <string name="enable_audio_context">Solicitar focus de Audio</string>
     <string name="connectionStatusMissingConnectedApp">Não foi possivel encontrar apps Connected ou Connected Classic</string>
     <string name="connectionStatusWaiting">Esperando a conexão com o veículo</string>

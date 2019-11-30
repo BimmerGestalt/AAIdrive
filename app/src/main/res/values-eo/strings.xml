@@ -22,10 +22,10 @@
     <string name="lbl_grant">Permesu</string>
 
     <!-- screen reader icon labels -->
-    <string name="imgdescAppIcon">Programetoj Bildsimbolo</string>
-    <string name="imgdescConnectable">Ligitebla</string>
-    <string name="imgdescBrowseable">Navigebla</string>
-    <string name="imgdescSearchable">Serĉeble</string>
+    <string name="musicAppIcon">Programetoj Bildsimbolo</string>
+    <string name="musicAppConnectable">Ligitebla</string>
+    <string name="musicAppBrowseable">Navigebla</string>
+    <string name="musicAppSearchable">Serĉeble</string>
 
     <string name="enable_audio_context">Petu Muzikan Kuntekson</string>
     <string name="connectionStatusMissingConnectedApp">Ne trovas la Connected programeton</string>

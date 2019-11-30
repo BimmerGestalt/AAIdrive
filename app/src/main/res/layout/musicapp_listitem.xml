@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,66 +8,90 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:id="@+id/imgMusicAppIcon"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp"
-            android:layout_marginEnd="4dp"
-            android:scaleType="fitStart"
-            tools:srcCompat="@tools:sample/avatars"
-            android:contentDescription="@string/imgdescAppIcon" />
-
-        <TextView
-            android:id="@+id/txtMusicAppName"
-            android:layout_width="0dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical" >
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
+            <ImageView
+                android:id="@+id/imgMusicAppIcon"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="4dp"
+                android:contentDescription="@string/musicAppIcon"
+                android:scaleType="fitStart"
+                tools:srcCompat="@tools:sample/avatars" />
 
-        <ImageView
-            android:id="@+id/imgNowPlaying"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:srcCompat="@drawable/ic_equalizer_black_24dp"
-            android:tint="?android:attr/textColorSecondary"
-            android:contentDescription="@string/imgdescNowPlaying" />
+            <TextView
+                android:id="@+id/txtMusicAppName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:gravity="start"
+                android:ems="10" />
 
-        <ImageView
-            android:id="@+id/imgControllable"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:srcCompat="@drawable/ic_slow_motion_video_black_24dp"
-            android:tint="?android:attr/textColorSecondary"
-            android:contentDescription="@string/imgdescControllable" />
+            <LinearLayout
+                android:id="@+id/paneMusicAppFeatures"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/imgConnectable"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:srcCompat="@drawable/ic_play_circle_outline_black_24dp"
-            android:tint="?android:attr/textColorSecondary"
-            android:contentDescription="@string/imgdescConnectable" />
+                <ImageView
+                    android:id="@+id/imgNowPlaying"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/musicAppNowPlaying"
+                    android:tint="?android:attr/textColorSecondary"
+                    app:srcCompat="@drawable/ic_equalizer_black_24dp" />
 
-        <ImageView
-            android:id="@+id/imgBrowseable"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:srcCompat="@drawable/ic_folder_open_black_24dp"
-            android:tint="?android:attr/textColorSecondary"
-            android:contentDescription="@string/imgdescBrowseable" />
+                <ImageView
+                    android:id="@+id/imgControllable"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/musicAppControllable"
+                    android:tint="?android:attr/textColorSecondary"
+                    app:srcCompat="@drawable/ic_slow_motion_video_black_24dp" />
 
-        <ImageView
-            android:id="@+id/imgSearchable"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:srcCompat="@drawable/ic_search_black_24dp"
-            android:tint="?android:attr/textColorSecondary"
-            android:contentDescription="@string/imgdescSearchable" />
+                <ImageView
+                    android:id="@+id/imgConnectable"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/musicAppConnectable"
+                    android:tint="?android:attr/textColorSecondary"
+                    app:srcCompat="@drawable/ic_play_circle_outline_black_24dp" />
+
+                <ImageView
+                    android:id="@+id/imgBrowseable"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/musicAppBrowseable"
+                    android:tint="?android:attr/textColorSecondary"
+                    app:srcCompat="@drawable/ic_folder_open_black_24dp" />
+
+                <ImageView
+                    android:id="@+id/imgSearchable"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/musicAppSearchable"
+                    android:tint="?android:attr/textColorSecondary"
+                    app:srcCompat="@drawable/ic_search_black_24dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtMusicAppFeatures"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:gravity="end"
+        android:visibility="gone" />
     </LinearLayout>
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
