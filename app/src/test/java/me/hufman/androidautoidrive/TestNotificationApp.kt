@@ -10,7 +10,6 @@ import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
 import me.hufman.androidautoidrive.carapp.notifications.*
-import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
 
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
@@ -18,7 +17,6 @@ import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
 import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
 import me.hufman.idriveconnectionkit.rhmi.RHMIState
-import me.hufman.idriveconnectionkit.rhmi.mocking.RHMIApplicationMock
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -136,7 +134,7 @@ class TestNotificationApp {
 	@Test
 	fun testSummary() {
 		val notification = createNotification("Ticker Text", "Title", "Text\nTwo\n", "Summary", true)
-		val notificationObject = NotificationListenerServiceImpl.summarizeNotification(notification)
+		val notificationObject = ParseNotification.summarizeNotification(notification)
 		assertEquals("testKey", notificationObject.key)
 		assertEquals("me.hufman.androidautoidrive", notificationObject.packageName)
 		assertEquals("Title", notificationObject.title)
@@ -166,57 +164,57 @@ class TestNotificationApp {
 				message, message2
 		)
 
-		val notificationObject = NotificationListenerServiceImpl.summarizeNotification(notification)
+		val notificationObject = ParseNotification.summarizeNotification(notification)
 		assertEquals("Sender: Message\nSender: Message2", notificationObject.text)
 	}
 
 	@Test
 	fun testShouldShow() {
 		val notification = createNotification("Ticker Text", "Title", "Text", "Summary", true)
-		assertTrue(NotificationListenerServiceImpl.shouldShowNotification(notification))
-		assertTrue(NotificationListenerServiceImpl.shouldPopupNotification(notification))
+		assertTrue(ParseNotification.shouldShowNotification(notification))
+		assertTrue(ParseNotification.shouldPopupNotification(notification))
 
 		val nullTitle = createNotification("Ticker Text", null, null, "Summary", true)
-		assertFalse(NotificationListenerServiceImpl.shouldShowNotification(nullTitle))
-		assertTrue(NotificationListenerServiceImpl.shouldPopupNotification(nullTitle))
+		assertFalse(ParseNotification.shouldShowNotification(nullTitle))
+		assertTrue(ParseNotification.shouldPopupNotification(nullTitle))
 
 		val musicApp = createNotification("Ticker Text", "Title", "Text", "Summary", true)
 		whenever(musicApp.notification.extras.getString(eq(Notification.EXTRA_TEMPLATE))) doReturn "android.app.Notification\$MediaStyle"
-		assertTrue(NotificationListenerServiceImpl.shouldShowNotification(musicApp))
-		assertFalse(NotificationListenerServiceImpl.shouldPopupNotification(musicApp))
+		assertTrue(ParseNotification.shouldShowNotification(musicApp))
+		assertFalse(ParseNotification.shouldPopupNotification(musicApp))
 
 		val groupNotification = createNotification("Ticker Text", "Title", "Text", "Summary", true)
 		groupNotification.notification.flags = FLAG_GROUP_SUMMARY
 		whenever(groupNotification.notification.group) doReturn "Yes"
-		assertFalse(NotificationListenerServiceImpl.shouldShowNotification(groupNotification))
-		assertFalse(NotificationListenerServiceImpl.shouldPopupNotification(groupNotification))
+		assertFalse(ParseNotification.shouldShowNotification(groupNotification))
+		assertFalse(ParseNotification.shouldPopupNotification(groupNotification))
 	}
 
 	@Test
 	fun testShouldPopupHistory() {
 		// show new notifications
 		val notification = createNotification("Ticker Text", "Title", "Text", "Summary", true)
-		assertTrue(NotificationListenerServiceImpl.shouldPopupNotification(notification))
+		assertTrue(ParseNotification.shouldPopupNotification(notification))
 
 		// don't show the same notification twice
-		NotificationsState.poppedNotifications.add(NotificationListenerServiceImpl.summarizeNotification(notification))
-		assertFalse(NotificationListenerServiceImpl.shouldPopupNotification(notification))
+		NotificationsState.poppedNotifications.add(ParseNotification.summarizeNotification(notification))
+		assertFalse(ParseNotification.shouldPopupNotification(notification))
 		assertEquals(1, NotificationsState.poppedNotifications.size)
 
 		// identical notifications should be coalesced in the history
 		val duplicate = createNotification("Ticker Text", "Title", "Text", "Summary", true)
-		NotificationsState.poppedNotifications.add(NotificationListenerServiceImpl.summarizeNotification(duplicate))
+		NotificationsState.poppedNotifications.add(ParseNotification.summarizeNotification(duplicate))
 		assertEquals(1, NotificationsState.poppedNotifications.size)
 
 		// only should have 15 history entries
 		(0..20).forEach { i ->
 			val spam = createNotification("Ticker Text", "Title $i", "Text $i", "Summary", true)
-			NotificationsState.poppedNotifications.add(NotificationListenerServiceImpl.summarizeNotification(spam))
+			NotificationsState.poppedNotifications.add(ParseNotification.summarizeNotification(spam))
 		}
 		assertEquals(15, NotificationsState.poppedNotifications.size)
 
 		// it should have flushed out the earlier notification
-		assertTrue(NotificationListenerServiceImpl.shouldPopupNotification(notification))
+		assertTrue(ParseNotification.shouldPopupNotification(notification))
 	}
 
 	fun createNotificationObject(title:String, text:String, summary:String, clearable:Boolean=false): CarNotification {
