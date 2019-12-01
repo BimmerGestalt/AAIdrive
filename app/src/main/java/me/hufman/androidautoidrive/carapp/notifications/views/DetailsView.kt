@@ -139,7 +139,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		} else if (notification.pictureUri != null) {
 			try {
 				phoneAppResources.getBitmap(notification.pictureUri, 400, 300)
-			} catch (e: SecurityException) {
+			} catch (e: Exception) {
 				Log.w(TAG, "Failed to open picture from ${notification.pictureUri}", e)
 				null
 			}
