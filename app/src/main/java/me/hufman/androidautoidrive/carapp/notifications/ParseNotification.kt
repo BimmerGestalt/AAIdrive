@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.carapp.notifications
 import android.app.Notification
 import android.graphics.Bitmap
 import android.graphics.drawable.Icon
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
@@ -22,6 +23,8 @@ object ParseNotification {
 		var summary:String? = null
 		val extras = sbn.notification.extras
 		var icon = sbn.notification.smallIcon
+		var picture: Bitmap? = null
+		var pictureUri: String? = null
 
 		// get the main title and text
 		if (extras.getCharSequence(Notification.EXTRA_TITLE) != null) {
@@ -58,19 +61,27 @@ object ParseNotification {
 			if (parcel is Bitmap) icon = Icon.createWithBitmap(parcel)
 		}
 
+		// maybe a picture too
+		if (extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_PICTURE) != null) {
+			val parcel = extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_PICTURE)
+			if (parcel is Bitmap) picture = parcel
+		}
+
 		// some extra handling for special notifications
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
 				extras.getString(Notification.EXTRA_TEMPLATE) == "android.app.Notification\$MessagingStyle") {
-			text = summarizeMessagingNotification(sbn)
+			val parsed = summarizeMessagingNotification(sbn)
+			text = parsed.text
+			pictureUri = parsed.pictureUri
 		}
 
 		val summarized = CarNotification(sbn.packageName, sbn.key, icon, sbn.isClearable, sbn.notification.actions ?: arrayOf(),
-				title, summary, text?.trim())
+				title, summary, text?.trim(), picture, pictureUri)
 		return summarized
 	}
 
 	@RequiresApi(Build.VERSION_CODES.O)
-	fun summarizeMessagingNotification(sbn: StatusBarNotification): String {
+	fun summarizeMessagingNotification(sbn: StatusBarNotification): MessagingNotificationParsed {
 		val extras = sbn.notification.extras
 		val historicMessages = extras.getParcelableArray(Notification.EXTRA_HISTORIC_MESSAGES) ?: arrayOf()
 		val messages = extras.getParcelableArray(Notification.EXTRA_MESSAGES) ?: arrayOf()
@@ -79,7 +90,12 @@ object ParseNotification {
 		val text = recentMessages.joinToString("\n") {
 			"${it.getCharSequence("sender")}: ${it.getCharSequence("text")}"
 		}
-		return text
+		val pictureUri = recentMessages.filter {
+			it.getCharSequence("type")?.startsWith("image/") == true
+		}.map {
+			it.getParcelable("uri") as Uri
+		}.lastOrNull()?.toString()
+		return MessagingNotificationParsed(text, pictureUri)
 	}
 
 	fun shouldPopupNotification(sbn: StatusBarNotification?): Boolean {
@@ -110,3 +126,5 @@ object ParseNotification {
 		Log.i(NotificationListenerServiceImpl.TAG, "$title $details")
 	}
 }
+
+data class MessagingNotificationParsed(val text: String, val pictureUri: String?)
