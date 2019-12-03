@@ -34,13 +34,17 @@ Implemented Features
 
   - Phone Notifications
     - Popup about new notifications
+    - Supports Dismiss, Mark As Read, or other notification actions
   - Google Maps
     - Basic search and routing
-    - Not built by default, showing Google Maps in a car is against the Maps API license
+    - Includes some dark themes
+    - Not compiled by default, because showing Google Maps in a car is against the Maps API license
   - Control of Android Auto compatible music apps
     - Supports browsing and searching apps' music libraries
     - Supports selecting from a list of currently-queued songs, as well as basic back/next control
     - Integrates into the car's audio context, for automatic resume and hardware button control
+    - Supports controlling any active music session, even apps that aren't Android Auto compatible
+    - Instantly updates the screen to follow the active app
     - Tested working apps:
       - [AntennaPod](https://play.google.com/store/apps/details?id=de.danoeh.antennapod)
       - [AP News](https://play.google.com/store/apps/details?id=mnn.Android)
@@ -85,9 +89,9 @@ Limitations
 Due to the unofficial reverse-engineered nature of this project, it has some limitations:
 
   - The main menu entries' icons and text can't be altered, and so do not look exactly correct
-  - The individual music app icons are not fully functional, but they do switch the active music source
+  - The individual music source icons are not fully functional, but they do switch the active music source
   - Android Oreo disabled Android Open Accessory Protocol 2 audio output, which is required to play audio over the app's USB connection in model years 2014-2017. Please disable the app option "Request Audio Focus" and use Bluetooth audio
-  - Some Android Auto music apps enforce a whitelist of clients, preventing this app from connecting and controlling them. These music apps are unavailable:
+  - Some Android Auto music apps enforce a whitelist of clients, preventing this app from launching them or browsing their libraries. However, once they are running, they can be controlled. For example, these popular music apps can not be launched, they must be started manually:
     - Amazon Music
     - Audible
     - Bandcamp
@@ -119,3 +123,5 @@ Build Instructions
   - (Optional) Add a [Google Maps API key](https://developers.google.com/maps/documentation/android-sdk/signup) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_GmapsApiKey`. This key should have access to Maps SDK for Android, Places API, and Directions API.
   - Check out the project in Android Studio, then `Build > Make Project`
   - From the commandline, with an Android build environment set up, `./gradlew assemble` should work too
+
+Besides building the entire project, Android Studio also offers a convenient "Run app" method to build and directly install to a connected phone. Use the Build Variants panel to select a specific version to install.
