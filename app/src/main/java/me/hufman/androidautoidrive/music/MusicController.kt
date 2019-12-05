@@ -119,9 +119,11 @@ class MusicController(val context: Context, val handler: Handler) {
 	}
 
 	fun connectApp(app: MusicAppInfo) = asyncRpc {
-		if (musicBrowser?.musicAppInfo != app) {
+		val switchApp = musicBrowser?.musicAppInfo != app
+		val needsReconnect = (app.connectable && musicBrowser?.mediaController == null) || musicSessions.mediaController == null
+		if (switchApp || needsReconnect) {
 			Log.i(TAG, "Switching current app connection from ${musicBrowser?.musicAppInfo} to $app")
-			disconnectApp()
+			disconnectApp(pause = switchApp)
 			musicSessions.connectApp(app)
 			lastConnectTime = System.currentTimeMillis()
 			musicBrowser = MusicBrowser(context, handler, app)
