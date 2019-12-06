@@ -207,7 +207,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 				albumArtSmallModel.value = phoneAppResources.getBitmap(song.coverArtUri, 200, 200)
 				albumArtBigComponent.setVisible(true)
 				albumArtSmallComponent.setVisible(true)
-			} catch (e: IOException) {
+			} catch (e: Exception) {
 				showPlaceholderCoverart()
 			}
 		} else {

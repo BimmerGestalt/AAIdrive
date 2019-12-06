@@ -1,8 +1,10 @@
 package me.hufman.androidautoidrive.carapp.notifications.views
 
+import android.util.Log
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.notifications.CarNotificationController
 import me.hufman.androidautoidrive.carapp.notifications.NotificationsState
+import me.hufman.androidautoidrive.carapp.notifications.TAG
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.ArrayList
 import kotlin.math.min
@@ -21,14 +23,18 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 
 	var listViewId: Int = 0                // where to set the focus when the active notification disappears
 	val iconWidget: RHMIComponent.List     // the widget to display the notification app's icon
+	val titleWidget: RHMIComponent.Label    // the widget to display the title in
 	val listWidget: RHMIComponent.List     // the widget to display the text
+	val imageWidget: RHMIComponent.Image
 
 	var visible = false
 	init {
 		iconWidget = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
+		titleWidget = state.componentsList.filterIsInstance<RHMIComponent.Label>().first()
 		listWidget = state.componentsList.filterIsInstance<RHMIComponent.List>().first {
 			it.getModel()?.modelType == "Richtext"
 		}
+		imageWidget = state.componentsList.filterIsInstance<RHMIComponent.Image>().first()
 	}
 
 	fun initWidgets(listView: NotificationListView) {
@@ -44,16 +50,22 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		state.setProperty(24, 3)
 		state.setProperty(36, false)
 		state.componentsList.forEach { it.setVisible(false) }
-		state.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull()?.apply {
+		iconWidget.apply {
 			// app icon and notification title
 			setVisible(true)
 			setEnabled(true)
 			setSelectable(true)
 			setProperty(6, "55,0,*")
 		}
-		state.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull {
-			it.getModel()?.modelType == "Richtext"
-		}?.apply {
+		titleWidget.apply {
+			setVisible(true)
+			setEnabled(true)
+		}
+		imageWidget.apply {
+			setProperty(9, 400)
+			setProperty(10, 300)
+		}
+		listWidget.apply {
 			// text
 			setVisible(true)
 			setEnabled(true)
@@ -113,12 +125,32 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 
 		// prepare the notification text
 		val listData = RHMIModel.RaListModel.RHMIListConcrete(1)
-		val trimmedText = notification.text?.substring(0, min(MAX_LENGTH, (notification.text ?: "").length))
-		listData.addRow(arrayOf("${notification.title}\n${trimmedText}"))
+		val trimmedText = notification.text?.substring(0, min(MAX_LENGTH, notification.text.length)) ?: ""
+		listData.addRow(arrayOf(trimmedText))
 
-		state.getTextModel()?.asRaDataModel()?.value = notification.title ?: appname
+		state.getTextModel()?.asRaDataModel()?.value = appname
 		iconWidget.getModel()?.value = iconListData
+		titleWidget.getModel()?.asRaDataModel()?.value = notification.title ?: ""
 		listWidget.getModel()?.value = listData
+
+		// try to load a picture from the notification
+		val picture = if (notification.picture != null) {
+			phoneAppResources.getBitmap(notification.picture, 400, 300)
+		} else if (notification.pictureUri != null) {
+			try {
+				phoneAppResources.getBitmap(notification.pictureUri, 400, 300)
+			} catch (e: Exception) {
+				Log.w(TAG, "Failed to open picture from ${notification.pictureUri}", e)
+				null
+			}
+		} else { null }
+		// if we have a picture to display
+		if (picture != null) {
+			imageWidget.setVisible(true)
+			imageWidget.getModel()?.asRaImageModel()?.value = picture
+		} else {
+			imageWidget.setVisible(false)
+		}
 
 		// find and enable the clear button
 		var buttons = ArrayList(state.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}

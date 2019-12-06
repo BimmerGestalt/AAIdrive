@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.net.Uri
+import java.net.URL
 
 interface PhoneAppResources {
 	fun getAppIcon(packageName: String): Drawable
@@ -32,7 +33,13 @@ class PhoneAppResourcesAndroid(val context: Context): PhoneAppResources {
 		return Utils.getBitmapAsPng(drawable, width, height, invert)
 	}
 	override fun getBitmap(uri: String, width: Int, height: Int, invert: Boolean): ByteArray {
-		val inputStream = context.contentResolver.openInputStream(Uri.parse(uri))
+		val parsedUri = Uri.parse(uri)
+		val inputStream = when (parsedUri.scheme) {
+			"content" -> context.contentResolver.openInputStream(parsedUri)
+			"http" -> URL(uri).openStream()
+			"https" -> URL(uri).openStream()
+			else -> throw IllegalArgumentException("Unknown scheme ${parsedUri.scheme}")
+		}
 		val drawable = Drawable.createFromStream(inputStream, uri)
 		inputStream.close()
 		return getBitmap(drawable, width, height, invert)

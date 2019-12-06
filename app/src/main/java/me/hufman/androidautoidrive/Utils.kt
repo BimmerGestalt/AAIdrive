@@ -40,8 +40,6 @@ object Utils {
 	fun getBitmap(bitmap: Bitmap, width: Int, height: Int, invert: Boolean = false): Bitmap {
 		if (bitmap.width == width && bitmap.height == height && invert == false) {
 			return bitmap
-		} else if (invert == false) {
-			return Bitmap.createScaledBitmap(bitmap, width, height, true)
 		} else {
 			val outBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
 			val canvas = Canvas(outBitmap)
@@ -50,13 +48,17 @@ object Utils {
 			if (invert) {
 				paint.colorFilter = FILTER_NEGATIVE
 			}
-			canvas.drawBitmap(bitmap, Rect(0, 0, bitmap.width, bitmap.height), Rect(0, 0, width, height), paint)
+			val stretchToFit = Matrix()
+			stretchToFit.setRectToRect(RectF(0f, 0f, bitmap.width.toFloat(), bitmap.height.toFloat()),
+					RectF(0f, 0f, width.toFloat(), height.toFloat()),
+					Matrix.ScaleToFit.CENTER)
+			canvas.drawBitmap(bitmap, stretchToFit, paint)
 			return outBitmap
 		}
 	}
 	fun getBitmap(drawable: Drawable, width: Int, height: Int, invert: Boolean = false): Bitmap {
 		if (drawable is BitmapDrawable && !invert) {
-			return getBitmap(drawable.bitmap, 48, 48, invert)
+			return getBitmap(drawable.bitmap, width, height, invert)
 		} else {
 			val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
 			val canvas = Canvas(bitmap)
@@ -69,7 +71,7 @@ object Utils {
 		}
 	}
 	fun getBitmapAsPng(bitmap: Bitmap, width: Int, height: Int, invert: Boolean = false): ByteArray {
-		return compressBitmap(Utils.getBitmap(bitmap, width, height, invert))
+		return compressBitmap(getBitmap(bitmap, width, height, invert))
 	}
 	fun getBitmapAsPng(drawable: Drawable, width: Int, height: Int, invert: Boolean = false): ByteArray {
 		return compressBitmap(getBitmap(drawable, width, height, invert))
