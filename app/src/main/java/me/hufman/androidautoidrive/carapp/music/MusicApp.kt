@@ -93,7 +93,10 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 			// switch the interface to the currently playing app
 			val nowPlaying = musicController.musicSessions.getPlayingApp()
 			if (nowPlaying != null) {
-				musicController.connectApp(nowPlaying)
+				val discoveredApp = musicAppDiscovery.validApps.firstOrNull {
+					it == nowPlaying
+				} ?: nowPlaying
+				musicController.connectApp(discoveredApp)
 			}
 		}
 		musicAppDiscovery.discoverApps()    // trigger the discovery, to show the apps when the handler starts running

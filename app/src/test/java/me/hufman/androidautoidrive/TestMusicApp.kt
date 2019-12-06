@@ -999,20 +999,40 @@ class TestMusicApp {
 			assertEquals("No checkbox in app list", "", row[0])
 		}
 
-		// a new music app starts playing
-		val nowPlayingApp = MusicAppInfo("Test3", mock(), "package3", "UNUSED")
+		// a new music app starts playing, which we don't know about
+		val nowPlayingApp = MusicAppInfo("Test4", mock(), "package4", "UNUSED")
 		whenever(musicController.musicSessions).then {
 			mock<MusicSessions> {
 				on { getPlayingApp() } doReturn nowPlayingApp
 			}
 		}
 		discoveryListenerCapture.value.run()
-		verify(musicController).connectApp(eq(nowPlayingApp))
+		verify(musicController).connectApp(same(nowPlayingApp))
 		// async sets the musicBrowser to the correct connection
 		whenever(musicController.musicBrowser).then { mock<MusicBrowser> {
 			on { musicAppInfo } doReturn nowPlayingApp
 		}}
+		whenever(musicAppDiscovery.validApps).then {
+			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
+					MusicAppInfo("Test3", mock(), "package3", "class"),
+					MusicAppInfo("Test4", mock(), "package4", null))
+		}
 		app.redraw()
-		assertNotEquals("Sets the checkbox in the app list", "", (mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data[1][0])
+		assertNotEquals("Sets the checkbox in the app list", "", (mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data[2][0])
+
+		// a new music session that we know can browse opens up
+		reset(musicController)
+		whenever(musicController.musicSessions).then {
+			mock<MusicSessions> {
+				on { getPlayingApp() } doReturn nowPlayingApp
+			}
+		}
+		val browseableApp = MusicAppInfo("Test4", mock(), "package4", "class")
+		whenever(musicAppDiscovery.validApps).then {
+			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
+					browseableApp)
+		}
+		discoveryListenerCapture.value.run()
+		verify(musicController).connectApp(same(browseableApp))
 	}
 }
