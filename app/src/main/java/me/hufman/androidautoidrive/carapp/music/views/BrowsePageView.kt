@@ -145,6 +145,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 		}
 
 		// start loading data
+		loaderJob?.cancel()
 		loaderJob = launch(Dispatchers.IO) {
 			musicListComponent.setEnabled(false)
 			currentListModel = loadingList
