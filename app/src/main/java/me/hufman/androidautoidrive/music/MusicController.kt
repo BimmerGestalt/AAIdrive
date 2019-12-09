@@ -92,7 +92,10 @@ class MusicController(val context: Context, val handler: Handler) {
 		val musicBrowserController = musicBrowser?.mediaController
 		if (musicSessionsController != null) {
 			try {
-				return f(musicSessionsController)
+				val response = f(musicSessionsController)
+				if (response != null) {
+					return response
+				}
 			} catch (e: DeadObjectException) {
 				// the controller disconnected
 				musicSessions.mediaController = null
@@ -100,7 +103,10 @@ class MusicController(val context: Context, val handler: Handler) {
 		}
 		if (musicBrowserController != null) {
 			try {
-				return f(musicBrowserController)
+				val response = f(musicBrowserController)
+				if (response != null) {
+					return response
+				}
 			} catch (e: DeadObjectException) {
 				// the controller disconnected
 				musicBrowser?.disconnect()
