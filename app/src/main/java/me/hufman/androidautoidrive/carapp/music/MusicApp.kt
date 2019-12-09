@@ -92,7 +92,8 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 			}
 			// switch the interface to the currently playing app
 			val nowPlaying = musicController.musicSessions.getPlayingApp()
-			if (nowPlaying != null) {
+			val changedApp = musicController.musicSessions.mediaController?.packageName != nowPlaying?.packageName
+			if (nowPlaying != null && changedApp) {
 				val discoveredApp = musicAppDiscovery.validApps.firstOrNull {
 					it == nowPlaying
 				} ?: nowPlaying
