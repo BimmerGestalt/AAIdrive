@@ -295,7 +295,7 @@ class TestNotificationApp {
 		app.notificationListener.onNotification(bundle)
 
 		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent
-		assertEquals(null, mockServer.triggeredEvents[1]?.get(0))
+		assertEquals(true, mockServer.triggeredEvents[1]?.get(0))
 		val expectedHeader = "Test AppName"
 		val expectedLabel1 = "Title"
 		val expectedLabel2 = "Text"
