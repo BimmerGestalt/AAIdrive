@@ -68,6 +68,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			// text
 			setVisible(true)
 			setEnabled(true)
+			setSelectable(true)
 		}
 
 		var buttons = ArrayList(state.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}

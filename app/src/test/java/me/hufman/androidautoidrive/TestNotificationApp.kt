@@ -93,6 +93,7 @@ class TestNotificationApp {
 			assertTrue(visibleWidgets[1] is RHMIComponent.Label)
 			assertTrue(visibleWidgets[2] is RHMIComponent.List)
 			assertEquals("Richtext", visibleWidgets[2].asList()?.getModel()?.modelType)
+			assertEquals(true, mockServer.properties[visibleWidgets[2].id]?.get(RHMIProperty.PropertyId.SELECTABLE.id))
 			val state = app.viewDetails.state as RHMIState.ToolbarState
 			assertEquals( 150, state.toolbarComponentsList[1].getImageModel()?.asImageIdModel()?.imageId)
 			state.toolbarComponentsList.subList(2, 7).forEach {
@@ -405,7 +406,7 @@ class TestNotificationApp {
 		NotificationsState.notifications.clear()
 		val notification = createNotificationObject("Title", "Text", "Summary", false)
 		NotificationsState.notifications.add(notification)
-		val notification2 = createNotificationObject("Title2", "Text2", "Summary2", true)
+		val notification2 = createNotificationObject("Title2", "Text2\nTest3", "Summary2", true)
 		NotificationsState.notifications.add(notification2)
 		app.viewList.redrawNotificationList()
 
@@ -434,7 +435,7 @@ class TestNotificationApp {
 		assertEquals(1, bodyList.numRows)
 		assertEquals(1, bodyList.numColumns)
 		assertEquals("Title2", mockServer.data[517])
-		assertEquals("Text2", bodyList.data[0][0])
+		assertEquals("Text2\nTest3", bodyList.data[0][0])
 
 		// verify the right buttons are enabled
 		assertEquals(true, mockServer.properties[122]?.get(RHMIProperty.PropertyId.ENABLED.id))  // clear this notification button
