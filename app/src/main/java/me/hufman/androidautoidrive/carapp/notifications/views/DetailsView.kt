@@ -48,7 +48,6 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		}
 
 		state.setProperty(24, 3)
-		state.setProperty(36, false)
 		state.componentsList.forEach { it.setVisible(false) }
 		iconWidget.apply {
 			// app icon and notification title
@@ -91,6 +90,13 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		}
 
 		listViewId = listView.state.id
+	}
+
+	/**
+	 * When we detect that the car is in Parked mode, lock the SpeedLock setting to stay unlocked
+	 */
+	fun lockSpeedLock() {
+		state.setProperty(36, false)
 	}
 
 	fun show() {

@@ -93,8 +93,15 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 		// subscribe to CDS for passenger seat info
 		val cdsHandle = carConnection.cds_create()
-		carConnection.cds_addPropertyChangedEventHandler(cdsHandle, "sensors.seatOccupiedPassenger", "76", 5000)
-		carConnection.cds_getPropertyAsync(cdsHandle, "76", "sensors.seatOccupiedPassenger")
+		val interestingProperties = mapOf("76" to "sensors.seatOccupiedPassenger",
+				"37" to "driving.gear",
+				"40" to "driving.parkingBrake")
+		interestingProperties.entries.forEach {
+			val ident = it.key
+			val name = it.value
+			carConnection.cds_addPropertyChangedEventHandler(cdsHandle, name, ident, 5000)
+			carConnection.cds_getPropertyAsync(cdsHandle, ident, name)
+		}
 
 		// register for events from the car
 		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1)
@@ -134,9 +141,25 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			}
 		}
 		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
-			if (propertyName == "sensors.seatOccupiedPassenger" && propertyValue != null && loadJSON(propertyValue) != null) {
-				val propertyData = loadJSON(propertyValue) ?: return
+			if (propertyValue == null || loadJSON(propertyValue) == null) {
+				return
+			}
+			val propertyData = loadJSON(propertyValue) ?: return
+
+			if (propertyName == "sensors.seatOccupiedPassenger") {
 				passengerSeated = propertyData.getInt("seatOccupiedPassenger") != 0
+			}
+			if (propertyName == "driving.gear") {
+				val GEAR_PARK = 3
+				if (propertyData.getInt("gear") == GEAR_PARK) {
+					viewDetails.lockSpeedLock()
+				}
+			}
+			if (propertyName == "driving.parkingBrake") {
+				val APPLIED_BRAKES = setOf(2, 8, 32)
+				if (APPLIED_BRAKES.contains(propertyData.getInt("parkingBrake"))) {
+					viewDetails.lockSpeedLock()
+				}
 			}
 		}
 	}

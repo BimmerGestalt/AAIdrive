@@ -84,7 +84,7 @@ class TestNotificationApp {
 		// test stateView setup
 		run {
 			assertEquals(3, mockServer.properties[app.viewDetails.state.id]?.get(24))
-			assertEquals(false, mockServer.properties[app.viewDetails.state.id]?.get(36))
+			assertNull("Hasn't cleared Speedlock yet", mockServer.properties[app.viewDetails.state.id]?.get(36))
 			val visibleWidgets = app.viewDetails.state.componentsList.filter {
 				mockServer.properties[it.id]?.get(RHMIProperty.PropertyId.VISIBLE.id) as Boolean
 			}
@@ -109,6 +109,17 @@ class TestNotificationApp {
 			assertTrue(visibleWidgets[0] is RHMIComponent.List)
 			assertNotNull(visibleWidgets[0].asList()?.getAction()?.asCombinedAction()?.raAction?.rhmiActionCallback)
 			assertNotNull(visibleWidgets[0].asList()?.getAction()?.asRAAction()?.rhmiActionCallback)
+		}
+		// test speedlock
+		run {
+			// parking gear
+			mockServer.properties[app.viewDetails.state.id]?.remove(36)
+			app.carappListener.cds_onPropertyChangedEvent(-1, "37", "driving.gear", """{"gear":3}""")
+			assertEquals(false, mockServer.properties[app.viewDetails.state.id]?.get(36))
+			// parking brake
+			mockServer.properties[app.viewDetails.state.id]?.remove(36)
+			app.carappListener.cds_onPropertyChangedEvent(-1, "40", "driving.parkingBrake", """{"parkingBrake":2}""")
+			assertEquals(false, mockServer.properties[app.viewDetails.state.id]?.get(36))
 		}
 	}
 
