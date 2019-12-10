@@ -116,11 +116,9 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		menuMap.setVisible(true)
 		menuMap.setSelectable(true)
 		menuMap.setProperty(6, "350,0,*")
-		menuMap.setProperty(10, 90)
 		menuMap.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
 
 		menuList.setProperty(6, "100,0,*")
-		menuList.setProperty(19, 100)   // force set a Y position, MY2019 seems to float up
 		menuList.setVisible(true)
 		menuList.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {  listIndex ->
 			val destStateId = when (listIndex) {
