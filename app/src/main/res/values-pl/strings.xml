@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">AndroidAutoIdrive</string>
-    <string name="permlab_accessNotifications">IDrive Notification Access</string>
-    <string name="permlab_bindNotificationListenerService">IDrive Notification Access</string>
-    <string name="permdesc_accessNotifications">IDrive Notification Access</string>
-    <string name="permdesc_bindNotificationListenerService">IDrive Notification Access</string>
+    <string name="permlab_accessNotifications">IDrive Przyznaj dostep do powiadomien</string>
+    <string name="permlab_bindNotificationListenerService">IDrive Dostep do powiadomien</string>
+    <string name="permdesc_accessNotifications">IDrive Dostep do powiadomien</string>
+    <string name="permdesc_bindNotificationListenerService">IDrive Przyznaj dostep do powiadomien</string>
     <string name="notification_title">Android Auto for IDrive</string>
     <string name="notification_description">Połączona z samochodem</string>
     <string name="notification_description_bmw">Połączono z BMW</string>
@@ -12,23 +12,32 @@
     <string name="spawn_test_notification">Testowe powiadomienie</string>
     <string name="message_notifications">Tresc powiadomienia</string>
     <string name="notification_popups">Wyskakujace okno powiadomień</string>
-    <string name="notification_popups_passenger">powidomienie z siedzacym pasarzerem</string>
+    <string name="notification_popups_passenger">Powidomienie z siedzacym pasazerem</string>
     <string name="enable_google_maps">Wlacz Google Maps</string>
     <string name="lbl_widescreen_map">Mapy w trybie pełnoekranowym</string>
     <string name="gmapStyleLabel">Styl map</string>
     <string name="lbl_music_apps">Aplikacje muzyczne</string>
     <string name="musicAppIcon">Ikony aplikacji</string>
-    <string name="musicAppConnectable">Podłączalny</string>
+    <string name="musicAppNowPlaying">Obecnie odtwarzene</string>
+    <string name="musicAppControllable">Możliwość kontroli podczas pracy</string>
+    <string name="musicAppConnectable">W pełni kontrolowany</string>
     <string name="musicAppBrowseable">Przegladalny</string>
     <string name="musicAppSearchable">Przeszukiwalny</string>
+    <string name="musicAppUnavailable">Niedostepna</string>
     <string name="enable_audio_context">Przełącz na audio z telefonu</string>
+    <string name="lbl_grant_sessions">Kontrola poprzez aktywna aplikacje muzyczna:</string>
+    <string name="lbl_grant">Przyznaj</string>
+
     <string name="connectionStatusMissingConnectedApp">Nie moge znależć aplikacji Connected lub Connected Classic</string>
     <string name="connectionStatusWaiting">Oczekiwanie na połączenie z samochodem</string>
 
+    <string name="nowplaying_notconnected">&lt;Nie polaczony&gt;</string>
+    <string name="nowplaying_unknown">&lt;Nieznany&gt;</string>
+
     <string name="txt_setup_bmw_ready">Aplikacja gotowa do połączenia z BMW</string>
     <string name="txt_setup_mini_ready">Aplikacja gotowa do połączenia z Mini</string>
-    <string name="txt_setup_discovered_new_bmw">Aplikacja BMW Connected wykryta, but Mini Connected Classic app also needs to be installed for this app to work:</string>
-    <string name="txt_setup_discovered_new_mini">Aplikacja Mini Connected wykryta, but BMW Connected Classic app also needs to be installed for this app to work:</string>
+    <string name="txt_setup_discovered_new_bmw">Aplikacja BMW Connected wykryta, ale aplikacja Mini Connected Classic rowniez musi byc zainstalowana do poprawnego dzialania:</string>
+    <string name="txt_setup_discovered_new_mini">Aplikacja Mini Connected wykryta, ale aplikacja BMW Connected Classic rowniez musi byc zainstalowana do poprawnego dzialania:</string>
     <string name="txt_setup_bmw_missing">Nie gotowy do połączenia z BMW:</string>
     <string name="txt_setup_mini_missing">Nie gotowy do połączenia z Mini:</string>
     <string name="btn_install">Instalacja</string>
