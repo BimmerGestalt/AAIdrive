@@ -125,7 +125,9 @@ class TestMusicApp {
 				artist="Artist", album="Album", title="Title")
 		on { getPlaybackPosition() } doReturn PlaybackPosition(false, SystemClock.elapsedRealtime(), 5000L, 180000L)
 		on { isSupportedAction(any()) } doReturn true
+		on { loadDesiredApp() } doReturn ""
 		on { musicSessions } doReturn mock<MusicSessions>()
+		on { isConnected() } doReturn true
 	}
 
 	val inputState = mock<RHMIState> {
@@ -346,6 +348,14 @@ class TestMusicApp {
 		playbackView.redraw()
 		assertEquals(true, mockServer.properties[IDs.COVERART_LARGE_COMPONENT]!![RHMIProperty.PropertyId.VISIBLE.id])
 		assertEquals(false, mockServer.properties[IDs.COVERART_SMALL_COMPONENT]!![RHMIProperty.PropertyId.VISIBLE.id])
+
+		// disconnect the app
+		whenever(musicController.isConnected()) doReturn false
+		whenever(musicController.getMetadata()) doReturn null as MusicMetadata?
+		playbackView.redraw()
+		// the Artist field should say Not Connected
+		assertEquals("<Not Connected>", mockServer.data[IDs.ARTIST_LARGE_MODEL])
+		assertEquals("<Not Connected>", mockServer.data[IDs.ARTIST_SMALL_MODEL])
 	}
 
 	@Test

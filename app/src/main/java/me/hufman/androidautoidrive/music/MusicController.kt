@@ -156,6 +156,11 @@ class MusicController(val context: Context, val handler: Handler) {
 		return AppSettings[AppSettings.KEYS.AUDIO_DESIRED_APP]
 	}
 
+	fun isConnected(): Boolean {
+		return musicBrowser?.mediaController != null ||
+				musicSessions.mediaController != null
+	}
+
 	fun disconnectApp(pause: Boolean = true) {
 		musicBrowser?.mediaController?.unregisterCallback(controllerCallback)
 		musicSessions.mediaController?.unregisterCallback(controllerCallback)

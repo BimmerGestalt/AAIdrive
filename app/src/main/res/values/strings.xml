@@ -56,6 +56,7 @@
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;No Apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Actions</string>
+    <string name="MUSIC_DISCONNECTED">&lt;Not Connected&gt;</string>
     <string name="MUSIC_BROWSE_TITLE">Browse</string>
     <string name="MUSIC_BROWSE_EMPTY">&lt;Empty&gt;</string>
     <string name="MUSIC_BROWSE_LOADING">&lt;Loading&gt;</string>
