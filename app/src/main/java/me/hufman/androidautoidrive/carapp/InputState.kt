@@ -6,7 +6,7 @@ import me.hufman.idriveconnectionkit.rhmi.*
 const val TAG = "InputState"
 
 /** Handles letter entry from the car's input widget */
-open class InputState<T:Any>(val inputComponent: RHMIComponent.Input, val onEntry: (String) -> List<T>?, val onSelect: (T, Int) -> Unit) {
+abstract class InputState<T:Any>(val inputComponent: RHMIComponent.Input) {
 	var input = ""
 	var suggestions: MutableList<T> = ArrayList()
 
@@ -19,10 +19,7 @@ open class InputState<T:Any>(val inputComponent: RHMIComponent.Input, val onEntr
 				else -> input += letter
 			}
 			inputComponent.getResultModel()?.asRaDataModel()?.value = input
-			val newSuggestions = onEntry(input)
-			if (newSuggestions != null) {
-				sendSuggestions(newSuggestions)
-			}
+			onEntry(input)
 		}
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 			val suggestion = suggestions.getOrNull(index)
@@ -47,6 +44,21 @@ open class InputState<T:Any>(val inputComponent: RHMIComponent.Input, val onEntr
 		outputListModel.setValue(outputList, 0, outputList.height, outputList.height)
 	}
 
+	/**
+	 * After a user inputs a letter, or a vocal word, or a delete command
+	 * This callback is called with the new complete input string
+	 * This callback should call sendSuggestions() to update the list of suggestions
+	 */
+	abstract fun onEntry(input: String)
+
+	/**
+	 * This callback is called when the user selects a suggestion
+	 */
+	abstract fun onSelect(item: T, index: Int)
+
+	/**
+	 * This function converts a suggestion item to a displayable text string
+	 */
 	open fun convertRow(row: T): String {
 		return row.toString()
 	}

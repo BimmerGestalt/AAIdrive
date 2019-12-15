@@ -175,18 +175,22 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		mapInputList.setProperty(22, true)
 
 		// set up the components for the input widget
-		stateInputState = InputState(viewInput, { query ->
-			interaction.searchLocations(query)
-			null    // don't update the results now
-		}, { result, i ->
-			selectedResult = result
-			interaction.stopNavigation()
-			if (result.location == null) {
-				interaction.resultInformation(result.id)    // ask for LatLong, to navigate to
-			} else {
-				interaction.navigateTo(result.location)
+		stateInputState = object: InputState<MapResult>(viewInput) {
+			override fun onEntry(input: String) {
+				interaction.searchLocations(input)
 			}
-		})
+
+			override fun onSelect(item: MapResult, index: Int) {
+				selectedResult = item
+				interaction.stopNavigation()
+				if (item.location == null) {
+					interaction.resultInformation(item.id)    // ask for LatLong, to navigate to
+				} else {
+					interaction.navigateTo(item.location)
+				}
+			}
+		}
+
 		viewInput.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
 		viewInput.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
 
