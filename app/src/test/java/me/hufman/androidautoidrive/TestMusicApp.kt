@@ -290,6 +290,58 @@ class TestMusicApp {
 	}
 
 	@Test
+	fun testGlobalRedraw() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+
+		// set the current app and song
+		whenever(musicController.musicBrowser).then {
+			mock<MusicBrowser> {
+				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
+				on { connected } doReturn true
+			}
+		}
+		whenever(musicController.getMetadata()) doReturn MusicMetadata("testId", queueId=10,
+				duration=180000L,
+				icon=mock(), coverArt=mock(),
+				artist="Artist", album="Album", title="Title")
+		val globalState = GlobalMetadata(app, musicController)
+		globalState.redraw()
+
+		// verify global metadata happened
+		assertEquals("Artist", mockServer.data[IDs.GLOBAL_ARTIST_MODEL])
+		assertEquals("Title", mockServer.data[IDs.GLOBAL_TRACK_MODEL])
+		assertEquals("Test2", mockServer.data[IDs.GLOBAL_APP_MODEL])
+		assertEquals("Title", mockServer.data[IDs.IC_TRACK_MODEL])
+		assertEquals("", mockServer.data[IDs.IC_USECASE_MODEL])
+		assertTrue(mockServer.triggeredEvents.containsKey(IDs.MULTIMEDIA_EVENT))
+		assertTrue(mockServer.triggeredEvents.containsKey(IDs.STATUSBAR_EVENT))
+
+		// add a queue
+		whenever(musicController.getQueue()) doAnswer { listOf(
+				MusicMetadata(queueId=10, title="Song 1"),
+				MusicMetadata(queueId=15, title="Song 3"),
+				MusicMetadata(queueId=20, title="Song 6")
+		) }
+		globalState.redraw()
+		assertEquals("EntICPlaylist", mockServer.data[IDs.IC_USECASE_MODEL])
+		val displayedTitles = (mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable).data.map {it[1]}.toTypedArray()
+		val displayedChecks = (mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable).data.map {it[5]}.toTypedArray()
+		assertArrayEquals(arrayOf("Song 1", "Song 3", "Song 6"), displayedTitles)
+		assertArrayEquals(arrayOf(1, 0, 0), displayedChecks)
+
+		// change song, the checkbox should move
+		whenever(musicController.getMetadata()) doReturn MusicMetadata("testId", queueId=20,
+				duration=180000L,
+				icon=mock(), coverArt=mock(),
+				artist="Artist", album="Album", title="Song 6")
+		globalState.redraw()
+		val displayedChecks2 = (mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable).data.map {it[5]}.toTypedArray()
+		assertArrayEquals(arrayOf(0, 0, 1), displayedChecks2)
+	}
+
+	@Test
 	fun testPlaybackRedraw() {
 		val mockServer = MockBMWRemotingServer()
 		val app = RHMIApplicationEtch(mockServer, 1)
