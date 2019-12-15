@@ -214,6 +214,9 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 	private fun showActionsList() {
 		synchronized(actions) {
 			actions.clear()
+			if (initialFolder == null && browseView.musicController.musicBrowser?.musicAppInfo?.searchable == true) {
+				actions.add(BrowseAction.SEARCH)
+			}
 			if (initialFolder == null && browseView.locationStack.size > 1) {
 				// the top of locationStack is always a single null element for the root
 				// we have previously browsed somewhere if locationStack.size > 1
@@ -221,9 +224,6 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 			}
 			if (musicList.isNotEmpty()) {
 				actions.add(BrowseAction.FILTER)
-			}
-			if (browseView.musicController.musicBrowser?.musicAppInfo?.searchable == true) {
-				actions.add(BrowseAction.SEARCH)
 			}
 			actionsListComponent.getModel()?.setValue(actionsListModel, 0, actionsListModel.height, actionsListModel.height)
 		}

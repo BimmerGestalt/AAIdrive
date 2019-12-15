@@ -958,10 +958,10 @@ class TestMusicApp {
 		await().untilAsserted {
 			assertEquals(4, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
-		assertArrayEquals(arrayOf(arrayOf("", "", "Filter"), arrayOf("", "", "Search")), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data)
+		assertArrayEquals(arrayOf(arrayOf("", "", "Search"), arrayOf("", "", "Filter")), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data)
 
 		// try clicking the action
-		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
+		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
 		// there should be action handlers now
 		assertNotNull(app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction())
