@@ -155,6 +155,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		menuMap.getAction()?.asRAAction()?.rhmiActionCallback = menuList.getAction()?.asRAAction()?.rhmiActionCallback
 
 		// set up the components on the map
+		// https://hufman.github.io/BMWConnectedAnalysis/rhmi-resources/
 		stateMap.app.setProperty(stateMap.id, 24, 3)    // set to wide-screen "tablestate"
 		stateMap.app.setProperty(stateMap.id, 26, "1,0,7")
 		viewFullMap.setVisible(true)
