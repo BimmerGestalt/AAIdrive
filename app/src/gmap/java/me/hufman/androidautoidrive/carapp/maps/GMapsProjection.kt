@@ -32,7 +32,7 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		window.setType(WindowManager.LayoutParams.TYPE_PRIVATE_PRESENTATION)
+		window?.setType(WindowManager.LayoutParams.TYPE_PRIVATE_PRESENTATION)
 		setContentView(R.layout.gmaps_projection)
 
 		gmapView.onCreate(savedInstanceState)

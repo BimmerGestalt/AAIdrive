@@ -15,6 +15,7 @@ import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
+import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
@@ -63,9 +64,9 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 
 		// create the app in the car
 		val rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.mapview", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive.mapview", "me.hufman"))
-		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getUiDescription()?.readBytes(), BMWRemoting.RHMIResourceType.DESCRIPTION)
-//		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getTextsDB("common")?.readBytes(), BMWRemoting.RHMIResourceType.TEXTDB)
-		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getImagesDB("common")?.readBytes(), BMWRemoting.RHMIResourceType.IMAGEDB)
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
+//		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB("common"))
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB("common"))
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		carApp = RHMIApplicationSynchronized(RHMIApplicationEtch(carConnection, rhmiHandle))
@@ -116,11 +117,9 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		menuMap.setVisible(true)
 		menuMap.setSelectable(true)
 		menuMap.setProperty(6, "350,0,*")
-		menuMap.setProperty(10, 90)
 		menuMap.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
 
 		menuList.setProperty(6, "100,0,*")
-		menuList.setProperty(19, 100)   // force set a Y position, MY2019 seems to float up
 		menuList.setVisible(true)
 		menuList.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {  listIndex ->
 			val destStateId = when (listIndex) {
@@ -176,18 +175,22 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		mapInputList.setProperty(22, true)
 
 		// set up the components for the input widget
-		stateInputState = InputState(viewInput, { query ->
-			interaction.searchLocations(query)
-			null    // don't update the results now
-		}, { result, i ->
-			selectedResult = result
-			interaction.stopNavigation()
-			if (result.location == null) {
-				interaction.resultInformation(result.id)    // ask for LatLong, to navigate to
-			} else {
-				interaction.navigateTo(result.location)
+		stateInputState = object: InputState<MapResult>(viewInput) {
+			override fun onEntry(input: String) {
+				interaction.searchLocations(input)
 			}
-		})
+
+			override fun onSelect(item: MapResult, index: Int) {
+				selectedResult = item
+				interaction.stopNavigation()
+				if (item.location == null) {
+					interaction.resultInformation(item.id)    // ask for LatLong, to navigate to
+				} else {
+					interaction.navigateTo(item.location)
+				}
+			}
+		}
+
 		viewInput.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
 		viewInput.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
 

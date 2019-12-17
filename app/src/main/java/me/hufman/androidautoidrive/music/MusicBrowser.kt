@@ -25,14 +25,18 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 		set(value) { field = value; if (connected) value?.run() }
 
 	init {
-		val component = ComponentName(musicAppInfo.packageName, musicAppInfo.className)
-		Log.i(TAG, "Opening connection to ${musicAppInfo.name}")
-		// load the mediaBrowser on the UI thread
-		handler.post {
-			Log.i(TAG, "Connecting to the app ${musicAppInfo.name}")
-			connecting = true
-			mediaBrowser = MediaBrowserCompat(context, component, ConnectionCallback(), null)
-			mediaBrowser?.connect()
+		if (musicAppInfo.className == null) {
+			Log.i(TAG, "Skipping connection to ${musicAppInfo.name}, no className found")
+		} else {
+			val component = ComponentName(musicAppInfo.packageName, musicAppInfo.className)
+			Log.i(TAG, "Opening connection to ${musicAppInfo.name}")
+			// load the mediaBrowser on the UI thread
+			handler.post {
+				Log.i(TAG, "Connecting to the app ${musicAppInfo.name}")
+				connecting = true
+				mediaBrowser = MediaBrowserCompat(context, component, ConnectionCallback(), null)
+				mediaBrowser?.connect()
+			}
 		}
 	}
 
@@ -76,7 +80,7 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 		return when (musicAppInfo.packageName) {
 			"com.spotify.music" -> "com.google.android.projection.gearhead---spotify_media_browser_root_android_auto"   // the Android Auto root for Spotify
 			"com.aspiro.tidal" -> "__ROOT_LOGGED_IN__"   // Tidal Music
-			"com.apple.android.music" -> "__ROOT__"     // Apple Music
+			"com.apple.android.music" -> "__AUTO_ROOT__"     // Apple Music
 			else -> mediaBrowser?.root ?: "disconnected root"
 		}
 	}
@@ -105,10 +109,12 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 			}
 			mediaBrowser?.disconnect()
 
-			Log.i(TAG, "Connecting to the app ${musicAppInfo.name}")
-			val component = ComponentName(musicAppInfo.packageName, musicAppInfo.className)
-			mediaBrowser = MediaBrowserCompat(context, component, ConnectionCallback(), null)
-			mediaBrowser?.connect()
+			if (musicAppInfo.className != null) {
+				Log.i(TAG, "Connecting to the app ${musicAppInfo.name}")
+				val component = ComponentName(musicAppInfo.packageName, musicAppInfo.className)
+				mediaBrowser = MediaBrowserCompat(context, component, ConnectionCallback(), null)
+				mediaBrowser?.connect()
+			}
 		}
 	}
 
@@ -136,7 +142,16 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 						mediaBrowser?.unsubscribe(browsePath)
 						deferred.complete(children)
 					}
+
+					override fun onError(parentId: String, options: Bundle) {
+						onError(parentId)
+					}
+
+					override fun onChildrenLoaded(parentId: String, children: MutableList<MediaBrowserCompat.MediaItem>, options: Bundle) {
+						onChildrenLoaded(parentId, children)
+					}
 				})
+
 				// now we wait for the results
 				withTimeout(timeout) {
 					while (!deferred.isCompleted) {

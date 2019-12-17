@@ -13,7 +13,25 @@ object NotificationsState {
 	})
 	var selectedNotification: CarNotification? = null
 
-	fun getNotificationByKey(key: String): CarNotification? {
-		return notifications.find { it.key == key }
+	fun getNotificationByKey(key: String?): CarNotification? {
+		key ?: return null
+		return synchronized(notifications) {
+			notifications.find { it.key == key }
+		}
+	}
+
+	/**
+	 * Return the selected notification, but only if it is still active
+	 */
+	fun fetchSelectedNotification(): CarNotification? {
+		return synchronized(notifications) {
+			val key = selectedNotification?.key
+			if (key != null) {
+				val currentNotification = getNotificationByKey(key)
+				selectedNotification = currentNotification
+			}
+			selectedNotification
+		}
+
 	}
 }

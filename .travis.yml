@@ -15,7 +15,7 @@ before_install:
   -in keystore.jks.enc -out keystore.jks -d; fi'
 script: "./gradlew check"
 after_success:
-- "./gradlew testGmapDebugUnitTestCoverage coveralls"
+- "./gradlew testGmapNonalyticsDebugUnitTestCoverage coveralls"
 - "./gradlew assembleNomap"
 - "echo Found the following artifacts:; find app/build/outputs"
 

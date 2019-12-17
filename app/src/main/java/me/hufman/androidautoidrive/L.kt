@@ -18,6 +18,7 @@ object L {
 	var MUSIC_APPLIST_TITLE = "Apps"
 	var MUSIC_APPLIST_EMPTY = "<No Apps>"
 	var MUSIC_CUSTOMACTIONS_TITLE = "Actions"
+	var MUSIC_DISCONNECTED = "<Not Connected>"
 	var MUSIC_BROWSE_TITLE = "Browse"
 	var MUSIC_BROWSE_EMPTY = "<Empty>"
 	var MUSIC_BROWSE_LOADING = "<Loading>"

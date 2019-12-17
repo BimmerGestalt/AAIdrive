@@ -26,22 +26,23 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 	}
 
 	fun redraw() {
-		val app = if (!controller.getPlaybackPosition().playbackPaused) controller.currentApp?.musicAppInfo else null
+		val app = if (!controller.getPlaybackPosition().playbackPaused) controller.musicBrowser?.musicAppInfo else null
 		if (app != null && app != displayedApp) {
 			showApp(app)
 		}
-		displayedApp = app
 
 		val song = controller.getMetadata()
 		if (song != null && song != displayedSong) {
 			showSong(song)
 		}
-		displayedSong = song
 
 		val queue = controller.getQueue()
-		if (queue != displayedQueue) {
-			showQueue(queue)
+		if (queue != displayedQueue || song != displayedSong) {
+			showQueue(queue, song)
 		}
+
+		displayedApp = app
+		displayedSong = song
 		displayedQueue = queue
 	}
 
@@ -68,7 +69,7 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 	/** TODO Verify this api
 	 * my test Mini doesn't support it when Spotify tries it
 	 * */
-	private fun showQueue(queue: List<MusicMetadata>?) {
+	private fun showQueue(queue: List<MusicMetadata>?, currentSong: MusicMetadata?) {
 		if (queue == null || queue.isEmpty()) {
 			instrumentCluster.getUseCaseModel()?.asRaDataModel()?.value = ""
 		} else {
@@ -76,7 +77,7 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 
 			val adapter = object: RHMIListAdapter<MusicMetadata>(7, queue) {
 				override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
-					val selected = item.queueId == displayedSong?.queueId
+					val selected = item.queueId == currentSong?.queueId
 					return arrayOf(
 							index,  // index
 							item.title ?: "",   // title

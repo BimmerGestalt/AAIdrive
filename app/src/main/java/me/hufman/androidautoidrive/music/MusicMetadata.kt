@@ -100,6 +100,8 @@ data class MusicMetadata(val mediaId: String? = null,
 		if (title != other.title) return false
 		if (trackNumber != other.trackNumber) return false
 		if (trackCount != other.trackCount) return false
+		if (coverArtUri != other.coverArtUri) return false
+		if ((coverArt == null) != (other.coverArt == null)) return false
 
 		return true
 	}

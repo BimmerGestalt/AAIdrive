@@ -3,7 +3,6 @@ package me.hufman.androidautoidrive.carapp.music.views
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import kotlinx.coroutines.*
-import kotlinx.coroutines.android.asCoroutineDispatcher
 import me.hufman.androidautoidrive.awaitPending
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
@@ -132,7 +131,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 	fun show() {
 		// show the name of the directory
 		folderNameLabel.getModel()?.asRaDataModel()?.value = when(shortcutSteps) {
-			0 -> folder?.title ?: browseView.musicController.currentApp?.musicAppInfo?.name ?: ""
+			0 -> folder?.title ?: browseView.musicController.musicBrowser?.musicAppInfo?.name ?: ""
 			1 -> "${initialFolder?.title ?: ""} / ${folder?.title ?: ""}"
 			else -> "${initialFolder?.title ?: ""} /../ ${folder?.title ?: ""}"
 		}
@@ -146,6 +145,7 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 		}
 
 		// start loading data
+		loaderJob?.cancel()
 		loaderJob = launch(Dispatchers.IO) {
 			musicListComponent.setEnabled(false)
 			currentListModel = loadingList
@@ -214,6 +214,9 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 	private fun showActionsList() {
 		synchronized(actions) {
 			actions.clear()
+			if (initialFolder == null && browseView.musicController.musicBrowser?.musicAppInfo?.searchable == true) {
+				actions.add(BrowseAction.SEARCH)
+			}
 			if (initialFolder == null && browseView.locationStack.size > 1) {
 				// the top of locationStack is always a single null element for the root
 				// we have previously browsed somewhere if locationStack.size > 1
@@ -221,9 +224,6 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 			}
 			if (musicList.isNotEmpty()) {
 				actions.add(BrowseAction.FILTER)
-			}
-			if (browseView.musicController.currentApp?.musicAppInfo?.searchable == true) {
-				actions.add(BrowseAction.SEARCH)
 			}
 			actionsListComponent.getModel()?.setValue(actionsListModel, 0, actionsListModel.height, actionsListModel.height)
 		}
@@ -234,62 +234,67 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 	}
 
 	private fun showFilterInput(inputComponent: RHMIComponent.Input) {
-		val inputState = InputState(inputComponent, { entry ->
-			if (entry.isNotEmpty()) {
+		val inputState = object: InputState<MusicMetadata>(inputComponent) {
+			override fun onEntry(input: String) {
 				val suggestions = musicList.asSequence().filter {
 					(it.title ?: "").split(Regex("\\s+")).any { word ->
-						word.toLowerCase().startsWith(entry.toLowerCase())
+						word.toLowerCase().startsWith(input.toLowerCase())
 					}
 				} + musicList.asSequence().filter {
-					it.title?.toLowerCase()?.contains(entry.toLowerCase()) ?: false
+					it.title?.toLowerCase()?.contains(input.toLowerCase()) ?: false
 				}
-				suggestions.take(15).distinct().toList()
-			} else { null }
-		}, { entry, index ->
-			previouslySelected = entry  // update the selection state for future redraws
-			if (entry.browseable) {
-				val nextPage = browseView.pushBrowsePage(entry)
-				inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
+				sendSuggestions(suggestions.take(15).distinct().toList())
 			}
-			else {
-				if (entry.playable) {
-					browseView.playSong(entry)
+
+			override fun onSelect(item: MusicMetadata, index: Int) {
+				previouslySelected = item  // update the selection state for future redraws
+				if (item.browseable) {
+					val nextPage = browseView.pushBrowsePage(item)
+					inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
 				}
-				inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
+				else {
+					if (item.playable) {
+						browseView.playSong(item)
+					}
+					inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
+				}
 			}
-		})
+		}
 	}
 
 	private fun showSearchInput(inputComponent: RHMIComponent.Input) {
-		var inputStateClosure: InputState<MusicMetadata>? = null
-		val inputState = object : InputState<MusicMetadata>(inputComponent, { query ->
-			if (query.length >= 2) {
-				searchJob?.cancel()
-				searchJob = launch(Dispatchers.IO) {
-					inputComponent.getSuggestModel()?.asRaListModel()?.setValue(searchingList, 0, searchingList.height, searchingList.height)
-					val suggestionsDeferred = browseView.musicController.searchAsync(query)
-					val suggestions = suggestionsDeferred.awaitPending(LOADING_TIMEOUT) {
-						Log.d(TAG, "Searching ${browseView.musicController.currentApp?.musicAppInfo?.name} for \"$query\" timed out, retrying")
-						inputStateClosure?.onEntry?.invoke(query)
-						return@launch
+		val inputState = object : InputState<MusicMetadata>(inputComponent) {
+			override fun onEntry(input: String) {
+				val inputState = this
+				if (input.length >= 2) {
+					searchJob?.cancel()
+					searchJob = launch(Dispatchers.IO) {
+						inputComponent.getSuggestModel()?.asRaListModel()?.setValue(searchingList, 0, searchingList.height, searchingList.height)
+						val suggestionsDeferred = browseView.musicController.searchAsync(input)
+						val suggestions = suggestionsDeferred.awaitPending(LOADING_TIMEOUT) {
+							Log.d(TAG, "Searching ${browseView.musicController.musicBrowser?.musicAppInfo?.name} for \"$input\" timed out, retrying")
+							inputState.onEntry(input)
+							return@launch
+						}
+						inputState.sendSuggestions(suggestions)
 					}
-					inputStateClosure?.sendSuggestions(suggestions)
 				}
 			}
-			null    // have to wait for the results to come back
-		}, { entry, index ->
-			previouslySelected = entry  // update the selection state for future redraws
-			if (entry.browseable) {
-				val nextPage = browseView.pushBrowsePage(entry)
-				inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
-			}
-			else {
-				if (entry.playable) {
-					browseView.playSong(entry)
+
+			override fun onSelect(item: MusicMetadata, index: Int) {
+				previouslySelected = item  // update the selection state for future redraws
+				if (item.browseable) {
+					val nextPage = browseView.pushBrowsePage(item)
+					inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
 				}
-				inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
+				else {
+					if (item.playable) {
+						browseView.playSong(item)
+					}
+					inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
+				}
 			}
-		}) {
+
 			override fun convertRow(row: MusicMetadata): String {
 				if (row.subtitle != null) {
 					return "${row.title}\n${row.subtitle}"
@@ -298,7 +303,6 @@ class BrowsePageView(val state: RHMIState, val browseView: BrowseView, var folde
 				}
 			}
 		}
-		inputStateClosure = inputState
 	}
 
 	fun hide() {

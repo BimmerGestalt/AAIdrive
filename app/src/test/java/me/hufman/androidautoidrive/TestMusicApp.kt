@@ -125,6 +125,9 @@ class TestMusicApp {
 				artist="Artist", album="Album", title="Title")
 		on { getPlaybackPosition() } doReturn PlaybackPosition(false, SystemClock.elapsedRealtime(), 5000L, 180000L)
 		on { isSupportedAction(any()) } doReturn true
+		on { loadDesiredApp() } doReturn ""
+		on { musicSessions } doReturn mock<MusicSessions>()
+		on { isConnected() } doReturn true
 	}
 
 	val inputState = mock<RHMIState> {
@@ -243,7 +246,7 @@ class TestMusicApp {
 		verify(musicController, atLeastOnce()).play()
 
 		// click entrybutton again after an active app is set
-		whenever(musicController.currentApp).then {
+		whenever(musicController.musicBrowser).then {
 			mock<MusicBrowser> {
 				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
 				on { connected } doReturn true
@@ -287,6 +290,58 @@ class TestMusicApp {
 	}
 
 	@Test
+	fun testGlobalRedraw() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+
+		// set the current app and song
+		whenever(musicController.musicBrowser).then {
+			mock<MusicBrowser> {
+				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
+				on { connected } doReturn true
+			}
+		}
+		whenever(musicController.getMetadata()) doReturn MusicMetadata("testId", queueId=10,
+				duration=180000L,
+				icon=mock(), coverArt=mock(),
+				artist="Artist", album="Album", title="Title")
+		val globalState = GlobalMetadata(app, musicController)
+		globalState.redraw()
+
+		// verify global metadata happened
+		assertEquals("Artist", mockServer.data[IDs.GLOBAL_ARTIST_MODEL])
+		assertEquals("Title", mockServer.data[IDs.GLOBAL_TRACK_MODEL])
+		assertEquals("Test2", mockServer.data[IDs.GLOBAL_APP_MODEL])
+		assertEquals("Title", mockServer.data[IDs.IC_TRACK_MODEL])
+		assertEquals("", mockServer.data[IDs.IC_USECASE_MODEL])
+		assertTrue(mockServer.triggeredEvents.containsKey(IDs.MULTIMEDIA_EVENT))
+		assertTrue(mockServer.triggeredEvents.containsKey(IDs.STATUSBAR_EVENT))
+
+		// add a queue
+		whenever(musicController.getQueue()) doAnswer { listOf(
+				MusicMetadata(queueId=10, title="Song 1"),
+				MusicMetadata(queueId=15, title="Song 3"),
+				MusicMetadata(queueId=20, title="Song 6")
+		) }
+		globalState.redraw()
+		assertEquals("EntICPlaylist", mockServer.data[IDs.IC_USECASE_MODEL])
+		val displayedTitles = (mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable).data.map {it[1]}.toTypedArray()
+		val displayedChecks = (mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable).data.map {it[5]}.toTypedArray()
+		assertArrayEquals(arrayOf("Song 1", "Song 3", "Song 6"), displayedTitles)
+		assertArrayEquals(arrayOf(1, 0, 0), displayedChecks)
+
+		// change song, the checkbox should move
+		whenever(musicController.getMetadata()) doReturn MusicMetadata("testId", queueId=20,
+				duration=180000L,
+				icon=mock(), coverArt=mock(),
+				artist="Artist", album="Album", title="Song 6")
+		globalState.redraw()
+		val displayedChecks2 = (mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable).data.map {it[5]}.toTypedArray()
+		assertArrayEquals(arrayOf(0, 0, 1), displayedChecks2)
+	}
+
+	@Test
 	fun testPlaybackRedraw() {
 		val mockServer = MockBMWRemotingServer()
 		val app = RHMIApplicationEtch(mockServer, 1)
@@ -295,7 +350,7 @@ class TestMusicApp {
 		val playbackView = PlaybackView(state, musicController, mapOf("147.png" to "Placeholder".toByteArray()), phoneAppResources)
 
 		whenever(musicController.getQueue()).doAnswer {null}
-		whenever(musicController.currentApp).then {
+		whenever(musicController.musicBrowser).then {
 			mock<MusicBrowser> {
 				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
 			}
@@ -345,6 +400,14 @@ class TestMusicApp {
 		playbackView.redraw()
 		assertEquals(true, mockServer.properties[IDs.COVERART_LARGE_COMPONENT]!![RHMIProperty.PropertyId.VISIBLE.id])
 		assertEquals(false, mockServer.properties[IDs.COVERART_SMALL_COMPONENT]!![RHMIProperty.PropertyId.VISIBLE.id])
+
+		// disconnect the app
+		whenever(musicController.isConnected()) doReturn false
+		whenever(musicController.getMetadata()) doReturn null as MusicMetadata?
+		playbackView.redraw()
+		// the Artist field should say Not Connected
+		assertEquals("<Not Connected>", mockServer.data[IDs.ARTIST_LARGE_MODEL])
+		assertEquals("<Not Connected>", mockServer.data[IDs.ARTIST_SMALL_MODEL])
 	}
 
 	@Test
@@ -475,7 +538,7 @@ class TestMusicApp {
 				MusicAppInfo("Test2", mock(), "package", "class")
 			}
 		}
-		whenever(musicController.currentApp) doReturn musicAppInfo
+		whenever(musicController.musicBrowser) doReturn musicAppInfo
 
 		// start browsing
 		val page1 = browseView.pushBrowsePage(null)
@@ -857,7 +920,7 @@ class TestMusicApp {
 		whenever(musicController.searchAsync(anyOrNull())) doAnswer { searchResults }
 
 		// pretend that the app isn't searchable
-		whenever(musicController.currentApp).then {
+		whenever(musicController.musicBrowser).then {
 			mock<MusicBrowser> {
 				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
 			}
@@ -872,7 +935,7 @@ class TestMusicApp {
 		assertEquals(0, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // should not show Filter or Search
 
 		// now pretend that the app IS searchable
-		whenever(musicController.currentApp).then {
+		whenever(musicController.musicBrowser).then {
 			mock<MusicBrowser> {
 				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class").apply { searchable = true }
 			}
@@ -895,10 +958,10 @@ class TestMusicApp {
 		await().untilAsserted {
 			assertEquals(4, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
-		assertArrayEquals(arrayOf(arrayOf("", "", "Filter"), arrayOf("", "", "Search")), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data)
+		assertArrayEquals(arrayOf(arrayOf("", "", "Search"), arrayOf("", "", "Filter")), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data)
 
 		// try clicking the action
-		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
+		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
 		// there should be action handlers now
 		assertNotNull(app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction())
@@ -955,5 +1018,83 @@ class TestMusicApp {
 		verify(musicController).customAction(CustomAction(
 				"packageName", "actionName", "Custom Name", null, null
 		))
+	}
+
+	@Test
+	fun testMusicSessions() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = MusicApp(carAppResources, phoneAppResources, musicAppDiscovery, musicController)
+		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
+
+		val discoveryListenerCapture = ArgumentCaptor.forClass(Runnable::class.java)
+		verify(musicAppDiscovery).listener = discoveryListenerCapture.capture()
+		verify(musicAppDiscovery, atLeastOnce()).discoverApps() // discover apps when it starts up
+
+		// tell the app about the current list of apps, without showing the app list
+		whenever(musicAppDiscovery.validApps).then {
+			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
+					MusicAppInfo("Test2", mock(), "package", "class"))
+		}
+		discoveryListenerCapture.value.run()
+		assertNull("Didn't send an app list to the car", mockServer.data[IDs.APPLIST_LISTMODEL])
+
+		// show the app list
+		mockClient.rhmi_onHmiEvent(1, "unused", IDs.APPLIST_STATE, 1, mapOf(4.toByte() to true))
+		verify(musicAppDiscovery, atLeastOnce()).discoverAppsAsync() // discover apps when the App List is shown
+		val displayedNames = (mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data.map {
+			it[2]
+		}
+		assertEquals("Updates the app list in the car", listOf("Test1", "Test2"), displayedNames)
+
+		// add a new app to the list
+		whenever(musicAppDiscovery.validApps).then {
+			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
+					MusicAppInfo("Test3", mock(), "package3", "class"))
+		}
+		discoveryListenerCapture.value.run()
+		val displayedNamesNew = (mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data.map {
+			it[2]
+		}
+		assertEquals("Updates the app list in the car", listOf("Test1", "Test3"), displayedNamesNew)
+		(mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data.forEach { row ->
+			assertEquals("No checkbox in app list", "", row[0])
+		}
+
+		// a new music app starts playing, which we don't know about
+		val nowPlayingApp = MusicAppInfo("Test4", mock(), "package4", "UNUSED")
+		whenever(musicController.musicSessions).then {
+			mock<MusicSessions> {
+				on { getPlayingApp() } doReturn nowPlayingApp
+			}
+		}
+		discoveryListenerCapture.value.run()
+		verify(musicController).connectApp(same(nowPlayingApp))
+		// async sets the musicBrowser to the correct connection
+		whenever(musicController.musicBrowser).then { mock<MusicBrowser> {
+			on { musicAppInfo } doReturn nowPlayingApp
+		}}
+		whenever(musicAppDiscovery.validApps).then {
+			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
+					MusicAppInfo("Test3", mock(), "package3", "class"),
+					MusicAppInfo("Test4", mock(), "package4", null))
+		}
+		app.redraw()
+		assertNotEquals("Sets the checkbox in the app list", "", (mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data[2][0])
+
+		// a new music session that we know can browse opens up
+		reset(musicController)
+		whenever(musicController.musicSessions).then {
+			mock<MusicSessions> {
+				on { getPlayingApp() } doReturn nowPlayingApp
+			}
+		}
+		val browseableApp = MusicAppInfo("Test4", mock(), "package4", "class")
+		whenever(musicAppDiscovery.validApps).then {
+			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
+					browseableApp)
+		}
+		discoveryListenerCapture.value.run()
+		verify(musicController).connectApp(same(browseableApp))
 	}
 }

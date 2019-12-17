@@ -8,6 +8,7 @@ import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.Utils.loadZipfile
 import me.hufman.androidautoidrive.carapp.RHMIApplicationIdempotent
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
+import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicController
@@ -26,6 +27,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 
 	val avContext = AVContextHandler(carApp, musicController, phoneAppResources)
 	val globalMetadata = GlobalMetadata(carApp, musicController)
+	var appListViewVisible = false
 	var playbackViewVisible = false
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
@@ -45,9 +47,9 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 
 		// create the app in the car
 		val rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.music", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive.music", "me.hufman"))
-		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getUiDescription()?.readBytes(), BMWRemoting.RHMIResourceType.DESCRIPTION)
-		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getTextsDB(IDriveConnectionListener.brand ?: "common")?.readBytes(), BMWRemoting.RHMIResourceType.TEXTDB)
-		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common")?.readBytes(), BMWRemoting.RHMIResourceType.IMAGEDB)
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB(IDriveConnectionListener.brand ?: "common"))
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		// set up the app in the car
@@ -85,6 +87,19 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 
 		musicAppDiscovery.listener = Runnable {
 			avContext.updateApps(musicAppDiscovery.validApps)
+			// redraw the app list
+			if (appListViewVisible) {
+				appSwitcherView.redraw()
+			}
+			// switch the interface to the currently playing app
+			val nowPlaying = musicController.musicSessions.getPlayingApp()
+			val changedApp = musicController.musicSessions.mediaController?.packageName != nowPlaying?.packageName
+			if (nowPlaying != null && changedApp) {
+				val discoveredApp = musicAppDiscovery.validApps.firstOrNull {
+					it == nowPlaying
+				} ?: nowPlaying
+				musicController.connectApp(discoveredApp)
+			}
 		}
 		musicAppDiscovery.discoverApps()    // trigger the discovery, to show the apps when the handler starts running
 
@@ -113,10 +128,13 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 			Log.i(TAG, msg)
 			try {
 				if (componentId == appSwitcherView.state.id &&
-						eventId == 1 && // FOCUS event
-						args?.get(4.toByte()) as? Boolean == true
+						eventId == 1 // FOCUS event
 				) {
-					appSwitcherView.show()
+					appListViewVisible = args?.get(4.toByte()) as? Boolean == true
+					if (appListViewVisible) {
+						appSwitcherView.show()
+						musicAppDiscovery.discoverAppsAsync()
+					}
 				}
 				if (componentId == playbackView.state.id &&
 						eventId == 11 // VISIBLE event
@@ -211,12 +229,12 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 	private fun initWidgets() {
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
 			it.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-				if (musicController.currentApp == null || musicController.currentApp?.connected != true) {
+				if (musicController.musicSessions.mediaController == null && musicController.musicBrowser?.connected != true) {
 					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
 				} else {
 					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
 
-					val currentApp = musicController.currentApp?.musicAppInfo
+					val currentApp = musicController.musicBrowser?.musicAppInfo
 					if (currentApp != null) {
 						avContext.av_requestContext(currentApp)
 					}
@@ -233,6 +251,9 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 	}
 
 	fun redraw() {
+		if (appListViewVisible) {
+			appSwitcherView.redraw()
+		}
 		if (playbackViewVisible) {
 			playbackView.redraw()
 		}

@@ -75,7 +75,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 
 	init {
 		val api_key = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-				.metaData.getString("com.google.android.geo.API_KEY")
+				.metaData.getString("com.google.android.geo.API_KEY") ?: ""
 		Places.initialize(context, api_key)
 		placesClient = Places.createClient(context)
 	}

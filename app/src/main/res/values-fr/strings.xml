@@ -17,10 +17,10 @@
     <string name="lbl_widescreen_map">Carte Elargie</string>
     <string name="gmapStyleLabel">Style de Carte</string>
     <string name="lbl_music_apps">Applications de Musique</string>
-    <string name="imgdescAppIcon">Icône de l\'Application</string>
-    <string name="imgdescConnectable">Connectable</string>
-    <string name="imgdescBrowseable">Navigable</string>
-    <string name="imgdescSearchable">Consultable</string>
+    <string name="musicAppIcon">Icône de l\'Application</string>
+    <string name="musicAppConnectable">Connectable</string>
+    <string name="musicAppBrowseable">Navigable</string>
+    <string name="musicAppSearchable">Consultable</string>
     <string name="enable_audio_context">Demande de Focus Audio</string>
     <string name="connectionStatusMissingConnectedApp">Applications Connected ou Connected Classic non trouvées</string>
     <string name="connectionStatusWaiting">En Attente de Connection</string>

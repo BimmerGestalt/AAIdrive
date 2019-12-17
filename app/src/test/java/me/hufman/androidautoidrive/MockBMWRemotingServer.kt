@@ -36,6 +36,9 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 		waitForApp.countDown()
 	}
 
+	override fun rhmi_checkResource(hash: ByteArray?, handle: Int?, size: Int?, name: String?, type: BMWRemoting.RHMIResourceType?): Boolean {
+		return false
+	}
 	override fun rhmi_setResource(handle: Int?, data: ByteArray?, type: BMWRemoting.RHMIResourceType?) {
 		if (type != null && data != null)
 			resources[type] = data

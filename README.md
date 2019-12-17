@@ -34,32 +34,42 @@ Implemented Features
 
   - Phone Notifications
     - Popup about new notifications
+    - Supports Dismiss, Mark As Read, or other notification actions
   - Google Maps
     - Basic search and routing
-    - Not built by default, showing Google Maps in a car is against the Maps API license
+    - Includes some dark themes
+    - Not compiled by default, because showing Google Maps in a car is against the Maps API license
   - Control of Android Auto compatible music apps
     - Supports browsing and searching apps' music libraries
     - Supports selecting from a list of currently-queued songs, as well as basic back/next control
     - Integrates into the car's audio context, for automatic resume and hardware button control
+    - Supports controlling any active music session, even apps that aren't Android Auto compatible
+    - Instantly updates the screen to follow the active app
     - Tested working apps:
+      - [AntennaPod](https://play.google.com/store/apps/details?id=de.danoeh.antennapod)
       - [AP News](https://play.google.com/store/apps/details?id=mnn.Android)
+      - [Apple Music](https://play.google.com/store/apps/details?id=com.apple.android.music)
       - [Black Player](https://play.google.com/store/apps/details?id=com.kodarkooperativet.blackplayerfree)
+      - [Castbox](https://play.google.com/store/apps/details?id=fm.castbox.audiobook.radio.podcast)
       - [Dash Player](https://play.google.com/store/apps/details?id=com.dashradio.dash)
       - [DSub](https://play.google.com/store/apps/details?id=github.daneren2005.dsub)
+      - [Energy Radio](https://play.google.com/store/apps/details?id=radioenergy.app)
       - [iVooz](https://play.google.com/store/apps/details?id=com.ivoox.app)
       - [Media Monkey](https://play.google.com/store/apps/details?id=com.ventismedia.android.mediamonkey)
       - [ntv Nachrichten](https://play.google.com/store/apps/details?id=de.lineas.lit.ntv.android)
       - [Player FM](https://play.google.com/store/apps/details?id=fm.player)
       - [Plex](https://play.google.com/store/apps/details?id=com.plexapp.android) (only music and podcasts)
       - [PowerAmp](https://play.google.com/store/apps/details?id=com.maxmpz.audioplayer)
+      - [Retro Music Player](https://play.google.com/store/apps/details?id=code.name.monkey.retromusic)
       - [Rocket Player](https://play.google.com/store/apps/details?id=com.jrtstudio.AnotherMusicPlayer)
       - [Scanner Radio](https://play.google.com/store/apps/details?id=com.scannerradio)
       - [SiriusXM](https://play.google.com/store/apps/details?id=com.sirius)
       - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android)
       - Spotify (up to [version 8.4.96.953](https://www.apkhere.com/down/com.spotify.music_8.4.96.953_free))
       - [Tidal](https://play.google.com/store/apps/details?id=com.aspiro.tidal)
+      - [Virgin Radio Italy](https://play.google.com/store/apps/details?id=it.froggy.android.virginradio)
       - [VLC For Android](https://play.google.com/store/apps/details?id=org.videolan.vlc)
-      - [YouTube](https://play.google.com/store/apps/details?id=com.google.android.youtube) (only music previous/next control, no video)
+      - [YouTube](https://play.google.com/store/apps/details?id=com.google.android.youtube) (only back/next control, no video display)
 
 Integration Points
 ------------------
@@ -79,9 +89,9 @@ Limitations
 Due to the unofficial reverse-engineered nature of this project, it has some limitations:
 
   - The main menu entries' icons and text can't be altered, and so do not look exactly correct
-  - The individual music app icons are not fully functional, but they do switch the active music source
+  - The individual music source icons are not fully functional, but they do switch the active music source
   - Android Oreo disabled Android Open Accessory Protocol 2 audio output, which is required to play audio over the app's USB connection in model years 2014-2017. Please disable the app option "Request Audio Focus" and use Bluetooth audio
-  - Some Android Auto music apps enforce a whitelist of clients, preventing this app from connecting and controlling them. These music apps are unavailable:
+  - Some Android Auto music apps enforce a whitelist of clients, preventing this app from launching them or browsing their libraries. However, once they are running, they can be controlled. For example, these popular music apps can not be launched, they must be started manually:
     - Amazon Music
     - Audible
     - Bandcamp
@@ -113,3 +123,5 @@ Build Instructions
   - (Optional) Add a [Google Maps API key](https://developers.google.com/maps/documentation/android-sdk/signup) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_GmapsApiKey`. This key should have access to Maps SDK for Android, Places API, and Directions API.
   - Check out the project in Android Studio, then `Build > Make Project`
   - From the commandline, with an Android build environment set up, `./gradlew assemble` should work too
+
+Besides building the entire project, Android Studio also offers a convenient "Run app" method to build and directly install to a connected phone. Use the Build Variants panel to select a specific version to install.

@@ -10,10 +10,13 @@ import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.DeferredUpdate
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
-import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import me.hufman.androidautoidrive.carapp.RHMIUtils
+import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
+import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
+import me.hufman.androidautoidrive.carapp.notifications.views.PopupView
+import me.hufman.androidautoidrive.removeFirst
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
@@ -32,32 +35,18 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		const val INTENT_NEW_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.NEW_NOTIFICATION"
 		const val EXTRA_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.EXTRA_NOTIFICATION"
 	}
-	val notificationListener = PhoneNotificationUpdate(PhoneNotificationListener())
+	val notificationListener = PhoneNotificationListener()
+	var notificationReceiver: PhoneNotificationUpdate? = null
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
 	val carApp: RHMIApplication
-	val statePopup: RHMIState.PopupState    // notification about notification
-	val stateList: RHMIState.PlainState     // show a list of active notifications
-	val stateView: RHMIState.ToolbarState   // view a notification with actions to do
+	val viewPopup: PopupView                // notification about notification
+	val viewList: NotificationListView      // show a list of active notifications
+	val viewDetails: DetailsView            // view a notification with actions to do
 	val stateInput: RHMIState.PlainState    // show a reply input form
-	val notificationListView: RHMIComponent.List    // the list component of notifications
-	val shownNotifications = ArrayList<CarNotification>()   // which notifications are showing
-	val notificationListData = object: RHMIListAdapter<CarNotification>(3, shownNotifications) {
-		override fun convertRow(index: Int, item: CarNotification): Array<Any> {
-			val icon = phoneAppResources.getBitmap(phoneAppResources.getIconDrawable(item.icon), 48, 48)
-			val text = if (item.summary != null) "${item.title}\n${item.summary}" else "${item.title}\n${item.text}"
-			return arrayOf(icon, "", text)
-		}
-	}
-	val emptyListData = RHMIModel.RaListModel.RHMIListConcrete(3).apply {
-		addRow(arrayOf("", "", L.NOTIFICATIONS_EMPTY_LIST))
-	}
 
-	var listFocused = false                 // whether the notification list is showing
 	var passengerSeated = false             // whether a passenger is seated
-	val INTERACTION_DEBOUNCE_MS = 2000              // how long to wait after lastInteractionTime to update the list
-	var lastInteractionTime: Long = 0             // timestamp when the user last navigated in the main list
-	var lastInteractionIndex: Int = -1       // what index the user last selected
+	var lastPopup: CarNotification? = null  // the last notification that we popped up
 
 	init {
 		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
@@ -69,9 +58,9 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 		// create the app in the car
 		val rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive", "me.hufman"))
-		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getUiDescription()?.readBytes(), BMWRemoting.RHMIResourceType.DESCRIPTION)
-		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getTextsDB("common")?.readBytes(), BMWRemoting.RHMIResourceType.TEXTDB)
-		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getImagesDB("common")?.readBytes(), BMWRemoting.RHMIResourceType.IMAGEDB)
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB("common"))
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB("common"))
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		// set up the app in the car
@@ -79,85 +68,41 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		carappListener.app = carApp
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
+		val unclaimedStates = LinkedList(carApp.states.values)
+
 		// figure out which views to use
-		statePopup = carApp.states.values.filterIsInstance<RHMIState.PopupState>().first{
-			//it.componentsList.filterIsInstance<RHMIComponent.List>().isNotEmpty()
-			true
-		}
-		stateList = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first{
-			it.componentsList.filterIsInstance<RHMIComponent.List>().isNotEmpty()
-		}
-		stateView = carApp.states.values.filterIsInstance<RHMIState.ToolbarState>().first{
-			it.toolbarComponentsList[0].asToolbarButton()?.imageModel == 0   // look for the paging state, it has a list
-		}
+		viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
+		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources)
+		viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, controller)
+
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first{
 			it.componentsList.filterIsInstance<RHMIComponent.Input>().isNotEmpty()
 		}
 
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
-			it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id
+			it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = viewList.state.id
 		}
 
 		// set up the list
-		stateList.app.setProperty(stateList.id, 24, 3)    // set to wide-screen "tablestate"
-		stateList.getTextModel()?.asRaDataModel()?.value = L.NOTIFICATIONS_TITLE
-		stateList.componentsList.forEach { it.setVisible(false) }
-		notificationListView = stateList.componentsList.filterIsInstance<RHMIComponent.List>().first()
-		notificationListView.setVisible(true)
-		notificationListView.setProperty(6, "55,0,*")
-		notificationListView.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
-			val notification = shownNotifications.getOrNull(index)
-			if (notification != null) {
-				// set the list to go into the state
-				notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateView.id
-
-				val actionId = notificationListView.getAction()?.asRAAction()?.id
-				carConnection.rhmi_ackActionEvent(rhmiHandle, actionId ?: 0, 1, true)   // start screen transition
-				NotificationsState.selectedNotification = notification
-				updateNotificationView()    // because updating this view would delay the transition too long
-			} else {
-				notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
-			}
-		}
-		notificationListView.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {
-			if (it != lastInteractionIndex) {
-				lastInteractionIndex = it
-				lastInteractionTime = System.currentTimeMillis()
-			}
-		}
+		viewList.initWidgets(viewDetails)
 
 		// set up the popup
-		statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().lastOrNull()?.setSelectable(true)
+		viewPopup.initWidgets()
 
-		// set up the view
-		stateView.app.setProperty(stateView.id, 24, 3)    // set to wide-screen "tablestate"
-		stateView.componentsList.forEach { it.setVisible(false) }
-		stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull()?.apply {
-			// app icon and notification title
-			setVisible(true)
-			setEnabled(true)
-			setProperty(6, "55,0,*")
-		}
-		stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull {
-			it.getModel()?.modelType == "Richtext"
-		}?.apply {
-			// text
-			setVisible(true)
-			setEnabled(true)
-		}
-		var buttons = ArrayList(stateView.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
-		stateView.toolbarComponentsList.forEach { it.setVisible(false) }
-		buttons[0].getImageModel()?.asImageIdModel()?.imageId = 150
-		buttons[0].setVisible(true)
-		buttons[0].setSelectable(true)
-		buttons.subList(1, 6).forEach {
-			it.getImageModel()?.asImageIdModel()?.imageId = 158
-		}
+		// set up the details view
+		viewDetails.initWidgets(viewList)
 
 		// subscribe to CDS for passenger seat info
 		val cdsHandle = carConnection.cds_create()
-		carConnection.cds_addPropertyChangedEventHandler(cdsHandle, "sensors.seatOccupiedPassenger", "76", 5000)
-		carConnection.cds_getPropertyAsync(cdsHandle, "76", "sensors.seatOccupiedPassenger")
+		val interestingProperties = mapOf("76" to "sensors.seatOccupiedPassenger",
+				"37" to "driving.gear",
+				"40" to "driving.parkingBrake")
+		interestingProperties.entries.forEach {
+			val ident = it.key
+			val name = it.value
+			carConnection.cds_addPropertyChangedEventHandler(cdsHandle, name, ident, 5000)
+			carConnection.cds_getPropertyAsync(cdsHandle, ident, name)
+		}
 
 		// register for events from the car
 		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1)
@@ -181,16 +126,11 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			val msg = "Received rhmi_onHmiEvent: handle=$handle ident=$ident componentId=$componentId eventId=$eventId args=${args?.toString()}"
 			Log.w(TAG, msg)
 
-			// if the notification list is changing its focus state
-			if (componentId == stateList.id &&
-					eventId == 1  // FOCUS event
-				) {
-				listFocused = args?.get(4.toByte()) as? Boolean == true
-				// if the user opened the notification list
-				if (listFocused) {
-					updateNotificationList()
-				}
-			}
+			val state = app?.states?.get(componentId)
+			state?.onHmiEvent(eventId, args)
+
+			val component = app?.components?.get(componentId)
+			component?.onHmiEvent(eventId, args)
 		}
 
 		fun loadJSON(str: String?): JSONObject? {
@@ -202,26 +142,47 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			}
 		}
 		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
-			if (propertyName == "sensors.seatOccupiedPassenger" && propertyValue != null && loadJSON(propertyValue) != null) {
-				val propertyData = loadJSON(propertyValue) ?: return
+			if (propertyValue == null || loadJSON(propertyValue) == null) {
+				return
+			}
+			val propertyData = loadJSON(propertyValue) ?: return
+
+			if (propertyName == "sensors.seatOccupiedPassenger") {
 				passengerSeated = propertyData.getInt("seatOccupiedPassenger") != 0
+			}
+			if (propertyName == "driving.gear") {
+				val GEAR_PARK = 3
+				if (propertyData.getInt("gear") == GEAR_PARK) {
+					viewDetails.lockSpeedLock()
+				}
+			}
+			if (propertyName == "driving.parkingBrake") {
+				val APPLIED_BRAKES = setOf(2, 8, 32)
+				if (APPLIED_BRAKES.contains(propertyData.getInt("parkingBrake"))) {
+					viewDetails.lockSpeedLock()
+				}
 			}
 		}
 	}
 
 	fun onCreate(context: Context, handler: Handler? = null) {
 		Log.i(TAG, "Registering car thread listeners for notifications")
+		val notificationReceiver = this.notificationReceiver ?:
+			PhoneNotificationUpdate(notificationListener)
+		this.notificationReceiver = notificationReceiver
 		if (handler != null) {
-			context.registerReceiver(notificationListener, IntentFilter(INTENT_NEW_NOTIFICATION), null, handler)
-			context.registerReceiver(notificationListener, IntentFilter(INTENT_UPDATE_NOTIFICATIONS), null, handler)
+			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_NEW_NOTIFICATION), null, handler)
+			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_UPDATE_NOTIFICATIONS), null, handler)
 		} else {
-			context.registerReceiver(notificationListener, IntentFilter(INTENT_NEW_NOTIFICATION))
-			context.registerReceiver(notificationListener, IntentFilter(INTENT_UPDATE_NOTIFICATIONS))
-
+			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_NEW_NOTIFICATION))
+			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_UPDATE_NOTIFICATIONS))
 		}
 	}
 	fun onDestroy(context: Context) {
-		context.unregisterReceiver(notificationListener)
+		val notificationReceiver = this.notificationReceiver
+		if (notificationReceiver != null) {
+			context.unregisterReceiver(notificationReceiver)
+		}
 		try {
 			Log.i(TAG, "Trying to shut down etch connection")
 			IDriveConnection.disconnectEtchConnection(carConnection)
@@ -229,152 +190,32 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		} catch (e: RuntimeException) {}
 	}
 
-	fun updateNotificationList() {
-		synchronized(NotificationsState.notifications) {
-			shownNotifications.clear()
-			shownNotifications.addAll(NotificationsState.notifications)
-		}
-
-		if (NotificationsState.notifications.isEmpty()) {
-			notificationListView.getModel()?.value = emptyListData
-		} else {
-			notificationListView.getModel()?.value = notificationListData
-		}
-	}
-
-	fun updateNotificationView() {
-		// clear the toolbar
-		var buttons = ArrayList(stateView.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
-		buttons.forEach { it.setEnabled(false) }
-
-		if (NotificationsState.selectedNotification == null) {
-			// if the selected notification is invalid
-			val listData = RHMIModel.RaListModel.RHMIListConcrete(3)
-			listData.addRow(arrayOf("", "", ""))
-			val listWidget = stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull() ?: return
-			listWidget.getModel()?.value = listData
-			stateView.getTextModel()?.asRaDataModel()?.value = ""
-			// perhaps there's a way to close the window if it's open
-			return
-		}
-
-		val notification = NotificationsState.selectedNotification ?: return
-
-		// prepare the app icon and title
-		val icon = phoneAppResources.getBitmap(phoneAppResources.getIconDrawable(notification.icon), 48, 48)
-		val appname = phoneAppResources.getAppName(notification.packageName)
-		val iconListData = RHMIModel.RaListModel.RHMIListConcrete(3)
-		iconListData.addRow(arrayOf(icon, "", appname))
-
-		// prepare the notification text
-		val listData = RHMIModel.RaListModel.RHMIListConcrete(1)
-		listData.addRow(arrayOf("${notification.title}\n${notification.text}"))
-
-		// find the widgets to use
-		val iconWidget = stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull() ?: return
-		val listWidget = stateView.componentsList.filterIsInstance<RHMIComponent.List>().firstOrNull {
-			it.getModel()?.modelType == "Richtext"
-		} ?: return
-
-		// set the values
-		stateView.getTextModel()?.asRaDataModel()?.value = notification.title ?: appname
-		iconWidget.getModel()?.value = iconListData
-		listWidget.getModel()?.value = listData
-
-		// find and enable the clear button
-		val clearButton = buttons[0]
-
-		if (notification.isClearable) {
-			clearButton.setEnabled(true)
-			clearButton.getTooltipModel()?.asRaDataModel()?.value = L.NOTIFICATION_CLEAR_ACTION
-			clearButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id
-			clearButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-				controller.clear(notification)
-				Thread.sleep(100)
-				updateNotificationList()
-				carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to listWidget.id))
-			}
-		} else {
-			clearButton.setEnabled(false)
-		}
-
-		// enable any custom actions
-		(0..4).forEach {i ->
-			val action = notification.actions.getOrNull(i)
-			var button = buttons[1+i]
-			if (action == null) {
-				button.setVisible(false)
-				button.setEnabled(false)
-				button.setSelectable(false)
-				button.getAction()?.asRAAction()?.rhmiActionCallback = null // don't leak memory
-			} else {
-				if (action.remoteInputs != null && action.remoteInputs.isNotEmpty()) {
-					// TODO Implement <input> view reply
-					button.setEnabled(false)
-				} else {
-					button.setEnabled(true)
-				}
-				button.setSelectable(true)
-				button.setVisible(true)
-				button.getTooltipModel()?.asRaDataModel()?.value = action.title.toString()
-				button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateList.id  // usually the action will clear the notification
-				button.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-					controller.action(notification, action.title.toString())
-				}
-			}
-		}
-
-		val focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()
-		focusEvent?.getTargetModel()?.asRaDataModel()?.value = clearButton.id.toString()
-		if (notification.isClearable) {
-			focusEvent?.triggerEvent(mapOf(0 to clearButton.id))
-		} else {
-			focusEvent?.triggerEvent(mapOf(0 to buttons[1].id))
-		}
-	}
-
 	/** All open, so that we can mock them in tests */
 	open inner class PhoneNotificationListener {
 		open fun onNotification(sbn: CarNotification) {
-			Log.i(TAG, "Received a new notification to show in the car")
+			Log.i(TAG, "Received a new notification to show in the car: $sbn")
 			if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
 					(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
 							!passengerSeated)
 			) {
-				val appname = phoneAppResources.getAppName(sbn.packageName)
-				val titleLabel = statePopup.getTextModel()?.asRaDataModel() ?: return
-				val bodyLabel1 = statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().firstOrNull()?.getModel()?.asRaDataModel() ?: return
-				val bodyLabel2 = statePopup.componentsList.filterIsInstance<RHMIComponent.Label>().getOrNull(1)?.getModel()?.asRaDataModel() ?: return
-				titleLabel.value = appname
-				bodyLabel1.value = sbn.title.toString()
-				bodyLabel2.value = sbn.text?.split(Regex("\n"))?.lastOrNull() ?: sbn.summary ?: ""
-				carApp.events.values.filterIsInstance<RHMIEvent.PopupEvent>().firstOrNull { it.getTarget() == statePopup }?.triggerEvent()
+				lastPopup = sbn
+
+				if (!sbn.equalsKey(NotificationsState.selectedNotification)) {
+					viewPopup.showNotification(sbn)
+				}
 			}
 		}
 
 		open fun updateNotificationList() {
 			Log.i(TAG, "Received a list of new notifications to show")
-			DeferredUpdate.trigger("PhoneNotificationList", {
-				val interactionTimeAgo = System.currentTimeMillis() - lastInteractionTime
-				val interactionTimeRemaining = INTERACTION_DEBOUNCE_MS - interactionTimeAgo
-				interactionTimeRemaining
-			}, {
+			viewList.gentlyUpdateNotificationList()
 
-				if (listFocused) {
-					Log.i(TAG, "Updating list of notifications")
-					this@PhoneNotifications.updateNotificationList()
-				} else {
-					Log.i(TAG, "Notification list is not on screen, skipping update")
-				}
+			viewDetails.redraw()
 
-				// check if we should clear an old notification from the NotificationView
-				val currentNotifications = LinkedList(NotificationsState.notifications) // safe-from-other-thread-mutation view
-				val selectedNotification = NotificationsState.selectedNotification
-				if (NotificationsState.selectedNotification != null && !currentNotifications.map { it.key }.contains(selectedNotification?.key)) {
-					NotificationsState.selectedNotification = null
-					updateNotificationView()
-				}
-			})
+			// if the notification we popped up disappeared, clear the popup
+			if (NotificationsState.getNotificationByKey(lastPopup?.key) == null) {
+				viewPopup.hideNotification()
+			}
 		}
 	}
 

@@ -51,8 +51,9 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	val albumArtPlaceholderBig = carAppImages["$IMAGEID_COVERART_LARGE.png"]
 	val albumArtPlaceholderSmall = carAppImages["$IMAGEID_COVERART_SMALL.png"]
 
-	var displayedApp: MusicAppInfo? = null
-	var displayedSong: MusicMetadata? = null
+	var displayedApp: MusicAppInfo? = null  // the app that was last redrawn
+	var displayedSong: MusicMetadata? = null    // the song  that was last redrawn
+	var displayedConnected: Boolean = false     // whether the controller was connected during redraw
 
 	init {
 		// discover widgets
@@ -170,10 +171,11 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	}
 
 	fun redraw() {
-		if (displayedApp != controller.currentApp?.musicAppInfo) {
+		if (displayedApp != controller.musicBrowser?.musicAppInfo) {
 			redrawApp()
 		}
-		if (displayedSong != controller.getMetadata()) {
+		if (displayedSong != controller.getMetadata() ||
+				displayedConnected != controller.isConnected()) {
 			redrawSong()
 		}
 		redrawQueueButton()
@@ -182,7 +184,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	}
 
 	private fun redrawApp() {
-		val app = controller.currentApp?.musicAppInfo ?: return
+		val app = controller.musicBrowser?.musicAppInfo ?: return
 		appTitleModel.value = app.name
 		val image = phoneAppResources.getBitmap(app.icon, 48, 48)
 		appLogoModel.value = image
@@ -193,7 +195,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		val blacklistedUriApps = setOf("Spotify")   // apps that don't let us resolve URIs
 
 		val song = controller.getMetadata()
-		artistModel.value = song?.artist ?: ""
+		artistModel.value = if (controller.isConnected()) { song?.artist ?: "" } else { L.MUSIC_DISCONNECTED }
 		albumModel.value = song?.album ?: ""
 		trackModel.value = song?.title ?: ""
 		if (song?.coverArt != null) {
@@ -201,13 +203,13 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 			albumArtSmallModel.value = phoneAppResources.getBitmap(song.coverArt, 200, 200)
 			albumArtBigComponent.setVisible(true)
 			albumArtSmallComponent.setVisible(true)
-		} else if (song?.coverArtUri != null && !blacklistedUriApps.contains(controller.currentApp?.musicAppInfo?.name)) {
+		} else if (song?.coverArtUri != null && !blacklistedUriApps.contains(controller.musicBrowser?.musicAppInfo?.name)) {
 			try {
 				albumArtBigModel.value = phoneAppResources.getBitmap(song.coverArtUri, 320, 320)
 				albumArtSmallModel.value = phoneAppResources.getBitmap(song.coverArtUri, 200, 200)
 				albumArtBigComponent.setVisible(true)
 				albumArtSmallComponent.setVisible(true)
-			} catch (e: IOException) {
+			} catch (e: Exception) {
 				showPlaceholderCoverart()
 			}
 		} else {
@@ -215,6 +217,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		}
 
 		displayedSong = song
+		displayedConnected = controller.isConnected()
 	}
 
 	private fun showPlaceholderCoverart() {
