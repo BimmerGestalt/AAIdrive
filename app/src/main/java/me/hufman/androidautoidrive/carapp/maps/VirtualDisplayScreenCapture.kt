@@ -12,7 +12,7 @@ import android.util.Log
 import java.io.ByteArrayOutputStream
 
 
-class VirtualDisplayScreenCapture(context: Context, val width:Int = 1000, val height:Int = 400, val dpi:Int = 300) {
+class VirtualDisplayScreenCapture(context: Context, val width:Int = 1370, val height:Int = 540, val dpi:Int = 225) { //this values should be passed dynamicly from MapView.kt case -line: 50 for better performance.
 	/** Prepares an ImageReader, and sends JPG-compressed images to a callback */
 	protected val imageCapture = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2)!!
 	val virtualDisplay: VirtualDisplay
@@ -105,7 +105,7 @@ class VirtualDisplayScreenCapture(context: Context, val width:Int = 1000, val he
 	fun compressBitmap(bitmap: Bitmap): ByteArray {
 		// send to car
 		jpg.reset()
-		bitmap.compress(Bitmap.CompressFormat.JPEG, 85, jpg)
+		bitmap.compress(Bitmap.CompressFormat.JPEG, 65, jpg) //quality 65 is fine, and you get readable small texts, below that it was sometimes hard to read.
 		return jpg.toByteArray()
 	}
 

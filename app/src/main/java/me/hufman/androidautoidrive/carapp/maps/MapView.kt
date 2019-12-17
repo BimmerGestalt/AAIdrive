@@ -15,7 +15,6 @@ import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
-import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
@@ -47,9 +46,26 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 	val menuEntries = arrayOf(L.MAP_ACTION_VIEWMAP, L.MAP_ACTION_SEARCH, L.MAP_ACTION_CLEARNAV)
 
 	val rhmiWidth: Int
+
+	/*
+		Put a case here and based on the resolution from rhmiWidth create 4 blocks with different sizes (listed below).
+	*/
+
 	val mapWidth: Int
-		get() = min(rhmiWidth - 280, if (AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()) 1000 else 700)
-	val mapHeight = 400
+		get() = if (AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()) 1370 else 825 // first value with right sidebar off, second with on.
+	val mapHeight = 540
+
+	/*
+		Side panel on the left: 70px
+		800 x 480
+		1280 x 480 * (1210/730 x 480)
+		1440 x 540 * (1370/825 x 540)
+		1920 x 720
+		Side panel on the right open is 40% wide according to what I found.
+		Side panel on the right closed is 5px (omitted)
+
+	 */
+
 
 	// map state
 	var frameUpdater = FrameUpdater(map)
@@ -64,9 +80,9 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 
 		// create the app in the car
 		val rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.mapview", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive.mapview", "me.hufman"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
-//		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB("common"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB("common"))
+		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getUiDescription()?.readBytes(), BMWRemoting.RHMIResourceType.DESCRIPTION)
+//		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getTextsDB("common")?.readBytes(), BMWRemoting.RHMIResourceType.TEXTDB)
+		carConnection.rhmi_setResource(rhmiHandle, carAppAssets.getImagesDB("common")?.readBytes(), BMWRemoting.RHMIResourceType.IMAGEDB)
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		carApp = RHMIApplicationSynchronized(RHMIApplicationEtch(carConnection, rhmiHandle))
@@ -76,7 +92,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		// figure out the components to use
 		Log.i(TAG, "Locating components to use")
 		stateMenu = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first {
-					it.componentsList.filterIsInstance<RHMIComponent.Label>().isNotEmpty() &&   // show whether currently navigating
+			it.componentsList.filterIsInstance<RHMIComponent.Label>().isNotEmpty() &&   // show whether currently navigating
 					it.componentsList.filterIsInstance<RHMIComponent.List>().isNotEmpty()   // a list of commands
 		}
 		menuMap = stateMenu.componentsList.filterIsInstance<RHMIComponent.List>()[0]
@@ -100,7 +116,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 
 		// get the car capabilities
 		val capabilities = carConnection.rhmi_getCapabilities("", 255)
-		rhmiWidth = (capabilities["hmi.display-width"] as? String?)?.toIntOrNull() ?: 720
+		rhmiWidth = (capabilities["hmi.display-width"] as? String?)?.toIntOrNull() ?: 1920
 		Log.i(TAG, "Detected HMI width of $rhmiWidth")
 
 		// set up the components
@@ -116,7 +132,8 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		}
 		menuMap.setVisible(true)
 		menuMap.setSelectable(true)
-		menuMap.setProperty(6, "350,0,*")
+		menuMap.setProperty(6, "*")
+		// menuMap.setProperty(6, "350,0,*")
 		menuMap.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
 
 		menuList.setProperty(6, "100,0,*")
@@ -141,25 +158,27 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 		stateMap.app.setProperty(stateMap.id, 24, 3)    // set to wide-screen "tablestate"
 		stateMap.app.setProperty(stateMap.id, 26, "1,0,7")
 		viewFullMap.setVisible(true)
-		viewFullMap.setProperty(20, -16)    // positionX
-		viewFullMap.setProperty(21, 0)    // positionY
+		viewFullMap.setProperty(18, 0)    // offsetX
+		viewFullMap.setProperty(19, 0)    // offsetY
+		viewFullMap.setProperty(20, -80)    // positionX
+		viewFullMap.setProperty(21, -80)    // positionY
 		viewFullMap.setProperty(9, mapWidth)
 		viewFullMap.setProperty(10, mapHeight)
 		mapInputList.setVisible(true)
 		mapInputList.setProperty(20, 50000)  // positionX, so that we don't see it but should still be interacting with it
 		mapInputList.setProperty(21, 50000)  // positionY, so that we don't see it but should still be interacting with it
 		val scrollList = RHMIModel.RaListModel.RHMIListConcrete(3)
-		(0..2).forEach { scrollList.addRow(arrayOf("+", "", "")) }  // zoom in
+		(0..2).forEach { scrollList.addRow(arrayOf("-", "", "")) }  // zoom out
 		scrollList.addRow(arrayOf("Map", "", "")) // neutral
-		(4..6).forEach { scrollList.addRow(arrayOf("-", "", "")) }  // zoom out
+		(4..6).forEach { scrollList.addRow(arrayOf("+", "", "")) }  // zoom in
 		mapInputList.getModel()?.asRaListModel()?.setValue(scrollList, 0, scrollList.height, scrollList.height)
 		carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().triggerEvent(mapOf(0 to mapInputList.id, 41 to 3))  // set focus to the middle of the list
 		mapInputList.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { listIndex ->
 			if (listIndex in 0..2) {
-				interaction.zoomIn(1)   // each wheel click through the list will trigger another step of 1
+				interaction.zoomOut(1)   // each wheel click through the list will trigger another step of 1
 			}
 			if (listIndex in 4..6) {
-				interaction.zoomOut(1)
+				interaction.zoomIn(1)
 			}
 			carApp.triggerHMIEvent(carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().id, mapOf(0 to mapInputList.id, 41 to 3))  // set focus to the middle of the list
 		}
@@ -296,7 +315,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 				schedule()  // check if there's another frame ready for us right now
 			} else {
 				// wait for the next frame, unless the callback comes back sooner
-				schedule(1000)
+				schedule(200)
 			}
 		}
 
@@ -316,7 +335,7 @@ class MapView(val carAppAssets: CarAppResources, val interaction: MapInteraction
 			Log.i(TAG, "Changing map mode to $mode")
 			when (mode) {
 				"menuMap" ->
-					map.changeImageSize(350, 90)
+					map.changeImageSize(670, 90)
 				"mainMap" ->
 					map.changeImageSize(mapWidth, mapHeight)
 			}
