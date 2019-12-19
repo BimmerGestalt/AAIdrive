@@ -129,6 +129,7 @@ class TestMusicApp {
 				artist="Artist", album="Album", title="Title")
 		on { getPlaybackPosition() } doReturn PlaybackPosition(false, SystemClock.elapsedRealtime(), 5000L, 180000L)
 		on { isSupportedAction(any()) } doReturn true
+		on { isSupportedAction(MusicAction.PLAY_FROM_SEARCH) } doReturn false
 		on { loadDesiredApp() } doReturn ""
 		on { musicSessions } doReturn mock<MusicSessions>()
 		on { isConnected() } doReturn true
@@ -995,6 +996,61 @@ class TestMusicApp {
 		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
 		assertEquals(IDs.PLAYBACK_STATE, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asHMIAction()?.getTargetState()?.id)
 		verify(musicController).playSong(MusicMetadata("testId4", title = "New song", browseable = false, playable = true))
+	}
+
+	@Test
+	fun testPlayFromSearch() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
+		browseView.initWidgets(playbackView, app.states[IDs.INPUT_STATE]!!)
+
+		// prepare results
+		val browseResults = CompletableDeferred<List<MusicMetadata>>().apply {complete(LinkedList())}
+		whenever(musicController.browseAsync(anyOrNull())) doAnswer { browseResults }
+		val searchResults = CompletableDeferred<List<MusicMetadata>>().apply {complete(LinkedList())}
+		whenever(musicController.searchAsync(anyOrNull())) doAnswer { searchResults }
+
+		// pretend that the app isn't searchable
+		whenever(musicController.musicBrowser).then {
+			mock<MusicBrowser> {
+				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
+			}
+		}
+		val page1 = browseView.pushBrowsePage(null)
+		page1.show()
+
+		// wait for the loading screen to show up
+		await().untilAsserted {
+			assertEquals(1, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+		}
+		assertEquals(0, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // should not show Filter or Search
+
+		// now pretend that the app IS searchable
+		whenever(musicController.isSupportedAction(MusicAction.PLAY_FROM_SEARCH)) doReturn true
+		page1.show()
+		assertArrayEquals(arrayOf(arrayOf("", "", "Search")), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data)
+
+		// try clicking the action
+		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+
+		// enter a query
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "mario"))
+		await().untilAsserted { verify(musicController).searchAsync(any()) }
+
+		// search results should show the Play From Search option
+		await().untilAsserted {
+			assertNotNull(mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)
+		}
+		assertArrayEquals(arrayOf(arrayOf("Play From Search")), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
+
+		// try clicking the option
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(IDs.PLAYBACK_STATE, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asHMIAction()?.getTargetState()?.id)
+		verify(musicController).playFromSearch("mario")
 	}
 
 	@Test

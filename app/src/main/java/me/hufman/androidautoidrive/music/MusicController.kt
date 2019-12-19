@@ -187,6 +187,9 @@ class MusicController(val context: Context, val handler: Handler) {
 			}
 		}
 	}
+	fun playFromSearch(search: String) = asyncControl { controller ->
+		controller?.transportControls?.playFromSearch(search, null)
+	}
 	fun pause() = asyncControl { controller ->
 		desiredPlayback = false
 		if (controller?.playbackState?.state != STATE_PAUSED) {

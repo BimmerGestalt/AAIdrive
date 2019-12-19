@@ -6,6 +6,7 @@ import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.awaitPending
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
 import kotlin.coroutines.CoroutineContext
@@ -64,7 +65,6 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 
 	private var loaderJob: Job? = null
 	private var searchJob: Job? = null
-	private lateinit var playbackView: PlaybackView
 	private var folderNameLabel: RHMIComponent.Label
 	private var actionsListComponent: RHMIComponent.List
 	private var musicListComponent: RHMIComponent.List
@@ -143,6 +143,7 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 			val musicList = musicListDeferred.awaitPending(LOADING_TIMEOUT) {
 				Log.d(TAG, "Browsing ${folder?.mediaId} timed out, retrying")
 				show()
+				delay(100)
 				return@launch
 			}
 			this@BrowsePageView.musicList.clear()
@@ -203,7 +204,9 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 	private fun showActionsList() {
 		synchronized(actions) {
 			actions.clear()
-			if (browsePageModel.folder == null && browsePageModel.musicAppInfo?.searchable == true) {
+			if (browsePageModel.folder == null && (
+					browsePageModel.musicAppInfo?.searchable == true ||
+					browsePageModel.isSupportedAction(MusicAction.PLAY_FROM_SEARCH))) {
 				actions.add(BrowseAction.SEARCH)
 			}
 			if (browsePageModel.folder == null && browsePageModel.jumpbackFolder() != null) {
@@ -253,16 +256,23 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 						val suggestionsDeferred = browsePageModel.searchAsync(input)
 						val suggestions = suggestionsDeferred.awaitPending(LOADING_TIMEOUT) {
 							Log.d(TAG, "Searching ${browsePageModel.musicAppInfo?.name} for \"$input\" timed out, retrying")
+							delay(100)
 							inputState.onEntry(input)
 							return@launch
 						}
-						inputState.sendSuggestions(suggestions)
+						val allSuggestions = (if (browsePageModel.isSupportedAction(MusicAction.PLAY_FROM_SEARCH)) listOf(BrowseView.SEARCHRESULT_PLAY_FROM_SEARCH) else listOf()) + suggestions
+						inputState.sendSuggestions(allSuggestions)
 					}
 				}
 			}
 
 			override fun onSelect(item: MusicMetadata, index: Int) {
-				previouslySelected = item  // update the selection state for future redraws
+				if (item == BrowseView.SEARCHRESULT_PLAY_FROM_SEARCH) {
+					browseController.playFromSearch(this.input)
+				} else {
+					previouslySelected = item  // update the selection state for future redraws
+				}
+				// handle regular media items, and set the targetState appropriately
 				browseController.onListSelection(item, inputComponent.getSuggestAction()?.asHMIAction())
 			}
 

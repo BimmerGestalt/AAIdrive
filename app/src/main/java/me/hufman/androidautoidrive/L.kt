@@ -26,6 +26,7 @@ object L {
 	var MUSIC_BROWSE_ACTION_JUMPBACK = "Jump Back"
 	var MUSIC_BROWSE_ACTION_FILTER = "Filter"
 	var MUSIC_BROWSE_ACTION_SEARCH = "Search"
+	var MUSIC_BROWSE_PLAY_FROM_SEARCH = "Play From Search"
 	var MUSIC_QUEUE_TITLE = "Now Playing"
 	var MUSIC_QUEUE_EMPTY = "<Empty Queue>"
 	var MUSIC_SKIP_PREVIOUS = "Back"
