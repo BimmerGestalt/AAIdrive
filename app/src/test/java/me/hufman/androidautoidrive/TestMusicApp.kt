@@ -496,6 +496,8 @@ class TestMusicApp {
 		globalState.redraw()
 		assertEquals("", mockServer.data[IDs.IC_USECASE_MODEL])
 		assertEquals("Title", mockServer.data[IDs.IC_TRACK_MODEL])
+		val emptylist = mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable
+		assertEquals(0, emptylist.totalRows)
 
 		whenever(musicController.getQueue()) doAnswer { listOf(
 				MusicMetadata(queueId=10, title="Song 1", album="Album", artist="Artist"),

@@ -72,6 +72,7 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 	private fun showQueue(queue: List<MusicMetadata>?, currentSong: MusicMetadata?) {
 		if (queue == null || queue.isEmpty()) {
 			instrumentCluster.getUseCaseModel()?.asRaDataModel()?.value = ""
+			instrumentCluster.getPlaylistModel()?.asRaListModel()?.value = RHMIModel.RaListModel.RHMIListConcrete(3)
 		} else {
 			instrumentCluster.getUseCaseModel()?.asRaDataModel()?.value = "EntICPlaylist"
 
