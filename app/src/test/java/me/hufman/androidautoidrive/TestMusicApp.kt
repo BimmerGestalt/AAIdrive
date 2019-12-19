@@ -608,7 +608,7 @@ class TestMusicApp {
 		assertEquals(2, browseView.locationStack.size)
 		assertEquals("testId1", browseView.locationStack.last()?.mediaId)
 		val page2 = browseView.pageStack.last()
-		assertEquals("testId1", page2.folder?.mediaId)
+		assertEquals("testId1", page2.browsePageModel.folder?.mediaId)
 		assertEquals(IDs.BROWSE2_STATE, page2.state.id)
 
 		page2.show()
@@ -737,7 +737,6 @@ class TestMusicApp {
 		}
 
 		assertEquals(" / Folder", mockServer.data[IDs.BROWSE1_LABEL_MODEL])
-		assertEquals(MusicMetadata("folder1", title = "Folder", browseable = true, playable = false), page1.folder)
 	}
 
 	@Test
@@ -842,7 +841,7 @@ class TestMusicApp {
 		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		assertEquals(IDs.BROWSE2_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
 		assertEquals(2, browseView.pageStack.size)
-		assertEquals("folderDeep3", browseView.pageStack.last().folder?.mediaId)
+		assertEquals("folderDeep3", browseView.pageStack.last().browsePageModel.folder?.mediaId)
 		assertEquals(listOf(null, "folderDeep1", "folderDeep2", "folderDeep3", "testId3"), browseView.stack.map {it.location?.mediaId})
 		browseView.pageStack.last().show()
 		await().untilAsserted {
