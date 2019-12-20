@@ -105,7 +105,7 @@ class VirtualDisplayScreenCapture(context: Context, val width:Int = 1000, val he
 	fun compressBitmap(bitmap: Bitmap): ByteArray {
 		// send to car
 		jpg.reset()
-		bitmap.compress(Bitmap.CompressFormat.JPEG, 85, jpg)
+		bitmap.compress(Bitmap.CompressFormat.JPEG, 65, jpg)  //quality 65 is fine, and you get readable small texts, below that it was sometimes hard to read
 		return jpg.toByteArray()
 	}
 
