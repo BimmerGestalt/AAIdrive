@@ -128,7 +128,14 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		// otherwise, the controller.currentApp was set in an av_requestContext call
 	}
 
+	/** When the car asks us to start playing, pick an app */
 	fun reconnectApp() {
+		val nowPlaying = controller.musicSessions.getPlayingApp()
+		if (nowPlaying != null) {
+			// the controller will have already connected, from the MusicAppDiscovery thread
+			Log.i(TAG, "Found already-playing app while resuming car playback: ${nowPlaying.packageName}")
+			return
+		}
 		val appName = controller.loadDesiredApp()
 		val amAppIdentifier = amAppIdentifier(appName)
 		val appInfo = knownApps[amAppIdentifier]
