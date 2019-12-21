@@ -71,16 +71,27 @@ object Utils {
 		}
 	}
 	fun getBitmapAsPng(bitmap: Bitmap, width: Int, height: Int, invert: Boolean = false): ByteArray {
-		return compressBitmap(getBitmap(bitmap, width, height, invert))
+		return compressBitmapPng(getBitmap(bitmap, width, height, invert))
 	}
 	fun getBitmapAsPng(drawable: Drawable, width: Int, height: Int, invert: Boolean = false): ByteArray {
-		return compressBitmap(getBitmap(drawable, width, height, invert))
+		return compressBitmapPng(getBitmap(drawable, width, height, invert))
+	}
+	fun getBitmapAsJpg(drawable: Bitmap, width: Int, height: Int, invert: Boolean = false, quality: Int = 50): ByteArray {
+		return compressBitmapJpg(getBitmap(drawable, width, height, invert), quality)
+	}
+	fun getBitmapAsJpg(drawable: Drawable, width: Int, height: Int, invert: Boolean = false, quality: Int = 50): ByteArray {
+		return compressBitmapJpg(getBitmap(drawable, width, height, invert), quality)
 	}
 
-	fun compressBitmap(bitmap: Bitmap): ByteArray {
+	fun compressBitmapPng(bitmap: Bitmap): ByteArray {
 		val png = ByteArrayOutputStream()
 		bitmap.compress(Bitmap.CompressFormat.PNG, 0, png)
 		return png.toByteArray()
+	}
+	fun compressBitmapJpg(bitmap: Bitmap, quality: Int): ByteArray {
+		val jpg = ByteArrayOutputStream()
+		bitmap.compress(Bitmap.CompressFormat.JPEG, quality, jpg)
+		return jpg.toByteArray()
 	}
 
 	val darkCache = HashMap<Int, Boolean>()

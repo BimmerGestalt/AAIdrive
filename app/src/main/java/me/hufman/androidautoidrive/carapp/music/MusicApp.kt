@@ -4,6 +4,7 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
+import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.Utils.loadZipfile
 import me.hufman.androidautoidrive.carapp.RHMIApplicationIdempotent
@@ -22,10 +23,10 @@ import java.util.*
 
 const val TAG = "MusicApp"
 
-class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController) {
+class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController) {
 	val carApp = createRHMIApp()
 
-	val avContext = AVContextHandler(carApp, musicController, phoneAppResources)
+	val avContext = AVContextHandler(carApp, musicController, graphicsHelpers)
 	val globalMetadata = GlobalMetadata(carApp, musicController)
 	var appListViewVisible = false
 	var playbackViewVisible = false
@@ -70,12 +71,12 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		// locate specific windows in the app
 		val carAppImages = loadZipfile(carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
 		val unclaimedStates = LinkedList(carApp.states.values)
-		playbackView = PlaybackView(unclaimedStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources)
-		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, phoneAppResources)
-		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, phoneAppResources)
+		playbackView = PlaybackView(unclaimedStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources, graphicsHelpers)
+		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, graphicsHelpers)
+		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController)
 		browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController)
 		inputState = unclaimedStates.removeFirst { it.componentsList.filterIsInstance<RHMIComponent.Input>().firstOrNull()?.suggestModel ?: 0 > 0 }
-		customActionsView = CustomActionsView(unclaimedStates.removeFirst { CustomActionsView.fits(it) }, phoneAppResources, musicController)
+		customActionsView = CustomActionsView(unclaimedStates.removeFirst { CustomActionsView.fits(it) }, graphicsHelpers, musicController)
 
 		Log.i(TAG, "Selected state ${appSwitcherView.state.id} for App Switcher")
 		Log.i(TAG, "Selected state ${playbackView.state.id} for Playback")

@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import de.bmw.idrive.BMWRemoting
+import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.TimeUtils.formatTime
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
@@ -11,7 +12,6 @@ import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
-import java.io.IOException
 
 private const val IMAGEID_COVERART_SMALL = 146
 private const val IMAGEID_COVERART_LARGE = 147
@@ -19,7 +19,7 @@ private const val IMAGEID_ARTIST = 150
 private const val IMAGEID_ALBUM = 148
 private const val IMAGEID_SONG = 152
 
-class PlaybackView(val state: RHMIState, val controller: MusicController, carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources) {
+class PlaybackView(val state: RHMIState, val controller: MusicController, carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.ToolbarState &&
@@ -186,7 +186,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	private fun redrawApp() {
 		val app = controller.musicBrowser?.musicAppInfo ?: return
 		appTitleModel.value = app.name
-		val image = phoneAppResources.getBitmap(app.icon, 48, 48)
+		val image = graphicsHelpers.compress(app.icon, 48, 48)
 		appLogoModel.value = image
 		displayedApp = app
 	}
@@ -199,14 +199,15 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		albumModel.value = song?.album ?: ""
 		trackModel.value = song?.title ?: ""
 		if (song?.coverArt != null) {
-			albumArtBigModel.value = phoneAppResources.getBitmap(song.coverArt, 320, 320)
-			albumArtSmallModel.value = phoneAppResources.getBitmap(song.coverArt, 200, 200)
+			albumArtBigModel.value = graphicsHelpers.compress(song.coverArt, 320, 320, quality = 65)
+			albumArtSmallModel.value = graphicsHelpers.compress(song.coverArt, 200, 200, quality = 65)
 			albumArtBigComponent.setVisible(true)
 			albumArtSmallComponent.setVisible(true)
 		} else if (song?.coverArtUri != null && !blacklistedUriApps.contains(controller.musicBrowser?.musicAppInfo?.name)) {
 			try {
-				albumArtBigModel.value = phoneAppResources.getBitmap(song.coverArtUri, 320, 320)
-				albumArtSmallModel.value = phoneAppResources.getBitmap(song.coverArtUri, 200, 200)
+				val coverArt = phoneAppResources.getUriDrawable(song.coverArtUri)
+				albumArtBigModel.value = graphicsHelpers.compress(coverArt, 320, 320, quality = 65)
+				albumArtSmallModel.value = graphicsHelpers.compress(coverArt, 200, 200, quality = 65)
 				albumArtBigComponent.setVisible(true)
 				albumArtSmallComponent.setVisible(true)
 			} catch (e: Exception) {

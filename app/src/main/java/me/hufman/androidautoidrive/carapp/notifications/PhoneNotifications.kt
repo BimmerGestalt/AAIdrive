@@ -10,6 +10,7 @@ import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.carapp.RHMIUtils
@@ -29,7 +30,7 @@ import java.util.*
 
 const val TAG = "PhoneNotifications"
 
-class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val controller: CarNotificationController) {
+class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController) {
 	companion object {
 		const val INTENT_UPDATE_NOTIFICATIONS = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.UPDATE_NOTIFICATIONS"
 		const val INTENT_NEW_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.NEW_NOTIFICATION"
@@ -72,8 +73,8 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 		// figure out which views to use
 		viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
-		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources)
-		viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, controller)
+		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources, graphicsHelpers)
+		viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller)
 
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first{
 			it.componentsList.filterIsInstance<RHMIComponent.Input>().isNotEmpty()

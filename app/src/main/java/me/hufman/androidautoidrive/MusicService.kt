@@ -18,6 +18,7 @@ class MusicService(val context: Context) {
 					var musicController = MusicController(context, handler)
 					carappMusic = MusicApp(CarAppAssetManager(context, "multimedia"),
 							PhoneAppResourcesAndroid(context),
+							GraphicsHelpersAndroid(),
 							musicAppDiscovery,
 							musicController)
 					musicAppDiscovery.discoverApps()

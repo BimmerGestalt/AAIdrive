@@ -217,6 +217,7 @@ class MainService: Service() {
 						Log.i(TAG, "Starting notifications app")
 						carappNotifications = PhoneNotifications(CarAppAssetManager(this, "basecoreOnlineServices"),
 								PhoneAppResourcesAndroid(this),
+								GraphicsHelpersAndroid(),
 								CarNotificationControllerIntent(this))
 						carappNotifications?.onCreate(this, threadNotifications?.handler)
 						// request an initial draw

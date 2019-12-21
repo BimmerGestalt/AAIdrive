@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.carapp.notifications.views
 
 import android.util.Log
+import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.notifications.CarNotificationController
 import me.hufman.androidautoidrive.carapp.notifications.NotificationsState
@@ -9,7 +10,7 @@ import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.ArrayList
 import kotlin.math.min
 
-class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val controller: CarNotificationController) {
+class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.ToolbarState &&
@@ -125,7 +126,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		}
 
 		// prepare the app icon and title
-		val icon = phoneAppResources.getBitmap(phoneAppResources.getIconDrawable(notification.icon), 48, 48)
+		val icon = graphicsHelpers.compress(phoneAppResources.getIconDrawable(notification.icon), 48, 48)
 		val appname = phoneAppResources.getAppName(notification.packageName)
 		val iconListData = RHMIModel.RaListModel.RHMIListConcrete(3)
 		iconListData.addRow(arrayOf(icon, "", appname))
@@ -142,10 +143,11 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 
 		// try to load a picture from the notification
 		val picture = if (notification.picture != null) {
-			phoneAppResources.getBitmap(notification.picture, 400, 300)
+			graphicsHelpers.compress(notification.picture, 400, 300, quality = 65)
 		} else if (notification.pictureUri != null) {
 			try {
-				phoneAppResources.getBitmap(notification.pictureUri, 400, 300)
+				val drawable = phoneAppResources.getUriDrawable(notification.pictureUri)
+				graphicsHelpers.compress(drawable, 400, 300, quality = 65)
 			} catch (e: Exception) {
 				Log.w(TAG, "Failed to open picture from ${notification.pictureUri}", e)
 				null

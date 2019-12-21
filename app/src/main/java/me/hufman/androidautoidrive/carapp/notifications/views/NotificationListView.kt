@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.carapp.notifications.views
 
 import android.util.Log
 import me.hufman.androidautoidrive.DeferredUpdate
+import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.notifications.CarNotification
@@ -10,7 +11,7 @@ import me.hufman.androidautoidrive.carapp.notifications.TAG
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*
 
-class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneAppResources) {
+class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.PlainState &&
@@ -28,7 +29,7 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 	val shownNotifications = ArrayList<CarNotification>()   // which notifications are showing
 	val notificationListData = object: RHMIListAdapter<CarNotification>(3, shownNotifications) {
 		override fun convertRow(index: Int, item: CarNotification): Array<Any> {
-			val icon = phoneAppResources.getBitmap(phoneAppResources.getIconDrawable(item.icon), 48, 48)
+			val icon = graphicsHelpers.compress(phoneAppResources.getIconDrawable(item.icon), 48, 48)
 			val text = if (item.summary != null) "${item.title}\n${item.summary}" else "${item.title}\n${item.text}"
 			return arrayOf(icon, "", text)
 		}

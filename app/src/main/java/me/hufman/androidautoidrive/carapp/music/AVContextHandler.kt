@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive.carapp.music
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
@@ -19,7 +19,7 @@ fun amAppIdentifier(packageName: String): String {
 val MusicAppInfo.amAppIdentifier: String
 	get() = amAppIdentifier(this.packageName)
 
-class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: MusicController, val phoneAppResources: PhoneAppResources) {
+class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: MusicController, val graphicsHelpers: GraphicsHelpers) {
 	val TAG = "AVContextHandler"
 	val carConnection = (app.unwrap() as RHMIApplicationEtch).remoteServer
 	var amHandle: Int? = null
@@ -74,7 +74,7 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		val amInfo = mutableMapOf<Int, Any>(
 			0 to 145,   // basecore version
 			1 to app.name,  // app name
-			2 to phoneAppResources.getBitmap(app.icon, 48, 48), // icon
+			2 to graphicsHelpers.compress(app.icon, 48, 48), // icon
 			3 to "Multimedia",   // section
 			4 to true,
 			5 to 800 - getAppWeight(app),   // weight
