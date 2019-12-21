@@ -1,10 +1,12 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import android.util.Log
+import kotlinx.coroutines.Deferred
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.FocusCallback
+import me.hufman.idriveconnectionkit.rhmi.RHMIAction
 import me.hufman.idriveconnectionkit.rhmi.RHMIState
 import java.util.*
 
@@ -25,15 +27,14 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		get() = stack.map { it.location }
 	lateinit var playbackView: PlaybackView
 	lateinit var inputState: RHMIState
+	lateinit var pageController: BrowsePageController
 	var lastApp: MusicAppInfo? = null
 
-	init {
-	}
 
 	fun initWidgets(playbackView: PlaybackView, inputState: RHMIState) {
 		// initialize common properties of the pages
 		states.forEach {
-			BrowsePageView.initWidgets(it, playbackView)
+			BrowsePageView.initWidgets(it)
 			it.focusCallback = FocusCallback { focused ->
 				Log.d("BrowseView", "Received focusedCallback for ${it.id}: $focused")
 				if (focused) {
@@ -45,6 +46,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		}
 		this.playbackView = playbackView
 		this.inputState = inputState
+		pageController = BrowsePageController(this, musicController, playbackView)
 	}
 
 	/**
@@ -85,7 +87,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		val currentPage = pageStack.last()
 		if (stateId == currentPage.state.id) {
 			// the system showed the page that was just added, load the info for it
-			currentPage.initWidgets(playbackView, inputState)
+			currentPage.initWidgets(inputState)
 			currentPage.show()
 		}
 	}
@@ -109,8 +111,9 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 			BrowseState(directory).apply { stack.add(this) }
 		}
 
-		val browsePage = BrowsePageView(state, this, directory, stack.getOrNull(index+1)?.location)
-		browsePage.initWidgets(playbackView, inputState)
+		val browseModel = BrowsePageModel(this, musicController, directory)
+		val browsePage = BrowsePageView(state, browseModel, pageController, stack.getOrNull(index+1)?.location)
+		browsePage.initWidgets(inputState)
 		stackSlot.pageView = browsePage
 		return browsePage
 	}
@@ -133,5 +136,40 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	 */
 	private fun hide(stateId: Int) {
 		pageStack.lastOrNull { it.state.id == stateId }?.hide()
+	}
+}
+
+class BrowsePageModel(private val browseView: BrowseView, private val musicController: MusicController, val folder: MusicMetadata?) {
+	val musicAppInfo: MusicAppInfo?
+		get() = musicController.musicBrowser?.musicAppInfo
+
+	fun jumpbackFolder(): MusicMetadata? {
+		return browseView.locationStack.lastOrNull { it?.browseable == true }
+	}
+	fun browseAsync(musicMetadata: MusicMetadata?): Deferred<List<MusicMetadata>> {
+		return musicController.browseAsync(musicMetadata)
+	}
+	fun searchAsync(query: String): Deferred<List<MusicMetadata>> {
+		return musicController.searchAsync(query)
+	}
+}
+
+class BrowsePageController(private val browseView: BrowseView, private val musicController: MusicController, private val playbackView: PlaybackView) {
+	fun jumpBack(hmiAction: RHMIAction.HMIAction?) {
+		val nextPage = browseView.pushBrowsePage(browseView.locationStack.lastOrNull {it?.browseable == true})
+		hmiAction?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
+	}
+
+	fun onListSelection(entry: MusicMetadata, hmiAction: RHMIAction.HMIAction?) {
+		if (entry.browseable) {
+			val nextPage = browseView.pushBrowsePage(entry)
+			hmiAction?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
+		}
+		else {
+			if (entry.playable) {
+				browseView.playSong(entry)
+			}
+			hmiAction?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
+		}
 	}
 }
