@@ -56,6 +56,7 @@ Implemented Features
       - [Energy Radio](https://play.google.com/store/apps/details?id=radioenergy.app)
       - [iVooz](https://play.google.com/store/apps/details?id=com.ivoox.app)
       - [Media Monkey](https://play.google.com/store/apps/details?id=com.ventismedia.android.mediamonkey)
+      - [Mi Music](https://play.google.com/store/apps/details?id=com.miui.player)
       - [ntv Nachrichten](https://play.google.com/store/apps/details?id=de.lineas.lit.ntv.android)
       - [Player FM](https://play.google.com/store/apps/details?id=fm.player)
       - [Plex](https://play.google.com/store/apps/details?id=com.plexapp.android) (only music and podcasts)
