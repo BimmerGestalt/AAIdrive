@@ -564,18 +564,23 @@ class TestMusicApp {
 		assertEquals(false, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.VALID.id] as Boolean?)  // request dynamic paging
 		assertEquals(false, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id] as Boolean?)   // not clickable
 		assertEquals("<Loading>", (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data[0][2])
+
+		// verifies that it browses again after a timeout
+		await().untilAsserted { verify(musicController, times(1)).browseAsync(anyOrNull()) }
+		await().untilAsserted { verify(musicController, times(2)).browseAsync(anyOrNull()) }
+
 		// finish loading
 		val browseList = listOf(
-			MusicMetadata("testId1", title = "Folder",
-					browseable = true, playable = false),
-			MusicMetadata("bonusFolder1", title = "BonusFolder1",
-					browseable = true, playable = false),
-			MusicMetadata("bonusFolder2", title = "BonusFolder2",
-					browseable = true, playable = false),
-			MusicMetadata("testId2", title = "File1",
-					browseable = false, playable = true),
-			MusicMetadata("testId3", title = "File2",
-					browseable = false, playable = true)
+				MusicMetadata("testId1", title = "Folder",
+						browseable = true, playable = false),
+				MusicMetadata("bonusFolder1", title = "BonusFolder1",
+						browseable = true, playable = false),
+				MusicMetadata("bonusFolder2", title = "BonusFolder2",
+						browseable = true, playable = false),
+				MusicMetadata("testId2", title = "File1",
+						browseable = false, playable = true),
+				MusicMetadata("testId3", title = "File2",
+						browseable = false, playable = true)
 		)
 		browseResults.complete(browseList)
 		await().until { (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows == 5 }
