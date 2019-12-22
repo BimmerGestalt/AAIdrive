@@ -7,6 +7,7 @@ import android.media.session.MediaSessionManager
 import android.media.session.PlaybackState.*
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
 import java.util.*
@@ -50,6 +51,8 @@ class MusicSessions(val context: Context) {
 			}.map {
 				MusicAppInfo.getInstance(context, it.packageName, null).apply {
 					this.controllable = true
+					val actions = it.playbackState?.actions ?: 0
+					this.playsearchable = actions and PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH > 0
 				}
 			}
 		} catch (e: SecurityException) {

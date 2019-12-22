@@ -22,6 +22,7 @@ object Analytics: AnalyticsProvider {
 				.withTag("connectable", if (appInfo.connectable) "true" else "false")
 				.withTag("browseable", if (appInfo.browseable) "true" else "false")
 				.withTag("searchable", if (appInfo.searchable) "true" else "false")
+				.withTag("playsearchable", if (appInfo.playsearchable) "true" else "false")
 				.withLevel(Event.Level.DEBUG)
 		Sentry.capture(event)
 	}

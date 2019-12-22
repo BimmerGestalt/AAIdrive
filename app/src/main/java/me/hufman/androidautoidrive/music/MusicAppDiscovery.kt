@@ -7,6 +7,8 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
+import android.support.v4.media.session.MediaControllerCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -50,7 +52,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 						app.connectable = jsonData.getBoolean("connectable")
 						app.browseable = jsonData.getBoolean("browseable")
 						app.searchable = jsonData.getBoolean("searchable")
-						Log.i(TAG, "Loading cached probe results for ${app.name}: connectable=${app.connectable} browseable=${app.browseable} searchable=${app.searchable}")
+						app.playsearchable = jsonData.getBoolean("playsearchable")
 
 					}
 				}
@@ -101,7 +103,6 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 		// clear out any old apps
 		for (app in previousApps) {
 			if (!discoveredApps.contains(app)) {
-				Log.i(TAG, "Removing previously-discovered app that has disappeared ${app.name}")
 				this.browseApps.remove(app)
 			}
 		}
@@ -109,7 +110,6 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 		// add any new apps
 		for (app in discoveredApps) {
 			if (!previousApps.contains(app)) {
-				Log.i(TAG, "Adding newly-discovered app ${app.name}")
 				this.browseApps.add(app)
 			}
 		}
@@ -196,12 +196,21 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 		val component = ComponentName(appInfo.packageName, appInfo.className)
 
 		disconnectApp(appInfo)  // clear any previous connection
-		val mediaBrowser = MediaBrowserCompat(
-				context, component, object: MediaBrowserCompat.ConnectionCallback() {
+
+		var mediaBrowser: MediaBrowserCompat? = null
+		val connectionCallback = object: MediaBrowserCompat.ConnectionCallback() {
 			override fun onConnected() {
 				Log.i(TAG, "Successfully connected to ${appInfo.name}")
 				appInfo.connectable = true
 				listener?.run()
+
+				// detect if the app can play from search
+				val sessionToken = mediaBrowser?.sessionToken
+				if (sessionToken != null) {
+					val controller = MediaControllerCompat(context, sessionToken)
+					val actions = controller.playbackState?.actions ?: 0
+					appInfo.playsearchable = actions and PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH > 0
+				}
 
 				// check for browse and searching
 				GlobalScope.launch {
@@ -229,6 +238,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 					appInfo.probed = true
 					scheduleSave()
 					Analytics.reportMusicAppProbe(appInfo)
+					Log.i(TAG, "Finished probing: $appInfo")
 				}
 			}
 
@@ -240,8 +250,8 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 				scheduleSave()
 				Analytics.reportMusicAppProbe(appInfo)
 			}
-			}, null
-		)
+		}
+		mediaBrowser = MediaBrowserCompat(context, component, connectionCallback, null)
 		activeConnections[appInfo] = mediaBrowser
 		mediaBrowser.connect()
 	}

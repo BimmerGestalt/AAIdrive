@@ -166,13 +166,13 @@ class MainActivity : AppCompatActivity() {
 					layout.findViewById<ImageView>(R.id.imgControllable).visibility = if (appInfo.controllable && !appInfo.connectable) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgConnectable).visibility = if (appInfo.connectable) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgBrowseable).visibility = if (appInfo.browseable) VISIBLE else GONE
-					layout.findViewById<ImageView>(R.id.imgSearchable).visibility = if (appInfo.searchable) VISIBLE else GONE
+					layout.findViewById<ImageView>(R.id.imgSearchable).visibility = if (appInfo.searchable || appInfo.playsearchable) VISIBLE else GONE
 					layout.findViewById<ImageView>(R.id.imgBlock).visibility = if (appInfo.controllable || appInfo.connectable) GONE else VISIBLE
 					val features = listOfNotNull(
 							if (appInfo.controllable && !appInfo.connectable) getString(R.string.musicAppControllable) else null,
 							if (appInfo.connectable) getString(R.string.musicAppConnectable) else null,
 							if (appInfo.browseable) getString(R.string.musicAppBrowseable) else null,
-							if (appInfo.searchable) getString(R.string.musicAppSearchable) else null,
+							if (appInfo.searchable || appInfo.playsearchable) getString(R.string.musicAppSearchable) else null,
 							if (appInfo.controllable || appInfo.connectable) null else getString(R.string.musicAppUnavailable)
 					).joinToString(", ")
 					layout.findViewById<TextView>(R.id.txtMusicAppFeatures).text = features
