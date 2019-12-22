@@ -10,6 +10,7 @@ data class MusicAppInfo(val name: String, val icon: Drawable,
 	var controllable = false
 	var browseable = false
 	var searchable = false
+	var playsearchable = false
 
 	companion object {
 		fun getInstance(context: Context, packageName: String, className: String?): MusicAppInfo {
@@ -49,7 +50,8 @@ data class MusicAppInfo(val name: String, val icon: Drawable,
 				"connectable" to connectable,
 				"controllable" to controllable,
 				"browseable" to browseable,
-				"searchable" to searchable
+				"searchable" to searchable,
+				"playsearchable" to playsearchable
 		)
 	}
 
@@ -59,6 +61,11 @@ data class MusicAppInfo(val name: String, val icon: Drawable,
 			it.controllable = this.controllable
 			it.browseable = this.browseable
 			it.searchable = this.searchable
+			it.playsearchable = this.playsearchable
 		}
+	}
+
+	override fun toString(): String {
+		return "MusicAppInfo(name='$name', packageName='$packageName', className=$className, probed=$probed, connectable=$connectable, controllable=$controllable, browseable=$browseable, searchable=$searchable, playsearchable=$playsearchable)"
 	}
 }

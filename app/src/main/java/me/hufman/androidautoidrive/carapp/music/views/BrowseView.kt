@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.carapp.music.views
 
 import android.util.Log
 import kotlinx.coroutines.Deferred
+import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
@@ -15,6 +16,7 @@ data class BrowseState(val location: MusicMetadata?,    // the directory the use
 )
 class BrowseView(val states: List<RHMIState>, val musicController: MusicController) {
 	companion object {
+		val SEARCHRESULT_PLAY_FROM_SEARCH = MusicMetadata(mediaId="__PLAY_FROM_SEARCH__", title=L.MUSIC_BROWSE_PLAY_FROM_SEARCH)
 		fun fits(state: RHMIState): Boolean {
 			return BrowsePageView.fits(state)
 		}
@@ -143,6 +145,9 @@ class BrowsePageModel(private val browseView: BrowseView, private val musicContr
 	val musicAppInfo: MusicAppInfo?
 		get() = musicController.musicBrowser?.musicAppInfo
 
+	fun isSupportedAction(action: MusicAction): Boolean {
+		return musicController.isSupportedAction(action)
+	}
 	fun jumpbackFolder(): MusicMetadata? {
 		return browseView.locationStack.lastOrNull { it?.browseable == true }
 	}
@@ -158,6 +163,10 @@ class BrowsePageController(private val browseView: BrowseView, private val music
 	fun jumpBack(hmiAction: RHMIAction.HMIAction?) {
 		val nextPage = browseView.pushBrowsePage(browseView.locationStack.lastOrNull {it?.browseable == true})
 		hmiAction?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
+	}
+
+	fun playFromSearch(search: String) {
+		musicController.playFromSearch(search)
 	}
 
 	fun onListSelection(entry: MusicMetadata, hmiAction: RHMIAction.HMIAction?) {

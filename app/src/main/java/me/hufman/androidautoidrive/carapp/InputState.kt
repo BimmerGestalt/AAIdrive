@@ -33,7 +33,7 @@ abstract class InputState<T:Any>(val inputComponent: RHMIComponent.Input) {
 		inputComponent.getSuggestModel()?.setValue(RHMIModel.RaListModel.RHMIListConcrete(1),0,0, 0)
 	}
 
-	fun sendSuggestions(newSuggestions: List<T>) {
+	open fun sendSuggestions(newSuggestions: List<T>) {
 		synchronized(this) {
 			suggestions.clear()
 			suggestions.addAll(newSuggestions)

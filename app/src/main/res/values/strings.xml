@@ -64,6 +64,7 @@
     <string name="MUSIC_BROWSE_ACTION_JUMPBACK">Jump Back</string>
     <string name="MUSIC_BROWSE_ACTION_FILTER">Filter</string>
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Search</string>
+    <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Play From Search</string>
     <string name="MUSIC_QUEUE_TITLE">Now Playing</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;Empty Queue&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Back</string>

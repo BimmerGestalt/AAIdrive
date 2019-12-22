@@ -153,10 +153,14 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 				})
 
 				// now we wait for the results
-				withTimeout(timeout) {
-					while (!deferred.isCompleted) {
-						delay(100)
+				try {
+					withTimeout(timeout) {
+						while (!deferred.isCompleted) {
+							delay(100)
+						}
 					}
+				} catch (e: CancellationException) {
+					// timeout expired
 				}
 				if (!deferred.isCompleted) {
 					deferred.complete(LinkedList())
@@ -187,10 +191,14 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 				deferred.complete(null)
 			}
 			// now we wait for the results
-			withTimeout(timeout) {
-				while (!deferred.isCompleted) {
-					delay(100)
+			try {
+				withTimeout(timeout) {
+					while (!deferred.isCompleted) {
+						delay(100)
+					}
 				}
+			} catch (e: CancellationException) {
+				// timeout expired
 			}
 			if (!deferred.isCompleted) {
 				deferred.complete(null)
