@@ -136,9 +136,11 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 		// start loading data
 		loaderJob?.cancel()
 		loaderJob = launch(Dispatchers.IO) {
-			musicListComponent.setEnabled(false)
-			currentListModel = loadingList
-			showList()
+			if (this@BrowsePageView.musicList.isEmpty()) {
+				musicListComponent.setEnabled(false)
+				currentListModel = loadingList
+				showList()
+			}
 			val musicListDeferred = browsePageModel.browseAsync(folder)
 			val musicList = musicListDeferred.awaitPending(LOADING_TIMEOUT) {
 				Log.d(TAG, "Browsing ${folder?.mediaId} timed out, retrying")
@@ -150,6 +152,7 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 			Log.d(TAG, "Browsing ${folder?.mediaId} resulted in ${musicList.count()} items")
 
 			if (musicList.isEmpty()) {
+				musicListComponent.setEnabled(false)
 				currentListModel = emptyList
 				showList()
 			} else if (isSingleFolder(musicList)) {

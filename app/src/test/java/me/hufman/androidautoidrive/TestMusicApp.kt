@@ -564,18 +564,19 @@ class TestMusicApp {
 		assertEquals(false, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id] as Boolean?)   // not clickable
 		assertEquals("<Loading>", (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data[0][2])
 		// finish loading
-		browseResults.complete(listOf(
-				MusicMetadata("testId1", title = "Folder",
-						browseable = true, playable = false),
-				MusicMetadata("bonusFolder1", title = "BonusFolder1",
-						browseable = true, playable = false),
-				MusicMetadata("bonusFolder2", title = "BonusFolder2",
-						browseable = true, playable = false),
-				MusicMetadata("testId2", title = "File1",
-						browseable = false, playable = true),
-				MusicMetadata("testId3", title = "File2",
-						browseable = false, playable = true)
-		))
+		val browseList = listOf(
+			MusicMetadata("testId1", title = "Folder",
+					browseable = true, playable = false),
+			MusicMetadata("bonusFolder1", title = "BonusFolder1",
+					browseable = true, playable = false),
+			MusicMetadata("bonusFolder2", title = "BonusFolder2",
+					browseable = true, playable = false),
+			MusicMetadata("testId2", title = "File1",
+					browseable = false, playable = true),
+			MusicMetadata("testId3", title = "File2",
+					browseable = false, playable = true)
+		)
+		browseResults.complete(browseList)
 		await().until { (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows == 5 }
 		assertEquals(true, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id] as Boolean?)    // clickable+
 		assertArrayEquals(arrayOf("Filter"),
@@ -599,12 +600,45 @@ class TestMusicApp {
 		)
 
 		// go back into the top level browse, it should not have Jump Back
+		val browseResultsAgain = CompletableDeferred<List<MusicMetadata>>() // reset the Browse Deferred
+		whenever(musicController.browseAsync(anyOrNull())) doAnswer {
+			browseResultsAgain
+		}
 		page1.show()
 		assertArrayEquals(arrayOf("Filter"),
 				(mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data.map {
 					it[2]
 				}.toTypedArray()
 		)
+		// verify that it didn't show loading screen, even if the deferred is still loading
+		Thread.sleep(1000)
+		assertEquals(true, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id] as Boolean?)   // still clickable
+		assertArrayEquals(arrayOf("Folder", "BonusFolder1", "BonusFolder2", "File1", "File2"),
+				(mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data.map {
+					it[2]
+				}.toTypedArray()
+		)
+		// finish loading
+		val browseListAgain = listOf(
+				MusicMetadata("testId1", title = "Folder",
+						browseable = true, playable = false),
+				MusicMetadata("bonusFolder1", title = "BonusFolder1",
+						browseable = true, playable = false),
+				MusicMetadata("bonusFolder2", title = "BonusFolder2",
+						browseable = true, playable = false),
+				MusicMetadata("testId2", title = "File1",
+						browseable = false, playable = true),
+				MusicMetadata("testId3", title = "File3",
+						browseable = false, playable = true)
+		)
+		browseResultsAgain.complete(browseListAgain)
+		await().untilAsserted {
+			assertArrayEquals(arrayOf("Folder", "BonusFolder1", "BonusFolder2", "File1", "File3"),
+					(mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data.map {
+						it[2]
+					}.toTypedArray()
+			)
+		}
 
 		// click the folder (testId1:Folder, to show in BROWSE2)
 		app.components[IDs.BROWSE1_MUSIC_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback!!.onActionEvent(mapOf(1.toByte() to 0))
@@ -620,7 +654,7 @@ class TestMusicApp {
 		await().until { (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows == 5 }
 		// browse results are still resolved from last page, so they show up immediately
 		assertEquals(true, mockServer.properties[IDs.BROWSE2_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id] as Boolean?)
-		assertArrayEquals(arrayOf("Folder", "BonusFolder1", "BonusFolder2", "File1", "File2"),
+		assertArrayEquals(arrayOf("Folder", "BonusFolder1", "BonusFolder2", "File1", "File3"),
 				(mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data.map {
 					it[2]
 				}.toTypedArray()
