@@ -271,7 +271,7 @@ class TestMusicApp {
 		assertEquals(null, mockServer.data[IDs.ARTIST_LARGE_MODEL])
 
 		// now redraw with the playback view selected
-		mockClient.rhmi_onHmiEvent(1, "unused", IDs.PLAYBACK_STATE, 11, mapOf(23.toByte() to true))
+		mockClient.rhmi_onHmiEvent(1, "unused", IDs.PLAYBACK_STATE, 1, mapOf(4.toByte() to true))
 		assertTrue(app.playbackViewVisible)
 		verify(musicController, atLeastOnce()).getMetadata()
 

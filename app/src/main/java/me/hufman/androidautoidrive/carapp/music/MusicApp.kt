@@ -147,9 +147,9 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 					}
 				}
 				if (componentId == playbackView.state.id &&
-						eventId == 11 // VISIBLE event
+						eventId == 1 // FOCUS event
 				) {
-					playbackViewVisible = args?.get(23.toByte()) as? Boolean == true
+					playbackViewVisible = args?.get(4.toByte()) as? Boolean == true
 					// redraw after a new window is shown
 					if (playbackViewVisible) {
 						playbackView.show()
