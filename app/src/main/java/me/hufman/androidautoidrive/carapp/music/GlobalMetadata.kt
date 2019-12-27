@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.carapp.music
 
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
@@ -14,11 +15,17 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 	var displayedApp: MusicAppInfo? = null
 	var displayedSong: MusicMetadata? = null
 	var displayedQueue: List<MusicMetadata>? = null
+	var icQueue: List<MusicMetadata> = ArrayList()
 
 	init {
 		multimediaInfoEvent = app.events.values.filterIsInstance<RHMIEvent.MultimediaInfoEvent>().first()
 		statusbarEvent = app.events.values.filterIsInstance<RHMIEvent.StatusbarEvent>().first()
 		instrumentCluster = app.components.values.filterIsInstance<RHMIComponent.InstrumentCluster>().first()
+	}
+
+	companion object {
+		val QUEUE_SKIPPREVIOUS = MusicMetadata(mediaId = "__QUEUE_SKIPBACK__", title="< ${L.MUSIC_SKIP_PREVIOUS}")
+		val QUEUE_SKIPNEXT = MusicMetadata(mediaId = "__QUEUE_SKIPNEXT__", title="${L.MUSIC_SKIP_NEXT} >")
 	}
 
 	fun initWidgets() {
@@ -38,7 +45,9 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 
 		val queue = controller.getQueue()
 		if (queue != displayedQueue || song != displayedSong) {
-			showQueue(queue, song)
+			val icQueue = prepareQueue(queue, song)
+			showQueue(icQueue, song)
+			this.icQueue = icQueue
 		}
 
 		displayedApp = app
@@ -66,39 +75,63 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 		multimediaInfoEvent.triggerEvent()
 	}
 
-	/** TODO Verify this api
-	 * my test Mini doesn't support it when Spotify tries it
-	 * */
-	private fun showQueue(queue: List<MusicMetadata>?, currentSong: MusicMetadata?) {
-		if (queue == null || queue.isEmpty()) {
-			instrumentCluster.getUseCaseModel()?.asRaDataModel()?.value = ""
-			instrumentCluster.getPlaylistModel()?.asRaListModel()?.value = RHMIModel.RaListModel.RHMIListConcrete(3)
+	/**
+	 * Decorates a song queue with a Back/Next action around the current song
+	 */
+	fun prepareQueue(songQueue: List<MusicMetadata>?, currentSong: MusicMetadata?): List<MusicMetadata> {
+		val queue = ArrayList<MusicMetadata>(songQueue?.size ?: 0 + 3)
+		fun addPrevious(): Unit = if (controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS)) { queue.add(QUEUE_SKIPPREVIOUS); Unit } else Unit
+		fun addNext(): Unit = if (controller.isSupportedAction(MusicAction.SKIP_TO_NEXT)) { queue.add(QUEUE_SKIPNEXT); Unit } else Unit
+		if (songQueue == null || songQueue.isEmpty()) {
+			addPrevious()
+			if (currentSong != null) { queue.add(currentSong) }
+			addNext()
 		} else {
-			instrumentCluster.getUseCaseModel()?.asRaDataModel()?.value = "EntICPlaylist"
-
-			val adapter = object: RHMIListAdapter<MusicMetadata>(7, queue) {
-				override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
-					val selected = item.queueId == currentSong?.queueId
-					return arrayOf(
-							index,  // index
-							item.title ?: "",   // title
-							item.artist ?: "",  // artist
-							item.album ?: "",   // album
-							-1,
-							if (selected) 1 else 0, // checked
-							true
-					)
+			val index = songQueue.indexOfFirst { it.queueId == currentSong?.queueId }
+			if (index >= 0) {
+				// add the previous/next actions around the current song
+				// This allows for using the shuffle mode's back/next and also the queue selection
+				queue.addAll(songQueue.subList(0, index))
+				addPrevious()
+				queue.add(songQueue[index])
+				addNext()
+				if (index < songQueue.count()) {
+					queue.addAll(songQueue.subList(index + 1, songQueue.count()))
 				}
+			} else {
+				queue.addAll(songQueue)
 			}
-
-			instrumentCluster.getPlaylistModel()?.asRaListModel()?.setValue(adapter, 0, adapter.height, adapter.height)
 		}
+		return queue
+	}
+
+	private fun showQueue(queue: List<MusicMetadata>, currentSong: MusicMetadata?) {
+		instrumentCluster.getUseCaseModel()?.asRaDataModel()?.value = "EntICPlaylist"
+
+		val adapter = object: RHMIListAdapter<MusicMetadata>(7, queue) {
+			override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
+				val selected = item.queueId == currentSong?.queueId
+				return arrayOf(
+						index,  // index
+						item.title ?: "",   // title
+						item.artist ?: "",  // artist
+						item.album ?: "",   // album
+						-1,
+						if (selected) 1 else 0, // checked
+						true
+				)
+			}
+		}
+
+		instrumentCluster.getPlaylistModel()?.asRaListModel()?.setValue(adapter, 0, adapter.height, adapter.height)
 	}
 
 	private fun onClick(index: Int) {
-		val song = displayedQueue?.getOrNull(index)
-		if (song?.queueId != null) {
-			controller.playQueue(song)
+		val song = icQueue.getOrNull(index)
+		when {
+			song == QUEUE_SKIPPREVIOUS -> controller.skipToPrevious()
+			song == QUEUE_SKIPNEXT -> controller.skipToNext()
+			song?.queueId != null -> controller.playQueue(song)
 		}
 	}
 

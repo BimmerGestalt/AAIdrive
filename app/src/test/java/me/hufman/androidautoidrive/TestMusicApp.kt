@@ -319,7 +319,7 @@ class TestMusicApp {
 		assertEquals("Title", mockServer.data[IDs.GLOBAL_TRACK_MODEL])
 		assertEquals("Test2", mockServer.data[IDs.GLOBAL_APP_MODEL])
 		assertEquals("Title", mockServer.data[IDs.IC_TRACK_MODEL])
-		assertEquals("", mockServer.data[IDs.IC_USECASE_MODEL])
+		assertEquals("EntICPlaylist", mockServer.data[IDs.IC_USECASE_MODEL])
 		assertTrue(mockServer.triggeredEvents.containsKey(IDs.MULTIMEDIA_EVENT))
 		assertTrue(mockServer.triggeredEvents.containsKey(IDs.STATUSBAR_EVENT))
 
@@ -333,8 +333,8 @@ class TestMusicApp {
 		assertEquals("EntICPlaylist", mockServer.data[IDs.IC_USECASE_MODEL])
 		val displayedTitles = (mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable).data.map {it[1]}.toTypedArray()
 		val displayedChecks = (mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable).data.map {it[5]}.toTypedArray()
-		assertArrayEquals(arrayOf("Song 1", "Song 3", "Song 6"), displayedTitles)
-		assertArrayEquals(arrayOf(1, 0, 0), displayedChecks)
+		assertArrayEquals(arrayOf("< Back", "Song 1", "Next >", "Song 3", "Song 6"), displayedTitles)
+		assertArrayEquals(arrayOf(0, 1, 0, 0, 0), displayedChecks)
 
 		// change song, the checkbox should move
 		whenever(musicController.getMetadata()) doReturn MusicMetadata("testId", queueId=20,
@@ -342,8 +342,10 @@ class TestMusicApp {
 				icon=mock(), coverArt=mock(),
 				artist="Artist", album="Album", title="Song 6")
 		globalState.redraw()
+		val displayedTitles2 = (mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable).data.map {it[1]}.toTypedArray()
 		val displayedChecks2 = (mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable).data.map {it[5]}.toTypedArray()
-		assertArrayEquals(arrayOf(0, 0, 1), displayedChecks2)
+		assertArrayEquals(arrayOf("Song 1", "Song 3", "< Back", "Song 6", "Next >"), displayedTitles2)
+		assertArrayEquals(arrayOf(0, 0, 0, 1, 0), displayedChecks2)
 	}
 
 	@Test
@@ -499,11 +501,13 @@ class TestMusicApp {
 		globalState.initWidgets()
 
 		globalState.redraw()
-		assertEquals("", mockServer.data[IDs.IC_USECASE_MODEL])
+		assertEquals("EntICPlaylist", mockServer.data[IDs.IC_USECASE_MODEL])
 		assertEquals("Title", mockServer.data[IDs.IC_TRACK_MODEL])
 		val emptylist = mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable
-		assertEquals(0, emptylist.totalRows)
+		assertEquals(3, emptylist.totalRows)
+		assertArrayEquals(arrayOf("< Back", "Title", "Next >"), emptylist.data.map {it[1]}.toTypedArray())
 
+		// a queue that has the song in place
 		whenever(musicController.getQueue()) doAnswer { listOf(
 				MusicMetadata(queueId=10, title="Song 1", album="Album", artist="Artist"),
 				MusicMetadata(queueId=15, title="Song 3"),
@@ -512,19 +516,35 @@ class TestMusicApp {
 		globalState.redraw()
 		assertEquals("EntICPlaylist", mockServer.data[IDs.IC_USECASE_MODEL])
 		val list = mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable
-		assertEquals(3, list.totalRows)
-		assertEquals("Song 1", list.data[0][1])
-		assertEquals("Artist", list.data[0][2])
-		assertEquals("Album", list.data[0][3])
-		assertEquals(1, list.data[0][5])
-		assertEquals("Song 3", list.data[1][1])
-		assertEquals("", list.data[1][2])
-		assertEquals("", list.data[1][3])
-		assertEquals(0, list.data[1][5])
-		assertEquals("Song 6", list.data[2][1])
+		assertEquals(5, list.totalRows)
+		assertEquals("< Back", list.data[0][1])
+		assertEquals("Song 1", list.data[1][1])
+		assertEquals("Artist", list.data[1][2])
+		assertEquals("Album", list.data[1][3])
+		assertEquals(1, list.data[1][5])
+		assertEquals("Next >", list.data[2][1])
+		assertEquals("Song 3", list.data[3][1])
+		assertEquals("", list.data[3][2])
+		assertEquals("", list.data[3][3])
+		assertEquals(0, list.data[3][5])
+		assertEquals("Song 6", list.data[4][1])
 
+		app.actions[IDs.IC_TRACK_ACTION]?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		verify(musicController).skipToPrevious()
 		app.actions[IDs.IC_TRACK_ACTION]?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 2))
+		verify(musicController).skipToNext()
+		app.actions[IDs.IC_TRACK_ACTION]?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 4))
 		verify(musicController).playQueue(MusicMetadata(queueId=20, title="Song 6"))
+
+		// a queue without the song in place
+		whenever(musicController.getQueue()) doAnswer { listOf(
+				MusicMetadata(queueId=15, title="Song 3"),
+				MusicMetadata(queueId=20, title="Song 6")
+		) }
+		globalState.redraw()
+		val missingList = mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable
+		assertArrayEquals(arrayOf("Song 3", "Song 6"), missingList.data.map {it[1]}.toTypedArray())
+		assertArrayEquals(arrayOf(0, 0), missingList.data.map {it[5]}.toTypedArray())
 	}
 
 	@Test
