@@ -5,6 +5,7 @@ import de.bmw.idrive.BMWRemoting
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.awaitPending
 import me.hufman.androidautoidrive.carapp.InputState
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
@@ -290,6 +291,7 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 				if (item == SEARCHRESULT_EMPTY || item == SEARCHRESULT_SEARCHING) {
 					// invalid selection, don't change states
 					inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
+					throw RHMIActionAbort()
 				} else if (item == BrowseView.SEARCHRESULT_PLAY_FROM_SEARCH) {
 					browseController.playFromSearch(this.input)
 					browseController.onListSelection(item, inputComponent.getSuggestAction()?.asHMIAction())

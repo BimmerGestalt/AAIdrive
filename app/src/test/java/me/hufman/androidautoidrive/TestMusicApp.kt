@@ -9,6 +9,7 @@ import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
 import kotlinx.coroutines.*
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.music.GlobalMetadata
 import me.hufman.androidautoidrive.carapp.music.MusicApp
 import me.hufman.androidautoidrive.carapp.music.views.*
@@ -1080,7 +1081,11 @@ class TestMusicApp {
 		}
 		// verifies that the Searching entry isn't clickable
 		mockServer.data.remove(inputComponent.getSuggestAction()?.asHMIAction()?.targetModel)
-		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0.toByte() to 1))
+		try {
+			inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0.toByte() to 1))
+			fail()
+		} catch (e: RHMIActionAbort) { // don't succeed the RAAction
+		}
 		assertEquals(0, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
 
 		// verify that it retries
@@ -1092,7 +1097,11 @@ class TestMusicApp {
 
 		// verifies that the Empty entry isn't clickable
 		mockServer.data.remove(inputComponent.getSuggestAction()?.asHMIAction()?.targetModel)
-		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0.toByte() to 1))
+		try {
+			inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0.toByte() to 1))
+			fail()
+		} catch (e: RHMIActionAbort) { // don't succeed the RAAction
+		}
 		assertEquals(0, inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
 	}
 

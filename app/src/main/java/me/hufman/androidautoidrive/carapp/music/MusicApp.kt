@@ -7,6 +7,7 @@ import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.Utils.loadZipfile
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIApplicationIdempotent
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.carapp.RHMIUtils
@@ -116,11 +117,19 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 //			Log.i(TAG, "Received rhmi_onActionEvent: handle=$handle ident=$ident actionId=$actionId")
 			try {
 				app?.actions?.get(actionId)?.asRAAction()?.rhmiActionCallback?.onActionEvent(args)
+				carApp.runSynchronized {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
+				}
+			} catch (e: RHMIActionAbort) {
+				// Action handler requested that we don't claim success
+				carApp.runSynchronized {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, false)
+				}
 			} catch (e: Exception) {
 				Log.e(TAG, "Exception while calling onActionEvent handler!", e)
-			}
-			carApp.runSynchronized {
-				server?.rhmi_ackActionEvent(handle, actionId, 1, true)
+				carApp.runSynchronized {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
+				}
 			}
 		}
 
