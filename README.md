@@ -125,3 +125,56 @@ Build Instructions
   - From the commandline, with an Android build environment set up, `./gradlew assemble` should work too
 
 Besides building the entire project, Android Studio also offers a convenient "Run app" method to build and directly install to a connected phone. Use the Build Variants panel to select a specific version to install.
+
+Privacy
+-------
+
+This project contains no advertising or user tracking, and is developed entirely for fun and to enhance the usefulness of the BMW/Mini infotainment system.
+
+The app uses the Internet Permission to make a TCP connection to the car, which is reachable through a localhost socket on the main Connected app. Additionally, some cover art and incoming picture notifications (such as from Hangouts) may be fetched from Internet URLs. No other Internet access is required for the app's functionality.
+
+The analytics-enabled version automatically reports some information to [Sentry](https://www.sentry.io) to assist with development and debugging. Besides any unfortunate crashes, the app reports any [installed music apps](https://github.com/hufman/AndroidAutoIdrive/blob/master/app/src/sentry/java/me/hufman/androidautoidrive/Analytics.kt) and the capabilities each app provides, as well as the [model and capabilities](https://github.com/hufman/AndroidAutoIdrive/blob/master/app/src/main/java/me/hufman/androidautoidrive/CarInformationDiscovery.kt#L33) of any connected car.
+
+Each release provides both the analytics-enabled and analytics-disabled options.
+
+<details>
+  <summary>Example Analytics Data</summary>
+
+  ### Music App
+```
+{
+  "appId": "github.daneren2005.dsub",
+  "appName": "DSub",
+  "controllable": "false",
+  "connectable": "true",
+  "browseable": "true",
+  "searchable": "false",
+  "playsearchable": "false"
+}
+```
+
+  ### Car Connection
+```
+{
+  "a4axl": "true",
+  "alignment_right": "true",
+  "hmi_display_height": "480",
+  "hmi_display_width": "1280",
+  "hmi_role": "HU",
+  "hmi_type": "MINI ID5",
+  "hmi_version": "EntryEvo_ID5_1903_Release ID5_1903-490-1837K Build 47 - Rev:203015 2018-11-14 08:39:42",
+  "inbox": "true",
+  "map": "true",
+  "navi": "true",
+  "pia": "true",
+  "speech2text": "true",
+  "speedlock": "true",
+  "touch_command": "false",
+  "tts": "true",
+  "vehicle_country": "US",
+  "vehicle_productiondate": "03.00",
+  "vehicle_type": "F56",
+  "voice": "false"
+}
+```
+
