@@ -18,6 +18,8 @@ after_success:
 - "./gradlew testGmapNonalyticsDebugUnitTestCoverage coveralls"
 - "./gradlew assembleNomap"
 - "echo Found the following artifacts:; find app/build/outputs"
+- "echo Hashing the artifacts for traceability:; find app/build/outputs -name '*.apk' -exec sha1sum '{}' +"
+- "echo Verifying sha1sum files:; find app/build/outputs -name '*.apk.sha1' -execdir cat '{}' +; find app/build/outputs -name '*.apk.sha1' -execdir sha1sum --check '{}' +"
 
 deploy:
   provider: releases

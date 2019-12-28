@@ -19,7 +19,7 @@ task "generateApkChecksums" {
             File fileSha1 = new File(file.absolutePath + ".sha1")
             String checksum
             file.withInputStream { ins -> checksum = DigestUtils.sha1Hex(ins) }
-            fileSha1.text = checksum
+            fileSha1.text = checksum + "  " + file.name + "\n"
         }
     }
 }
