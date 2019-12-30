@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name">AndroidAutoIdrive</string>
+    <string name="permlab_accessNotifications"> Доступ к Уведомлениям IDrive</string>
+    <string name="permlab_bindNotificationListenerService">Доступ к Уведомлениям IDrive</string>
+    <string name="permdesc_accessNotifications">Доступ к Уведомлениям IDrive</string>
+    <string name="permdesc_bindNotificationListenerService">Доступ к Уведомлениям IDrive</string>
+    <string name="notification_title">Android Auto для IDrive</string>
+    <string name="notification_description">Подклучен к Машыне</string>
+    <string name="notification_description_bmw">Подклучен к БМВ</string>
+    <string name="notification_description_mini">Подклучен к Мини</string>
+
+    <string name="spawn_test_notification">Пробная Уведомление</string>
+    <string name="message_notifications">Уведомления о Сообщениях</string>
+    <string name="notification_popups">Всплывающие Уведомления</string>
+    <string name="notification_popups_passenger">Всплывающие Уведомления с Пасажиром</string>
+    <string name="enable_google_maps">Включить Google Maps</string>
+    <string name="lbl_widescreen_map">Широкоэкранные Карты</string>
+    <string name="gmapStyleLabel">Стиль Карты</string>
+    <string name="lbl_music_apps">Музыкальные Приложения</string>
+    <string name="musicAppIcon">Значок Приложения</string>
+    <string name="musicAppNowPlaying">Играющие</string>
+    <string name="musicAppControllable">Управляемый во Время Работы</string>
+    <string name="musicAppConnectable">Полностью Контролируемое</string>
+    <string name="musicAppBrowseable">Просматриваемый</string>
+    <string name="musicAppSearchable">Доступны для Поиска</string>
+    <string name="musicAppUnavailable">Недоступные</string>
+    <string name="enable_audio_context">Запросить Аудио Фокус</string>
+    <string name="lbl_grant_sessions">Контроль над Активными Музыкальными Приложениями:</string>
+    <string name="lbl_grant">Разрешить</string>
+
+    <string name="connectionStatusMissingConnectedApp">Не найдено приложения Connected или Connected Classic</string>
+    <string name="connectionStatusWaiting">Ждем подключения к машине</string>
+
+    <string name="nowplaying_notconnected">&lt;Не подключено&gt;</string>
+    <string name="nowplaying_unknown">&lt;Неизвестное&gt;</string>
+
+    <string name="txt_setup_bmw_ready">Приложение готово для подключения к БМВ</string>
+    <string name="txt_setup_mini_ready">Приложение готово для подключения к Мини</string>
+    <string name="txt_setup_discovered_new_bmw">Приложение BMW Connected обнаружено, но для работы этого приложения также необходимо установить приложение Mini Connected Classic:</string>
+    <string name="txt_setup_discovered_new_mini">Приложение Mini Connected обнаружено, но для работы этого приложения также необходимо установить приложение BMW Connected Classic:</string>
+    <string name="txt_setup_bmw_missing">Не готово к подключению к БМВ:</string>
+    <string name="txt_setup_mini_missing">Не готово к подключению к Мини:</string>
+    <string name="btn_install">Установить</string>
+    <string name="btn_install_bmw">Установить BMW Connected Classic</string>
+    <string name="btn_install_mini">Установить Mini Connected Classic</string>
+
+    <!-- car app strings -->
+    <string name="NOTIFICATIONS_TITLE">Уведомления</string>
+    <string name="NOTIFICATIONS_EMPTY_LIST">Нет Уведомлений</string>
+    <string name="NOTIFICATION_CLEAR_ACTION">Очищить </string>
+
+    <string name="MAP_ACTION_VIEWMAP">Посмотреть Полную Карту</string>
+    <string name="MAP_ACTION_SEARCH">Поиск Места</string>
+    <string name="MAP_ACTION_CLEARNAV">Очистить Навигацию</string>
+
+    <string name="MUSIC_APPLIST_TITLE">Приложения</string>
+    <string name="MUSIC_APPLIST_EMPTY">&lt;Нет Приложений&gt;</string>
+    <string name="MUSIC_CUSTOMACTIONS_TITLE">Действия</string>
+    <string name="MUSIC_DISCONNECTED">&lt;Не Подключено &gt;</string>
+    <string name="MUSIC_BROWSE_TITLE">Просмотреть</string>
+    <string name="MUSIC_BROWSE_EMPTY">&lt;Пусто&gt;</string>
+    <string name="MUSIC_BROWSE_LOADING">&lt;Загрузка&gt;</string>
+    <string name="MUSIC_BROWSE_SEARCHING">&lt;Ищем&gt;</string>
+    <string name="MUSIC_BROWSE_ACTION_JUMPBACK">Назад</string>
+    <string name="MUSIC_BROWSE_ACTION_FILTER">Фильтр</string>
+    <string name="MUSIC_BROWSE_ACTION_SEARCH">Поиск</string>
+    <string name="MUSIC_QUEUE_TITLE">Играющие </string>
+    <string name="MUSIC_QUEUE_EMPTY">&lt;Пустая очередь&gt;</string>
+    <string name="MUSIC_SKIP_PREVIOUS">Предыдущий</string>
+    <string name="MUSIC_SKIP_NEXT">Следующую</string>
+
+    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_ON">Перемешивать</string>
+    <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Не Нравится</string>
+    <string name="MUSIC_SPOTIFY_START_RADIO">Сделать Радиостанцию</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Повторить Все</string>
+    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_OFF">Не Перемешивать</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Повторить Одну</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Выключить Повтор</string>
+    <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Нравится</string>
+</resources>
