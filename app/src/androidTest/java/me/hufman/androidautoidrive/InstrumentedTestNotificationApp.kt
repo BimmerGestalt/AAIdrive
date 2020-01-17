@@ -53,7 +53,7 @@ class InstrumentedTestNotificationApp {
 		// prepare a notification
 		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)
 		val notification = CarNotification(appContext.packageName, "test", icon, true, arrayOf(),
-				"Test", "Test Summary", "Test Text")
+				"Test", "Test Summary", "Test Text", null, null)
 
 		// send an update from the phone
 		val controller = NotificationListenerServiceImpl.NotificationUpdater(appContext)
@@ -80,14 +80,19 @@ class InstrumentedTestNotificationApp {
 		// prepare a notification
 		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)
 		val notification = CarNotification(appContext.packageName, "test", icon, true, arrayOf(),
-				"Test", "Test Summary", "Test Text")
+				"Test", "Test Summary", "Test Text", null, null)
+
+		val carController = CarNotificationControllerIntent(appContext)
+		// mark the notification as read
+		carController.read(notification)
+		await().untilAsserted { verify(mockListener, times(1)).readNotification(notification.key) }
 
 		// send an interaction from the car
-		val carController = CarNotificationControllerIntent(appContext)
 		carController.clear(notification)
-
-		// verify that it made it across
 		await().untilAsserted { verify(mockListener, times(1)).cancelNotification(notification.key) }
 
+		// send a custom action from the car
+		carController.action(notification, "custom")
+		await().untilAsserted { verify(mockListener, times(1)).sendNotificationAction(notification.key, "custom") }
 	}
 }

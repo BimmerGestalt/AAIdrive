@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
@@ -224,6 +225,8 @@ class MainActivity : AppCompatActivity() {
 			val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID,
 					NOTIFICATION_CHANNEL_NAME,
 					NotificationManager.IMPORTANCE_DEFAULT)
+			channel.enableLights(true)
+			channel.lightColor = Color.CYAN
 
 			val notificationManager = getSystemService(NotificationManager::class.java)
 			notificationManager.createNotificationChannel(channel)

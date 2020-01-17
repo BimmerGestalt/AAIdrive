@@ -428,6 +428,9 @@ class TestNotificationApp {
 		// the car shows the view state
 		callbacks.rhmi_onHmiEvent(1, "unused", 20, 1, mapOf(4.toByte() to true))
 
+		// verify the car told the phone that it is reading the notification
+		verify(carNotificationController).read(notification2)
+
 		// verify that the right information is shown
 		val appTitleList = mockServer.data[519] as BMWRemoting.RHMIDataTable
 		assertNotNull(appTitleList)

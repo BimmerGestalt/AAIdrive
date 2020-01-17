@@ -31,6 +31,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		const val INTENT_REQUEST_DATA = "me.hufman.androidaudoidrive.PhoneNotificationUpdate.REQUEST_DATA"
 		const val EXTRA_KEY = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotificationUpdate.EXTRA_KEY"
 		const val EXTRA_INTERACTION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotificationUpdate.EXTRA_INTERACTION"
+		const val EXTRA_INTERACTION_READ = "EXTRA_INTERACTION_READ"
 		const val EXTRA_INTERACTION_CLEAR = "EXTRA_INTERACTION_CLEAR"
 		const val EXTRA_INTERACTION_ACTION = "EXTRA_INTERACTION_ACTION"
 		const val EXTRA_ACTION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotificationUpdate.EXTRA_ACTION"
@@ -127,6 +128,9 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 
 	open inner class InteractionListener {
 		/** Handles interactions from the car */
+		open fun readNotification(key: String) {
+			this@NotificationListenerServiceImpl.setNotificationsShown(arrayOf(key))
+		}
 		open fun cancelNotification(key: String) {
 			this@NotificationListenerServiceImpl.cancelNotification(key)
 		}
@@ -150,15 +154,23 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 				// handle a notification interaction
 				val interaction = intent.getStringExtra(EXTRA_INTERACTION)
 				val key = intent.getStringExtra(EXTRA_KEY)
-				if (interaction == EXTRA_INTERACTION_ACTION) {
-					val action = intent.getStringExtra(EXTRA_ACTION)
-					Log.i(TAG, "Received request to send action to $key of type $action")
-					listener.sendNotificationAction(key, action)
-				} else if (interaction == EXTRA_INTERACTION_CLEAR) {
-					Log.i(TAG, "Received request to clear notification $key")
-					listener.cancelNotification(key)
-				} else {
-					Log.i(TAG, "Unknown interaction! $interaction")
+				when (interaction) {
+					EXTRA_INTERACTION_READ -> {
+						Log.d(TAG, "Received request to mark notification $key as read")
+						listener.readNotification(key)
+					}
+					EXTRA_INTERACTION_ACTION -> {
+						val action = intent.getStringExtra(EXTRA_ACTION)
+						Log.d(TAG, "Received request to send action to $key of type $action")
+						listener.sendNotificationAction(key, action)
+					}
+					EXTRA_INTERACTION_CLEAR -> {
+						Log.d(TAG, "Received request to clear notification $key")
+						listener.cancelNotification(key)
+					}
+					else -> {
+						Log.i(TAG, "Unknown interaction! $interaction")
+					}
 				}
 			} else if (intent?.action == INTENT_REQUEST_DATA) {
 				// send a full list of notifications to the car

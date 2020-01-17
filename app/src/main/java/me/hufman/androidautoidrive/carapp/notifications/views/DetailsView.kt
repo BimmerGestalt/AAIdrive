@@ -125,6 +125,8 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			return
 		}
 
+		controller.read(notification)
+
 		// prepare the app icon and title
 		val icon = graphicsHelpers.compress(phoneAppResources.getIconDrawable(notification.icon), 48, 48)
 		val appname = phoneAppResources.getAppName(notification.packageName)
