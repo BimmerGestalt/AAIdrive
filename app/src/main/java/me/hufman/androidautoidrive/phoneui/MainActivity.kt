@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity() {
 					layout.findViewById<ImageView>(R.id.imgMusicAppIcon).setImageDrawable(appInfo.icon)
 					layout.findViewById<TextView>(R.id.txtMusicAppName).setText(appInfo.name)
 
-					if (appInfo.packageName == appDiscoveryThread.discovery.musicSessions.getPlayingApp()?.packageName) {
+					if (appInfo.packageName == appDiscoveryThread.discovery?.musicSessions?.getPlayingApp()?.packageName) {
 						layout.findViewById<ImageView>(R.id.imgNowPlaying).setImageDrawable(equalizerAnimated)
 						equalizerAnimated.start()
 						layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = VISIBLE
@@ -370,13 +370,15 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	class AppDiscoveryThread(val context: Context, val callback: (List<MusicAppInfo>) -> Unit): HandlerThread("MusicAppDiscovery UI") {
-		private lateinit var handler: Handler
-		lateinit var discovery: MusicAppDiscovery
+		private var handler: Handler? = null
+		var discovery: MusicAppDiscovery? = null
 			private set
 
 		override fun onLooperPrepared() {
-			handler = Handler(this.looper)
-			discovery = MusicAppDiscovery(context, handler)
+			val handler = Handler(this.looper)
+			this.handler = handler
+			val discovery = MusicAppDiscovery(context, handler)
+			this.discovery = discovery
 			discovery.listener = Runnable {
 				scheduleRedraw()
 			}
@@ -385,30 +387,36 @@ class MainActivity : AppCompatActivity() {
 		}
 
 		private val redrawRunnable = Runnable {
-			callback(discovery.combinedApps)
+			val apps = discovery?.combinedApps
+			if (apps != null) {
+				callback(apps)
+			}
 		}
 
 		private fun scheduleRedraw() {
+			val handler = handler ?: return
 			handler.removeCallbacks(redrawRunnable)
 			handler.postDelayed(redrawRunnable, 100)
 		}
 
 		fun discovery() {
+			val handler = handler ?: return
 			handler.post {
-				discovery.discoverApps()
+				discovery?.discoverApps()
 			}
 		}
 
 		fun forceDiscovery() {
+			val handler = handler ?: return
 			handler.post {
-				discovery.cancelDiscovery()
-				discovery.discoverApps()
-				discovery.probeApps(true)
+				discovery?.cancelDiscovery()
+				discovery?.discoverApps()
+				discovery?.probeApps(true)
 			}
 		}
 
 		fun stopDiscovery() {
-			discovery.cancelDiscovery()
+			discovery?.cancelDiscovery()
 			quitSafely()
 		}
 	}
