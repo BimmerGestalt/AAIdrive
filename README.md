@@ -70,6 +70,7 @@ Implemented Features
       - [Tidal](https://play.google.com/store/apps/details?id=com.aspiro.tidal)
       - [Virgin Radio Italy](https://play.google.com/store/apps/details?id=it.froggy.android.virginradio)
       - [VLC For Android](https://play.google.com/store/apps/details?id=org.videolan.vlc)
+      - [Voice Audiobook Player](https://play.google.com/store/apps/details?id=de.ph1b.audiobook)
       - [YouTube](https://play.google.com/store/apps/details?id=com.google.android.youtube) (only back/next control, no video display)
 
 Integration Points
