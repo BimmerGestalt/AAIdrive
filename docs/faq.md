@@ -4,6 +4,20 @@ title: Foreseen Anticipated Queries
 permalink: /faq
 ---
 
+Why doesn't the app connect to the car?
+: This app relies on a working connection from the official BMW/Mini Connected app to a compatible car. If the official Connected app has successfully added the Connected and the Calendar entries to the car, this app should successfully detect the car.
+
+How do I fix the Bluetooth apps connection?
+: The Bluetooth connection method, on compatible cars, is finicky. The most reliable way to fix the connection, if it didn't automatically connect within 1 minute, is:
+
+  - Turn off Bluetooth in the phone
+  - Force kill the Connected app
+  - Open the Connected app
+  - Initiate the Bluetooth connection from the car, by clicking the Apps checkbox within the connection menu
+  - Wait up to 1 minute
+
+The Connected app should now show the notification with its Connected To Car status.
+
 What features does this app add to the car?
 : This app adds music apps from the phone as music sources in the car dashboard, to allow control of the phone's music playback including app switching and browsing. It can also optionally show phone notifications in the car dashboard, and do some basic interactions with them (such as Mark As Read, Like, and so on)
 
@@ -23,13 +37,13 @@ How does the app detect passengers in the car?
 : The car detects weight on the seat and tells the app if someone is sitting on it.
 
 Can you add support for this other music app?
-: This app uses the standard Android MediaBrowser api to interact with music apps. It seems that some apps implement a whitelist of which apps are allowed to connect and control its music, and the authors of these apps have refused previous requests to alter their whitelists. Please reach out to the music app author to grant an exception for this app.
+: This app uses the standard Android MediaBrowser api to interact with music apps. It seems that some apps enforce a whitelist of which apps are allowed to connect and control its music, and the authors of these apps have refused previous requests to alter their whitelists. Please reach out to the music app author to grant an exception for this app. The app gained support (in version 1.2) to control any running music app, but can not start them with this whitelist in place.
 
 What does "Request Audio Focus" mean?
 : This feature tells the car to listen to the phone's app connection for music, and enables a few tighter integrations like automatic music resuming and the seek buttons. However, cars that run the Connected Apps over USB also listen to the music over USB, which is only compatible with Android phones before Oreo. In this situation, the car should be set to play from Bluetooth and the "Request Audio Focus" should be disabled.
 
 Why should I use this app's version of Spotify?
-: The official Connected App of Spotify is not allowed to run when the phone is connected over USB, because the necessary Android Open Accessory 2.0 protocol was removed in Android Oreo. This app provides a workaround to play Spotify over Bluetooth audio.
+: The official Connected App of Spotify is not allowed to run when the phone is connected over USB, because the necessary Android Open Accessory 2.0 protocol was removed in Android Oreo. This app provides a workaround to play Spotify over Bluetooth audio. Additionally, this interface provides Search capabilities.
 
 Why does Spotify sometimes not show cover art?
 : Sometimes Spotify sends the cover art as a URI link, and then blocks the request to download the cover art image. Other times, it sends the cover art as a regular image, and then it can be shown in the car.
@@ -42,7 +56,7 @@ Which version should I install?
 : The `release` and `debug` versions are signed by different keys, as some phones may refuse to install apps without a release signature.
 
 Why isn't this available on the Google Play Store?
-: During this early stage, the app needs further testing before releasing to a wider anonymous public. Additionally, it relies on a feature which enables to app to stay completely shut down until the car connects, which was removed in Android Oreo, and Google Play Store does not allow uploading apps that are targeting old API versions.
+: During this early stage, the app needs further testing before releasing to a wider anonymous public.
 
 How do I get past this other problem?
 : Please [reach out](mailto:hufman+androidautoidrive@gmail.com?subject=Android Auto IDrive Question) for support!
