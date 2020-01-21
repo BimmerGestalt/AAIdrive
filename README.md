@@ -68,6 +68,7 @@ Implemented Features
       - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android)
       - Spotify (up to [version 8.4.96.953](https://www.apkhere.com/down/com.spotify.music_8.4.96.953_free))
       - [Tidal](https://play.google.com/store/apps/details?id=com.aspiro.tidal)
+      - [Versuz Radio](https://play.google.com/store/apps/details?id=com.versuzradio)
       - [Virgin Radio Italy](https://play.google.com/store/apps/details?id=it.froggy.android.virginradio)
       - [VLC For Android](https://play.google.com/store/apps/details?id=org.videolan.vlc)
       - [Voice Audiobook Player](https://play.google.com/store/apps/details?id=de.ph1b.audiobook)
