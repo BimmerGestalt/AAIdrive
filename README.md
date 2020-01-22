@@ -30,6 +30,21 @@ Download the APK from the [Releases page](https://github.com/hufman/AndroidAutoI
 
 Check out the [FAQ](https://hufman.github.io/AndroidAutoIdrive/faq.html) if you run into problems.
 
+User Guide
+----------
+
+![Phone Connection](https://hufman.github.io/AndroidAutoIdrive/screenshot-connection.png)
+
+After connecting the phone to the car, the official Connected app should show this car icon in the status bar. When this icon appears, this app should connect and add its functionality to the car.
+
+![Phone App List](https://hufman.github.io/AndroidAutoIdrive/screenshot-phoneapps.jpg)
+
+After all the apps are connected, a bunch of new entries will show up in the car's Connected menu. Besides the official Calendar and Connected apps (and the Spotify app if running over Bluetooth), there should be a new Audioplayer icon and a book icon with no label. This book icon is the Notifications app.
+
+![Music App List](https://hufman.github.io/AndroidAutoIdrive/screenshot-medialist.jpg)
+
+Several new entries will be added to the Media section of the control screen. The Audioplayer icon is the one with the main functionality, while the other displayed apps above the Audioplayer are quick shortcuts to switch playback to the respective apps. This screenshot also shows the official Spotify app at the bottom of the list.
+
 Implemented Features
 --------------------
 
