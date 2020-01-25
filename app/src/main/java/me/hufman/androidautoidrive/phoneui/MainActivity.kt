@@ -180,6 +180,20 @@ class MainActivity : AppCompatActivity() {
 						val txtFeatures = layout.findViewById<TextView>(R.id.txtMusicAppFeatures)
 						txtFeatures.visibility = if (txtFeatures.visibility == VISIBLE) GONE else VISIBLE
 					}
+
+					// show app-specific notes
+					val notes = layout.findViewById<TextView>(R.id.txtMusicAppNotes)
+					if (appInfo.packageName == "com.spotify.music" && appInfo.probed && !appInfo.connectable) {
+						notes.text = getString(R.string.musicAppNotes_oldSpotify)
+						notes.visibility = VISIBLE
+						notes.setOnClickListener {
+							SpotifyDowngradeDialog().show(supportFragmentManager, "notes")
+						}
+					} else {
+						notes.visibility = GONE
+						notes.setOnClickListener(null)
+					}
+
 					layout
 				} else {
 					layout.findViewById<TextView>(R.id.txtMusicAppName).setText("Error")

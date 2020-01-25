@@ -95,12 +95,19 @@
 
         </LinearLayout>
 
-    <TextView
-        android:id="@+id/txtMusicAppFeatures"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:gravity="end"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/txtMusicAppFeatures"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:gravity="end"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/txtMusicAppNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:visibility="gone"  />
     </LinearLayout>
 </LinearLayout>
