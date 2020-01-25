@@ -31,6 +31,7 @@
     <string name="musicAppNotes_oldSpotifyInstructions">This app can only provide full control over Spotify up to version 8.4.96.953, such as browsing playlists and searching. For full control, please download an older version, from APKPure or similar.</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancel</string>
+    <string name="btn_configure">Configure …</string>
 
     <string name="connectionStatusMissingConnectedApp">Can\'t find Connected or Connected Classic app</string>
     <string name="connectionStatusWaiting">Waiting for connection to car</string>

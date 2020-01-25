@@ -1,10 +1,5 @@
 package me.hufman.androidautoidrive.phoneui
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -14,14 +9,12 @@ import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
@@ -75,12 +68,9 @@ class MainActivity : AppCompatActivity() {
 			if (buttonView != null) onChangedSwitchNotifications(buttonView, isChecked)
 			redraw()
 		}
-		swNotificationPopup.setOnCheckedChangeListener { buttonView, isChecked ->
-			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, isChecked.toString())
-			redraw()
-		}
-		swNotificationPopupPassenger.setOnCheckedChangeListener { buttonView, isChecked ->
-			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER, isChecked.toString())
+		btnConfigureNotifications.setOnClickListener {
+			val intent = Intent(this, ConfigureNotificationsActivity::class.java)
+			startActivity(intent)
 		}
 		swGMaps.setOnCheckedChangeListener { buttonView, isChecked ->
 			if (buttonView != null) onChangedSwitchGMaps(buttonView, isChecked)
@@ -102,29 +92,6 @@ class MainActivity : AppCompatActivity() {
 		}
 		swAudioContext.setOnCheckedChangeListener { buttonView, isChecked ->
 			AppSettings.saveSetting(this, AppSettings.KEYS.AUDIO_ENABLE_CONTEXT, isChecked.toString())
-		}
-
-		// spawn a Test notification
-		createNotificationChannel()
-		btnTestNotification.setOnClickListener {
-			//val actionIntent = Intent(this, CustomActionListener::class.java)
-			val actionIntent = Intent(this, CustomActionListener::class.java)
-
-			val action = Notification.Action.Builder(null, "Custom action test",
-					PendingIntent.getBroadcast(this, 0, actionIntent, FLAG_UPDATE_CURRENT ))
-					.build()
-			val notificationBuilder = Notification.Builder(this)
-					.setSmallIcon(android.R.drawable.ic_menu_gallery)
-					.setContentTitle("Test Notification")
-					.setContentText("This is a test notification")
-					.setSubText("SubText")
-					.addAction(action)
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-				notificationBuilder.setChannelId(NOTIFICATION_CHANNEL_ID)
-			}
-			val notification = notificationBuilder.build()
-			val manager = NotificationManagerCompat.from(this)
-			manager.notify(1, notification)
 		}
 
 		btnGrantSessions.setOnClickListener {
@@ -233,17 +200,6 @@ class MainActivity : AppCompatActivity() {
 		appDiscoveryThread.stopDiscovery()
 	}
 
-	private fun createNotificationChannel() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID,
-					NOTIFICATION_CHANNEL_NAME,
-					NotificationManager.IMPORTANCE_DEFAULT)
-
-			val notificationManager = getSystemService(NotificationManager::class.java)
-			notificationManager.createNotificationChannel(channel)
-
-		}
-	}
 	fun onChangedSwitchNotifications(buttonView: CompoundButton, isChecked: Boolean) {
 		AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS, isChecked.toString())
 		if (isChecked) {
@@ -317,9 +273,6 @@ class MainActivity : AppCompatActivity() {
 		swMessageNotifications.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
 				UIState.notificationListenerConnected
 		paneNotifications.visible = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
-		swNotificationPopup.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
-		paneNotificationPopup.visible = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
-		swNotificationPopupPassenger.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean()
 		swGMaps.isChecked = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
 		paneGMaps.visible = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
 		swGmapWidescreen.isChecked = AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()
@@ -373,13 +326,6 @@ class MainActivity : AppCompatActivity() {
 	inner class RedrawListener: BroadcastReceiver() {
 		override fun onReceive(context: Context?, intent: Intent?) {
 			runOnUiThread { redraw() }
-		}
-	}
-
-	class CustomActionListener: BroadcastReceiver() {
-		override fun onReceive(context: Context?, intent: Intent?) {
-			Log.i(TAG, "Received custom action")
-			Toast.makeText(context, "Custom Action press", Toast.LENGTH_SHORT).show()
 		}
 	}
 
