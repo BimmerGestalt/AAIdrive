@@ -13,6 +13,7 @@
     <string name="message_notifications">Message Notifications</string>
     <string name="notification_popups">Notification Popups</string>
     <string name="notification_popups_passenger">Popups with passenger</string>
+    <string name="lbl_popupVersion">Popups only work with IDrive4</string>
     <string name="enable_google_maps">Enable Google Maps</string>
     <string name="lbl_widescreen_map">Widescreen Map</string>
     <string name="gmapStyleLabel">Map Style</string>
