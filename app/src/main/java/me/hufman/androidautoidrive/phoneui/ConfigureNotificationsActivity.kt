@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.phoneui
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,9 +8,12 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.NotificationManagerCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
@@ -30,6 +34,9 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 		}
 		swNotificationPopupPassenger.setOnCheckedChangeListener { buttonView, isChecked ->
 			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER, isChecked.toString())
+		}
+		btnGrantSMS.setOnClickListener {
+			ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_SMS), 20)
 		}
 
 		// spawn a Test notification
@@ -62,10 +69,15 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 		redraw()
 	}
 
+	fun hasSMSPermission(): Boolean {
+		return (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED)
+	}
+
 	fun redraw() {
 		swNotificationPopup.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
 		paneNotificationPopup.visible = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
 		swNotificationPopupPassenger.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean()
+		paneSMSPermission.visible = !hasSMSPermission()
 	}
 
 	private fun createNotificationChannel() {
