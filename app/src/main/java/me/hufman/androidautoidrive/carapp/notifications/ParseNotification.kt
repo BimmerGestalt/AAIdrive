@@ -75,6 +75,11 @@ object ParseNotification {
 			pictureUri = parsed.pictureUri
 		}
 
+		// clean out any emoji from the notification
+		title = title?.let { UnicodeCleaner.clean(it) }
+		summary = summary?.let { UnicodeCleaner.clean(it) }
+		text = text?.let { UnicodeCleaner.clean(it) }
+
 		val summarized = CarNotification(sbn.packageName, sbn.key, icon, sbn.isClearable, sbn.notification.actions ?: arrayOf(),
 				title, summary, text?.trim(), picture, pictureUri)
 		return summarized

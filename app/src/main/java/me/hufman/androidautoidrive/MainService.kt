@@ -11,6 +11,7 @@ import com.bmwgroup.connected.car.app.BrandType
 import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
+import me.hufman.androidautoidrive.carapp.notifications.UnicodeCleaner
 import me.hufman.androidautoidrive.phoneui.MainActivity
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
@@ -57,6 +58,7 @@ class MainService: Service() {
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 		Analytics.init(this)
+		UnicodeCleaner.init(this)
 
 		val action = intent?.action ?: ""
 		if (action == ACTION_START) {

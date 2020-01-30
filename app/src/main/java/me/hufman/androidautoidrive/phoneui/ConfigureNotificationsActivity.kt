@@ -50,7 +50,7 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 			val notificationBuilder = Notification.Builder(this)
 					.setSmallIcon(android.R.drawable.ic_menu_gallery)
 					.setContentTitle("Test Notification")
-					.setContentText("This is a test notification")
+					.setContentText("This is a test notification \ud83d\udc4d")
 					.setSubText("SubText")
 					.addAction(action)
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

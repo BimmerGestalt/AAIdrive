@@ -70,6 +70,8 @@ class TestNotificationApp {
 		NotificationsState.notifications.clear()
 		NotificationsState.poppedNotifications.clear()
 		NotificationsState.selectedNotification = null
+		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDC08", listOf("cat2"), "cat")
+		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDE3B", listOf("heart_eyes_cat"), "heart_eyes_cat")
 	}
 
 	@Test
@@ -154,12 +156,12 @@ class TestNotificationApp {
 
 	@Test
 	fun testSummary() {
-		val notification = createNotification("Ticker Text", "Title", "Text\nTwo\n", "Summary", true)
+		val notification = createNotification("Ticker Text", "Title", "Text \uD83D\uDE3B\nTwo\n", "Summary", true)
 		val notificationObject = ParseNotification.summarizeNotification(notification)
 		assertEquals("testKey", notificationObject.key)
 		assertEquals("me.hufman.androidautoidrive", notificationObject.packageName)
 		assertEquals("Title", notificationObject.title)
-		assertEquals("Text\nTwo", notificationObject.text)
+		assertEquals("Text :heart_eyes_cat:\nTwo", notificationObject.text)
 		assertEquals("Summary", notificationObject.summary)
 		assertNull(notificationObject.picture)
 		assertEquals(notification.notification.smallIcon, notificationObject.icon)
