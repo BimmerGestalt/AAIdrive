@@ -3,17 +3,16 @@ package me.hufman.androidautoidrive.music
 import android.content.Context
 import android.os.DeadObjectException
 import android.os.Handler
-import android.os.Looper
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.support.v4.media.session.PlaybackStateCompat.*
 import android.util.Log
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.music.controllers.GenericMusicAppController
+import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import java.util.*
 
 class MusicController(val context: Context, val handler: Handler) {
@@ -33,7 +32,9 @@ class MusicController(val context: Context, val handler: Handler) {
 	}
 
 	var lastConnectTime = 0L
-	var musicBrowser: MusicBrowser? = null
+	var currentAppInfo: MusicAppInfo? = null
+	var currentAppController: MusicAppController? = null
+	private var musicBrowser: MusicBrowser? = null
 	val musicSessions = MusicSessions(context)
 
 	private val controllerCallback = Callback()
@@ -87,30 +88,12 @@ class MusicController(val context: Context, val handler: Handler) {
 	 * It will run the task with null if no controllers are connected
 	 * This method does not switch threads, keep RPC context in mind
 	 */
-	private inline fun <R> withController(f: (MediaControllerCompat?) -> R): R {
-		val musicSessionsController = musicSessions.mediaController
-		val musicBrowserController = musicBrowser?.mediaController
-		if (musicSessionsController != null) {
-			try {
-				val response = f(musicSessionsController)
-				if (response != null) {
-					return response
-				}
-			} catch (e: DeadObjectException) {
-				// the controller disconnected
-				musicSessions.mediaController = null
-			}
-		}
-		if (musicBrowserController != null) {
-			try {
-				val response = f(musicBrowserController)
-				if (response != null) {
-					return response
-				}
-			} catch (e: DeadObjectException) {
-				// the controller disconnected
-				musicBrowser?.disconnect()
-			}
+	private inline fun <R> withController(f: (MusicAppController?) -> R): R {
+		try {
+			return f(currentAppController)
+		} catch (e: DeadObjectException) {
+			// the controller disconnected
+			disconnectApp(false)
 		}
 		return f(null)
 	}
@@ -118,32 +101,55 @@ class MusicController(val context: Context, val handler: Handler) {
 	 * Run this controller task on the handler's thread, and don't crash for RPC disconnections
 	 * It will apply to the controller that is connected when the task fires
 	 */
-	private inline fun asyncControl(crossinline f: (MediaControllerCompat?) -> Unit) {
+	private inline fun asyncControl(crossinline f: (MusicAppController?) -> Unit) {
 		handler.post {
 			withController(f)
 		}
 	}
 
 	fun connectApp(app: MusicAppInfo) = asyncRpc {
-		val switchApp = musicBrowser?.musicAppInfo != app
-		val needsReconnect = (app.connectable && musicBrowser?.mediaController == null) || musicSessions.mediaController == null
+		val switchApp = currentAppInfo != app
+		val needsReconnect = currentAppController == null
 		if (switchApp || needsReconnect) {
-			Log.i(TAG, "Switching current app connection from ${musicBrowser?.musicAppInfo} to $app")
+			Log.i(TAG, "Switching current app connection from $currentAppInfo to $app")
 			disconnectApp(pause = switchApp)
+
+			// try to connect to an existing session
 			musicSessions.connectApp(app)
+			val sessionController = musicSessions.mediaController
+			if (sessionController != null) {
+				sessionController.registerCallback(controllerCallback, handler)
+				currentAppController?.disconnect()
+				currentAppController = GenericMusicAppController(context, sessionController, null)
+				if (desiredPlayback) {
+					Log.i(TAG, "Resuming playback on new music connection")
+					play()
+				}
+				scheduleRedraw()
+			}
+
+			// try to connect to the media browser
 			lastConnectTime = System.currentTimeMillis()
 			musicBrowser = MusicBrowser(context, handler, app)
 			musicBrowser?.listener = Runnable {
 				Log.d(TAG, "Notified of new music browser connection")
 				musicBrowser?.mediaController?.registerCallback(controllerCallback, handler)
 				if (desiredPlayback) {
-					Log.i(TAG, "Resuming playback on new music connection")
+					Log.i(TAG, "Resuming playback on new music browser connection")
 					play()
+				}
+
+				val musicBrowser = musicBrowser
+				val browserController = musicBrowser?.mediaController
+				if (browserController != null) {
+					currentAppController?.disconnect()
+					currentAppController = GenericMusicAppController(context, browserController, musicBrowser)
 				}
 				scheduleRedraw()
 				saveDesiredApp(app)
 			}
 		}
+		currentAppInfo = app
 	}
 
 	/** Remember this app as the last one to play */
@@ -157,8 +163,7 @@ class MusicController(val context: Context, val handler: Handler) {
 	}
 
 	fun isConnected(): Boolean {
-		return musicBrowser?.mediaController != null ||
-				musicSessions.mediaController != null
+		return currentAppController != null
 	}
 
 	fun disconnectApp(pause: Boolean = true) {
@@ -174,6 +179,8 @@ class MusicController(val context: Context, val handler: Handler) {
 		musicBrowser?.disconnect()
 		musicBrowser = null
 		musicSessions.mediaController = null
+		currentAppController?.disconnect()
+		currentAppController = null
 	}
 
 	/* Controls */
@@ -182,37 +189,35 @@ class MusicController(val context: Context, val handler: Handler) {
 		if (controller == null) {
 			Log.w(TAG, "Play request but no active music app connection")
 		} else {
-			if (controller.playbackState?.state != STATE_PLAYING) {
-				controller.transportControls?.play()
+			if (controller.getPlaybackPosition().playbackPaused) {
+				controller.play()
 			}
 		}
 	}
 	fun playFromSearch(search: String) = asyncControl { controller ->
-		controller?.transportControls?.playFromSearch(search, null)
+		controller?.playFromSearch(search)
 	}
 	fun pause() = asyncControl { controller ->
 		desiredPlayback = false
-		if (controller?.playbackState?.state != STATE_PAUSED) {
-			controller?.transportControls?.pause()
+		if (controller?.getPlaybackPosition()?.playbackPaused == false) {
+			controller.pause()
 		}
 	}
 	fun pauseSync() = withController { controller -> // all calls are already in the handler thread, don't go async
-		if (controller != null) {
-			controller.transportControls?.pause()
-		}
+		controller?.pause()
 	}
 	fun skipToPrevious() = asyncControl { controller ->
-		controller?.transportControls?.skipToPrevious()
+		controller?.skipToPrevious()
 	}
 	fun skipToNext() = asyncControl { controller ->
-		controller?.transportControls?.skipToNext()
+		controller?.skipToNext()
 	}
-	fun startRewind() = asyncControl { controller ->
+	fun startRewind() {
 		startedSeekingTime = System.currentTimeMillis()
 		seekingDirectionForward = false
 		seekingRunnable.run()
 	}
-	fun startFastForward() = asyncControl { controller ->
+	fun startFastForward() {
 		startedSeekingTime = System.currentTimeMillis()
 		seekingDirectionForward = true
 		seekingRunnable.run()
@@ -222,129 +227,50 @@ class MusicController(val context: Context, val handler: Handler) {
 		play()
 	}
 	fun seekTo(newPos: Long) = asyncControl { controller ->
-		controller?.transportControls?.seekTo(newPos)
+		controller?.seekTo(newPos)
 	}
 
 	fun playSong(song: MusicMetadata) = asyncControl { controller ->
-		if (song.mediaId != null) {
-			controller?.transportControls?.playFromMediaId(song.mediaId, song.extras)
-		}
+		controller?.playSong(song)
 	}
 
 	fun playQueue(song: MusicMetadata) = asyncControl { controller ->
-		if (song.queueId != null) {
-			controller?.transportControls?.skipToQueueItem(song.queueId)
-		}
+		controller?.playQueue(song)
 	}
 
 	fun customAction(action: CustomAction) = asyncControl { controller ->
-		if (action.packageName == controller?.packageName) {
-			controller.transportControls?.sendCustomAction(action.action, action.extras)
-		}
+		controller?.customAction(action)
 	}
 
-	fun browseAsync(directory: MusicMetadata?): Deferred<List<MusicMetadata>> {
-		val app = musicBrowser
-		return GlobalScope.async {
-			app?.browse(directory?.mediaId)?.map {
-				MusicMetadata.fromMediaItem(it)
-			} ?: LinkedList()
-		}
+	fun browseAsync(directory: MusicMetadata?): Deferred<List<MusicMetadata>> = withController { controller ->
+		return controller?.browseAsync(directory) ?: CompletableDeferred(LinkedList())
 	}
 
-	fun searchAsync(query: String): Deferred<List<MusicMetadata>> {
-		val app = musicBrowser
-		return GlobalScope.async {
-			app?.search(query)?.map {
-				MusicMetadata.fromMediaItem(it)
-			} ?: LinkedList()
-		}
+	fun searchAsync(query: String): Deferred<List<MusicMetadata>> = withController { controller ->
+		return controller?.searchAsync(query) ?: CompletableDeferred(LinkedList())
 	}
 
 	/* Current state */
 	/** Gets the current queue */
 	fun getQueue(): List<MusicMetadata>? = withController { controller ->
-		return controller?.queue?.map { MusicMetadata.fromQueueItem(it) }
+		return controller?.getQueue()
 	}
 	/** Gets the current song's title and other metadata */
 	fun getMetadata(): MusicMetadata? = withController { controller ->
-		val mediaMetadata = controller?.metadata ?: return null
-		val playbackState = controller.playbackState
-		return MusicMetadata.fromMediaMetadata(mediaMetadata, playbackState)
+		return controller?.getMetadata()
 	}
 	/** Gets the song's playback position */
 	fun getPlaybackPosition(): PlaybackPosition = withController { controller ->
-		val playbackState = controller?.playbackState
-		return if (playbackState == null) {
-			PlaybackPosition(true, 0, 0, 0)
-		} else {
-			val metadata = getMetadata()
-			PlaybackPosition(playbackState.state == STATE_PAUSED ||
-					playbackState.state == STATE_CONNECTING ||
-					playbackState.state == STATE_BUFFERING,
-					playbackState.lastPositionUpdateTime, playbackState.position, metadata?.duration ?: -1)
-		}
+		return controller?.getPlaybackPosition() ?: PlaybackPosition(true, 0, 0, 0)
 	}
+
 	fun getCustomActions(): List<CustomAction> = withController { controller ->
-		val playbackState = controller?.playbackState
-
-		val customActions = playbackState?.customActions?.map {
-			CustomAction.fromMediaCustomAction(context, musicBrowser?.musicAppInfo?.packageName ?: "", it)
-		} ?: LinkedList()
-
-		return customActions.map {formatCustomActionDisplay(it) }
-	}
-
-	private fun formatCustomActionDisplay(ca: CustomAction): CustomAction{
-		if(ca.packageName == "com.spotify.music")
-		{
-			val niceName: String
-
-			when(ca.action)
-			{
-				"TURN_SHUFFLE_ON" ->
-					niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_ON
-				"TURN_REPEAT_SHUFFLE_OFF" ->
-					niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF
-				"TURN_SHUFFLE_OFF" ->
-					niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF
-
-				"REMOVE_FROM_COLLECTION" ->
-					niceName = L.MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION
-
-				"START_RADIO" ->
-					niceName = L.MUSIC_SPOTIFY_START_RADIO
-
-				"TURN_REPEAT_ALL_ON" ->
-					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON
-				"TURN_REPEAT_ONE_ON" ->
-					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON
-				"TURN_REPEAT_ONE_OFF" ->
-					niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF
-				"ADD_TO_COLLECTION" ->
-					niceName = L.MUSIC_SPOTIFY_ADD_TO_COLLECTION
-				else ->
-					niceName = ca.name
-			}
-
-			return CustomAction(ca.packageName, ca.action, niceName, ca.icon, ca.extras);
-		}
-
-		if (ca.packageName == "com.jrtstudio.AnotherMusicPlayer") {
-			val rocketPlayerActionPattern = Regex("([A-Za-z]+)[0-9]+")
-			val match = rocketPlayerActionPattern.matchEntire(ca.name)
-			if (match != null) {
-				return CustomAction(ca.packageName, ca.action, match.groupValues[1], ca.icon, ca.extras)
-			}
-		}
-
-		return ca
+		return controller?.getCustomActions() ?: LinkedList()
 	}
 
 	fun isSupportedAction(action: MusicAction): Boolean = withController { controller ->
-		return (controller?.playbackState?.actions ?: 0) and action.flag > 0
+		return controller?.isSupportedAction(action) ?: false
 	}
-
 
 	val redrawProgressTask = Runnable {
 		redrawProgress()
@@ -382,7 +308,7 @@ class MusicController(val context: Context, val handler: Handler) {
 
 	/** If the current app is playing, make sure the metadata is valid */
 	fun assertPlayingMetadata() = withController { controller ->
-		val metadata = controller?.metadata
+		val metadata = controller?.getMetadata()
 		if (controller != null && metadata == null && System.currentTimeMillis() > lastConnectTime + RECONNECT_TIMEOUT) {
 			Log.w(TAG, "Detected NULL metadata for an app, reconnecting")
 			lastConnectTime = System.currentTimeMillis()

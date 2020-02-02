@@ -67,10 +67,10 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	 */
 	private fun show(stateId: Int) {
 		// track the last app we played and reset if it changed
-		if (lastApp != null && lastApp != musicController.musicBrowser?.musicAppInfo) {
+		if (lastApp != null && lastApp != musicController.currentAppInfo) {
 			stack.clear()
 		}
-		lastApp = musicController.musicBrowser?.musicAppInfo
+		lastApp = musicController.currentAppInfo
 
 		// handle back presses
 		if (pageStack.isNotEmpty() && stateId != pageStack.last().state.id) {
@@ -143,7 +143,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 
 class BrowsePageModel(private val browseView: BrowseView, private val musicController: MusicController, val folder: MusicMetadata?) {
 	val musicAppInfo: MusicAppInfo?
-		get() = musicController.musicBrowser?.musicAppInfo
+		get() = musicController.currentAppInfo
 
 	fun isSupportedAction(action: MusicAction): Boolean {
 		return musicController.isSupportedAction(action)

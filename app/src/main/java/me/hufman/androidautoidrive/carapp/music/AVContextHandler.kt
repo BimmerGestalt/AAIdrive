@@ -56,7 +56,7 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 			}
 		}
 
-		if (currentContext && controller.musicBrowser == null) {
+		if (currentContext && controller.currentAppController == null) {
 			Log.i(TAG, "Car automatically requested to resume playback from a disconnect")
 			reconnectApp()
 		}
@@ -121,7 +121,7 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		Log.i(TAG, "Car declares current audio connection to us")
 		currentContext = true
 
-		if (controller.musicBrowser == null) {
+		if (controller.currentAppController == null) {
 			Log.i(TAG, "Successful connection request, trying to remember which app was last playing")
 			reconnectApp()
 		}
@@ -177,7 +177,7 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		// the car is requesting the current app stop so that a different app can play
 		// either another app within our own app (which won't trigger connectionGranted)
 		// or another source entirely{
-		Log.i(TAG, "Deactivating app currently-connected ${controller.musicBrowser?.musicAppInfo?.name}")
+		Log.i(TAG, "Deactivating app currently-connected ${controller.currentAppInfo?.name}")
 		controller.pause()
 		currentContext = false
 	}

@@ -12,7 +12,55 @@ class CustomAction(val packageName: String, val action: String, val name: String
 			val resources = context.packageManager.getResourcesForApplication(packageName)
 			val icon = resources.getDrawable(action.icon, null) ?:
 					Resources.getSystem().getDrawable(action.icon, null)
-			return CustomAction(packageName, action.action, action.name.toString(), icon, action.extras)
+			return formatCustomActionDisplay(
+					CustomAction(packageName, action.action, action.name.toString(), icon, action.extras)
+			)
+		}
+
+		private fun formatCustomActionDisplay(ca: CustomAction): CustomAction {
+			if(ca.packageName == "com.spotify.music")
+			{
+				val niceName: String
+
+				when(ca.action)
+				{
+					"TURN_SHUFFLE_ON" ->
+						niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_ON
+					"TURN_REPEAT_SHUFFLE_OFF" ->
+						niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF
+					"TURN_SHUFFLE_OFF" ->
+						niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF
+
+					"REMOVE_FROM_COLLECTION" ->
+						niceName = L.MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION
+
+					"START_RADIO" ->
+						niceName = L.MUSIC_SPOTIFY_START_RADIO
+
+					"TURN_REPEAT_ALL_ON" ->
+						niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON
+					"TURN_REPEAT_ONE_ON" ->
+						niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON
+					"TURN_REPEAT_ONE_OFF" ->
+						niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF
+					"ADD_TO_COLLECTION" ->
+						niceName = L.MUSIC_SPOTIFY_ADD_TO_COLLECTION
+					else ->
+						niceName = ca.name
+				}
+
+				return CustomAction(ca.packageName, ca.action, niceName, ca.icon, ca.extras);
+			}
+
+			if (ca.packageName == "com.jrtstudio.AnotherMusicPlayer") {
+				val rocketPlayerActionPattern = Regex("([A-Za-z]+)[0-9]+")
+				val match = rocketPlayerActionPattern.matchEntire(ca.name)
+				if (match != null) {
+					return CustomAction(ca.packageName, ca.action, match.groupValues[1], ca.icon, ca.extras)
+				}
+			}
+
+			return ca
 		}
 	}
 
@@ -35,6 +83,5 @@ class CustomAction(val packageName: String, val action: String, val name: String
 		result = 31 * result + name.hashCode()
 		return result
 	}
-
 
 }
