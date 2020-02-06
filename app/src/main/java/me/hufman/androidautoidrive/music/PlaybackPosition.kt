@@ -5,7 +5,7 @@ import kotlin.math.min
 
 /** Given a snapshot of playback position, return the song's current playback position in ms */
 class PlaybackPosition(val playbackPaused: Boolean,
-                       val lastPositionUpdateTime: Long,
+                       val lastPositionUpdateTime: Long = SystemClock.elapsedRealtime(),
                        val lastPosition: Long,
                        val maximumPosition: Long) {
 	fun getPosition(): Long {

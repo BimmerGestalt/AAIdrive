@@ -68,5 +68,9 @@
             android:authorities="me.hufman.androidautoidrive.provider"
             android:grantUriPermissions="true" />
 
+
+        <meta-data
+            android:name="com.spotify.music.API_KEY"
+            android:value="${spotify_api_key}" />
     </application>
 </manifest>

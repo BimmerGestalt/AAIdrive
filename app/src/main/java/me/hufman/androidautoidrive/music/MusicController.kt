@@ -13,6 +13,7 @@ import kotlinx.coroutines.Deferred
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.music.controllers.GenericMusicAppController
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
+import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import java.util.*
 
 class MusicController(val context: Context, val handler: Handler) {
@@ -147,6 +148,16 @@ class MusicController(val context: Context, val handler: Handler) {
 				}
 				scheduleRedraw()
 				saveDesiredApp(app)
+			}
+
+			// try to connect to a Spotify app
+			if (app.packageName == "com.spotify.music") {
+				SpotifyAppController.connect(context, { spotifyController ->
+					if (currentAppInfo?.packageName == "com.spotify.music") {
+						currentAppController?.disconnect()
+						currentAppController = spotifyController
+					}
+				})
 			}
 		}
 		currentAppInfo = app
