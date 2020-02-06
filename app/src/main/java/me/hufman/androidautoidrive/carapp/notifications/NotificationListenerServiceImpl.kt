@@ -42,6 +42,10 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 
 	override fun onCreate() {
 		super.onCreate()
+
+		// load the emoji dictionary
+		UnicodeCleaner.init(this)
+
 		Log.i(TAG, "Registering CarNotificationInteraction listeners")
 		this.registerReceiver(interactionListener, IntentFilter(INTENT_INTERACTION))
 		this.registerReceiver(interactionListener, IntentFilter(INTENT_REQUEST_DATA))
