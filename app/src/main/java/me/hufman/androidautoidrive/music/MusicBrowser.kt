@@ -4,75 +4,74 @@ import android.content.ComponentName
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.asCoroutineDispatcher
+import me.hufman.androidautoidrive.MutableObservable
+import me.hufman.androidautoidrive.Observable
+import me.hufman.androidautoidrive.music.controllers.GenericMusicAppController
+import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import java.util.*
 
-class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo: MusicAppInfo) {
-	private val TAG = "MusicBrowser"
-	private var connecting = false
-	var connected = false   // whether we are still connected
-		private set
-	private var mediaBrowser: MediaBrowserCompat? = null    // all interactions with MediaBrowserCompat must be from the same thread
-	var mediaController: MediaControllerCompat? = null  // after the connection, this will become valid
-		private set
+class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, val musicAppInfo: MusicAppInfo) {
+	companion object {
+		const val TAG = "MusicBrowser"
+	}
+	// all interactions with MediaBrowserCompat must be from the same thread
 
-	var listener: Runnable? = null
-		set(value) { field = value; if (connected) value?.run() }
+	var connected = true   // whether we are still connected
+		private set
 
 	init {
 		if (musicAppInfo.className == null) {
 			Log.i(TAG, "Skipping connection to ${musicAppInfo.name}, no className found")
 		} else {
-			val component = ComponentName(musicAppInfo.packageName, musicAppInfo.className)
-			Log.i(TAG, "Opening connection to ${musicAppInfo.name}")
-			// load the mediaBrowser on the UI thread
-			handler.post {
-				Log.i(TAG, "Connecting to the app ${musicAppInfo.name}")
-				connecting = true
-				mediaBrowser = MediaBrowserCompat(context, component, ConnectionCallback(), null)
-				mediaBrowser?.connect()
-			}
 		}
 	}
 
-	private inner class ConnectionCallback: MediaBrowserCompat.ConnectionCallback() {
-		override fun onConnected() {
-			Log.i(TAG, "Connected to ${musicAppInfo.name}, triggering listener $listener")
-			synchronized(this@MusicBrowser) {
-				connecting = false
-				connected = true
-			}
+	class Connector(val context: Context, val handler: Handler): MusicAppController.Connector {
+		override fun connect(appInfo: MusicAppInfo): Observable<MusicAppController> {
+			val pendingController = MutableObservable<MusicAppController>()
+			if (appInfo.className == null) {
+				pendingController.value = null
+			} else {
+				val component = ComponentName(appInfo.packageName, appInfo.className)
+				Log.i(TAG, "Opening connection to ${appInfo.name}")
+				// load the mediaBrowser on the UI thread
+				handler.post {
+					Log.i(TAG, "Connecting to the app ${appInfo.name}")
+					var mediaBrowser: MediaBrowserCompat? = null
+					val callback = object: MediaBrowserCompat.ConnectionCallback() {
+						override fun onConnected() {
+							val mediaBrowser = mediaBrowser
+							val sessionToken = mediaBrowser?.sessionToken
+							Log.i(TAG, "Successful MediaBrowser connection to ${appInfo.name}")
+							if (mediaBrowser != null && sessionToken != null) {
+								pendingController.value = GenericMusicAppController(context, MediaControllerCompat(context, sessionToken), MusicBrowser(handler, mediaBrowser, appInfo))
+							} else {
+								pendingController.value = null
+							}
+						}
 
-			// load up the controller
-			val browser = mediaBrowser
-			if (browser != null && browser.sessionToken != null) {
-				mediaController = MediaControllerCompat(context, browser.sessionToken)
+						override fun onConnectionSuspended() {
+							mediaBrowser?.disconnect()
+							pendingController.value = null
+						}
+						override fun onConnectionFailed() {
+							mediaBrowser?.disconnect()
+							pendingController.value = null
+						}
+					}
+					val mediaBrowserConnection = MediaBrowserCompat(context, component, callback, null)
+					mediaBrowser = mediaBrowserConnection
+					mediaBrowser.connect()
+				}
 			}
-
-			// trigger any listener callbacks
-			listener?.run()
+			return pendingController
 		}
 
-		override fun onConnectionSuspended() {
-			Log.i(TAG, "Disconnected from ${musicAppInfo.name}")
-			synchronized(this@MusicBrowser) {
-				connecting = false
-				connected = false
-			}
-		}
-
-		override fun onConnectionFailed() {
-			Log.i(TAG, "Failed connecting to ${musicAppInfo.name}")
-			synchronized(this@MusicBrowser) {
-				connecting = false
-				connected = false
-			}
-		}
 	}
 
 	private fun getRoot(): String {
@@ -81,65 +80,30 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 			"com.spotify.music" -> "com.google.android.projection.gearhead---spotify_media_browser_root_android_auto"   // the Android Auto root for Spotify
 			"com.aspiro.tidal" -> "__ROOT_LOGGED_IN__"   // Tidal Music
 			"com.apple.android.music" -> "__AUTO_ROOT__"     // Apple Music
-			else -> mediaBrowser?.root ?: "disconnected root"
-		}
-	}
-
-	suspend fun waitForConnect() {
-		(0..500).forEach { _ ->
-			delay(50)
-			synchronized(this) {
-				if (!connecting) {
-					return
-				}
-			}
-		}
-	}
-
-	/** Reconnect to this app manually */
-	fun reconnect() {
-		handler.post {
-			if (connected) {
-				Log.i(TAG, "Reconnecting to existing app ${mediaBrowser?.serviceComponent?.packageName}")
-			}
-			synchronized(this@MusicBrowser) {
-				mediaController = null
-				connected = false
-				connecting = true
-			}
-			mediaBrowser?.disconnect()
-
-			if (musicAppInfo.className != null) {
-				Log.i(TAG, "Connecting to the app ${musicAppInfo.name}")
-				val component = ComponentName(musicAppInfo.packageName, musicAppInfo.className)
-				mediaBrowser = MediaBrowserCompat(context, component, ConnectionCallback(), null)
-				mediaBrowser?.connect()
-			}
+			else -> mediaBrowser.root
 		}
 	}
 
 	fun disconnect() {
-		mediaController = null
 		handler.post {
 			connected = false
-			mediaBrowser?.disconnect()
+			mediaBrowser.disconnect()
 		}
 	}
 
-	suspend fun browse(path: String?, timeout: Long = 5000): List<MediaBrowserCompat.MediaItem> {
+	suspend fun browse(path: String?, timeout: Long = 10000): List<MediaBrowserCompat.MediaItem> {
 		val deferred = CompletableDeferred<List<MediaBrowserCompat.MediaItem>>()
 		withContext(handler.asCoroutineDispatcher()) {
-			waitForConnect()
 			if (connected) {
 				val browsePath = path ?: getRoot()
-				mediaBrowser?.subscribe(browsePath, object : MediaBrowserCompat.SubscriptionCallback() {
+				mediaBrowser.subscribe(browsePath, object : MediaBrowserCompat.SubscriptionCallback() {
 					override fun onError(parentId: String) {
-						mediaBrowser?.unsubscribe(browsePath)
+						mediaBrowser.unsubscribe(browsePath)
 						deferred.complete(LinkedList())
 					}
 
 					override fun onChildrenLoaded(parentId: String, children: MutableList<MediaBrowserCompat.MediaItem>) {
-						mediaBrowser?.unsubscribe(browsePath)
+						mediaBrowser.unsubscribe(browsePath)
 						deferred.complete(children)
 					}
 
@@ -176,9 +140,8 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 	suspend fun search(query: String, timeout: Long = 5000): List<MediaBrowserCompat.MediaItem>? {
 		val deferred = CompletableDeferred<List<MediaBrowserCompat.MediaItem>?>()
 		withContext(handler.asCoroutineDispatcher()) {
-			waitForConnect()
 			if (connected) {
-				mediaBrowser?.search(query, null, object : MediaBrowserCompat.SearchCallback() {
+				mediaBrowser.search(query, null, object : MediaBrowserCompat.SearchCallback() {
 					override fun onError(query: String, extras: Bundle?) {
 						deferred.complete(null)
 					}

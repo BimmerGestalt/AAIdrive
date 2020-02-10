@@ -154,7 +154,7 @@ class BrowsePageModel(private val browseView: BrowseView, private val musicContr
 	fun browseAsync(musicMetadata: MusicMetadata?): Deferred<List<MusicMetadata>> {
 		return musicController.browseAsync(musicMetadata)
 	}
-	fun searchAsync(query: String): Deferred<List<MusicMetadata>> {
+	fun searchAsync(query: String): Deferred<List<MusicMetadata>?> {
 		return musicController.searchAsync(query)
 	}
 }

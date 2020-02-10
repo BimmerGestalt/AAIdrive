@@ -5,16 +5,13 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.util.Log
 import com.spotify.android.appremote.api.ConnectionParams
-import com.spotify.android.appremote.api.Connector
-import com.spotify.android.appremote.api.ContentApi
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.*
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
-import me.hufman.androidautoidrive.music.CustomAction
-import me.hufman.androidautoidrive.music.MusicAction
-import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.MutableObservable
+import me.hufman.androidautoidrive.Observable
+import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
 import java.lang.Exception
 import java.util.*
@@ -24,34 +21,6 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
-
-		fun connect(context: Context, listener: (SpotifyAppController) -> Unit) {
-			Log.w(TAG, "Attempting to connect to Spotify Remote")
-
-			val CLIENT_ID = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-					.metaData.getString("com.spotify.music.API_KEY", "unavailable")
-			val params = ConnectionParams.Builder(CLIENT_ID)
-					.setRedirectUri(REDIRECT_URI)
-					.showAuthView(true)
-					.build()
-
-			val remoteListener = object: Connector.ConnectionListener {
-				override fun onFailure(e: Throwable?) {
-					Log.e(TAG, "Failed to connect to Spotify Remote: $e")
-				}
-
-				override fun onConnected(remote: SpotifyAppRemote?) {
-					if (remote != null) {
-						Log.i(TAG, "Successfully connected to Spotify Remote")
-						listener(SpotifyAppController(remote))
-					} else {
-						Log.e(TAG, "Connected to a null Spotify Remote?")
-					}
-				}
-			}
-
-			SpotifyAppRemote.connect(context, params, remoteListener)
-		}
 
 		fun MusicMetadata.Companion.fromSpotify(track: Track, coverArt: Bitmap? = null): MusicMetadata {
 			// general track metadata
@@ -73,6 +42,45 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 		}
 	}
 
+	class Connector(val context: Context): MusicAppController.Connector {
+		override fun connect(appInfo: MusicAppInfo): Observable<MusicAppController> {
+			val pendingController = MutableObservable<MusicAppController>()
+			if (appInfo.packageName != "com.spotify.music") {
+				pendingController.value = null
+				return pendingController
+			}
+
+			Log.w(TAG, "Attempting to connect to Spotify Remote")
+
+			val CLIENT_ID = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+					.metaData.getString("com.spotify.music.API_KEY", "unavailable")
+			val params = ConnectionParams.Builder(CLIENT_ID)
+					.setRedirectUri(REDIRECT_URI)
+					.showAuthView(true)
+					.build()
+
+
+			val remoteListener = object: com.spotify.android.appremote.api.Connector.ConnectionListener {
+				override fun onFailure(e: Throwable?) {
+					Log.e(TAG, "Failed to connect to Spotify Remote: $e")
+					pendingController.value = null
+				}
+
+				override fun onConnected(remote: SpotifyAppRemote?) {
+					if (remote != null) {
+						Log.i(TAG, "Successfully connected to Spotify Remote")
+						pendingController.value = SpotifyAppController(remote)
+					} else {
+						Log.e(TAG, "Connected to a null Spotify Remote?")
+						pendingController.value = null
+					}
+				}
+			}
+
+			SpotifyAppRemote.connect(context, params, remoteListener)
+			return pendingController
+		}
+	}
 
 	// create the Custom Actions during client creation, so that the language is loaded
 	val CUSTOM_ACTION_TURN_SHUFFLE_ON = CustomAction.fromSpotify("TURN_SHUFFLE_ON")
@@ -84,6 +92,7 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 	val CUSTOM_ACTION_REMOVE_FROM_COLLECTION = CustomAction.fromSpotify("REMOVE_FROM_COLLECTION")
 
 	// Spotify is very asynchronous, save any subscription state for the getters
+	var callback: ((MusicAppController) -> Unit)? = null    // UI listener
 	val spotifySubscription: Subscription<PlayerState> = remote.playerApi.subscribeToPlayerState()
 	val playlistSubscription: Subscription<PlayerContext> = remote.playerApi.subscribeToPlayerContext()
 	var playerActions: PlayerRestrictions? = null
@@ -121,6 +130,8 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 
 			// update a progress bar
 			position = PlaybackPosition(playerState.isPaused, lastPosition = playerState.playbackPosition, maximumPosition = playerState.track.duration)
+
+			callback?.invoke(this)
 		}
 
 		playlistSubscription.setEventCallback { playerContext ->
@@ -139,6 +150,8 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 					}
 				}
 			}
+
+			callback?.invoke(this)
 		}
 	}
 
@@ -239,30 +252,51 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 		return actions
 	}
 
-	override fun browseAsync(directory: MusicMetadata?): Deferred<List<MusicMetadata>> {
+	override suspend fun browse(directory: MusicMetadata?): List<MusicMetadata> {
 		val deferred = CompletableDeferred<List<MusicMetadata>>()
-		val result = if (directory?.mediaId == null) remote.contentApi.getRecommendedContentItems(ContentApi.ContentType.AUTOMOTIVE)
-		else remote.contentApi.getChildrenOfItem(directory.toListItem(), 200, 0)
+		val result = if (directory?.mediaId == null) {
+			remote.contentApi.getRecommendedContentItems("default-cars")
+		} else {
+			remote.contentApi.getChildrenOfItem(directory.toListItem(), 200, 0)
+		}
 		result.setResultCallback { results ->
 			deferred.complete(results.items.map {
 				MusicMetadata.fromSpotify(it)
 			})
 		}
-		return deferred
+		return deferred.await()
 	}
 
-	override fun searchAsync(query: String): Deferred<List<MusicMetadata>> {
+	override suspend fun search(query: String): List<MusicMetadata>? {
 		// requires a Web API call, not sure how to get the access token
-		return CompletableDeferred(LinkedList())
+		return null
+	}
+
+	override fun subscribe(callback: (MusicAppController) -> Unit) {
+		this.callback = callback
 	}
 
 	override fun disconnect() {
+		Log.d(TAG, "Disconnecting from Spotify")
+		this.callback = null
 		try {
 			spotifySubscription.cancel()
+		} catch (e: Exception) {
+			Log.w(TAG, "Exception while disconnecting from Spotify: $e")
+		}
+		try {
 			playlistSubscription.cancel()
+		} catch (e: Exception) {
+			Log.w(TAG, "Exception while disconnecting from Spotify: $e")
+		}
+		try {
 			SpotifyAppRemote.disconnect(remote)
 		} catch (e: Exception) {
 			Log.w(TAG, "Exception while disconnecting from Spotify: $e")
 		}
+	}
+
+	override fun toString(): String {
+		return "SpotifyAppController"
 	}
 }
