@@ -43,8 +43,8 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 	}
 
 	class Connector(val context: Context): MusicAppController.Connector {
-		override fun connect(appInfo: MusicAppInfo): Observable<MusicAppController> {
-			val pendingController = MutableObservable<MusicAppController>()
+		override fun connect(appInfo: MusicAppInfo): Observable<SpotifyAppController> {
+			val pendingController = MutableObservable<SpotifyAppController>()
 			if (appInfo.packageName != "com.spotify.music") {
 				pendingController.value = null
 				return pendingController

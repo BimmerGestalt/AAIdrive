@@ -9,21 +9,19 @@ import java.util.*
 
 /**
  * Given a list of Connectors to try, connect to the given MusicAppInfo
- * The Connectors should be sorted to have the most suitable connector at the end of the list
- * For example, a MediaSession controller before the SpotifyAppController
+ * The Connectors should be sorted to have the most suitable connector at the front of the list
+ * For example, a SpotifyAppController before the GenericMusicAppController
  * This is because the SpotifyAppController can provide better Metadata
  */
-class CombinedMusicAppController(connectors: List<MusicAppController.Connector>, val appInfo: MusicAppInfo): MusicAppController {
+class CombinedMusicAppController(val controllers: List<Observable<out MusicAppController>>): MusicAppController {
 	private val TAG = "CombinedAppController"
 	// Wait up to this time for all the connectors to connect, before doing a browse/search
 	val CONNECTION_TIMEOUT = 5000
 
-	companion object {
-		class Connector(val connectors: List<MusicAppController.Connector>): MusicAppController.Connector {
-			override fun connect(appInfo: MusicAppInfo): Observable<MusicAppController> {
-				return MutableObservable<MusicAppController>().also {
-					it.value = CombinedMusicAppController(connectors, appInfo)
-				}
+	class Connector(val connectors: List<MusicAppController.Connector>): MusicAppController.Connector {
+		override fun connect(appInfo: MusicAppInfo): Observable<CombinedMusicAppController> {
+			return MutableObservable<CombinedMusicAppController>().also {
+				it.value = CombinedMusicAppController(connectors.map { connector -> connector.connect(appInfo) })
 			}
 		}
 	}
@@ -32,8 +30,9 @@ class CombinedMusicAppController(connectors: List<MusicAppController.Connector>,
 	private var browseableController: MusicAppController? = null
 
 	var callback: ((MusicAppController) -> Unit)? = null
-	private val controllers = connectors.reversed().map {
-		it.connect(appInfo).also { pendingController ->
+
+	init {
+		controllers.forEach { pendingController ->
 			pendingController.subscribe { freshController ->
 				// a controller has connected/disconnected
 				if (freshController != null) {
@@ -51,7 +50,7 @@ class CombinedMusicAppController(connectors: List<MusicAppController.Connector>,
 	/**
 	 * Runs the given command against the first working of the connected controllers
 	 */
-	private inline fun <R> withController(f: (MusicAppController) -> R): R? {
+	inline fun <R> withController(f: (MusicAppController) -> R): R? {
 		for (pendingController in controllers) {
 			val controller = pendingController.value ?: continue
 			try {
@@ -197,9 +196,7 @@ class CombinedMusicAppController(connectors: List<MusicAppController.Connector>,
 	override suspend fun browse(directory: MusicMetadata?): List<MusicMetadata> {
 		// always resume browsing from the previous controller that we were browsing
 		val browseableController = this.browseableController
-		Log.d(TAG, "Starting browse directory:$directory, browseableController:$browseableController")
 		if (directory != null && browseableController != null) {
-			Log.d(TAG, "Using same browse controller as before")
 			return browseableController.browse(directory)
 		}
 

@@ -35,8 +35,8 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 	val musicSessions = MusicSessions(context)
 
 	val connectors = listOf(
-			MusicBrowser.Connector(context, handler),
-			SpotifyAppController.Connector(context)
+			SpotifyAppController.Connector(context),
+			MusicBrowser.Connector(context, handler)
 	)
 
 	private val saveCacheTask = Runnable {
@@ -195,7 +195,11 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 		disconnectApp(appInfo)  // clear any previous connection
 
 		Log.i(TAG, "Testing ${appInfo.name} for connectivity")
-		val controller = CombinedMusicAppController(connectors, appInfo)
+		val controller = CombinedMusicAppController.Connector(connectors).connect(appInfo).value
+		if (controller == null) {
+			Log.w(TAG, "Did not successfully create CombinedMusicAppController!")
+			return
+		}
 		controller.subscribe {
 			Log.d(TAG, "Received update about controller probe ${appInfo.name}: connectable=${controller.isConnected()} pending=${controller.isPending()}")
 			appInfo.connectable = controller.isConnected()

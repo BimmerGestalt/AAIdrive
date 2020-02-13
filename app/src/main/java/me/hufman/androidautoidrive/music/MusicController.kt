@@ -39,10 +39,11 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 
 	val musicSessions = MusicSessions(context)
 	val connectors = listOf(
-			musicSessions.Connector(context),
+			SpotifyAppController.Connector(context),
 			MusicBrowser.Connector(context, handler),
-			SpotifyAppController.Connector(context)
+			musicSessions.Connector(context)
 	)
+	val connector = CombinedMusicAppController.Connector(connectors)
 
 	var lastConnectTime = 0L
 	var currentAppInfo: MusicAppInfo? = null
@@ -130,16 +131,20 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 			disconnectApp(pause = switchApp)
 
 			triggeredPlayback = false
-			val controller = CombinedMusicAppController(connectors, app)
-			controller.subscribe {
-				if (controller.isConnected() && desiredPlayback && !triggeredPlayback) {
-					controller.play()
-					triggeredPlayback = true
+			val controller = connector.connect(app).value
+			if (controller == null) {
+				Log.e(TAG, "Unable to connect to CombinedMusicAppController, this should never happen")
+			} else {
+				controller.subscribe {
+					if (controller.isConnected() && desiredPlayback && !triggeredPlayback) {
+						controller.play()
+						triggeredPlayback = true
+					}
+					scheduleRedraw()
 				}
-				scheduleRedraw()
+				currentAppController = controller
+				saveDesiredApp(app)
 			}
-			currentAppController = controller
-			saveDesiredApp(app)
 		}
 		currentAppInfo = app
 	}
@@ -174,9 +179,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	fun play() {
 		desiredPlayback = true
 		asyncControl { controller ->
-			if (controller.getPlaybackPosition().playbackPaused) {
-				controller.play()
-			}
+			controller.play()
 		}
 	}
 	fun playFromSearch(search: String) = asyncControl { controller ->
@@ -184,9 +187,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	}
 	fun pause() = asyncControl { controller ->
 		desiredPlayback = false
-		if (!controller.getPlaybackPosition().playbackPaused) {
-			controller.pause()
-		}
+		controller.pause()
 	}
 	fun pauseSync() = withController { controller -> // all calls are already in the handler thread, don't go async
 		controller.pause()

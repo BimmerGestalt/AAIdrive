@@ -23,8 +23,8 @@ class MusicSessions(val context: Context) {
 	}
 
 	inner class Connector(val context: Context): MusicAppController.Connector {
-		override fun connect(appInfo: MusicAppInfo): Observable<MusicAppController> {
-			val pendingController = MutableObservable<MusicAppController>()
+		override fun connect(appInfo: MusicAppInfo): Observable<GenericMusicAppController> {
+			val pendingController = MutableObservable<GenericMusicAppController>()
 			sessionControllers[appInfo.packageName] = pendingController
 			val session = connectApp(appInfo)
 			if (session != null) {
@@ -35,7 +35,7 @@ class MusicSessions(val context: Context) {
 	}
 
 	val mediaManager = context.getSystemService(MediaSessionManager::class.java)
-	val sessionControllers = ConcurrentHashMap<String, MutableObservable<MusicAppController>>()
+	val sessionControllers = ConcurrentHashMap<String, MutableObservable<GenericMusicAppController>>()
 	val sessionListener = object: MediaSessionManager.OnActiveSessionsChangedListener {
 		override fun onActiveSessionsChanged(p0: MutableList<MediaController>?) {
 			updateAppControllers()

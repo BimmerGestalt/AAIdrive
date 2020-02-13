@@ -6,7 +6,7 @@ import me.hufman.androidautoidrive.music.*
 
 interface MusicAppController {
 	interface Connector {
-		fun connect(appInfo: MusicAppInfo): Observable<MusicAppController>
+		fun connect(appInfo: MusicAppInfo): Observable<out MusicAppController>
 	}
 
 	@Throws(DeadObjectException::class)

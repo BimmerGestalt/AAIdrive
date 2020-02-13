@@ -32,8 +32,8 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 	}
 
 	class Connector(val context: Context, val handler: Handler): MusicAppController.Connector {
-		override fun connect(appInfo: MusicAppInfo): Observable<MusicAppController> {
-			val pendingController = MutableObservable<MusicAppController>()
+		override fun connect(appInfo: MusicAppInfo): Observable<GenericMusicAppController> {
+			val pendingController = MutableObservable<GenericMusicAppController>()
 			if (appInfo.className == null) {
 				pendingController.value = null
 			} else {
