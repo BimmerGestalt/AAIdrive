@@ -26,6 +26,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
+import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
 import java.lang.IllegalStateException
@@ -151,7 +152,11 @@ class MainActivity : AppCompatActivity() {
 					// show app-specific notes
 					val notes = layout.findViewById<TextView>(R.id.txtMusicAppNotes)
 					if (appInfo.packageName == "com.spotify.music" && appInfo.probed && !appInfo.connectable) {
-						notes.text = getString(R.string.musicAppNotes_oldSpotify)
+						notes.text = if (SpotifyAppController.hasSupport(context)) {
+							getString(R.string.musicAppNotes_unauthorizedSpotify)
+						} else {
+							getString(R.string.musicAppNotes_oldSpotify)
+						}
 						notes.visibility = VISIBLE
 						notes.setOnClickListener {
 							SpotifyDowngradeDialog().show(supportFragmentManager, "notes")
@@ -219,8 +224,7 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	fun hasNotificationPermission(): Boolean {
-		return (Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true
-				|| UIState.notificationListenerConnected)
+		return Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true
 	}
 
 	fun onChangedSwitchGMaps(buttonView: CompoundButton, isChecked: Boolean) {

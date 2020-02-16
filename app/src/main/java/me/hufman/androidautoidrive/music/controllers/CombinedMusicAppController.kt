@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.music.controllers
 
+import android.os.DeadObjectException
 import android.util.Log
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.MutableObservable
@@ -14,10 +15,12 @@ import java.util.*
  * This is because the SpotifyAppController can provide better Metadata
  */
 class CombinedMusicAppController(val controllers: List<Observable<out MusicAppController>>): MusicAppController {
-	private val TAG = "CombinedAppController"
 	// Wait up to this time for all the connectors to connect, before doing a browse/search
 	val CONNECTION_TIMEOUT = 5000
 
+	companion object {
+		const val TAG = "CombinedAppController"
+	}
 	class Connector(val connectors: List<MusicAppController.Connector>): MusicAppController.Connector {
 		override fun connect(appInfo: MusicAppInfo): Observable<CombinedMusicAppController> {
 			return MutableObservable<CombinedMusicAppController>().also {
@@ -50,16 +53,20 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 	/**
 	 * Runs the given command against the first working of the connected controllers
 	 */
-	inline fun <R> withController(f: (MusicAppController) -> R): R? {
+	fun <R> withController(f: (MusicAppController) -> R): R? {
 		for (pendingController in controllers) {
 			val controller = pendingController.value ?: continue
 			try {
 				return f(controller)
+			} catch (e: DeadObjectException) {
+				// raise the disconnect to the main MusicController
+				throw e
 			} catch (e: UnsupportedOperationException) {
 				// this controller doesn't support it, try the next one
 			} catch (e: Exception) {
 				// error running the command against this controller, try the next one
 				// maybe disconnect it from future attempts, or to reconnect
+				Log.w(TAG, "Received exception from controller $controller: $e")
 			}
 		}
 		return null
@@ -144,17 +151,33 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 	}
 
 	override fun customAction(action: CustomAction) {
-		withController {
-			if (!it.getCustomActions().contains(action)) {
-				throw UnsupportedOperationException()
+		// check for exact matches
+		for (pendingController in controllers) {
+			val controller = pendingController.value ?: continue
+			val controllerActions = controller.getCustomActions()
+			if (controllerActions.any { it === action }) {
+				controller.customAction(action)
+				return
 			}
-			it.customAction(action)
+		}
+		// check for equality
+		for (pendingController in controllers) {
+			val controller = pendingController.value ?: continue
+			val controllerActions = controller.getCustomActions()
+			if (controllerActions.any { it == action }) {
+				controller.customAction(action)
+				return
+			}
 		}
 	}
 
 	override fun getQueue(): List<MusicMetadata> {
 		return withController {
-			it.getQueue()
+			val queue = it.getQueue()
+			if (queue.isEmpty()) {
+				throw UnsupportedOperationException()
+			}
+			queue
 		} ?: LinkedList()
 	}
 
@@ -177,9 +200,24 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 	}
 
 	override fun getCustomActions(): List<CustomAction> {
-		return withController {
-			it.getCustomActions()
-		} ?: LinkedList()
+		val actions = ArrayList<CustomAction>()
+		val nameIndices = HashMap<String, Int>()    // points to the array slot with the given action
+		for (pendingController in controllers) {
+			val controller = pendingController.value ?: continue
+			val controllerActions = controller.getCustomActions()
+			controllerActions.forEach { controllerAction ->
+				val index = nameIndices[controllerAction.action]
+				if (index != null) {
+					if (actions[index].icon == null && controllerAction.icon != null) {
+						actions[index] = controllerAction
+					}
+				} else {
+					nameIndices[controllerAction.action] = actions.size
+					actions.add(controllerAction)
+				}
+			}
+		}
+		return actions
 	}
 
 	private suspend fun waitforConnect() {
@@ -213,7 +251,6 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 			this@CombinedMusicAppController.browseableController = controller
 			return results
 		}
-		Log.i(TAG, "No browseable controllers found")
 		return LinkedList()
 	}
 

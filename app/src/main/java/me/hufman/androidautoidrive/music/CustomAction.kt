@@ -17,7 +17,7 @@ class CustomAction(val packageName: String, val action: String, val name: String
 			)
 		}
 
-		private fun formatCustomActionDisplay(ca: CustomAction): CustomAction {
+		fun formatCustomActionDisplay(ca: CustomAction): CustomAction {
 			if(ca.packageName == "com.spotify.music")
 			{
 				val niceName: String
@@ -84,4 +84,7 @@ class CustomAction(val packageName: String, val action: String, val name: String
 		return result
 	}
 
+	override fun toString(): String {
+		return "CustomAction(packageName='$packageName', action='$action', name='$name')"
+	}
 }

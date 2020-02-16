@@ -1,14 +1,12 @@
 package me.hufman.androidautoidrive
 
 import com.nhaarman.mockito_kotlin.*
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.androidautoidrive.music.PlaybackPosition
 import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import org.junit.Assert.*
@@ -189,10 +187,6 @@ class TestCombinedMusicAppController {
 		leftObservable.value = leftController
 		rightObservable.value = rightController
 
-		val queue = controller.getQueue()
-		verify(leftController, times(1)).getQueue()
-		verify(rightController, never()).getQueue()
-
 		val metadata = controller.getMetadata()
 		verify(leftController, times(1)).getMetadata()
 		verify(rightController, never()).getMetadata()
@@ -207,10 +201,58 @@ class TestCombinedMusicAppController {
 		assertTrue(supported)
 		verify(leftController, times(1)).isSupportedAction(MusicAction.PLAY)
 		verify(rightController, times(1)).isSupportedAction(MusicAction.PLAY)
+	}
 
-		val customActions = controller.getCustomActions()
-		verify(leftController, times(1)).getCustomActions()
-		verify(rightController, never()).getCustomActions()
+	@Test
+	fun testQueue() {
+		leftObservable.value = leftController
+		rightObservable.value = rightController
+		whenever(leftController.getQueue()).doAnswer { LinkedList() }
+		whenever(rightController.getQueue()).doAnswer { listOf(mock()) }
+
+		val queue = controller.getQueue()
+		verify(leftController, times(1)).getQueue()
+		verify(rightController, times(1)).getQueue()
+
+		assertEquals(1, queue.size)
+		controller.playQueue(MusicMetadata(queueId = 0))
+		verify(leftController, times(2)).getQueue()
+		verify(rightController, times(2)).getQueue()
+		verify(leftController, times(0)).playQueue(any())
+		verify(rightController, times(1)).playQueue(any())
+	}
+
+	@Test
+	fun testCustomActions() {
+		// combine all of the available custom actions
+		val leftActions = listOf(CustomAction("test", "action1", "name1", null, null), CustomAction("test", "action2", "shared action", null, null))
+		val rightActions = listOf(CustomAction("test", "action3", "name3", null, null), CustomAction("test", "action2", "shared action", mock(), null))
+		leftObservable.value = leftController
+		rightObservable.value = rightController
+		whenever(leftController.getCustomActions()).doAnswer { leftActions }
+		whenever(rightController.getCustomActions()).doAnswer { rightActions }
+
+		// get a combined list of custom actions
+		val actions = controller.getCustomActions()
+		assertEquals(3, actions.size)
+		assertSame(leftActions[0], actions[0])
+		assertNotSame(leftActions[1], actions[1])
+		assertSame(rightActions[1], actions[1])
+		assertSame(rightActions[0], actions[2])
+
+		// test that the correct controller gets the action
+		controller.customAction(actions[0])
+		verify(leftController).customAction(leftActions[0])
+		controller.customAction(actions[1])
+		verify(leftController, never()).customAction(actions[1])
+		verify(rightController).customAction(rightActions[1])
+		controller.customAction(actions[2])
+		verify(rightController).customAction(rightActions[0])
+
+		// test for looser equality
+		val rebuiltAction = CustomAction("test", "action2", "shared action", mock(), null)
+		controller.customAction(rebuiltAction)
+		verify(leftController).customAction(rebuiltAction)
 	}
 
 	@Test

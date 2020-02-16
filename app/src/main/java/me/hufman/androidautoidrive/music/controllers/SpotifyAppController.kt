@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.music.controllers
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.os.Handler
 import android.util.Log
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.SpotifyAppRemote
@@ -21,6 +22,12 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
+		
+		fun hasSupport(context: Context): Boolean {
+			val CLIENT_ID = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+					.metaData.getString("com.spotify.music.API_KEY", "unavailable")
+			return CLIENT_ID != "unavailable" && CLIENT_ID != ""
+		}
 
 		fun MusicMetadata.Companion.fromSpotify(track: Track, coverArt: Bitmap? = null): MusicMetadata {
 			// general track metadata
@@ -38,7 +45,7 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 		}
 
 		fun CustomAction.Companion.fromSpotify(name: String): CustomAction {
-			return CustomAction("com.spotify.music", name, name, null, null)
+			return formatCustomActionDisplay(CustomAction("com.spotify.music", name, name, null, null))
 		}
 	}
 
@@ -70,6 +77,11 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 					if (remote != null) {
 						Log.i(TAG, "Successfully connected to Spotify Remote")
 						pendingController.value = SpotifyAppController(remote)
+
+						// if app discovery says we aren't able to connect, discover again
+						if (!appInfo.connectable) {
+							MusicAppDiscovery(context, Handler()).probeApp(appInfo)
+						}
 					} else {
 						Log.e(TAG, "Connected to a null Spotify Remote?")
 						pendingController.value = null
@@ -90,18 +102,16 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 	val CUSTOM_ACTION_TURN_REPEAT_ONE_OFF = CustomAction.fromSpotify("TURN_REPEAT_ONE_OFF")
 	val CUSTOM_ACTION_ADD_TO_COLLECTION = CustomAction.fromSpotify("ADD_TO_COLLECTION")
 	val CUSTOM_ACTION_REMOVE_FROM_COLLECTION = CustomAction.fromSpotify("REMOVE_FROM_COLLECTION")
+	val CUSTOM_ACTION_START_RADIO = CustomAction.fromSpotify("START_RADIO")
 
 	// Spotify is very asynchronous, save any subscription state for the getters
 	var callback: ((MusicAppController) -> Unit)? = null    // UI listener
 	val spotifySubscription: Subscription<PlayerState> = remote.playerApi.subscribeToPlayerState()
-	val playlistSubscription: Subscription<PlayerContext> = remote.playerApi.subscribeToPlayerContext()
 	var playerActions: PlayerRestrictions? = null
 	var playerOptions: PlayerOptions? = null
 	var currentTrack: MusicMetadata? = null
 	var position: PlaybackPosition = PlaybackPosition(true, 0, 0, -1)
 	var currentTrackLibrary: Boolean? = null
-	var queueUri: String? = null
-	var queueItems: List<MusicMetadata>? = null
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -133,29 +143,10 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 
 			callback?.invoke(this)
 		}
-
-		playlistSubscription.setEventCallback { playerContext ->
-			// update the current queue
-			val uri = playerContext.uri
-			queueUri = uri
-			if (uri != null) {
-				val listItem = ListItem(uri, uri, null, playerContext.title, playerContext.subtitle, false, true)
-				remote.contentApi.getChildrenOfItem(listItem, 100, 0).setResultCallback { currentQueue ->
-					if (currentQueue != null) {
-						queueItems = currentQueue.items.mapIndexed { index: Int, listItem: ListItem? ->
-							MusicMetadata(queueId = listItem?.uri?.hashCode()?.toLong(), title = listItem?.title ?: "Track $index")
-						}
-					} else {
-						queueItems = LinkedList()
-					}
-				}
-			}
-
-			callback?.invoke(this)
-		}
 	}
 
 	override fun play() {
+		remote.connectApi.connectSwitchToLocalDevice()
 		remote.playerApi.resume()
 	}
 
@@ -180,16 +171,7 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 	}
 
 	override fun playQueue(song: MusicMetadata) {
-		// queue item equality is based on queueId, which we are storing as the uri hashCode
-		// so, we have to iterate through the queue to find the user's selected queueId
-		val queueUri = this.queueUri
-		if (song.queueId != null) {
-			queueItems?.forEachIndexed { index, it ->
-				if (it.queueId == song.queueId) {
-					remote.playerApi.skipToIndex(queueUri, index)
-				}
-			}
-		}
+		// we don't know the index to jump to
 	}
 
 	override fun playFromSearch(search: String) {
@@ -208,7 +190,8 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 	}
 
 	override fun getQueue(): List<MusicMetadata> {
-		return queueItems ?: LinkedList()
+		// not allowed per https://github.com/spotify/android-sdk/issues/10
+		return LinkedList()
 	}
 
 	override fun getMetadata(): MusicMetadata? {
@@ -227,6 +210,7 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 			MusicAction.PLAY -> true
 			MusicAction.PAUSE -> true
 			MusicAction.SEEK_TO -> playerActions?.canSeek == true
+			MusicAction.SKIP_TO_QUEUE_ITEM -> false
 			// figure out search
 			else -> false
 		}
@@ -249,6 +233,9 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 		if (playerOptions?.repeatMode == Repeat.ONE) actions.add(CUSTOM_ACTION_TURN_REPEAT_ONE_OFF)
 		if (currentTrackLibrary == false) actions.add(CUSTOM_ACTION_ADD_TO_COLLECTION)
 		if (currentTrackLibrary == true) actions.add(CUSTOM_ACTION_REMOVE_FROM_COLLECTION)
+
+		// START_RADIO is blocked on https://github.com/spotify/android-sdk/issues/66
+
 		return actions
 	}
 
@@ -260,9 +247,11 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 			remote.contentApi.getChildrenOfItem(directory.toListItem(), 200, 0)
 		}
 		result.setResultCallback { results ->
-			deferred.complete(results.items.map {
+			deferred.complete(results?.items?.map {
 				MusicMetadata.fromSpotify(it)
-			})
+			} ?: LinkedList())
+		}.setErrorCallback {
+			deferred.complete(LinkedList())
 		}
 		return deferred.await()
 	}
@@ -281,11 +270,6 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 		this.callback = null
 		try {
 			spotifySubscription.cancel()
-		} catch (e: Exception) {
-			Log.w(TAG, "Exception while disconnecting from Spotify: $e")
-		}
-		try {
-			playlistSubscription.cancel()
 		} catch (e: Exception) {
 			Log.w(TAG, "Exception while disconnecting from Spotify: $e")
 		}

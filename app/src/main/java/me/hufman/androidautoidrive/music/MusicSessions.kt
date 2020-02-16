@@ -20,6 +20,10 @@ import java.util.concurrent.ConcurrentHashMap
 class MusicSessions(val context: Context) {
 	companion object {
 		const val TAG = "MusicSessions"
+
+		private fun isControllable(actions: Long): Boolean {
+			return ((actions and ACTION_PLAY) or (actions and ACTION_PAUSE) or (actions and ACTION_PLAY_FROM_SEARCH)) > 0
+		}
 	}
 
 	inner class Connector(val context: Context): MusicAppController.Connector {
@@ -29,7 +33,14 @@ class MusicSessions(val context: Context) {
 			val session = connectApp(appInfo)
 			if (session != null) {
 				pendingController.value = GenericMusicAppController(context, session, null)
+			} else {
+				pendingController.value = null
 			}
+
+			// set up MediaSession listener
+			mediaManager.removeOnActiveSessionsChangedListener(sessionListener)
+			mediaManager.addOnActiveSessionsChangedListener(sessionListener, ComponentName(context, NotificationListenerServiceImpl::class.java))
+
 			return pendingController
 		}
 	}
@@ -66,14 +77,14 @@ class MusicSessions(val context: Context) {
 		try {
 			val sessions = mediaManager.getActiveSessions(ComponentName(context, NotificationListenerServiceImpl::class.java))
 			val sessionsByName = sessions.filter {
-				val actions = it.playbackState?.actions ?: 0
-				actions and (ACTION_PLAY or ACTION_PAUSE) > 0
+				isControllable(it.playbackState?.actions ?: 0)
 			}.groupBy { it.packageName }
+
 			sessionControllers.forEach {
 				val session = sessionsByName[it.key]?.firstOrNull()
-				if (session != null) {
-					val session = MediaControllerCompat(context, MediaSessionCompat.Token.fromToken(session.sessionToken))
-					it.value.value = GenericMusicAppController(context, session, null)
+				if (session != null && it.value.value == null) {
+					val mediaController = MediaControllerCompat(context, MediaSessionCompat.Token.fromToken(session.sessionToken))
+					it.value.value = GenericMusicAppController(context, mediaController, null)
 				} else {
 					it.value.value = null
 				}
@@ -87,8 +98,7 @@ class MusicSessions(val context: Context) {
 		return try {
 			val sessions = mediaManager.getActiveSessions(ComponentName(context, NotificationListenerServiceImpl::class.java))
 			return sessions.filter {
-				val actions = it.playbackState?.actions ?: 0
-				actions and (ACTION_PLAY or ACTION_PAUSE) > 0
+				isControllable(it.playbackState?.actions ?: 0)
 			}.map {
 				MusicAppInfo.getInstance(context, it.packageName, null).apply {
 					this.controllable = true
@@ -110,8 +120,8 @@ class MusicSessions(val context: Context) {
 			for (session in sessions) {
 				val actions = session.playbackState?.actions ?: 0
 				val state = session.playbackState?.state ?: 0
-				if (actions and (ACTION_PLAY or ACTION_PAUSE) > 0 && state == STATE_PLAYING) {
-					Log.i(TAG, "Returning mediaSession ${session.packageName}")
+				if (isControllable(actions) && state == STATE_PLAYING) {
+					Log.i(TAG, "Found mediaSession for ${session.packageName}")
 					return MusicAppInfo.getInstance(context, session.packageName, null).apply {
 						this.controllable = true
 					}

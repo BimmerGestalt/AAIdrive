@@ -29,6 +29,7 @@ class TestSpotifyMusicAppController {
 	val spotifyCallback = ArgumentCaptor.forClass(Subscription.EventCallback::class.java as Class<Subscription.EventCallback<PlayerState>>)
 	val playlistCallback = ArgumentCaptor.forClass(Subscription.EventCallback::class.java as Class<Subscription.EventCallback<PlayerContext>>)
 
+	val connectApi = mock<ConnectApi>()
 	val contentApi = mock<ContentApi> {
 		on { getRecommendedContentItems(any()) } doAnswer {
 			val result = mock<CallResult<ListItems>>()
@@ -69,6 +70,7 @@ class TestSpotifyMusicAppController {
 	}
 
 	val remote = mock<SpotifyAppRemote> {
+		on { connectApi } doReturn connectApi
 		on { contentApi } doReturn contentApi
 		on { imagesApi } doReturn imagesApi
 		on { playerApi } doReturn playerApi
@@ -86,6 +88,7 @@ class TestSpotifyMusicAppController {
 	fun testControl() {
 		controller.play()
 		verify(playerApi).resume()
+		verify(connectApi).connectSwitchToLocalDevice()
 
 		controller.pause()
 		verify(playerApi).pause()
@@ -124,6 +127,18 @@ class TestSpotifyMusicAppController {
 
 		controller.customAction(controller.CUSTOM_ACTION_REMOVE_FROM_COLLECTION)
 		verify(userApi).removeFromLibrary("mediaId")
+	}
+
+	@Test
+	fun testCustomActionNames() {
+		assertEquals("Turn Shuffle On", controller.CUSTOM_ACTION_TURN_SHUFFLE_ON.name)
+		assertEquals("Turn Shuffle Off", controller.CUSTOM_ACTION_TURN_SHUFFLE_OFF.name)
+		assertEquals("Turn Repeat All On", controller.CUSTOM_ACTION_TURN_REPEAT_ALL_ON.name)
+		assertEquals("Turn Repeat One On", controller.CUSTOM_ACTION_TURN_REPEAT_ONE_ON.name)
+		assertEquals("Turn Repeat Off", controller.CUSTOM_ACTION_TURN_REPEAT_ONE_OFF.name)
+		assertEquals("Like", controller.CUSTOM_ACTION_ADD_TO_COLLECTION.name)
+		assertEquals("Dislike", controller.CUSTOM_ACTION_REMOVE_FROM_COLLECTION.name)
+		assertEquals("Make Radio Station", controller.CUSTOM_ACTION_START_RADIO.name)
 	}
 
 	@Test
@@ -257,27 +272,6 @@ class TestSpotifyMusicAppController {
 	}
 
 	@Test
-	fun testQueue() {
-		// load a queue
-		playlistCallback.value.onEvent(PlayerContext("playlisturi", "title", "subtitle", "playlist"))
-		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, "title", "subtitle", false, true), 100, 0)
-		contentCallback.value.onResult(ListItems(1, 0, 1, arrayOf(
-				ListItem("id", "uri", null, "Title", "Subtitle", true, false)
-		)))
-		val queue = controller.getQueue()
-		assertEquals(1, queue.size)
-		assertNotEquals(null, queue[0].queueId)
-		assertEquals("Title", queue[0].title)
-
-		// fail to skip
-		controller.playQueue(MusicMetadata(queueId = 345))
-		verify(playerApi, never()).skipToIndex(any(), any())
-		// try to skip to it
-		controller.playQueue(queue[0])
-		verify(playerApi).skipToIndex("playlisturi", 0)
-	}
-
-	@Test
 	fun testStateUpdate() {
 		val state = PlayerState(
 				Track(
@@ -370,7 +364,6 @@ class TestSpotifyMusicAppController {
 		controller.disconnect()
 		assertEquals(null, controller.callback)
 		verify(controller.spotifySubscription).cancel()
-		verify(controller.playlistSubscription).cancel()
 	}
 
 	@Test

@@ -191,7 +191,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 		activeConnections.remove(appInfo)
 	}
 
-	private fun probeApp(appInfo: MusicAppInfo) {
+	fun probeApp(appInfo: MusicAppInfo) {
 		disconnectApp(appInfo)  // clear any previous connection
 
 		Log.i(TAG, "Testing ${appInfo.name} for connectivity")

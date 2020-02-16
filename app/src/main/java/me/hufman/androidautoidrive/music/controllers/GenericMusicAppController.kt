@@ -85,7 +85,7 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 	/* Current state */
 	@Throws(DeadObjectException::class)
 	override fun getQueue(): List<MusicMetadata> {
-		return mediaController.queue.map { MusicMetadata.fromQueueItem(it) }
+		return mediaController.queue?.map { MusicMetadata.fromQueueItem(it) } ?: LinkedList()
 	}
 
 	@Throws(DeadObjectException::class)
