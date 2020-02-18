@@ -16,7 +16,7 @@ class MusicService(val context: Context) {
 					val handler = threadMusic?.handler ?: return@CarThread
 					var musicAppDiscovery = MusicAppDiscovery(context, handler)
 					var musicController = MusicController(context, handler)
-					carappMusic = MusicApp(CarAppAssetManager(context, "multimedia"),
+					carappMusic = MusicApp(CarAppAssetManager(context, "multimedia5"),
 							PhoneAppResourcesAndroid(context),
 							GraphicsHelpersAndroid(),
 							musicAppDiscovery,

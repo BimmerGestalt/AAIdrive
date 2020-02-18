@@ -12,6 +12,7 @@ import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.music.GlobalMetadata
 import me.hufman.androidautoidrive.carapp.music.MusicApp
+import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeToolbarState
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.*
 import me.hufman.idriveconnectionkit.IDriveConnection
@@ -179,13 +180,22 @@ class TestMusicApp {
 		assertEquals(IDs.ACTION_STATE, state.toolbarComponentsList[4].getAction()?.asHMIAction()?.getTargetState()?.id)
 		assertEquals(IDs.APPICON_MODEL, playbackView.appLogoModel.id)
 		assertEquals(IDs.COVERART_LARGE_MODEL, playbackView.albumArtBigModel.id)
-		assertEquals(IDs.COVERART_SMALL_MODEL, playbackView.albumArtSmallModel.id)
+		assertEquals(IDs.COVERART_SMALL_MODEL, playbackView.albumArtSmallModel?.id)
 		assertEquals(setOf(IDs.ARTIST_LARGE_MODEL, IDs.ARTIST_SMALL_MODEL), playbackView.artistModel.members.map { it?.id }.toSet())
 		assertEquals(setOf(IDs.ALBUM_LARGE_MODEL, IDs.ALBUM_SMALL_MODEL), playbackView.albumModel.members.map { it?.id }.toSet())
 		assertEquals(setOf(IDs.TRACK_LARGE_MODEL, IDs.TRACK_SMALL_MODEL), playbackView.trackModel.members.map { it?.id }.toSet())
 		assertEquals(setOf(IDs.TIME_NUMBER_LARGE_MODEL, IDs.TIME_NUMBER_SMALL_MODEL), playbackView.currentTimeModel.members.map { it?.id }.toSet())
 		assertEquals(setOf(IDs.MAXTIME_NUMBER_LARGE_MODEL, IDs.MAXTIME_NUMBER_SMALL_MODEL), playbackView.maximumTimeModel.members.map { it?.id }.toSet())
-		assertEquals(setOf(IDs.TIME_GAUGE_MODEL), playbackView.gaugeModel.members.map { it?.id }.toSet())
+		assertEquals(setOf(IDs.TIME_GAUGE_MODEL), (playbackView.gaugeModel as ProgressGaugeToolbarState).model.members.map { it?.id }.toSet())
+	}
+
+	@Test
+	fun testAppInitPlaybackViewID5() {
+		whenever(carAppResources.getUiDescription()).doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_multimedia_v3.xml") }
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = MusicApp( carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController)
+
 	}
 
 	fun testAppInitEnqueueView(enqueuedView: EnqueuedView) {

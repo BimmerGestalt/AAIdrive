@@ -50,8 +50,8 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		// create the app in the car
 		val rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.music", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive.music", "me.hufman"))
 		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB(IDriveConnectionListener.brand ?: "common"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
+//		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB(IDriveConnectionListener.brand ?: "common"))
+//		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		// set up the app in the car
@@ -72,7 +72,11 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		// locate specific windows in the app
 		val carAppImages = loadZipfile(carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
 		val unclaimedStates = LinkedList(carApp.states.values)
-		playbackView = PlaybackView(unclaimedStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources, graphicsHelpers)
+		val playbackStates = LinkedList<RHMIState>().apply {
+			addAll(carApp.states.values.filterIsInstance<RHMIState.AudioHmiState>())
+			addAll(carApp.states.values.filterIsInstance<RHMIState.ToolbarState>())
+		}
+		playbackView = PlaybackView(playbackStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources, graphicsHelpers)
 		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, graphicsHelpers)
 		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController)
 		browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController)
@@ -264,7 +268,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		if (appListViewVisible) {
 			appSwitcherView.redraw()
 		}
-		if (playbackViewVisible) {
+		if (playbackViewVisible || playbackView.state is RHMIState.AudioHmiState) {
 			playbackView.redraw()
 		}
 		globalMetadata.redraw()
