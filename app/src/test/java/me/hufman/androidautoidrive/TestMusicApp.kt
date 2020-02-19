@@ -12,6 +12,7 @@ import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.music.GlobalMetadata
 import me.hufman.androidautoidrive.carapp.music.MusicApp
+import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeAudioState
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeToolbarState
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.*
@@ -33,6 +34,7 @@ class TestMusicApp {
 		const val ENTRYBUTTON_ACTION = 382
 		const val ENTRYBUTTON_DEST_STATE = 384
 		const val APPLIST_STATE = 9
+		const val APPLIST_ID5_STATE = 11
 		const val APPLIST_TEXTMODEL = 390
 		const val APPLIST_COMPONENT = 27
 		const val APPLIST_LISTMODEL = 394
@@ -71,11 +73,13 @@ class TestMusicApp {
 
 		const val TOOLBAR_QUEUE_BUTTON = 113
 		const val QUEUE_STATE = 10
+		const val QUEUE_ID5_STATE = 16
 		const val QUEUE_COMPONENT = 39
 		const val QUEUE_MODEL = 407
 
 		const val TOOLBAR_ACTION_BUTTON = 115
 		const val ACTION_STATE = 21
+		const val ACTION_ID5_STATE = 18
 		const val ACTION_LIST_COMPONENT = 141
 		const val ACTION_LIST_MODEL = 549
 
@@ -97,6 +101,19 @@ class TestMusicApp {
 		const val INPUT_COMPONENT = 119
 		const val INPUT_RESULT_MODEL = 512
 		const val INPUT_SUGGEST_MODEL = 509
+
+		const val AUDIO_STATE = 24
+		const val AUDIOSTATE_TITLE_MODEL = 444
+		const val AUDIOSTATE_PROVIDER_MODEL = 457
+		const val AUDIOSTATE_COVERART_MODEL = 456
+		const val AUDIOSTATE_ARTIST_MODEL = 445
+		const val AUDIOSTATE_ALBUM_MODEL = 446
+		const val AUDIOSTATE_TRACK_MODEL = 447
+		const val AUDIOSTATE_CURRENT_TIME_MODEL = 451
+		const val AUDIOSTATE_MAX_TIME_MODEL = 452
+		const val AUDIOSTATE_PLAYBACK_PROGRESS_MODEL = 462
+		const val AUDIOSTATE_PLAYLIST_MODEL = 458
+		const val AUDIOSTATE_PLAYLIST_INDEX_MODEL = 459
 	}
 
 	val handler = mock<Handler> {
@@ -195,7 +212,44 @@ class TestMusicApp {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = MusicApp( carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController)
+		val playbackView = app.playbackView
+		val state = playbackView.state as RHMIState.AudioHmiState
+		assertEquals(IDs.AUDIOSTATE_TITLE_MODEL, playbackView.appTitleModel.id)
+		assertEquals(IDs.APPLIST_ID5_STATE, state.toolbarComponentsList[0].getAction()?.asHMIAction()?.getTargetState()?.id)
+		assertEquals(IDs.QUEUE_ID5_STATE, state.toolbarComponentsList[2].getAction()?.asHMIAction()?.getTargetState()?.id)
+		assertEquals(IDs.ACTION_ID5_STATE, state.toolbarComponentsList[3].getAction()?.asHMIAction()?.getTargetState()?.id)
+		assertEquals(IDs.AUDIOSTATE_PROVIDER_MODEL, playbackView.appLogoModel.id)
+		assertEquals(IDs.AUDIOSTATE_COVERART_MODEL, playbackView.albumArtBigModel.id)
+		assertEquals(null, playbackView.albumArtSmallModel?.id)
+		assertEquals(setOf(IDs.AUDIOSTATE_ARTIST_MODEL), playbackView.artistModel.members.map { it?.id }.toSet())
+		assertEquals(setOf(IDs.AUDIOSTATE_ALBUM_MODEL), playbackView.albumModel.members.map { it?.id }.toSet())
+		assertEquals(setOf(IDs.AUDIOSTATE_TRACK_MODEL), playbackView.trackModel.members.map { it?.id }.toSet())
+		assertEquals(setOf(IDs.AUDIOSTATE_CURRENT_TIME_MODEL), playbackView.currentTimeModel.members.map { it?.id }.toSet())
+		assertEquals(setOf(IDs.AUDIOSTATE_MAX_TIME_MODEL), playbackView.maximumTimeModel.members.map { it?.id }.toSet())
+		assertEquals(IDs.AUDIOSTATE_PLAYBACK_PROGRESS_MODEL, (playbackView.gaugeModel as ProgressGaugeAudioState).model.id)
+		val playlist = mockServer.data[IDs.AUDIOSTATE_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable
+		assertEquals(3, playlist.totalRows)
+		assertEquals(listOf("Back", "", "Next"), playlist.data.map { it[2] })
+		assertEquals(1, state.getPlayListFocusRowModel()?.asRaIntModel()?.value)
+	}
 
+	@Test
+	fun testPlaybackViewID5Interaction() {
+		whenever(carAppResources.getUiDescription()).doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_multimedia_v3.xml") }
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = MusicApp( carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController)
+		val state = app.playbackView.state as RHMIState.AudioHmiState
+		state.toolbarComponentsList[4].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
+		verify(musicController).skipToPrevious()
+		state.toolbarComponentsList[5].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
+		verify(musicController).skipToNext()
+		state.getPlayListAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		verify(musicController, times(2)).skipToPrevious()
+		state.getPlayListAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
+		verify(musicController).seekTo(0)
+		state.getPlayListAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 2))
+		verify(musicController, times(2)).skipToNext()
 	}
 
 	fun testAppInitEnqueueView(enqueuedView: EnqueuedView) {

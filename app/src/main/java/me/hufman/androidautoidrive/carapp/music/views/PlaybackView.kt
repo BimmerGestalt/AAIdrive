@@ -207,6 +207,13 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 				playlistModel.setValue(playlist, 0, 3, 3)
 			}
 			state.getPlayListFocusRowModel()?.asRaIntModel()?.value = 1
+			state.getPlayListAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
+				when (index) {
+					0 -> controller.skipToPrevious()
+					1 -> controller.seekTo(0)
+					2 -> controller.skipToNext()
+				}
+			}
 		}
 	}
 
