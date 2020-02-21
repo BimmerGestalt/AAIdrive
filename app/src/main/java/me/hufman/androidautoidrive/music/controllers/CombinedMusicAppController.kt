@@ -78,9 +78,9 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 		}
 	}
 
-	fun isConnected(): Boolean {
+	override fun isConnected(): Boolean {
 		return controllers.any {
-			it.value != null
+			it.value?.isConnected() == true
 		}
 	}
 

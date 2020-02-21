@@ -47,7 +47,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 
 	var lastConnectTime = 0L
 	var currentAppInfo: MusicAppInfo? = null
-	var currentAppController: CombinedMusicAppController? = null
+	var currentAppController: MusicAppController? = null
 
 	var listener: Runnable? = null
 	var desiredPlayback = false  // if we should start playback as soon as connected
@@ -125,7 +125,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 
 	fun connectApp(app: MusicAppInfo) = asyncRpc {
 		val switchApp = currentAppInfo != app
-		val needsReconnect = currentAppController?.isConnected() != true
+		val needsReconnect = !isConnected()
 		if (switchApp || needsReconnect) {
 			Log.i(TAG, "Switching current app connection from $currentAppInfo to $app")
 			disconnectApp(pause = switchApp)
@@ -160,7 +160,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	}
 
 	fun isConnected(): Boolean {
-		return currentAppController != null
+		return currentAppController?.isConnected() == true
 	}
 
 	fun disconnectApp(pause: Boolean = true) {

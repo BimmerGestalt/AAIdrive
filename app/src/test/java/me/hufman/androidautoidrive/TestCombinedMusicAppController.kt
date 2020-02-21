@@ -20,8 +20,12 @@ import java.util.*
 @RunWith(MockitoJUnitRunner.Silent::class)
 class TestCombinedMusicAppController {
 
-	val leftController = mock<MusicAppController>()
-	val rightController = mock<MusicAppController>()
+	val leftController = mock<MusicAppController> {
+		on { isConnected() } doReturn true
+	}
+	val rightController = mock<MusicAppController> {
+		on { isConnected() } doReturn true
+	}
 	val leftObservable = MutableObservable<MusicAppController>()
 	val rightObservable = MutableObservable<MusicAppController>()
 	val controller = CombinedMusicAppController(listOf(leftObservable, rightObservable))
@@ -39,6 +43,11 @@ class TestCombinedMusicAppController {
 
 		assertTrue(controller.isPending())
 		assertTrue(controller.isConnected())
+
+		// oops the controller disconnected
+		whenever(leftController.isConnected()).thenReturn(false)
+		assertTrue(controller.isPending())
+		assertFalse(controller.isConnected())
 
 		rightObservable.value = null
 		verify(callback, times(1)).invoke(any())

@@ -6,6 +6,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.util.Log
 import me.hufman.androidautoidrive.music.*
 import java.util.*
 
@@ -30,74 +31,85 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 			}
 		}
 	}
+	val TAG = "GenericMusicController"
+	var connected = true
 	var callback: ((MusicAppController) -> Unit)? = null    // UI listener
 
-	@Throws(DeadObjectException::class)
-	override fun play() {
+	private inline fun remoteCall(runnable: () -> Unit) {
+		try {
+			return runnable()
+		} catch (e: DeadObjectException) {
+			Log.w(TAG, "Received DeadObjectException from MediaController $this")
+			this.disconnectController()
+		}
+	}
+	private inline fun <T> remoteData(runnable: () -> T): T? {
+		try {
+			return runnable()
+		} catch (e: DeadObjectException) {
+			Log.w(TAG, "Received DeadObjectException from MediaController $this")
+			this.disconnectController()
+			return null
+		}
+	}
+
+	override fun play() = remoteCall {
 		mediaController.transportControls.play()
 	}
 
-	@Throws(DeadObjectException::class)
-	override fun pause() {
+	override fun pause() = remoteCall {
 		mediaController.transportControls.pause()
 	}
 
-	@Throws(DeadObjectException::class)
-	override fun skipToPrevious() {
+	override fun skipToPrevious() = remoteCall {
 		mediaController.transportControls.skipToPrevious()
 	}
 
-	@Throws(DeadObjectException::class)
-	override fun skipToNext() {
+	override fun skipToNext() = remoteCall {
 		mediaController.transportControls.skipToNext()
 	}
 
-	@Throws(DeadObjectException::class)
-	override fun seekTo(newPos: Long) {
+	override fun seekTo(newPos: Long) = remoteCall {
 		mediaController.transportControls.seekTo(newPos)
 	}
 
-	@Throws(DeadObjectException::class)
-	override fun playSong(song: MusicMetadata) {
+	override fun playSong(song: MusicMetadata) = remoteCall {
 		if (song.mediaId != null) {
 			mediaController.transportControls.playFromMediaId(song.mediaId, song.extras)
 		}
 	}
 
-	@Throws(DeadObjectException::class)
-	override fun playQueue(song: MusicMetadata) {
+	override fun playQueue(song: MusicMetadata) = remoteCall {
 		if (song.queueId != null) {
 			mediaController.transportControls.skipToQueueItem(song.queueId)
 		}
 	}
 
-	@Throws(DeadObjectException::class)
-	override fun playFromSearch(search: String) {
+	override fun playFromSearch(search: String) = remoteCall {
 		mediaController.transportControls.playFromSearch(search, null)
 	}
 
-	override fun customAction(action: CustomAction) {
+	override fun customAction(action: CustomAction) = remoteCall {
 		if (action.packageName == mediaController.packageName) {
 			mediaController.transportControls?.sendCustomAction(action.action, action.extras)
 		}
 	}
 
 	/* Current state */
-	@Throws(DeadObjectException::class)
 	override fun getQueue(): List<MusicMetadata> {
-		return mediaController.queue?.map { MusicMetadata.fromQueueItem(it) } ?: LinkedList()
+		return remoteData {
+			mediaController.queue?.map { MusicMetadata.fromQueueItem(it) }
+		} ?: LinkedList()
 	}
 
-	@Throws(DeadObjectException::class)
-	override fun getMetadata(): MusicMetadata? {
-		return mediaController.metadata?.let {
+	override fun getMetadata(): MusicMetadata? = remoteData {
+		mediaController.metadata?.let {
 			MusicMetadata.fromMediaMetadata(it, mediaController.playbackState)
 		}
 	}
 
-	@Throws(DeadObjectException::class)
 	override fun getPlaybackPosition(): PlaybackPosition {
-		val state = mediaController.playbackState
+		val state = remoteData { mediaController.playbackState }
 		return if (state == null) {
 			PlaybackPosition(true, 0, 0, 0)
 		} else {
@@ -111,26 +123,25 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 		}
 	}
 
-	@Throws(DeadObjectException::class)
 	override fun isSupportedAction(action: MusicAction): Boolean {
-		return ((mediaController.playbackState?.actions ?: 0) and action.flag) > 0
+		val actions = remoteData { mediaController.playbackState?.actions } ?: 0
+		return (actions and action.flag) > 0
 	}
 
-	@Throws(DeadObjectException::class)
 	override fun getCustomActions(): List<CustomAction> {
-		return mediaController.playbackState?.customActions?.map {
+		return remoteData { mediaController.playbackState?.customActions }?.map {
 			CustomAction.fromMediaCustomAction(context, mediaController.packageName, it)
 		} ?: LinkedList()
 	}
 
 	override suspend fun browse(directory: MusicMetadata?): List<MusicMetadata> {
 		val app = musicBrowser
-		return app?.browse(directory?.mediaId)?.map {
+		return remoteData { app?.browse(directory?.mediaId)?.map {
 			MusicMetadata.fromMediaItem(it)
-		} ?: LinkedList()
+		} } ?: LinkedList()
 	}
 
-	override suspend fun search(query: String): List<MusicMetadata>? {
+	override suspend fun search(query: String): List<MusicMetadata>? = remoteData {
 		val app = musicBrowser
 		return app?.search(query)?.map {
 			MusicMetadata.fromMediaItem(it)
@@ -142,14 +153,24 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 		mediaController.registerCallback(this.controllerCallback)
 	}
 
-	override fun disconnect() {
-		this.callback = null
+	override fun isConnected(): Boolean {
+		return this.connected
+	}
+
+	private fun disconnectController() {
+		this.connected = false
 		try {
 			mediaController.unregisterCallback(this.controllerCallback)
 		} catch (e: Exception) {}
 		try {
 			musicBrowser?.disconnect()
 		} catch (e: Exception) {}
+		callback?.invoke(this)
+	}
+
+	override fun disconnect() {
+		this.callback = null
+		disconnectController()
 	}
 
 	override fun toString(): String {

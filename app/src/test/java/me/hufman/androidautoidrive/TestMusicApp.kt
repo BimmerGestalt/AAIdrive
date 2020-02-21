@@ -13,7 +13,7 @@ import me.hufman.androidautoidrive.carapp.music.GlobalMetadata
 import me.hufman.androidautoidrive.carapp.music.MusicApp
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.*
-import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
+import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.SecurityService
@@ -253,7 +253,7 @@ class TestMusicApp {
 
 		// click entrybutton again after an active app is set
 		whenever(musicController.currentAppInfo).doReturn(MusicAppInfo("Test2", mock(), "package", "class"))
-		whenever(musicController.currentAppController) doReturn mock<CombinedMusicAppController>()
+		whenever(musicController.currentAppController) doReturn mock<MusicAppController>()
 		mockClient.rhmi_onActionEvent(1, "unused", IDs.ENTRYBUTTON_ACTION, mapOf(0 to 1))
 		assertEquals(IDs.PLAYBACK_STATE, mockServer.data[IDs.ENTRYBUTTON_DEST_STATE])
 

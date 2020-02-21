@@ -70,7 +70,11 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 			val remoteListener = object: com.spotify.android.appremote.api.Connector.ConnectionListener {
 				override fun onFailure(e: Throwable?) {
 					Log.e(TAG, "Failed to connect to Spotify Remote: $e")
-					pendingController.value = null
+					// disconnect an existing session, if any
+					pendingController.value?.disconnect()
+					if (pendingController.pending) {
+						pendingController.value = null
+					}
 				}
 
 				override fun onConnected(remote: SpotifyAppRemote?) {
@@ -103,6 +107,8 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 	val CUSTOM_ACTION_ADD_TO_COLLECTION = CustomAction.fromSpotify("ADD_TO_COLLECTION")
 	val CUSTOM_ACTION_REMOVE_FROM_COLLECTION = CustomAction.fromSpotify("REMOVE_FROM_COLLECTION")
 	val CUSTOM_ACTION_START_RADIO = CustomAction.fromSpotify("START_RADIO")
+
+	var connected = true
 
 	// Spotify is very asynchronous, save any subscription state for the getters
 	var callback: ((MusicAppController) -> Unit)? = null    // UI listener
@@ -265,8 +271,13 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 		this.callback = callback
 	}
 
+	override fun isConnected(): Boolean {
+		return this.connected
+	}
+
 	override fun disconnect() {
 		Log.d(TAG, "Disconnecting from Spotify")
+		this.connected = false
 		this.callback = null
 		try {
 			spotifySubscription.cancel()

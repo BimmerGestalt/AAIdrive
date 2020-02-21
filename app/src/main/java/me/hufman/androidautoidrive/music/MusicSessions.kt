@@ -38,8 +38,13 @@ class MusicSessions(val context: Context) {
 			}
 
 			// set up MediaSession listener
-			mediaManager.removeOnActiveSessionsChangedListener(sessionListener)
-			mediaManager.addOnActiveSessionsChangedListener(sessionListener, ComponentName(context, NotificationListenerServiceImpl::class.java))
+			try {
+				mediaManager.removeOnActiveSessionsChangedListener(sessionListener)
+				mediaManager.addOnActiveSessionsChangedListener(sessionListener, ComponentName(context, NotificationListenerServiceImpl::class.java))
+			} catch (e: SecurityException) {
+				// user hasn't granted Notification Access yet
+				Log.w(TAG, "Can't connect to ${appInfo.name}, user hasn't granted Notification Access yet")
+			}
 
 			return pendingController
 		}

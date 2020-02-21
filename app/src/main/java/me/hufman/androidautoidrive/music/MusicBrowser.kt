@@ -56,11 +56,15 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 						}
 
 						override fun onConnectionSuspended() {
+							Log.i(TAG, "MediaBrowser suspended from ${appInfo.name}")
 							mediaBrowser?.disconnect()
+							pendingController.value?.disconnect()
 							pendingController.value = null
 						}
 						override fun onConnectionFailed() {
+							Log.i(TAG, "Failed MediaBrowser connection to ${appInfo.name}")
 							mediaBrowser?.disconnect()
+							pendingController.value?.disconnect()
 							pendingController.value = null
 						}
 					}
