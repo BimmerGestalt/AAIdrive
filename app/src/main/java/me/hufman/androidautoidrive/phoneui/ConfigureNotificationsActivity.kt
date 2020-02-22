@@ -19,9 +19,12 @@ import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_notifications.*
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.R
 
 class ConfigureNotificationsActivity: AppCompatActivity() {
+
+	val appSettings = MutableAppSettings(this)
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -29,11 +32,11 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 		setContentView(R.layout.activity_notifications)
 
 		swNotificationPopup.setOnCheckedChangeListener { buttonView, isChecked ->
-			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, isChecked.toString())
+			appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP] = isChecked.toString()
 			redraw()
 		}
 		swNotificationPopupPassenger.setOnCheckedChangeListener { buttonView, isChecked ->
-			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER, isChecked.toString())
+			appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER] = isChecked.toString()
 		}
 		btnGrantSMS.setOnClickListener {
 			ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_SMS), 20)
@@ -67,6 +70,12 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 		super.onResume()
 
 		redraw()
+		appSettings.callback = { redraw() }
+	}
+
+	override fun onPause() {
+		super.onPause()
+		appSettings.callback = null
 	}
 
 	fun hasSMSPermission(): Boolean {
@@ -74,9 +83,9 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 	}
 
 	fun redraw() {
-		swNotificationPopup.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
-		paneNotificationPopup.visible = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
-		swNotificationPopupPassenger.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean()
+		swNotificationPopup.isChecked = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
+		paneNotificationPopup.visible = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
+		swNotificationPopupPassenger.isChecked = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean()
 		paneSMSPermission.visible = !hasSMSPermission()
 	}
 

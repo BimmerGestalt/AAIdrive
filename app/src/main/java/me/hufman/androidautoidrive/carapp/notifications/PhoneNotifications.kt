@@ -9,15 +9,13 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
-import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.GraphicsHelpers
-import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
 import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
 import me.hufman.androidautoidrive.carapp.notifications.views.PopupView
-import me.hufman.androidautoidrive.removeFirst
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
@@ -30,7 +28,7 @@ import java.util.*
 
 const val TAG = "PhoneNotifications"
 
-class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController) {
+class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val appSettings: MutableAppSettings) {
 	companion object {
 		const val INTENT_UPDATE_NOTIFICATIONS = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.UPDATE_NOTIFICATIONS"
 		const val INTENT_NEW_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.NEW_NOTIFICATION"
@@ -40,7 +38,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	var notificationReceiver: PhoneNotificationUpdate? = null
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
-	val carApp: RHMIApplication
+	val carApp: RHMIApplicationSynchronized
 	val viewPopup: PopupView                // notification about notification
 	val viewList: NotificationListView      // show a list of active notifications
 	val viewDetails: DetailsView            // view a notification with actions to do
@@ -73,7 +71,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 		// figure out which views to use
 		viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
-		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources, graphicsHelpers)
+		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources, graphicsHelpers, appSettings)
 		viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller)
 
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first{
@@ -117,10 +115,20 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			Log.w(TAG, "Received rhmi_onActionEvent: handle=$handle ident=$ident actionId=$actionId")
 			try {
 				app?.actions?.get(actionId)?.asRAAction()?.rhmiActionCallback?.onActionEvent(args)
+				carApp.runSynchronized {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
+				}
+			} catch (e: RHMIActionAbort) {
+				// Action handler requested that we don't claim success
+				carApp.runSynchronized {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, false)
+				}
 			} catch (e: Exception) {
 				Log.e(TAG, "Exception while calling onActionEvent handler! $e")
+				carApp.runSynchronized {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
+				}
 			}
-			server?.rhmi_ackActionEvent(handle, actionId, 1, true)
 		}
 
 		override fun rhmi_onHmiEvent(handle: Int?, ident: String?, componentId: Int?, eventId: Int?, args: MutableMap<*, *>?) {

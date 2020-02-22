@@ -42,6 +42,8 @@
     <string name="NOTIFICATIONS_TITLE">Benachrichtigungen</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Keine Benachrichtigungen</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Löschen</string>
+    <string name="NOTIFICATION_POPUPS">Benachrichtigungs-Popups</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER">Popups mit Beifahrer</string>
 
     <string name="MAP_ACTION_VIEWMAP">Ganze Karte ansehen</string>
     <string name="MAP_ACTION_SEARCH">Nach Ort suchen</string>
