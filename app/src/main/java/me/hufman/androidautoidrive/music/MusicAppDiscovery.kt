@@ -22,8 +22,8 @@ import kotlin.collections.HashSet
 class MusicAppDiscovery(val context: Context, val handler: Handler) {
 	val TAG = "MusicAppDiscovery"
 
-	val browseApps: MutableList<MusicAppInfo> = LinkedList()
-	val combinedApps: MutableList<MusicAppInfo> = LinkedList()
+	private val browseApps: MutableList<MusicAppInfo> = LinkedList()
+	val combinedApps: MutableList<MusicAppInfo> = Collections.synchronizedList(LinkedList())
 	val validApps
 		get() = combinedApps.filter {it.connectable || it.controllable}
 
@@ -133,10 +133,9 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 
 	fun addSessionApps() {
 		// discover Music Sessions
-		this.combinedApps.clear()
-		this.combinedApps.addAll(this.browseApps.map { it.clone() })
+		val apps = ArrayList(this.browseApps)
 
-		val appsByName = this.combinedApps.associateBy { it.packageName }
+		val appsByName = apps.associateBy { it.packageName }
 		val mediaSessionApps = musicSessions.discoverApps()
 		for (app in mediaSessionApps) {
 			Log.i(TAG, "Found music session ${app.name}")
@@ -147,11 +146,15 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 			} else {
 				// don't try to probe this new app, it doesn't advertise browse support
 				app.probed = true
-				this.combinedApps.add(app)
+				apps.add(app)
 			}
 		}
+		apps.sortBy { it.name.toLowerCase() }
 
-		this.combinedApps.sortBy { it.name.toLowerCase() }
+		synchronized(this.combinedApps) {
+			this.combinedApps.clear()
+			this.combinedApps.addAll(apps)
+		}
 
 		handler.post {
 			listener?.run()
