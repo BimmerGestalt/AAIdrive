@@ -383,7 +383,8 @@ class MusicController(val context: Context, val handler: Handler) {
 	/** If the current app is playing, make sure the metadata is valid */
 	fun assertPlayingMetadata() = withController { controller ->
 		val metadata = controller?.metadata
-		if (controller != null && metadata == null && System.currentTimeMillis() > lastConnectTime + RECONNECT_TIMEOUT) {
+		val packageName = controller?.packageName
+		if (controller != null && packageName == "com.google.android.youtube" && metadata == null && System.currentTimeMillis() > lastConnectTime + RECONNECT_TIMEOUT) {
 			Log.w(TAG, "Detected NULL metadata for an app, reconnecting")
 			lastConnectTime = System.currentTimeMillis()
 			musicBrowser?.reconnect()
