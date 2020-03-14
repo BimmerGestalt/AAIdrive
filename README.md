@@ -112,6 +112,12 @@ Besides showing a self-contained remote UI, the IDrive system offers many exciti
 Limitations
 -----------
 
+This project replicates some of the features of Android Auto using the IDrive interface, using the same APIs that Android Auto uses to talk to the music apps. It cannot currently provide more advanced Android Auto features, such as:
+
+  - Integration with the car's Voice Assistant button
+  - Screen-casting of arbitrary phone apps to the car (Google Maps, Waze, or any other apps)
+  - Displaying the original Android Auto interface at all
+
 Due to the unofficial reverse-engineered nature of this project, it has some limitations:
 
   - The main menu entries' icons and text can't be altered, and so do not look exactly correct
