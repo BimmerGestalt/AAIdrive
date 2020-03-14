@@ -86,6 +86,7 @@ Implemented Features
         - [Nederland.FM](https://play.google.com/store/apps/details?id=nl.nibbixsoft.app)
         - [NHL](https://play.google.com/store/apps/details?id=com.nhl.gc1112.free)
         - [ntv Nachrichten](https://play.google.com/store/apps/details?id=de.lineas.lit.ntv.android)
+        - [NYTimes](https://play.google.com/store/apps/details?id=com.nytimes.android)
         - [Scanner Radio](https://play.google.com/store/apps/details?id=com.scannerradio)
         - [SiriusXM](https://play.google.com/store/apps/details?id=com.sirius)
         - [Versuz Radio](https://play.google.com/store/apps/details?id=com.versuzradio)
