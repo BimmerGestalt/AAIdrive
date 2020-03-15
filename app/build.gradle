@@ -28,8 +28,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         archivesBaseName = "androidautoidrive-${androidGitVersion.name()}"
 
-        manifestPlaceholders = [spotify_api_key: hasProperty("AndroidAutoIdrive_SpotifyApiKey") ?
-                                    AndroidAutoIdrive_SpotifyApiKey : "unavailable"]
+        manifestPlaceholders = [spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey]
     }
 
     signingConfigs {
@@ -79,8 +78,7 @@ android {
         gmap {
             dimension "map"
             // load api keys from ~/.gradle/gradle.properties
-            manifestPlaceholders = [spotify_api_key: project.hasProperty("AndroidAutoIdrive_SpotifyApiKey") ?
-                                        AndroidAutoIdrive_SpotifyApiKey : "unavailable",
+            manifestPlaceholders = [spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey,
                                     gmaps_api_key: AndroidAutoIdrive_GmapsApiKey]
         }
     }

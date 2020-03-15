@@ -123,6 +123,7 @@ Due to the unofficial reverse-engineered nature of this project, it has some lim
     - Scribd
     - Smart Audiobook Player
     - YouTube Music
+  - Recent versions of Spotify block the standard Android MediaBrowserService connection, which is also tied into the Search and Spotify's Queue features. Please downgrade to [version 8.4.96.953](https://www.apkhere.com/down/com.spotify.music_8.4.96.953_free) for full functionality.
 
 Requirements
 ------------
