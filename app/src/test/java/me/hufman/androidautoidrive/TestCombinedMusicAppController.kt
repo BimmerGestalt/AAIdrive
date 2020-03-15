@@ -124,9 +124,8 @@ class TestCombinedMusicAppController {
 		verify(rightController, times(1)).play()
 
 		controller.pause()
-		verify(leftController, times(1)).isSupportedAction(MusicAction.PAUSE)
-		verify(rightController, times(1)).isSupportedAction(MusicAction.PAUSE)
-		verify(leftController, never()).pause()
+		// pause doesn't check for isSupportedAction
+		verify(leftController, times(1)).pause()
 		verify(rightController, times(1)).pause()
 
 		controller.skipToPrevious()

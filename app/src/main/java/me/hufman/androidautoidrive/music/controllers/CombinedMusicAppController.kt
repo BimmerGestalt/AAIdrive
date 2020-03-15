@@ -85,20 +85,25 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 	}
 
 	override fun play() {
-		withController {
+		val played = withController {
 			if (!it.isSupportedAction(MusicAction.PLAY)) {
 				throw UnsupportedOperationException()
 			}
 			it.play()
+			true
+		}
+		// if none of the controllers claim to support Play, just force a play on all of them
+		if (played != true) {
+			for (pendingController in controllers) {
+				pendingController.value?.play()
+			}
 		}
 	}
 
 	override fun pause() {
-		withController {
-			if (!it.isSupportedAction(MusicAction.PAUSE)) {
-				throw UnsupportedOperationException()
-			}
-			it.pause()
+		// definitely make sure we pause, don't check for supported action
+		for (pendingController in controllers) {
+			pendingController.value?.pause()
 		}
 	}
 
