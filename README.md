@@ -102,12 +102,19 @@ Integration Points
 
 Besides showing a self-contained remote UI, the IDrive system offers many exciting integration points. Here are a few that this project supports:
 
+  - The UI widgets automatically take on the respective theme to fit the car
   - The Map View, Notification List, and Music Playback screens can be assigned to the physical shortcut keys in the dashboard
   - New notifications trigger a popup from anywhere in IDrive, not just in the main list
   - New notification popups can be disabled if a passenger is detected in the seat
   - The currently-playing app is displayed along the top of the IDrive screen
   - The currently-playing song is shown in the Multimedia side panel of the IDrive
-  - Audio focus can be optionally enabled, which enables playback resuming when reconnecting on startup, pausing playback when pushing the mute button or during calls, handling physical back/next buttons including seeking support, and using the steering wheel controls to skip back/next from the instrument cluster
+  - With an old-enough phone or a new-enough car, audio focus can be enabled which grants the following extra features:
+    - The Media shortcut button opens this app when it is in control of the music
+    - Automatically resumes playback when reconnecting to the car
+    - Playback pauses when pushing the mute button or during calls
+    - The physical back/next buttons can be held down to seek within a track or pressed to skip tracks
+    - The steering wheel controls can skip tracks from the instrument cluster
+    - Enqueued songs can be scrolled in the instrument cluster, depending on app support
 
 Limitations
 -----------
