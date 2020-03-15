@@ -100,14 +100,15 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 		withContext(handler.asCoroutineDispatcher()) {
 			if (connected) {
 				val browsePath = path ?: getRoot()
-				mediaBrowser.subscribe(browsePath, object : MediaBrowserCompat.SubscriptionCallback() {
+				var callback: MediaBrowserCompat.SubscriptionCallback? = null
+				callback = object : MediaBrowserCompat.SubscriptionCallback() {
 					override fun onError(parentId: String) {
-						mediaBrowser.unsubscribe(browsePath)
+						mediaBrowser.unsubscribe(browsePath, callback!!)
 						deferred.complete(LinkedList())
 					}
 
 					override fun onChildrenLoaded(parentId: String, children: MutableList<MediaBrowserCompat.MediaItem>) {
-						mediaBrowser.unsubscribe(browsePath)
+						mediaBrowser.unsubscribe(browsePath, callback!!)
 						deferred.complete(children)
 					}
 
@@ -118,7 +119,8 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 					override fun onChildrenLoaded(parentId: String, children: MutableList<MediaBrowserCompat.MediaItem>, options: Bundle) {
 						onChildrenLoaded(parentId, children)
 					}
-				})
+				}
+				mediaBrowser.subscribe(browsePath, callback)
 
 				// now we wait for the results
 				try {
@@ -129,6 +131,7 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 					}
 				} catch (e: CancellationException) {
 					// timeout expired
+					mediaBrowser.unsubscribe(browsePath, callback)
 				}
 				if (!deferred.isCompleted) {
 					deferred.complete(LinkedList())
