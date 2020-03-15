@@ -7,6 +7,9 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.android.asCoroutineDispatcher
+import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.music.*
 import java.util.*
 
@@ -97,6 +100,8 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 
 	/* Current state */
 	override fun getQueue(): List<MusicMetadata> {
+		triggerSpotifyWorkaround()
+
 		return remoteData {
 			mediaController.queue?.map { MusicMetadata.fromQueueItem(it) }
 		} ?: LinkedList()
@@ -129,9 +134,24 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 	}
 
 	override fun getCustomActions(): List<CustomAction> {
+		triggerSpotifyWorkaround()
+
 		return remoteData { mediaController.playbackState?.customActions }?.map {
 			CustomAction.fromMediaCustomAction(context, mediaController.packageName, it)
 		} ?: LinkedList()
+	}
+
+	/**
+	 * Spotify does not post the queue or custom actions to the MediaSession normally
+	 * Instead, it only updates the queue and custom actions as part of a browse loadChildren
+	 */
+	private fun triggerSpotifyWorkaround() {
+		// spotify needs a browse to update metadata, such as queue and custom actions
+		if (musicBrowser?.musicAppInfo?.packageName == "com.spotify.music" && musicBrowser.connected) {
+			GlobalScope.launch(musicBrowser.handler.asCoroutineDispatcher()) {
+				musicBrowser.browse(null, 200)
+			}
+		}
 	}
 
 	override suspend fun browse(directory: MusicMetadata?): List<MusicMetadata> {

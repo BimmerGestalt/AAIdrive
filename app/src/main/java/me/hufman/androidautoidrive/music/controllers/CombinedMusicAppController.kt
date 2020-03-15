@@ -256,7 +256,7 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 
 	override suspend fun search(query: String): List<MusicMetadata>? {
 		waitforConnect()
-		// try to find a browseable controller
+		// try to find a searchable controller
 		for (pendingController in controllers) {
 			val controller = pendingController.value ?: continue
 			val results = controller.search(query) ?: continue
