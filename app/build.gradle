@@ -27,6 +27,7 @@ android {
         versionName androidGitVersion.name()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         archivesBaseName = "androidautoidrive-${androidGitVersion.name()}"
+        buildConfigField "long", "BUILD_TIME", System.currentTimeMillis() + "L"
     }
 
     signingConfigs {

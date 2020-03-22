@@ -6,8 +6,9 @@ import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
+import java.lang.Exception
 
-class CarInformationDiscovery(carAppAssets: CarAppResources) {
+class CarInformationDiscovery(carAppAssets: CarAppResources, val listener: CarInformationDiscoveryListener?) {
 
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
@@ -30,6 +31,17 @@ class CarInformationDiscovery(carAppAssets: CarAppResources) {
 
 	private fun getCapabilities() {
 		val capabilities = carConnection.rhmi_getCapabilities("", 255)
+
+		// report the capabilities to any debug view
+		val stringCapabilities = capabilities
+				.mapKeys { it.key as String }
+				.mapValues { it.value?.toString() }
+		try {
+			listener?.onCapabilities(stringCapabilities)
+		} catch (e: Exception) {
+		}
+
+		// report the capabilities to analytics
 		val reportedKeys = setOf(
 				"vehicle.type", "vehicle.country", "vehicle.productiondate",
 				"hmi.type", "hmi.version", "hmi.display-width", "hmi.display-height", "hmi.role",
@@ -53,4 +65,8 @@ class CarInformationDiscovery(carAppAssets: CarAppResources) {
 			IDriveConnection.disconnectEtchConnection(carConnection)
 		} catch (e: java.lang.Exception) {}
 	}
+}
+
+interface CarInformationDiscoveryListener {
+	fun onCapabilities(capabilities: Map<String, String?>)
 }

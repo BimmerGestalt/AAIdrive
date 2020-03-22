@@ -16,7 +16,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="15dp"
-            android:gravity="center">
+            android:gravity="center"
+            android:animateLayoutChanges="true">
 
             <LinearLayout
                 android:id="@+id/paneConnectedBMWNewInstalled"
@@ -142,6 +143,48 @@
                     android:text="@string/txt_setup_mini_ready" />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:id="@+id/paneBuildInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp">
+                <TextView
+                    android:id="@+id/txtBuildInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:longClickable="true"
+                    android:textIsSelectable="true" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/paneCarCapabilities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="15dp">
+
+                <TextView
+                    android:id="@+id/lblCarCapabilities"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/txt_car_capabilities" />
+
+                <TextView
+                    android:id="@+id/txtCarCapabilities"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|top"
+                    android:longClickable="true"
+                    android:textIsSelectable="true" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </android.support.constraint.ConstraintLayout>

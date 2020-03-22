@@ -12,7 +12,9 @@ import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControlle
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
 import me.hufman.androidautoidrive.carapp.notifications.UnicodeCleaner
+import me.hufman.androidautoidrive.phoneui.DebugStatus
 import me.hufman.androidautoidrive.phoneui.MainActivity
+import me.hufman.androidautoidrive.phoneui.SetupActivity
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
@@ -194,7 +196,16 @@ class MainService: Service() {
 				threadCapabilities = CarThread("Capabilities") {
 					Log.i(TAG, "Starting to discover car capabilities")
 
-					carappCapabilities = CarInformationDiscovery(CarAppAssetManager(this, "smartthings"))
+					carappCapabilities = CarInformationDiscovery(CarAppAssetManager(this, "smartthings"), object: CarInformationDiscoveryListener {
+						override fun onCapabilities(capabilities: Map<String, String?>) {
+							synchronized(DebugStatus.carCapabilities) {
+								DebugStatus.carCapabilities.clear()
+								DebugStatus.carCapabilities.putAll(capabilities.mapValues { it.value ?: "null" })
+							}
+							SetupActivity.redraw(this@MainService)
+						}
+
+					})
 					carappCapabilities?.onCreate()
 				}
 				threadCapabilities?.start()
