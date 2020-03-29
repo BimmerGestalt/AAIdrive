@@ -161,7 +161,13 @@ Build Instructions
 
   - (Optional) Add a [Google Maps API key](https://developers.google.com/maps/documentation/android-sdk/signup) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_GmapsApiKey`. This key should have access to Maps SDK for Android, Places API, and Directions API.
   - Check out the project in Android Studio, then `Build > Make Project`
-  - From the commandline, with an Android build environment set up, `./gradlew assemble` should work too
+  - Commandline builds should work too:
+    - Make sure Android SDK Build Tools version 28 is installed
+    - `git clone https://github.com/hufman/AndroidAutoIdrive.git && cd AndroidAutoIdrive`
+    - `git submodule init && git submodule update`
+    - `./gradlew assembleNonalytics`  This step will fail without the Build Tools installed
+
+The built APKs should be found in `app/build/outputs/apk/*/*/*apk`
 
 Besides building the entire project, Android Studio also offers a convenient "Run app" method to build and directly install to a connected phone. Use the Build Variants panel to select a specific version to install.
 
