@@ -220,14 +220,21 @@ class TestCombinedMusicAppController {
 
 		val queue = controller.getQueue()
 		verify(leftController, times(1)).getQueue()
-		verify(rightController, times(1)).getQueue()
+		verify(rightController, times(2)).getQueue()
 
 		assertEquals(1, queue.size)
 		controller.playQueue(MusicMetadata(queueId = 0))
 		verify(leftController, times(2)).getQueue()
-		verify(rightController, times(2)).getQueue()
+		verify(rightController, times(3)).getQueue()
 		verify(leftController, times(0)).playQueue(any())
 		verify(rightController, times(1)).playQueue(any())
+
+		// test that the MusicMetadata queueId comes from the controller with the queue
+		whenever(leftController.getMetadata()).doAnswer { MusicMetadata(mediaId="test1", queueId=200)}
+		whenever(rightController.getMetadata()).doAnswer { MusicMetadata(mediaId="test2", queueId=1)}
+		val combinedMetadata = controller.getMetadata()
+		assertEquals("test1", combinedMetadata?.mediaId)
+		assertEquals(1L, combinedMetadata?.queueId)
 	}
 
 	@Test

@@ -72,6 +72,18 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 		return null
 	}
 
+	/**
+	 * Return the first controller which has a valid queue, if any
+	 */
+	fun getQueueController(): MusicAppController? {
+		return withController {
+			if (it.getQueue().isEmpty()) {
+				throw UnsupportedOperationException()
+			}
+			it
+		}
+	}
+
 	fun isPending(): Boolean {
 		return controllers.any {
 			it.pending
@@ -138,12 +150,7 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 	}
 
 	override fun playQueue(song: MusicMetadata) {
-		withController {
-			if (it.getQueue().isEmpty()) {
-				throw UnsupportedOperationException()
-			}
-			it.playQueue(song)
-		}
+		getQueueController()?.playQueue(song)
 	}
 
 	override fun playFromSearch(search: String) {
@@ -177,19 +184,20 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 	}
 
 	override fun getQueue(): List<MusicMetadata> {
-		return withController {
-			val queue = it.getQueue()
-			if (queue.isEmpty()) {
-				throw UnsupportedOperationException()
-			}
-			queue
-		} ?: LinkedList()
+		return getQueueController()?.getQueue() ?: LinkedList()
 	}
 
 	override fun getMetadata(): MusicMetadata? {
-		return withController {
+		var metadata = withController {
 			it.getMetadata()
 		}
+		// the first working controller may not have a queue, so
+		// update the queueId to be used by the queue controller
+		val queueController = getQueueController()
+		if (queueController != null) {
+			metadata = metadata?.copy(queueId = queueController.getMetadata()?.queueId)
+		}
+		return metadata
 	}
 
 	override fun getPlaybackPosition(): PlaybackPosition {

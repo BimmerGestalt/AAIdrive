@@ -113,11 +113,14 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 	// Spotify is very asynchronous, save any subscription state for the getters
 	var callback: ((MusicAppController) -> Unit)? = null    // UI listener
 	val spotifySubscription: Subscription<PlayerState> = remote.playerApi.subscribeToPlayerState()
+	val playlistSubscription: Subscription<PlayerContext> = remote.playerApi.subscribeToPlayerContext()
 	var playerActions: PlayerRestrictions? = null
 	var playerOptions: PlayerOptions? = null
 	var currentTrack: MusicMetadata? = null
 	var position: PlaybackPosition = PlaybackPosition(true, 0, 0, -1)
 	var currentTrackLibrary: Boolean? = null
+	var queueUri: String? = null
+	var queueItems: List<MusicMetadata>? = null
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -149,6 +152,30 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 
 			callback?.invoke(this)
 		}
+
+		playlistSubscription.setEventCallback { playerContext ->
+			Log.d(TAG, "Heard an update from Spotify queue: ${playerContext.uri}")
+			// update the current queue
+			val uri = playerContext.uri
+			queueUri = uri
+			if (uri != null) {
+				val listItem = ListItem(uri, uri, null, playerContext.title, playerContext.subtitle, false, true)
+				remote.contentApi.getChildrenOfItem(listItem, 100, 0).setResultCallback { currentQueue ->
+					Log.d(TAG, "The received queue: ${currentQueue?.items?.map{it.toString()}}")
+					if (currentQueue != null) {
+						queueItems = currentQueue.items.mapIndexed { index: Int, listItem: ListItem? ->
+							MusicMetadata(queueId = listItem?.uri?.hashCode()?.toLong(), title = listItem?.title ?: "Track $index")
+						}
+					} else {
+						queueItems = LinkedList()
+					}
+				}.setErrorCallback {
+					Log.w(TAG, "Unable to fetch Spotify queue", it)
+				}
+			}
+
+			callback?.invoke(this)
+		}
 	}
 
 	override fun play() {
@@ -177,7 +204,17 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 	}
 
 	override fun playQueue(song: MusicMetadata) {
+		// queue item equality is based on queueId, which we are storing as the uri hashCode
 		// we don't know the index to jump to
+		// so, we have to iterate through the queue to find the user's selected queueId
+		val queueUri = this.queueUri
+		if (song.queueId != null) {
+			queueItems?.forEachIndexed { index, it ->
+				if (it.queueId == song.queueId) {
+					remote.playerApi.skipToIndex(queueUri, index)
+				}
+			}
+		}
 	}
 
 	override fun playFromSearch(search: String) {
@@ -196,8 +233,8 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 	}
 
 	override fun getQueue(): List<MusicMetadata> {
-		// not allowed per https://github.com/spotify/android-sdk/issues/10
-		return LinkedList()
+		// unreliable per https://github.com/spotify/android-sdk/issues/10
+		return queueItems ?: LinkedList()
 	}
 
 	override fun getMetadata(): MusicMetadata? {
@@ -281,6 +318,11 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 		this.callback = null
 		try {
 			spotifySubscription.cancel()
+		} catch (e: Exception) {
+			Log.w(TAG, "Exception while disconnecting from Spotify: $e")
+		}
+		try {
+			playlistSubscription.cancel()
 		} catch (e: Exception) {
 			Log.w(TAG, "Exception while disconnecting from Spotify: $e")
 		}

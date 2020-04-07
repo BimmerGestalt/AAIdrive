@@ -107,7 +107,7 @@ Limitations
 Due to the unofficial reverse-engineered nature of this project, it has some limitations:
 
   - The main menu entries' icons and text can't be altered, and so do not look exactly correct
-  - The individual music source icons are not fully functional, but they do switch the active music source
+  - The individual music source icons may not be fully functional, but they do switch the active music source
   - Android Oreo disabled Android Open Accessory Protocol 2 audio output, which is required to play audio over the app's USB connection in model years 2014-2017. Please disable the app option "Request Audio Focus" and use Bluetooth audio
   - Some Android Auto music apps enforce a whitelist of clients, preventing this app from launching them or browsing their libraries. However, once they are running, they can be controlled. For example, these popular music apps can not be launched, they must be started manually:
     - Amazon Music
@@ -123,7 +123,7 @@ Due to the unofficial reverse-engineered nature of this project, it has some lim
     - Scribd
     - Smart Audiobook Player
     - YouTube Music
-  - Recent versions of Spotify block the standard Android MediaBrowserService connection, which is also tied into the Search and Spotify's Queue features. Please downgrade to [version 8.4.96.953](https://www.apkhere.com/down/com.spotify.music_8.4.96.953_free) for full functionality.
+  - Recent versions of Spotify block the standard Android MediaBrowserService connection, which is needed for the Search feature. Please downgrade to [version 8.4.96.953](https://www.apkhere.com/down/com.spotify.music_8.4.96.953_free) for full functionality.
 
 Requirements
 ------------
