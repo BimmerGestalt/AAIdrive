@@ -1,0 +1,70 @@
+package me.hufman.androidautoidrive.carapp.maps.views
+
+import android.util.Log
+import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
+import me.hufman.androidautoidrive.carapp.maps.MapApp
+import me.hufman.idriveconnectionkit.rhmi.FocusCallback
+import me.hufman.idriveconnectionkit.rhmi.RHMIActionListCallback
+import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
+import me.hufman.idriveconnectionkit.rhmi.RHMIState
+
+class MenuView(val state: RHMIState, val interaction: MapInteractionController, val frameUpdater: MapApp.FrameUpdater) {
+	companion object {
+		val TAG = "MapMenu"
+		fun fits(state: RHMIState): Boolean {
+			return state is RHMIState.PlainState &&
+				state.componentsList.filterIsInstance<RHMIComponent.Label>().isNotEmpty() &&   // show whether currently navigating
+				state.componentsList.filterIsInstance<RHMIComponent.List>().size > 1
+		}
+	}
+
+	val menuEntries = listOf(L.MAP_ACTION_VIEWMAP, L.MAP_ACTION_SEARCH, L.MAP_ACTION_CLEARNAV)
+	val rhmiMenuEntries = object: RHMIListAdapter<String>(3, menuEntries) {}
+	val menuMap = state.componentsList.filterIsInstance<RHMIComponent.List>()[0]
+	val menuList = state.componentsList.filterIsInstance<RHMIComponent.List>()[1]
+
+	fun initWidgets(stateMap: RHMIState, stateInput: RHMIState) {
+		menuList.getModel()?.setValue(rhmiMenuEntries,0, menuEntries.size, menuEntries.size)
+		state.componentsList.forEach {
+			it.setVisible(false)
+		}
+
+		state.focusCallback = FocusCallback { focused ->
+			if (focused) {
+				Log.i(TAG, "Showing map on menu")
+				frameUpdater.showMode("menuMap")
+				interaction.showMap()
+			} else {
+				Log.i(TAG, "Hiding map on menu")
+				frameUpdater.hideMode("menuMap")
+				if (frameUpdater.currentMode == "") {
+					interaction.pauseMap()
+				}
+			}
+		}
+
+		menuMap.setVisible(true)
+		menuMap.setSelectable(true)
+		menuMap.setProperty(6, "350,0,*")
+		menuMap.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
+
+		menuList.setProperty(6, "100,0,*")
+		menuList.setVisible(true)
+		menuList.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {  listIndex ->
+			val destStateId = when (listIndex) {
+				0 -> stateMap.id
+				1 -> stateInput.id
+				else -> state.id
+			}
+			Log.i(TAG, "User pressed menu item $listIndex ${menuEntries.getOrNull(listIndex)}, setting target ${menuList.getAction()?.asHMIAction()?.getTargetModel()?.id} to $destStateId")
+			menuList.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = destStateId
+			if (listIndex == 2) {
+				// clear navigation
+				interaction.stopNavigation()
+			}
+		}
+		// it seems that menuMap and menuList share the same HMI Action values, so use the same RA handler
+		menuMap.getAction()?.asRAAction()?.rhmiActionCallback = menuList.getAction()?.asRAAction()?.rhmiActionCallback
+	}
+}

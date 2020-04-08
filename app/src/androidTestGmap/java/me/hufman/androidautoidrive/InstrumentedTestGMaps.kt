@@ -47,7 +47,7 @@ class InstrumentedTestGMaps {
 	@Test
 	fun queryResultsToCar() {
 		val appContext = InstrumentationRegistry.getTargetContext()
-		val listener = MapView.MapResultsReceiver(mockResultsReceiver)
+		val listener = MapApp.MapResultsReceiver(mockResultsReceiver)
 		appContext.registerReceiver(listener, IntentFilter(INTENT_MAP_RESULTS))
 		appContext.registerReceiver(listener, IntentFilter(INTENT_MAP_RESULT))
 

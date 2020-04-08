@@ -9,7 +9,7 @@ import me.hufman.androidautoidrive.carapp.maps.*
 
 class MapService(val context: Context) {
 	var threadGMaps: CarThread? = null
-	var mapView: MapView? = null
+	var mapApp: MapApp? = null
 	var mapScreenCapture: VirtualDisplayScreenCapture? = null
 	var mapController: GMapsController? = null
 	var mapListener: MapsInteractionControllerListener? = null
@@ -30,9 +30,9 @@ class MapService(val context: Context) {
 						mapListener.onCreate()
 						this.mapListener = mapListener
 
-						mapView = MapView(CarAppAssetManager(context, "smartthings"),
+						mapApp = MapApp(CarAppAssetManager(context, "smartthings"),
 								MapInteractionControllerIntent(context), mapScreenCapture)
-						mapView?.onCreate(context, threadGMaps?.handler)
+						mapApp?.onCreate(context, threadGMaps?.handler)
 					}
 					threadGMaps?.start()
 				}
@@ -49,12 +49,12 @@ class MapService(val context: Context) {
 
 	fun stop() {
 		threadGMaps?.handler?.post {
-			mapView?.onDestroy(context)
+			mapApp?.onDestroy(context)
 			mapListener?.onDestroy()
 			mapScreenCapture?.onDestroy()
 			threadGMaps?.handler?.looper?.quitSafely()
 
-			mapView = null
+			mapApp = null
 			mapController = null
 			mapListener = null
 			mapScreenCapture = null
