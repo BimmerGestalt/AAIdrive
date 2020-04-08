@@ -32,6 +32,10 @@ import kotlin.math.min
 const val TAG = "MapView"
 
 class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionController, val map: VirtualDisplayScreenCapture) {
+	companion object {
+		val MAX_WIDTH = 1000
+		val MAX_HEIGHT = 400
+	}
 	var handler: Handler? = null    // will be set in onCreate()
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
@@ -47,8 +51,6 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 	val viewInput: RHMIComponent.Input
 	val stateInputState: InputState<MapResult>
 
-	val MAX_WIDTH = 1000
-	val MAX_HEIGHT = 4000
 	val rhmiWidth: Int
 	val mapWidth: Int
 		get() = min(rhmiWidth - 280, if (AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()) 1000 else 700)

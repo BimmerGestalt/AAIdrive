@@ -115,7 +115,7 @@ class TestMapsApp {
 		await().untilAsserted { verify(mockMap).compressBitmap(any()) } // it should compress the bitmap, and send it to menu map
 		mockHandlerRunnable.allValues.forEach { it.run() }
 		await().untilAsserted { verify(mockMap, atLeast(2)).getFrame() }    // wait until the frame updater checks for another frame
-		assertArrayEquals("Updates the menu map", ByteArray(4), ((mockServer.data[app.menuView.menuList.model] as BMWRemoting.RHMIDataTable).data[0][0] as BMWRemoting.RHMIResourceData).data)
+		assertArrayEquals("Updates the menu map", ByteArray(4), ((mockServer.data[app.menuView.menuMap.model] as BMWRemoting.RHMIDataTable).data[0][0] as BMWRemoting.RHMIResourceData).data)
 		assertEquals("Doesn't show the wrong-sized map in full view", null, mockServer.data[app.mapView.mapImage.model])
 
 		// Now send the right picture
