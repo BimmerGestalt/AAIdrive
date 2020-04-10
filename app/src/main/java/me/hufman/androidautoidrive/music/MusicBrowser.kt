@@ -81,6 +81,7 @@ class MusicBrowser(val context: Context, val handler: Handler, val musicAppInfo:
 			"com.spotify.music" -> "com.google.android.projection.gearhead---spotify_media_browser_root_android_auto"   // the Android Auto root for Spotify
 			"com.aspiro.tidal" -> "__ROOT_LOGGED_IN__"   // Tidal Music
 			"com.apple.android.music" -> "__AUTO_ROOT__"     // Apple Music
+			"com.radio.fmradio" -> "__ROOT__"   // Radio FM
 			else -> mediaBrowser?.root ?: "disconnected root"
 		}
 	}
