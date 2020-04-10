@@ -1,13 +1,8 @@
 package me.hufman.androidautoidrive.carapp.maps
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Bitmap
-import android.media.ImageReader
 import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
@@ -17,7 +12,8 @@ import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.RHMIApplicationIdempotent
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.carapp.RHMIUtils
-import me.hufman.androidautoidrive.carapp.maps.views.MapView
+import me.hufman.androidautoidrive.carapp.maps.views.FullImageInteraction
+import me.hufman.androidautoidrive.carapp.maps.views.FullImageView
 import me.hufman.androidautoidrive.carapp.maps.views.MenuView
 import me.hufman.androidautoidrive.removeFirst
 import me.hufman.idriveconnectionkit.IDriveConnection
@@ -25,7 +21,6 @@ import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.SecurityService
 import me.hufman.idriveconnectionkit.rhmi.*
-import java.lang.RuntimeException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.min
@@ -46,7 +41,7 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 	var selectedResult: MapResult? = null
 
 	val menuView: MenuView
-	val mapView: MapView
+	val fullImageView: FullImageView
 	val stateInput: RHMIState.PlainState
 	val viewInput: RHMIComponent.Input
 	val stateInputState: InputState<MapResult>
@@ -85,7 +80,17 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 		Log.i(TAG, "Locating components to use")
 		val unclaimedStates = LinkedList(carApp.states.values)
 		menuView = MenuView(unclaimedStates.removeFirst { MenuView.fits(it) }, interaction, frameUpdater)
-		mapView = MapView(unclaimedStates.removeFirst { MapView.fits(it) }, interaction, frameUpdater, { mapWidth }, { mapHeight })
+		fullImageView = FullImageView(unclaimedStates.removeFirst { FullImageView.fits(it) }, "Map", object: FullImageInteraction {
+			override fun navigateUp() {
+				interaction.zoomIn(1)
+			}
+			override fun navigateDown() {
+				interaction.zoomOut(1)
+			}
+			override fun click() {
+
+			}
+		}, frameUpdater, { mapWidth }, { mapHeight })
 
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first {
 			it.componentsList.filterIsInstance<RHMIComponent.Input>().filter { it.suggestAction > 0 }.isNotEmpty()
@@ -105,8 +110,8 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 
 		// set up the components
 		Log.i(TAG, "Setting up component behaviors")
-		menuView.initWidgets(mapView.state, stateInput)
-		mapView.initWidgets(menuView.state)
+		menuView.initWidgets(fullImageView.state, stateInput)
+		fullImageView.initWidgets(menuView.state)
 		// set up the components for the input widget
 		stateInputState = object: InputState<MapResult>(viewInput) {
 			override fun onEntry(input: String) {
@@ -124,8 +129,8 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 			}
 		}
 
-		viewInput.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = mapView.state.id
-		viewInput.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = mapView.state.id
+		viewInput.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
+		viewInput.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
 
 		// register for events from the car
 		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.mapview", -1)

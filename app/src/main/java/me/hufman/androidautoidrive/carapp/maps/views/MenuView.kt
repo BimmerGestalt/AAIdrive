@@ -50,7 +50,7 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 		menuList.setVisible(true)
 		menuList.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {  listIndex ->
 			val destStateId = when (listIndex) {
-				0 -> stateMap.id
+				0 -> stateMap.id    // must be index 0, because it's also index 0 in menuMap
 				1 -> stateInput.id
 				else -> state.id
 			}
