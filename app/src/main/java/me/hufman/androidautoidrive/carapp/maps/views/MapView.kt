@@ -1,11 +1,13 @@
 package me.hufman.androidautoidrive.carapp.maps.views
 
 import android.util.Log
-import me.hufman.androidautoidrive.carapp.maps.MapApp
+import me.hufman.androidautoidrive.carapp.maps.FrameUpdater
+import me.hufman.androidautoidrive.carapp.maps.MapApp.Companion.MAX_HEIGHT
+import me.hufman.androidautoidrive.carapp.maps.MapApp.Companion.MAX_WIDTH
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
 import me.hufman.idriveconnectionkit.rhmi.*
 
-class MapView(val state: RHMIState, val interaction: MapInteractionController, val frameUpdater: MapApp.FrameUpdater, val mapWidth: Int, val mapHeight: Int) {
+class MapView(val state: RHMIState, val interaction: MapInteractionController, val frameUpdater: FrameUpdater, val getWidth: () -> Int, val getHeight: () -> Int) {
 	companion object {
 		val TAG = "MapView"
 		fun fits(state: RHMIState): Boolean {
@@ -16,8 +18,8 @@ class MapView(val state: RHMIState, val interaction: MapInteractionController, v
 	}
 
 	val mapImage = state.componentsList.filterIsInstance<RHMIComponent.Image>().first()
+	val mapModel = mapImage.getModel()!!
 	val mapInputList = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
-
 
 	fun initWidgets(stateMenu: RHMIState) {
 		// set up the components on the map
@@ -30,14 +32,10 @@ class MapView(val state: RHMIState, val interaction: MapInteractionController, v
 		state.focusCallback = FocusCallback { focused ->
 			if (focused) {
 				Log.i(TAG, "Showing map on full screen")
-				frameUpdater.showMode("mainMap")
-				interaction.showMap()
+				frameUpdater.showWindow(getWidth(), getHeight(), mapModel)
 			} else {
 				Log.i(TAG, "Hiding map on full screen")
-				frameUpdater.hideMode("mainMap")
-				if (frameUpdater.currentMode == "") {
-					interaction.pauseMap()
-				}
+				frameUpdater.hideWindow(mapModel)
 			}
 		}
 
@@ -75,7 +73,7 @@ class MapView(val state: RHMIState, val interaction: MapInteractionController, v
 		mapImage.setVisible(true)
 		mapImage.setProperty(20, -16)    // positionX
 		mapImage.setProperty(21, 0)    // positionY
-		mapImage.setProperty(9, mapWidth)
-		mapImage.setProperty(10, mapHeight)
+		mapImage.setProperty(9, MAX_WIDTH)
+		mapImage.setProperty(10, MAX_HEIGHT)
 	}
 }

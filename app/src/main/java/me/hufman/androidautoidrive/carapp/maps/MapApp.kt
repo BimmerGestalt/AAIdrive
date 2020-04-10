@@ -14,6 +14,7 @@ import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.carapp.InputState
+import me.hufman.androidautoidrive.carapp.RHMIApplicationIdempotent
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.androidautoidrive.carapp.maps.views.MapView
@@ -36,11 +37,10 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 		val MAX_WIDTH = 1000
 		val MAX_HEIGHT = 400
 	}
-	var handler: Handler? = null    // will be set in onCreate()
+
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
-	var mapResultsUpdater = MapResultsUpdater()
-	val mapListener = MapResultsReceiver(mapResultsUpdater)
+	var mapResultsUpdater = MapResultsReceiver(MapResultsUpdater())
 	val carApp: RHMIApplication
 	var searchResults = ArrayList<MapResult>()
 	var selectedResult: MapResult? = null
@@ -57,7 +57,10 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 	val mapHeight = 400
 
 	// map state
-	var frameUpdater = FrameUpdater(map)
+	var frameUpdater = FrameUpdater(map, object: FrameModeListener {
+		override fun onResume() { interaction.showMap()	}
+		override fun onPause() { interaction.pauseMap() }
+	})
 
 	init {
 		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
@@ -74,7 +77,7 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB("common"))
 		carConnection.rhmi_initialize(rhmiHandle)
 
-		carApp = RHMIApplicationSynchronized(RHMIApplicationEtch(carConnection, rhmiHandle))
+		carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)))
 		carappListener.app = carApp
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
@@ -82,7 +85,7 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 		Log.i(TAG, "Locating components to use")
 		val unclaimedStates = LinkedList(carApp.states.values)
 		menuView = MenuView(unclaimedStates.removeFirst { MenuView.fits(it) }, interaction, frameUpdater)
-		mapView = MapView(unclaimedStates.removeFirst { MapView.fits(it) }, interaction, frameUpdater, MAX_WIDTH, MAX_HEIGHT)
+		mapView = MapView(unclaimedStates.removeFirst { MapView.fits(it) }, interaction, frameUpdater, { mapWidth }, { mapHeight })
 
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first {
 			it.componentsList.filterIsInstance<RHMIComponent.Input>().filter { it.suggestAction > 0 }.isNotEmpty()
@@ -129,24 +132,14 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.mapview", -1, -1)
 	}
 
-	fun onCreate(context: Context, handler: Handler?) {
-		this.handler = handler
-		if (handler == null) {
-			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULTS))
-			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULT))
-
-			frameUpdater.start(Handler(Looper.myLooper()))
-		} else {
-			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULTS), null, handler)
-			context.registerReceiver(mapListener, IntentFilter(INTENT_MAP_RESULT), null, handler)
-
-			// prepare the map transfer
-			Log.i(TAG, "Setting up map transfer")
-			frameUpdater.start(handler)
-		}
+	fun onCreate(context: Context, handler: Handler) {
+		Log.i(TAG, "Setting up map transfer")
+		context.registerReceiver(mapResultsUpdater, IntentFilter(INTENT_MAP_RESULTS), null, handler)
+		context.registerReceiver(mapResultsUpdater, IntentFilter(INTENT_MAP_RESULT), null, handler)
+		frameUpdater.start(handler)
 	}
 	fun onDestroy(context: Context) {
-		context.unregisterReceiver(mapListener)
+		context.unregisterReceiver(mapResultsUpdater)
 		try {
 			IDriveConnection.disconnectEtchConnection(carConnection)
 		} catch (e: java.lang.Exception) {}
@@ -176,94 +169,7 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 		}
 	}
 
-	inner class FrameUpdater(val display: VirtualDisplayScreenCapture): Runnable {
-		var currentMode = ""
-		var isRunning = true
-		private var handler: Handler? = null
-
-		fun start(handler: Handler) {
-			this.handler = handler
-			Log.i(TAG, "Starting FrameUpdater thread with handler $handler")
-			display.registerImageListener(ImageReader.OnImageAvailableListener // Called from the UI thread to say a new image is available
-			{
-				// let the car thread consume the image
-				schedule()
-			})
-			schedule()  // check for a first image
-		}
-
-		override fun run() {
-			var bitmap = display.getFrame()
-			if (bitmap != null) {
-				sendImage(bitmap)
-				schedule()  // check if there's another frame ready for us right now
-			} else {
-				// wait for the next frame, unless the callback comes back sooner
-				schedule(1000)
-			}
-		}
-
-		fun schedule(delayMs: Int = 0) {
-			handler?.removeCallbacks(this)   // remove any previously-scheduled invocations
-			handler?.postDelayed(this, delayMs.toLong())
-		}
-
-		fun shutDown() {
-			isRunning = false
-			display.registerImageListener(null)
-			handler?.removeCallbacks(this)
-		}
-
-		fun showMode(mode: String) {
-			currentMode = mode
-			Log.i(TAG, "Changing map mode to $mode")
-			when (mode) {
-				"menuMap" ->
-					map.changeImageSize(350, 90)
-				"mainMap" ->
-					map.changeImageSize(mapWidth, mapHeight)
-			}
-		}
-		fun hideMode(mode: String) {
-			if (currentMode == mode) {
-				currentMode = ""
-			}
-		}
-
-		private fun sendImage(bitmap: Bitmap) {
-			val imageData = display.compressBitmap(bitmap)
-			try {
-				if (bitmap.height >= 150)   // main map
-					mapView.mapImage.getModel()?.asRaImageModel()?.value = imageData
-				else if (bitmap.height >= 80) { // menu map
-					val list = RHMIModel.RaListModel.RHMIListConcrete(3)
-					list.addRow(arrayOf(BMWRemoting.RHMIResourceData(BMWRemoting.RHMIResourceType.IMAGEDATA, imageData), "", ""))
-					menuView.menuMap.getModel()?.asRaListModel()?.setValue(list, 0, 1, 1)
-				} else {
-					Log.w(TAG, "Unknown image size: ${bitmap.width}x${bitmap.height} in mode: $currentMode")
-				}
-			} catch (e: RuntimeException) {
-			} catch (e: org.apache.etch.util.TimeoutException) {
-				// don't crash if the phone is unplugged during a frame update
-			}
-		}
-	}
-
 	/** Receives updates about the map search results and delegates to the given controller */
-	class MapResultsReceiver(val updater: MapResultsController): BroadcastReceiver() {
-		override fun onReceive(context: Context?, intent: Intent?) {
-			if (context?.packageName == null || intent?.`package` == null || context.packageName != intent.`package`) return
-			if (intent.action == INTENT_MAP_RESULTS) {
-				Log.i(TAG, "Received map results: ${intent.getSerializableExtra(EXTRA_MAP_RESULTS)}")
-				updater.onSearchResults(intent.getSerializableExtra(EXTRA_MAP_RESULTS) as? Array<MapResult> ?: return)
-			}
-			if (intent.action == INTENT_MAP_RESULT) {
-				updater.onPlaceResult(intent.getSerializableExtra(EXTRA_MAP_RESULT) as? MapResult ?: return)
-			}
-		}
-
-	}
-
 	inner class MapResultsUpdater: MapResultsController {
 		override fun onSearchResults(results: Array<MapResult>) {
 			Log.i(TAG, "Received query results")

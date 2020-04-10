@@ -68,7 +68,7 @@ class TestMapsApp {
 	}
 
 	@Test
-	fun testMapShow() {
+	fun testMenuMap() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = MapApp(carAppResources, mockController, mockMap)
@@ -82,23 +82,12 @@ class TestMapsApp {
 		await().untilAsserted { verify(mockMap).registerImageListener(imageCallbackCapture.capture()) }
 		val imageCallback = imageCallbackCapture.value
 
-		// show the main screen
+		// show the menu screen
 		mockClient.rhmi_onHmiEvent(1, "", app.menuView.state.id, 1, mapOf(4.toByte() to true))
 		verify(mockMap).changeImageSize(350, 90)
 		verify(mockController).showMap()
 
-		mockClient.rhmi_onHmiEvent(1, "", app.menuView.state.id, 1, mapOf(4.toByte() to false))
-		verify(mockController).pauseMap()
-
-		reset(mockMap)
-		reset(mockController)
-
-		// show the map screen
-		mockClient.rhmi_onHmiEvent(1, "", app.mapView.state.id, 1, mapOf(4.toByte() to true))
-		verify(mockMap).changeImageSize(700, 400)
-		verify(mockController).showMap()
-
-		// send a picture, but it's the wrong size so it shouldn't send to the car's map
+		// send a picture
 		reset(mockMap)
 		whenever(mockMap.getFrame()).then {
 			mock<Bitmap> {
@@ -116,9 +105,31 @@ class TestMapsApp {
 		mockHandlerRunnable.allValues.forEach { it.run() }
 		await().untilAsserted { verify(mockMap, atLeast(2)).getFrame() }    // wait until the frame updater checks for another frame
 		assertArrayEquals("Updates the menu map", ByteArray(4), ((mockServer.data[app.menuView.menuMap.model] as BMWRemoting.RHMIDataTable).data[0][0] as BMWRemoting.RHMIResourceData).data)
-		assertEquals("Doesn't show the wrong-sized map in full view", null, mockServer.data[app.mapView.mapImage.model])
+		assertEquals("Doesn't show the full map", null, mockServer.data[app.mapView.mapImage.model])
 
-		// Now send the right picture
+	}
+
+	@Test
+	fun testMapShow() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = MapApp(carAppResources, mockController, mockMap)
+		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
+		val mockHandlerRunnable = ArgumentCaptor.forClass(Runnable::class.java)
+		val mockHandler = mock<Handler>()
+		whenever(mockHandler.postDelayed(mockHandlerRunnable.capture(), any())).thenReturn(true)
+		app.onCreate(mock(), mockHandler)
+
+		val imageCallbackCapture = ArgumentCaptor.forClass(ImageReader.OnImageAvailableListener::class.java)
+		await().untilAsserted { verify(mockMap).registerImageListener(imageCallbackCapture.capture()) }
+		val imageCallback = imageCallbackCapture.value
+
+		// show the map screen
+		mockClient.rhmi_onHmiEvent(1, "", app.mapView.state.id, 1, mapOf(4.toByte() to true))
+		verify(mockMap).changeImageSize(700, 400)
+		verify(mockController).showMap()
+
+		// Send the fullsize map
 		reset(mockMap)
 		whenever(mockMap.getFrame()).then {
 			mock<Bitmap> {

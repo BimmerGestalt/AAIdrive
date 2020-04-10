@@ -2,14 +2,14 @@ package me.hufman.androidautoidrive.carapp.maps.views
 
 import android.util.Log
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import me.hufman.androidautoidrive.carapp.maps.FrameUpdater
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
-import me.hufman.androidautoidrive.carapp.maps.MapApp
 import me.hufman.idriveconnectionkit.rhmi.FocusCallback
 import me.hufman.idriveconnectionkit.rhmi.RHMIActionListCallback
 import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
 import me.hufman.idriveconnectionkit.rhmi.RHMIState
 
-class MenuView(val state: RHMIState, val interaction: MapInteractionController, val frameUpdater: MapApp.FrameUpdater) {
+class MenuView(val state: RHMIState, val interaction: MapInteractionController, val frameUpdater: FrameUpdater) {
 	companion object {
 		val TAG = "MapMenu"
 		fun fits(state: RHMIState): Boolean {
@@ -22,6 +22,7 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 	val menuEntries = listOf(L.MAP_ACTION_VIEWMAP, L.MAP_ACTION_SEARCH, L.MAP_ACTION_CLEARNAV)
 	val rhmiMenuEntries = object: RHMIListAdapter<String>(3, menuEntries) {}
 	val menuMap = state.componentsList.filterIsInstance<RHMIComponent.List>()[0]
+	val mapModel = menuMap.getModel()!!
 	val menuList = state.componentsList.filterIsInstance<RHMIComponent.List>()[1]
 
 	fun initWidgets(stateMap: RHMIState, stateInput: RHMIState) {
@@ -33,14 +34,10 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 		state.focusCallback = FocusCallback { focused ->
 			if (focused) {
 				Log.i(TAG, "Showing map on menu")
-				frameUpdater.showMode("menuMap")
-				interaction.showMap()
+				frameUpdater.showWindow(350, 90, mapModel)
 			} else {
 				Log.i(TAG, "Hiding map on menu")
-				frameUpdater.hideMode("menuMap")
-				if (frameUpdater.currentMode == "") {
-					interaction.pauseMap()
-				}
+				frameUpdater.hideWindow(mapModel)
 			}
 		}
 
