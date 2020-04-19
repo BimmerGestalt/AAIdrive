@@ -62,11 +62,25 @@
             </intent-filter>
         </service>
 
+        <service android:name="me.hufman.carprojection.adapters.ICarService">
+        </service>
+        <service android:name="me.hufman.carprojection.adapters.ICarProjectionCallbackService">
+        </service>
+
         <provider
             android:name="me.hufman.androidautoidrive.CarAPIAssetProvider"
             android:exported="true"
             android:authorities="me.hufman.androidautoidrive.provider"
             android:grantUriPermissions="true" />
 
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+        <meta-data
+            android:name="xposeddescription"
+            android:value="Allows this app to host Android Auto applications" />
+        <meta-data
+            android:name="xposedminversion"
+            android:value="82" />
     </application>
 </manifest>

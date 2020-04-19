@@ -39,7 +39,7 @@ class MapService(val context: Context) {
 				if (threadGMaps == null) {
 					threadGMaps = CarThread("GMaps") {
 						Log.i(MainService.TAG, "Starting GMaps")
-						val mapScreenCapture = VirtualDisplayScreenCapture.build()
+						val mapScreenCapture = VirtualDisplayScreenCapture.build(MapApp.MAX_WIDTH, MapApp.MAX_HEIGHT)
 						this.mapScreenCapture = mapScreenCapture
 						val virtualDisplay = createVirtualDisplay(context, mapScreenCapture.imageCapture, 100)
 						this.virtualDisplay = virtualDisplay

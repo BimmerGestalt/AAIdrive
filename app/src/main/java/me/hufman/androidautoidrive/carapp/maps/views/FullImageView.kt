@@ -13,6 +13,7 @@ class FullImageView(val state: RHMIState, val title: String, val interaction: Fu
 	companion object {
 		val TAG = "FullImageView"
 		fun fits(state: RHMIState): Boolean {
+			Log.i(TAG, "Examining state ${state.id}: ${state is RHMIState.PlainState} ${state.componentsList.filterIsInstance<RHMIComponent.Image>().isNotEmpty()} ${state.componentsList.filterIsInstance<RHMIComponent.List>().isNotEmpty()}")
 			return state is RHMIState.PlainState &&
 				state.componentsList.filterIsInstance<RHMIComponent.Image>().isNotEmpty() &&
 				state.componentsList.filterIsInstance<RHMIComponent.List>().isNotEmpty()
@@ -23,7 +24,7 @@ class FullImageView(val state: RHMIState, val title: String, val interaction: Fu
 	val imageModel = imageComponent.getModel()!!
 	val inputList = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 
-	fun initWidgets(stateMenu: RHMIState) {
+	fun initWidgets() {
 		// set up the components on the map
 		state.getTextModel()?.asRaDataModel()?.value = title
 		state.setProperty(24, 3)
@@ -62,13 +63,11 @@ class FullImageView(val state: RHMIState, val title: String, val interaction: Fu
 		}
 		inputList.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIActionButtonCallback {
 			override fun onAction(invokedBy: Int?) {
-				val destState = if (invokedBy == 2) {   // bookmark event
-					state.id
+				if (invokedBy == 2) {   // bookmark event
+					state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().triggerEvent(mapOf(0 to state.id))
 				} else {
-					stateMenu.id
+					interaction.click()
 				}
-				state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().triggerEvent(mapOf(0 to destState))
-				interaction.click()
 			}
 		}
 		inputList.setVisible(true)

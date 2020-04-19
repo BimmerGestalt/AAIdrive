@@ -53,6 +53,8 @@ class MainService: Service() {
 
 	var musicService = MusicService(this)
 
+	var projectionService = ProjectionService(this)
+
 
 	override fun onBind(intent: Intent?): IBinder? {
 		return null
@@ -173,6 +175,9 @@ class MainService: Service() {
 				// start music
 				startAny = startAny or startMusic()
 
+				// start projection
+				startAny = startAny or startProjection()
+
 				// check if we are idle and should shut down
 				if (startAny ){
 					startServiceNotification(IDriveConnectionListener.brand)
@@ -270,11 +275,19 @@ class MainService: Service() {
 		musicService.stop()
 	}
 
+	fun startProjection(): Boolean {
+		return projectionService.start()
+	}
+	fun stopProjection() {
+		projectionService.stop()
+	}
+
 	private fun stopCarApps() {
 		stopCarCapabilities()
 		stopNotifications()
 		stopMaps()
 		stopMusic()
+		stopProjection()
 		stopServiceNotification()
 	}
 

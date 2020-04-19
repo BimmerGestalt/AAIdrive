@@ -105,6 +105,10 @@ dependencies {
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'android.arch.lifecycle:viewmodel:1.1.1'
     implementation 'com.github.wax911:android-emojify:1.5.3'
+    implementation "org.mockito:mockito-core:2.18.3"
+    implementation "org.mockito:mockito-android:2.18.3"
+    implementation 'com.nhaarman:mockito-kotlin:1.6.0'
+    compileOnly 'de.robv.android.xposed:api:82'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
@@ -133,4 +137,3 @@ dependencies {
     sentryImplementation 'io.sentry:sentry-android:1.7.16'
     sentryImplementation 'org.slf4j:slf4j-nop:1.7.25'
 }
-

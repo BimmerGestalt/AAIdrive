@@ -27,7 +27,7 @@ class CarThread(name: String, val runnable: () -> (Unit)): Thread(name) {
 			Log.i(TAG, "Successfully finished tasks for thread $name")
 		} catch (e: RuntimeException) {
 			// phone was unplugged during an RPC command
-			Log.i(TAG, "Shutting down thread $name due to RuntimeException: $e")
+			Log.i(TAG, "Shutting down thread $name due to RuntimeException: $e", e)
 		} catch (e: org.apache.etch.util.TimeoutException) {
 			// phone was unplugged during an RPC command
 			Log.i(TAG, "Shutting down thread $name due to Etch TimeoutException")

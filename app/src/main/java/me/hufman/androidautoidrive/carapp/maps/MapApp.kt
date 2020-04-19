@@ -88,7 +88,7 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 				interaction.zoomOut(1)
 			}
 			override fun click() {
-
+				carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().triggerEvent(mapOf(0 to menuView.state.id))
 			}
 		}, frameUpdater, { mapWidth }, { mapHeight })
 
@@ -111,7 +111,7 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 		// set up the components
 		Log.i(TAG, "Setting up component behaviors")
 		menuView.initWidgets(fullImageView.state, stateInput)
-		fullImageView.initWidgets(menuView.state)
+		fullImageView.initWidgets()
 		// set up the components for the input widget
 		stateInputState = object: InputState<MapResult>(viewInput) {
 			override fun onEntry(input: String) {
