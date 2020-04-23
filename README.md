@@ -129,7 +129,7 @@ This project replicates some of the features of Android Auto using the IDrive in
 Due to the unofficial reverse-engineered nature of this project, it has some limitations:
 
   - The main menu entries' icons and text can't be altered, and so do not look exactly correct
-  - The individual music source icons are not fully functional, but they do switch the active music source
+  - The individual music source icons may not be fully functional, but they do switch the active music source
   - Android Oreo disabled Android Open Accessory Protocol 2 audio output, which is required to play audio over the app's USB connection in model years 2014-2017. Please disable the app option "Request Audio Focus" and use Bluetooth audio
   - Some Android Auto music apps enforce a whitelist of clients, preventing this app from launching them or browsing their libraries. However, once they are running, they can be controlled. For example, these popular music apps can not be launched, they must be started manually:
     - Amazon Music
@@ -145,6 +145,7 @@ Due to the unofficial reverse-engineered nature of this project, it has some lim
     - Scribd
     - Smart Audiobook Player
     - YouTube Music
+  - Recent versions of Spotify block the standard Android MediaBrowserService connection, which is needed for the Search feature. Please downgrade to [version 8.4.96.953](https://www.apkhere.com/down/com.spotify.music_8.4.96.953_free) for full functionality.
 
 Requirements
 ------------
@@ -161,6 +162,7 @@ Build Instructions
 ------------------
 
   - (Optional) Add a [Google Maps API key](https://developers.google.com/maps/documentation/android-sdk/signup) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_GmapsApiKey`. This key should have access to Maps SDK for Android, Places API, and Directions API.
+  - (Optional) Add a [Spotify API Client ID](https://developer.spotify.com/dashboard/) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_SpotifyApiKey`. It needs a Redirect URI set to `me.hufman.androidautoidrive://spotify_callback`, but no other settings are needed.
   - Check out the project in Android Studio, then `Build > Make Project`
   - Commandline builds should work too:
     - Make sure Android SDK Build Tools version 28 is installed

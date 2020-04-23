@@ -1,25 +1,27 @@
 package me.hufman.androidautoidrive.music
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
-import android.os.Looper
-import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
-import android.support.v4.media.session.MediaControllerCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.android.asCoroutineDispatcher
 import me.hufman.androidautoidrive.Analytics
+import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
+import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.lang.Runnable
 import java.util.*
 import kotlin.collections.HashSet
+import kotlin.coroutines.CoroutineContext
 
-class MusicAppDiscovery(val context: Context, val handler: Handler) {
+class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineScope {
+	override val coroutineContext: CoroutineContext
+		get() = handler.asCoroutineDispatcher("MusicAppDiscovery")
+
 	val TAG = "MusicAppDiscovery"
 
 	private val browseApps: MutableList<MusicAppInfo> = LinkedList()
@@ -27,10 +29,15 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 	val validApps
 		get() = combinedApps.filter {it.connectable || it.controllable}
 
-	private val activeConnections = HashMap<MusicAppInfo, MediaBrowserCompat>()
+	private val activeConnections = HashMap<MusicAppInfo, CombinedMusicAppController>()
 	var listener: Runnable? = null
 
 	val musicSessions = MusicSessions(context)
+
+	val connectors = listOf(
+			SpotifyAppController.Connector(context),
+			MusicBrowser.Connector(context, handler)
+	)
 
 	private val saveCacheTask = Runnable {
 		saveCache()
@@ -187,75 +194,44 @@ class MusicAppDiscovery(val context: Context, val handler: Handler) {
 		activeConnections.remove(appInfo)
 	}
 
-	private fun probeApp(appInfo: MusicAppInfo) {
-		if (Looper.myLooper() != handler.looper) {
-			handler.post {
-				probeApp(appInfo)
-			}
-			return
-		}
-
-		Log.i(TAG, "Testing ${appInfo.name} for connectivity")
-		val component = ComponentName(appInfo.packageName, appInfo.className)
-
+	fun probeApp(appInfo: MusicAppInfo) {
 		disconnectApp(appInfo)  // clear any previous connection
 
-		var mediaBrowser: MediaBrowserCompat? = null
-		val connectionCallback = object: MediaBrowserCompat.ConnectionCallback() {
-			override fun onConnected() {
-				Log.i(TAG, "Successfully connected to ${appInfo.name}")
-				appInfo.connectable = true
-				listener?.run()
-
-				// detect if the app can play from search
-				val sessionToken = mediaBrowser?.sessionToken
-				if (sessionToken != null) {
-					val controller = MediaControllerCompat(context, sessionToken)
-					val actions = controller.playbackState?.actions ?: 0
-					appInfo.playsearchable = actions and PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH > 0
-				}
-
-				// check for browse and searching
-				GlobalScope.launch {
-					val browseJob = launch {
-						val browser = MusicBrowser(context, handler, appInfo)
-						val browseResult = browser.browse(null)
-						if (browseResult.isNotEmpty()) {
-							appInfo.browseable = true
-							listener?.run()
-						}
-						browser.disconnect()
+		Log.i(TAG, "Testing ${appInfo.name} for connectivity")
+		val controller = CombinedMusicAppController.Connector(connectors).connect(appInfo).value
+		if (controller == null) {
+			Log.w(TAG, "Did not successfully create CombinedMusicAppController!")
+			return
+		}
+		controller.subscribe {
+			Log.d(TAG, "Received update about controller probe ${appInfo.name}: connectable=${controller.isConnected()} pending=${controller.isPending()}")
+			appInfo.connectable = controller.isConnected()
+			appInfo.playsearchable = controller.isSupportedAction(MusicAction.PLAY_FROM_SEARCH)
+			// check if we have finished connecting to everything
+			if (!controller.isPending()) {
+				// do final probes
+				launch {
+					val browseResult = controller.browse(null)
+					Log.d(TAG, "Received browse results from ${appInfo.name}: $browseResult")
+					if (browseResult.isNotEmpty()) {
+						appInfo.browseable = true
+						listener?.run()
 					}
-					val searchJob = launch {
-						val browser = MusicBrowser(context, handler, appInfo)
-						val searchResult = browser.search("query")
-						if (searchResult != null) {
-							appInfo.searchable = true
-							listener?.run()
-						}
-						browser.disconnect()
+					val searchResults = controller.search("query")
+					if (searchResults?.isNotEmpty() == true) {
+						appInfo.searchable = true
+						listener?.run()
 					}
-					browseJob.join()
-					searchJob.join()
+					// save our cached version and stop probing
 					disconnectApp(appInfo)
 					appInfo.probed = true
 					scheduleSave()
 					Analytics.reportMusicAppProbe(appInfo)
 					Log.i(TAG, "Finished probing: $appInfo")
+					listener?.run()
 				}
 			}
-
-			override fun onConnectionFailed() {
-				Log.i(TAG, "Failed to connect to ${appInfo.name}")
-				disconnectApp(appInfo)
-				appInfo.probed = true
-				appInfo.connectable = false
-				scheduleSave()
-				Analytics.reportMusicAppProbe(appInfo)
-			}
 		}
-		mediaBrowser = MediaBrowserCompat(context, component, connectionCallback, null)
-		activeConnections[appInfo] = mediaBrowser
-		mediaBrowser.connect()
+		activeConnections[appInfo] = controller
 	}
 }

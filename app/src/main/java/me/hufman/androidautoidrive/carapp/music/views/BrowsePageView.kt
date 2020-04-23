@@ -10,6 +10,8 @@ import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
 
 enum class BrowseAction(val getLabel: () -> String) {
@@ -270,7 +272,7 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 							search(input)
 							return@launch
 						}
-						sendSuggestions(suggestions)
+						sendSuggestions(suggestions ?: LinkedList())
 					}
 				} else if (input.length >= 2) {
 					// too many retries

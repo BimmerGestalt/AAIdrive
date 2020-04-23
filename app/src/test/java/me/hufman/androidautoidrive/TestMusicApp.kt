@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
@@ -14,6 +13,7 @@ import me.hufman.androidautoidrive.carapp.music.GlobalMetadata
 import me.hufman.androidautoidrive.carapp.music.MusicApp
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.*
+import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.SecurityService
@@ -252,12 +252,8 @@ class TestMusicApp {
 		verify(musicController, atLeastOnce()).play()
 
 		// click entrybutton again after an active app is set
-		whenever(musicController.musicBrowser).then {
-			mock<MusicBrowser> {
-				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
-				on { connected } doReturn true
-			}
-		}
+		whenever(musicController.currentAppInfo).doReturn(MusicAppInfo("Test2", mock(), "package", "class"))
+		whenever(musicController.currentAppController) doReturn mock<MusicAppController>()
 		mockClient.rhmi_onActionEvent(1, "unused", IDs.ENTRYBUTTON_ACTION, mapOf(0 to 1))
 		assertEquals(IDs.PLAYBACK_STATE, mockServer.data[IDs.ENTRYBUTTON_DEST_STATE])
 
@@ -302,12 +298,8 @@ class TestMusicApp {
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 
 		// set the current app and song
-		whenever(musicController.musicBrowser).then {
-			mock<MusicBrowser> {
-				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
-				on { connected } doReturn true
-			}
-		}
+		whenever(musicController.currentAppInfo).doReturn(MusicAppInfo("Test2", mock(), "package", "class"))
+		whenever(musicController.isConnected()) doReturn true
 		whenever(musicController.getMetadata()) doReturn MusicMetadata("testId", queueId=10,
 				duration=180000L,
 				icon=mock(), coverArt=mock(),
@@ -358,11 +350,7 @@ class TestMusicApp {
 		val playbackView = PlaybackView(state, musicController, mapOf("147.png" to "Placeholder".toByteArray()), phoneAppResources, graphicsHelpers)
 
 		whenever(musicController.getQueue()).doAnswer {null}
-		whenever(musicController.musicBrowser).then {
-			mock<MusicBrowser> {
-				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
-			}
-		}
+		whenever(musicController.currentAppInfo).doReturn(MusicAppInfo("Test2", mock(), "package", "class"))
 
 		playbackView.redraw()
 
@@ -561,12 +549,7 @@ class TestMusicApp {
 		whenever(musicController.browseAsync(anyOrNull())) doAnswer {
 			browseResults
 		}
-		val musicAppInfo = mock<MusicBrowser> {
-			on { musicAppInfo } doAnswer {
-				MusicAppInfo("Test2", mock(), "package", "class")
-			}
-		}
-		whenever(musicController.musicBrowser) doReturn musicAppInfo
+		whenever(musicController.currentAppInfo) doReturn MusicAppInfo("Test2", mock(), "package", "class")
 
 		// start browsing
 		val page1 = browseView.pushBrowsePage(null)
@@ -986,11 +969,7 @@ class TestMusicApp {
 		whenever(musicController.searchAsync(anyOrNull())) doAnswer { searchResults }
 
 		// pretend that the app isn't searchable
-		whenever(musicController.musicBrowser).then {
-			mock<MusicBrowser> {
-				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
-			}
-		}
+		whenever(musicController.currentAppInfo) doReturn MusicAppInfo("Test2", mock(), "package", "class")
 		val page1 = browseView.pushBrowsePage(null)
 		page1.show()
 
@@ -1001,11 +980,10 @@ class TestMusicApp {
 		assertEquals(0, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // should not show Filter or Search
 
 		// now pretend that the app IS searchable
-		whenever(musicController.musicBrowser).then {
-			mock<MusicBrowser> {
-				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class").apply { searchable = true }
-			}
-		}
+
+		whenever(musicController.currentAppInfo).doReturn(
+				MusicAppInfo("Test2", mock(), "package", "class").apply { searchable = true}
+		)
 		mockServer.data.remove(IDs.BROWSE1_MUSIC_MODEL)
 		page1.show()
 		await().untilAsserted {
@@ -1121,11 +1099,7 @@ class TestMusicApp {
 		whenever(musicController.searchAsync(anyOrNull())) doAnswer { searchResults }
 
 		// pretend that the app isn't searchable
-		whenever(musicController.musicBrowser).then {
-			mock<MusicBrowser> {
-				on { musicAppInfo } doReturn MusicAppInfo("Test2", mock(), "package", "class")
-			}
-		}
+		whenever(musicController.currentAppInfo) doReturn MusicAppInfo("Test2", mock(), "package", "class")
 		val page1 = browseView.pushBrowsePage(null)
 		page1.show()
 
@@ -1239,9 +1213,7 @@ class TestMusicApp {
 		discoveryListenerCapture.value.run()
 		verify(musicController).connectApp(same(nowPlayingApp))
 		// async sets the musicBrowser to the correct connection
-		whenever(musicController.musicBrowser).then { mock<MusicBrowser> {
-			on { musicAppInfo } doReturn nowPlayingApp
-		}}
+		whenever(musicController.currentAppInfo).doReturn(nowPlayingApp)
 		whenever(musicAppDiscovery.validApps).then {
 			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
 					MusicAppInfo("Test3", mock(), "package3", "class"),

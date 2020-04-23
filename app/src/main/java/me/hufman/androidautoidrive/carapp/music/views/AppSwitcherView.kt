@@ -29,7 +29,7 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 			val appIcon = graphicsHelpers.compress(item.icon, 48, 48)
 			val checkbox = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 149)
 			return arrayOf(
-				if (item == avContext.controller.musicBrowser?.musicAppInfo) checkbox else "",
+				if (item == avContext.controller.currentAppInfo) checkbox else "",
 				BMWRemoting.RHMIResourceData(BMWRemoting.RHMIResourceType.IMAGEDATA, appIcon),
 				item.name
 			)
@@ -52,7 +52,7 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 		redraw()
 
 		if (apps.isNotEmpty()) {
-			val index = apps.indexOfFirst { it == avContext.controller.musicBrowser?.musicAppInfo }
+			val index = apps.indexOfFirst { it == avContext.controller.currentAppInfo }
 			if (index >= 0) {
 				state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
 						mapOf(0.toByte() to listApps.id, 41.toByte() to index)

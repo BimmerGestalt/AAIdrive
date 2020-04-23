@@ -21,6 +21,14 @@ after_success:
 - "echo Hashing the artifacts for traceability:; find app/build/outputs -name '*.apk' -exec sha1sum '{}' +"
 - "echo Verifying sha1sum files:; find app/build/outputs -name '*.apk.sha1' -execdir cat '{}' +; find app/build/outputs -name '*.apk.sha1' -execdir sha1sum --check '{}' +"
 
+addons:
+  artifacts:
+    paths:
+      - $(ls app/build/outputs/apk/nomapSentry/*/*apk | tr "\n" :)
+      - $(ls app/build/outputs/apk/nomapSentry/*/*apk.sha1 | tr "\n" :)
+      - $(ls app/build/outputs/apk/nomapNonalytics/*/*apk | tr "\n" :)
+      - $(ls app/build/outputs/apk/nomapNonalytics/*/*apk.sha1 | tr "\n" :)
+
 deploy:
   provider: releases
   skip_cleanup: true

@@ -28,6 +28,8 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         archivesBaseName = "androidautoidrive-${androidGitVersion.name()}"
         buildConfigField "long", "BUILD_TIME", System.currentTimeMillis() + "L"
+
+        manifestPlaceholders = [spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey]
     }
 
     signingConfigs {
@@ -78,9 +80,15 @@ android {
         gmap {
             dimension "map"
             // load api keys from ~/.gradle/gradle.properties
-            manifestPlaceholders = [gmaps_api_key:AndroidAutoIdrive_GmapsApiKey]
+            manifestPlaceholders = [spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey,
+                                    gmaps_api_key: AndroidAutoIdrive_GmapsApiKey]
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
 }
 
 //tasks.matching {it instanceof Test}.all {
@@ -105,6 +113,9 @@ dependencies {
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'android.arch.lifecycle:viewmodel:1.1.1'
     implementation 'com.github.wax911:android-emojify:1.5.3'
+    implementation project(path: ':spotify-app-remote')
+    implementation "com.google.code.gson:gson:2.8.5"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.0.1"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
