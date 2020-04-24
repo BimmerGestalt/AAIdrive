@@ -68,8 +68,6 @@ class TestNotificationApp {
 	@Before
 	fun setUp() {
 		NotificationsState.notifications.clear()
-		NotificationsState.poppedNotifications.clear()
-		NotificationsState.selectedNotification = null
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDC08", listOf("cat2"), "cat")
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDE3B", listOf("heart_eyes_cat"), "heart_eyes_cat")
 	}
@@ -227,29 +225,37 @@ class TestNotificationApp {
 
 	@Test
 	fun testShouldPopupHistory() {
+		val history = PopupHistory()
+
 		// show new notifications
-		val notification = createNotification("Ticker Text", "Title", "Text", "Summary", true)
-		assertTrue(ParseNotification.shouldPopupNotification(notification))
+		val notification = ParseNotification.summarizeNotification(createNotification("Ticker Text", "Title", "Text", "Summary", true))
+		assertFalse(history.contains(notification))
 
 		// don't show the same notification twice
-		NotificationsState.poppedNotifications.add(ParseNotification.summarizeNotification(notification))
-		assertFalse(ParseNotification.shouldPopupNotification(notification))
-		assertEquals(1, NotificationsState.poppedNotifications.size)
+		history.add(notification)
+		assertTrue(history.contains(notification))
+		assertEquals(1, history.poppedNotifications.size)
 
 		// identical notifications should be coalesced in the history
-		val duplicate = createNotification("Ticker Text", "Title", "Text", "Summary", true)
-		NotificationsState.poppedNotifications.add(ParseNotification.summarizeNotification(duplicate))
-		assertEquals(1, NotificationsState.poppedNotifications.size)
+		val duplicate = ParseNotification.summarizeNotification(createNotification("Ticker Text", "Title", "Text", "Summary", true))
+		history.add(duplicate)
+		assertEquals(1, history.poppedNotifications.size)
+
+		// updated notification should still be shown
+		val updated = ParseNotification.summarizeNotification(createNotification("Ticker Text", "Title", "Text\nLine2", "Summary", true))
+		assertFalse(history.contains(updated))
+		history.add(updated)
+		assertEquals(2, history.poppedNotifications.size)
 
 		// only should have 15 history entries
 		(0..20).forEach { i ->
 			val spam = createNotification("Ticker Text", "Title $i", "Text $i", "Summary", true)
-			NotificationsState.poppedNotifications.add(ParseNotification.summarizeNotification(spam))
+			history.add(ParseNotification.summarizeNotification(spam))
 		}
-		assertEquals(15, NotificationsState.poppedNotifications.size)
+		assertEquals(15, history.poppedNotifications.size)
 
 		// it should have flushed out the earlier notification
-		assertTrue(ParseNotification.shouldPopupNotification(notification))
+		assertFalse(history.contains(notification))
 	}
 
 	fun createNotificationObject(title:String, text:String, summary:String, clearable:Boolean=false,
@@ -293,16 +299,54 @@ class TestNotificationApp {
 
 		val bundle = createNotificationObject("Title", "Text", "Summary")
 
-		NotificationsState.selectedNotification = bundle
+		// read the notification
+		app.viewDetails.selectedNotification = bundle
 
+		// it should not popup
 		val bundle2 = createNotificationObject("Title", "Text\nNext Message", "Summary")
 		app.notificationListener.onNotification(bundle2)
-
 		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+
+		// now hide the notification, and try to popup again
+		app.viewDetails.state.focusCallback?.onFocus(false)
+		app.notificationListener.onNotification(bundle2)
+		assertNotNull(mockServer.triggeredEvents[1])    // did not trigger the popup
 	}
 
+	/**
+	 * Close the popup if the notification disappears
+	 */
 	@Test
 	fun testDismissPopup() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(carAppResources, phoneAppResources, graphicsHelpers, carNotificationController)
+
+		val bundle = createNotificationObject("Title", "Text", "Summary")
+
+		NotificationsState.replaceNotifications(listOf(bundle))
+		app.notificationListener.onNotification(bundle)
+
+		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent
+		assertEquals(true, mockServer.triggeredEvents[1]?.get(0))
+		val expectedHeader = "Test AppName"
+		val expectedLabel1 = "Title"
+		val expectedLabel2 = "Text"
+		assertEquals(expectedHeader, mockServer.data[404])
+		assertEquals(expectedLabel1, mockServer.data[405])
+		assertEquals(expectedLabel2, mockServer.data[406])
+
+		// swipe it away
+		NotificationsState.notifications.clear()
+		app.notificationListener.updateNotificationList()
+		assertEquals(false, mockServer.triggeredEvents[1]?.get(0))
+	}
+
+	/**
+	 * Close the popup if the notification disappears
+	 */
+	@Test
+	fun testPopupNotificationHistoryClearing() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(carAppResources, phoneAppResources, graphicsHelpers, carNotificationController)
@@ -321,10 +365,19 @@ class TestNotificationApp {
 		assertEquals(expectedLabel1, mockServer.data[405])
 		assertEquals(expectedLabel2, mockServer.data[406])
 
-		// swipe it away
+		// verify that a second onNotification doesn't trigger
+		mockServer.triggeredEvents.remove(1)
+		app.notificationListener.onNotification(bundle)
+		assertNull(mockServer.triggeredEvents[1])
+
+		// verify that clearing the notification resets the history
 		NotificationsState.notifications.clear()
 		app.notificationListener.updateNotificationList()
-		assertEquals(false, mockServer.triggeredEvents[1]?.get(0))
+		assertEquals(0, app.viewPopup.popupHistory.poppedNotifications.size)
+		// it should trigger a popup now
+		app.notificationListener.onNotification(bundle)
+		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent
+		assertEquals(true, mockServer.triggeredEvents[1]?.get(0))
 	}
 
 	@Test
@@ -351,11 +404,9 @@ class TestNotificationApp {
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(carAppResources, phoneAppResources, graphicsHelpers, carNotificationController)
 
-		NotificationsState.notifications.clear()
 		val statusbarNotification = createNotificationObject("Title", "Text", "Summary")
-		NotificationsState.notifications.add(statusbarNotification)
 		val statusbarNotification2 = createNotificationObject("Title2", "Text2", "Summary2")
-		NotificationsState.notifications.add(statusbarNotification2)
+		NotificationsState.replaceNotifications(listOf(statusbarNotification, statusbarNotification2))
 		app.viewList.redrawNotificationList()
 
 		val list = mockServer.data[386] as BMWRemoting.RHMIDataTable
@@ -378,11 +429,9 @@ class TestNotificationApp {
 		val app = PhoneNotifications(carAppResources, phoneAppResources, graphicsHelpers, carNotificationController)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
-		NotificationsState.notifications.clear()
 		val statusbarNotification = createNotificationObject("Title", "Text", "Summary")
-		NotificationsState.notifications.add(statusbarNotification)
 		val statusbarNotification2 = createNotificationObject("Title2", "Text2", "Summary2")
-		NotificationsState.notifications.add(statusbarNotification2)
+		NotificationsState.replaceNotifications(listOf(statusbarNotification, statusbarNotification2))
 
 		// test that we don't needlessly update the list until we actually view it
 		run {
@@ -409,13 +458,14 @@ class TestNotificationApp {
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(carAppResources, phoneAppResources, graphicsHelpers, carNotificationController)
 
-		NotificationsState.notifications.clear()
 		val notification = createNotificationObject("Title", "Text", "Summary", false)
-		NotificationsState.notifications.add(notification)
 		val notification2 = createNotificationObject("Title2", "Text2\nTest3", "Summary2", true)
-		NotificationsState.notifications.add(notification2)
-		app.viewList.redrawNotificationList()
+		NotificationsState.replaceNotifications(listOf(notification, notification2))
 
+		// pretend that the car shows this window
+		app.viewList.state.focusCallback?.onFocus(true)
+
+		// verify that it redraws the list
 		val notificationsList = mockServer.data[386] as BMWRemoting.RHMIDataTable
 		assertNotNull(notificationsList)
 		assertEquals(2, notificationsList.numRows)
@@ -425,10 +475,13 @@ class TestNotificationApp {
 		callbacks.rhmi_onActionEvent(1, "Dont care", 161, mapOf(1.toByte() to 1))
 
 		assertEquals(app.viewDetails.state.id, mockServer.data[163])
-		assertEquals(notification2, NotificationsState.selectedNotification)
+		assertEquals(notification2, app.viewDetails.selectedNotification)
 
 		// the car shows the view state
 		callbacks.rhmi_onHmiEvent(1, "unused", 20, 1, mapOf(4.toByte() to true))
+
+		// it should set the focus to the first button
+		assertEquals(app.viewDetails.state.asToolbarState()?.toolbarComponentsList!![1].id, mockServer.triggeredEvents[5]!![0])
 
 		// verify that the right information is shown
 		val appTitleList = mockServer.data[519] as BMWRemoting.RHMIDataTable
@@ -470,7 +523,7 @@ class TestNotificationApp {
 		val statusbarNotificationSurprise = createNotificationObject("SurpriseTitle", "SurpriseText", "SurpriseSummary")
 		NotificationsState.notifications.add(0, statusbarNotificationSurprise)
 		app.viewList.notificationListView.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))   // clicks the first one
-		assertEquals(notification, NotificationsState.selectedNotification)
+		assertEquals(notification, app.viewDetails.selectedNotification)
 
 		// check the notification picture
 		assertEquals(false, mockServer.properties[120]?.get(RHMIProperty.PropertyId.VISIBLE.id))
@@ -495,7 +548,7 @@ class TestNotificationApp {
 		NotificationsState.notifications.clear()
 		val notification = createNotificationObject("Title", "Text", "Summary", false)
 		NotificationsState.notifications.add(notification)
-		NotificationsState.selectedNotification = notification
+		app.viewDetails.selectedNotification = notification
 
 		// show the viewDetails
 		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(1, "unused", 20, 1, mapOf(4.toByte() to true))
@@ -513,7 +566,7 @@ class TestNotificationApp {
 		NotificationsState.notifications.clear()
 		val notification2 = createNotificationObject("Title2", "Text", "Summary2", false)
 		NotificationsState.notifications.add(notification2)
-		NotificationsState.selectedNotification = notification  // still viewing the old notification
+		app.viewDetails.selectedNotification = notification  // still viewing the old notification
 
 		// now redraw the view
 		app.viewDetails.redraw()

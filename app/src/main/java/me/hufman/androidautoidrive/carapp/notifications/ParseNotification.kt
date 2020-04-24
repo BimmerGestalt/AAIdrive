@@ -109,10 +109,8 @@ object ParseNotification {
 		if (sbn.notification.isGroupSummary()) return false
 		val isMusic = sbn.notification.extras.getString(Notification.EXTRA_TEMPLATE) == "android.app.Notification\$MediaStyle"
 		if (isMusic) return false
+		return true
 
-		val notification = summarizeNotification(sbn)
-		val alreadyShown = NotificationsState.poppedNotifications.contains(notification)
-		return !alreadyShown
 	}
 
 	fun shouldShowNotification(sbn: StatusBarNotification): Boolean {

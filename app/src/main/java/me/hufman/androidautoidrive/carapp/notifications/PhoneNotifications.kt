@@ -12,6 +12,7 @@ import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.carapp.RHMIApplicationIdempotent
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
@@ -65,14 +66,14 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		// set up the app in the car
-		carApp = RHMIApplicationSynchronized(RHMIApplicationEtch(carConnection, rhmiHandle))
+		carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)))
 		carappListener.app = carApp
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
 		val unclaimedStates = LinkedList(carApp.states.values)
 
 		// figure out which views to use
-		viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
+		viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources, PopupHistory())
 		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources, graphicsHelpers)
 		viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller)
 
@@ -166,18 +167,15 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		}
 	}
 
-	fun onCreate(context: Context, handler: Handler? = null) {
+	fun onCreate(context: Context, handler: Handler) {
 		Log.i(TAG, "Registering car thread listeners for notifications")
 		val notificationReceiver = this.notificationReceiver ?:
 			PhoneNotificationUpdate(notificationListener)
 		this.notificationReceiver = notificationReceiver
-		if (handler != null) {
-			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_NEW_NOTIFICATION), null, handler)
-			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_UPDATE_NOTIFICATIONS), null, handler)
-		} else {
-			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_NEW_NOTIFICATION))
-			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_UPDATE_NOTIFICATIONS))
-		}
+		context.registerReceiver(notificationReceiver, IntentFilter(INTENT_NEW_NOTIFICATION), null, handler)
+		context.registerReceiver(notificationReceiver, IntentFilter(INTENT_UPDATE_NOTIFICATIONS), null, handler)
+
+		viewList.onCreate(handler)
 	}
 	fun onDestroy(context: Context) {
 		val notificationReceiver = this.notificationReceiver
@@ -196,12 +194,12 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		open fun onNotification(sbn: CarNotification) {
 			Log.i(TAG, "Received a new notification to show in the car: $sbn")
 			if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
-					(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
-							!passengerSeated)
+				(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
+					!passengerSeated)
 			) {
 				lastPopup = sbn
 
-				if (!sbn.equalsKey(NotificationsState.selectedNotification)) {
+				if (!sbn.equalsKey(viewDetails.selectedNotification)) {
 					viewPopup.showNotification(sbn)
 				}
 			}
@@ -213,16 +211,20 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 			viewDetails.redraw()
 
+			// clear out any popped notifications that don't exist anymore
+			val currentNotifications = NotificationsState.cloneNotifications()
+			viewPopup.popupHistory.retainAll(currentNotifications)
+
 			// if the notification we popped up disappeared, clear the popup
-			if (NotificationsState.getNotificationByKey(lastPopup?.key) == null) {
+			if (currentNotifications.find { it.key == lastPopup?.key } == null) {
 				viewPopup.hideNotification()
 			}
+
 		}
 	}
 
 	class PhoneNotificationUpdate(val listener: PhoneNotificationListener): BroadcastReceiver() {
 		override fun onReceive(context: Context?, intent: Intent?) {
-
 			if (intent != null && intent.action == INTENT_NEW_NOTIFICATION) {
 				val notificationKey = intent.getStringExtra(EXTRA_NOTIFICATION)
 				if (notificationKey != null) {

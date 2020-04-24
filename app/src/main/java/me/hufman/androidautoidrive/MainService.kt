@@ -231,9 +231,10 @@ class MainService: Service() {
 								PhoneAppResourcesAndroid(this),
 								GraphicsHelpersAndroid(),
 								CarNotificationControllerIntent(this))
-						carappNotifications?.onCreate(this, threadNotifications?.handler)
-						// request an initial draw
-						sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
+						val handler = threadCapabilities?.handler
+						if (handler != null) {
+							carappNotifications?.onCreate(this, handler)
+						}
 					}
 					threadNotifications?.start()
 				}

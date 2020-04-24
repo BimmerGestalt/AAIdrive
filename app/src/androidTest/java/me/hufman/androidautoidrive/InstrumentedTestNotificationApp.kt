@@ -28,16 +28,6 @@ import org.junit.Before
 @RunWith(AndroidJUnit4::class)
 class InstrumentedTestNotificationApp {
 
-	@Before
-	fun setUp() {
-		/* NotificationListenerServiceImpl only sends announcements if the car is connected */
-		IDriveConnectionListener.setConnection("test", "127.0.0.1", 7000)
-	}
-	@After
-	fun tearDown() {
-		IDriveConnectionListener.reset()
-	}
-
 	@Test
 	fun testNotificationUpdate() {
 		/** Test that a new notification pokes the car */
