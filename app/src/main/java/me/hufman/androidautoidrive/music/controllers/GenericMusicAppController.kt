@@ -94,6 +94,8 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 
 	override fun customAction(action: CustomAction) = remoteCall {
 		if (action.packageName == mediaController.packageName) {
+			triggerSpotifyWorkaround()
+
 			mediaController.transportControls?.sendCustomAction(action.action, action.extras)
 		}
 	}
