@@ -45,6 +45,14 @@ class CustomAction(val packageName: String, val action: String, val name: String
 						niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF
 					"ADD_TO_COLLECTION" ->
 						niceName = L.MUSIC_SPOTIFY_ADD_TO_COLLECTION
+					"THUMB_UP" ->
+						niceName = L.MUSIC_SPOTIFY_THUMB_UP
+					"THUMBS_UP_SELECTED" ->
+						niceName = L.MUSIC_SPOTIFY_THUMBS_UP_SELECTED
+					"THUMB_DOWN" ->
+						niceName = L.MUSIC_SPOTIFY_THUMB_DOWN
+					"THUMBS_DOWN_SELECTED" ->
+						niceName = L.MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED
 					else ->
 						niceName = ca.name
 				}

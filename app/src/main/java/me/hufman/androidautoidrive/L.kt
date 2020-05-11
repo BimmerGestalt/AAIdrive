@@ -41,6 +41,10 @@ object L {
 	var MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON = "Turn Repeat One On"
 	var MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF = "Turn Repeat Off"
 	val MUSIC_SPOTIFY_ADD_TO_COLLECTION = "Like"
+	val MUSIC_SPOTIFY_THUMB_UP = "Thumb Up"
+	val MUSIC_SPOTIFY_THUMBS_UP_SELECTED = "Thumbed Up"
+	val MUSIC_SPOTIFY_THUMB_DOWN = "Thumb Down"
+	val MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED = "Thumbed Down"    // not sure if this exists, but just to be complete
 
 	fun loadResources(context: Context, locale: Locale? = null) {
 		val thisContext = if (locale == null) { context } else {

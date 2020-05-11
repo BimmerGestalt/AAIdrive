@@ -89,4 +89,8 @@
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Turn Repeat One On</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Turn Repeat Off</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>
+    <string name="MUSIC_SPOTIFY_THUMB_UP">Thumb Up</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>
+    <string name="MUSIC_SPOTIFY_THUMB_DOWN">Thumb Down</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Thumbed Down</string>
 </resources>
