@@ -8,7 +8,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v7.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_music.*
+import kotlinx.android.synthetic.main.activity_musicplayer.*
 import me.hufman.androidautoidrive.CarAppAssetManager
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.Utils
@@ -16,10 +16,10 @@ import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 
-class MusicActivity: AppCompatActivity() {
+class MusicPlayerActivity: AppCompatActivity() {
 
 	companion object {
-		const val TAG = "MusicActivity"
+		const val TAG = "MusicPlayerActivity"
 	}
 
 	var musicApp: MusicAppInfo? = null
@@ -28,7 +28,7 @@ class MusicActivity: AppCompatActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		setContentView(R.layout.activity_music)
+		setContentView(R.layout.activity_musicplayer)
 
 		val musicApp = UIState.selectedMusicApp ?: return
 		this.musicApp = musicApp
@@ -49,9 +49,9 @@ class MusicActivity: AppCompatActivity() {
 		}
 
 		// set up the paging
-		pgrMusic.adapter = MusicActivityPagerAdapter(supportFragmentManager)
-		pgrMusic.offscreenPageLimit = 2
-		tabMusic.setupWithViewPager(pgrMusic)
+		pgrMusicPlayer.adapter = MusicPlayerPagerAdapter(supportFragmentManager)
+		pgrMusicPlayer.offscreenPageLimit = 2
+		tabMusicPlayer.setupWithViewPager(pgrMusicPlayer)
 	}
 
 	override fun onDestroy() {
@@ -60,30 +60,30 @@ class MusicActivity: AppCompatActivity() {
 	}
 
 	fun pushBrowse(directory: MusicMetadata?) {
-		val container = (pgrMusic.adapter as MusicActivityPagerAdapter).getItem(1) as MusicBrowseFragment
+		val container = (pgrMusicPlayer.adapter as MusicPlayerPagerAdapter).getItem(1) as MusicBrowseFragment
 		container.replaceFragment(MusicBrowsePageFragment.newInstance(directory), true)
 	}
 
 	fun showNowPlaying() {
-		pgrMusic.currentItem = 0
+		pgrMusicPlayer.currentItem = 0
 	}
 
 	override fun onBackPressed() {
-		if (pgrMusic.currentItem == 0) {
+		if (pgrMusicPlayer.currentItem == 0) {
 			// pass through default behavior, to close the Activity
 			super.onBackPressed()
 		}
-		if (pgrMusic.currentItem == 1) {
-			val container = (pgrMusic.adapter as MusicActivityPagerAdapter).getItem(1) as MusicBrowseFragment
+		if (pgrMusicPlayer.currentItem == 1) {
+			val container = (pgrMusicPlayer.adapter as MusicPlayerPagerAdapter).getItem(1) as MusicBrowseFragment
 			val popped = container.onBackPressed()
 			if (!popped) {
-				pgrMusic.currentItem = 0
+				pgrMusicPlayer.currentItem = 0
 			}
 		}
 	}
 }
 
-class MusicActivityPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
+class MusicPlayerPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
 	val tabs = LinkedHashMap<String, Fragment>(2).apply {
 		this["Now Playing"] = MusicNowPlayingFragment()
 		this["Browse"] = MusicBrowseFragment.newInstance(MusicBrowsePageFragment.newInstance(null))

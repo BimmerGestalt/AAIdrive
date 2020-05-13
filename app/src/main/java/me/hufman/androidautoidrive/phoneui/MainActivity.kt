@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
 			val appInfo = adapterView.adapter.getItem(i) as? MusicAppInfo
 			if (appInfo != null) {
 				UIState.selectedMusicApp = appInfo
-				val intent = Intent(this, MusicActivity::class.java)
+				val intent = Intent(this, MusicPlayerActivity::class.java)
 				startActivity(intent)
 			}
 		}

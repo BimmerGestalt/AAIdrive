@@ -8,7 +8,6 @@ import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,10 +60,10 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 		listBrowse.adapter = BrowseAdapter(this.context!!, viewModel.icons, contents) { mediaEntry ->
 			if (mediaEntry != null) {
 				if (mediaEntry.browseable) {
-					(activity as MusicActivity).pushBrowse(mediaEntry)
+					(activity as MusicPlayerActivity).pushBrowse(mediaEntry)
 				} else {
 					musicController.playSong(mediaEntry)
-					(activity as MusicActivity).showNowPlaying()
+					(activity as MusicPlayerActivity).showNowPlaying()
 				}
 			}
 		}
