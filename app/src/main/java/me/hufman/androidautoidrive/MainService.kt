@@ -227,14 +227,20 @@ class MainService: Service() {
 				if (threadNotifications == null) {
 					threadNotifications = CarThread("Notifications") {
 						Log.i(TAG, "Starting notifications app")
+						val handler = threadNotifications?.handler
+						if (handler == null) {
+							Log.e(TAG, "CarThread Handler is null?")
+						}
 						carappNotifications = PhoneNotifications(CarAppAssetManager(this, "basecoreOnlineServices"),
 								PhoneAppResourcesAndroid(this),
 								GraphicsHelpersAndroid(),
-								CarNotificationControllerIntent(this))
-						val handler = threadCapabilities?.handler
+								CarNotificationControllerIntent(this),
+								MutableAppSettings(this, handler))
 						if (handler != null) {
 							carappNotifications?.onCreate(this, handler)
 						}
+						// request an initial draw
+						sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
 					}
 					threadNotifications?.start()
 				}

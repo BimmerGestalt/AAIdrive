@@ -1,7 +1,11 @@
 package me.hufman.androidautoidrive
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Handler
 
 const val INTENT_GMAP_RELOAD_SETTINGS = "me.hufman.androidautoidrive.carapp.gmaps.RELOAD_SETTINGS"
 
@@ -74,7 +78,49 @@ object AppSettings {
 		val preferences = ctx.getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE)
 		val editor = preferences.edit()
 		editor.putString(setting.name, value)
-		editor.commit()
+		editor.apply()
 		loadedSettings[key] = value
+	}
+}
+
+/**
+ * An instantiated object to pass around to get/change settings
+ * It can also have a callback registered
+ */
+class MutableAppSettings(val context: Context, val handler: Handler? = null) {
+	companion object {
+		val INTENT_SETTINGS_CHANGED = "me.hufman.androidautoidrive.notifications.INTENT_SETTINGS_CHANGED"
+	}
+
+	val receiver = object: BroadcastReceiver() {
+		override fun onReceive(p0: Context?, p1: Intent?) {
+			callback?.invoke()
+		}
+	}
+	var callback: (() -> Unit)? = null
+		set(value) {
+			if (field == null && value != null) {
+				context.registerReceiver(receiver, IntentFilter(INTENT_SETTINGS_CHANGED), null, handler)
+			}
+			if (field != null && value == null) {
+				context.unregisterReceiver(receiver)
+			}
+			field = value
+		}
+
+	fun getSetting(key: AppSettings.KEYS): String {
+		return AppSettings.getSetting(key)
+	}
+	fun saveSetting(key: AppSettings.KEYS, value: String) {
+		AppSettings.saveSetting(context, key, value)
+
+		context.sendBroadcast(Intent(INTENT_SETTINGS_CHANGED))
+	}
+
+	operator fun get(key: AppSettings.KEYS): String {
+		return this.getSetting(key)
+	}
+	operator fun set(key: AppSettings.KEYS, value: String) {
+		this.saveSetting(key, value)
 	}
 }
