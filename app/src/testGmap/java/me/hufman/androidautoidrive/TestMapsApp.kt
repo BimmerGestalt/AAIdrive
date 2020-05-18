@@ -6,10 +6,9 @@ import android.os.Handler
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
-import me.hufman.androidautoidrive.carapp.maps.GMapsController
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
 import me.hufman.androidautoidrive.carapp.maps.VirtualDisplayScreenCapture
-import me.hufman.androidautoidrive.carapp.maps.MapView
+import me.hufman.androidautoidrive.carapp.maps.MapApp
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.SecurityService
@@ -56,23 +55,23 @@ class TestMapsApp {
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapView(carAppResources, mockController, mockMap)
-		assertEquals(9, app.stateMenu.id)
-		assertEquals(19, app.stateMap.id)
-		assertEquals(132, app.viewFullMap.id)
-		assertEquals(133, app.mapInputList.id)
+		val app = MapApp(carAppResources, mockController, mockMap)
+		assertEquals(9, app.menuView.state.id)
+		assertEquals(19, app.fullImageView.state.id)
+		assertEquals(132, app.fullImageView.imageComponent.id)
+		assertEquals(133, app.fullImageView.inputList.id)
 
 		app.carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
-			assertEquals("Entry button goes to menu screen", app.stateMenu.id, it.getAction()?.asHMIAction()?.getTargetState()?.id)
+			assertEquals("Entry button goes to menu screen", app.menuView.state.id, it.getAction()?.asHMIAction()?.getTargetState()?.id)
 		}
-		assertNotNull("Scroll listener registered", app.mapInputList?.getSelectAction()?.asRAAction()?.rhmiActionCallback)
+		assertNotNull("Scroll listener registered", app.fullImageView.inputList?.getSelectAction()?.asRAAction()?.rhmiActionCallback)
 	}
 
 	@Test
-	fun testMapShow() {
+	fun testMenuMap() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapView(carAppResources, mockController, mockMap)
+		val app = MapApp(carAppResources, mockController, mockMap)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 		val mockHandlerRunnable = ArgumentCaptor.forClass(Runnable::class.java)
 		val mockHandler = mock<Handler>()
@@ -83,23 +82,12 @@ class TestMapsApp {
 		await().untilAsserted { verify(mockMap).registerImageListener(imageCallbackCapture.capture()) }
 		val imageCallback = imageCallbackCapture.value
 
-		// show the main screen
-		mockClient.rhmi_onHmiEvent(1, "", app.stateMenu.id, 1, mapOf(4.toByte() to true))
+		// show the menu screen
+		mockClient.rhmi_onHmiEvent(1, "", app.menuView.state.id, 1, mapOf(4.toByte() to true))
 		verify(mockMap).changeImageSize(350, 90)
 		verify(mockController).showMap()
 
-		mockClient.rhmi_onHmiEvent(1, "", app.stateMenu.id, 1, mapOf(4.toByte() to false))
-		verify(mockController).pauseMap()
-
-		reset(mockMap)
-		reset(mockController)
-
-		// show the map screen
-		mockClient.rhmi_onHmiEvent(1, "", app.stateMap.id, 1, mapOf(4.toByte() to true))
-		verify(mockMap).changeImageSize(700, 400)
-		verify(mockController).showMap()
-
-		// send a picture, but it's the wrong size so it shouldn't send to the car's map
+		// send a picture
 		reset(mockMap)
 		whenever(mockMap.getFrame()).then {
 			mock<Bitmap> {
@@ -116,10 +104,32 @@ class TestMapsApp {
 		await().untilAsserted { verify(mockMap).compressBitmap(any()) } // it should compress the bitmap, and send it to menu map
 		mockHandlerRunnable.allValues.forEach { it.run() }
 		await().untilAsserted { verify(mockMap, atLeast(2)).getFrame() }    // wait until the frame updater checks for another frame
-		assertArrayEquals("Updates the menu map", ByteArray(4), ((mockServer.data[app.menuMap.model] as BMWRemoting.RHMIDataTable).data[0][0] as BMWRemoting.RHMIResourceData).data)
-		assertEquals("Doesn't show the wrong-sized map in full view", null, mockServer.data[app.viewFullMap.model])
+		assertArrayEquals("Updates the menu map", ByteArray(4), ((mockServer.data[app.menuView.menuMap.model] as BMWRemoting.RHMIDataTable).data[0][0] as BMWRemoting.RHMIResourceData).data)
+		assertEquals("Doesn't show the full map", null, mockServer.data[app.fullImageView.imageComponent.model])
 
-		// Now send the right picture
+	}
+
+	@Test
+	fun testMapShow() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = MapApp(carAppResources, mockController, mockMap)
+		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
+		val mockHandlerRunnable = ArgumentCaptor.forClass(Runnable::class.java)
+		val mockHandler = mock<Handler>()
+		whenever(mockHandler.postDelayed(mockHandlerRunnable.capture(), any())).thenReturn(true)
+		app.onCreate(mock(), mockHandler)
+
+		val imageCallbackCapture = ArgumentCaptor.forClass(ImageReader.OnImageAvailableListener::class.java)
+		await().untilAsserted { verify(mockMap).registerImageListener(imageCallbackCapture.capture()) }
+		val imageCallback = imageCallbackCapture.value
+
+		// show the map screen
+		mockClient.rhmi_onHmiEvent(1, "", app.fullImageView.state.id, 1, mapOf(4.toByte() to true))
+		verify(mockMap).changeImageSize(700, 400)
+		verify(mockController).showMap()
+
+		// Send the fullsize map
 		reset(mockMap)
 		whenever(mockMap.getFrame()).then {
 			mock<Bitmap> {
@@ -131,15 +141,15 @@ class TestMapsApp {
 		imageCallback.onImageAvailable(null)
 		mockHandlerRunnable.allValues.forEach { it.run() }
 		await().untilAsserted { verify(mockMap, atLeastOnce()).getFrame() }
-		assertArrayEquals("Sent map to car", ByteArray(5), (mockServer.data[app.viewFullMap.model] as BMWRemoting.RHMIResourceData).data as ByteArray)
+		assertArrayEquals("Sent map to car", ByteArray(5), (mockServer.data[app.fullImageView.imageComponent.model] as BMWRemoting.RHMIResourceData).data as ByteArray)
 
 		// try changing the zoom
-		mockClient.rhmi_onActionEvent(1, "", app.mapInputList.getSelectAction()?.asRAAction()?.id, mapOf(1.toByte() to 2))
+		mockClient.rhmi_onActionEvent(1, "", app.fullImageView.inputList.getSelectAction()?.asRAAction()?.id, mapOf(1.toByte() to 2))
 		verify(mockController).zoomIn(1)
 		assertEquals("Reset scroll back to neutral" , 3, mockServer.triggeredEvents[6]?.get(41))
 
 		// hide the map screen
-		mockClient.rhmi_onHmiEvent(1, "", app.stateMap.id, 1, mapOf(4.toByte() to false))
+		mockClient.rhmi_onHmiEvent(1, "", app.fullImageView.state.id, 1, mapOf(4.toByte() to false))
 		verify(mockController).pauseMap()
 	}
 

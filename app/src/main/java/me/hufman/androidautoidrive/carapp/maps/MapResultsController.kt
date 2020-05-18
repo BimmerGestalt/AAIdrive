@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.carapp.maps
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import java.io.Serializable
@@ -39,5 +40,17 @@ class MapResultsSender(val context: Context): MapResultsController {
 		val intent = Intent(INTENT_MAP_RESULT).putExtra(EXTRA_MAP_RESULT, result)
 				.setPackage(context.packageName)
 		context.sendBroadcast(intent)
+	}
+}
+
+class MapResultsReceiver(val controller: MapResultsController): BroadcastReceiver() {
+	override fun onReceive(context: Context?, intent: Intent?) {
+		if (context?.packageName == null || intent?.`package` == null || context.packageName != intent.`package`) return
+		if (intent.action == INTENT_MAP_RESULTS) {
+			controller.onSearchResults(intent.getSerializableExtra(EXTRA_MAP_RESULTS) as? Array<MapResult> ?: return)
+		}
+		if (intent.action == INTENT_MAP_RESULT) {
+			controller.onPlaceResult(intent.getSerializableExtra(EXTRA_MAP_RESULT) as? MapResult ?: return)
+		}
 	}
 }
