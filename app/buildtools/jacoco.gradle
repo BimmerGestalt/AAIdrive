@@ -3,11 +3,6 @@
 apply plugin: 'jacoco'
 
 project.afterEvaluate {
-    def isRunningOnTravis = System.getenv("CI") == "true"
-    // remove the default jacoco tasks
-    project.getTasks().findAll { it.name.startsWith("jacoco") }.each {
-        it.enabled = isRunningOnTravis
-    }
     // create variant-specific ones
     android.applicationVariants.all { variant ->
         def testTaskName = "test${variant.name.capitalize()}UnitTest"
