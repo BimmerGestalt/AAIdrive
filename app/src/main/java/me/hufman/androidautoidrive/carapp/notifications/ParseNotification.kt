@@ -27,44 +27,34 @@ object ParseNotification {
 		var pictureUri: String? = null
 
 		// get the main title and text
-		if (extras.getCharSequence(Notification.EXTRA_TITLE) != null) {
-			title = extras.getCharSequence(Notification.EXTRA_TITLE).toString()
-		}
-		if (extras.getCharSequence(Notification.EXTRA_TEXT) != null) {
-			text = extras.getCharSequence(Notification.EXTRA_TEXT).toString()
-		}
+		extras.getCharSequence(Notification.EXTRA_TITLE)?.let { title = it.toString() }
+		extras.getCharSequence(Notification.EXTRA_TEXT)?.let { text = it.toString() }
+
 		// full expanded view, like an email body
-		if (extras.getCharSequence(Notification.EXTRA_TITLE_BIG) != null) {
-			title = extras.getCharSequence(Notification.EXTRA_TITLE_BIG).toString()
-		}
-		if (extras.getCharSequence(Notification.EXTRA_BIG_TEXT) != null) {
-			text = extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString()
-		}
-		if (extras.getCharSequence(Notification.EXTRA_SUMMARY_TEXT) != null) {
-			summary = extras.getCharSequence(Notification.EXTRA_SUMMARY_TEXT).toString()
-		}
-		if (extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES) != null) {
-			text = extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES).joinToString("\n")
-		}
+		extras.getCharSequence(Notification.EXTRA_TITLE_BIG)?.let { title = it.toString() }
+		extras.getCharSequence(Notification.EXTRA_BIG_TEXT)?.let { text = it.toString() }
+		extras.getCharSequence(Notification.EXTRA_SUMMARY_TEXT)?.let { summary = it.toString() }
+		extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)?.let { text = it.joinToString("\n") }
 
 		// icon handling
-		if (extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON) != null) {
+		extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON)?.let {
 			// might have a user avatar, which might be an icon or a bitmap
-			val parcel = extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON)
-			if (parcel is Icon) icon = parcel
-			if (parcel is Bitmap) icon = Icon.createWithBitmap(parcel)
+			when (it) {
+				is Icon -> icon = it
+				is Bitmap -> icon = Icon.createWithBitmap(it)
+			}
 		}
-		if (extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON_BIG) != null) {
+		extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON_BIG)?.let {
 			// might have a user avatar, which might be an icon or a bitmap
-			val parcel = extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON_BIG)
-			if (parcel is Icon) icon = parcel
-			if (parcel is Bitmap) icon = Icon.createWithBitmap(parcel)
+			when (it) {
+				is Icon -> icon = it
+				is Bitmap -> icon = Icon.createWithBitmap(it)
+			}
 		}
 
 		// maybe a picture too
-		if (extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_PICTURE) != null) {
-			val parcel = extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_PICTURE)
-			if (parcel is Bitmap) picture = parcel
+		extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_PICTURE)?.let {
+			if (it is Bitmap) picture = it
 		}
 
 		// some extra handling for special notifications
