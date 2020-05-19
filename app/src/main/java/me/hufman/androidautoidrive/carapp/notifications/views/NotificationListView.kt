@@ -36,7 +36,7 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 	val notificationListData = object: RHMIListAdapter<CarNotification>(3, shownNotifications) {
 		override fun convertRow(index: Int, item: CarNotification): Array<Any> {
 			val icon = graphicsHelpers.compress(phoneAppResources.getIconDrawable(item.icon), 48, 48)
-			val text = if (item.summary != null) "${item.title}\n${item.summary}" else "${item.title}\n${item.text}"
+			val text = "${item.title}\n${item.text.trim().split(Regex("\n")).lastOrNull() ?: ""}"
 			return arrayOf(icon, "", text)
 		}
 	}

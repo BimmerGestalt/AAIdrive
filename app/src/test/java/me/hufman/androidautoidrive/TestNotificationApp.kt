@@ -167,7 +167,6 @@ class TestNotificationApp {
 		assertEquals("me.hufman.androidautoidrive", notificationObject.packageName)
 		assertEquals("Title", notificationObject.title)
 		assertEquals("Text :heart_eyes_cat:\nTwo", notificationObject.text)
-		assertEquals("Summary", notificationObject.summary)
 		assertNull(notificationObject.picture)
 		assertEquals(notification.notification.smallIcon, notificationObject.icon)
 		assertTrue(notificationObject.isClearable)
@@ -206,6 +205,16 @@ class TestNotificationApp {
 		val notificationObject = ParseNotification.summarizeNotification(notification)
 		assertEquals("Sender: Message\nSender: Message2\nSender: Message3", notificationObject.text)
 		assertNotNull(notificationObject.pictureUri)
+	}
+
+	@Test
+	fun testSummaryEmptyText() {
+		val notification = createNotification("Ticker Text", "Title", null, "Summary", true)
+		val notificationObject = ParseNotification.summarizeNotification(notification)
+		assertEquals("testKey", notificationObject.key)
+		assertEquals("me.hufman.androidautoidrive", notificationObject.packageName)
+		assertEquals("Title", notificationObject.title)
+		assertEquals("Summary", notificationObject.text)
 	}
 
 	@Test
@@ -265,7 +274,7 @@ class TestNotificationApp {
 		assertFalse(history.contains(notification))
 	}
 
-	fun createNotificationObject(title:String, text:String, summary:String, clearable:Boolean=false,
+	fun createNotificationObject(title:String, text:String, clearable:Boolean=false,
 	                             picture: Bitmap? = null, pictureUri: String? = null): CarNotification {
 		val actions = arrayOf(mock<Notification.Action> {
 		})
@@ -273,7 +282,7 @@ class TestNotificationApp {
 		actions[0].actionIntent = mock()
 
 		return CarNotification("me.hufman.androidautoidrive", "test$title", mock<Icon>(), clearable, actions,
-				title, summary, text, picture, pictureUri)
+				title, text, picture, pictureUri)
 	}
 
 	@Test
@@ -282,7 +291,7 @@ class TestNotificationApp {
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
 
-		val bundle = createNotificationObject("Title", "Text", "Summary")
+		val bundle = createNotificationObject("Title", "FirstLine\nText")
 
 		app.notificationListener.onNotification(bundle)
 
@@ -304,13 +313,13 @@ class TestNotificationApp {
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
 
-		val bundle = createNotificationObject("Title", "Text", "Summary")
+		val bundle = createNotificationObject("Title", "Text")
 
 		// read the notification
 		app.viewDetails.selectedNotification = bundle
 
 		// it should not popup
-		val bundle2 = createNotificationObject("Title", "Text\nNext Message", "Summary")
+		val bundle2 = createNotificationObject("Title", "Text\nNext Message")
 		app.notificationListener.onNotification(bundle2)
 		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
 
@@ -329,7 +338,7 @@ class TestNotificationApp {
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
 
-		val bundle = createNotificationObject("Title", "Text", "Summary")
+		val bundle = createNotificationObject("Title", "Text")
 
 		NotificationsState.replaceNotifications(listOf(bundle))
 		app.notificationListener.onNotification(bundle)
@@ -358,7 +367,7 @@ class TestNotificationApp {
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
 
-		val bundle = createNotificationObject("Title", "Text", "Summary")
+		val bundle = createNotificationObject("Title", "Text")
 
 		NotificationsState.notifications.add(bundle)
 		app.notificationListener.onNotification(bundle)
@@ -412,24 +421,29 @@ class TestNotificationApp {
 		val app = PhoneNotifications(carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
 		app.viewList.initWidgets(app.viewDetails)
 
-		val statusbarNotification = createNotificationObject("Title", "Text", "Summary")
-		val statusbarNotification2 = createNotificationObject("Title2", "Text2", "Summary2")
-		NotificationsState.replaceNotifications(listOf(statusbarNotification, statusbarNotification2))
+		val item1 = createNotificationObject("Title", "Text")
+		val item2 = createNotificationObject("Title2", "Text2\nLine2")
+		val item3 = createNotificationObject("Title3", "")
+		NotificationsState.replaceNotifications(listOf(item1, item2, item3))
 		val callbacks = IDriveConnection.mockRemotingClient as BMWRemotingClient
 		callbacks.rhmi_onHmiEvent(1, "unused", 8, 1, mapOf(4.toByte() to true))
 
 		run {
 			val list = mockServer.data[386] as BMWRemoting.RHMIDataTable
 			assertNotNull(list)
-			assertEquals(2, list.numRows)
+			assertEquals(3, list.numRows)
 			val row = list.data[0]
 			assertArrayEquals("Drawable{48x48}".toByteArray(), row[0] as? ByteArray)
 			assertEquals("", row[1])
-			assertEquals("Title\nSummary", row[2])
+			assertEquals("Title\nText", row[2])
 			val row2 = list.data[1]
 			assertArrayEquals("Drawable{48x48}".toByteArray(), row2[0] as? ByteArray)
 			assertEquals("", row2[1])
-			assertEquals("Title2\nSummary2", row2[2])
+			assertEquals("Title2\nLine2", row2[2])
+			val row3 = list.data[2]
+			assertArrayEquals("Drawable{48x48}".toByteArray(), row3[0] as? ByteArray)
+			assertEquals("", row3[1])
+			assertEquals("Title3\n", row3[2])
 		}
 
 		run {
@@ -447,8 +461,8 @@ class TestNotificationApp {
 		val app = PhoneNotifications(carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
-		val statusbarNotification = createNotificationObject("Title", "Text", "Summary")
-		val statusbarNotification2 = createNotificationObject("Title2", "Text2", "Summary2")
+		val statusbarNotification = createNotificationObject("Title", "Text")
+		val statusbarNotification2 = createNotificationObject("Title2", "Text2")
 		NotificationsState.replaceNotifications(listOf(statusbarNotification, statusbarNotification2))
 
 		// test that we don't needlessly update the list until we actually view it
@@ -476,8 +490,8 @@ class TestNotificationApp {
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
 
-		val notification = createNotificationObject("Title", "Text", "Summary", false)
-		val notification2 = createNotificationObject("Title2", "Text2\nTest3", "Summary2", true)
+		val notification = createNotificationObject("Title", "Text",false)
+		val notification2 = createNotificationObject("Title2", "Text2\nTest3",true)
 		NotificationsState.replaceNotifications(listOf(notification, notification2))
 
 		// pretend that the car shows this window
@@ -538,7 +552,7 @@ class TestNotificationApp {
 
 		// test clicking surprise notifications
 		// which are added to the NotificationsState without showing in the UI
-		val statusbarNotificationSurprise = createNotificationObject("SurpriseTitle", "SurpriseText", "SurpriseSummary")
+		val statusbarNotificationSurprise = createNotificationObject("SurpriseTitle", "SurpriseText")
 		NotificationsState.notifications.add(0, statusbarNotificationSurprise)
 		app.viewList.notificationListView.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))   // clicks the first one
 		assertEquals(notification, app.viewDetails.selectedNotification)
@@ -546,12 +560,12 @@ class TestNotificationApp {
 		// check the notification picture
 		assertEquals(false, mockServer.properties[120]?.get(RHMIProperty.PropertyId.VISIBLE.id))
 		assertNull(mockServer.data[510])
-		NotificationsState.notifications[0] = createNotificationObject("Title", "Text", "Summary", picture = mock())
+		NotificationsState.notifications[0] = createNotificationObject("Title", "Text", picture = mock())
 		app.viewDetails.redraw()
 		assertEquals(true, mockServer.properties[120]?.get(RHMIProperty.PropertyId.VISIBLE.id))
 		assertArrayEquals("Bitmap{400x300}".toByteArray(), (mockServer.data[510] as BMWRemoting.RHMIResourceData).data as ByteArray)
 		mockServer.data.remove(510)
-		NotificationsState.notifications[0]  = createNotificationObject("Title", "Text", "Summary", pictureUri="content:///")
+		NotificationsState.notifications[0]  = createNotificationObject("Title", "Text", pictureUri="content:///")
 		app.viewDetails.redraw()
 		assertEquals(true, mockServer.properties[120]?.get(RHMIProperty.PropertyId.VISIBLE.id))
 		assertArrayEquals("Drawable{400x300}".toByteArray(), (mockServer.data[510] as BMWRemoting.RHMIResourceData).data as ByteArray)
@@ -613,7 +627,7 @@ class TestNotificationApp {
 		val app = PhoneNotifications(carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
 
 		NotificationsState.notifications.clear()
-		val notification = createNotificationObject("Title", "Text", "Summary", false)
+		val notification = createNotificationObject("Title", "Text", false)
 		NotificationsState.notifications.add(notification)
 		app.viewDetails.selectedNotification = notification
 
@@ -631,7 +645,7 @@ class TestNotificationApp {
 
 		// swap out the notification
 		NotificationsState.notifications.clear()
-		val notification2 = createNotificationObject("Title2", "Text", "Summary2", false)
+		val notification2 = createNotificationObject("Title2", "Text", false)
 		NotificationsState.notifications.add(notification2)
 		app.viewDetails.selectedNotification = notification  // still viewing the old notification
 

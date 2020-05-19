@@ -138,12 +138,12 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 
 		// prepare the notification text
 		val listData = RHMIModel.RaListModel.RHMIListConcrete(1)
-		val trimmedText = notification.text?.substring(0, min(MAX_LENGTH, notification.text.length)) ?: ""
+		val trimmedText = notification.text.substring(0, min(MAX_LENGTH, notification.text.length))
 		listData.addRow(arrayOf(trimmedText))
 
 		state.getTextModel()?.asRaDataModel()?.value = appname
 		iconWidget.getModel()?.value = iconListData
-		titleWidget.getModel()?.asRaDataModel()?.value = notification.title ?: ""
+		titleWidget.getModel()?.asRaDataModel()?.value = notification.title
 		listWidget.getModel()?.value = listData
 
 		// try to load a picture from the notification
