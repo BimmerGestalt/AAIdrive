@@ -95,6 +95,38 @@ android {
 //    it.outputs.upToDateWhen {false}
 //}
 
+// compile all the debug variants
+task compileDebug {
+    dependsOn {
+        android.applicationVariants.findAll { it.name.endsWith("Debug") }.collect { variant ->
+            "compile${variant.name.capitalize()}Sources"
+        }
+    }
+}
+
+// lint all the debug variants
+task lintDebug {
+    dependsOn {
+        android.applicationVariants.findAll { it.name.endsWith("Debug") }.collect { variant ->
+            "lint${variant.name.capitalize()}"
+        }
+    }
+}
+
+// unit test all the debug variants
+task testDebug {
+    dependsOn {
+        android.applicationVariants.findAll { it.name.endsWith("Debug") }.collect { variant ->
+            "test${variant.name.capitalize()}UnitTest"
+        }
+    }
+}
+
+// like check, but only with debug variants
+task checkDebug {
+    dependsOn(lintDebug, testDebug)
+}
+
 repositories {
     jcenter()
     maven { url 'https://jitpack.io' }
