@@ -1,0 +1,99 @@
+<resources>
+    <string name="app_name">AndroidAutoIdrive</string>
+    <string name="permlab_accessNotifications">Acces notificări IDrive</string>
+    <string name="permlab_bindNotificationListenerService">Acces notificări IDrive</string>
+    <string name="permdesc_accessNotifications">Acces notificări IDrive</string>
+    <string name="permdesc_bindNotificationListenerService">Acces notificări IDrive</string>
+    <string name="notification_title">Android Auto pentru IDrive</string>
+    <string name="notification_description">Conectat la mașină</string>
+    <string name="notification_description_bmw">Conectat la BMW</string>
+    <string name="notification_description_mini">Conectat la Mini</string>
+
+    <string name="spawn_test_notification">Notificare de test</string>
+    <string name="message_notifications">Notificări mesaj</string>
+    <string name="notification_popups">Popup-uri notificări</string>
+    <string name="notification_popups_passenger">Popup-uri pasager</string>
+    <string name="lbl_popupVersion">Popup-urile funcționează doar cu IDrive4</string>
+    <string name="lbl_smsPermission">Permisiune SMS necesară pentru a vedea imaginile din mesaje în mașină. Textul este disponibil întotdeauna.</string>
+
+    <string name="enable_google_maps">Activează Google Maps</string>
+    <string name="lbl_widescreen_map">Hartă widescreen</string>
+    <string name="gmapStyleLabel">Stil hartă</string>
+    <string name="lbl_music_apps">Aplicații de muzică</string>
+    <string name="musicAppIcon">Icon aplicație</string>
+    <string name="musicAppNowPlaying">În redare</string>
+    <string name="musicAppControllable">Controlabil cu app pornit</string>
+    <string name="musicAppConnectable">Controlabil complet</string>
+    <string name="musicAppBrowseable">Suportă listare</string>
+    <string name="musicAppSearchable">Suportă căutare</string>
+    <string name="musicAppUnavailable">Indisponibil</string>
+    <string name="enable_audio_context">Cere Audio Focus</string>
+    <string name="lbl_grant_sessions">Control pe aplicațiile de muzică:</string>
+    <string name="lbl_grant">Permite</string>
+    <string name="musicAppNotes_unauthorizedSpotify">Autorizează acces Spotify</string>
+    <string name="musicAppNotes_oldSpotify">Încarcă o versiune mai veche de Spotify pentru control complet</string>
+    <string name="musicAppNotes_oldSpotifyInstructions">Aplicația poate oferi control deplin pentru Spotify până la versiunea 8.4.96.953, cum ar fi afișarea playlist-urilor și căutarea melodiilor. Pentru control deplin, descarcă o versiune mai veche de pe APKPure sau site-uri similare.</string>
+    <string name="lbl_ok">Ok</string>
+    <string name="lbl_cancel">Anulare</string>
+    <string name="btn_configure">Configurare …</string>
+
+    <string name="connectionStatusMissingConnectedApp">Nu am găsit aplicația Connected sau Connected Classic</string>
+    <string name="connectionStatusWaiting">Aștept conectarea la masină</string>
+
+    <string name="nowplaying_notconnected">&lt;Neconectat&gt;</string>
+    <string name="nowplaying_unknown">&lt;Necunoscut&gt;</string>
+
+    <string name="txt_setup_bmw_ready">Aplicația este gata să se conecteze la un BMW</string>
+    <string name="txt_setup_mini_ready">Aplicația este gata să se conecteze la un Mini</string>
+    <string name="txt_setup_discovered_new_bmw">Aplicația BMW Connected detectată, dar aplicatia Mini Connected Classic este necesară pentru funcționare:</string>
+    <string name="txt_setup_discovered_new_mini">Aplicația Mini Connected detectată, dar aplicatia BMW Connected Classic este necesară pentru funcționare:</string>
+    <string name="txt_setup_bmw_missing">Nepregătit pentru conectare la BMW:</string>
+    <string name="txt_setup_mini_missing">Nepregătit pentru conectare la Mini:</string>
+    <string name="txt_build_info">Versiune build: %1$s %2$s</string>
+    <string name="txt_car_capabilities">Capabilități mașină raportate:</string>
+    <string name="btn_install">Instalare</string>
+    <string name="btn_install_bmw">Instalează BMW Connected Classic</string>
+    <string name="btn_install_mini">Instalează Mini Connected Classic</string>
+
+    <!-- car app strings -->
+    <string name="NOTIFICATIONS_TITLE">Notificări</string>
+    <string name="NOTIFICATIONS_EMPTY_LIST">Nu există notificări</string>
+    <string name="NOTIFICATION_CLEAR_ACTION">Șterge tot</string>
+    <string name="NOTIFICATION_OPTIONS">Opțiuni</string>
+    <string name="NOTIFICATION_POPUPS">Popup-uri notificări</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER">Popup-uri cu pasager</string>
+
+    <string name="MAP_ACTION_VIEWMAP">Vezi harta întreagă</string>
+    <string name="MAP_ACTION_SEARCH">Caută loc</string>
+    <string name="MAP_ACTION_CLEARNAV">Curăță navigare</string>
+
+    <string name="MUSIC_APPLIST_TITLE">Aplicații</string>
+    <string name="MUSIC_APPLIST_EMPTY">&lt;Nu există aplicații&gt;</string>
+    <string name="MUSIC_CUSTOMACTIONS_TITLE">Acțiuni</string>
+    <string name="MUSIC_DISCONNECTED">&lt;Deconectat&gt;</string>
+    <string name="MUSIC_BROWSE_TITLE">Căutare</string>
+    <string name="MUSIC_BROWSE_EMPTY">&lt;Gol&gt;</string>
+    <string name="MUSIC_BROWSE_LOADING">&lt;Încărcăm&gt;</string>
+    <string name="MUSIC_BROWSE_SEARCHING">&lt;Căutare&gt;</string>
+    <string name="MUSIC_BROWSE_ACTION_JUMPBACK">Înapoi</string>
+    <string name="MUSIC_BROWSE_ACTION_FILTER">Filtru</string>
+    <string name="MUSIC_BROWSE_ACTION_SEARCH">Căutare</string>
+    <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Redă din căutare</string>
+    <string name="MUSIC_QUEUE_TITLE">În redare</string>
+    <string name="MUSIC_QUEUE_EMPTY">&lt;Listă goală&gt;</string>
+    <string name="MUSIC_SKIP_PREVIOUS">Anteriorul</string>
+    <string name="MUSIC_SKIP_NEXT">Următorul</string>
+
+    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_ON">Pornește amestecare</string>
+    <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Dislike</string>
+    <string name="MUSIC_SPOTIFY_START_RADIO">Pornește radio</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Pornește repetare tot</string>
+    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_OFF">Oprește amestecare</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Pornește repetă una</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Oprește repetare</string>
+    <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>
+    <string name="MUSIC_SPOTIFY_THUMB_UP">Thumb Up</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>
+    <string name="MUSIC_SPOTIFY_THUMB_DOWN">Thumb Down</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Thumbed Down</string>
+</resources>
