@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
+import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CertMangling
@@ -21,6 +22,8 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 	}
 
 	var handler: Handler? = null
+	var carConnection: BMWRemotingServer? = null
+
 	val ProberTask = Runnable {
 		for (port in PORTS) {
 			if (probePort(port)) {
@@ -36,7 +39,7 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 	}
 
 	val KeepaliveTask = Runnable {
-		if (!probePort(IDriveConnectionListener.port ?: 0)) {
+		if (!pingCar()) {
 			// car has disconnected
 			Log.i(TAG, "Previously-connected car has disconnected")
 			IDriveConnectionListener.reset()
@@ -52,13 +55,11 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 	}
 
 	fun schedule(delay: Long) {
-		handler?.removeCallbacks(ProberTask)
-		if (!IDriveConnectionListener.isConnected) {
+		if (!IDriveConnectionListener.isConnected || carConnection == null) {
+			handler?.removeCallbacks(ProberTask)
 			handler?.postDelayed(ProberTask, delay)
-		}
-
-		handler?.removeCallbacks(KeepaliveTask)
-		if (IDriveConnectionListener.isConnected) {
+		} else {
+			handler?.removeCallbacks(KeepaliveTask)
 			handler?.postDelayed(KeepaliveTask, delay)
 		}
 	}
@@ -102,6 +103,8 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 				val sas_login = SecurityService.signChallenge(challenge = sas_challenge)
 				conn.sas_login(sas_login)
 				val capabilities = conn.rhmi_getCapabilities("", 255)
+				carConnection = conn
+
 				val vehicleType = capabilities["vehicle.type"] as? String?
 				val hmiType = capabilities["hmi.type"] as? String?
 				Analytics.reportCarProbeDiscovered(port, vehicleType, hmiType)
@@ -127,6 +130,16 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 		}
 		if (!success) {
 			Analytics.reportCarProbeFailure(port, errorMessage, errorException)
+		}
+	}
+
+	private fun pingCar(): Boolean {
+		try {
+			return carConnection?.ver_getVersion() != null
+		} catch (e: java.lang.Exception) {
+			carConnection = null
+			Log.w(TAG, "Exception while pinging car", e)
+			return false
 		}
 	}
 
