@@ -11,6 +11,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import kotlinx.android.synthetic.main.activity_setup.*
+import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.R
 import me.hufman.idriveconnectionkit.android.SecurityService
@@ -41,6 +42,11 @@ class SetupActivity : AppCompatActivity() {
 		btnInstallMissingBMWClassic.setOnClickListener { installBMWClassic() }
 		btnInstallMiniClassic.setOnClickListener { installMiniClassic() }
 		btnInstallMissingMiniClassic.setOnClickListener { installMiniClassic() }
+
+		swAdvancedSettings.setOnClickListener {
+			AppSettings.saveSetting(this, AppSettings.KEYS.SHOW_ADVANCED_SETTINGS, swAdvancedSettings.isChecked.toString())
+			redraw()
+		}
 
 		this.registerReceiver(redrawListener, IntentFilter(INTENT_REDRAW))
 	}
@@ -112,13 +118,16 @@ class SetupActivity : AppCompatActivity() {
 		val buildTime = SimpleDateFormat.getDateTimeInstance().format(Date(BuildConfig.BUILD_TIME))
 		txtBuildInfo.text = getString(R.string.txt_build_info, BuildConfig.VERSION_NAME, buildTime)
 
+		val showAdvancedSettings = AppSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
+		swAdvancedSettings.isChecked = showAdvancedSettings
+
 		val carCapabilities = synchronized(DebugStatus.carCapabilities) {
 			DebugStatus.carCapabilities.map {
 				"${it.key}: ${it.value}"
 			}.sorted().joinToString("\n")
 		}
 		txtCarCapabilities.text = carCapabilities
-		paneCarCapabilities.visible = carCapabilities.isNotEmpty()
+		paneCarCapabilities.visible = showAdvancedSettings && carCapabilities.isNotEmpty()
 	}
 
 	fun installBMWClassic() {

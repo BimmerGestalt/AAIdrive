@@ -163,6 +163,14 @@
                     android:longClickable="true"
                     android:textIsSelectable="true" />
             </LinearLayout>
+
+            <Switch
+                android:id="@+id/swAdvancedSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_advanced_settings"
+                android:layout_marginBottom="8dp" />
+
             <LinearLayout
                 android:id="@+id/paneCarCapabilities"
                 android:layout_width="match_parent"

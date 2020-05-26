@@ -11,7 +11,6 @@ import com.bmwgroup.connected.car.app.BrandType
 import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
-import me.hufman.androidautoidrive.carapp.notifications.UnicodeCleaner
 import me.hufman.androidautoidrive.phoneui.DebugStatus
 import me.hufman.androidautoidrive.phoneui.MainActivity
 import me.hufman.androidautoidrive.phoneui.SetupActivity

@@ -142,7 +142,8 @@ class MusicActivity : AppCompatActivity() {
 	}
 
 	fun redraw() {
-		swAudioContext.visible = BuildConfig.MANUAL_AUDIO_CONTEXT
+		val showAdvancedSettings = AppSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
+		swAudioContext.visible = showAdvancedSettings || BuildConfig.MANUAL_AUDIO_CONTEXT
 		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT].toBoolean()
 		paneGrantSessions.visibility = if (hasNotificationPermission()) View.GONE else View.VISIBLE
 	}
