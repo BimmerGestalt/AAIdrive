@@ -24,10 +24,10 @@ import java.util.*
 
 const val TAG = "MusicApp"
 
-class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController) {
+class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController, musicAppMode: MusicAppMode) {
 	val carApp = createRHMIApp()
 
-	val avContext = AVContextHandler(carApp, musicController, graphicsHelpers)
+	val avContext = AVContextHandler(carApp, musicController, graphicsHelpers, musicAppMode)
 	val globalMetadata = GlobalMetadata(carApp, musicController)
 	var appListViewVisible = false
 	var playbackViewVisible = false

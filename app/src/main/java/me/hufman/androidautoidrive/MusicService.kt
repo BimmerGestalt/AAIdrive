@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive
 
 import android.content.Context
 import me.hufman.androidautoidrive.carapp.music.MusicApp
+import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicController
 
@@ -20,7 +21,8 @@ class MusicService(val context: Context) {
 							PhoneAppResourcesAndroid(context),
 							GraphicsHelpersAndroid(),
 							musicAppDiscovery,
-							musicController)
+							musicController,
+							MusicAppMode(MutableAppSettings(context)))
 					musicAppDiscovery.discoverApps()
 				}
 				threadMusic?.start()

@@ -30,6 +30,11 @@ android {
         buildConfigField "long", "BUILD_TIME", System.currentTimeMillis() + "L"
 
         manifestPlaceholders = [spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey]
+
+        // show the Audio Context option for advanced users
+        // Forcing it is only useful for old phones with Android Open Accessory v2 Audio support
+        // because the detection logic for AUDIO_SUPPORTS_USB only guesses based on version
+        buildConfigField "boolean", "MANUAL_AUDIO_CONTEXT", "true"
     }
 
     signingConfigs {

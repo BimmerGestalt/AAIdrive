@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Handler
 
 const val INTENT_GMAP_RELOAD_SETTINGS = "me.hufman.androidautoidrive.carapp.gmaps.RELOAD_SETTINGS"
@@ -20,7 +21,8 @@ object AppSettings {
 		ENABLED_GMAPS,
 		MAP_WIDESCREEN,
 		GMAPS_STYLE,
-		AUDIO_ENABLE_CONTEXT,
+		AUDIO_SUPPORTS_USB,
+		AUDIO_FORCE_CONTEXT,
 		AUDIO_DESIRED_APP
 	}
 	private val DEFINITIONS = mapOf(
@@ -30,7 +32,8 @@ object AppSettings {
 		KEYS.ENABLED_GMAPS to SettingDefinition("Enabled_GMaps", "false", "Show Google Maps in the car"),
 		KEYS.MAP_WIDESCREEN to SettingDefinition("Map_Widescreen", "false", "Show Map in widescreen"),
 		KEYS.GMAPS_STYLE to SettingDefinition("GMaps_Style", "auto", "GMaps style"),
-		KEYS.AUDIO_ENABLE_CONTEXT to SettingDefinition("Audio_Enable_Context", "false", "Request audio context"),
+		KEYS.AUDIO_SUPPORTS_USB to SettingDefinition("Audio_Supports_USB", (Build.VERSION.SDK_INT < Build.VERSION_CODES.O).toString(), "The phone is old enough to support USB accessory audio"),
+		KEYS.AUDIO_FORCE_CONTEXT to SettingDefinition("Audio_Force_Context", "false", "Force audio context"),
 		KEYS.AUDIO_DESIRED_APP to SettingDefinition("Audio_Desired_App", "", "Last music app that was playing")
 	)
 

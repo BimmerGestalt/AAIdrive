@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_music.btnGrantSessions
 import kotlinx.android.synthetic.main.activity_music.listMusicApps
 import kotlinx.android.synthetic.main.activity_music.paneGrantSessions
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
@@ -41,7 +42,7 @@ class MusicActivity : AppCompatActivity() {
 		setContentView(R.layout.activity_music)
 
 		swAudioContext.setOnCheckedChangeListener { buttonView, isChecked ->
-			AppSettings.saveSetting(this, AppSettings.KEYS.AUDIO_ENABLE_CONTEXT, isChecked.toString())
+			AppSettings.saveSetting(this, AppSettings.KEYS.AUDIO_FORCE_CONTEXT, isChecked.toString())
 		}
 		btnGrantSessions.setOnClickListener {
 			promptNotificationPermission()
@@ -141,7 +142,8 @@ class MusicActivity : AppCompatActivity() {
 	}
 
 	fun redraw() {
-		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_ENABLE_CONTEXT].toBoolean()
+		swAudioContext.visible = BuildConfig.MANUAL_AUDIO_CONTEXT
+		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT].toBoolean()
 		paneGrantSessions.visibility = if (hasNotificationPermission()) View.GONE else View.VISIBLE
 	}
 
