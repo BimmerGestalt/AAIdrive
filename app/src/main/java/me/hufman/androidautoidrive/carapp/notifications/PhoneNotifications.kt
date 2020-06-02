@@ -20,7 +20,7 @@ import me.hufman.androidautoidrive.carapp.notifications.views.PopupView
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -29,7 +29,7 @@ import java.util.*
 
 const val TAG = "PhoneNotifications"
 
-class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val appSettings: MutableAppSettings) {
+class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val appSettings: MutableAppSettings) {
 	companion object {
 		const val INTENT_UPDATE_NOTIFICATIONS = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.UPDATE_NOTIFICATIONS"
 		const val INTENT_NEW_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.NEW_NOTIFICATION"
@@ -52,7 +52,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
 		val appCert = carAppAssets.getAppCertificate(IDriveConnectionListener.brand ?: "")?.readBytes() as ByteArray
 		val sas_challenge = carConnection.sas_certificate(appCert)
-		val sas_login = SecurityService.signChallenge(challenge=sas_challenge)
+		val sas_login = securityAccess.signChallenge(challenge=sas_challenge)
 		carConnection.sas_login(sas_login)
 		carappListener.server = carConnection
 

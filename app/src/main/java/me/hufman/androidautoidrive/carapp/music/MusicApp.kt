@@ -18,13 +18,13 @@ import me.hufman.androidautoidrive.removeFirst
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*
 
 const val TAG = "MusicApp"
 
-class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController, musicAppMode: MusicAppMode) {
+class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController, musicAppMode: MusicAppMode) {
 	val carApp = createRHMIApp()
 
 	val avContext = AVContextHandler(carApp, musicController, graphicsHelpers, musicAppMode)
@@ -43,7 +43,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		val carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
 		val appCert = carAppAssets.getAppCertificate(IDriveConnectionListener.brand ?: "")?.readBytes() as ByteArray
 		val sas_challenge = carConnection.sas_certificate(appCert)
-		val sas_login = SecurityService.signChallenge(challenge=sas_challenge)
+		val sas_login = securityAccess.signChallenge(challenge=sas_challenge)
 		carConnection.sas_login(sas_login)
 		carappListener.server = carConnection
 

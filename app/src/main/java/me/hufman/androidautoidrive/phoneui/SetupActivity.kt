@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.activity_setup.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.R
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -26,11 +26,12 @@ class SetupActivity : AppCompatActivity() {
 		}
 	}
 
+	val securityAccess = SecurityAccess.getInstance(this)
+
 	val redrawListener = object: BroadcastReceiver() {
 		override fun onReceive(p0: Context?, p1: Intent?) {
 			redraw()
 		}
-
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,47 +64,47 @@ class SetupActivity : AppCompatActivity() {
 	}
 
 	fun isConnectedSecurityConnected(): Boolean {
-		return SecurityService.isConnected()
+		return securityAccess.isConnected()
 	}
 	fun isConnectedNewInstalled(): Boolean {
-		return SecurityService.installedSecurityServices.any {
-			!it.contains("Classic")
+		return securityAccess.installedSecurityServices.any {
+			!it.name.contains("Classic")
 		}
 	}
 
 	fun isBMWConnectedInstalled(): Boolean {
-		return SecurityService.installedSecurityServices.any {
-			it.startsWith("BMW")
+		return securityAccess.installedSecurityServices.any {
+			it.name.startsWith("BMW")
 		}
 	}
 	fun isBMWConnectedClassicInstalled(): Boolean {
-		return SecurityService.installedSecurityServices.any {
-			it.startsWith("BMW") &&
-			it.contains("Classic")
+		return securityAccess.installedSecurityServices.any {
+			it.name.startsWith("BMW") &&
+			it.name.contains("Classic")
 		}
 	}
 	fun isBMWConnectedNewInstalled(): Boolean {
-		return SecurityService.installedSecurityServices.any {
-			it.startsWith("BMW") &&
-			!it.contains("Classic")
+		return securityAccess.installedSecurityServices.any {
+			it.name.startsWith("BMW") &&
+			!it.name.contains("Classic")
 		}
 	}
 
 	fun isMiniConnectedInstalled(): Boolean {
-		return SecurityService.installedSecurityServices.any {
-			it.startsWith("Mini")
+		return securityAccess.installedSecurityServices.any {
+			it.name.startsWith("Mini")
 		}
 	}
 	fun isMiniConnectedClassicInstalled(): Boolean {
-		return SecurityService.installedSecurityServices.any {
-			it.startsWith("Mini") &&
-			it.contains("Classic")
+		return securityAccess.installedSecurityServices.any {
+			it.name.startsWith("Mini") &&
+			it.name.contains("Classic")
 		}
 	}
 	fun isMiniConnectedNewInstalled(): Boolean {
-		return SecurityService.installedSecurityServices.any {
-			it.startsWith("Mini") &&
-			!it.contains("Classic")
+		return securityAccess.installedSecurityServices.any {
+			it.name.startsWith("Mini") &&
+			!it.name.contains("Classic")
 		}
 	}
 

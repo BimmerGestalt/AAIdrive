@@ -11,7 +11,7 @@ import me.hufman.androidautoidrive.carapp.maps.VirtualDisplayScreenCapture
 import me.hufman.androidautoidrive.carapp.maps.MapApp
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
 import org.junit.Assert.*
 import org.junit.Test
@@ -20,6 +20,9 @@ import org.awaitility.Awaitility.await
 import java.io.ByteArrayInputStream
 
 class TestMapsApp {
+	val securityAccess = mock<SecurityAccess> {
+		on { signChallenge(any(), any() )} doReturn ByteArray(512)
+	}
 	val carAppResources = mock<CarAppResources> {
 		on { getAppCertificate() } doReturn ByteArrayInputStream(ByteArray(0))
 		on { getUiDescription() } doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_onlineservices_v2.xml") }
@@ -40,9 +43,6 @@ class TestMapsApp {
 
 	init {
 		AppSettings.loadDefaultSettings()
-		SecurityService.activeSecurityConnections["mock"] = mock {
-			on { signChallenge(any(), any() )} doReturn ByteArray(512)
-		}
 	}
 
 	fun setUp() {
@@ -55,7 +55,7 @@ class TestMapsApp {
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapApp(carAppResources, mockController, mockMap)
+		val app = MapApp(securityAccess, carAppResources, mockController, mockMap)
 		assertEquals(9, app.menuView.state.id)
 		assertEquals(19, app.fullImageView.state.id)
 		assertEquals(132, app.fullImageView.imageComponent.id)
@@ -71,7 +71,7 @@ class TestMapsApp {
 	fun testMenuMap() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapApp(carAppResources, mockController, mockMap)
+		val app = MapApp(securityAccess, carAppResources, mockController, mockMap)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 		val mockHandlerRunnable = ArgumentCaptor.forClass(Runnable::class.java)
 		val mockHandler = mock<Handler>()
@@ -113,7 +113,7 @@ class TestMapsApp {
 	fun testMapShow() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapApp(carAppResources, mockController, mockMap)
+		val app = MapApp(securityAccess, carAppResources, mockController, mockMap)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 		val mockHandlerRunnable = ArgumentCaptor.forClass(Runnable::class.java)
 		val mockHandler = mock<Handler>()

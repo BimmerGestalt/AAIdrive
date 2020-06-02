@@ -8,14 +8,14 @@ import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CertMangling
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import java.io.IOException
 import java.net.Socket
 
 /**
  * Tries to connect to a car
  */
-class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread("CarProber") {
+class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread("CarProber") {
 	companion object {
 		val PORTS = listOf(4004, 4005, 4006, 4007, 4008)
 		val TAG = "CarProber"
@@ -85,7 +85,7 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 	 * Attempts to detect the car brand
 	 */
 	private fun probeCar(port: Int) {
-		if (!SecurityService.isConnected()) {
+		if (!securityAccess.isConnected()) {
 			// try again later after the security service is ready
 			schedule(2000)
 			return
@@ -97,10 +97,10 @@ class CarProber(val bmwCert: ByteArray, val miniCert: ByteArray): HandlerThread(
 		for (brand in listOf("bmw", "mini")) {
 			try {
 				val cert = if (brand == "bmw") bmwCert else miniCert
-				val signedCert = CertMangling.mergeBMWCert(cert, SecurityService.fetchBMWCerts(brandHint = brand))
+				val signedCert = CertMangling.mergeBMWCert(cert, securityAccess.fetchBMWCerts(brandHint = brand))
 				val conn = IDriveConnection.getEtchConnection("127.0.0.1", port, BaseBMWRemotingClient())
 				val sas_challenge = conn.sas_certificate(signedCert)
-				val sas_login = SecurityService.signChallenge(challenge = sas_challenge)
+				val sas_login = securityAccess.signChallenge(challenge = sas_challenge)
 				conn.sas_login(sas_login)
 				val capabilities = conn.rhmi_getCapabilities("", 255)
 				carConnection = conn

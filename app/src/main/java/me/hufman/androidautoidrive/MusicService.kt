@@ -5,8 +5,9 @@ import me.hufman.androidautoidrive.carapp.music.MusicApp
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicController
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 
-class MusicService(val context: Context) {
+class MusicService(val context: Context, val securityAccess: SecurityAccess) {
 	var threadMusic: CarThread? = null
 	var carappMusic: MusicApp? = null
 
@@ -17,7 +18,8 @@ class MusicService(val context: Context) {
 					val handler = threadMusic?.handler ?: return@CarThread
 					var musicAppDiscovery = MusicAppDiscovery(context, handler)
 					var musicController = MusicController(context, handler)
-					carappMusic = MusicApp(CarAppAssetManager(context, "multimedia"),
+					carappMusic = MusicApp(securityAccess,
+							CarAppAssetManager(context, "multimedia"),
 							PhoneAppResourcesAndroid(context),
 							GraphicsHelpersAndroid(),
 							musicAppDiscovery,

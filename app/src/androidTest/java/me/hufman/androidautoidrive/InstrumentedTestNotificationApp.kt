@@ -43,7 +43,7 @@ class InstrumentedTestNotificationApp {
 		// prepare a notification
 		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)
 		val notification = CarNotification(appContext.packageName, "test", icon, true, arrayOf(),
-				"Test", "Test Summary", "Test Text", null, null)
+				"Test", "Test Text", null, null)
 
 		// send an update from the phone
 		val controller = NotificationListenerServiceImpl.NotificationUpdater(appContext)
@@ -70,7 +70,7 @@ class InstrumentedTestNotificationApp {
 		// prepare a notification
 		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)
 		val notification = CarNotification(appContext.packageName, "test", icon, true, arrayOf(),
-				"Test", "Test Summary", "Test Text", null, null)
+				"Test", "Test Text", null, null)
 
 		val carController = CarNotificationControllerIntent(appContext)
 		// send an interaction from the car

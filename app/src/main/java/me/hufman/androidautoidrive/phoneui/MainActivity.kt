@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.activity_main.listMusicApps
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import java.lang.IllegalStateException
 import kotlin.math.max
 
@@ -239,7 +239,7 @@ class MainActivity : AppCompatActivity() {
 		swGmapSyle.setSelection(max(0, gmapStylePosition))
 
 		val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
-		if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && !SecurityService.success) {
+		if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && !SecurityAccess.getInstance(this).isConnected()) {
 			txtConnectionStatus.text = resources.getString(R.string.connectionStatusMissingConnectedApp)
 			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionError, null))
 		} else if (!IDriveConnectionListener.isConnected) {

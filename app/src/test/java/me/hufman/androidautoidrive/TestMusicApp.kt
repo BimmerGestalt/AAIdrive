@@ -17,7 +17,7 @@ import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
 import org.awaitility.Awaitility.await
 import org.junit.Assert.*
@@ -103,6 +103,9 @@ class TestMusicApp {
 		on { looper } doAnswer { Looper.myLooper() }
 	}
 
+	val securityAccess = mock<SecurityAccess> {
+		on { signChallenge(any(), any() )} doReturn ByteArray(512)
+	}
 	val carAppResources = mock<CarAppResources> {
 		on { getAppCertificate() } doReturn ByteArrayInputStream(ByteArray(0))
 		on { getUiDescription() } doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_multimedia_v2.xml") }
@@ -149,16 +152,13 @@ class TestMusicApp {
 	init {
 		AppSettings.loadDefaultSettings()
 		AppSettings.tempSetSetting(AppSettings.KEYS.AUDIO_FORCE_CONTEXT, "true")
-		SecurityService.activeSecurityConnections["mock"] = mock {
-			on { signChallenge(any(), any() )} doReturn ByteArray(512)
-		}
 	}
 
 	@Test
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MusicApp( carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
+		val app = MusicApp(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
 
 		// verify the right elements are selected
 		testAppInitSwitcher(app.appSwitcherView)
@@ -208,7 +208,7 @@ class TestMusicApp {
 		val mode = mock<MusicAppMode> {
 			on { shouldRequestAudioContext() } doReturn true
 		}
-		val app = MusicApp(carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mode)
+		val app = MusicApp(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mode)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
 		// click into the trigger a redraw
@@ -1170,7 +1170,7 @@ class TestMusicApp {
 	fun testMusicSessions() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MusicApp(carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
+		val app = MusicApp(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
 		val discoveryListenerCapture = ArgumentCaptor.forClass(Runnable::class.java)

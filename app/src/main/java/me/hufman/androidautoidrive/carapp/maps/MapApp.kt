@@ -19,7 +19,7 @@ import me.hufman.androidautoidrive.removeFirst
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -27,7 +27,7 @@ import kotlin.math.min
 
 const val TAG = "MapView"
 
-class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionController, val map: VirtualDisplayScreenCapture) {
+class MapApp(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val interaction: MapInteractionController, val map: VirtualDisplayScreenCapture) {
 	companion object {
 		val MAX_WIDTH = 1000
 		val MAX_HEIGHT = 400
@@ -61,7 +61,7 @@ class MapApp(val carAppAssets: CarAppResources, val interaction: MapInteractionC
 		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
 		val appCert = carAppAssets.getAppCertificate(IDriveConnectionListener.brand ?: "")?.readBytes() as ByteArray
 		val sas_challenge = carConnection.sas_certificate(appCert)
-		val sas_login = SecurityService.signChallenge(challenge=sas_challenge)
+		val sas_login = securityAccess.signChallenge(challenge=sas_challenge)
 		carConnection.sas_login(sas_login)
 		carappListener.server = carConnection
 
