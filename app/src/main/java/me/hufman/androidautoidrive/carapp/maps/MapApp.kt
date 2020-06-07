@@ -4,22 +4,13 @@ import android.content.Context
 import android.content.IntentFilter
 import android.os.Handler
 import android.util.Log
-import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.carapp.InputState
-import me.hufman.androidautoidrive.carapp.RHMIUtils
-import me.hufman.androidautoidrive.carapp.FullImageInteraction
-import me.hufman.androidautoidrive.carapp.FullImageView
+import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.maps.views.MenuView
 import me.hufman.androidautoidrive.removeFirst
 import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
-import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -27,7 +18,7 @@ import kotlin.math.min
 
 const val TAG = "MapView"
 
-class MapApp(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val interaction: MapInteractionController, val map: VirtualDisplayScreenCapture) {
+class MapApp(val carConnectionBuilder: CarConnectionBuilder, val interaction: MapInteractionController, val map: VirtualDisplayScreenCapture) {
 	companion object {
 		val MAX_WIDTH = 1000
 		val MAX_HEIGHT = 400
@@ -58,23 +49,14 @@ class MapApp(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, 
 	})
 
 	init {
-		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
-		val appCert = carAppAssets.getAppCertificate(IDriveConnectionListener.brand ?: "")?.readBytes() as ByteArray
-		val sas_challenge = carConnection.sas_certificate(appCert)
-		val sas_login = securityAccess.signChallenge(challenge=sas_challenge)
-		carConnection.sas_login(sas_login)
+		carConnectionBuilder.callbackClient = carappListener
+		carConnection = carConnectionBuilder.connect()
 		carappListener.server = carConnection
 
 		// create the app in the car
-		val rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.mapview", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive.mapview", "me.hufman"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
-//		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB("common"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB("common"))
-		carConnection.rhmi_initialize(rhmiHandle)
-
-		carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)))
+		carConnectionBuilder.setTextDb = false
+		carApp = carConnectionBuilder.buildApp(carConnection)
 		carappListener.app = carApp
-		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
 		// figure out the components to use
 		Log.i(TAG, "Locating components to use")
@@ -136,10 +118,6 @@ class MapApp(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, 
 
 		viewInput.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
 		viewInput.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
-
-		// register for events from the car
-		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.mapview", -1)
-		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.mapview", -1, -1)
 	}
 
 	fun onCreate(context: Context, handler: Handler) {

@@ -7,24 +7,20 @@ import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.Utils.loadZipfile
+import me.hufman.androidautoidrive.carapp.CarConnectionBuilder
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
-import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.removeFirst
-import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
-import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*
 
 const val TAG = "MusicApp"
 
-class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController, musicAppMode: MusicAppMode) {
+class MusicApp(val carConnectionBuilder: CarConnectionBuilder, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController, musicAppMode: MusicAppMode) {
 	val carApp = createRHMIApp()
 
 	val avContext = AVContextHandler(carApp, musicController, graphicsHelpers, musicAppMode)
@@ -40,37 +36,20 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 
 	private fun createRHMIApp(): RHMIApplicationSynchronized {
 		val carappListener = CarAppListener()
-		val carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
-		val appCert = carAppAssets.getAppCertificate(IDriveConnectionListener.brand ?: "")?.readBytes() as ByteArray
-		val sas_challenge = carConnection.sas_certificate(appCert)
-		val sas_login = securityAccess.signChallenge(challenge=sas_challenge)
-		carConnection.sas_login(sas_login)
+		carConnectionBuilder.callbackClient = carappListener
+		val carConnection = carConnectionBuilder.connect()
 		carappListener.server = carConnection
 
-		// create the app in the car
-		val rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.music", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive.music", "me.hufman"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB(IDriveConnectionListener.brand ?: "common"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
-		carConnection.rhmi_initialize(rhmiHandle)
-
 		// set up the app in the car
-		val carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)))
+		val carApp = carConnectionBuilder.buildApp(carConnection)
 		carappListener.app = carApp
-		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
-
-		// register for events from the car
-		carApp.runSynchronized {
-			carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1)
-			carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1, -1)
-		}
 
 		return carApp
 	}
 
 	init {
 		// locate specific windows in the app
-		val carAppImages = loadZipfile(carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
+		val carAppImages = loadZipfile(carConnectionBuilder.carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
 		val unclaimedStates = LinkedList(carApp.states.values)
 		playbackView = PlaybackView(unclaimedStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources, graphicsHelpers)
 		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, graphicsHelpers)

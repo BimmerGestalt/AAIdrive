@@ -2,25 +2,18 @@ package me.hufman.androidautoidrive
 
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
+import me.hufman.androidautoidrive.carapp.CarConnectionBuilder
 import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import java.lang.Exception
 
-class CarInformationDiscovery(securityAccess: SecurityAccess, carAppAssets: CarAppResources, val listener: CarInformationDiscoveryListener?) {
+class CarInformationDiscovery(val carConnectionBuilder: CarConnectionBuilder, val listener: CarInformationDiscoveryListener?) {
 
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
 
 	init {
-		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host
-				?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
-		val appCert = carAppAssets.getAppCertificate(IDriveConnectionListener.brand
-				?: "")?.readBytes() as ByteArray
-		val sas_challenge = carConnection.sas_certificate(appCert)
-		val sas_login = securityAccess.signChallenge(challenge = sas_challenge)
-		carConnection.sas_login(sas_login)
+		carConnectionBuilder.callbackClient = carappListener
+		carConnection = carConnectionBuilder.connect()
 	}
 
 	fun onCreate() {

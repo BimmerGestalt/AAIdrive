@@ -8,6 +8,7 @@ import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
 import com.bmwgroup.connected.car.app.BrandType
+import me.hufman.androidautoidrive.carapp.CarConnectionBuilder
 import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
@@ -198,8 +199,8 @@ class MainService: Service() {
 				threadCapabilities = CarThread("Capabilities") {
 					Log.i(TAG, "Starting to discover car capabilities")
 
-					carappCapabilities = CarInformationDiscovery(securityAccess,
-							CarAppAssetManager(this, "smartthings"),
+					val carConnectionBuilder = CarConnectionBuilder(IDriveConnectionListener(), securityAccess, CarAppAssetManager(this, "smartthings"), "me.hufman.androidautoidrive.capabilities")
+					carappCapabilities = CarInformationDiscovery(carConnectionBuilder,
 							object: CarInformationDiscoveryListener {
 						override fun onCapabilities(capabilities: Map<String, String?>) {
 							synchronized(DebugStatus.carCapabilities) {
@@ -235,8 +236,8 @@ class MainService: Service() {
 						if (handler == null) {
 							Log.e(TAG, "CarThread Handler is null?")
 						}
-						carappNotifications = PhoneNotifications(securityAccess,
-								CarAppAssetManager(this, "basecoreOnlineServices"),
+						val carConnectionBuilder = CarConnectionBuilder(IDriveConnectionListener(), securityAccess, CarAppAssetManager(this, "basecoreOnlineServices"), "me.hufman.androidautoidrive")
+						carappNotifications = PhoneNotifications(carConnectionBuilder,
 								PhoneAppResourcesAndroid(this),
 								GraphicsHelpersAndroid(),
 								CarNotificationControllerIntent(this),
