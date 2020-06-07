@@ -2,9 +2,8 @@ package me.hufman.androidautoidrive.carapp.music
 
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.GraphicsHelpers
-import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
+import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
