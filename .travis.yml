@@ -1,5 +1,6 @@
 language: android
-dist: trusty
+jdk: openjdk10
+dist: xenial
 android:
   components:
   - extra-google-m2repository
