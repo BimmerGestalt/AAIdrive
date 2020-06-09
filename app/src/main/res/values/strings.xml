@@ -55,6 +55,8 @@
     <string name="btn_install_bmw">Install BMW Connected Classic</string>
     <string name="btn_install_mini">Install Mini Connected Classic</string>
     <string name="lbl_advanced_settings">Show Advanced Settings</string>
+    <string name="lbl_assistant">Voice Assistant (Beta)</string>
+
 
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notifications</string>

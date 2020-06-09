@@ -22,6 +22,8 @@ import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.listMusicApps
 import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.carapp.assistant.AssistantAppInfo
+import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
@@ -43,14 +45,17 @@ class MainActivity : AppCompatActivity() {
 	val handler = Handler()
 	val redrawListener = RedrawListener()
 	val redrawTask = RedrawTask()
-	val displayedApps = ArrayList<MusicAppInfo>()
+	val displayedMusicApps = ArrayList<MusicAppInfo>()
 	val appDiscoveryThread = AppDiscoveryThread(this) { apps ->
 		handler.post {
-			displayedApps.clear()
-			displayedApps.addAll(apps.filter { it.connectable || it.controllable })
+			displayedMusicApps.clear()
+			displayedMusicApps.addAll(apps.filter { it.connectable || it.controllable })
 			listMusicApps.invalidateViews() // redraw the app list
 		}
 	}
+
+	val assistantController = AssistantControllerAndroid(this, PhoneAppResourcesAndroid(this))
+	val displayedAssistantApps = ArrayList<AssistantAppInfo>()
 	var whenActivityStarted = 0L
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,7 +113,7 @@ class MainActivity : AppCompatActivity() {
 				startActivity(intent)
 			}
 		}
-		listMusicApps.adapter = object: ArrayAdapter<MusicAppInfo>(this, R.layout.musicapp_listitem, displayedApps) {
+		listMusicApps.adapter = object: ArrayAdapter<MusicAppInfo>(this, R.layout.musicapp_listitem, displayedMusicApps) {
 			val animationLoopCallback = object: Animatable2.AnimationCallback() {
 				override fun onAnimationEnd(drawable: Drawable?) {
 					handler.post { (drawable as AnimatedVectorDrawable).start() }
@@ -139,6 +144,33 @@ class MainActivity : AppCompatActivity() {
 					layout.findViewById<TextView>(R.id.txtMusicAppName).setText("Error")
 					layout
 				}
+			}
+		}
+
+		listAssistantApps.adapter = object: ArrayAdapter<AssistantAppInfo>(this, R.layout.assistantapp_listitem, displayedAssistantApps) {
+			override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+				val appInfo = getItem(position)
+				val layout = convertView ?: layoutInflater.inflate(R.layout.assistantapp_listitem, parent,false)
+				return if (appInfo != null) {
+					layout.findViewById<ImageView>(R.id.imgAssistantAppIcon).setImageDrawable(appInfo.icon)
+					layout.findViewById<ImageView>(R.id.imgAssistantAppIcon).contentDescription = appInfo.name
+					layout.findViewById<TextView>(R.id.txtAssistantAppName).text = appInfo.name
+					layout.findViewById<ImageView>(R.id.imgAssistantSettingsIcon).visible = assistantController.supportsSettings(appInfo)
+
+					layout.findViewById<ImageView>(R.id.imgAssistantSettingsIcon).setOnClickListener {
+						assistantController.openSettings(appInfo)
+					}
+					layout
+				} else {
+					layout.findViewById<TextView>(R.id.txtAssistantAppName).setText("Error")
+					layout
+				}
+			}
+		}
+		listAssistantApps.setOnItemClickListener { adapterView, view, i, l ->
+			val appInfo = adapterView.adapter.getItem(i) as? AssistantAppInfo
+			if (appInfo != null) {
+				assistantController.triggerAssistant(appInfo)
 			}
 		}
 
@@ -219,6 +251,11 @@ class MainActivity : AppCompatActivity() {
 
 		// update the music apps list, including any music sessions
 		appDiscoveryThread.discovery()
+
+		// reload assistants
+		displayedAssistantApps.clear()
+		displayedAssistantApps.addAll(assistantController.getAssistants().toList().sortedBy { it.name })
+		listAssistantApps.invalidateViews()
 
 		// try starting the service, to try connecting to the car with current app settings
 		// for example, after we resume from enabling the notification
