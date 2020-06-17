@@ -89,14 +89,18 @@ class MainService: Service() {
 	private fun handleActionStart() {
 		Log.i(TAG, "Starting up service")
 		createNotificationChannel()
+		// set up connection listeners
+		securityAccess.listener = Runnable {
+			combinedCallback()
+		}
+		IDriveConnectionListener.callback = Runnable {
+			combinedCallback()
+		}
 		// try connecting to the security service
 		if (!securityServiceThread.isAlive) {
 			securityServiceThread.start()
 		}
 		securityServiceThread.connect()
-		securityAccess.listener = Runnable {
-			combinedCallback()
-		}
 		// start up car connection listener
 		announceCarAPI()
 		idriveConnectionListener.subscribe(this)
