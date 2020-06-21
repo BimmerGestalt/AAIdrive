@@ -1,9 +1,6 @@
 package me.hufman.androidautoidrive.carapp.maps
 
-import android.content.Context
 import android.graphics.*
-import android.hardware.display.DisplayManager
-import android.hardware.display.VirtualDisplay
 import android.media.Image
 import android.media.ImageReader
 import android.os.Handler
@@ -11,30 +8,29 @@ import android.os.Looper
 import android.util.Log
 import java.io.ByteArrayOutputStream
 
+/**
+ * Generates images from an ImageReader, handily resized and compressed to JPG
+ */
+class VirtualDisplayScreenCapture(val imageCapture: ImageReader, val bitmapConfig: Bitmap.Config, val compressFormat: Bitmap.CompressFormat, var compressQuality: Int = 65) {
+	companion object {
+		fun build(): VirtualDisplayScreenCapture {
+			return VirtualDisplayScreenCapture(
+					ImageReader.newInstance(MapApp.MAX_WIDTH, MapApp.MAX_HEIGHT, PixelFormat.RGBA_8888, 2)!!,
+					Bitmap.Config.ARGB_8888,
+					Bitmap.CompressFormat.JPEG)
+		}
+	}
 
-class VirtualDisplayScreenCapture(context: Context, val width:Int = 1000, val height:Int = 400, val dpi:Int = 300) {
 	/** Prepares an ImageReader, and sends JPG-compressed images to a callback */
-	protected val imageCapture = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2)!!
-	val virtualDisplay: VirtualDisplay
-
 	private val origRect = Rect(0, 0, imageCapture.width, imageCapture.height)    // the full size of the main map
 	private var sourceRect = Rect(0, 0, imageCapture.width, imageCapture.height)    // the capture region from the main map
-	private var bitmap = Bitmap.createBitmap(imageCapture.width, imageCapture.height, Bitmap.Config.ARGB_8888)
-	private val resizeFilter = Paint()
-	private var resizedBitmap = Bitmap.createBitmap(imageCapture.width, imageCapture.height, Bitmap.Config.ARGB_8888)
+	private var bitmap = Bitmap.createBitmap(imageCapture.width, imageCapture.height, bitmapConfig)
+	private val resizeFilter = Paint().apply { this.isFilterBitmap = false }
+	private var resizedBitmap = Bitmap.createBitmap(imageCapture.width, imageCapture.height, bitmapConfig)
 	private var resizedCanvas = Canvas(resizedBitmap)
 	private var resizedRect = Rect(0, 0, resizedBitmap.width, resizedBitmap.height) // draw to the full region of the resize canvas
-	private val jpg = ByteArrayOutputStream()
+	private val outputFile = ByteArrayOutputStream()
 
-	init {
-		resizeFilter.isFilterBitmap = false
-
-		val displayManager = context.getSystemService(DisplayManager::class.java)
-		virtualDisplay = displayManager.createVirtualDisplay("IDriveGoogleMaps",
-				imageCapture.width, imageCapture.height, dpi,
-				imageCapture.surface, DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY,
-				null, Handler(Looper.getMainLooper()))
-	}
 
 	fun registerImageListener(listener: ImageReader.OnImageAvailableListener?) {
 		this.imageCapture.setOnImageAvailableListener(listener, Handler(Looper.getMainLooper()))
@@ -42,7 +38,7 @@ class VirtualDisplayScreenCapture(context: Context, val width:Int = 1000, val he
 
 	fun changeImageSize(width: Int, height: Int) {
 		synchronized(this) {
-			resizedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+			resizedBitmap = Bitmap.createBitmap(width, height, bitmapConfig)
 			resizedCanvas = Canvas(resizedBitmap)
 			resizedRect = Rect(0, 0, resizedBitmap.width, resizedBitmap.height)
 			sourceRect = findInnerRect(origRect, resizedRect)    // the capture region from the main map
@@ -76,7 +72,7 @@ class VirtualDisplayScreenCapture(context: Context, val width:Int = 1000, val he
 		val width = image.width + padding / planes[0].pixelStride
 		if (bitmap.width != width) {
 			Log.i(TAG, "Setting capture bitmap to ${width}x${imageCapture.height}")
-			bitmap = Bitmap.createBitmap(width, imageCapture.height, Bitmap.Config.ARGB_8888)
+			bitmap = Bitmap.createBitmap(width, imageCapture.height, bitmapConfig)
 		}
 		bitmap.copyPixelsFromBuffer(buffer)
 
@@ -85,7 +81,7 @@ class VirtualDisplayScreenCapture(context: Context, val width:Int = 1000, val he
 		synchronized(this) {
 			if (sourceRect != resizedRect) {
 				// if we need to resize
-				resizedCanvas.drawBitmap(bitmap, sourceRect, resizedRect, null)
+				resizedCanvas.drawBitmap(bitmap, sourceRect, resizedRect, resizeFilter)
 				outputBitmap = resizedBitmap
 			}
 		}
@@ -104,13 +100,12 @@ class VirtualDisplayScreenCapture(context: Context, val width:Int = 1000, val he
 
 	fun compressBitmap(bitmap: Bitmap): ByteArray {
 		// send to car
-		jpg.reset()
-		bitmap.compress(Bitmap.CompressFormat.JPEG, 65, jpg)  //quality 65 is fine, and you get readable small texts, below that it was sometimes hard to read
-		return jpg.toByteArray()
+		outputFile.reset()
+		bitmap.compress(compressFormat, compressQuality, outputFile)  //quality 65 is fine, and you get readable small texts, below that it was sometimes hard to read
+		return outputFile.toByteArray()
 	}
 
 	fun onDestroy() {
 		this.imageCapture.setOnImageAvailableListener(null, null)
-		virtualDisplay.release()
 	}
 }

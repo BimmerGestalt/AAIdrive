@@ -3,6 +3,7 @@
 apply plugin: 'jacoco'
 
 project.afterEvaluate {
+    // create variant-specific ones
     android.applicationVariants.all { variant ->
         def testTaskName = "test${variant.name.capitalize()}UnitTest"
         tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {

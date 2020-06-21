@@ -68,6 +68,11 @@ class MusicNowPlayingFragment: Fragment() {
 		})
 	}
 
+	override fun onResume() {
+		super.onResume()
+		redraw()
+	}
+
 	fun redraw() {
 		if (!isVisible) return
 		val metadata = musicController.getMetadata()

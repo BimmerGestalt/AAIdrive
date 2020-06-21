@@ -39,6 +39,8 @@
     <string name="NOTIFICATIONS_TITLE">Notificações</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Não há notificações</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Limpar</string>
+    <string name="NOTIFICATION_POPUPS">Popups de notificação</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER">Popups para o passageiro</string>
 
     <string name="MAP_ACTION_VIEWMAP">Ver Mapa inteiro</string>
     <string name="MAP_ACTION_SEARCH">Procurar por Lugar</string>

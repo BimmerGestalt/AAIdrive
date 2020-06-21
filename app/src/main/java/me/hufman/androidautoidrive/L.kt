@@ -8,8 +8,12 @@ import kotlin.reflect.full.memberProperties
 object L {
 	// all of the strings used in the car app
 	// these default string values are used in tests, Android resources are used for real
+	var NOTIFICATIONS_TITLE = "Notifications"
 	var NOTIFICATIONS_EMPTY_LIST = "No Notifications"
 	var NOTIFICATION_CLEAR_ACTION = "Clear"
+	var NOTIFICATION_OPTIONS = "Options"
+	var NOTIFICATION_POPUPS = "Notification Popups"
+	var NOTIFICATION_POPUPS_PASSENGER = "Popups with passenger"
 
 	var MAP_ACTION_VIEWMAP = "View Full Map"
 	var MAP_ACTION_SEARCH = "Search for Place"
@@ -31,16 +35,19 @@ object L {
 	var MUSIC_QUEUE_EMPTY = "<Empty Queue>"
 	var MUSIC_SKIP_PREVIOUS = "Back"
 	var MUSIC_SKIP_NEXT = "Next"
-	val NOTIFICATIONS_TITLE = "Notifications"
 
-	val MUSIC_SPOTIFY_TURN_SHUFFLE_ON = "Turn Shuffle On"
-	val MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION = "Dislike"
+	var MUSIC_SPOTIFY_TURN_SHUFFLE_ON = "Turn Shuffle On"
+	var MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION = "Dislike"
 	var MUSIC_SPOTIFY_START_RADIO = "Make Radio Station"
 	var MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON = "Turn Repeat All On"
 	var MUSIC_SPOTIFY_TURN_SHUFFLE_OFF = "Turn Shuffle Off"
 	var MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON = "Turn Repeat One On"
 	var MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF = "Turn Repeat Off"
-	val MUSIC_SPOTIFY_ADD_TO_COLLECTION = "Like"
+	var MUSIC_SPOTIFY_ADD_TO_COLLECTION = "Like"
+	var MUSIC_SPOTIFY_THUMB_UP = "Thumb Up"
+	var MUSIC_SPOTIFY_THUMBS_UP_SELECTED = "Thumbed Up"
+	var MUSIC_SPOTIFY_THUMB_DOWN = "Thumb Down"
+	var MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED = "Thumbed Down"    // not sure if this exists, but just to be complete
 
 	fun loadResources(context: Context, locale: Locale? = null) {
 		val thisContext = if (locale == null) { context } else {

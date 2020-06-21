@@ -17,10 +17,10 @@
     <string name="lbl_widescreen_map">Widescreen Karte</string>
     <string name="gmapStyleLabel">Kartenstil</string>
     <string name="lbl_music_apps">Musik Apps</string>
-    <string name="imgdescAppIcon">App Icon</string>
-    <string name="imgdescConnectable">Anschließbar</string>
-    <string name="imgdescBrowseable">Durchsuchbar</string>
-    <string name="imgdescSearchable">Suchbar</string>
+    <string name="musicAppIcon">App Icon</string>
+    <string name="musicAppConnectable">Anschließbar</string>
+    <string name="musicAppBrowseable">Durchsuchbar</string>
+    <string name="musicAppSearchable">Suchbar</string>
     <string name="enable_audio_context">Audio Focus anfordern</string>
     <string name="connectionStatusMissingConnectedApp">Die Connected / Connected Classic App kann nicht gefunden werden</string>
     <string name="connectionStatusWaiting">Warten auf Verbindung zum Auto</string>
@@ -42,6 +42,8 @@
     <string name="NOTIFICATIONS_TITLE">Benachrichtigungen</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Keine Benachrichtigungen</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Löschen</string>
+    <string name="NOTIFICATION_POPUPS">Benachrichtigungs-Popups</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER">Popups mit Beifahrer</string>
 
     <string name="MAP_ACTION_VIEWMAP">Ganze Karte ansehen</string>
     <string name="MAP_ACTION_SEARCH">Nach Ort suchen</string>

@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.carapp.notifications.views
 import android.util.Log
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.carapp.notifications.CarNotification
 import me.hufman.androidautoidrive.carapp.notifications.CarNotificationController
 import me.hufman.androidautoidrive.carapp.notifications.NotificationsState
 import me.hufman.androidautoidrive.carapp.notifications.TAG
@@ -29,6 +30,8 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 	val imageWidget: RHMIComponent.Image
 
 	var visible = false
+	var selectedNotification: CarNotification? = null
+
 	init {
 		iconWidget = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 		titleWidget = state.componentsList.filterIsInstance<RHMIComponent.Label>().first()
@@ -44,7 +47,9 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		state.focusCallback = FocusCallback { focused ->
 			visible = focused
 			if (focused) {
-				redraw()
+				show()
+			} else {
+				selectedNotification = null
 			}
 		}
 
@@ -119,7 +124,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		}
 
 		// find the notification, or bail to the list
-		val notification = NotificationsState.fetchSelectedNotification()
+		val notification = NotificationsState.getNotificationByKey(selectedNotification?.key)
 		if (notification == null) {
 			state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to listViewId))
 			return
@@ -133,12 +138,12 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 
 		// prepare the notification text
 		val listData = RHMIModel.RaListModel.RHMIListConcrete(1)
-		val trimmedText = notification.text?.substring(0, min(MAX_LENGTH, notification.text.length)) ?: ""
+		val trimmedText = notification.text.substring(0, min(MAX_LENGTH, notification.text.length))
 		listData.addRow(arrayOf(trimmedText))
 
 		state.getTextModel()?.asRaDataModel()?.value = appname
 		iconWidget.getModel()?.value = iconListData
-		titleWidget.getModel()?.asRaDataModel()?.value = notification.title ?: ""
+		titleWidget.getModel()?.asRaDataModel()?.value = notification.title
 		listWidget.getModel()?.value = listData
 
 		// try to load a picture from the notification
@@ -169,7 +174,6 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			clearButton.getTooltipModel()?.asRaDataModel()?.value = L.NOTIFICATION_CLEAR_ACTION
 			clearButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 				controller.clear(notification)
-				Thread.sleep(50)
 			}
 		} else {
 			clearButton.setEnabled(false)
@@ -178,7 +182,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		// enable any custom actions
 		(0..4).forEach {i ->
 			val action = notification.actions.getOrNull(i)
-			var button = buttons[1+i]
+			val button = buttons[1+i]
 			if (action == null) {
 				button.setEnabled(false)
 				button.setSelectable(false)

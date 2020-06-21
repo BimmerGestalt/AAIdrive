@@ -1,53 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
         android:orientation="vertical"
-        android:padding="15dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        android:animateLayoutChanges="true">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_marginTop="10dp"
+            android:text="@string/lbl_music_apps" />
 
-            <ImageView
-                android:id="@+id/imgAppIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_weight="0"
-                android:contentDescription="@string/musicAppIcon"
-                app:srcCompat="@android:drawable/alert_dark_frame" />
+        <Switch
+            android:id="@+id/swAudioContext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/enable_audio_context"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:id="@+id/paneGrantSessions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone" >
 
             <TextView
-                android:id="@+id/txtAppName"
-                android:layout_width="wrap_content"
+                android:id="@+id/txtGrantSessionsLabel"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:textSize="18sp" />
+                android:text="@string/lbl_grant_sessions" />
 
+            <Button
+                android:id="@+id/btnGrantSessions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_grant"
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/pgrMusic"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/listMusicAppsRefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabMusic"
+            <ListView
+                android:id="@+id/listMusicApps"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0" />
-
-        </android.support.v4.view.ViewPager>
+                android:layout_height="match_parent" />
+        </android.support.v4.widget.SwipeRefreshLayout>
 
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

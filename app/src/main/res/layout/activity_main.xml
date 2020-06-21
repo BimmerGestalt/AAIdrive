@@ -44,8 +44,8 @@
                 android:id="@+id/btnConfigureNotifications"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/btn_configure" />
-
+                android:text="@string/btn_configure"
+                android:textSize="12sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -98,53 +98,42 @@
             </LinearLayout>
         </LinearLayout>
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="@string/lbl_music_apps" />
-
-        <Switch
-            android:id="@+id/swAudioContext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/enable_audio_context"
-            android:layout_marginBottom="8dp" />
-
-        <LinearLayout
-            android:id="@+id/paneGrantSessions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:visibility="gone" >
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/txtGrantSessionsLabel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/lbl_grant_sessions" />
-
-            <Button
-                android:id="@+id/btnGrantSessions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lbl_grant"
+                android:layout_weight="1"
+                android:text="@string/lbl_music_apps" />
+
+            <Button
+                android:id="@+id/btnConfigureMusic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_weight="0"
+                android:text="@string/btn_configure"
                 android:textSize="12sp" />
         </LinearLayout>
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/listMusicAppsRefresh"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <ListView
-                android:id="@+id/listMusicApps"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </android.support.v4.widget.SwipeRefreshLayout>
-
+        <GridView
+            android:id="@+id/listMusicApps"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:paddingEnd="4dp"
+            android:columnWidth="50dp"
+            android:horizontalSpacing="8dp"
+            android:verticalSpacing="8dp"
+            android:gravity="center_horizontal"
+            android:clipChildren="true"
+            android:numColumns="auto_fit"
+            android:stretchMode="spacingWidth" />
     </LinearLayout>
 
     <LinearLayout

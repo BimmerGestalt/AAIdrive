@@ -1,46 +1,58 @@
 package me.hufman.androidautoidrive
 
 import android.os.Handler
-import android.os.Looper
-import java.util.*
+import kotlin.math.max
 
-object DeferredUpdate {
+/**
+ * Represents a deferrable-able runnable
+ */
+class DeferredUpdate(val handler: Handler, val currentTimeProvider: () -> Long = {System.currentTimeMillis()}) {
+	var deferredTime = 0L
+	var task: Runnable? = null
 
-	val tasks = HashMap<String, Runnable>()
-
-	fun trigger(name: String, delayFunc: (() -> Long), callback: (() -> Unit), initialDelay: Long = 100) {
-		schedule(name, delayFunc, callback, initialDelay)
-	}
-
-	private fun schedule(name: String, delayFunc: () -> Long, callback: () -> Unit, delay: Long) {
-		synchronized(tasks) {
-			val task = DeferredUpdateTimerTask(name, delayFunc, callback)
-			tasks[name] = task
-			Handler(Looper.myLooper()).postDelayed(task, delay)
+	/**
+	 * Enqueue this runnable to be executed, if this hasn't been deferred yet
+	 */
+	fun trigger(initialDelay: Long = 100, callback: (() -> Unit)) {
+		cancel()
+		synchronized(this) {
+			this.task = DeferredUpdateTimerTask(callback)
 		}
+		schedule(initialDelay)
 	}
 
-	fun cancel(name: String) {
-		synchronized(tasks) {
-			val task = tasks[name]
+	/**
+	 * Defer any execution by at least this long
+	 */
+	fun defer(delay: Long) {
+		deferredTime = currentTimeProvider() + delay
+		schedule(0)
+	}
+
+	private fun schedule(delay: Long) {
+		synchronized(this) {
+			val task = task
 			if (task != null) {
-				Handler(Looper.myLooper()).removeCallbacks(task)
+				val remainingTime = max(0, max(delay, deferredTime - currentTimeProvider()))
+				handler.removeCallbacks(task)
+				handler.postDelayed(task, remainingTime)
 			}
-			tasks.remove(name)
 		}
 	}
 
-
-	class DeferredUpdateTimerTask(val name: String, val delayFunc: () -> Long, val callback: () -> Unit): Runnable {
-		override fun run() {
-			// each time we check to see if we should run
-			val delay = delayFunc()
-			if (delay > 0) {
-				schedule(name, delayFunc, callback, delay)
-			} else {
-				cancel(name)    // prepare for another thread to schedule the timer in the future
-				callback()
+	fun cancel() {
+		synchronized(this) {
+			if (task != null) {
+				handler.removeCallbacks(task)
 			}
+			task = null
+		}
+	}
+
+	inner class DeferredUpdateTimerTask(val callback: () -> Unit): Runnable {
+		override fun run() {
+			cancel()    // prepare for another thread to schedule the timer in the future
+			callback()
 		}
 
 	}

@@ -9,36 +9,93 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
+import me.hufman.androidautoidrive.MutableObservable
+import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
+import me.hufman.androidautoidrive.music.controllers.GenericMusicAppController
+import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 class MusicSessions(val context: Context) {
 	companion object {
 		const val TAG = "MusicSessions"
+
+		private fun isControllable(actions: Long): Boolean {
+			return ((actions and ACTION_PLAY) or (actions and ACTION_PAUSE) or (actions and ACTION_PLAY_FROM_SEARCH)) > 0
+		}
+	}
+
+	inner class Connector(val context: Context): MusicAppController.Connector {
+		override fun connect(appInfo: MusicAppInfo): Observable<GenericMusicAppController> {
+			val pendingController = MutableObservable<GenericMusicAppController>()
+			sessionControllers[appInfo.packageName] = pendingController
+			val session = connectApp(appInfo)
+			if (session != null) {
+				pendingController.value = GenericMusicAppController(context, session, null)
+			} else {
+				pendingController.value = null
+			}
+
+			// set up MediaSession listener
+			try {
+				mediaManager.removeOnActiveSessionsChangedListener(sessionListener)
+				mediaManager.addOnActiveSessionsChangedListener(sessionListener, ComponentName(context, NotificationListenerServiceImpl::class.java))
+			} catch (e: SecurityException) {
+				// user hasn't granted Notification Access yet
+				Log.w(TAG, "Can't connect to ${appInfo.name}, user hasn't granted Notification Access yet")
+			}
+
+			return pendingController
+		}
 	}
 
 	val mediaManager = context.getSystemService(MediaSessionManager::class.java)
+	val sessionControllers = ConcurrentHashMap<String, MutableObservable<GenericMusicAppController>>()
 	val sessionListener = object: MediaSessionManager.OnActiveSessionsChangedListener {
 		override fun onActiveSessionsChanged(p0: MutableList<MediaController>?) {
+			updateAppControllers()
 			sessionCallback?.run()
 		}
 	}
 	var sessionCallback: Runnable? = null
 
-	var mediaController: MediaControllerCompat? = null
-
-	fun connectApp(desiredApp: MusicAppInfo) {
+	fun connectApp(desiredApp: MusicAppInfo): MediaControllerCompat? {
 		try {
 			val sessions = mediaManager.getActiveSessions(ComponentName(context, NotificationListenerServiceImpl::class.java))
 			for (session in sessions) {
 				if (session.packageName == desiredApp.packageName) {
-					mediaController = MediaControllerCompat(context, MediaSessionCompat.Token.fromToken(session.sessionToken))
-					return
+					return MediaControllerCompat(context, MediaSessionCompat.Token.fromToken(session.sessionToken))
 				}
 			}
 		} catch (e: SecurityException) {
 			// user hasn't granted Notification Access yet
 			Log.w(TAG, "Can't connect to ${desiredApp.name}, user hasn't granted Notification Access yet")
+		}
+		return null
+	}
+
+	/**
+	 * Iterate through the music sessions and any MusicAppControllers and update connected status
+	 */
+	private fun updateAppControllers() {
+		try {
+			val sessions = mediaManager.getActiveSessions(ComponentName(context, NotificationListenerServiceImpl::class.java))
+			val sessionsByName = sessions.filter {
+				isControllable(it.playbackState?.actions ?: 0)
+			}.groupBy { it.packageName }
+
+			sessionControllers.forEach {
+				val session = sessionsByName[it.key]?.firstOrNull()
+				if (session != null && it.value.value == null) {
+					val mediaController = MediaControllerCompat(context, MediaSessionCompat.Token.fromToken(session.sessionToken))
+					it.value.value = GenericMusicAppController(context, mediaController, null)
+				} else {
+					it.value.value = null
+				}
+			}
+		} catch (e: SecurityException) {
+			// user hasn't granted Notification Access yet
 		}
 	}
 
@@ -46,8 +103,7 @@ class MusicSessions(val context: Context) {
 		return try {
 			val sessions = mediaManager.getActiveSessions(ComponentName(context, NotificationListenerServiceImpl::class.java))
 			return sessions.filter {
-				val actions = it.playbackState?.actions ?: 0
-				actions and (ACTION_PLAY or ACTION_PAUSE) > 0
+				isControllable(it.playbackState?.actions ?: 0)
 			}.map {
 				MusicAppInfo.getInstance(context, it.packageName, null).apply {
 					this.controllable = true
@@ -69,8 +125,8 @@ class MusicSessions(val context: Context) {
 			for (session in sessions) {
 				val actions = session.playbackState?.actions ?: 0
 				val state = session.playbackState?.state ?: 0
-				if (actions and (ACTION_PLAY or ACTION_PAUSE) > 0 && state == STATE_PLAYING) {
-					Log.i(TAG, "Returning mediaSession ${session.packageName}")
+				if (isControllable(actions) && state == STATE_PLAYING) {
+					Log.i(TAG, "Found mediaSession for ${session.packageName}")
 					return MusicAppInfo.getInstance(context, session.packageName, null).apply {
 						this.controllable = true
 					}

@@ -4,6 +4,7 @@ Android Auto for IDrive
 [![Build Status](https://travis-ci.org/hufman/AndroidAutoIdrive.svg?branch=master)](https://travis-ci.org/hufman/AndroidAutoIdrive)
 [![Coverage Status](https://coveralls.io/repos/github/hufman/AndroidAutoIdrive/badge.svg?branch=master)](https://coveralls.io/github/hufman/AndroidAutoIdrive?branch=master)
 [![Release Download](https://img.shields.io/github/release/hufman/AndroidAutoIdrive.svg)](https://github.com/hufman/AndroidAutoIdrive/releases/latest)
+[![Gitter](https://badges.gitter.im/AndroidAutoIdrive/community.svg)](https://gitter.im/AndroidAutoIdrive/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [<img title="Buy me a coffee" src="https://cdn.buymeacoffee.com/buttons/default-blue.png" width="85" height="20" />](https://www.buymeacoffee.com/q4JVoxz)
 
 The BMW/Mini IDrive does not offer native Android Auto integration, but does provide a much more powerful Connected Apps connectivity option, which offers many exciting integration points into the car. This project is an effort to implement most of the features of Android Auto as unofficial BMW/Mini Connected Apps.
@@ -66,7 +67,6 @@ Implemented Features
         - [AntennaPod](https://play.google.com/store/apps/details?id=de.danoeh.antennapod)
         - [The Bob & Tom Show](https://play.google.com/store/apps/details?id=com.radio.station.BOB.TOM)
         - [Castbox](https://play.google.com/store/apps/details?id=fm.castbox.audiobook.radio.podcast)
-        - [Dash Radio](https://play.google.com/store/apps/details?id=com.dashradio.dash)
         - [iVooz](https://play.google.com/store/apps/details?id=com.ivoox.app)
         - [Player FM](https://play.google.com/store/apps/details?id=fm.player)
         - [Voice Audiobook Player](https://play.google.com/store/apps/details?id=de.ph1b.audiobook)
@@ -82,11 +82,13 @@ Implemented Features
         - [VLC For Android](https://play.google.com/store/apps/details?id=org.videolan.vlc)
       - Radio
         - [AP News](https://play.google.com/store/apps/details?id=mnn.Android)
+        - [Dash Radio](https://play.google.com/store/apps/details?id=com.dashradio.dash)
         - [Energy Radio](https://play.google.com/store/apps/details?id=radioenergy.app)
         - [Nederland.FM](https://play.google.com/store/apps/details?id=nl.nibbixsoft.app)
         - [NHL](https://play.google.com/store/apps/details?id=com.nhl.gc1112.free)
         - [ntv Nachrichten](https://play.google.com/store/apps/details?id=de.lineas.lit.ntv.android)
         - [NYTimes](https://play.google.com/store/apps/details?id=com.nytimes.android)
+        - [Radio FM](https://play.google.com/store/apps/details?id=com.radio.fmradio)
         - [Scanner Radio](https://play.google.com/store/apps/details?id=com.scannerradio)
         - [SiriusXM](https://play.google.com/store/apps/details?id=com.sirius)
         - [Versuz Radio](https://play.google.com/store/apps/details?id=com.versuzradio)
@@ -128,7 +130,7 @@ This project replicates some of the features of Android Auto using the IDrive in
 Due to the unofficial reverse-engineered nature of this project, it has some limitations:
 
   - The main menu entries' icons and text can't be altered, and so do not look exactly correct
-  - The individual music source icons are not fully functional, but they do switch the active music source
+  - The individual music source icons may not be fully functional, but they do switch the active music source
   - Android Oreo disabled Android Open Accessory Protocol 2 audio output, which is required to play audio over the app's USB connection in model years 2014-2017. Please disable the app option "Request Audio Focus" and use Bluetooth audio
   - Some Android Auto music apps enforce a whitelist of clients, preventing this app from launching them or browsing their libraries. However, once they are running, they can be controlled. For example, these popular music apps can not be launched, they must be started manually:
     - Amazon Music
@@ -144,6 +146,7 @@ Due to the unofficial reverse-engineered nature of this project, it has some lim
     - Scribd
     - Smart Audiobook Player
     - YouTube Music
+  - Recent versions of Spotify block the standard Android MediaBrowserService connection, which is needed for the Search feature. Please downgrade to [version 8.4.96.953](https://www.apkhere.com/down/com.spotify.music_8.4.96.953_free) for full functionality.
 
 Requirements
 ------------
@@ -160,8 +163,15 @@ Build Instructions
 ------------------
 
   - (Optional) Add a [Google Maps API key](https://developers.google.com/maps/documentation/android-sdk/signup) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_GmapsApiKey`. This key should have access to Maps SDK for Android, Places API, and Directions API.
+  - (Optional) Add a [Spotify API Client ID](https://developer.spotify.com/dashboard/) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_SpotifyApiKey`. It needs a Redirect URI set to `me.hufman.androidautoidrive://spotify_callback`, but no other settings are needed.
   - Check out the project in Android Studio, then `Build > Make Project`
-  - From the commandline, with an Android build environment set up, `./gradlew assemble` should work too
+  - Commandline builds should work too:
+    - Make sure Android SDK Build Tools version 28 is installed
+    - `git clone https://github.com/hufman/AndroidAutoIdrive.git && cd AndroidAutoIdrive`
+    - `git submodule init && git submodule update`
+    - `./gradlew assembleNomapNonalyticsDebug`  This step will fail without the Build Tools installed
+
+The built APKs should be found in `app/build/outputs/apk/*/*/*.apk`
 
 Besides building the entire project, Android Studio also offers a convenient "Run app" method to build and directly install to a connected phone. Use the Build Variants panel to select a specific version to install.
 

@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Icon
 
 class CarNotification(val packageName: String, val key: String, val icon: Icon, val isClearable: Boolean, val actions: Array<Notification.Action>,
-                      val title: String?, val summary: String?, val text: String?, val picture: Bitmap?, val pictureUri: String?) {
+                      val title: String, val text: String, val picture: Bitmap?, val pictureUri: String?) {
 	override fun toString(): String {
 		return "CarNotification(key='$key', title=$title)"
 	}
@@ -19,7 +19,6 @@ class CarNotification(val packageName: String, val key: String, val icon: Icon, 
 		if (packageName != other.packageName) return false
 		if (key != other.key) return false
 		if (title != other.title) return false
-		if (summary != other.summary) return false
 		if (text != other.text) return false
 
 		return true
@@ -40,9 +39,8 @@ class CarNotification(val packageName: String, val key: String, val icon: Icon, 
 	override fun hashCode(): Int {
 		var result = packageName.hashCode()
 		result = 31 * result + key.hashCode()
-		result = 31 * result + (title?.hashCode() ?: 0)
-		result = 31 * result + (summary?.hashCode() ?: 0)
-		result = 31 * result + (text?.hashCode() ?: 0)
+		result = 31 * result + title.hashCode()
+		result = 31 * result + text.hashCode()
 		return result
 	}
 }

@@ -19,7 +19,8 @@ import me.hufman.androidautoidrive.phoneui.SetupActivity
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import java.lang.IllegalArgumentException
 
 class MainService: Service() {
 	companion object {
@@ -34,15 +35,16 @@ class MainService: Service() {
 
 	var foregroundNotification: Notification? = null
 
+	val securityAccess = SecurityAccess.getInstance(this)
 	val idriveConnectionListener = IDriveConnectionListener()   // start listening to car connection, if the AndroidManifest listener didn't start
 	val carProberThread by lazy {
-		CarProber(
+		CarProber(securityAccess,
 			CarAppAssetManager(this, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
 			CarAppAssetManager(this, "smartthings").getAppCertificateRaw("mini")!!.readBytes()
 		)
 	}
 
-	val securityServiceThread = SecurityServiceThread(this)
+	val securityServiceThread = SecurityServiceThread(securityAccess)
 
 	var threadCapabilities: CarThread? = null
 	var carappCapabilities: CarInformationDiscovery? = null
@@ -50,9 +52,9 @@ class MainService: Service() {
 	var threadNotifications: CarThread? = null
 	var carappNotifications: PhoneNotifications? = null
 
-	var mapService = MapService(this)
+	var mapService = MapService(this, securityAccess)
 
-	var musicService = MusicService(this)
+	var musicService = MusicService(this, securityAccess)
 
 	var threadAssistant: CarThread? = null
 	var carappAssistant: AssistantApp? = null
@@ -77,7 +79,11 @@ class MainService: Service() {
 	override fun onDestroy() {
 		handleActionStop()
 		// one time things
-		idriveConnectionListener.unsubscribe(this)
+		try {
+			idriveConnectionListener.unsubscribe(this)
+		} catch (e: IllegalArgumentException) {
+			// never started?
+		}
 		carProberThread.quitSafely()
 		super.onDestroy()
 	}
@@ -88,17 +94,18 @@ class MainService: Service() {
 	private fun handleActionStart() {
 		Log.i(TAG, "Starting up service")
 		createNotificationChannel()
+		// set up connection listeners
+		securityAccess.listener = Runnable {
+			combinedCallback()
+		}
+		IDriveConnectionListener.callback = Runnable {
+			combinedCallback()
+		}
 		// try connecting to the security service
 		if (!securityServiceThread.isAlive) {
 			securityServiceThread.start()
 		}
 		securityServiceThread.connect()
-		SecurityService.subscribe(Runnable {
-			combinedCallback()
-		})
-		IDriveConnectionListener.callback = Runnable {
-			combinedCallback()
-		}
 		// start up car connection listener
 		announceCarAPI()
 		idriveConnectionListener.subscribe(this)
@@ -159,7 +166,7 @@ class MainService: Service() {
 
 	fun combinedCallback() {
 		synchronized(MainService::class.java) {
-			if (IDriveConnectionListener.isConnected && SecurityService.isConnected()) {
+			if (IDriveConnectionListener.isConnected && securityAccess.isConnected()) {
 				var startAny = false
 
 				AppSettings.loadSettings(this)
@@ -189,7 +196,7 @@ class MainService: Service() {
 					stopSelf()
 				}
 			} else {
-				Log.d(TAG, "Not fully connected: IDrive:${IDriveConnectionListener.isConnected} SecurityService:${SecurityService.isConnected()}")
+				Log.d(TAG, "Not fully connected: IDrive:${IDriveConnectionListener.isConnected} SecurityService:${securityAccess.isConnected()}")
 
 				stopCarApps()
 			}
@@ -203,7 +210,9 @@ class MainService: Service() {
 				threadCapabilities = CarThread("Capabilities") {
 					Log.i(TAG, "Starting to discover car capabilities")
 
-					carappCapabilities = CarInformationDiscovery(CarAppAssetManager(this, "smartthings"), object: CarInformationDiscoveryListener {
+					carappCapabilities = CarInformationDiscovery(securityAccess,
+							CarAppAssetManager(this, "smartthings"),
+							object: CarInformationDiscoveryListener {
 						override fun onCapabilities(capabilities: Map<String, String?>) {
 							synchronized(DebugStatus.carCapabilities) {
 								DebugStatus.carCapabilities.clear()
@@ -234,11 +243,19 @@ class MainService: Service() {
 				if (threadNotifications == null) {
 					threadNotifications = CarThread("Notifications") {
 						Log.i(TAG, "Starting notifications app")
-						carappNotifications = PhoneNotifications(CarAppAssetManager(this, "basecoreOnlineServices"),
+						val handler = threadNotifications?.handler
+						if (handler == null) {
+							Log.e(TAG, "CarThread Handler is null?")
+						}
+						carappNotifications = PhoneNotifications(securityAccess,
+								CarAppAssetManager(this, "basecoreOnlineServices"),
 								PhoneAppResourcesAndroid(this),
 								GraphicsHelpersAndroid(),
-								CarNotificationControllerIntent(this))
-						carappNotifications?.onCreate(this, threadNotifications?.handler)
+								CarNotificationControllerIntent(this),
+								MutableAppSettings(this, handler))
+						if (handler != null) {
+							carappNotifications?.onCreate(this, handler)
+						}
 						// request an initial draw
 						sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
 					}
@@ -283,7 +300,8 @@ class MainService: Service() {
 				threadAssistant = CarThread("Assistant") {
 					Log.i(TAG, "Starting to discover car capabilities")
 
-					carappAssistant = AssistantApp(CarAppAssetManager(this, "basecoreOnlineServices"),
+					carappAssistant = AssistantApp(securityAccess,
+							CarAppAssetManager(this, "basecoreOnlineServices"),
 							AssistantControllerAndroid(this, PhoneAppResourcesAndroid(this)),
 							GraphicsHelpersAndroid())
 					carappAssistant?.onCreate()
@@ -317,7 +335,7 @@ class MainService: Service() {
 		Log.i(TAG, "Shutting down service")
 		synchronized(MainService::class.java) {
 			stopCarApps()
-			SecurityService.listener = Runnable {}
+			securityAccess.listener = Runnable {}
 			securityServiceThread.disconnect()
 		}
 	}

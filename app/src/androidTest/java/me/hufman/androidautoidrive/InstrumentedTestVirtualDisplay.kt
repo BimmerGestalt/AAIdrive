@@ -14,6 +14,7 @@ import android.widget.ImageView
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
+import me.hufman.androidautoidrive.MapService.Companion.createVirtualDisplay
 import me.hufman.androidautoidrive.carapp.maps.VirtualDisplayScreenCapture
 import org.awaitility.Awaitility.await
 
@@ -31,8 +32,9 @@ class InstrumentedTestVirtualDisplay {
 		// Context of the app under test.
 		val appContext = InstrumentationRegistry.getTargetContext()
 		Looper.prepare()
-		val testCapture = VirtualDisplayScreenCapture(appContext)
-		val projection = MockProjection(appContext, testCapture.virtualDisplay.display)
+		val testCapture = VirtualDisplayScreenCapture.build()
+		val virtualDisplay = createVirtualDisplay(appContext, testCapture.imageCapture)
+		val projection = MockProjection(appContext, virtualDisplay.display)
 		testCapture.registerImageListener(frameListener)
 		projection.show()
 
@@ -41,6 +43,7 @@ class InstrumentedTestVirtualDisplay {
 		}
 
 		testCapture.onDestroy()
+		virtualDisplay.release()
 	}
 }
 

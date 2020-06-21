@@ -30,6 +30,8 @@
         </activity>
         <activity android:name=".phoneui.MusicActivity">
         </activity>
+        <activity android:name=".phoneui.MusicPlayerActivity">
+        </activity>
         <activity android:name=".phoneui.ConfigureNotificationsActivity"
             android:label="@string/message_notifications">
         </activity>
@@ -68,5 +70,9 @@
             android:authorities="me.hufman.androidautoidrive.provider"
             android:grantUriPermissions="true" />
 
+
+        <meta-data
+            android:name="com.spotify.music.API_KEY"
+            android:value="${spotify_api_key}" />
     </application>
 </manifest>

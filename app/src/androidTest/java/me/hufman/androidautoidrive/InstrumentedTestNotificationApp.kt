@@ -28,16 +28,6 @@ import org.junit.Before
 @RunWith(AndroidJUnit4::class)
 class InstrumentedTestNotificationApp {
 
-	@Before
-	fun setUp() {
-		/* NotificationListenerServiceImpl only sends announcements if the car is connected */
-		IDriveConnectionListener.setConnection("test", "127.0.0.1", 7000)
-	}
-	@After
-	fun tearDown() {
-		IDriveConnectionListener.reset()
-	}
-
 	@Test
 	fun testNotificationUpdate() {
 		/** Test that a new notification pokes the car */
@@ -53,7 +43,7 @@ class InstrumentedTestNotificationApp {
 		// prepare a notification
 		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)
 		val notification = CarNotification(appContext.packageName, "test", icon, true, arrayOf(),
-				"Test", "Test Summary", "Test Text", null, null)
+				"Test", "Test Text", null, null)
 
 		// send an update from the phone
 		val controller = NotificationListenerServiceImpl.NotificationUpdater(appContext)
@@ -80,7 +70,7 @@ class InstrumentedTestNotificationApp {
 		// prepare a notification
 		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)
 		val notification = CarNotification(appContext.packageName, "test", icon, true, arrayOf(),
-				"Test", "Test Summary", "Test Text", null, null)
+				"Test", "Test Text", null, null)
 
 		val carController = CarNotificationControllerIntent(appContext)
 		// send an interaction from the car

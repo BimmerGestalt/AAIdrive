@@ -9,7 +9,7 @@ import me.hufman.androidautoidrive.carapp.assistant.AssistantAppInfo
 import me.hufman.androidautoidrive.carapp.assistant.AssistantController
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.ByteArrayInputStream
@@ -17,6 +17,9 @@ import java.io.ByteArrayInputStream
 class TestAssistantApp {
 	val assistantController = mock<AssistantController>()
 
+	val securityAccess = mock<SecurityAccess> {
+		on { signChallenge(any(), any() )} doReturn ByteArray(512)
+	}
 	val carAppResources = mock<CarAppResources> {
 		on { getAppCertificate() } doReturn ByteArrayInputStream(ByteArray(0))
 		on { getUiDescription() } doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_onlineservices_v2.xml") }
@@ -36,18 +39,12 @@ class TestAssistantApp {
 		on { compress(isA<Bitmap>(), any(), any(), any(), any()) } doAnswer { "Bitmap{${it.arguments[1]}x${it.arguments[2]}}".toByteArray() }
 	}
 
-	init {
-		SecurityService.activeSecurityConnections["mock"] = mock {
-			on { signChallenge(any(), any() )} doReturn ByteArray(512)
-		}
-	}
-
 	@Test
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 
-		val app = AssistantApp(carAppResources, assistantController, graphicsHelpers)
+		val app = AssistantApp(securityAccess, carAppResources, assistantController, graphicsHelpers)
 		app.onCreate()
 
 		// verify the right icons were added
@@ -73,7 +70,7 @@ class TestAssistantApp {
 				assistant
 		))
 
-		val app = AssistantApp(carAppResources, assistantController, graphicsHelpers)
+		val app = AssistantApp(securityAccess, carAppResources, assistantController, graphicsHelpers)
 		app.onCreate()
 
 		assertEquals(1, mockServer.amApps.size)

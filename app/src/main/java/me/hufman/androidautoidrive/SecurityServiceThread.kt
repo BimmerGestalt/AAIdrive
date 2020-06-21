@@ -1,25 +1,24 @@
 package me.hufman.androidautoidrive
 
-import android.content.Context
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 
-class SecurityServiceThread(val context: Context): HandlerThread("SecurityServiceThread") {
+class SecurityServiceThread(val securityAccess: SecurityAccess): HandlerThread("SecurityServiceThread") {
 	override fun onLooperPrepared() {
-		SecurityService.connect(context)
+		securityAccess.connect()
 	}
 
 	fun connect() {
 		Handler(Looper.myLooper()).post {
-			SecurityService.connect(context)
+			securityAccess.connect()
 		}
 	}
 
 	fun disconnect() {
 		Handler(Looper.myLooper()).post {
-			SecurityService.disconnect()
+			securityAccess.disconnect()
 			quitSafely()
 		}
 	}

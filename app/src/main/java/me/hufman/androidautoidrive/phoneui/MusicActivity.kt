@@ -1,103 +1,158 @@
 package me.hufman.androidautoidrive.phoneui
 
-import android.arch.lifecycle.ViewModelProviders
-import android.graphics.BitmapFactory
+import android.content.Intent
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
+import android.provider.Settings
 import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_music.*
-import me.hufman.androidautoidrive.CarAppAssetManager
+import kotlinx.android.synthetic.main.activity_music.btnGrantSessions
+import kotlinx.android.synthetic.main.activity_music.listMusicApps
+import kotlinx.android.synthetic.main.activity_music.paneGrantSessions
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.Utils
 import me.hufman.androidautoidrive.music.MusicAppInfo
-import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 
-class MusicActivity: AppCompatActivity() {
+class MusicActivity : AppCompatActivity() {
 
-	companion object {
-		const val TAG = "MusicActivity"
+	val handler = Handler()
+
+	val displayedApps = ArrayList<MusicAppInfo>()
+	val appDiscoveryThread = AppDiscoveryThread(this) { apps ->
+		handler.post {
+			displayedApps.clear()
+			displayedApps.addAll(apps)
+			listMusicApps.invalidateViews() // redraw the app list
+		}
 	}
-
-	var musicApp: MusicAppInfo? = null
-	var musicController: MusicController? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-
 		setContentView(R.layout.activity_music)
 
-		val musicApp = UIState.selectedMusicApp ?: return
-		this.musicApp = musicApp
-		txtAppName.text = musicApp.name
-		imgAppIcon.setImageDrawable(musicApp.icon)
-
-		// load the viewmodel
-		val viewModel = ViewModelProviders.of(this).get(MusicActivityModel::class.java)
-		viewModel.musicController = viewModel.musicController ?: MusicController(applicationContext, Handler(this.mainLooper))
-		viewModel.musicController?.connectApp(musicApp)
-		musicController = viewModel.musicController
-
-		// load the icons
-		val appAssets = CarAppAssetManager(this, "multimedia")
-		val images = Utils.loadZipfile(appAssets.getImagesDB("common"))
-		for (id in listOf("150.png", "148.png", "152.png", "147.png", "155.png")) {
-			viewModel.icons[id] = BitmapFactory.decodeByteArray(images[id], 0, images[id]?.size ?: 0)
+		swAudioContext.setOnCheckedChangeListener { buttonView, isChecked ->
+			AppSettings.saveSetting(this, AppSettings.KEYS.AUDIO_FORCE_CONTEXT, isChecked.toString())
+		}
+		btnGrantSessions.setOnClickListener {
+			promptNotificationPermission()
 		}
 
-		// set up the paging
-		pgrMusic.adapter = MusicActivityPagerAdapter(supportFragmentManager)
-		pgrMusic.offscreenPageLimit = 2
-		tabMusic.setupWithViewPager(pgrMusic)
-	}
+		// build list of discovered music apps
+		appDiscoveryThread.start()
 
-	override fun onDestroy() {
-		super.onDestroy()
-		musicController?.disconnectApp(pause=false)
-	}
-
-	fun pushBrowse(directory: MusicMetadata?) {
-		val container = (pgrMusic.adapter as MusicActivityPagerAdapter).getItem(1) as MusicBrowseFragment
-		container.replaceFragment(MusicBrowsePageFragment.newInstance(directory), true)
-	}
-
-	fun showNowPlaying() {
-		pgrMusic.currentItem = 0
-	}
-
-	override fun onBackPressed() {
-		if (pgrMusic.currentItem == 0) {
-			// pass through default behavior, to close the Activity
-			super.onBackPressed()
-		}
-		if (pgrMusic.currentItem == 1) {
-			val container = (pgrMusic.adapter as MusicActivityPagerAdapter).getItem(1) as MusicBrowseFragment
-			val popped = container.onBackPressed()
-			if (!popped) {
-				pgrMusic.currentItem = 0
+		listMusicApps.setOnItemClickListener { adapterView, view, i, l ->
+			val appInfo = adapterView.adapter.getItem(i) as? MusicAppInfo
+			if (appInfo != null) {
+				UIState.selectedMusicApp = appInfo
+				val intent = Intent(this, MusicPlayerActivity::class.java)
+				startActivity(intent)
 			}
 		}
-	}
-}
+		listMusicApps.adapter = object: ArrayAdapter<MusicAppInfo>(this, R.layout.musicapp_listitem, displayedApps) {
+			val animationLoopCallback = object: Animatable2.AnimationCallback() {
+				override fun onAnimationEnd(drawable: Drawable?) {
+					handler.post { (drawable as AnimatedVectorDrawable).start() }
+				}
+			}
+			val equalizerStatic = resources.getDrawable(R.drawable.ic_equalizer_black_24dp, null)
+			val equalizerAnimated = (resources.getDrawable(R.drawable.ic_dancing_equalizer, null) as AnimatedVectorDrawable).apply {
+				this.registerAnimationCallback(animationLoopCallback)
+			}
 
-class MusicActivityPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
-	val tabs = LinkedHashMap<String, Fragment>(2).apply {
-		this["Now Playing"] = MusicNowPlayingFragment()
-		this["Browse"] = MusicBrowseFragment.newInstance(MusicBrowsePageFragment.newInstance(null))
+			override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+				val appInfo = getItem(position)
+				val layout = convertView ?: layoutInflater.inflate(R.layout.musicapp_listitem, parent,false)
+				return if (appInfo != null) {
+					layout.findViewById<ImageView>(R.id.imgMusicAppIcon).setImageDrawable(appInfo.icon)
+					layout.findViewById<TextView>(R.id.txtMusicAppName).setText(appInfo.name)
+
+					if (appInfo.packageName == appDiscoveryThread.discovery?.musicSessions?.getPlayingApp()?.packageName) {
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).setImageDrawable(equalizerAnimated)
+						equalizerAnimated.start()
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = View.VISIBLE
+					} else {
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).setImageDrawable(equalizerStatic)
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = View.GONE
+					}
+					layout.findViewById<ImageView>(R.id.imgControllable).visibility = if (appInfo.controllable && !appInfo.connectable) View.VISIBLE else View.GONE
+					layout.findViewById<ImageView>(R.id.imgConnectable).visibility = if (appInfo.connectable) View.VISIBLE else View.GONE
+					layout.findViewById<ImageView>(R.id.imgBrowseable).visibility = if (appInfo.browseable) View.VISIBLE else View.GONE
+					layout.findViewById<ImageView>(R.id.imgSearchable).visibility = if (appInfo.searchable || appInfo.playsearchable) View.VISIBLE else View.GONE
+					layout.findViewById<ImageView>(R.id.imgBlock).visibility = if (appInfo.controllable || appInfo.connectable) View.GONE else View.VISIBLE
+					val features = listOfNotNull(
+							if (appInfo.controllable && !appInfo.connectable) getString(R.string.musicAppControllable) else null,
+							if (appInfo.connectable) getString(R.string.musicAppConnectable) else null,
+							if (appInfo.browseable) getString(R.string.musicAppBrowseable) else null,
+							if (appInfo.searchable || appInfo.playsearchable) getString(R.string.musicAppSearchable) else null,
+							if (appInfo.controllable || appInfo.connectable) null else getString(R.string.musicAppUnavailable)
+					).joinToString(", ")
+					layout.findViewById<TextView>(R.id.txtMusicAppFeatures).text = features
+					layout.findViewById<LinearLayout>(R.id.paneMusicAppFeatures).setOnClickListener {
+						val txtFeatures = layout.findViewById<TextView>(R.id.txtMusicAppFeatures)
+						txtFeatures.visibility = if (txtFeatures.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+					}
+
+					// show app-specific notes
+					val notes = layout.findViewById<TextView>(R.id.txtMusicAppNotes)
+					if (appInfo.packageName == "com.spotify.music" && appInfo.probed && !appInfo.connectable) {
+						notes.text = if (SpotifyAppController.hasSupport(context)) {
+							getString(R.string.musicAppNotes_unauthorizedSpotify)
+						} else {
+							getString(R.string.musicAppNotes_oldSpotify)
+						}
+						notes.visibility = View.VISIBLE
+						notes.setOnClickListener {
+							SpotifyDowngradeDialog().show(supportFragmentManager, "notes")
+						}
+					} else {
+						notes.visibility = View.GONE
+						notes.setOnClickListener(null)
+					}
+
+					layout
+				} else {
+					layout.findViewById<TextView>(R.id.txtMusicAppName).setText("Error")
+					layout
+				}
+			}
+		}
+
+		listMusicAppsRefresh.setOnRefreshListener {
+			appDiscoveryThread.forceDiscovery()
+			handler.postDelayed({
+				listMusicAppsRefresh.isRefreshing = false
+			}, 2000)
+		}
 	}
 
-	override fun getCount(): Int {
-		return tabs.size
+	override fun onResume() {
+		super.onResume()
+		redraw()
 	}
 
-	override fun getPageTitle(position: Int): CharSequence? {
-		return tabs.keys.elementAt(position)
+	fun redraw() {
+		val showAdvancedSettings = AppSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
+		swAudioContext.visible = showAdvancedSettings || BuildConfig.MANUAL_AUDIO_CONTEXT
+		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT].toBoolean()
+		paneGrantSessions.visibility = if (hasNotificationPermission()) View.GONE else View.VISIBLE
 	}
 
-	override fun getItem(index: Int): Fragment {
-		return tabs.values.elementAt(index)
+	fun promptNotificationPermission() {
+		startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+	}
+
+	fun hasNotificationPermission(): Boolean {
+		return Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true
 	}
 }

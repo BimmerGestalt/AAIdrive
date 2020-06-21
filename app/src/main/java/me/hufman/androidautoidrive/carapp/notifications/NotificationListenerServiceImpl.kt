@@ -62,6 +62,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		super.onListenerConnected()
 		UIState.notificationListenerConnected = true
 		sendBroadcast(Intent(MainActivity.INTENT_REDRAW))
+
+		if (!IDriveConnectionListener.isConnected) return
 		updateNotificationList()
 	}
 
@@ -70,13 +72,9 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	}
 
 	override fun onNotificationRemoved(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
-		if (!IDriveConnectionListener.isConnected) return
 		Log.i(TAG, "Notification removed: ${sbn?.notification?.extras?.get("android.title")}")
 		super.onNotificationRemoved(sbn, rankingMap)
 		updateNotificationList()
-		if (sbn != null) {
-			NotificationsState.poppedNotifications.remove(summarizeNotification(sbn))
-		}
 	}
 
 	override fun onNotificationPosted(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
@@ -84,28 +82,25 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		if (sbn != null) {
 			dumpNotification("Notification posted", sbn)
 		}
-		val shouldPopup = shouldPopupNotification(sbn)
 		updateNotificationList()
+		val shouldPopup = shouldPopupNotification(sbn)
 		if (sbn != null && shouldPopup) {
 			controller.sendNotification(sbn)
-			NotificationsState.poppedNotifications.add(summarizeNotification(sbn))
 		}
 
 		super.onNotificationPosted(sbn, rankingMap)
 	}
 
 	fun updateNotificationList() {
-		synchronized(NotificationsState.notifications) {
-			NotificationsState.notifications.clear()
-			try {
-				NotificationsState.notifications.addAll(this.activeNotifications.filter {
-					shouldShowNotification(it)
-				}.map {
-					summarizeNotification(it)
-				})
-			} catch (e: SecurityException) {
-				Log.w(TAG, "Unable to fetch activeNotifications: $e")
+		try {
+			val current = this.activeNotifications.filter {
+				shouldShowNotification(it)
+			}.map {
+				summarizeNotification(it)
 			}
+			NotificationsState.replaceNotifications(current)
+		} catch (e: SecurityException) {
+			Log.w(TAG, "Unable to fetch activeNotifications: $e")
 		}
 		controller.sendNotificationList()
 	}
@@ -113,14 +108,12 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	open class NotificationUpdater(private val context: Context) {
 		/** Sends data from the phone NotificationListenerService to the car service */
 		open fun sendNotificationList() {
-			if (!IDriveConnectionListener.isConnected) return
 			Log.i(TAG, "Sending notification list to the car thread")
 			val intent = Intent(INTENT_UPDATE_NOTIFICATIONS)
 					.setPackage(context.packageName)
 			context.sendBroadcast(intent)
 		}
 		open fun sendNotification(notification: StatusBarNotification) {
-			if (!IDriveConnectionListener.isConnected) return
 			Log.i(TAG, "Sending new notification to the car thread")
 			val intent = Intent(INTENT_NEW_NOTIFICATION)
 					.setPackage(context.packageName)
@@ -138,9 +131,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 			try {
 				val notification = this@NotificationListenerServiceImpl.activeNotifications.find { it.key == key }
 				val intent = notification?.notification?.actions?.find { it.title == action }?.actionIntent
-				if (intent != null) {
-					intent.send()
-				}
+				intent?.send()
 			} catch (e: SecurityException) {
 				Log.w(TAG, "Unable to send action $action to notification $key: $e")
 			}
