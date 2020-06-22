@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_music.paneGrantSessions
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 

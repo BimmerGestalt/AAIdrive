@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
-	val assistantController = AssistantControllerAndroid(this, PhoneAppResourcesAndroid(this))
+	val assistantController by lazy { AssistantControllerAndroid(this, PhoneAppResourcesAndroid(this)) }
 	val displayedAssistantApps = ArrayList<AssistantAppInfo>()
 	var whenActivityStarted = 0L
 
