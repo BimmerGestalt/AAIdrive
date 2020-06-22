@@ -142,34 +142,41 @@
                 android:stretchMode="spacingWidth" />
 
             <LinearLayout
+                android:id="@+id/paneAssistant"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="4dp"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="@string/lbl_assistant" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="4dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/btnAssistantHelp"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="?android:selectableItemBackground"
-                    android:src="@android:drawable/ic_menu_help"
-                    android:visibility="gone" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="@string/lbl_assistant" />
+
+                    <ImageButton
+                        android:id="@+id/btnAssistantHelp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?android:selectableItemBackground"
+                        android:src="@android:drawable/ic_menu_help"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <me.hufman.androidautoidrive.phoneui.NestedListView
+                    android:id="@+id/listAssistantApps"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="40dp" />
             </LinearLayout>
-
-            <me.hufman.androidautoidrive.phoneui.NestedListView
-                android:id="@+id/listAssistantApps"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="40dp" />
         </LinearLayout>
 
     </ScrollView>
