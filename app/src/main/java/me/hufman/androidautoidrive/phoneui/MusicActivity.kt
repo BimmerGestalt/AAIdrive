@@ -2,6 +2,9 @@ package me.hufman.androidautoidrive.phoneui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Typeface
 import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
@@ -12,6 +15,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,9 +26,7 @@ import kotlinx.android.synthetic.main.activity_music.*
 import kotlinx.android.synthetic.main.activity_music.btnGrantSessions
 import kotlinx.android.synthetic.main.activity_music.listMusicApps
 import kotlinx.android.synthetic.main.activity_music.paneGrantSessions
-import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.BuildConfig
-import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 
@@ -33,13 +35,15 @@ class MusicActivity : AppCompatActivity() {
 	val handler = Handler()
 
 	val displayedApps = ArrayList<MusicAppInfo>()
-	val appDiscoveryThread = AppDiscoveryThread(this) { apps ->
+	val appDiscoveryThread = AppDiscoveryThread(this) { appDiscovery ->
 		handler.post {
 			displayedApps.clear()
-			displayedApps.addAll(apps)
+			displayedApps.addAll(appDiscovery.combinedApps)
 			listMusicApps.adapter?.notifyDataSetChanged() // redraw the app list
 		}
 	}
+	val appSettings by lazy { MutableAppSettings(this, handler) }
+	val hiddenApps by lazy { ListSetting(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS) }
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -57,7 +61,7 @@ class MusicActivity : AppCompatActivity() {
 
 		listMusicApps.setHasFixedSize(true)
 		listMusicApps.layoutManager = LinearLayoutManager(this)
-		listMusicApps.adapter = MusicAppListAdapter(this, handler, supportFragmentManager, displayedApps, appDiscoveryThread)
+		listMusicApps.adapter = MusicAppListAdapter(this, handler, supportFragmentManager, displayedApps, appDiscoveryThread, hiddenApps)
 
 		listMusicAppsRefresh.setOnRefreshListener {
 			appDiscoveryThread.forceDiscovery()
@@ -65,6 +69,26 @@ class MusicActivity : AppCompatActivity() {
 				listMusicAppsRefresh.isRefreshing = false
 			}, 2000)
 		}
+
+		val swipeCallback = object: ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+			override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
+				return false
+			}
+
+			override fun onSwiped(view: RecyclerView.ViewHolder, direction: Int) {
+				val musicAppInfo = (view as? MusicAppListAdapter.ViewHolder)?.appInfo
+				if (musicAppInfo != null) {
+					val previous = hiddenApps.contains(musicAppInfo.packageName)
+					if (previous) {
+						hiddenApps.remove(musicAppInfo.packageName)
+					} else {
+						hiddenApps.add(musicAppInfo.packageName)
+					}
+					listMusicApps.adapter?.notifyItemChanged(view.adapterPosition)
+				}
+			}
+		}
+		ItemTouchHelper(swipeCallback).attachToRecyclerView(listMusicApps)
 	}
 
 	override fun onResume() {
@@ -93,7 +117,7 @@ class MusicActivity : AppCompatActivity() {
 	}
 }
 
-class MusicAppListAdapter(val context: Context, val handler: Handler, val supportFragmentManager: FragmentManager, val contents: ArrayList<MusicAppInfo>, val appDiscoveryThread: AppDiscoveryThread): RecyclerView.Adapter<MusicAppListAdapter.ViewHolder>() {
+class MusicAppListAdapter(val context: Context, val handler: Handler, val supportFragmentManager: FragmentManager, val contents: ArrayList<MusicAppInfo>, val appDiscoveryThread: AppDiscoveryThread, val hiddenApps: Set<String>): RecyclerView.Adapter<MusicAppListAdapter.ViewHolder>() {
 
 	// animations for the music session
 	val animationLoopCallback = object: Animatable2.AnimationCallback() {
@@ -105,6 +129,9 @@ class MusicAppListAdapter(val context: Context, val handler: Handler, val suppor
 	val equalizerAnimated = (context.getDrawable(R.drawable.ic_dancing_equalizer) as AnimatedVectorDrawable).apply {
 		this.registerAnimationCallback(animationLoopCallback)
 	}
+	val grayscaleColorFilter = ColorMatrixColorFilter(
+			ColorMatrix().apply { setSaturation(0.0f) }
+	)
 
 	// high level handling to link a row View to a specific MusicAppInfo
 	inner class ViewHolder(val view: View): RecyclerView.ViewHolder(view), View.OnClickListener {
@@ -131,7 +158,21 @@ class MusicAppListAdapter(val context: Context, val handler: Handler, val suppor
 			if (appInfo == null) {
 				txtMusicAppName.text = "Error"
 			} else {
-				imgMusicAppIcon.setImageDrawable(appInfo.icon)
+				val icon = appInfo.icon
+				icon.mutate()
+
+				if (hiddenApps.contains(appInfo.packageName)) {
+					imgMusicAppIcon.alpha = 0.4f
+					icon.colorFilter = grayscaleColorFilter
+					txtMusicAppName.setTextColor(txtMusicAppName.textColors.withAlpha(128))
+					txtMusicAppName.setTypeface(null, Typeface.ITALIC)
+				} else {
+					imgMusicAppIcon.alpha = 1.0f
+					icon.colorFilter = null
+					txtMusicAppName.setTextColor(txtMusicAppName.textColors.withAlpha(255))
+					txtMusicAppName.setTypeface(null, Typeface.NORMAL)
+				}
+				imgMusicAppIcon.setImageDrawable(icon)
 				txtMusicAppName.text = appInfo.name
 
 				if (appInfo.packageName == appDiscoveryThread.discovery?.musicSessions?.getPlayingApp()?.packageName) {
@@ -152,7 +193,8 @@ class MusicAppListAdapter(val context: Context, val handler: Handler, val suppor
 						if (appInfo.connectable) context.getString(R.string.musicAppConnectable) else null,
 						if (appInfo.browseable) context.getString(R.string.musicAppBrowseable) else null,
 						if (appInfo.searchable || appInfo.playsearchable) context.getString(R.string.musicAppSearchable) else null,
-						if (appInfo.controllable || appInfo.connectable) null else context.getString(R.string.musicAppUnavailable)
+						if (appInfo.controllable || appInfo.connectable) null else context.getString(R.string.musicAppUnavailable),
+						if (hiddenApps.contains(appInfo.packageName)) context.getString(R.string.musicAppHidden) else null
 				).joinToString(", ")
 				txtMusicAppFeatures.text = features
 				paneMusicAppFeatures.setOnClickListener {
