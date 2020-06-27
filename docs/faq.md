@@ -22,10 +22,10 @@ What features does this app add to the car?
 : This app adds music apps from the phone as music sources in the car dashboard, to allow control of the phone's music playback including app switching and browsing. It can also optionally show phone notifications in the car dashboard, and do some basic interactions with them (such as Mark As Read, Like, and so on)
 
 Is my phone compatible?
-: This Android app has been successfully tested on Android Nougat, Oreo, and Pi. iPhone users do not need this app, because BMW supports more apps and Apple Carplay for iPhones.
+: This Android app has been successfully tested on Android Nougat, Oreo, and later. iPhone users do not need this app, because BMW supports more apps and Apple Carplay for iPhones.
 
 Is my car compatible?
-: Any model-year 2015 or later BMW or Mini with the navigation option should be compatible. As a sure test of compatibility, the official BMW or Mini Connected phone app should add a Calendar to the car's Connected Apps menu: This app uses that same protocol.
+: Any model-year 2015 or later BMW or Mini with the navigation option should be compatible. As a sure test of compatibility, the official BMW or Mini Connected phone app should add a Calendar to the car's Connected Apps menu: This app uses that same protocol. Live Cockpit, running on IDrive 7, is not compatible however.
 
 Is it safe? What is it doing to the car?
 : The phone app connects to the car and adds new menus and labels to the display, and then updates the contents of the labels in response to user input, all remotely. Nothing permanent is changed in the car, and everything disappears when the phone is disconnected from the car.
@@ -35,6 +35,9 @@ Do I really need the Connected Classic app?
 
 How does the app detect passengers in the car?
 : The car detects weight on the seat and tells the app if someone is sitting on it.
+
+Why isn't the Notification view scrollable?
+: IDrive 4 has a Speedlock feature to disable interaction with certain screens if the car is not parked, a restriction which was removed in later versions. This app tries to disable the Notification screen's Speedlock setting, but the car must first be parked for this to work. By parking the car (including engaging the Parking Brake on a stickshift vehicle), the window should become scrollable and then stay scrollable after driving off.
 
 Can you add support for this other music app?
 : This app uses the standard Android MediaBrowser api to interact with music apps. It seems that some apps enforce a whitelist of which apps are allowed to connect and control its music, and the authors of these apps have refused previous requests to alter their whitelists. Please reach out to the music app author to grant an exception for this app. The app gained support (in version 1.2) to control any running music app, but can not start them with this whitelist in place.
