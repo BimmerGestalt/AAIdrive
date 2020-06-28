@@ -88,7 +88,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 		initWidgets()
 
 		musicAppDiscovery.listener = Runnable {
-			avContext.updateApps(musicAppDiscovery.validApps)
+			avContext.updateApps(musicAppDiscovery.connectableApps)
 			// redraw the app list
 			if (appListViewVisible) {
 				appSwitcherView.redraw()

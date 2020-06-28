@@ -4,10 +4,9 @@ import android.content.Context
 import android.os.Handler
 import android.os.HandlerThread
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
-import me.hufman.androidautoidrive.music.MusicAppInfo
 
 
-class AppDiscoveryThread(val context: Context, val callback: (List<MusicAppInfo>) -> Unit): HandlerThread("MusicAppDiscovery UI") {
+class AppDiscoveryThread(val context: Context, val callback: (MusicAppDiscovery) -> Unit): HandlerThread("MusicAppDiscovery UI") {
 	private var handler: Handler? = null
 	var discovery: MusicAppDiscovery? = null
 		private set
@@ -25,9 +24,9 @@ class AppDiscoveryThread(val context: Context, val callback: (List<MusicAppInfo>
 	}
 
 	private val redrawRunnable = Runnable {
-		val apps = discovery?.combinedApps
-		if (apps != null) {
-			callback(apps)
+		val discovery = discovery
+		if (discovery != null) {
+			callback(discovery)
 		}
 	}
 

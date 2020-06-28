@@ -23,7 +23,8 @@ object AppSettings {
 		AUDIO_SUPPORTS_USB("Audio_Supports_USB", (Build.VERSION.SDK_INT < Build.VERSION_CODES.O).toString(), "The phone is old enough to support USB accessory audio"),
 		AUDIO_FORCE_CONTEXT("Audio_Force_Context", "false", "Force audio context"),
 		AUDIO_DESIRED_APP("Audio_Desired_App", "", "Last music app that was playing"),
-		SHOW_ADVANCED_SETTINGS("Advanced_Settings", "false", "Show advanced settings")
+		SHOW_ADVANCED_SETTINGS("Advanced_Settings", "false", "Show advanced settings"),
+		HIDDEN_MUSIC_APPS("Hidden_Music_Apps", "com.android.bluetooth,com.clearchannel.iheartradio.connect,com.google.android.googlequicksearchbox,com.google.android.youtube,com.vanced.android.youtube", "List of music apps to hide from the app list")
 	}
 
 	private val loadedSettings = HashMap<KEYS, String>()
@@ -110,5 +111,71 @@ class MutableAppSettings(val context: Context, val handler: Handler? = null) {
 	}
 	operator fun set(key: AppSettings.KEYS, value: String) {
 		this.saveSetting(key, value)
+	}
+}
+
+/**
+ * A set that is backed by a comma-separated string in AppSettings
+ */
+class ListSetting(val appSettings: MutableAppSettings, val key: AppSettings.KEYS): MutableSet<String> {
+	fun getAll(): MutableSet<String> {
+		return appSettings[key].split(",").toMutableSet()
+	}
+	fun setAll(values: Set<String>) {
+		val newSetting = values.joinToString(",")
+		if (appSettings[key] != newSetting) {
+			appSettings[key] = newSetting
+		}
+	}
+	inline fun <K> withSet(callback: MutableSet<String>.() -> K): K {
+		val values = getAll()
+		val response = callback(values)
+		setAll(values)
+		return response
+	}
+
+	override fun add(element: String): Boolean = withSet {
+		add(element)
+	}
+
+	override fun addAll(elements: Collection<String>): Boolean = withSet {
+		addAll(elements)
+	}
+
+	override fun clear() = withSet {
+		clear()
+	}
+
+	override fun iterator(): MutableIterator<String> = withSet {
+		iterator()
+	}
+
+	override fun remove(element: String): Boolean = withSet {
+		remove(element)
+	}
+
+	override fun removeAll(elements: Collection<String>): Boolean = withSet {
+		removeAll(elements)
+	}
+
+	override fun retainAll(elements: Collection<String>): Boolean = withSet {
+		retainAll(elements)
+	}
+
+	override val size: Int
+		get() = withSet {
+			size
+		}
+
+	override fun contains(element: String): Boolean = withSet {
+		contains(element)
+	}
+
+	override fun containsAll(elements: Collection<String>): Boolean = withSet {
+		containsAll(elements)
+	}
+
+	override fun isEmpty(): Boolean = withSet {
+		isEmpty()
 	}
 }

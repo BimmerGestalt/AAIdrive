@@ -8,6 +8,9 @@ import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import me.hufman.androidautoidrive.Analytics
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.ListSetting
+import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import org.json.JSONArray
@@ -24,10 +27,26 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 
 	val TAG = "MusicAppDiscovery"
 
+	val appSettings = MutableAppSettings(context, handler)
+	val hiddenApps = ListSetting(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS)
+
 	private val browseApps: MutableList<MusicAppInfo> = LinkedList()
 	val combinedApps: MutableList<MusicAppInfo> = Collections.synchronizedList(LinkedList())
+	// which apps should show up as currently controllable
+	// shows all MediaBrowserService and MediaSession apps, unless they are hidden by user
+	// also always shows the currently-playing app
 	val validApps
-		get() = combinedApps.filter {it.connectable || it.controllable}
+		get() = combinedApps.filter {
+			(it.connectable && !hiddenApps.contains(it.packageName)) ||
+			(it.controllable && !hiddenApps.contains(it.packageName)) ||
+			musicSessions.getPlayingApp()?.packageName == it.packageName
+		}
+	// which apps should show up in the car's Media menu
+	// these app entries can't be removed once they are created
+	val connectableApps: List<MusicAppInfo>
+		get() = combinedApps.filter {
+			it.connectable && !hiddenApps.contains(it.packageName)
+		}
 
 	private val activeConnections = HashMap<MusicAppInfo, CombinedMusicAppController>()
 	var listener: Runnable? = null
@@ -128,6 +147,11 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 		// load up music session info, and register for updates
 		addSessionApps()
 		musicSessions.registerCallback(Runnable { addSessionApps() })
+
+		// watch for Hidden Apps updates
+		appSettings.callback = {
+			listener?.run()
+		}
 	}
 
 	/**
@@ -186,6 +210,8 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 			disconnectApp(app)
 		}
 		musicSessions.unregisterCallback()
+
+		appSettings.callback = null
 	}
 
 	private fun disconnectApp(appInfo: MusicAppInfo) {

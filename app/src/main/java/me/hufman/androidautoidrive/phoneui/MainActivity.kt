@@ -44,10 +44,10 @@ class MainActivity : AppCompatActivity() {
 	val redrawListener = RedrawListener()
 	val redrawTask = RedrawTask()
 	val displayedApps = ArrayList<MusicAppInfo>()
-	val appDiscoveryThread = AppDiscoveryThread(this) { apps ->
+	val appDiscoveryThread = AppDiscoveryThread(this) { appDiscovery ->
 		handler.post {
 			displayedApps.clear()
-			displayedApps.addAll(apps.filter { it.connectable || it.controllable })
+			displayedApps.addAll(appDiscovery.validApps)
 			listMusicApps.invalidateViews() // redraw the app list
 		}
 	}
