@@ -56,6 +56,10 @@
     <string name="btn_install_bmw">Install BMW Connected Classic</string>
     <string name="btn_install_mini">Install Mini Connected Classic</string>
     <string name="lbl_advanced_settings">Show Advanced Settings</string>
+    <string name="lbl_assistant">Voice Assistant (Beta)</string>
+    <string name="notification_assistant_tap">Tap to launch %s</string>
+    <string name="notification_assistant_description">Only necessary because the screen is on</string>
+
 
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notifications</string>

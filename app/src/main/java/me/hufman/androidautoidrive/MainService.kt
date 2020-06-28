@@ -8,6 +8,8 @@ import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
 import com.bmwgroup.connected.car.app.BrandType
+import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
+import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
 import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
@@ -53,6 +55,9 @@ class MainService: Service() {
 	var mapService = MapService(this, securityAccess)
 
 	var musicService = MusicService(this, securityAccess)
+
+	var threadAssistant: CarThread? = null
+	var carappAssistant: AssistantApp? = null
 
 
 	override fun onBind(intent: Intent?): IBinder? {
@@ -179,6 +184,9 @@ class MainService: Service() {
 				// start music
 				startAny = startAny or startMusic()
 
+				// start assistant
+				startAny = startAny or startAssistant()
+
 				// check if we are idle and should shut down
 				if (startAny ){
 					startServiceNotification(IDriveConnectionListener.brand)
@@ -286,11 +294,37 @@ class MainService: Service() {
 		musicService.stop()
 	}
 
+	fun startAssistant(): Boolean {
+		synchronized(this) {
+			if (threadAssistant == null) {
+				threadAssistant = CarThread("Assistant") {
+					Log.i(TAG, "Starting to discover car capabilities")
+
+					carappAssistant = AssistantApp(securityAccess,
+							CarAppAssetManager(this, "basecoreOnlineServices"),
+							AssistantControllerAndroid(this, PhoneAppResourcesAndroid(this)),
+							GraphicsHelpersAndroid())
+					carappAssistant?.onCreate()
+				}
+				threadAssistant?.start()
+			}
+		}
+		return true
+	}
+
+	fun stopAssistant() {
+		carappAssistant?.onDestroy()
+		carappAssistant = null
+		threadAssistant?.handler?.looper?.quitSafely()
+		threadAssistant = null
+	}
+
 	private fun stopCarApps() {
 		stopCarCapabilities()
 		stopNotifications()
 		stopMaps()
 		stopMusic()
+		stopAssistant()
 		stopServiceNotification()
 	}
 

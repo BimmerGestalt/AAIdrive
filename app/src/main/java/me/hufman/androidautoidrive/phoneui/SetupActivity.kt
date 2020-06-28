@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_setup.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import java.text.SimpleDateFormat
 import java.util.*

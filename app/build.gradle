@@ -17,6 +17,8 @@ apply from: 'buildtools/SentryProperties.gradle'
 
 apply from: 'buildtools/checksums.gradle'
 
+def TRAVIS_BRANCH = System.env.TRAVIS_PULL_REQUEST == "true" ? System.env.TRAVIS_PULL_REQUEST_BRANCH : System.env.TRAVIS_BRANCH
+
 android {
     compileSdkVersion 28
     defaultConfig {
