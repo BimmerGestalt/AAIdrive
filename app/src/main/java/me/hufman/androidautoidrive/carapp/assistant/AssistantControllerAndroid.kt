@@ -36,6 +36,7 @@ open class AssistantControllerAndroid(val context: Context, val phoneAppResource
 			val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID,
 					NOTIFICATION_CHANNEL_NAME,
 					NotificationManager.IMPORTANCE_HIGH)
+			channel.setSound(null, null)
 
 			val notificationManager = context.getSystemService(NotificationManager::class.java)
 			notificationManager.createNotificationChannel(channel)
