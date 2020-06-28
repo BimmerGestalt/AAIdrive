@@ -37,9 +37,6 @@ android {
         // Forcing it is only useful for old phones with Android Open Accessory v2 Audio support
         // because the detection logic for AUDIO_SUPPORTS_USB only guesses based on version
         buildConfigField "boolean", "MANUAL_AUDIO_CONTEXT", "false"
-
-        // show the Assistant settings on the assistant branch or if a gradle property says to
-        buildConfigField "boolean", "ENABLE_VOICE_ASSISTANT", (androidGitVersion.name().contains("-assistant-") || TRAVIS_BRANCH == "assistant") ? "true" : AndroidAutoIdrive_EnableVoiceAssistant
     }
 
     signingConfigs {

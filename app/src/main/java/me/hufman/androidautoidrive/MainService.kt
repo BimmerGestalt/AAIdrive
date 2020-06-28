@@ -295,9 +295,6 @@ class MainService: Service() {
 	}
 
 	fun startAssistant(): Boolean {
-		if (!BuildConfig.ENABLE_VOICE_ASSISTANT) {
-			return false
-		}
 		synchronized(this) {
 			if (threadAssistant == null) {
 				threadAssistant = CarThread("Assistant") {

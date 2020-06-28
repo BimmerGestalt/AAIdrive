@@ -253,12 +253,9 @@ class MainActivity : AppCompatActivity() {
 		appDiscoveryThread.discovery()
 
 		// reload assistants
-		paneAssistant.visible = BuildConfig.ENABLE_VOICE_ASSISTANT
-		if (BuildConfig.ENABLE_VOICE_ASSISTANT) {
-			displayedAssistantApps.clear()
-			displayedAssistantApps.addAll(assistantController.getAssistants().toList().sortedBy { it.name })
-			listAssistantApps.invalidateViews()
-		}
+		displayedAssistantApps.clear()
+		displayedAssistantApps.addAll(assistantController.getAssistants().toList().sortedBy { it.name })
+		listAssistantApps.invalidateViews()
 
 		// try starting the service, to try connecting to the car with current app settings
 		// for example, after we resume from enabling the notification
