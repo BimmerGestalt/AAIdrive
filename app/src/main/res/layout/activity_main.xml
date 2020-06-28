@@ -176,6 +176,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="40dp" />
+
+                <TextView
+                    android:id="@+id/txtEmptyAssistantApps"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="40dp"
+                    android:paddingEnd="40dp"
+                    android:text="@string/lbl_assistant_empty" />
             </LinearLayout>
         </LinearLayout>
 

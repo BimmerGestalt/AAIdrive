@@ -255,6 +255,7 @@ class MainActivity : AppCompatActivity() {
 		// reload assistants
 		displayedAssistantApps.clear()
 		displayedAssistantApps.addAll(assistantController.getAssistants().toList().sortedBy { it.name })
+		listAssistantApps.emptyView = txtEmptyAssistantApps
 		listAssistantApps.invalidateViews()
 
 		// try starting the service, to try connecting to the car with current app settings
