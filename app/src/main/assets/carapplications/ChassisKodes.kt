@@ -34,7 +34,7 @@ enum class ChassisCode(val brand: String, val chassis: String) {
     E9("BMW",	"2 Series"),
     E6("BMW",	"2 Series"),
     E3("BMW",	"2 Series"),
-    
+
     F36("BMW", "4 Series"),
     F33("BMW", "4 Series"),
     F32("BMW", "4 Series"),
