@@ -1,5 +1,5 @@
 enum class ChassisCode(val brand: String, val chassis: String) {
-    // Mini codes
+    // Mini codes | https://new.minimania.com/MINI_model_designations
     R50("MINI", "Cooper"),
     R53("MINI", "Cooper"),
     R56("MINI", "Cooper"),
@@ -16,7 +16,7 @@ enum class ChassisCode(val brand: String, val chassis: String) {
     R60("MINI", "Countryman"),
     F60("MINI", "Countryman"),
 
-    // BMW codes
+    // BMW codes | https://burgertuning.com/pages/chassis-codes
     G07("BMW","X7"),
     E26("BMW","M1"),
     E25("BMW","Concept"),
