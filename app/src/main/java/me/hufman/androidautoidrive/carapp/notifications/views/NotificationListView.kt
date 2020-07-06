@@ -7,12 +7,13 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.notifications.CarNotification
+import me.hufman.androidautoidrive.carapp.notifications.NotificationSettings
 import me.hufman.androidautoidrive.carapp.notifications.NotificationsState
 import me.hufman.androidautoidrive.carapp.notifications.TAG
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*
 
-class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val appSettings: MutableAppSettings) {
+class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val settings: NotificationSettings) {
 	companion object {
 		val INTERACTION_DEBOUNCE_MS = 2000              // how long to wait after lastInteractionTime to update the list
 
@@ -44,13 +45,9 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 		addRow(arrayOf("", "", L.NOTIFICATIONS_EMPTY_LIST))
 	}
 
-	val menuSettings = listOf(
-			AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP,
-			AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER
-	)
-	val menuSettingsListData = object: RHMIListAdapter<AppSettings.KEYS>(3, menuSettings) {
+	val menuSettingsListData = object: RHMIListAdapter<AppSettings.KEYS>(3, settings.getSettings()) {
 		override fun convertRow(index: Int, item: AppSettings.KEYS): Array<Any> {
-			val checked = appSettings[item].toBoolean()
+			val checked = settings.isChecked(item)
 			val checkmark = if (checked) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, IMAGEID_CHECKMARK) else ""
 			val name = when (item) {
 				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP -> L.NOTIFICATION_POPUPS
@@ -72,11 +69,11 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 			visible = true
 			if (focused) {
 				redrawNotificationList()
-				appSettings.callback = {
+				settings.callback = {
 					redrawNotificationList()
 				}
 			} else {
-				appSettings.callback = null
+				settings.callback = null
 			}
 		}
 
@@ -103,21 +100,23 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 			}
 		}
 
-		state.componentsList.filterIsInstance<RHMIComponent.Label>().lastOrNull()?.let {
-			it.getModel()?.asRaDataModel()?.value = L.NOTIFICATION_OPTIONS
-			it.setVisible(true)
-			it.setEnabled(false)
-			it.setSelectable(false)
-		}
-
-		settingsListView.setVisible(true)
-		settingsListView.setProperty(6, "55,0,*")
-		settingsListView.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
-			val option = menuSettings.getOrNull(index)
-			if (option != null) {
-				appSettings[option] = (!appSettings[option].toBoolean()).toString()
+		if (settings.getSettings().isNotEmpty()) {
+			state.componentsList.filterIsInstance<RHMIComponent.Label>().lastOrNull()?.let {
+				it.getModel()?.asRaDataModel()?.value = L.NOTIFICATION_OPTIONS
+				it.setVisible(true)
+				it.setEnabled(false)
+				it.setSelectable(false)
 			}
-			throw RHMIActionAbort()
+
+			settingsListView.setVisible(true)
+			settingsListView.setProperty(6, "55,0,*")
+			settingsListView.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
+				val setting = menuSettingsListData.realData.getOrNull(index)
+				if (setting != null) {
+					settings.toggleSetting(setting)
+				}
+				throw RHMIActionAbort()
+			}
 		}
 	}
 

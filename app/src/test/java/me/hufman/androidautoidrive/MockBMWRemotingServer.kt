@@ -20,6 +20,12 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 	var avCurrentContext = -1
 	var avCurrentState = BMWRemoting.AVPlayerState.AV_PLAYERSTATE_STOP
 
+	val capabilities = mutableMapOf(
+		"hmi.display-width" to "1280",
+		"hmi.display-height" to "480",
+		"hmi.type" to "MINI ID4++"
+	)
+
 	override fun sas_certificate(data: ByteArray?): ByteArray {
 		return ByteArray(16)
 	}
@@ -77,10 +83,7 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 	}
 
 	override fun rhmi_getCapabilities(component: String?, handle: Int?): Map<*, *> {
-		return mapOf(
-				"hmi.display-width" to "1280",
-				"hmi.display-height" to "480"
-		)
+		return capabilities
 	}
 
 	override fun cds_create(): Int {

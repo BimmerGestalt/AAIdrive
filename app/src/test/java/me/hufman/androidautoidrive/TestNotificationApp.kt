@@ -12,10 +12,12 @@ import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
 import me.hufman.androidautoidrive.carapp.notifications.*
+import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
 
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
 import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
 import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
 import me.hufman.idriveconnectionkit.rhmi.RHMIState
@@ -447,10 +449,45 @@ class TestNotificationApp {
 		}
 
 		run {
+			val label = mockServer.data[393]
+			assertEquals("Options", label)
 			val menu = mockServer.data[394] as BMWRemoting.RHMIDataTable
 			assertEquals(2, menu.numRows)
 			assertEquals(listOf("Notification Popups", "Popups with passenger"), menu.data.map { it[2] })
 			verify(appSettings).callback = any()
+		}
+	}
+
+	@Test
+	fun testListSettings() {
+		val rhmiApp = RHMIApplicationConcrete()
+		rhmiApp.loadFromXML(carAppResources.getUiDescription()!!.readBytes())
+		val state = rhmiApp.states[8]!!
+
+		run {
+			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++"), appSettings)
+			val id4Menu = NotificationListView(state, phoneAppResources, graphicsHelpers, settings)
+			id4Menu.initWidgets(mock())
+			id4Menu.redrawNotificationList()
+
+			val label = rhmiApp.modelData[393]
+			assertEquals("Options", label)
+			val menu = rhmiApp.modelData[394] as BMWRemoting.RHMIDataTable
+			assertEquals(2, menu.numRows)
+			assertEquals(listOf("Notification Popups", "Popups with passenger"), menu.data.map { it[2] })
+		}
+
+		rhmiApp.modelData.clear()
+		run {
+			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5"), appSettings)
+			val id5Menu = NotificationListView(state, phoneAppResources, graphicsHelpers, settings)
+			id5Menu.initWidgets(mock())
+			id5Menu.redrawNotificationList()
+
+			val label = rhmiApp.modelData[393]
+			assertEquals(null, label)   // never sets the
+			val menu = rhmiApp.modelData[394] as BMWRemoting.RHMIDataTable
+			assertEquals(0, menu.numRows)
 		}
 	}
 

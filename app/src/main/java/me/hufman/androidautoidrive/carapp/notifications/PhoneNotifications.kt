@@ -63,6 +63,13 @@ class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAp
 		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB("common"))
 		carConnection.rhmi_initialize(rhmiHandle)
 
+		// get the list of capabilities, to decide what settings to show
+		val capabilities = carConnection.rhmi_getCapabilities("", rhmiHandle)
+				.filter { it.key is String && it.value is String }
+				.mapKeys { it.key as String }
+				.mapValues { it.value as String }
+		val notificationSettings = NotificationSettings(capabilities, appSettings)
+
 		// set up the app in the car
 		carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)))
 		carappListener.app = carApp
@@ -72,7 +79,7 @@ class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAp
 
 		// figure out which views to use
 		viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources, PopupHistory())
-		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources, graphicsHelpers, appSettings)
+		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings)
 		viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller)
 
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first{
