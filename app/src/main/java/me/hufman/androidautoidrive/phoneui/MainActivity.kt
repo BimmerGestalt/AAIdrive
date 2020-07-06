@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 	companion object {
 		const val INTENT_REDRAW = "me.hufman.androidautoidrive.REDRAW"
 		const val TAG = "MainActivity"
+		const val NOTIFICATION_SERVICE_TIMEOUT = 1000
 		const val SECURITY_SERVICE_TIMEOUT = 1000
 		const val REDRAW_INTERVAL = 5000L
 		const val REQUEST_LOCATION = 4000
@@ -264,8 +265,16 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	fun redraw() {
-		swMessageNotifications.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
-				UIState.notificationListenerConnected
+		val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
+
+		if (ageOfActivity > NOTIFICATION_SERVICE_TIMEOUT) {
+			// wait a bit to make sure the Notification Listener actually is running
+			// sometimes when restarting, the listener takes a bit to start up
+			swMessageNotifications.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
+					UIState.notificationListenerConnected
+		} else {
+			swMessageNotifications.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
+		}
 		paneNotifications.visible = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
 		swGMaps.isChecked = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
 		paneGMaps.visible = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
@@ -276,7 +285,6 @@ class MainActivity : AppCompatActivity() {
 		}.indexOf(AppSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase())
 		swGmapSyle.setSelection(max(0, gmapStylePosition))
 
-		val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
 		if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && !SecurityAccess.getInstance(this).isConnected()) {
 			txtConnectionStatus.text = resources.getString(R.string.connectionStatusMissingConnectedApp)
 			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionError, null))
