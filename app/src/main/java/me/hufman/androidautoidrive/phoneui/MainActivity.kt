@@ -194,7 +194,8 @@ class MainActivity : AppCompatActivity() {
 		AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS, isChecked.toString())
 		if (isChecked) {
 			// make sure we have permissions to read the notifications
-			if (!hasNotificationPermission() || !UIState.notificationListenerConnected) {
+			val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
+			if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && (!hasNotificationPermission() || !UIState.notificationListenerConnected)) {
 				promptNotificationPermission()
 			} else {
 				startMainService()
