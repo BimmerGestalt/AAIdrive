@@ -61,7 +61,7 @@
         <receiver android:name=".phoneui.ConfigureNotificationsActivity$CustomActionListener" />
 
         <receiver
-            android:name=".A2DPBroadcastReceiverKt">
+            android:name=".A2DPBroadcastReceiver">
 
             <intent-filter>
                 <action
