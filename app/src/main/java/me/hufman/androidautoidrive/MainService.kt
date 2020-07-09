@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive
 
+import ChassisCode
 import android.app.*
 import android.app.Notification.PRIORITY_LOW
 import android.content.Intent
@@ -48,6 +49,7 @@ class MainService: Service() {
 
 	var threadCapabilities: CarThread? = null
 	var carappCapabilities: CarInformationDiscovery? = null
+	var carCapabilities: Map<String, String?> = mapOf()
 
 	var threadNotifications: CarThread? = null
 	var carappNotifications: PhoneNotifications? = null
@@ -142,7 +144,7 @@ class MainService: Service() {
 		CarAPIDiscovery.announceApp(this, myApp)
 	}
 
-	private fun startServiceNotification(brand: String?) {
+	private fun startServiceNotification(brand: String?, chassisCode: ChassisCode?) {
 		Log.i(TAG, "Creating foreground notification")
 		val notifyIntent = Intent(this, MainActivity::class.java).apply {
 			flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -160,6 +162,11 @@ class MainService: Service() {
 
 		if (brand?.toLowerCase() == "bmw") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_bmw))
 		if (brand?.toLowerCase() == "mini") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_mini))
+
+		if (chassisCode != null) {
+			foregroundNotificationBuilder.setContentText(resources.getString(R.string.notification_description_chassiscode, chassisCode.toString()))
+		}
+
 		foregroundNotification = foregroundNotificationBuilder.build()
 		startForeground(ONGOING_NOTIFICATION_ID, foregroundNotification)
 	}
@@ -189,7 +196,7 @@ class MainService: Service() {
 
 				// check if we are idle and should shut down
 				if (startAny ){
-					startServiceNotification(IDriveConnectionListener.brand)
+					startServiceNotification(IDriveConnectionListener.brand, ChassisCode.fromCode(carCapabilities["vehicle.type"] ?: "Unknown"))
 				} else {
 					Log.i(TAG, "No apps are enabled, skipping the service start")
 					stopServiceNotification()
@@ -219,6 +226,9 @@ class MainService: Service() {
 								DebugStatus.carCapabilities.putAll(capabilities.mapValues { it.value ?: "null" })
 							}
 							SetupActivity.redraw(this@MainService)
+							// update the notification
+							carCapabilities = capabilities
+							startServiceNotification(IDriveConnectionListener.brand, ChassisCode.fromCode(carCapabilities["vehicle.type"] ?: "Unknown"))
 						}
 
 					})

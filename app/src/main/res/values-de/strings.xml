@@ -6,6 +6,7 @@
     <string name="permdesc_bindNotificationListenerService">IDrive Benachrichtigungszugriff</string>
     <string name="notification_title">Android Auto für IDrive</string>
     <string name="notification_description">Mit Auto verbunden</string>
+    <string name="notification_description_chassiscode">Mit %s verbunden</string>
     <string name="notification_description_bmw">Mit BMW verbunden</string>
     <string name="notification_description_mini">Mit Mini verbunden</string>
 

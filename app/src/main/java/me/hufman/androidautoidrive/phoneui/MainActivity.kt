@@ -292,10 +292,15 @@ class MainActivity : AppCompatActivity() {
 			txtConnectionStatus.text = resources.getString(R.string.connectionStatusWaiting)
 			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionWaiting, null))
 		} else {
-			txtConnectionStatus.text = when (IDriveConnectionListener.brand?.toLowerCase()) {
-				"bmw" -> resources.getString(R.string.notification_description_bmw)
-				"mini" -> resources.getString(R.string.notification_description_mini)
-				else -> resources.getString(R.string.notification_description)
+			val chassisCode = ChassisCode.fromCode(DebugStatus.carCapabilities["vehicle.type"] ?: "Unknown")
+			txtConnectionStatus.text = if (chassisCode != null) {
+				resources.getString(R.string.notification_description_chassiscode, chassisCode.toString())
+			} else {
+				when (IDriveConnectionListener.brand?.toLowerCase()) {
+					"bmw" -> resources.getString(R.string.notification_description_bmw)
+					"mini" -> resources.getString(R.string.notification_description_mini)
+					else -> resources.getString(R.string.notification_description)
+				}
 			}
 			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionConnected, null))
 		}

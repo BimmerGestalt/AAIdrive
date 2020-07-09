@@ -12,6 +12,7 @@ class CarInformationDiscovery(securityAccess: SecurityAccess, carAppAssets: CarA
 
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
+	var capabilities: Map<String, String?>? = null
 
 	init {
 		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host
@@ -36,6 +37,7 @@ class CarInformationDiscovery(securityAccess: SecurityAccess, carAppAssets: CarA
 		val stringCapabilities = capabilities
 				.mapKeys { it.key as String }
 				.mapValues { it.value?.toString() }
+		this.capabilities = stringCapabilities
 		try {
 			listener?.onCapabilities(stringCapabilities)
 		} catch (e: Exception) {

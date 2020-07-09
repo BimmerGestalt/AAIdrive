@@ -6,6 +6,7 @@
     <string name="permdesc_bindNotificationListenerService">Доступ к Уведомлениям IDrive</string>
     <string name="notification_title">Android Auto для IDrive</string>
     <string name="notification_description">Подклучен к Машыне</string>
+    <string name="notification_description_chassiscode">Подклучен к %s</string>
     <string name="notification_description_bmw">Подклучен к БМВ</string>
     <string name="notification_description_mini">Подклучен к Мини</string>
 
