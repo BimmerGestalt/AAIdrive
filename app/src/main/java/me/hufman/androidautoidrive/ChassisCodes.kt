@@ -31,7 +31,8 @@ enum class ChassisCode(val brand: String, val chassis: String) {
     I12("BMW","i8"),
     F25("BMW","X3"),
     F15("BMW","X5"),
-    E36("BMW","Z3"),
+    E36_7("BMW","Z3"),
+    E36_8("BMW","Z3"),
     E89("BMW","Z4"),
     E86("BMW","Z4"),
     E85("BMW","Z4"),
@@ -97,6 +98,7 @@ enum class ChassisCode(val brand: String, val chassis: String) {
     E39("BMW","5 Series"),
     E38("BMW","7 Series"),
     E36("BMW","3 Series"),
+    E36_5("BMW","3 Series"),
     E34("BMW","5 Series"),
     E32("BMW","7 Series"),
     E31("BMW","8 Series"),
@@ -112,8 +114,9 @@ enum class ChassisCode(val brand: String, val chassis: String) {
 
     companion object {
         fun fromCode(chassisCode: String): ChassisCode? {
+            val code = chassisCode.toUpperCase().replace(Regex("[^A-Z0-9]"), "_")
             return ChassisCode.values().firstOrNull {
-                it.name == chassisCode.toUpperCase()
+                it.name == code
             }
         }
     }
