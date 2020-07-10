@@ -92,6 +92,7 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 			Log.w(TAG, "Wanted to requestContext for missing app $ident?")
 	}
 	fun av_requestContext(app: MusicAppInfo) {
+		controller.connectApp(app)  // prepare the music controller, so that av_connectionGranted can use it
 		if (musicAppMode.shouldRequestAudioContext()) {
 			Log.i(TAG, "Sending requestContext to car for ${app.name}")
 			this.app.runSynchronized {
@@ -103,13 +104,11 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 				// start playback if we are the current AV context
 				// or play anyways if we have the wrong instanceId
 				// the car will respond with av_connectionDenied if instanceId is incorrect (null coalesced to a random guess)
-				controller.connectApp(app)
 				enactPlayerState(BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 				av_playerStateChanged(avHandle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 			}
 		} else {
 			// just assume the car has given us access, and play the app anyways
-			controller.connectApp(app)
 			enactPlayerState(BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 			av_playerStateChanged(avHandle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 		}
@@ -119,9 +118,14 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		Log.i(TAG, "Car declares current audio connection to us")
 		currentContext = true
 
-		if (controller.currentAppController == null) {
+		if (controller.currentAppInfo == null) {
 			Log.i(TAG, "Successful connection request, trying to remember which app was last playing")
 			reconnectApp()
+		}
+		val desiredAppInfo = controller.currentAppInfo
+		if (desiredAppInfo != null && controller.currentAppController == null) {
+			// MusicController wants to play an app, but the controller isn't ready yet
+			controller.connectApp(desiredAppInfo)
 		}
 		// otherwise, the controller.currentApp was set in an av_requestContext call
 	}

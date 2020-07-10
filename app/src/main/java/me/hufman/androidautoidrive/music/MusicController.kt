@@ -123,30 +123,33 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		}
 	}
 
-	fun connectApp(app: MusicAppInfo) = asyncRpc {
-		val switchApp = currentAppInfo != app
-		val needsReconnect = !isConnected()
-		if (switchApp || needsReconnect) {
-			Log.i(TAG, "Switching current app connection from $currentAppInfo to $app")
-			disconnectApp(pause = switchApp)
+	fun connectApp(app: MusicAppInfo) {
+		val previousAppInfo = currentAppInfo
+		currentAppInfo = app
+		asyncRpc {
+			val switchApp = currentAppInfo != previousAppInfo
+			val needsReconnect = !isConnected()
+			if (switchApp || needsReconnect) {
+				Log.i(TAG, "Switching current app connection from $currentAppInfo to $app")
+				disconnectApp(pause = switchApp)
 
-			triggeredPlayback = false
-			val controller = connector.connect(app).value
-			if (controller == null) {
-				Log.e(TAG, "Unable to connect to CombinedMusicAppController, this should never happen")
-			} else {
-				controller.subscribe {
-					if (controller.isConnected() && desiredPlayback && !triggeredPlayback) {
-						controller.play()
-						triggeredPlayback = true
+				triggeredPlayback = false
+				val controller = connector.connect(app).value
+				if (controller == null) {
+					Log.e(TAG, "Unable to connect to CombinedMusicAppController, this should never happen")
+				} else {
+					controller.subscribe {
+						if (controller.isConnected() && desiredPlayback && !triggeredPlayback) {
+							controller.play()
+							triggeredPlayback = true
+						}
+						scheduleRedraw()
 					}
-					scheduleRedraw()
+					currentAppController = controller
+					saveDesiredApp(app)
 				}
-				currentAppController = controller
-				saveDesiredApp(app)
 			}
 		}
-		currentAppInfo = app
 	}
 
 	/** Remember this app as the last one to play */
