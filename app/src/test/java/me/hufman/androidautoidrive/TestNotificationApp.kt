@@ -137,7 +137,7 @@ class TestNotificationApp {
 		}
 	}
 
-	fun createNotification(tickerText:String, title:String?, text: String?, summary:String, clearable:Boolean=false): StatusBarNotification {
+	fun createNotification(tickerText:String, title:String?, text: String?, summary:String, clearable: Boolean=false, packageName: String="me.hufman.androidautoidrive"): StatusBarNotification {
 		val phoneNotification = mock<Notification> {
 			on { getLargeIcon() } doReturn mock<Icon>()
 			on { smallIcon } doReturn mock<Icon>()
@@ -155,7 +155,7 @@ class TestNotificationApp {
 		val statusbarNotification = mock<StatusBarNotification> {
 			on { key } doReturn "testKey"
 			on { notification } doReturn phoneNotification
-			on { packageName } doReturn "me.hufman.androidautoidrive"
+			on { getPackageName() } doReturn packageName
 			on { isClearable } doReturn clearable
 		}
 		return statusbarNotification
@@ -239,6 +239,10 @@ class TestNotificationApp {
 		whenever(groupNotification.notification.group) doReturn "Yes"
 		assertFalse(ParseNotification.shouldShowNotification(groupNotification))
 		assertFalse(ParseNotification.shouldPopupNotification(groupNotification))
+
+		val spotifyNotification = createNotification("Ticker", "Spotify", "AndroidAutoIdrive is connecting", "", true, "com.spotify.music")
+		assertTrue(ParseNotification.shouldShowNotification(spotifyNotification))
+		assertFalse(ParseNotification.shouldPopupNotification(spotifyNotification))
 	}
 
 	@Test

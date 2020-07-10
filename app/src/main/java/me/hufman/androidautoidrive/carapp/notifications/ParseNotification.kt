@@ -15,6 +15,12 @@ import android.util.Log
 object ParseNotification {
 
 	/**
+	 * Any package names that should not trigger popups
+	 * Spotify, for example, shows a notification that another app is controlling it
+	 */
+	val SUPPRESSED_POPUP_PACKAGES = setOf("com.spotify.music")
+
+	/**
 	 * Summarize an Android Notification into what should be shown in the car
 	 */
 	fun summarizeNotification(sbn: StatusBarNotification): CarNotification {
@@ -101,6 +107,7 @@ object ParseNotification {
 		if (sbn.notification.isGroupSummary()) return false
 		val isMusic = sbn.notification.extras.getString(Notification.EXTRA_TEMPLATE) == "android.app.Notification\$MediaStyle"
 		if (isMusic) return false
+		if (SUPPRESSED_POPUP_PACKAGES.contains(sbn.packageName)) return false
 		return true
 
 	}
