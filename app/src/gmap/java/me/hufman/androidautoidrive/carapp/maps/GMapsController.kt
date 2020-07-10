@@ -176,10 +176,11 @@ class GMapsController(private val context: Context, private val resultsControlle
 	}
 
 	private fun updateCamera() {
+		val location = currentLocation ?: return
 		if (!animatingCamera || zoomingCamera) {
 			// if the camera is idle or we are zooming the camera already
 			animatingCamera = true
-			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, currentZoom), animationFinishedCallback)
+			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(location, currentZoom), animationFinishedCallback)
 		}
 	}
 
