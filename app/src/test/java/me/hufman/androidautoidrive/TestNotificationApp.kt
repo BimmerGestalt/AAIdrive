@@ -7,7 +7,10 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Bundle
+import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.support.v4.app.NotificationManagerCompat.IMPORTANCE_LOW
+import android.support.v4.app.NotificationManagerCompat.IMPORTANCE_HIGH
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
@@ -223,26 +226,55 @@ class TestNotificationApp {
 	fun testShouldShow() {
 		val notification = createNotification("Ticker Text", "Title", "Text", "Summary", true)
 		assertTrue(ParseNotification.shouldShowNotification(notification))
-		assertTrue(ParseNotification.shouldPopupNotification(notification))
+		assertTrue(ParseNotification.shouldPopupNotification(notification, null))
 
 		val nullTitle = createNotification("Ticker Text", null, null, "Summary", true)
 		assertFalse(ParseNotification.shouldShowNotification(nullTitle))
-		assertTrue(ParseNotification.shouldPopupNotification(nullTitle))
+		assertTrue(ParseNotification.shouldPopupNotification(nullTitle, null))
 
 		val musicApp = createNotification("Ticker Text", "Title", "Text", "Summary", true)
 		whenever(musicApp.notification.extras.getString(eq(Notification.EXTRA_TEMPLATE))) doReturn "android.app.Notification\$MediaStyle"
 		assertTrue(ParseNotification.shouldShowNotification(musicApp))
-		assertFalse(ParseNotification.shouldPopupNotification(musicApp))
+		assertFalse(ParseNotification.shouldPopupNotification(musicApp, null))
 
 		val groupNotification = createNotification("Ticker Text", "Title", "Text", "Summary", true)
 		groupNotification.notification.flags = FLAG_GROUP_SUMMARY
 		whenever(groupNotification.notification.group) doReturn "Yes"
 		assertFalse(ParseNotification.shouldShowNotification(groupNotification))
-		assertFalse(ParseNotification.shouldPopupNotification(groupNotification))
+		assertFalse(ParseNotification.shouldPopupNotification(groupNotification, null))
 
 		val spotifyNotification = createNotification("Ticker", "Spotify", "AndroidAutoIdrive is connecting", "", true, "com.spotify.music")
 		assertTrue(ParseNotification.shouldShowNotification(spotifyNotification))
-		assertFalse(ParseNotification.shouldPopupNotification(spotifyNotification))
+		assertFalse(ParseNotification.shouldPopupNotification(spotifyNotification, null))
+
+		// low priority notification handling
+		val highPriorityRanking = mock<NotificationListenerService.Ranking> {
+			on { importance } doReturn IMPORTANCE_HIGH
+			on { isAmbient } doReturn false
+			on { matchesInterruptionFilter() } doReturn true
+		}
+		assertTrue(ParseNotification.shouldPopupNotification(notification, highPriorityRanking))
+
+		val lowPriorityRanking = mock<NotificationListenerService.Ranking> {
+			on { importance } doReturn IMPORTANCE_LOW
+			on { isAmbient } doReturn false
+			on { matchesInterruptionFilter() } doReturn true
+		}
+		assertFalse(ParseNotification.shouldPopupNotification(notification, lowPriorityRanking))
+
+		val dndRanking = mock<NotificationListenerService.Ranking> {
+			on { importance } doReturn IMPORTANCE_HIGH
+			on { isAmbient } doReturn false
+			on { matchesInterruptionFilter() } doReturn false
+		}
+		assertFalse(ParseNotification.shouldPopupNotification(notification, dndRanking))
+
+		val ambientRanking = mock<NotificationListenerService.Ranking> {
+			on { importance } doReturn IMPORTANCE_HIGH
+			on { isAmbient } doReturn true
+			on { matchesInterruptionFilter() } doReturn true
+		}
+		assertFalse(ParseNotification.shouldPopupNotification(notification, ambientRanking))
 	}
 
 	@Test

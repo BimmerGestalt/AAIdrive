@@ -7,9 +7,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
+import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat.*
 import android.util.Log
 
 object ParseNotification {
@@ -19,6 +21,8 @@ object ParseNotification {
 	 * Spotify, for example, shows a notification that another app is controlling it
 	 */
 	val SUPPRESSED_POPUP_PACKAGES = setOf("com.spotify.music")
+	/** Any notification levels that should not show popups */
+	val SUPPRESSED_POPUP_IMPORTANCES = setOf(IMPORTANCE_LOW, IMPORTANCE_MIN, IMPORTANCE_NONE)
 
 	/**
 	 * Summarize an Android Notification into what should be shown in the car
@@ -101,13 +105,24 @@ object ParseNotification {
 		return MessagingNotificationParsed(text, pictureUri)
 	}
 
-	fun shouldPopupNotification(sbn: StatusBarNotification?): Boolean {
+	fun shouldPopupNotification(sbn: StatusBarNotification?, ranking: NotificationListenerService.Ranking?): Boolean {
 		if (sbn == null) return false
 		if (!sbn.isClearable) return false
 		if (sbn.notification.isGroupSummary()) return false
 		val isMusic = sbn.notification.extras.getString(Notification.EXTRA_TEMPLATE) == "android.app.Notification\$MediaStyle"
 		if (isMusic) return false
 		if (SUPPRESSED_POPUP_PACKAGES.contains(sbn.packageName)) return false
+
+		// The docs say rankingMap won't be null, but the signature isn't explicit, so check
+		if (ranking != null) {
+			if (ranking.isAmbient) return false
+			if (!ranking.matchesInterruptionFilter()) return false
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				if (SUPPRESSED_POPUP_IMPORTANCES.contains(ranking.importance)) return false
+			}
+		}
+
 		return true
 
 	}
@@ -118,10 +133,11 @@ object ParseNotification {
 				(sbn.isClearable || sbn.notification.actions?.isNotEmpty() == true)
 	}
 
-	fun dumpNotification(title: String, sbn: StatusBarNotification) {
+	fun dumpNotification(title: String, sbn: StatusBarNotification, ranking: NotificationListenerService.Ranking?) {
 		val extras = sbn.notification.extras
 		val details = extras?.keySet()?.map { "  ${it}=>${extras.get(it)}" }?.joinToString("\n") ?: ""
-		Log.i(NotificationListenerServiceImpl.TAG, "$title: ${extras?.get("android.title")} with the keys:\n$details")
+		Log.i(NotificationListenerServiceImpl.TAG, "$title from ${sbn.packageName}: ${extras?.get("android.title")} with the keys:\n$details")
+		Log.i(NotificationListenerServiceImpl.TAG, "Ranking: isAmbient:${ranking?.isAmbient} matchesFilter:${ranking?.matchesInterruptionFilter()} importance:${ranking?.importance}")
 	}
 	fun dumpMessage(title: String, bundle: Bundle) {
 		val details = bundle.keySet()?.map { key -> "  ${key}=>${bundle.get(key)}" }?.joinToString("\n") ?: ""

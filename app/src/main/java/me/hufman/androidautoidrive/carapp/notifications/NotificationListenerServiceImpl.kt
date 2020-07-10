@@ -27,6 +27,7 @@ fun Notification.isGroupSummary(): Boolean {
 class NotificationListenerServiceImpl: NotificationListenerService() {
 	companion object {
 		const val TAG = "IDriveNotifications"
+		const val LOG_NOTIFICATIONS = false
 		const val INTENT_INTERACTION = "me.hufman.androidaudoidrive.PhoneNotificationUpdate.INTERACTION"
 		const val INTENT_REQUEST_DATA = "me.hufman.androidaudoidrive.PhoneNotificationUpdate.REQUEST_DATA"
 		const val EXTRA_KEY = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotificationUpdate.EXTRA_KEY"
@@ -39,6 +40,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 
 	val controller = NotificationUpdater(this)
 	val interactionListener = IDriveNotificationInteraction(InteractionListener(), controller)
+	val ranking = Ranking() // object to receive new notification rankings
 
 	override fun onCreate() {
 		super.onCreate()
@@ -63,7 +65,6 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		UIState.notificationListenerConnected = true
 		sendBroadcast(Intent(MainActivity.INTENT_REDRAW))
 
-		if (!IDriveConnectionListener.isConnected) return
 		updateNotificationList()
 	}
 
@@ -72,18 +73,26 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	}
 
 	override fun onNotificationRemoved(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
-		Log.i(TAG, "Notification removed: ${sbn?.notification?.extras?.get("android.title")}")
+		if (LOG_NOTIFICATIONS) {
+			Log.i(TAG, "Notification removed: ${sbn?.notification?.extras?.get("android.title")}")
+		}
 		super.onNotificationRemoved(sbn, rankingMap)
 		updateNotificationList()
 	}
 
 	override fun onNotificationPosted(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
 		if (!IDriveConnectionListener.isConnected) return
-		if (sbn != null) {
-			dumpNotification("Notification posted", sbn)
+		val ranking = if (sbn != null && rankingMap != null) {
+			rankingMap.getRanking(sbn.key, this.ranking)
+			ranking
+		} else null
+
+		if (LOG_NOTIFICATIONS && sbn != null) {
+			dumpNotification("Notification posted", sbn, ranking)
 		}
 		updateNotificationList()
-		val shouldPopup = shouldPopupNotification(sbn)
+
+		val shouldPopup = shouldPopupNotification(sbn, ranking)
 		if (sbn != null && shouldPopup) {
 			controller.sendNotification(sbn)
 		}
@@ -92,6 +101,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	}
 
 	fun updateNotificationList() {
+		if (!IDriveConnectionListener.isConnected) return
 		try {
 			val current = this.activeNotifications.filter {
 				shouldShowNotification(it)
