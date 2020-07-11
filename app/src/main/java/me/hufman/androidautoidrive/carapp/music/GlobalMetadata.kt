@@ -131,6 +131,7 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 		when {
 			song == QUEUE_SKIPPREVIOUS -> controller.skipToPrevious()
 			song == QUEUE_SKIPNEXT -> controller.skipToNext()
+			song == controller.getMetadata() -> controller.seekTo(0)
 			song?.queueId != null -> controller.playQueue(song)
 		}
 	}

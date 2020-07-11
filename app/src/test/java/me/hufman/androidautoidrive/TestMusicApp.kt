@@ -493,12 +493,31 @@ class TestMusicApp {
 		val globalState = GlobalMetadata(app, musicController)
 		globalState.initWidgets()
 
+		// an empty queue with no actions
+		whenever(musicController.isSupportedAction(any())) doReturn false
 		globalState.redraw()
 		assertEquals("EntICPlaylist", mockServer.data[IDs.IC_USECASE_MODEL])
 		assertEquals("Title", mockServer.data[IDs.IC_TRACK_MODEL])
 		val emptylist = mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable
-		assertEquals(3, emptylist.totalRows)
-		assertArrayEquals(arrayOf("< Back", "Title", "Next >"), emptylist.data.map {it[1]}.toTypedArray())
+		assertEquals(1, emptylist.totalRows)
+		assertArrayEquals(arrayOf("Title"), emptylist.data.map {it[1]}.toTypedArray())
+
+		// an empty queue WITH actions
+		whenever(musicController.isSupportedAction(any())) doReturn true
+		globalState.displayedSong = null    // reset from the previous test
+		globalState.redraw()
+		assertEquals("EntICPlaylist", mockServer.data[IDs.IC_USECASE_MODEL])
+		assertEquals("Title", mockServer.data[IDs.IC_TRACK_MODEL])
+		val singleList = mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable
+		assertEquals(3, singleList.totalRows)
+		assertArrayEquals(arrayOf("< Back", "Title", "Next >"), singleList.data.map {it[1]}.toTypedArray())
+
+		app.actions[IDs.IC_TRACK_ACTION]?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		verify(musicController).skipToPrevious()
+		app.actions[IDs.IC_TRACK_ACTION]?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
+		verify(musicController).seekTo(0)
+		app.actions[IDs.IC_TRACK_ACTION]?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 2))
+		verify(musicController).skipToNext()
 
 		// a queue that has the song in place
 		whenever(musicController.getQueue()) doAnswer { listOf(
@@ -523,9 +542,9 @@ class TestMusicApp {
 		assertEquals("Song 6", list.data[4][1])
 
 		app.actions[IDs.IC_TRACK_ACTION]?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
-		verify(musicController).skipToPrevious()
+		verify(musicController, times(2)).skipToPrevious()
 		app.actions[IDs.IC_TRACK_ACTION]?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 2))
-		verify(musicController).skipToNext()
+		verify(musicController, times(2)).skipToNext()
 		app.actions[IDs.IC_TRACK_ACTION]?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 4))
 		verify(musicController).playQueue(MusicMetadata(queueId=20, title="Song 6"))
 
