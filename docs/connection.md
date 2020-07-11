@@ -16,7 +16,7 @@ The USB method is very reliable. Some phones, however, default to USB Charging O
 
 # Bluetooth
 
-Bluetooth is much less reliable. Every 10 minutes, the Connected app starts up a background service which checks every connected Bluetooth device for a car connection. However, Android will realize that the Connected app is not running in the foreground and kill this background service. This 10 minute interval, combined with the apparently random behavior of the Android memory killer, leads to flakiness and incredible frustration.
+Bluetooth support is flakier than USB, but is more convenient when it works and is required for advanced audio functionality. If the Apps connection didn't automatically connect, it should connect successfully if the Music connection is toggled from the car: An event listener in the Connected phone app initializes the Apps connection right when the A2DP music protocol is connected.
 
 To improve reliability for Bluetooth connections, you should add the Connected app to the whitelist to prevent the phone from [killing the app](https://dontkillmyapp.com/).
 
