@@ -52,6 +52,7 @@
     <string name="txt_setup_bmw_missing">Not ready to connect to a BMW:</string>
     <string name="txt_setup_mini_missing">Not ready to connect to a Mini:</string>
     <string name="txt_build_info">Build Version: %1$s %2$s</string>
+    <string name="txt_bcl_report">BCL Tunnel Performance:</string>
     <string name="txt_car_capabilities">Reported Car Capabilities:</string>
     <string name="btn_install">Install</string>
     <string name="btn_install_bmw">Install BMW Connected Classic</string>

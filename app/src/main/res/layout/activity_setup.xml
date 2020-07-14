@@ -172,6 +172,28 @@
                 android:layout_marginBottom="8dp" />
 
             <LinearLayout
+                android:id="@+id/paneBclReport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="15dp">
+
+                <TextView
+                    android:id="@+id/lblBclReport"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/txt_bcl_report" />
+
+                <TextView
+                    android:id="@+id/txtBclReport"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|top"
+                    android:longClickable="true"
+                    android:textIsSelectable="true" />
+            </LinearLayout>
+            <LinearLayout
                 android:id="@+id/paneCarCapabilities"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -29,6 +29,8 @@ class SetupActivity : AppCompatActivity() {
 
 	val securityAccess = SecurityAccess.getInstance(this)
 
+	val bclStatusListener = BclStatusListener()
+
 	val redrawListener = object: BroadcastReceiver() {
 		override fun onReceive(p0: Context?, p1: Intent?) {
 			redraw()
@@ -57,6 +59,14 @@ class SetupActivity : AppCompatActivity() {
 		super.onResume()
 
 		redraw()
+
+		bclStatusListener.subscribe(this)
+	}
+
+	override fun onPause() {
+		super.onPause()
+
+		bclStatusListener.unsubscribe(this)
 	}
 
 	override fun onDestroy() {
@@ -122,6 +132,9 @@ class SetupActivity : AppCompatActivity() {
 
 		val showAdvancedSettings = AppSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
 		swAdvancedSettings.isChecked = showAdvancedSettings
+
+		txtBclReport.text = bclStatusListener.toString()
+		paneBclReport.visible = showAdvancedSettings && bclStatusListener.state != "UNKNOWN"
 
 		val carCapabilities = synchronized(DebugStatus.carCapabilities) {
 			DebugStatus.carCapabilities.map {
