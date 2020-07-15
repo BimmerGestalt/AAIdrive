@@ -69,6 +69,7 @@ Implemented Features
         - [AntennaPod](https://play.google.com/store/apps/details?id=de.danoeh.antennapod)
         - [The Bob & Tom Show](https://play.google.com/store/apps/details?id=com.radio.station.BOB.TOM)
         - [Castbox](https://play.google.com/store/apps/details?id=fm.castbox.audiobook.radio.podcast)
+        - [Google Play Books](https://play.google.com/store/apps/details?id=com.google.android.apps.books)
         - [iVooz](https://play.google.com/store/apps/details?id=com.ivoox.app)
         - [Player FM](https://play.google.com/store/apps/details?id=fm.player)
         - [Voice Audiobook Player](https://play.google.com/store/apps/details?id=de.ph1b.audiobook)
