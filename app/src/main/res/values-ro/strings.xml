@@ -46,15 +46,15 @@
 
     <string name="txt_setup_bmw_ready">Aplicația este gata să se conecteze la un BMW</string>
     <string name="txt_setup_mini_ready">Aplicația este gata să se conecteze la un Mini</string>
-    <string name="txt_setup_discovered_new_bmw">Aplicația BMW Connected detectată, dar aplicatia Mini Connected Classic este necesară pentru funcționare:</string>
-    <string name="txt_setup_discovered_new_mini">Aplicația Mini Connected detectată, dar aplicatia BMW Connected Classic este necesară pentru funcționare:</string>
     <string name="txt_setup_bmw_missing">Nepregătit pentru conectare la BMW:</string>
     <string name="txt_setup_mini_missing">Nepregătit pentru conectare la Mini:</string>
     <string name="txt_build_info">Versiune build: %1$s %2$s</string>
     <string name="txt_car_capabilities">Capabilități mașină raportate:</string>
     <string name="btn_install">Instalare</string>
-    <string name="btn_install_bmw">Instalează BMW Connected Classic</string>
-    <string name="btn_install_mini">Instalează Mini Connected Classic</string>
+    <string name="btn_install_bmw">Instalează BMW Connected</string>
+    <string name="btn_install_mini">Instalează Mini Connected</string>
+    <string name="btn_install_bmwclassic">Instalează BMW Connected Classic</string>
+    <string name="btn_install_miniclassic">Instalează Mini Connected Classic</string>
 
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notificări</string>

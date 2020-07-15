@@ -37,13 +37,13 @@
 
     <string name="txt_setup_bmw_ready">Приложение готово для подключения к БМВ</string>
     <string name="txt_setup_mini_ready">Приложение готово для подключения к Мини</string>
-    <string name="txt_setup_discovered_new_bmw">Приложение BMW Connected обнаружено, но для работы этого приложения также необходимо установить приложение Mini Connected Classic:</string>
-    <string name="txt_setup_discovered_new_mini">Приложение Mini Connected обнаружено, но для работы этого приложения также необходимо установить приложение BMW Connected Classic:</string>
     <string name="txt_setup_bmw_missing">Не готово к подключению к БМВ:</string>
     <string name="txt_setup_mini_missing">Не готово к подключению к Мини:</string>
     <string name="btn_install">Установить</string>
-    <string name="btn_install_bmw">Установить BMW Connected Classic</string>
-    <string name="btn_install_mini">Установить Mini Connected Classic</string>
+    <string name="btn_install_bmw">Установить BMW Connected</string>
+    <string name="btn_install_mini">Установить Mini Connected</string>
+    <string name="btn_install_bmwclassic">Установить BMW Connected Classic</string>
+    <string name="btn_install_miniclassic">Установить Mini Connected Classic</string>
 
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Уведомления</string>

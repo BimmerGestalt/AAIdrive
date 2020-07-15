@@ -9,15 +9,16 @@ import android.text.format.DateUtils
 import java.lang.StringBuilder
 import java.text.NumberFormat
 
-class BclStatusListener: BroadcastReceiver() {
+class BclStatusListener(val callback: () -> Unit = {}): BroadcastReceiver() {
 	companion object {
 		const val BCL_REPORT = "com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_INFO"
-		const val REDRAW_DEBOUNCE = 100
+		const val BCL_TRANSPORT = "com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_TRANSPORT_SWITCH"
 	}
 
 	val stringBuilder = StringBuilder()
 	val numberFormatter = NumberFormat.getNumberInstance()
 
+	var lastUpdate: Long = -1
 	var initTimestamp: Long = -1
 	var bytesRead: Long = 0
 	var bytesWritten: Long = 0
@@ -27,12 +28,20 @@ class BclStatusListener: BroadcastReceiver() {
 	var huBufsize: Int = 0
 	var remainingAckBytes: Long = 0
 	var state: String? = "UNKNOWN"
+	var stateUpdate: Long = -1  // when the state was last updated
 	var brand: String? = null
+	var transport: String? = null   // could be any of ETH,BT,USB
 
-	var nextRedraw: Long = 0
+	val staleness
+		get() = SystemClock.uptimeMillis() - lastUpdate
+	val sessionAge
+		get() = SystemClock.uptimeMillis() - initTimestamp
+	val stateAge
+		get() = SystemClock.uptimeMillis() - stateUpdate
 
 	fun subscribe(context: Context) {
 		context.registerReceiver(this, IntentFilter(BCL_REPORT))
+		context.registerReceiver(this, IntentFilter(BCL_TRANSPORT))
 	}
 	fun unsubscribe(context: Context) {
 		context.unregisterReceiver(this)
@@ -42,25 +51,33 @@ class BclStatusListener: BroadcastReceiver() {
 		context ?: return
 		intent ?: return
 
-		initTimestamp = intent.getLongExtra("EXTRA_START_TIMESTAMP", -1)
-		bytesRead = intent.getLongExtra("EXTRA_NUM_BYTES_READ", 0)
-		bytesWritten = intent.getLongExtra("EXTRA_NUM_BYTES_WRITTEN", 0)
-		numConnections = intent.getIntExtra("EXTRA_NUM_CONNECTIONS", 0)
-		instanceId = intent.getShortExtra("EXTRA_INSTANCE_ID", 0)
-		watchdogRtt = intent.getLongExtra("EXTRA_WATCHDOG_RTT", -1)
-		huBufsize = intent.getIntExtra("EXTRA_HU_BUFFER_SIZE", 0)
-		remainingAckBytes = intent.getLongExtra("EXTRA_REMAINING_ACK_BYTES", 0)
-		state = intent.getStringExtra("EXTRA_STATE")
-		brand = intent.getStringExtra("EXTRA_BRAND")
-
-		if (nextRedraw < SystemClock.uptimeMillis()) {
-			context.sendBroadcast(Intent(SetupActivity.INTENT_REDRAW))
-			nextRedraw = SystemClock.uptimeMillis() + REDRAW_DEBOUNCE
+		if (intent.action == BCL_REPORT) {
+			lastUpdate = SystemClock.uptimeMillis()
+			initTimestamp = intent.getLongExtra("EXTRA_START_TIMESTAMP", -1)
+			bytesRead = intent.getLongExtra("EXTRA_NUM_BYTES_READ", 0)
+			bytesWritten = intent.getLongExtra("EXTRA_NUM_BYTES_WRITTEN", 0)
+			numConnections = intent.getIntExtra("EXTRA_NUM_CONNECTIONS", 0)
+			instanceId = intent.getShortExtra("EXTRA_INSTANCE_ID", 0)
+			watchdogRtt = intent.getLongExtra("EXTRA_WATCHDOG_RTT", -1)
+			huBufsize = intent.getIntExtra("EXTRA_HU_BUFFER_SIZE", 0)
+			remainingAckBytes = intent.getLongExtra("EXTRA_REMAINING_ACK_BYTES", 0)
+			val oldState = state
+			state = intent.getStringExtra("EXTRA_STATE")
+			brand = intent.getStringExtra("EXTRA_BRAND")
+			if (oldState != state) {
+				stateUpdate = lastUpdate
+			}
 		}
+		// Only posts the transport when the connection is established
+		if (intent.action == BCL_TRANSPORT) {
+			transport = intent.getStringExtra("EXTRA_TRANSPORT")
+		}
+
+		callback()
 	}
 
 	override fun toString(): String {
-		val age = DateUtils.formatElapsedTime(stringBuilder,(SystemClock.uptimeMillis() - initTimestamp) / 1000)
+		val age = DateUtils.formatElapsedTime(stringBuilder,this.sessionAge / 1000)
 		return arrayOf(
 				"Brand: $brand",
 				"State: $state",

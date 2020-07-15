@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
+import android.provider.Settings
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.View.GONE
@@ -14,22 +16,28 @@ import kotlinx.android.synthetic.main.activity_setup.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import java.text.SimpleDateFormat
 import java.util.*
 
 class SetupActivity : AppCompatActivity() {
 	companion object {
+		const val REDRAW_DEBOUNCE = 100
 		const val INTENT_REDRAW = "me.hufman.androidautoidrive.SetupActivity.REDRAW"
 		fun redraw(context: Context) {
 			context.sendBroadcast(Intent(INTENT_REDRAW))
 		}
 	}
 
-	val securityAccess = SecurityAccess.getInstance(this)
+	val connectionDebugging by lazy { CarConnectionDebugging(this) }
 
-	val bclStatusListener = BclStatusListener()
+	var bclNextRedraw: Long = 0
+	val bclStatusListener = BclStatusListener {
+		if (bclNextRedraw < SystemClock.uptimeMillis()) {
+			sendBroadcast(Intent(INTENT_REDRAW))
+			bclNextRedraw = SystemClock.uptimeMillis() + REDRAW_DEBOUNCE
+		}
+	}
+
 
 	val redrawListener = object: BroadcastReceiver() {
 		override fun onReceive(p0: Context?, p1: Intent?) {
@@ -42,10 +50,10 @@ class SetupActivity : AppCompatActivity() {
 
 		setContentView(R.layout.activity_setup)
 
-		btnInstallBmwClassic.setOnClickListener { installBMWClassic() }
-		btnInstallMissingBMWClassic.setOnClickListener { installBMWClassic() }
-		btnInstallMiniClassic.setOnClickListener { installMiniClassic() }
-		btnInstallMissingMiniClassic.setOnClickListener { installMiniClassic() }
+		btnInstallBMW.setOnClickListener { installConnected("bmw") }
+		btnInstallMini.setOnClickListener { installConnected("mini") }
+		btnInstallBMWClassic.setOnClickListener { installConnectedClassic("bmw") }
+		btnInstallMiniClassic.setOnClickListener { installConnectedClassic("mini") }
 
 		swAdvancedSettings.setOnClickListener {
 			AppSettings.saveSetting(this, AppSettings.KEYS.SHOW_ADVANCED_SETTINGS, swAdvancedSettings.isChecked.toString())
@@ -53,6 +61,8 @@ class SetupActivity : AppCompatActivity() {
 		}
 
 		this.registerReceiver(redrawListener, IntentFilter(INTENT_REDRAW))
+
+		connectionDebugging.register()
 	}
 
 	override fun onResume() {
@@ -72,69 +82,91 @@ class SetupActivity : AppCompatActivity() {
 	override fun onDestroy() {
 		super.onDestroy()
 		this.unregisterReceiver(redrawListener)
+		connectionDebugging.unregister()
 	}
 
-	fun isConnectedSecurityConnected(): Boolean {
-		return securityAccess.isConnected()
-	}
-	fun isConnectedNewInstalled(): Boolean {
-		return securityAccess.installedSecurityServices.any {
-			!it.name.contains("Classic")
-		}
+	fun showEither(falseView: View, trueView: View, determiner: () -> Boolean) {
+		showEither(falseView, trueView, {true}, determiner)
 	}
 
-	fun isBMWConnectedInstalled(): Boolean {
-		return securityAccess.installedSecurityServices.any {
-			it.name.startsWith("BMW")
-		}
-	}
-	fun isBMWConnectedClassicInstalled(): Boolean {
-		return securityAccess.installedSecurityServices.any {
-			it.name.startsWith("BMW") &&
-			it.name.contains("Classic")
-		}
-	}
-	fun isBMWConnectedNewInstalled(): Boolean {
-		return securityAccess.installedSecurityServices.any {
-			it.name.startsWith("BMW") &&
-			!it.name.contains("Classic")
-		}
-	}
-
-	fun isMiniConnectedInstalled(): Boolean {
-		return securityAccess.installedSecurityServices.any {
-			it.name.startsWith("Mini")
-		}
-	}
-	fun isMiniConnectedClassicInstalled(): Boolean {
-		return securityAccess.installedSecurityServices.any {
-			it.name.startsWith("Mini") &&
-			it.name.contains("Classic")
-		}
-	}
-	fun isMiniConnectedNewInstalled(): Boolean {
-		return securityAccess.installedSecurityServices.any {
-			it.name.startsWith("Mini") &&
-			!it.name.contains("Classic")
-		}
+	fun showEither(falseView: View, trueView: View, prereq: () -> Boolean, determiner: () -> Boolean) {
+		val prereqed = prereq()
+		val determination = determiner()
+		falseView.visible = prereqed && !determination
+		trueView.visible = prereqed && determination
 	}
 
 	fun redraw() {
-		paneConnectedBMWNewInstalled.visible = isConnectedNewInstalled() && !isConnectedSecurityConnected() && isBMWConnectedNewInstalled()
-		paneConnectedMiniNewInstalled.visible = isConnectedNewInstalled() && !isConnectedSecurityConnected() && !isBMWConnectedNewInstalled() && isMiniConnectedNewInstalled()
-		paneBMWMissing.visible = !(isConnectedNewInstalled() && !isConnectedSecurityConnected()) && !isBMWConnectedInstalled()
-		paneMiniMissing.visible = !(isConnectedNewInstalled() && !isConnectedSecurityConnected()) && !isMiniConnectedInstalled()
-		paneBMWReady.visible = isConnectedSecurityConnected() && isBMWConnectedInstalled()
-		paneMiniReady.visible = isConnectedSecurityConnected() && isMiniConnectedInstalled()
+		val deviceName = Settings.Global.getString(this.contentResolver, "device_name")
 
+		showEither(paneBMWMissing, paneBMWReady) {
+			connectionDebugging.isConnectedSecurityConnected && connectionDebugging.isBMWConnectedInstalled
+		}
+		btnInstallBMW.visible = !connectionDebugging.isBMWConnectedInstalled    // don't offer the button to install if it's already installed
+		showEither(paneMiniMissing, paneMiniReady) {
+			connectionDebugging.isConnectedSecurityConnected && connectionDebugging.isMiniConnectedInstalled
+		}
+		btnInstallMini.visible = !connectionDebugging.isMiniConnectedInstalled    // don't offer the button to install if it's already installed
+
+		// if the security service isn't working for some reason, prompt to install the Classic app
+		paneSecurityMissing.visible = !connectionDebugging.isConnectedSecurityConnected && connectionDebugging.isConnectedInstalled
+		showEither(btnInstallBMWClassic, btnInstallMiniClassic) {
+			// if Mini Connected is installed, prompt to install BMW Connected Classic
+			// otherwise, prompt to install Mini Connected Classic (most users will be BMW)
+			connectionDebugging.isMiniConnectedInstalled
+		}
+
+		// Bluetooth connection status
+		showEither(paneBTDisconnected, paneBTConnected) { connectionDebugging.isBTConnected }
+		showEither(paneA2dpDisconnected, paneA2dpConnected, { connectionDebugging.isBTConnected }) {
+			connectionDebugging.isA2dpConnected
+		}
+		showEither(paneSppDisconnected, paneSppConnected, { connectionDebugging.isBTConnected }) {
+			connectionDebugging.isSPPAvailable
+		}
+
+		// USB connection status
+		paneUSBDisconnected.visible = !connectionDebugging.isUsbConnected
+		paneUSBConnected.visible = connectionDebugging.isUsbConnected && !connectionDebugging.isUsbTransferConnected && !connectionDebugging.isUsbAccessoryConnected
+		paneUSBMTPConnected.visible = connectionDebugging.isUsbConnected && connectionDebugging.isUsbTransferConnected && !connectionDebugging.isUsbAccessoryConnected
+		paneUSBACCConnected.visible = connectionDebugging.isUsbAccessoryConnected
+		txtEnableUsbMtp.visible = !connectionDebugging.isBCLConnecting && !connectionDebugging.isBCLConnected
+		txtEnableUsbAcc.visible = !connectionDebugging.isBCLConnecting && !connectionDebugging.isBCLConnected
+		txtEnableUsbAcc.text = getString(R.string.txt_setup_enable_usbacc, deviceName)
+
+		// apps connection is running, perhaps on a transport
+		paneBclDisconnected.visible = (connectionDebugging.isBTConnected || connectionDebugging.isUsbAccessoryConnected) &&
+				!connectionDebugging.isBCLConnecting && !connectionDebugging.isBCLConnected
+		paneBclConnecting.visible = connectionDebugging.isBCLConnecting && !connectionDebugging.isBCLConnected
+		paneBclStuck.visible = connectionDebugging.isBCLStuck
+		txtEnableBclSpp.text = getString(R.string.txt_setup_enable_bcl_mode, deviceName)
+		paneBclConnected.visible = connectionDebugging.isBCLConnected
+		txtBclConnected.text = if (connectionDebugging.bclTransport == null)
+			getString(R.string.txt_setup_bcl_connected)
+		else
+			getString(R.string.txt_setup_bcl_connected_transport, connectionDebugging.bclTransport)
+
+		paneCarConnected.visible = connectionDebugging.idriveListener.isConnected
+		val chassisCode = ChassisCode.fromCode(DebugStatus.carCapabilities["vehicle.type"] ?: "Unknown")
+		txtCarConnected.text = if (chassisCode != null) {
+			resources.getString(R.string.notification_description_chassiscode, chassisCode.toString())
+		} else {
+			when (connectionDebugging.idriveListener.brand?.toLowerCase()) {
+				"bmw" -> resources.getString(R.string.notification_description_bmw)
+				"mini" -> resources.getString(R.string.notification_description_mini)
+				else -> resources.getString(R.string.notification_description)
+			}
+		}
+		// second half
 		val buildTime = SimpleDateFormat.getDateTimeInstance().format(Date(BuildConfig.BUILD_TIME))
 		txtBuildInfo.text = getString(R.string.txt_build_info, BuildConfig.VERSION_NAME, buildTime)
 
 		val showAdvancedSettings = AppSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
 		swAdvancedSettings.isChecked = showAdvancedSettings
+		paneAdvancedInfo.visible = showAdvancedSettings
 
 		txtBclReport.text = bclStatusListener.toString()
-		paneBclReport.visible = showAdvancedSettings && bclStatusListener.state != "UNKNOWN"
+		paneBclReport.visible = bclStatusListener.state != "UNKNOWN" && bclStatusListener.staleness < 30000
 
 		val carCapabilities = synchronized(DebugStatus.carCapabilities) {
 			DebugStatus.carCapabilities.map {
@@ -142,22 +174,27 @@ class SetupActivity : AppCompatActivity() {
 			}.sorted().joinToString("\n")
 		}
 		txtCarCapabilities.text = carCapabilities
-		paneCarCapabilities.visible = showAdvancedSettings && carCapabilities.isNotEmpty()
+		paneCarCapabilities.visible = carCapabilities.isNotEmpty()
 	}
 
-	fun installBMWClassic() {
+	val isUSA
+		get() = this.resources.configuration.locale.country == "US"
+
+	fun installConnected(brand: String = "bmw") {
+		val packageName = if (isUSA) "de.$brand.connected.na" else "de.$brand.connected"
 		val intent = Intent(Intent.ACTION_VIEW).apply {
-			data = Uri.parse("https://play.google.com/store/apps/details?id=com.bmwgroup.connected.bmw.usa")
+			data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+		}
+		startActivity(intent)
+	}
+	fun installConnectedClassic(brand: String = "bmw") {
+		val packageName = if (isUSA) "com.bmwgroup.connected.$brand.usa" else "com.bmwgroup.connected.$brand"
+		val intent = Intent(Intent.ACTION_VIEW).apply {
+			data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
 		}
 		startActivity(intent)
 	}
 
-	fun installMiniClassic() {
-		val intent = Intent(Intent.ACTION_VIEW).apply {
-			data = Uri.parse("https://play.google.com/store/apps/details?id=com.bmwgroup.connected.mini.usa")
-		}
-		startActivity(intent)
-	}
 }
 
 var View.visible: Boolean
