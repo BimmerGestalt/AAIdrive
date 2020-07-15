@@ -85,6 +85,7 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 			"com.aspiro.tidal" -> "__ROOT_LOGGED_IN__"   // Tidal Music
 			"com.apple.android.music" -> "__AUTO_ROOT__"     // Apple Music
 			"com.radio.fmradio" -> "__ROOT__"   // Radio FM
+			"app.sunshinelive.de.sunshinelive" -> "/"   // Sunshine Live
 			else -> mediaBrowser.root
 		}
 	}

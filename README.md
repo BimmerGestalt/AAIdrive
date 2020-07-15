@@ -84,6 +84,7 @@ Implemented Features
         - [VLC For Android](https://play.google.com/store/apps/details?id=org.videolan.vlc)
       - Radio
         - [AP News](https://play.google.com/store/apps/details?id=mnn.Android)
+        - [BFM](https://play.google.com/store/apps/details?id=my.bfm.app)
         - [Dash Radio](https://play.google.com/store/apps/details?id=com.dashradio.dash)
         - [Energy Radio](https://play.google.com/store/apps/details?id=radioenergy.app)
         - [Nederland.FM](https://play.google.com/store/apps/details?id=nl.nibbixsoft.app)
@@ -93,6 +94,7 @@ Implemented Features
         - [Radio FM](https://play.google.com/store/apps/details?id=com.radio.fmradio)
         - [Scanner Radio](https://play.google.com/store/apps/details?id=com.scannerradio)
         - [SiriusXM](https://play.google.com/store/apps/details?id=com.sirius)
+        - [sunshine live](https://play.google.com/store/apps/details?id=app.sunshinelive.de.sunshinelive)
         - [Versuz Radio](https://play.google.com/store/apps/details?id=com.versuzradio)
         - [Virgin Radio Italy](https://play.google.com/store/apps/details?id=it.froggy.android.virginradio)
       - Streaming Services
