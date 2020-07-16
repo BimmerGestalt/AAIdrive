@@ -62,6 +62,8 @@
     <string name="lbl_assistant_empty">None found</string>
     <string name="notification_assistant_tap">Tap to launch %s</string>
     <string name="notification_assistant_description">Only necessary because the screen is on</string>
+    <string name="donation_title">Like this app?</string>
+    <string name="donation_text">Consider showing your support with a small donation</string>
 
 
     <!-- car app strings -->

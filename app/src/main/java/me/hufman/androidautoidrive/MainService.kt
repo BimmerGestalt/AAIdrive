@@ -15,6 +15,7 @@ import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControlle
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
 import me.hufman.androidautoidrive.phoneui.DebugStatus
+import me.hufman.androidautoidrive.phoneui.DonationRequest
 import me.hufman.androidautoidrive.phoneui.MainActivity
 import me.hufman.androidautoidrive.phoneui.SetupActivity
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
@@ -202,6 +203,9 @@ class MainService: Service() {
 					stopServiceNotification()
 					stopSelf()
 				}
+
+				// show a donation popup, if it's time
+				DonationRequest(this).countUsage()
 			} else {
 				Log.d(TAG, "Not fully connected: IDrive:${IDriveConnectionListener.isConnected} SecurityService:${securityAccess.isConnected()}")
 
