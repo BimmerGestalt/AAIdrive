@@ -43,8 +43,8 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 		}
 
 		// spawn a Test notification
-		createNotificationChannel()
 		btnTestNotification.setOnClickListener {
+			createNotificationChannel()
 			val actionIntent = Intent(this, CustomActionListener::class.java)
 
 			val action = Notification.Action.Builder(null, "Custom action test",
