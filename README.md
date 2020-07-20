@@ -49,6 +49,10 @@ Several new entries will be added to the Media section of the control screen. Th
 Implemented Features
 --------------------
 
+  - Google Assistant
+    - Any voice assistant installed on the phone is added as a Connected App entry
+    - Google Assistant works the best, but Alexa, Bixby, and Cortana are also compatible
+    - The voice assistant app can be set as a hardware shortcut button for convenience
   - Phone Notifications
     - Popup about new notifications
     - Supports Dismiss, Mark As Read, or other notification actions
@@ -109,7 +113,7 @@ Integration Points
 Besides showing a self-contained remote UI, the IDrive system offers many exciting integration points. Here are a few that this project supports:
 
   - The UI widgets automatically take on the respective theme to fit the car
-  - The Map View, Notification List, and Music Playback screens can be assigned to the physical shortcut buttons in the dashboard
+  - The Assistants, Map View, Notification List, and Music Playback screens can be assigned to the physical shortcut buttons in the dashboard
   - New notifications trigger a popup in IDrive version 4
   - New notification popups can be disabled if a passenger is detected in the seat
   - The currently-playing app is displayed along the top of the IDrive screen
@@ -158,10 +162,9 @@ Requirements
 To communicate to the car, this project relies on the proxy connection that is created by the main Connected app on the phone. Both of the brand-specific Connected and the Connected Classic apps have been tested as compatible for this purpose.
 
 Additionally, the car proposes a security challenge during the connection process, and this project asks the Security Service provided by the Connected apps for the correct response.
-However, the newer Connected app locked down this ability in version 5.1, which means the Connected Classic app must be installed to provide this response.
-For example, the user can install BMW Connected for the remote connectivity and better robustness with the Android memory manager, and install Mini Connected Classic to provide the Security Service for this project. Note that the Connected Classic app does not actually need to run, be logged in, or ever connected to the car!
-
-It is not recommended to install both the Connected and Connected Classic apps of the same brand, they will fight over the connection to the car and undefined results may happen. Instead, install the Connected Classic app of the other brand that is not intended to be used regularly.
+The normal Connected app should be enough for this, but it might be necessary to also install the Connected Classic app to provide the Security Service.
+If this is needed, it is not recommended to install both the Connected and Connected Classic apps of the same brand, they will fight over the connection to the car and undefined results may happen.
+Instead, install the Connected Classic app of the other brand that is not intended to be used regularly.
 
 Build Instructions
 ------------------
