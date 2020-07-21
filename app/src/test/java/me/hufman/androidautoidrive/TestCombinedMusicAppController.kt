@@ -11,13 +11,10 @@ import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import org.junit.Assert.*
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
 import java.lang.UnsupportedOperationException
 import java.util.*
 
 
-@RunWith(MockitoJUnitRunner.Silent::class)
 class TestCombinedMusicAppController {
 
 	val leftController = mock<MusicAppController> {
@@ -45,7 +42,7 @@ class TestCombinedMusicAppController {
 		assertTrue(controller.isConnected())
 
 		// oops the controller disconnected
-		whenever(leftController.isConnected()).thenReturn(false)
+		whenever(leftController.isConnected()) doReturn false
 		assertTrue(controller.isPending())
 		assertFalse(controller.isConnected())
 
@@ -152,14 +149,14 @@ class TestCombinedMusicAppController {
 		verify(rightController, never()).seekTo(any())
 
 		val customAction = CustomAction("com.musicapp", "action", "name", null, null)
-		whenever(rightController.getCustomActions()).thenReturn(listOf(customAction))
+		whenever(rightController.getCustomActions()) doAnswer {listOf(customAction)}
 		controller.customAction(customAction)
 		verify(leftController, times(1)).getCustomActions()
 		verify(rightController, times(1)).getCustomActions()
 		verify(rightController, times(1)).customAction(customAction)
 
-		whenever(leftController.getQueue()).thenReturn(LinkedList())
-		whenever(rightController.getQueue()).thenReturn(listOf(MusicMetadata()))
+		whenever(leftController.getQueue()) doAnswer {LinkedList()}
+		whenever(rightController.getQueue()) doAnswer {listOf(MusicMetadata())}
 		controller.playQueue(MusicMetadata(queueId = 1L))
 		verify(leftController).getQueue()
 		verify(rightController).getQueue()
@@ -203,8 +200,8 @@ class TestCombinedMusicAppController {
 		verify(leftController, times(1)).getPlaybackPosition()
 		verify(rightController, never()).getPlaybackPosition()
 
-		whenever(leftController.isSupportedAction(any())).thenReturn(false)
-		whenever(rightController.isSupportedAction(any())).thenReturn(true)
+		whenever(leftController.isSupportedAction(any())) doReturn false
+		whenever(rightController.isSupportedAction(any())) doReturn true
 		val supported = controller.isSupportedAction(MusicAction.PLAY)
 		assertTrue(supported)
 		verify(leftController, times(1)).isSupportedAction(MusicAction.PLAY)
@@ -277,8 +274,8 @@ class TestCombinedMusicAppController {
 			rightObservable.value = rightController
 
 			val musicMetadata = MusicMetadata("mediaId")
-			whenever(leftController.browse(anyOrNull())).thenReturn(LinkedList())
-			whenever(rightController.browse(anyOrNull())).thenReturn(listOf(musicMetadata))
+			whenever(leftController.browse(anyOrNull())) doAnswer {LinkedList()}
+			whenever(rightController.browse(anyOrNull())) doAnswer {listOf(musicMetadata)}
 			val results = controller.browse(MusicMetadata(mediaId="/"))
 			assertEquals(listOf(musicMetadata), results)
 			verify(leftController, times(1)).browse(anyOrNull())
@@ -308,8 +305,8 @@ class TestCombinedMusicAppController {
 			rightObservable.value = rightController
 
 			val musicMetadata = MusicMetadata("mediaId")
-			whenever(leftController.search(any())).thenReturn(null)
-			whenever(rightController.search(any())).thenReturn(listOf(musicMetadata))
+			whenever(leftController.search(any())) doAnswer {null}
+			whenever(rightController.search(any())) doAnswer {listOf(musicMetadata)}
 			val results = controller.search("query")
 			assertEquals(listOf(musicMetadata), results)
 			verify(leftController, times(1)).search(any())

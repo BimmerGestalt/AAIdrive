@@ -22,7 +22,6 @@ import me.hufman.idriveconnectionkit.rhmi.*
 import org.awaitility.Awaitility.await
 import org.junit.Assert.*
 import org.junit.Test
-import org.mockito.ArgumentCaptor
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 import java.util.*
@@ -224,13 +223,14 @@ class TestMusicApp {
 		assertArrayEquals(arrayOf(arrayOf("", "", "<No Apps>")), (mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data)
 
 		// some apps are discovered
-		whenever(musicAppDiscovery.validApps).then {
+		whenever(musicAppDiscovery.validApps).doAnswer {
 			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
 					MusicAppInfo("Test2", mock(), "package", "class"))
 		}
-		val discoveryListenerCapture = ArgumentCaptor.forClass(Runnable::class.java)
-		verify(musicAppDiscovery).listener = discoveryListenerCapture.capture()
-		discoveryListenerCapture.value.run()
+		argumentCaptor<java.lang.Runnable>().apply {
+			verify(musicAppDiscovery).listener = capture()
+			lastValue.run()
+		}
 		assertEquals(1, mockServer.avConnections.size)
 
 		// click entrybutton again with a list of apps
@@ -262,9 +262,10 @@ class TestMusicApp {
 		assertEquals(IDs.PLAYBACK_STATE, mockServer.data[IDs.ENTRYBUTTON_DEST_STATE])
 
 		// verify that an app listener is connecting, to redraw on changes
-		val controllerListenerCapture = ArgumentCaptor.forClass(Runnable::class.java)
-		verify(musicController).listener = controllerListenerCapture.capture()
-		controllerListenerCapture.value.run()
+		argumentCaptor<Runnable>().apply {
+			verify(musicController).listener = capture()
+			lastValue.run()
+		}
 
 		// test that the playback view redraw didn't happen since it's not focused
 		assertFalse(app.playbackViewVisible)
@@ -1192,16 +1193,16 @@ class TestMusicApp {
 		val app = MusicApp(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
-		val discoveryListenerCapture = ArgumentCaptor.forClass(Runnable::class.java)
+		val discoveryListenerCapture = argumentCaptor<Runnable>()
 		verify(musicAppDiscovery).listener = discoveryListenerCapture.capture()
 		verify(musicAppDiscovery, atLeastOnce()).discoverApps() // discover apps when it starts up
 
 		// tell the app about the current list of apps, without showing the app list
-		whenever(musicAppDiscovery.validApps).then {
+		whenever(musicAppDiscovery.validApps) doAnswer {
 			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
 					MusicAppInfo("Test2", mock(), "package", "class"))
 		}
-		discoveryListenerCapture.value.run()
+		discoveryListenerCapture.lastValue.run()
 		assertNull("Didn't send an app list to the car", mockServer.data[IDs.APPLIST_LISTMODEL])
 
 		// show the app list
@@ -1213,11 +1214,11 @@ class TestMusicApp {
 		assertEquals("Updates the app list in the car", listOf("Test1", "Test2"), displayedNames)
 
 		// add a new app to the list
-		whenever(musicAppDiscovery.validApps).then {
+		whenever(musicAppDiscovery.validApps) doAnswer {
 			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
 					MusicAppInfo("Test3", mock(), "package3", "class"))
 		}
-		discoveryListenerCapture.value.run()
+		discoveryListenerCapture.lastValue.run()
 		val displayedNamesNew = (mockServer.data[IDs.APPLIST_LISTMODEL] as BMWRemoting.RHMIDataTable).data.map {
 			it[2]
 		}
@@ -1228,16 +1229,16 @@ class TestMusicApp {
 
 		// a new music app starts playing, which we don't know about
 		val nowPlayingApp = MusicAppInfo("Test4", mock(), "package4", "UNUSED")
-		whenever(musicController.musicSessions).then {
+		whenever(musicController.musicSessions) doAnswer {
 			mock<MusicSessions> {
 				on { getPlayingApp() } doReturn nowPlayingApp
 			}
 		}
-		discoveryListenerCapture.value.run()
+		discoveryListenerCapture.lastValue.run()
 		verify(musicController).connectApp(same(nowPlayingApp))
 		// async sets the musicBrowser to the correct connection
 		whenever(musicController.currentAppInfo).doReturn(nowPlayingApp)
-		whenever(musicAppDiscovery.validApps).then {
+		whenever(musicAppDiscovery.validApps) doAnswer {
 			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
 					MusicAppInfo("Test3", mock(), "package3", "class"),
 					MusicAppInfo("Test4", mock(), "package4", null))
@@ -1247,17 +1248,17 @@ class TestMusicApp {
 
 		// a new music session that we know can browse opens up
 		reset(musicController)
-		whenever(musicController.musicSessions).then {
+		whenever(musicController.musicSessions) doAnswer {
 			mock<MusicSessions> {
 				on { getPlayingApp() } doReturn nowPlayingApp
 			}
 		}
 		val browseableApp = MusicAppInfo("Test4", mock(), "package4", "class")
-		whenever(musicAppDiscovery.validApps).then {
+		whenever(musicAppDiscovery.validApps) doAnswer {
 			listOf(MusicAppInfo("Test1", mock(), "package", "class"),
 					browseableApp)
 		}
-		discoveryListenerCapture.value.run()
+		discoveryListenerCapture.lastValue.run()
 		verify(musicController).connectApp(same(browseableApp))
 	}
 }

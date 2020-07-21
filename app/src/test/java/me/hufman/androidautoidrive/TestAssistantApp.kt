@@ -51,9 +51,9 @@ class TestAssistantApp {
 		assertEquals(0, mockServer.amApps.size)
 
 		// add an assistant and try again
-		whenever(assistantController.getAssistants()).thenReturn(setOf(
+		whenever(assistantController.getAssistants()) doReturn setOf(
 				AssistantAppInfo("Test App", mock(), "me.test.app")
-		))
+		)
 		app.onCreate()
 
 		assertEquals(1, mockServer.amApps.size)
@@ -66,9 +66,7 @@ class TestAssistantApp {
 		IDriveConnection.mockRemotingServer = mockServer
 
 		val assistant = AssistantAppInfo("Test App", mock(), "me.test.app")
-		whenever(assistantController.getAssistants()).thenReturn(setOf(
-				assistant
-		))
+		whenever(assistantController.getAssistants()) doReturn setOf(assistant)
 
 		val app = AssistantApp(securityAccess, carAppResources, assistantController, graphicsHelpers)
 		app.onCreate()

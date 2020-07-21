@@ -13,12 +13,8 @@ import me.hufman.androidautoidrive.music.controllers.GenericMusicAppController
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.junit.MockitoJUnitRunner
 
 
-@RunWith(MockitoJUnitRunner.Silent::class)
 class TestGenericMusicAppController {
 	val mediaTransportControls = mock<MediaControllerCompat.TransportControls>()
 	val mediaController = mock<MediaControllerCompat> {
@@ -82,7 +78,7 @@ class TestGenericMusicAppController {
 	fun testCustomActions() {
 		val otherAction = CustomAction("com.wrongapp", "test", "Name", null, null)
 		controller.customAction(otherAction)
-		verify(mediaTransportControls, never()).sendCustomAction(anyString(), anyOrNull())
+		verify(mediaTransportControls, never()).sendCustomAction(any<String>(), anyOrNull())
 
 		val myAction = CustomAction("com.musicapp", "test", "Name", null, null)
 		controller.customAction(myAction)

@@ -16,55 +16,51 @@ import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
-import org.mockito.junit.MockitoJUnitRunner
 
 
-@RunWith(MockitoJUnitRunner.Silent::class)
 class TestSpotifyMusicAppController {
-	val contentCallback = ArgumentCaptor.forClass(CallResult.ResultCallback::class.java as Class<CallResult.ResultCallback<ListItems>>)
-	val imagesCallback = ArgumentCaptor.forClass(CallResult.ResultCallback::class.java as Class<CallResult.ResultCallback<Bitmap>>)
-	val libraryCallback = ArgumentCaptor.forClass(CallResult.ResultCallback::class.java as Class<CallResult.ResultCallback<LibraryState>>)
-	val spotifyCallback = ArgumentCaptor.forClass(Subscription.EventCallback::class.java as Class<Subscription.EventCallback<PlayerState>>)
-	val playlistCallback = ArgumentCaptor.forClass(Subscription.EventCallback::class.java as Class<Subscription.EventCallback<PlayerContext>>)
+	val contentCallback = argumentCaptor<CallResult.ResultCallback<ListItems>>()
+	val imagesCallback = argumentCaptor<CallResult.ResultCallback<Bitmap>>()
+	val libraryCallback = argumentCaptor<CallResult.ResultCallback<LibraryState>>()
+	val spotifyCallback = argumentCaptor<Subscription.EventCallback<PlayerState>>()
+	val playlistCallback = argumentCaptor<Subscription.EventCallback<PlayerContext>>()
 
 	val connectApi = mock<ConnectApi>()
 	val contentApi = mock<ContentApi> {
 		on { getRecommendedContentItems(any()) } doAnswer {
 			val result = mock<CallResult<ListItems>>()
-			whenever(result.setResultCallback(contentCallback.capture())).thenReturn(result)
+			whenever(result.setResultCallback(contentCallback.capture())) doReturn result
 			result
 		}
 		on { getChildrenOfItem(any(), any(), any()) } doAnswer {
 			val result = mock<CallResult<ListItems>>()
-			whenever(result.setResultCallback(contentCallback.capture())).thenReturn(result)
+			whenever(result.setResultCallback(contentCallback.capture())) doReturn result
 			result
 		}
 	}
 	val imagesApi = mock<ImagesApi> {
 		on { getImage(any()) } doAnswer {
 			val result = mock<CallResult<Bitmap>>()
-			whenever(result.setResultCallback(imagesCallback.capture())).thenReturn(result)
+			whenever(result.setResultCallback(imagesCallback.capture())) doReturn result
 			result
 		}
 	}
 	val playerApi = mock<PlayerApi> {
 		on { subscribeToPlayerState() } doAnswer {
 			val subscription = mock<Subscription<PlayerState>>()
-			whenever(subscription.setEventCallback(spotifyCallback.capture())).thenReturn(subscription)
+			whenever(subscription.setEventCallback(spotifyCallback.capture())) doReturn subscription
 			subscription
 		}
 		on { subscribeToPlayerContext() } doAnswer {
 			val subscription = mock<Subscription<PlayerContext>>()
-			whenever(subscription.setEventCallback(playlistCallback.capture())).thenReturn(subscription)
+			whenever(subscription.setEventCallback(playlistCallback.capture())) doReturn subscription
 			subscription
 		}
 	}
 	val userApi = mock<UserApi> {
 		on { getLibraryState(any()) } doAnswer {
 			val result = mock<CallResult<LibraryState>>()
-			whenever(result.setResultCallback(libraryCallback.capture())).thenReturn(result)
+			whenever(result.setResultCallback(libraryCallback.capture())) doReturn result
 			result
 		}
 	}
@@ -154,21 +150,21 @@ class TestSpotifyMusicAppController {
 					PlayerOptions(false, Repeat.OFF),
 					PlayerRestrictions(true, true, true, true, true, true)
 			)
-			spotifyCallback.value.onEvent(state)
+			spotifyCallback.lastValue.onEvent(state)
 
 			assertEquals(setOf(
 					controller.CUSTOM_ACTION_TURN_SHUFFLE_ON,
 					controller.CUSTOM_ACTION_TURN_REPEAT_ALL_ON
 			), controller.getCustomActions().toSet())
 
-			libraryCallback.value.onResult(LibraryState("uri", false, true))
+			libraryCallback.lastValue.onResult(LibraryState("uri", false, true))
 			assertEquals(setOf(
 					controller.CUSTOM_ACTION_TURN_SHUFFLE_ON,
 					controller.CUSTOM_ACTION_TURN_REPEAT_ALL_ON,
 					controller.CUSTOM_ACTION_ADD_TO_COLLECTION
 			), controller.getCustomActions().toSet())
 
-			libraryCallback.value.onResult(LibraryState("uri", true, true))
+			libraryCallback.lastValue.onResult(LibraryState("uri", true, true))
 			assertEquals(setOf(
 					controller.CUSTOM_ACTION_TURN_SHUFFLE_ON,
 					controller.CUSTOM_ACTION_TURN_REPEAT_ALL_ON,
@@ -187,7 +183,7 @@ class TestSpotifyMusicAppController {
 					PlayerOptions(false, Repeat.OFF),
 					PlayerRestrictions(true, true, true, false, true, true)
 			)
-			spotifyCallback.value.onEvent(state)
+			spotifyCallback.lastValue.onEvent(state)
 
 			assertEquals(setOf(
 					controller.CUSTOM_ACTION_TURN_SHUFFLE_ON,
@@ -206,7 +202,7 @@ class TestSpotifyMusicAppController {
 					PlayerOptions(false, Repeat.OFF),
 					PlayerRestrictions(true, true, false, false, true, true)
 			)
-			spotifyCallback.value.onEvent(state)
+			spotifyCallback.lastValue.onEvent(state)
 
 			assertEquals(setOf(
 					controller.CUSTOM_ACTION_TURN_SHUFFLE_ON
@@ -224,7 +220,7 @@ class TestSpotifyMusicAppController {
 					PlayerOptions(true, Repeat.ALL),
 					PlayerRestrictions(true, true, true, true, true, true)
 			)
-			spotifyCallback.value.onEvent(state)
+			spotifyCallback.lastValue.onEvent(state)
 
 			assertEquals(setOf(
 					controller.CUSTOM_ACTION_TURN_SHUFFLE_OFF,
@@ -243,7 +239,7 @@ class TestSpotifyMusicAppController {
 					PlayerOptions(true, Repeat.ALL),
 					PlayerRestrictions(true, true, false, true, true, true)
 			)
-			spotifyCallback.value.onEvent(state)
+			spotifyCallback.lastValue.onEvent(state)
 
 			assertEquals(setOf(
 					controller.CUSTOM_ACTION_TURN_SHUFFLE_OFF,
@@ -262,7 +258,7 @@ class TestSpotifyMusicAppController {
 					PlayerOptions(true, Repeat.ONE),
 					PlayerRestrictions(true, true, true, true, true, true)
 			)
-			spotifyCallback.value.onEvent(state)
+			spotifyCallback.lastValue.onEvent(state)
 
 			assertEquals(setOf(
 					controller.CUSTOM_ACTION_TURN_SHUFFLE_OFF,
@@ -274,9 +270,9 @@ class TestSpotifyMusicAppController {
 	@Test
 	fun testQueue() {
 		// load a queue
-		playlistCallback.value.onEvent(PlayerContext("playlisturi", "title", "subtitle", "playlist"))
+		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", "title", "subtitle", "playlist"))
 		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, "title", "subtitle", false, true), 100, 0)
-		contentCallback.value.onResult(ListItems(1, 0, 1, arrayOf(
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
 				ListItem("id", "uri", null, "Title", "Subtitle", true, false)
 		)))
 		val queue = controller.getQueue()
@@ -302,7 +298,7 @@ class TestSpotifyMusicAppController {
 				false, 1.0f, 200,
 				PlayerOptions.DEFAULT, PlayerRestrictions.DEFAULT
 		)
-		spotifyCallback.value.onEvent(state)
+		spotifyCallback.lastValue.onEvent(state)
 
 		val metadata = controller.getMetadata()
 		val position = controller.getPlaybackPosition()
@@ -320,7 +316,7 @@ class TestSpotifyMusicAppController {
 		assertFalse(controller.isSupportedAction(MusicAction.SET_SHUFFLE_MODE))
 
 		// resolve the cover art
-		imagesCallback.value.onResult(mock())
+		imagesCallback.lastValue.onResult(mock())
 		assertNotEquals(null, controller.getMetadata()?.coverArt)
 
 		// set the player restrictions for skipping and seeking
@@ -332,7 +328,7 @@ class TestSpotifyMusicAppController {
 				false, 1.0f, 200,
 				PlayerOptions.DEFAULT, PlayerRestrictions(true, true, true, true, true, true)
 		)
-		spotifyCallback.value.onEvent(premiumState)
+		spotifyCallback.lastValue.onEvent(premiumState)
 		assertTrue(controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS))
 		assertTrue(controller.isSupportedAction(MusicAction.SKIP_TO_NEXT))
 		assertTrue(controller.isSupportedAction(MusicAction.SEEK_TO))
@@ -347,7 +343,7 @@ class TestSpotifyMusicAppController {
 			delay(1000)
 			assertFalse(deferredResults.isCompleted)
 			verify(contentApi).getRecommendedContentItems("default-cars")
-			contentCallback.value.onResult(ListItems(1, 0, 1, arrayOf(
+			contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
 					ListItem("id", "uri", null, "Title", "Subtitle", true, false)
 			)))
 			val results = deferredResults.await()
@@ -362,7 +358,7 @@ class TestSpotifyMusicAppController {
 			delay(1000)
 			assertFalse(deferredResults.isCompleted)
 			verify(contentApi).getChildrenOfItem(ListItem("library", "library", null, null, null, false, true), 200, 0)
-			contentCallback.value.onResult(ListItems(1, 0, 1, arrayOf(
+			contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
 					ListItem("id", "uri", null, "Favorite", "Subtitle", true, false)
 			)))
 			val results = deferredResults.await()

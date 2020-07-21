@@ -168,6 +168,7 @@ dependencies {
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
     implementation project(path: ':IDriveConnectKitAndroid')
     implementation project(path: ':IDriveConnectKit')
+    testImplementation project(path: ':IDriveConnectKit')
     androidTestImplementation project(path: ':IDriveConnectKitAndroid')
     androidTestImplementation project(path: ':IDriveConnectKit')
     androidTestImplementation "org.bouncycastle:bcmail-jdk16:1.46"

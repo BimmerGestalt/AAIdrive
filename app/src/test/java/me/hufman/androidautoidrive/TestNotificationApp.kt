@@ -28,8 +28,6 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
 import java.io.ByteArrayInputStream
 
 /**
@@ -37,7 +35,6 @@ import java.io.ByteArrayInputStream
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-@RunWith(MockitoJUnitRunner.Silent::class)
 class TestNotificationApp {
 
 	val securityAccess = mock<SecurityAccess> {
@@ -650,8 +647,8 @@ class TestNotificationApp {
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
 		app.viewList.initWidgets(app.viewDetails)
-		whenever(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP]).thenReturn("true")
-		whenever(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER]).thenReturn("false")
+		whenever(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP]) doReturn "true"
+		whenever(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER]) doReturn "false"
 		val appSettingsCallback = argumentCaptor<() -> Unit>()
 
 		// the car shows the view state
@@ -674,7 +671,7 @@ class TestNotificationApp {
 		callbacks.rhmi_onActionEvent(1, "Dont care", 173, mapOf(1.toByte() to 1))
 		verify(mockServer).rhmi_ackActionEvent(1, 173, 1, false)    // don't click to the next screen
 		verify(appSettings)[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER] = "true"
-		whenever(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER]).thenReturn("true")
+		whenever(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER]) doReturn "true"
 
 		// the callback should trigger because of the changed setting
 		appSettingsCallback.lastValue.invoke()
