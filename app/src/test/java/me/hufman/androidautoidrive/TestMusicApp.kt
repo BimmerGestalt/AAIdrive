@@ -17,6 +17,7 @@ import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
+import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
 import org.awaitility.Awaitility.await
@@ -230,8 +231,14 @@ class TestMusicApp {
 		argumentCaptor<java.lang.Runnable>().apply {
 			verify(musicAppDiscovery).listener = capture()
 			lastValue.run()
+			// without an InstanceID, won't try to create an AvContext
+			assertEquals(0, mockServer.avConnections.size)
+			// now set the instanceId
+			IDriveConnectionListener.setConnection("", "localhost", 4008, 9)
+			lastValue.run()
+			assertEquals(1, mockServer.avConnections.size)
+			IDriveConnectionListener.reset()
 		}
-		assertEquals(1, mockServer.avConnections.size)
 
 		// click entrybutton again with a list of apps
 		mockClient.rhmi_onActionEvent(1, "unused", IDs.ENTRYBUTTON_ACTION, mapOf(0 to 1))

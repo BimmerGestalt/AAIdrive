@@ -19,6 +19,7 @@ val MusicAppInfo.amAppIdentifier: String
 	get() = amAppIdentifier(this.packageName)
 
 class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: MusicController, val graphicsHelpers: GraphicsHelpers, val musicAppMode: MusicAppMode) {
+	val MY_IDENT = "me.hufman.androidautoidrive.music"  // AM and AV ident string
 	val TAG = "AVContextHandler"
 	val carConnection = (app.unwrap() as RHMIApplicationEtch).remoteServer
 	var amHandle: Int? = null
@@ -26,12 +27,30 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 	val knownApps = ConcurrentHashMap<String, MusicAppInfo>()
 	@Volatile var currentContext = false  // whether we are the current playing app.. the car doesn't grantConnection if we are already connected
 
+	/**
+	 * Creates the avHandle
+	 * Should be run inside a car's synchronized block
+	 */
+	fun createAvHandle() {
+		if (avHandle != null) {
+			// already done
+			return
+		}
+		val instanceId = IDriveConnectionListener.instanceId
+		if (instanceId == null) {
+			Log.w(TAG, "instanceId is null! skipping av handle creation for now")
+		} else {
+			Log.d(TAG, "instanceId == ${IDriveConnectionListener.instanceId}")
+			avHandle = carConnection.av_create(instanceId, MY_IDENT)
+			Log.d(TAG, "AV handle: $avHandle")
+		}
+	}
+
 	fun updateApps(apps: List<MusicAppInfo>) {
 		app.runSynchronized {
-			val myIdent = "me.hufman.androidautoidrive.music"
 			if (amHandle == null) {
 				amHandle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
-				carConnection.am_addAppEventHandler(amHandle, myIdent)
+				carConnection.am_addAppEventHandler(amHandle, MY_IDENT)
 			}
 
 			for (app in apps) {
@@ -43,16 +62,7 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 				}
 			}
 
-			if (IDriveConnectionListener.instanceId == null) {
-				Log.w(TAG, "instanceId is null! av handle may not be usable")
-			} else {
-				Log.d(TAG, "instanceId == ${IDriveConnectionListener.instanceId}")
-			}
-			if (avHandle == null) {
-				avHandle = carConnection.av_create(IDriveConnectionListener.instanceId
-						?: 8, myIdent)
-				Log.d(TAG, "AV handle: $avHandle")
-			}
+			createAvHandle()
 		}
 
 		if (currentContext && controller.currentAppController == null) {
@@ -94,13 +104,17 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 	fun av_requestContext(app: MusicAppInfo) {
 		controller.connectApp(app)  // prepare the music controller, so that av_connectionGranted can use it
 		if (musicAppMode.shouldRequestAudioContext()) {
-			Log.i(TAG, "Sending requestContext to car for ${app.name}")
 			this.app.runSynchronized {
-				if (!currentContext) {
+				createAvHandle()    // make sure we have an avHandle
+				val avHandle = avHandle
+				if (!currentContext && avHandle != null) {
+					Log.i(TAG, "Sending requestContext to car for ${app.name}")
 					carConnection.av_requestConnection(avHandle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
+				} else if (!currentContext && avHandle == null) {
+					Log.i(TAG, "avHandle is not set up yet, not requesting context")
 				}
 			}
-			if (currentContext || IDriveConnectionListener.instanceId == null) {
+			if (currentContext || avHandle == null) {
 				// start playback if we are the current AV context
 				// or play anyways if we have the wrong instanceId
 				// the car will respond with av_connectionDenied if instanceId is incorrect (null coalesced to a random guess)
@@ -108,9 +122,8 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 				av_playerStateChanged(avHandle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 			}
 		} else {
-			// just assume the car has given us access, and play the app anyways
+			// acting as just a fancy controller for Bluetooth music, just play the app
 			enactPlayerState(BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
-			av_playerStateChanged(avHandle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 		}
 	}
 
@@ -163,7 +176,9 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 	private fun av_playerStateChanged(handle: Int?, connectionType: BMWRemoting.AVConnectionType?, playerState: BMWRemoting.AVPlayerState?) {
 		// helper function to help synchronize car accesses
 		app.runSynchronized {
-			carConnection.av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, playerState)
+			if (handle != null) {
+				carConnection.av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, playerState)
+			}
 		}
 	}
 
