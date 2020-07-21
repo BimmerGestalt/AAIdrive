@@ -48,7 +48,7 @@ class PopupView(val state: RHMIState, val phoneAppResources: PhoneAppResources, 
 			bodyLabel2.value = sbn.text.trim().split(Regex("\n")).lastOrNull() ?: ""
 			popEvent?.triggerEvent(mapOf(0 to true))
 		} catch (e: Exception) {
-			Log.e(TAG, "Error while trigger notification popup", e)
+			Log.e(TAG, "Error while triggering notification popup: $e")
 		}
 	}
 
@@ -56,7 +56,7 @@ class PopupView(val state: RHMIState, val phoneAppResources: PhoneAppResources, 
 		try {
 			popEvent?.triggerEvent(mapOf(0 to false))
 		} catch (e: Exception) {
-			Log.e(TAG, "Error while hiding notification popup", e)
+			Log.e(TAG, "Error while hiding notification popup: $e")
 		}
 	}
 }
