@@ -49,6 +49,26 @@
     <string name="txt_setup_mini_ready">Diese App ist bereit für die Verbindung mit einem Mini</string>
     <string name="txt_setup_bmw_missing">Nicht bereit für die Verbindung mit einem BMW:</string>
     <string name="txt_setup_mini_missing">Nicht bereit für die Verbindung mit einem Mini:</string>
+	 <string name="txt_setup_security_missing">Security Service ist nicht erreichbar:</string>
+    <string name="txt_setup_bt_disconnected">Fahrzeug nicht mit Bluetooth verbunden</string>
+    <string name="txt_setup_bt_connected">Fahrzeug mit Bluetooth verbunden</string>
+    <string name="txt_setup_a2dp_disconnected">Bluetooth Audio nicht verbunden</string>
+    <string name="txt_setup_a2dp_connected">Bluetooth Audio verbunden</string>
+    <string name="txt_setup_spp_disconnected">Bluetooth Apps nicht unterstützt</string>
+    <string name="txt_setup_spp_connected">Bluetooth Apps unterstützt</string>
+    <string name="txt_setup_usb_disconnected">Fahrzeug nicht mit USB verbunden</string>
+    <string name="txt_setup_usb_connected">Fahrzeug mit USB verbunden (Akku wird geladen) </string>
+    <string name="txt_setup_enable_usbmtp">Wechsle den USB-Modus des Smartphones auf Dateitransfer</string>
+    <string name="txt_setup_enable_usbacc">Aktiviere die USB-Zubehör Option oder die Apps Option im Fahrzeug für %s</string>
+    <string name="txt_setup_usbmtp_connected">USB verbunden im Massenspeicher Modus</string>
+    <string name="txt_setup_usbacc_connected">USB verbunden im Zubehör Modus</string>
+    <string name="txt_setup_bcl_init_stuck">Apps-Verbindung ist nicht aktiviert:</string>
+    <string name="txt_setup_enable_bcl_mode">Aktiviere die Apps Option im Fahrzug für %s</string>
+    <string name="txt_setup_bcl_disconnected">Apps Verbindung ist nicht bereit:</string>
+    <string name="txt_setup_enable_bclspp">Versuche Bluetooth Audio an- und auszuschalten oder mit USB-Kabel zu verbinden</string>
+    <string name="txt_setup_bcl_connecting">Apps-Verbindung wird hergestellt</string>
+    <string name="txt_setup_bcl_connected">Apps-Verbindung aktiv</string>
+    <string name="txt_setup_bcl_connected_transport">Apps-Verbindung läuft über %s</string>
     <string name="txt_build_info">Build Version: %1$s %2$s</string>
     <string name="txt_bcl_report">BCL Tunnel Performance:</string>
     <string name="txt_car_capabilities">Berichtete Fahrzeug Möglichkeiten:</string>
@@ -62,6 +82,8 @@
     <string name="lbl_assistant_empty">Nichts gefunden</string>
     <string name="notification_assistant_tap">Drücke um %s zu starten</string>
     <string name="notification_assistant_description">Nur nötig, weil der Bildschirm an ist</string>
+	<string name="donation_title">Gefällt Dir diese App?</string>
+    <string name="donation_text">Unterstütze den Entwickler mit einer kleinen Spende</string>
 
 
     <!-- car app strings -->
