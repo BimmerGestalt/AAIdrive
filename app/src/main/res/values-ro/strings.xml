@@ -48,7 +48,6 @@
     <string name="txt_setup_mini_ready">Aplicația este gata să se conecteze la un Mini</string>
     <string name="txt_setup_bmw_missing">Nepregătit pentru conectare la BMW:</string>
     <string name="txt_setup_mini_missing">Nepregătit pentru conectare la Mini:</string>
-    <string name="txt_build_info">Versiune build: %1$s %2$s</string>
     <string name="txt_setup_security_missing">Serviciul de securitate nu poate fi atins:</string>
     <string name="txt_setup_bt_disconnected">Neconectat la o mașină via Bluetooth</string>
     <string name="txt_setup_bt_connected">Conectat la mașină via Bluetooth</string>
