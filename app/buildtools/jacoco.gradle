@@ -21,13 +21,13 @@ project.afterEvaluate {
                     '**/R$*.class'
             ]
             def kotlinClasses = fileTree(dir: "$buildDir/tmp/kotlin-classes/${variant.name}", excludes: excludes)
-            classDirectories = files([kotlinClasses])
+            classDirectories.setFrom(files([kotlinClasses]))
 
-            sourceDirectories = files([
+            sourceDirectories.setFrom(files([
                     "${project.projectDir}/src/main/java",
                     "${project.projectDir}/src/${variant.name}/java"
-            ])
-            executionData = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+            ]))
+            executionData.setFrom(files("${project.buildDir}/jacoco/${testTaskName}.exec"))
         }
     }
 }
