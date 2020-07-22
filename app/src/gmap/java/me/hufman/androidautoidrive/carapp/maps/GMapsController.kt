@@ -65,7 +65,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 			animatingCamera = false
 		}
 	}
-	private var startZoom = 6f  // what zoom level we start the projection with
+	private var startZoom = 10f  // default: 6f what zoom level we start the projection with
 	private var currentZoom = 15f
 	private var searchSessionStart: Long = 0    // when the search session started
 	private var searchSessionConsumed = true    // if we used the search session for a Place Info lookup
@@ -109,8 +109,8 @@ class GMapsController(private val context: Context, private val resultsControlle
 		if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 			val locationRequest = LocationRequest()
 			locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-			locationRequest.interval = 3000
-			locationRequest.fastestInterval = 500
+			locationRequest.interval = 1000
+			locationRequest.fastestInterval = 300
 
 			locationProvider.requestLocationUpdates(locationRequest, locationCallback, null)
 		}

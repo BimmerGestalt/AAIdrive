@@ -29,8 +29,8 @@ const val TAG = "MapView"
 
 class MapApp(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val interaction: MapInteractionController, val map: VirtualDisplayScreenCapture) {
 	companion object {
-		val MAX_WIDTH = 1000
-		val MAX_HEIGHT = 400
+		val MAX_WIDTH = 1440
+		val MAX_HEIGHT = 540
 	}
 
 	val carappListener = CarAppListener()
@@ -48,8 +48,24 @@ class MapApp(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, 
 
 	val rhmiWidth: Int
 	val mapWidth: Int
-		get() = min(rhmiWidth - 280, if (AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()) 1000 else 700)
-	val mapHeight = 400
+		//get() = min(rhmiWidth - 280, if (AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()) 1370 else 825)
+		get() = if (AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()) 1370 else 825 // first value with right sidebar off, second with on.
+	val mapHeight = 540
+
+	/*
+		Side panel on the left: 70px
+		800 x 480
+		1280 x 480 * (1210/730 x 480)
+		1440 x 540 * (1370/825 x 540)
+		1920 x 720
+		Side panel on the right open is 40% wide according to what I found.
+		Side panel on the right closed is 5px (omitted)
+
+		If possible:
+		- option to set map direction: driving direction, north
+		- option to set map in mode: Map, Hybrid + traffic, Satellite
+
+	 */
 
 	// map state
 	var frameUpdater = FrameUpdater(map, object: FrameModeListener {
@@ -82,11 +98,13 @@ class MapApp(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, 
 		menuView = MenuView(unclaimedStates.removeFirst { MenuView.fits(it) }, interaction, frameUpdater)
 		fullImageView = FullImageView(unclaimedStates.removeFirst { FullImageView.fits(it) }, "Map", object : FullImageInteraction {
 			override fun navigateUp() {
-				interaction.zoomIn(1)
+				interaction.zoomOut(1)
+				// interaction.zoomIn(1) //check the other way round ?
 			}
 
 			override fun navigateDown() {
-				interaction.zoomOut(1)
+				interaction.zoomIn(1)
+				//interaction.zoomOut(1)
 			}
 
 			override fun click() {

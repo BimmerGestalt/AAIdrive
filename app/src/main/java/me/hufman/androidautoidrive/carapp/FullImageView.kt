@@ -88,8 +88,10 @@ class FullImageView(val state: RHMIState, val title: String, val interaction: Fu
 		inputList.setProperty(22, true)
 
 		imageComponent.setVisible(true)
-		imageComponent.setProperty(20, -16)    // positionX
-		imageComponent.setProperty(21, 0)    // positionY
+		imageComponent.setProperty(18, 0)    // offsetX
+		imageComponent.setProperty(19, 0)    // offsetY
+		imageComponent.setProperty(20, -78)    // positionX -16
+		imageComponent.setProperty(21, -80)    // positionY 0
 		imageComponent.setProperty(9, getWidth())
 		imageComponent.setProperty(10, getHeight())
 	}

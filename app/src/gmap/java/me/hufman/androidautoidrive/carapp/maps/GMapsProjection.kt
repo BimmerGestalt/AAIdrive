@@ -56,6 +56,7 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 			}
 
 			mapListener?.run()
+
 		}
 
 		// watch for map settings

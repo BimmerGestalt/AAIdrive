@@ -34,7 +34,7 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 		state.focusCallback = FocusCallback { focused ->
 			if (focused) {
 				Log.i(TAG, "Showing map on menu")
-				frameUpdater.showWindow(350, 90, mapModel)
+				frameUpdater.showWindow(650, 90, mapModel) //width:350
 			} else {
 				Log.i(TAG, "Hiding map on menu")
 				frameUpdater.hideWindow(mapModel)
@@ -43,7 +43,7 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 
 		menuMap.setVisible(true)
 		menuMap.setSelectable(true)
-		menuMap.setProperty(6, "350,0,*")
+		menuMap.setProperty(6, "650,0,*") //350
 		menuMap.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
 
 		menuList.setProperty(6, "100,0,*")

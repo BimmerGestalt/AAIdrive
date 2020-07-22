@@ -22,7 +22,7 @@ class MapService(val context: Context, val securityAccess: SecurityAccess) {
 	var mapListener: MapsInteractionControllerListener? = null
 
 	companion object {
-		fun createVirtualDisplay(context: Context, imageCapture: ImageReader, dpi:Int = 100): VirtualDisplay {
+		fun createVirtualDisplay(context: Context, imageCapture: ImageReader, dpi:Int = 100): VirtualDisplay { //dpi:100
 			val displayManager = context.getSystemService(DisplayManager::class.java)
 			return displayManager.createVirtualDisplay("IDriveGoogleMaps",
 					imageCapture.width, imageCapture.height, dpi,
@@ -42,7 +42,7 @@ class MapService(val context: Context, val securityAccess: SecurityAccess) {
 						Log.i(MainService.TAG, "Starting GMaps")
 						val mapScreenCapture = VirtualDisplayScreenCapture.build()
 						this.mapScreenCapture = mapScreenCapture
-						val virtualDisplay = createVirtualDisplay(context, mapScreenCapture.imageCapture, 100)
+						val virtualDisplay = createVirtualDisplay(context, mapScreenCapture.imageCapture, 100) //dpi: 100
 						this.virtualDisplay = virtualDisplay
 						val mapController = GMapsController(context, MapResultsSender(context), virtualDisplay)
 						this.mapController = mapController
