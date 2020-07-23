@@ -110,7 +110,7 @@ class SetupActivity : AppCompatActivity() {
 
 		// if the security service isn't working for some reason, prompt to install the Classic app
 		paneSecurityMissing.visible = !connectionDebugging.isConnectedSecurityConnected && connectionDebugging.isConnectedInstalled
-		showEither(btnInstallBMWClassic, btnInstallMiniClassic) {
+		showEither(btnInstallMiniClassic, btnInstallBMWClassic) {
 			// if Mini Connected is installed, prompt to install BMW Connected Classic
 			// otherwise, prompt to install Mini Connected Classic (most users will be BMW)
 			connectionDebugging.isMiniConnectedInstalled
@@ -139,7 +139,7 @@ class SetupActivity : AppCompatActivity() {
 				!connectionDebugging.isBCLConnecting && !connectionDebugging.isBCLConnected
 		paneBclConnecting.visible = connectionDebugging.isBCLConnecting && !connectionDebugging.isBCLConnected
 		paneBclStuck.visible = connectionDebugging.isBCLStuck
-		txtEnableBclSpp.text = getString(R.string.txt_setup_enable_bcl_mode, deviceName)
+		txtEnableBcl.text = getString(R.string.txt_setup_enable_bcl_mode, deviceName)
 		paneBclConnected.visible = connectionDebugging.isBCLConnected
 		txtBclConnected.text = if (connectionDebugging.bclTransport == null)
 			getString(R.string.txt_setup_bcl_connected)

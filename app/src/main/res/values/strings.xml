@@ -60,13 +60,13 @@
     <string name="txt_setup_usb_disconnected">No car connected over USB</string>
     <string name="txt_setup_usb_connected">USB connected in Charging mode</string>
     <string name="txt_setup_enable_usbmtp">Switch the phone\'s USB mode to File Transfer</string>
-    <string name="txt_setup_enable_usbacc">Enable the USB Accessory or Apps option in the car for this %s</string>
+    <string name="txt_setup_enable_usbacc">Enable the USB Accessory Mode or Apps option in the car for this %s</string>
     <string name="txt_setup_usbmtp_connected">USB connected in Storage mode</string>
     <string name="txt_setup_usbacc_connected">USB connected in Accessory mode</string>
     <string name="txt_setup_bcl_init_stuck">Apps Connection is not enabled:</string>
     <string name="txt_setup_enable_bcl_mode">Enable the Apps option in the car for this %s</string>
     <string name="txt_setup_bcl_disconnected">Apps Connection is not ready:</string>
-    <string name="txt_setup_enable_bclspp">Try toggling Bluetooth Music or plugging in the USB cable</string>
+    <string name="txt_setup_enable_bclspp">Try toggling Bluetooth Music or connecting over USB</string>
     <string name="txt_setup_bcl_connecting">Apps Connection is connecting</string>
     <string name="txt_setup_bcl_connected">Apps Connection is running</string>
     <string name="txt_setup_bcl_connected_transport">Apps Connection is running over %s</string>
