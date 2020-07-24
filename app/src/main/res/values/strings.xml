@@ -34,8 +34,8 @@
     <string name="lbl_grant_sessions">Control over active music apps:</string>
     <string name="lbl_grant">Grant</string>
     <string name="musicAppNotes_unauthorizedSpotify">Click here to authorize Spotify access</string>
-    <string name="musicAppNotes_oldSpotify">Please downgrade Spotify for full functionality (Browsing)</string>
-    <string name="musicAppNotes_oldSpotifyInstructions">This app can only provide full control over Spotify up to version 8.4.96.953, such as browsing playlists and searching. For full control, please download an older version, from APKPure or similar.</string>
+    <string name="musicAppNotes_oldSpotify">Please downgrade Spotify for full functionality (Searching)</string>
+    <string name="musicAppNotes_oldSpotifyInstructions">This app can only provide full control over Spotify up to version 8.4.96.953, such as searching. For full control, please download an older version, from APKPure or similar.</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancel</string>
     <string name="btn_configure">Configure …</string>
