@@ -71,6 +71,7 @@ Implemented Features
         - [Castbox](https://play.google.com/store/apps/details?id=fm.castbox.audiobook.radio.podcast)
         - [Google Play Books](https://play.google.com/store/apps/details?id=com.google.android.apps.books)
         - [iVooz](https://play.google.com/store/apps/details?id=com.ivoox.app)
+        - [Libro.fm Audiobooks](https://play.google.com/store/apps/details?id=fm.libro.librofm)
         - [Player FM](https://play.google.com/store/apps/details?id=fm.player)
         - [Voice Audiobook Player](https://play.google.com/store/apps/details?id=de.ph1b.audiobook)
       - Music Library

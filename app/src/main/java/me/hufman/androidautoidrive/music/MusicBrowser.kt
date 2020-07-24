@@ -87,6 +87,7 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 			"com.radio.fmradio" -> "__ROOT__"   // Radio FM
 			"app.sunshinelive.de.sunshinelive" -> "/"   // Sunshine Live
 			"com.google.android.apps.books" -> "com.google.android.apps.play.books.orson"  // Google Play Books
+			"fm.libro.librofm" -> "/"   // Libro FM
 			else -> mediaBrowser.root
 		}
 	}
