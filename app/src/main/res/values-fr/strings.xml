@@ -15,8 +15,8 @@
     <string name="message_notifications">Notifications de Message</string>
     <string name="notification_popups">Popups de Notification</string>
     <string name="notification_popups_passenger">Popups de Notification Passager</string>
-    <string name="lbl_popupVersion">Les popups ne fonctionnent qu'avec IDrive4</string>
-    <string name="lbl_smsPermission">Autorise l'accès aux images contenues dans les SMS depuis la voiture. Le text est quant à lui toujours visible.</string>
+    <string name="lbl_popupVersion">Les popups ne fonctionnent qu\'avec IDrive4</string>
+    <string name="lbl_smsPermission">Autorise l\'accès aux images contenues dans les SMS depuis la voiture. Le text est quant à lui toujours visible.</string>
 
     <string name="enable_google_maps">Activer Google Maps</string>
     <string name="lbl_widescreen_map">Carte Elargie</string>
@@ -24,7 +24,7 @@
     <string name="lbl_music_apps">Applications de Musique</string>
     <string name="musicAppIcon">Icône de l\'Application</string>
     <string name="musicAppNowPlaying">Lecture en Cours</string>
-    <string name="musicAppControllable">Contrôlable lorsque l'app est lancée</string>
+    <string name="musicAppControllable">Contrôlable lorsque l\'app est lancée</string>
     <string name="musicAppConnectable">Connectable</string>
     <string name="musicAppBrowseable">Navigable</string>
     <string name="musicAppSearchable">Cherchable</string>
@@ -33,9 +33,9 @@
     <string name="enable_audio_context">Demande de Focus Audio</string>
     <string name="lbl_grant_sessions">Contrôle des applications de musiques:</string>
     <string name="lbl_grant">Autoriser</string>
-    <string name="musicAppNotes_unauthorizedSpotify">Cliquer ici pour autoriser l'accès à Spotify</string>
+    <string name="musicAppNotes_unauthorizedSpotify">Cliquer ici pour autoriser l\'accès à Spotify</string>
     <string name="musicAppNotes_oldSpotify">Installez une version plus ancienne de Spotify pour un contrôle complet (navigation)</string>
-    <string name="musicAppNotes_oldSpotifyInstructions">Cette app peut fournir un contrôle complet de Spotify (tel qu'acceder aux playlistes et faire des recherches) pour les versions 8.4.96.953 ou antérieures. Pour un contrôle complet, telecharger une version moins récente (depuis APKPure ou similaire).</string>
+    <string name="musicAppNotes_oldSpotifyInstructions">Cette app peut fournir un contrôle complet de Spotify (tel qu\'acceder aux playlistes et faire des recherches) pour les versions 8.4.96.953 ou antérieures. Pour un contrôle complet, telecharger une version moins récente (depuis APKPure ou similaire).</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Annuler</string>
     <string name="btn_configure">Configurer …</string>
@@ -46,26 +46,26 @@
     <string name="nowplaying_notconnected">&lt;Non Connecté&gt;</string>
     <string name="nowplaying_unknown">&lt;Inconnu&gt;</string>
 
-    <string name="txt_setup_bmw_ready">L'app est prête à être connectée à une BMW</string>
-    <string name="txt_setup_mini_ready">L'app est prête à être connectée à une Mini</string>
+    <string name="txt_setup_bmw_ready">L\'app est prête à être connectée à une BMW</string>
+    <string name="txt_setup_mini_ready">L\'app est prête à être connectée à une Mini</string>
     <string name="txt_setup_bmw_missing">App non prête à être connectée à une BMW:</string>
     <string name="txt_setup_mini_missing">App non prête à être connectée à une Mini:</string>
     <string name="txt_setup_security_missing">Le service Security est manquant:</string>
-    <string name="txt_setup_bt_disconnected">Aucune voiture n'est connectée en Bluetooth</string>
+    <string name="txt_setup_bt_disconnected">Aucune voiture n\'est connectée en Bluetooth</string>
     <string name="txt_setup_bt_connected">Voiture connectée en Bluetooth</string>
-    <string name="txt_setup_a2dp_disconnected">Bluetooth Music n'est pas connecté</string>
+    <string name="txt_setup_a2dp_disconnected">Bluetooth Music n\'est pas connecté</string>
     <string name="txt_setup_a2dp_connected">Bluetooth Music est connecté</string>
     <string name="txt_setup_spp_disconnected">Les Apps Bluetooth ne sont pas supportées</string>
     <string name="txt_setup_spp_connected">Les Apps Bluetooth sont supportées</string>
-    <string name="txt_setup_usb_disconnected">Aucune voiture n'est connectée en USB</string>
+    <string name="txt_setup_usb_disconnected">Aucune voiture n\'est connectée en USB</string>
     <string name="txt_setup_usb_connected">USB connecté en mode Chargement</string>
     <string name="txt_setup_enable_usbmtp">Changez le mode USB du téléphone en mode Transfer de Fichier</string>
-    <string name="txt_setup_enable_usbacc">Activer Accessoires USB ou l'option Apps dans la voiture pour ce/cette %s</string>
+    <string name="txt_setup_enable_usbacc">Activer Accessoires USB ou l\'option Apps dans la voiture pour ce/cette %s</string>
     <string name="txt_setup_usbmtp_connected">USB connecté en mode Stockage</string>
     <string name="txt_setup_usbacc_connected">USB connecté en mode Accessoire</string>
-    <string name="txt_setup_bcl_init_stuck">Apps Connection n'est pas activée:</string>
-    <string name="txt_setup_enable_bcl_mode">Activer l'option Apps dans la voiture pour ce/cette %s</string>
-    <string name="txt_setup_bcl_disconnected">Apps Connection n'est pas prêt:</string>
+    <string name="txt_setup_bcl_init_stuck">Apps Connection n\'est pas activée:</string>
+    <string name="txt_setup_enable_bcl_mode">Activer l\'option Apps dans la voiture pour ce/cette %s</string>
+    <string name="txt_setup_bcl_disconnected">Apps Connection n\'est pas prêt:</string>
     <string name="txt_setup_enable_bclspp">Essayer de lancer Bluetooth Music ou de brancher un cable USB</string>
     <string name="txt_setup_bcl_connecting">Apps Connection est connectée</string>
     <string name="txt_setup_bcl_connected">Apps Connection est lancée</string>
@@ -82,7 +82,7 @@
     <string name="lbl_assistant">Assistant Vocal (Beta)</string>
     <string name="lbl_assistant_empty">Aucun résultat trouvé</string>
     <string name="notification_assistant_tap">Appuyer pour lancer %s</string>
-    <string name="notification_assistant_description">Nécessaire uniquement car l'écran est</string>
+    <string name="notification_assistant_description">Nécessaire uniquement car l\'écran est</string>
     <string name="donation_title">Vous aimez cette app?</string>
     <string name="donation_text">Considérez montrer votre soutien avec un petit don</string>
 
