@@ -103,7 +103,11 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 		val deferred = CompletableDeferred<List<MediaBrowserCompat.MediaItem>>()
 		withContext(handler.asCoroutineDispatcher()) {
 			if (connected) {
-				val browsePath = path ?: getRoot()
+				val browsePath = (path ?: getRoot()).let {
+					// the browsePath (parentId) is not allowed to be blank
+					if (it.isEmpty()) { "/" } else it
+				}
+
 				var callback: MediaBrowserCompat.SubscriptionCallback? = null
 				callback = object : MediaBrowserCompat.SubscriptionCallback() {
 					override fun onError(parentId: String) {
