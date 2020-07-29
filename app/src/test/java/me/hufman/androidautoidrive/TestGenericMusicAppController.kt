@@ -149,6 +149,12 @@ class TestGenericMusicAppController {
 		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_CONNECTING, 1000, 0) }
 		assertTrue(controller.getPlaybackPosition().playbackPaused)
 
+		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_STOPPED, 1000, 0) }
+		assertTrue(controller.getPlaybackPosition().playbackPaused)
+
+		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_NONE, 1000, 0) }
+		assertTrue(controller.getPlaybackPosition().playbackPaused)
+
 		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_PLAYING, 1000, 0) }
 		assertFalse(controller.getPlaybackPosition().playbackPaused)
 

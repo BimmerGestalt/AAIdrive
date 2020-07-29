@@ -122,6 +122,8 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 		} else {
 			val metadata = getMetadata()
 			val isPaused = (
+					state.state == PlaybackStateCompat.STATE_NONE ||
+					state.state == PlaybackStateCompat.STATE_STOPPED ||
 					state.state == PlaybackStateCompat.STATE_PAUSED ||
 					state.state == PlaybackStateCompat.STATE_CONNECTING ||
 					state.state == PlaybackStateCompat.STATE_BUFFERING
