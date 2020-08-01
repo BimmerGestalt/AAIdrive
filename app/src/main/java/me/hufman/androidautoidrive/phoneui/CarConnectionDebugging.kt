@@ -198,6 +198,10 @@ class CarConnectionDebugging(val context: Context) {
 		// we don't need to do a redraw here, because SetupActivity is doing it itself
 	}
 
+	private val mguProber = MGUProber {
+		redraw()
+	}
+
 	// the resulting state
 	val isHfConnected
 		get() = hfListener.profile?.connectedDevices?.any { it.isCar() } == true
@@ -229,6 +233,9 @@ class CarConnectionDebugging(val context: Context) {
 	val bclTransport
 		get() = bclListener.transport
 
+	val mguDetected
+		get() = mguProber.connectedPorts.isNotEmpty()
+
 	fun register() {
 		Log.i(TAG, "Starting to watch for Bluetooth connection")
 		BluetoothAdapter.getDefaultAdapter()?.apply {
@@ -249,6 +256,7 @@ class CarConnectionDebugging(val context: Context) {
 		context.registerReceiver(uuidListener, uuidFilter)
 		usbListener.subscribe(context.getSystemService(UsbManager::class.java))
 		bclListener.subscribe(context)
+		mguProber.start()
 	}
 
 	fun unregister() {
@@ -266,6 +274,7 @@ class CarConnectionDebugging(val context: Context) {
 		}
 		usbListener.unsubscribe()
 		bclListener.unsubscribe(context)
+		mguProber.quitSafely()
 	}
 
 	fun redraw() {

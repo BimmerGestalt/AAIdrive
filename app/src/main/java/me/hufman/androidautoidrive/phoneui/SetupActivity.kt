@@ -130,13 +130,14 @@ class SetupActivity : AppCompatActivity() {
 		paneUSBConnected.visible = connectionDebugging.isUsbConnected && !connectionDebugging.isUsbTransferConnected && !connectionDebugging.isUsbAccessoryConnected
 		paneUSBMTPConnected.visible = connectionDebugging.isUsbConnected && connectionDebugging.isUsbTransferConnected && !connectionDebugging.isUsbAccessoryConnected
 		paneUSBACCConnected.visible = connectionDebugging.isUsbAccessoryConnected
-		txtEnableUsbMtp.visible = !connectionDebugging.isBCLConnecting && !connectionDebugging.isBCLConnected
-		txtEnableUsbAcc.visible = !connectionDebugging.isBCLConnecting && !connectionDebugging.isBCLConnected
+		txtEnableUsbMtp.visible = !connectionDebugging.isBCLConnecting && !connectionDebugging.isBCLConnected && !connectionDebugging.mguDetected
+		txtEnableUsbAcc.visible = !connectionDebugging.isBCLConnecting && !connectionDebugging.isBCLConnected && !connectionDebugging.mguDetected
 		txtEnableUsbAcc.text = getString(R.string.txt_setup_enable_usbacc, deviceName)
 
 		// apps connection is running, perhaps on a transport
 		paneBclDisconnected.visible = (connectionDebugging.isBTConnected || connectionDebugging.isUsbAccessoryConnected) &&
-				!connectionDebugging.isBCLConnecting && !connectionDebugging.isBCLConnected
+				!connectionDebugging.isBCLConnecting && !connectionDebugging.isBCLConnected &&
+				!connectionDebugging.mguDetected
 		paneBclConnecting.visible = connectionDebugging.isBCLConnecting && !connectionDebugging.isBCLConnected
 		paneBclStuck.visible = connectionDebugging.isBCLStuck
 		txtEnableBcl.text = getString(R.string.txt_setup_enable_bcl_mode, deviceName)
@@ -157,6 +158,8 @@ class SetupActivity : AppCompatActivity() {
 				else -> resources.getString(R.string.notification_description)
 			}
 		}
+		paneMguDetected.visible = connectionDebugging.mguDetected
+
 		// second half
 		val buildTime = SimpleDateFormat.getDateTimeInstance().format(Date(BuildConfig.BUILD_TIME))
 		txtBuildInfo.text = getString(R.string.txt_build_info, BuildConfig.VERSION_NAME, buildTime)

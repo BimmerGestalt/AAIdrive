@@ -538,6 +538,38 @@
                     android:text="@string/txt_setup_bcl_connected" />
             </LinearLayout>
 
+            <!-- MGU Detected -->
+            <LinearLayout
+                android:id="@+id/paneMguDetected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="15dp"
+                android:gravity="center">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="5dp"
+                        android:src="@android:drawable/checkbox_off_background" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/txt_setup_mgu_detected" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:paddingStart="36dp"
+                    android:paddingEnd="36dp"
+                    android:text="@string/txt_setup_mgu_detected_desc" />
+            </LinearLayout>
+
             <!-- END OF SETUP DEBUGGING -->
             <View
                 android:layout_width="match_parent"
