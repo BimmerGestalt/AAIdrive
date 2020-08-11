@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Handler
 import android.util.Log
+import android.util.LruCache
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
@@ -117,6 +118,7 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 	var playerActions: PlayerRestrictions? = null
 	var playerOptions: PlayerOptions? = null
 	var currentTrack: MusicMetadata? = null
+	var coverArts = LruCache<ImageUri, Bitmap>(4)
 	var position: PlaybackPosition = PlaybackPosition(true, 0, 0, -1)
 	var currentTrackLibrary: Boolean? = null
 	var queueUri: String? = null
@@ -133,11 +135,19 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 			// update the current track info
 			val track = playerState.track
 			if (track != null) {
-				currentTrack = MusicMetadata.fromSpotify(track)
-				// try to load the coverart
-				val coverArtLoader = remote.imagesApi.getImage(track.imageUri)
-				coverArtLoader.setResultCallback { coverArt ->
-					currentTrack = MusicMetadata.fromSpotify(track, coverArt = coverArt)
+				val oldTrack = currentTrack
+				val cachedCoverArt = coverArts[track.imageUri]
+				currentTrack = MusicMetadata.fromSpotify(track, cachedCoverArt)
+				if (cachedCoverArt == null) {
+					// try to load the coverart
+					val coverArtLoader = remote.imagesApi.getImage(track.imageUri)
+					coverArtLoader.setResultCallback { coverArt ->
+						coverArts.put(track.imageUri, coverArt)
+						if (oldTrack?.mediaId == currentTrack?.mediaId) {   // still playing the same song
+							currentTrack = MusicMetadata.fromSpotify(track, coverArt = coverArt)
+							callback?.invoke(this)
+						}
+					}
 				}
 				currentTrackLibrary = null
 				remote.userApi.getLibraryState(track.uri).setResultCallback {
