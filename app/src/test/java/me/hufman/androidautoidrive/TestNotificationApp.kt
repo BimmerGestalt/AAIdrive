@@ -330,6 +330,9 @@ class TestNotificationApp {
 
 		app.notificationListener.onNotification(bundle)
 
+		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
+		assertEquals(157, (mockServer.data[551] as BMWRemoting.RHMIResourceIdentifier).id)
+
 		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent
 		val expectedHeader = "Test AppName"
 		val expectedLabel1 = "Title"
@@ -545,6 +548,9 @@ class TestNotificationApp {
 		mockClient.rhmi_onActionEvent(0, "don't care", 255, mapOf(0.toByte() to true))
 		// and show the main list
 		mockClient.rhmi_onHmiEvent(0, "don't care", 8, 1, mapOf(4.toByte() to true))
+
+		// check that any statusbar icon is hidden
+		assertFalse(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
 
 		// check that there are contents now
 		run {
