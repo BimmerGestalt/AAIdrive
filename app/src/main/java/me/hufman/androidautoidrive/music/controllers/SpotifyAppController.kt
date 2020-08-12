@@ -135,15 +135,15 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 			// update the current track info
 			val track = playerState.track
 			if (track != null) {
-				val oldTrack = currentTrack
 				val cachedCoverArt = coverArts[track.imageUri]
-				currentTrack = MusicMetadata.fromSpotify(track, cachedCoverArt)
+				currentTrack = MusicMetadata.fromSpotify(track, coverArt = cachedCoverArt)
+				val loadingTrack = currentTrack
 				if (cachedCoverArt == null) {
 					// try to load the coverart
 					val coverArtLoader = remote.imagesApi.getImage(track.imageUri)
 					coverArtLoader.setResultCallback { coverArt ->
 						coverArts.put(track.imageUri, coverArt)
-						if (oldTrack?.mediaId == currentTrack?.mediaId) {   // still playing the same song
+						if (loadingTrack?.mediaId == currentTrack?.mediaId) {   // still playing the same song
 							currentTrack = MusicMetadata.fromSpotify(track, coverArt = coverArt)
 							callback?.invoke(this)
 						}
