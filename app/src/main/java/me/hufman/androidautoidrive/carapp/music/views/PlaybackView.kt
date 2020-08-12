@@ -4,6 +4,7 @@ import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.TimeUtils.formatTime
+import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
 import me.hufman.androidautoidrive.findAdjacentComponent
@@ -193,9 +194,11 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 
 	private fun redrawSong() {
 		val song = controller.getMetadata()
-		artistModel.value = if (controller.isConnected()) { song?.artist ?: "" } else { L.MUSIC_DISCONNECTED }
-		albumModel.value = song?.album ?: ""
-		trackModel.value = song?.title ?: ""
+		artistModel.value = if (controller.isConnected()) {
+			UnicodeCleaner.clean(song?.artist ?: "")
+		} else { L.MUSIC_DISCONNECTED }
+		albumModel.value = UnicodeCleaner.clean(song?.album ?: "")
+		trackModel.value = UnicodeCleaner.clean(song?.title ?: "")
 		if (song?.coverArt != null) {
 			albumArtBigModel.value = graphicsHelpers.compress(song.coverArt, 320, 320, quality = 65)
 			albumArtSmallModel.value = graphicsHelpers.compress(song.coverArt, 200, 200, quality = 65)

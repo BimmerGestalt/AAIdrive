@@ -22,6 +22,7 @@ import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
 import org.awaitility.Awaitility.await
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
@@ -152,6 +153,12 @@ class TestMusicApp {
 	init {
 		AppSettings.loadDefaultSettings()
 		AppSettings.tempSetSetting(AppSettings.KEYS.AUDIO_FORCE_CONTEXT, "true")
+	}
+
+	@Before
+	fun setup() {
+		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDC08", listOf("cat2"), "cat")
+		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDE3B", listOf("heart_eyes_cat"), "heart_eyes_cat")
 	}
 
 	@Test
@@ -606,7 +613,7 @@ class TestMusicApp {
 
 		// finish loading
 		val browseList = listOf(
-				MusicMetadata("testId1", title = "Folder",
+				MusicMetadata("testId1", title = "Folder \uD83D\uDC08",
 						browseable = true, playable = false),
 				MusicMetadata("bonusFolder1", title = "BonusFolder1",
 						browseable = true, playable = false),
@@ -625,7 +632,7 @@ class TestMusicApp {
 					it[2]
 				}.toTypedArray()
 		)
-		assertArrayEquals(arrayOf("Folder", "BonusFolder1", "BonusFolder2", "File1", "File2"),
+		assertArrayEquals(arrayOf("Folder :cat2:", "BonusFolder1", "BonusFolder2", "File1", "File2"),
 				(mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data.map {
 					it[2]
 				}.toTypedArray()
@@ -634,7 +641,7 @@ class TestMusicApp {
 		// trigger a dynamic showList from the car
 		mockServer.data.remove(IDs.BROWSE1_MUSIC_MODEL)
 		app.components[IDs.BROWSE1_MUSIC_COMPONENT]?.requestDataCallback?.onRequestData(0, 10)
-		assertArrayEquals(arrayOf("Folder", "BonusFolder1", "BonusFolder2", "File1", "File2"),
+		assertArrayEquals(arrayOf("Folder :cat2:", "BonusFolder1", "BonusFolder2", "File1", "File2"),
 				(mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data.map {
 					it[2]
 				}.toTypedArray()
@@ -654,7 +661,7 @@ class TestMusicApp {
 		// verify that it didn't show loading screen, even if the deferred is still loading
 		Thread.sleep(1000)
 		assertEquals(true, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id] as Boolean?)   // still clickable
-		assertArrayEquals(arrayOf("Folder", "BonusFolder1", "BonusFolder2", "File1", "File2"),
+		assertArrayEquals(arrayOf("Folder :cat2:", "BonusFolder1", "BonusFolder2", "File1", "File2"),
 				(mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data.map {
 					it[2]
 				}.toTypedArray()
@@ -960,7 +967,7 @@ class TestMusicApp {
 				MusicMetadata("testId2", title = "Play All",	browseable = false, playable = true),
 				MusicMetadata("testId3", title = "File1", browseable = false, playable = true),
 				MusicMetadata("testId5", title = "Best snew song", browseable = false, playable = true),
-				MusicMetadata("testId4", title = "New song", browseable = false, playable = true)
+				MusicMetadata("testId4", title = "New song \uD83D\uDC08", browseable = false, playable = true)
 		))
 		await().untilAsserted {
 			assertEquals(1, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
@@ -976,12 +983,17 @@ class TestMusicApp {
 
 		// try entering a query
 		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "n"))
-		assertArrayEquals(arrayOf(arrayOf("New song"), arrayOf("Best snew song")), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable).data)
+		assertArrayEquals(arrayOf(arrayOf("New song :cat2:"), arrayOf("Best snew song")), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable).data)
 
 		// select a suggestion
 		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
 		assertEquals(IDs.PLAYBACK_STATE, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asHMIAction()?.getTargetState()?.id)
 		verify(musicController).playSong(MusicMetadata("testId5", title = "Best snew song", browseable = false, playable = true))
+
+		// try entering an emoji
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "delall"))
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "cat"))
+		assertArrayEquals(arrayOf(arrayOf("New song :cat2:")), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable).data)
 	}
 
 	@Test
@@ -1011,7 +1023,6 @@ class TestMusicApp {
 		assertEquals(0, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // should not show Filter or Search
 
 		// now pretend that the app IS searchable
-
 		whenever(musicController.currentAppInfo).doReturn(
 				MusicAppInfo("Test2", mock(), "package", "class").apply { searchable = true}
 		)

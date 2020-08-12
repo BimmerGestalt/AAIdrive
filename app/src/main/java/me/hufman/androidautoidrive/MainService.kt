@@ -70,6 +70,9 @@ class MainService: Service() {
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 		Analytics.init(this)
 
+		// load the emoji dictionary
+		UnicodeCleaner.init(this)
+
 		val action = intent?.action ?: ""
 		if (action == ACTION_START) {
 			handleActionStart()

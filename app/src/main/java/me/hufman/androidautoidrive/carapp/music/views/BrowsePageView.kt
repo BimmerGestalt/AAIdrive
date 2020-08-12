@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.carapp.music.views
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import kotlinx.coroutines.*
+import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.awaitPending
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
@@ -170,7 +171,7 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 								if (previouslySelected == item) checkmarkIcon else "",
 								if (item.browseable) folderIcon else
 									if (item.playable) songIcon else "",
-								item.title ?: ""
+								UnicodeCleaner.clean(item.title ?: "")
 						)
 					}
 				}
@@ -232,11 +233,11 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 		val inputState = object: InputState<MusicMetadata>(inputComponent) {
 			override fun onEntry(input: String) {
 				val suggestions = musicList.asSequence().filter {
-					(it.title ?: "").split(Regex("\\s+")).any { word ->
+					UnicodeCleaner.clean(it.title ?: "").split(Regex("\\s+")).any { word ->
 						word.toLowerCase().startsWith(input.toLowerCase())
 					}
 				} + musicList.asSequence().filter {
-					it.title?.toLowerCase()?.contains(input.toLowerCase()) ?: false
+					UnicodeCleaner.clean(it.title?: "").toLowerCase().contains(input.toLowerCase())
 				}
 				sendSuggestions(suggestions.take(15).distinct().toList())
 			}
@@ -244,6 +245,10 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 			override fun onSelect(item: MusicMetadata, index: Int) {
 				previouslySelected = item  // update the selection state for future redraws
 				browseController.onListSelection(item, inputComponent.getSuggestAction()?.asHMIAction())
+			}
+
+			override fun convertRow(row: MusicMetadata): String {
+				return UnicodeCleaner.clean(row.title ?: "")
 			}
 		}
 	}
@@ -305,9 +310,9 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 
 			override fun convertRow(row: MusicMetadata): String {
 				if (row.subtitle != null) {
-					return "${row.title}\n${row.subtitle}"
+					return UnicodeCleaner.clean("${row.title}\n${row.subtitle}")
 				} else {
-					return row.title ?: ""
+					return UnicodeCleaner.clean(row.title ?: "")
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import me.hufman.androidautoidrive.GraphicsHelpers
+import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.MusicController
@@ -18,11 +19,12 @@ class CustomActionsView(val state: RHMIState, val graphicsHelpers: GraphicsHelpe
 	val actionList = ArrayList<CustomAction>()
 	val listAdapter = object: RHMIListAdapter<CustomAction>(3, actionList) {
 		override fun convertRow(index: Int, item: CustomAction): Array<Any> {
+			val name = UnicodeCleaner.clean(item.name)
 			if (item.icon != null) {
 				val invert = graphicsHelpers.isDark(item.icon)
-				return arrayOf(graphicsHelpers.compress(item.icon, 48, 48, invert), "", item.name)
+				return arrayOf(graphicsHelpers.compress(item.icon, 48, 48, invert), "", name)
 			} else {
-				return arrayOf("", "", item.name)
+				return arrayOf("", "", name)
 			}
 		}
 	}

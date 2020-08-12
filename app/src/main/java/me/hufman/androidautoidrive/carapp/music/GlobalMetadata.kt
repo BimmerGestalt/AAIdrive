@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.carapp.music
 
+import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicAppInfo
@@ -65,11 +66,11 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 		// show in the sidebar
 		val trackModel = multimediaInfoEvent.getTextModel1()?.asRaDataModel()
 		val artistModel = multimediaInfoEvent.getTextModel2()?.asRaDataModel()
-		trackModel?.value = song.title ?: ""
-		artistModel?.value = song.artist ?: ""
+		trackModel?.value = UnicodeCleaner.clean(song.title ?: "")
+		artistModel?.value = UnicodeCleaner.clean(song.artist ?: "")
 
 		// show in the IC
-		instrumentCluster.getTextModel()?.asRaDataModel()?.value = song.title ?: ""
+		instrumentCluster.getTextModel()?.asRaDataModel()?.value = UnicodeCleaner.clean(song.title ?: "")
 
 		// actually tell the car to load the data
 		multimediaInfoEvent.triggerEvent()
@@ -113,9 +114,9 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 				val selected = item.queueId == currentSong?.queueId
 				return arrayOf(
 						index,  // index
-						item.title ?: "",   // title
-						item.artist ?: "",  // artist
-						item.album ?: "",   // album
+						UnicodeCleaner.clean(item.title ?: ""),   // title
+						UnicodeCleaner.clean(item.artist ?: ""),  // artist
+						UnicodeCleaner.clean(item.album ?: ""),   // album
 						-1,
 						if (selected) 1 else 0, // checked
 						true
