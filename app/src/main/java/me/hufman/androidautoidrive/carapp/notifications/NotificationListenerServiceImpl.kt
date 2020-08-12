@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.notifications.ParseNotification.dumpNotification
 import me.hufman.androidautoidrive.carapp.notifications.ParseNotification.shouldPopupNotification
 import me.hufman.androidautoidrive.carapp.notifications.ParseNotification.shouldShowNotification
