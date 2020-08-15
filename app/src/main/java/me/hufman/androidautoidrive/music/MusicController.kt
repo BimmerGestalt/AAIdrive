@@ -196,7 +196,11 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	}
 
 	fun customAction(action: CustomAction) = asyncControl { controller ->
-		controller.customAction(action)
+		if (seekingController.seekingActions.contains(action)) {
+			seekingController.seekAction(action)
+		} else {
+			controller.customAction(action)
+		}
 	}
 
 	fun browseAsync(directory: MusicMetadata?): Deferred<List<MusicMetadata>> {
@@ -242,9 +246,10 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	}
 
 	fun getCustomActions(): List<CustomAction> {
-		return withController { controller ->
+		val appActions = withController { controller ->
 			controller.getCustomActions()
-		}  ?: LinkedList()
+		} ?: LinkedList()
+		return appActions + seekingController.seekingActions
 	}
 
 	fun isSupportedAction(action: MusicAction): Boolean {

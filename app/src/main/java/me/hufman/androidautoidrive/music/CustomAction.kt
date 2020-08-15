@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.media.session.PlaybackStateCompat
 
-class CustomAction(val packageName: String, val action: String, val name: String, val icon: Drawable?, val extras: Bundle?) {
+open class CustomAction(val packageName: String, val action: String, val name: String, val icon: Drawable?, val extras: Bundle?) {
 	companion object {
 		fun fromMediaCustomAction(context: Context, packageName: String, action: PlaybackStateCompat.CustomAction): CustomAction {
 			val resources = context.packageManager.getResourcesForApplication(packageName)
@@ -57,7 +57,7 @@ class CustomAction(val packageName: String, val action: String, val name: String
 						niceName = ca.name
 				}
 
-				return CustomAction(ca.packageName, ca.action, niceName, ca.icon, ca.extras);
+				return CustomAction(ca.packageName, ca.action, niceName, ca.icon, ca.extras)
 			}
 
 			if (ca.packageName == "com.jrtstudio.AnotherMusicPlayer") {
@@ -96,3 +96,8 @@ class CustomAction(val packageName: String, val action: String, val name: String
 		return "CustomAction(packageName='$packageName', action='$action', name='$name')"
 	}
 }
+
+/**
+ * A CustomAction that doesn't close the Actions window
+ */
+class CustomActionDwell(packageName: String, action: String, name: String, icon: Drawable?, extras: Bundle?): CustomAction(packageName, action, name, icon, extras)

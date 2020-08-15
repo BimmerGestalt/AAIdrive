@@ -28,6 +28,14 @@ class SeekingController(val handler: Handler, val controller: MusicController) {
 		}
 	}
 
+	val seekingActions = listOf(
+		CustomActionDwell("me.hufman.androidautoidrive", "MUSIC_ACTION_SEEK_BACK_60", L.MUSIC_ACTION_SEEK_BACK_60, null, null),
+		CustomActionDwell("me.hufman.androidautoidrive", "MUSIC_ACTION_SEEK_BACK_20", L.MUSIC_ACTION_SEEK_BACK_20, null, null),
+		CustomActionDwell("me.hufman.androidautoidrive", "MUSIC_ACTION_SEEK_BACK_5", L.MUSIC_ACTION_SEEK_BACK_5, null, null),
+		CustomActionDwell("me.hufman.androidautoidrive", "MUSIC_ACTION_SEEK_FORWARD_5", L.MUSIC_ACTION_SEEK_FORWARD_5, null, null),
+		CustomActionDwell("me.hufman.androidautoidrive", "MUSIC_ACTION_SEEK_FORWARD_20", L.MUSIC_ACTION_SEEK_FORWARD_20, null, null),
+		CustomActionDwell("me.hufman.androidautoidrive", "MUSIC_ACTION_SEEK_FORWARD_60", L.MUSIC_ACTION_SEEK_FORWARD_60, null, null)
+	)
 
 	fun startRewind() {
 		startedSeekingTime = timeProvider()
@@ -42,6 +50,14 @@ class SeekingController(val handler: Handler, val controller: MusicController) {
 	fun stopSeeking() {
 		startedSeekingTime = 0
 		controller.play()
+	}
+
+	fun seekAction(action: CustomAction) {
+		if (seekingActions.contains(action)) {
+			val direction = if (action.action.contains("SEEK_BACK_")) { -1 } else { 1 }
+			val delta = action.action.split("_").last().toInt() * 1000 * direction
+			seek(delta)
+		}
 	}
 
 	fun holdSeek(holdTime: Long) {

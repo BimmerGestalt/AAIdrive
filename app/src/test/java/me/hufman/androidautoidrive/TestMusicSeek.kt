@@ -43,6 +43,10 @@ class TestMusicSeek {
 		// release the button
 		controller.stopSeeking()
 		verify(musicController).play()
+		// should not seek or schedule again
+		seekingRunnable.lastValue.run()
+		verify(musicController, times(2)).seekTo(startPosition + 7000)
+		verify(handler, times(3)).postDelayed(seekingRunnable.capture(), eq(300))
 	}
 
 	@Test
@@ -66,6 +70,25 @@ class TestMusicSeek {
 
 		timeMs += 2500  // 2500 later than start
 		seekingRunnable.lastValue.run()
+		verify(musicController).skipToPrevious()
+	}
+
+	@Test
+	fun testSeekAction() {
+		val handler = mock<Handler>()
+		val startPosition: Long = 25000
+		val position = mock<PlaybackPosition> {
+			on { getPosition() } doReturn startPosition
+		}
+		val musicController = mock<MusicController> {
+			on { getPlaybackPosition() } doReturn position
+		}
+		val controller = SeekingController(handler, musicController)
+		controller.seekAction(controller.seekingActions[1]) // back_20
+		verify(musicController).seekTo(startPosition - 20000)
+		controller.seekAction(controller.seekingActions[5]) // forward_60
+		verify(musicController).seekTo(startPosition + 60000)
+		controller.seekAction(controller.seekingActions[0]) // back_60
 		verify(musicController).skipToPrevious()
 	}
 }
