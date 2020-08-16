@@ -89,12 +89,12 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 			addNext()
 		} else {
 			val index = songQueue.indexOfFirst { it.queueId == currentSong?.queueId }
-			if (index >= 0) {
+			if (currentSong != null && index >= 0) {
 				// add the previous/next actions around the current song
 				// This allows for using the shuffle mode's back/next and also the queue selection
 				queue.addAll(songQueue.subList(0, index))
 				addPrevious()
-				queue.add(songQueue[index])
+				queue.add(currentSong)
 				addNext()
 				if (index < songQueue.count()) {
 					queue.addAll(songQueue.subList(index + 1, songQueue.count()))

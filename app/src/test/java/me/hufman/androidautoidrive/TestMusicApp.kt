@@ -345,7 +345,7 @@ class TestMusicApp {
 		assertEquals("EntICPlaylist", mockServer.data[IDs.IC_USECASE_MODEL])
 		val displayedTitles = (mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable).data.map {it[1]}.toTypedArray()
 		val displayedChecks = (mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable).data.map {it[5]}.toTypedArray()
-		assertArrayEquals(arrayOf("< Back", "Song 1", "Next >", "Song 3", "Song 6"), displayedTitles)
+		assertArrayEquals(arrayOf("< Back", "Title", "Next >", "Song 3", "Song 6"), displayedTitles)
 		assertArrayEquals(arrayOf(0, 1, 0, 0, 0), displayedChecks)
 
 		// change song, the checkbox should move
@@ -545,7 +545,7 @@ class TestMusicApp {
 		val list = mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable
 		assertEquals(5, list.totalRows)
 		assertEquals("< Back", list.data[0][1])
-		assertEquals("Song 1", list.data[1][1])
+		assertEquals("Title", list.data[1][1])
 		assertEquals("Artist", list.data[1][2])
 		assertEquals("Album", list.data[1][3])
 		assertEquals(1, list.data[1][5])
