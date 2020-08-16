@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.music.controllers
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.util.Log
 import android.util.LruCache
@@ -13,13 +14,14 @@ import com.spotify.protocol.types.*
 import kotlinx.coroutines.CompletableDeferred
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.Observable
+import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
 import java.lang.Exception
 import java.util.*
 
 
-class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
+class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): MusicAppController {
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
@@ -45,8 +47,8 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 					this.playable, this.browseable)
 		}
 
-		fun CustomAction.Companion.fromSpotify(name: String): CustomAction {
-			return formatCustomActionDisplay(CustomAction("com.spotify.music", name, name, null, null))
+		fun CustomAction.Companion.fromSpotify(name: String, icon: Drawable? = null): CustomAction {
+			return formatCustomActionDisplay(CustomAction("com.spotify.music", name, name, icon, null))
 		}
 	}
 
@@ -81,7 +83,7 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 				override fun onConnected(remote: SpotifyAppRemote?) {
 					if (remote != null) {
 						Log.i(TAG, "Successfully connected to Spotify Remote")
-						pendingController.value = SpotifyAppController(remote)
+						pendingController.value = SpotifyAppController(context, remote)
 
 						// if app discovery says we aren't able to connect, discover again
 						if (!appInfo.connectable) {
@@ -100,14 +102,22 @@ class SpotifyAppController(val remote: SpotifyAppRemote): MusicAppController {
 	}
 
 	// create the Custom Actions during client creation, so that the language is loaded
-	val CUSTOM_ACTION_TURN_SHUFFLE_ON = CustomAction.fromSpotify("TURN_SHUFFLE_ON")
-	val CUSTOM_ACTION_TURN_SHUFFLE_OFF = CustomAction.fromSpotify("TURN_SHUFFLE_OFF")
-	val CUSTOM_ACTION_TURN_REPEAT_ALL_ON = CustomAction.fromSpotify("TURN_REPEAT_ALL_ON")
-	val CUSTOM_ACTION_TURN_REPEAT_ONE_ON = CustomAction.fromSpotify("TURN_REPEAT_ONE_ON")
-	val CUSTOM_ACTION_TURN_REPEAT_ONE_OFF = CustomAction.fromSpotify("TURN_REPEAT_ONE_OFF")
-	val CUSTOM_ACTION_ADD_TO_COLLECTION = CustomAction.fromSpotify("ADD_TO_COLLECTION")
-	val CUSTOM_ACTION_REMOVE_FROM_COLLECTION = CustomAction.fromSpotify("REMOVE_FROM_COLLECTION")
-	val CUSTOM_ACTION_START_RADIO = CustomAction.fromSpotify("START_RADIO")
+	val CUSTOM_ACTION_TURN_SHUFFLE_ON = CustomAction.fromSpotify("TURN_SHUFFLE_ON",
+			context.getDrawable(R.drawable.spotify_shuffle_off))
+	val CUSTOM_ACTION_TURN_SHUFFLE_OFF = CustomAction.fromSpotify("TURN_SHUFFLE_OFF",
+			context.getDrawable(R.drawable.spotify_shuffle_on))
+	val CUSTOM_ACTION_TURN_REPEAT_ALL_ON = CustomAction.fromSpotify("TURN_REPEAT_ALL_ON",
+			context.getDrawable(R.drawable.spotify_repeat_off))
+	val CUSTOM_ACTION_TURN_REPEAT_ONE_ON = CustomAction.fromSpotify("TURN_REPEAT_ONE_ON",
+			context.getDrawable(R.drawable.spotify_repeat_on))
+	val CUSTOM_ACTION_TURN_REPEAT_ONE_OFF = CustomAction.fromSpotify("TURN_REPEAT_ONE_OFF",
+			context.getDrawable(R.drawable.spotify_repeat_one))
+	val CUSTOM_ACTION_ADD_TO_COLLECTION = CustomAction.fromSpotify("ADD_TO_COLLECTION",
+			context.getDrawable(R.drawable.spotify_add_library))
+	val CUSTOM_ACTION_REMOVE_FROM_COLLECTION = CustomAction.fromSpotify("REMOVE_FROM_COLLECTION",
+			context.getDrawable(R.drawable.spotify_added_library))
+	val CUSTOM_ACTION_START_RADIO = CustomAction.fromSpotify("START_RADIO",
+			context.getDrawable(R.drawable.spotify_start_radio))
 
 	var connected = true
 

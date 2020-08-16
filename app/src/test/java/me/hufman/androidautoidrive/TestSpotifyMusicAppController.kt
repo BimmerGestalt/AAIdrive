@@ -77,7 +77,7 @@ class TestSpotifyMusicAppController {
 
 	@Before
 	fun setup() {
-		controller = SpotifyAppController(remote)
+		controller = SpotifyAppController(mock(), remote)
 	}
 
 	@Test
