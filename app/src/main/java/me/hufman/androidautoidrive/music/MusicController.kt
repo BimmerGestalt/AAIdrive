@@ -46,7 +46,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	var triggeredPlayback = false   // whether we have triggered playback on a fresh connection
 
 	// handles manual rewinding/fastforwarding
-	val seekingController = SeekingController(handler, this)
+	val seekingController = SeekingController(context, handler, this)
 
 
 	init {

@@ -20,7 +20,7 @@ class TestMusicSeek {
 		}
 		var timeMs: Long = 1000
 		val seekingRunnable = argumentCaptor<Runnable>()
-		val controller = SeekingController(handler, musicController)
+		val controller = SeekingController(mock(), handler, musicController)
 		controller.timeProvider = { timeMs }
 
 		// start a thing
@@ -61,7 +61,7 @@ class TestMusicSeek {
 		}
 		var timeMs: Long = 1000
 		val seekingRunnable = argumentCaptor<Runnable>()
-		val controller = SeekingController(handler, musicController)
+		val controller = SeekingController(mock(), handler, musicController)
 		controller.timeProvider = { timeMs }
 
 		controller.startRewind()
@@ -83,10 +83,10 @@ class TestMusicSeek {
 		val musicController = mock<MusicController> {
 			on { getPlaybackPosition() } doReturn position
 		}
-		val controller = SeekingController(handler, musicController)
-		controller.seekAction(controller.seekingActions[1]) // back_20
-		verify(musicController).seekTo(startPosition - 20000)
-		controller.seekAction(controller.seekingActions[5]) // forward_60
+		val controller = SeekingController(mock(), handler, musicController)
+		controller.seekAction(controller.seekingActions[1]) // back_10
+		verify(musicController).seekTo(startPosition - 10000)
+		controller.seekAction(controller.seekingActions[3]) // forward_60
 		verify(musicController).seekTo(startPosition + 60000)
 		controller.seekAction(controller.seekingActions[0]) // back_60
 		verify(musicController).skipToPrevious()
