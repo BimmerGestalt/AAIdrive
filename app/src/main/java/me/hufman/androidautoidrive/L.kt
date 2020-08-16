@@ -36,6 +36,15 @@ object L {
 	var MUSIC_SKIP_PREVIOUS = "Back"
 	var MUSIC_SKIP_NEXT = "Next"
 
+	var MUSIC_ACTION_SEEK_BACK_5 = "Seek back 5 seconds"
+	var MUSIC_ACTION_SEEK_BACK_10 = "Seek back 10 seconds"
+	var MUSIC_ACTION_SEEK_BACK_20 = "Seek back 20 seconds"
+	var MUSIC_ACTION_SEEK_BACK_60 = "Seek back 60 seconds"
+	var MUSIC_ACTION_SEEK_FORWARD_5 = "Seek forward 5 seconds"
+	var MUSIC_ACTION_SEEK_FORWARD_10 = "Seek forward 10 seconds"
+	var MUSIC_ACTION_SEEK_FORWARD_20 = "Seek forward 20 seconds"
+	var MUSIC_ACTION_SEEK_FORWARD_60 = "Seek forward 60 seconds"
+
 	var MUSIC_SPOTIFY_TURN_SHUFFLE_ON = "Turn Shuffle On"
 	var MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION = "Dislike"
 	var MUSIC_SPOTIFY_START_RADIO = "Make Radio Station"
@@ -58,13 +67,20 @@ object L {
 		}
 		val stringProperties = L::class.memberProperties.filterIsInstance<KMutableProperty1<L, String>>()
 		for (member in stringProperties) {
-			if (member.name.matches(Regex("[A-Z_]+"))) {
+			if (member.name.matches(Regex("[A-Z_]+$"))) {
 				// this should crash the app if a new L string is created without a matching resource
 				val id = thisContext.resources.getIdentifier(member.name, "string", context.packageName)
 				if (id == 0) {
 					throw AssertionError("Could not find Resource value for string ${member.name}")
 				}
 				val value =	thisContext.resources.getString(id)
+				member.set(L, value)
+			} else if (member.name.matches(Regex("[A-Z_]+_[0-9]+$"))) {
+				val nameMatch = Regex("([A-Z_]+)_([0-9]+)$").matchEntire(member.name)
+						?: throw AssertionError("Could not parse L name ${member.name}")
+				val id = thisContext.resources.getIdentifier(nameMatch.groupValues[1], "plurals", context.packageName)
+				val quantity = nameMatch.groupValues[2].toInt()
+				val value = thisContext.resources.getQuantityString(id, quantity, quantity)
 				member.set(L, value)
 			}
 		}

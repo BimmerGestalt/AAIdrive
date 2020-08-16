@@ -116,6 +116,15 @@
     <string name="MUSIC_SKIP_PREVIOUS">Back</string>
     <string name="MUSIC_SKIP_NEXT">Next</string>
 
+    <plurals name="MUSIC_ACTION_SEEK_BACK">
+        <item quantity="one">Seek back %s second</item>
+        <item quantity="other">Seek back %s seconds</item>
+    </plurals>
+    <plurals name="MUSIC_ACTION_SEEK_FORWARD">
+        <item quantity="one">Seek forward %s second</item>
+        <item quantity="other">Seek forward %s seconds</item>
+    </plurals>
+
     <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_ON">Turn Shuffle On</string>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Dislike</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Make Radio Station</string>
