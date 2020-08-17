@@ -208,6 +208,8 @@ class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAp
 	open inner class PhoneNotificationListener {
 		open fun onNotification(sbn: CarNotification) {
 			Log.i(TAG, "Received a new notification to show in the car: $sbn")
+			viewList.showStatusBarIcon()
+
 			if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
 				(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
 					!passengerSeated)
