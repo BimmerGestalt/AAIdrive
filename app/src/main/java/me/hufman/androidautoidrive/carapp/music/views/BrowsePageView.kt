@@ -127,6 +127,8 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 
 		showActionsList()
 
+		//TODO: investigate paging system
+
 		// update the list whenever the car requests some more data
 		musicListComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
 			Log.i(TAG, "Car requested more data, $startIndex:${startIndex+numRows}")

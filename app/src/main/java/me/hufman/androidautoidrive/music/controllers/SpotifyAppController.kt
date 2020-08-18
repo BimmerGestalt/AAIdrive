@@ -12,6 +12,10 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.*
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import me.hufman.androidautoidrive.GraphicsHelpersAndroid
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.R
@@ -19,9 +23,13 @@ import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
 import java.lang.Exception
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
 
-class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): MusicAppController {
+class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): MusicAppController, CoroutineScope {
+	override val coroutineContext: CoroutineContext
+		get() = Dispatchers.IO
+
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
@@ -136,6 +144,13 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	var currentTrackLibrary: Boolean? = null
 	var queueUri: String? = null
 	var queueItems: List<MusicMetadata> = LinkedList()
+
+	//var coverArtByMediaIdMap = HashMap<String?,Bitmap?>()
+
+	//test
+	val graphicsHelpers = GraphicsHelpersAndroid()
+	var coverArtByMediaIdMap = HashMap<String?, ByteArray?>()
+	//
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -288,6 +303,14 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		return queueItems ?: LinkedList()
 	}
 
+	override suspend fun getSongQueueCoverArtImage(imageUri: ImageUri): Bitmap? {
+		val deferred = CompletableDeferred<Bitmap?>()
+		remote.imagesApi.getImage(imageUri,Image.Dimension.THUMBNAIL).setResultCallback { coverArtImg ->
+			deferred.complete(coverArtImg)
+		}
+		return deferred.await()
+	}
+
 	override fun getMetadata(): MusicMetadata? {
 		return currentTrack
 	}
@@ -338,6 +361,16 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	override fun isShuffling(): Boolean {
 		return playerOptions?.isShuffling == true
 	}
+
+	//test
+	override fun getCoverArtByMediaId(): HashMap<String?, ByteArray?> {
+		return coverArtByMediaIdMap
+	}
+	//
+
+//	override fun getCoverArtByMediaId(): HashMap<String?, Bitmap?> {
+//		return coverArtByMediaIdMap
+//	}
 
 	override suspend fun browse(directory: MusicMetadata?): List<MusicMetadata> {
 		val deferred = CompletableDeferred<List<MusicMetadata>>()

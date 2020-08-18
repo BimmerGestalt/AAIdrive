@@ -1,7 +1,9 @@
 package me.hufman.androidautoidrive.music.controllers
 
+import android.graphics.Bitmap
 import android.os.DeadObjectException
 import android.util.Log
+import com.spotify.protocol.types.ImageUri
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.Observable
@@ -233,6 +235,16 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 		return actions
 	}
 
+	//test
+	override fun getCoverArtByMediaId(): HashMap<String?, ByteArray?> {
+		return getQueueController()?.getCoverArtByMediaId()!!
+	}
+	//
+
+//	override fun getCoverArtByMediaId(): HashMap<String?, Bitmap?> {
+//		return getQueueController()?.getCoverArtByMediaId()!!
+//	}
+
 	override fun toggleShuffle() {
 		withController {
 			if (!it.isSupportedAction(MusicAction.SET_SHUFFLE_MODE)) {
@@ -295,6 +307,15 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 			// make the Play and Browse commands dig through the search results
 			this@CombinedMusicAppController.browseableController = controller
 			return results
+		}
+		return null
+	}
+
+	override suspend fun getSongQueueCoverArtImage(imageUri: ImageUri): Bitmap? {
+		waitforConnect()
+		for(pendingController in controllers) {
+			val controller = pendingController.value ?: continue
+			return controller.getSongQueueCoverArtImage(imageUri) ?: continue
 		}
 		return null
 	}

@@ -1,12 +1,14 @@
 package me.hufman.androidautoidrive.music.controllers
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.DeadObjectException
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
+import com.spotify.protocol.types.ImageUri
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -157,6 +159,16 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 		} ?: false
 	}
 
+	//test
+	override fun getCoverArtByMediaId(): HashMap<String?, ByteArray?> {
+		TODO("Not yet implemented")
+	}
+	//
+
+//	override fun getCoverArtByMediaId(): HashMap<String?, Bitmap?> {
+//		TODO("Not yet implemented")
+//	}
+
 	/**
 	 * Spotify does not post the queue or custom actions to the MediaSession normally
 	 * Instead, it only updates the queue and custom actions as part of a browse loadChildren
@@ -182,6 +194,10 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 		return app?.search(query)?.map {
 			MusicMetadata.fromMediaItem(it)
 		}
+	}
+
+	override suspend fun getSongQueueCoverArtImage(imageUri: ImageUri): Bitmap? {
+		return null
 	}
 
 	override fun subscribe(callback: (MusicAppController) -> Unit) {

@@ -1,9 +1,11 @@
 package me.hufman.androidautoidrive.music
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.DeadObjectException
 import android.os.Handler
 import android.util.Log
+import com.spotify.protocol.types.ImageUri
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import me.hufman.androidautoidrive.AppSettings
@@ -249,6 +251,33 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		}
 		return results
 	}
+
+
+	fun getSongCoverArtAsync(imageUri: ImageUri): Deferred<Bitmap?> {
+		val result: CompletableDeferred<Bitmap?> = CompletableDeferred()
+		withController { controller ->
+			//getCoverArtJob?.cancel()
+			launch {
+				result.complete(controller.getSongQueueCoverArtImage(imageUri))
+			}
+		}
+		return result
+	}
+
+//	fun getCoverArtByMediaId(): HashMap<String?,Bitmap?>? {
+//		return withController { controller ->
+//			return controller.getCoverArtByMediaId()
+//		}
+//	}
+
+	//test
+	fun getCoverArtByMediaId(): HashMap<String?,ByteArray?>? {
+		return withController { controller ->
+			return controller.getCoverArtByMediaId()
+		}
+	}
+	//
+
 
 	/* Current state */
 	/** Gets the current queue */

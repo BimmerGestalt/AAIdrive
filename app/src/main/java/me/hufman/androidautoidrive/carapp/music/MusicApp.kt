@@ -31,6 +31,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 	val globalMetadata = GlobalMetadata(carApp, musicController)
 	var appListViewVisible = false
 	var playbackViewVisible = false
+	var enqueuedViewVisible = false
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
 	val enqueuedView: EnqueuedView
@@ -74,7 +75,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 		val unclaimedStates = LinkedList(carApp.states.values)
 		playbackView = PlaybackView(unclaimedStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources, graphicsHelpers)
 		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, graphicsHelpers)
-		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController)
+		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, graphicsHelpers)
 		browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController)
 		inputState = unclaimedStates.removeFirst { it.componentsList.filterIsInstance<RHMIComponent.Input>().firstOrNull()?.suggestModel ?: 0 > 0 }
 		customActionsView = CustomActionsView(unclaimedStates.removeFirst { CustomActionsView.fits(it) }, graphicsHelpers, musicController)
@@ -159,6 +160,8 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 						eventId == 1 &&     //Focus
 						args?.get(4.toByte()) as? Boolean == true
 				) {
+					//TODO: this flag needs to be set as false when the view is not shown
+					enqueuedViewVisible = args?.get(4.toByte()) as? Boolean == true
 					enqueuedView.show()
 				}
 				if (componentId == customActionsView.state.id &&
@@ -266,6 +269,9 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 		}
 		if (playbackViewVisible) {
 			playbackView.redraw()
+		}
+		if(enqueuedViewVisible) {
+			enqueuedView.redraw()
 		}
 		globalMetadata.redraw()
 	}

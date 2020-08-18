@@ -88,6 +88,7 @@ class MusicPlayerPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm
 	val tabs = LinkedHashMap<String, Fragment>(2).apply {
 		this["Now Playing"] = MusicNowPlayingFragment()
 		this["Browse"] = MusicBrowseFragment.newInstance(MusicBrowsePageFragment.newInstance(null))
+		this["Queue"] = MusicBrowseFragment.newInstance(MusicQueuePageFragment.newInstance())
 	}
 
 	override fun getCount(): Int {
