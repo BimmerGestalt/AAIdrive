@@ -25,7 +25,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		private const val IMAGEID_CHECKMARK = 149
 
 		//current default width only supports 22 chars before rolling over
-		private const val MAX_LENGTH = 20
+		private const val MAX_LENGTH = 22
 
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.PlainState &&
@@ -66,12 +66,12 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 			var title = item.title ?: ""
 			if(title.length > MAX_LENGTH) {
-				title = title.substring(0, MAX_LENGTH) + "..."
+				title = title.substring(0, 20) + "..."
 			}
 
 			var artist = item.artist ?: ""
 			if(artist.length > MAX_LENGTH) {
-				artist = artist.substring(0, MAX_LENGTH) + "..."
+				artist = artist.substring(0, 20) + "..."
 			}
 
 			val songMetaDataText = "${title}\n${artist}"
@@ -100,10 +100,6 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 //		listComponent.setProperty(RHMIProperty.PropertyId.WIDTH, 1000)
 //		listComponent.setProperty(RHMIProperty.PropertyId.HEIGHT,100)
 
-		listComponent.eventCallback = EventCallback { eventId, args ->
-			val x = 0
-		}
-
 		listComponent.setProperty(RHMIProperty.PropertyId.VALID, false)
 
 		listComponent.setVisible(true)
@@ -121,14 +117,10 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			launch {
 				val coverArt = musicController.getSongCoverArtAsync(ImageUri(song.coverArtUri)).await()!!
 				coverArtBySong[song.mediaId] = graphicsHelpers.compress(coverArt,90,90, quality = 30)
-				state.app.events.values.firstOrNull { it is RHMIEvent.MultimediaInfoEvent }?.triggerEvent(mapOf(
-						0.toByte() to listComponent.id,
-						1.toByte() to startIndex+index))
 			}
 		}
 	}
 
-	//TODO: call async cover art method and cache images -> have the text load in first and then slowly load cover art images (use LRU caching for max size of 50?)
 	fun show() {
 		currentSong = musicController.getMetadata()
 		songsList.clear()
