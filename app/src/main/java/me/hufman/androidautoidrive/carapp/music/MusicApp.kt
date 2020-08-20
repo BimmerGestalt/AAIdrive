@@ -160,9 +160,15 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 						eventId == 1 &&     //Focus
 						args?.get(4.toByte()) as? Boolean == true
 				) {
-					//TODO: this flag needs to be set as false when the view is not shown
-					enqueuedViewVisible = args?.get(4.toByte()) as? Boolean == true
+					enqueuedViewVisible = true
 					enqueuedView.show()
+				}
+				//lost focus
+				else if (componentId == enqueuedView.state.id &&
+						eventId == 1 &&
+						args?.get(4.toByte()) as? Boolean == false)
+				{
+					enqueuedViewVisible = false
 				}
 				if (componentId == customActionsView.state.id &&
 						eventId == 1 &&
