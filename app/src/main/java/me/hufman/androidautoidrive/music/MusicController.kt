@@ -264,21 +264,6 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		return result
 	}
 
-//	fun getCoverArtByMediaId(): HashMap<String?,Bitmap?>? {
-//		return withController { controller ->
-//			return controller.getCoverArtByMediaId()
-//		}
-//	}
-
-	//test
-	fun getCoverArtByMediaId(): HashMap<String?,ByteArray?>? {
-		return withController { controller ->
-			return controller.getCoverArtByMediaId()
-		}
-	}
-	//
-
-
 	/* Current state */
 	/** Gets the current queue */
 	fun getQueue(): List<MusicMetadata>? {

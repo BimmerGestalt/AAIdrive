@@ -1,6 +1,5 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
-import android.graphics.Bitmap
 import android.util.LruCache
 import com.spotify.protocol.types.ImageUri
 import de.bmw.idrive.BMWRemoting
@@ -8,14 +7,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.GraphicsHelpers
-import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
-import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
 import kotlin.coroutines.CoroutineContext
-import kotlin.math.min
+import kotlin.math.max
 
 class EnqueuedView(val state: RHMIState, val musicController: MusicController, val graphicsHelpers: GraphicsHelpers): CoroutineScope {
 	override val coroutineContext: CoroutineContext
@@ -42,27 +39,27 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	var currentSong: MusicMetadata? = null
 	val songsList = ArrayList<MusicMetadata>()
 	val songsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3)
-
 	var coverArtCache = LruCache<String, ByteArray>(50)
-
-	//var coverArtBySong = HashMap<String?,Bitmap?>()
-
-	//test
-	var coverArtBySong = HashMap<String?, ByteArray?>()
-	//
-
-//	val loadingSongList = RHMIModel.RaListModel.RHMIListConcrete(3).apply {
-//		this.addRow(arrayOf("", "", L.MUSIC_BROWSE_LOADING))
-//	}
-
 	var songsListAdapter = object: RHMIListAdapter<MusicMetadata>(4, songsList) {
 		override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
 			val checkmark = if (item.queueId == currentSong?.queueId) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, IMAGEID_CHECKMARK) else ""
 
-			val coverArtImage = if (coverArtBySong[item.mediaId] != null) coverArtBySong[item.mediaId] as ByteArray else ""
+			val coverArtImage: Any
+			if(coverArtCache[item.mediaId] != null) {
+				coverArtImage = coverArtCache[item.mediaId]
+			}
+			else {
+				coverArtImage = ""
+				launch {
+					val coverArtRaw = musicController.getSongCoverArtAsync(ImageUri(item.coverArtUri)).await()
+					if(coverArtRaw != null) {
+						coverArtCache.put(item.mediaId,graphicsHelpers.compress(coverArtRaw,90,90, quality = 30))
+					}
 
-			//default size is 144
-			//val coverArt = if (coverArtImage != null) graphicsHelpers.compress(coverArtImage, 80, 80, quality = 40) else ""
+					//call redraw on this row
+					showList(index,1)
+				}
+			}
 
 			var title = item.title ?: ""
 			if(title.length > MAX_LENGTH) {
@@ -110,15 +107,6 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 	fun showList(startIndex: Int = 0, numRows: Int = 10) {
 		listComponent.getModel()?.setValue(songsListAdapter, startIndex, numRows, songsListAdapter.height)
-
-		//trigger the cover art jobs
-		val songs: List<MusicMetadata> = songsListAdapter.realData.subList(startIndex,startIndex+numRows)
-		songs.forEachIndexed { index, song ->
-			launch {
-				val coverArt = musicController.getSongCoverArtAsync(ImageUri(song.coverArtUri)).await()!!
-				coverArtBySong[song.mediaId] = graphicsHelpers.compress(coverArt,90,90, quality = 30)
-			}
-		}
 	}
 
 	fun show() {
@@ -130,21 +118,14 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			listComponent.setSelectable(true)
 			songsList.addAll(songs)
 
-			//coverArtBySong = musicController.getCoverArtByMediaId()!!
-
 			listComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
 				showList(startIndex, numRows)
 			}
 
-			//only loads the first 10 entries
-			//showList()
-			
-			//listComponent.getModel()?.setValue(songsListAdapter, 0, songsListAdapter.height, songsListAdapter.height)
-
 			val selectedIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
 
 			//load 3 entries before the selected
-			showList(min(0,selectedIndex-3))
+			showList(max(0,selectedIndex-3))
 
 			setSelectionToCurrentSong(selectedIndex)
 		} else {
@@ -165,10 +146,15 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 	//temporary disabled to reduce complexity
 	fun redraw() {
-//		if(currentSong?.mediaId != musicController.getMetadata()?.mediaId) {
-//			currentSong = musicController.getMetadata()
-//			listComponent.getModel()?.setValue(songsListAdapter, 0, songsListAdapter.height, songsListAdapter.height)
-//		}
+		if(currentSong?.mediaId != musicController.getMetadata()?.mediaId) {
+			currentSong = musicController.getMetadata()
+			val playingIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
+			//redraw when seek next
+			showList(playingIndex-1)
+
+			//redraw when seek previous
+			showList(playingIndex+1)
+		}
 	}
 
 	fun onClick(index: Int) {

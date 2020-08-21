@@ -45,6 +45,10 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			return MusicMetadata(mediaId = track.uri, queueId = track.uri.hashCode().toLong(),
 					title = track.name, album = track.album.name, artist = track.artist.name, coverArt = coverArt)
 		}
+
+		//TODO
+		// new method with
+		// artist = listItem?.subtitle, coverArtUri = listItem?.imageUri?.raw, mediaId = listItem?.uri
 		fun MusicMetadata.Companion.fromSpotify(listItem: ListItem, coverArt: Bitmap? = null): MusicMetadata {
 			// browse result
 			return MusicMetadata(mediaId = listItem.uri, queueId = listItem.uri.hashCode().toLong(),
@@ -144,13 +148,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	var currentTrackLibrary: Boolean? = null
 	var queueUri: String? = null
 	var queueItems: List<MusicMetadata> = LinkedList()
-
-	//var coverArtByMediaIdMap = HashMap<String?,Bitmap?>()
-
-	//test
-	val graphicsHelpers = GraphicsHelpersAndroid()
-	var coverArtByMediaIdMap = HashMap<String?, ByteArray?>()
-	//
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->

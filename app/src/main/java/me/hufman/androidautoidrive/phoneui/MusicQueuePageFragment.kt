@@ -133,7 +133,6 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 			val item = contents.getOrNull(position) ?: return
 
 //			val cachedCoverArtImage = cachedCoverArtImages[item.mediaId]
-			val cachedCoverArtImage = musicController.getCoverArtByMediaId()?.get(item.mediaId)
 			//holder.coverArtImageView.setImageBitmap(cachedCoverArtImage); //TODO: working version, currently disabled due to experimentation
 
 //			if(cachedCoverArtImage == null) {
