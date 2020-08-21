@@ -48,7 +48,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController) {
 	}
 
 	fun show() {
-		val currentSong = musicController.getMetadata()
+		currentSong = musicController.getMetadata()
 		songsList.clear()
 		val songs = musicController.getQueue()
 		if (songs?.isNotEmpty() == true) {
