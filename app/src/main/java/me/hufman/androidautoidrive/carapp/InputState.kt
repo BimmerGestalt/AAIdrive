@@ -20,6 +20,12 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 	}
 
 	init {
+		// show any suggestions right when it shows up
+		state.focusCallback = FocusCallback { focus ->
+			if (focus) {
+				onEntry(input)
+			}
+		}
 		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionSpellerCallback { letter ->
 			Log.i(TAG, "Received speller input $letter")
 			onInput(letter)

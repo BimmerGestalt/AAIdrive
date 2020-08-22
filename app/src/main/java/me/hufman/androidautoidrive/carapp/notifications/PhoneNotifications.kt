@@ -97,7 +97,7 @@ class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAp
 		viewPopup.initWidgets()
 
 		// set up the details view
-		viewDetails.initWidgets(viewList)
+		viewDetails.initWidgets(viewList, stateInput)
 
 		// subscribe to CDS for passenger seat info
 		val cdsHandle = carConnection.cds_create()
