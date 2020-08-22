@@ -43,7 +43,6 @@ class MapApp(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, 
 	val menuView: MenuView
 	val fullImageView: FullImageView
 	val stateInput: RHMIState.PlainState
-	val viewInput: RHMIComponent.Input
 	val stateInputState: InputState<MapResult>
 
 	val rhmiWidth: Int
@@ -100,7 +99,6 @@ class MapApp(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, 
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first {
 			it.componentsList.filterIsInstance<RHMIComponent.Input>().filter { it.suggestAction > 0 }.isNotEmpty()
 		}
-		viewInput = stateInput.componentsList.filterIsInstance<RHMIComponent.Input>().first()
 
 		// connect buttons together
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach{
@@ -118,7 +116,7 @@ class MapApp(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, 
 		menuView.initWidgets(fullImageView.state, stateInput)
 		fullImageView.initWidgets()
 		// set up the components for the input widget
-		stateInputState = object: InputState<MapResult>(viewInput) {
+		stateInputState = object: InputState<MapResult>(stateInput) {
 			override fun onEntry(input: String) {
 				interaction.searchLocations(input)
 			}
@@ -134,8 +132,8 @@ class MapApp(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, 
 			}
 		}
 
-		viewInput.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
-		viewInput.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
+		stateInputState.inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
+		stateInputState.inputComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
 
 		// register for events from the car
 		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.mapview", -1)

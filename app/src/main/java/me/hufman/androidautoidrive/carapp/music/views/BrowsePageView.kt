@@ -85,7 +85,6 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 	}
 
 	fun initWidgets(inputState: RHMIState) {
-		val inputComponent = inputState.componentsList.filterIsInstance<RHMIComponent.Input>().first()
 		folderNameLabel.setVisible(true)
 		// handle action clicks
 		actionsListComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
@@ -96,11 +95,11 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 				}
 				BrowseAction.FILTER -> {
 					musicListComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputState.id
-					showFilterInput(inputComponent)
+					showFilterInput(inputState)
 				}
 				BrowseAction.SEARCH -> {
 					musicListComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputState.id
-					showSearchInput(inputComponent)
+					showSearchInput(inputState)
 				}
 			}
 		}
@@ -229,8 +228,8 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 		musicListComponent.getModel()?.setValue(currentListModel, startIndex, numRows, currentListModel.height)
 	}
 
-	fun showFilterInput(inputComponent: RHMIComponent.Input) {
-		val inputState = object: InputState<MusicMetadata>(inputComponent) {
+	fun showFilterInput(inputState: RHMIState) {
+		val showState = object: InputState<MusicMetadata>(inputState) {
 			override fun onEntry(input: String) {
 				val suggestions = musicList.asSequence().filter {
 					UnicodeCleaner.clean(it.title ?: "").split(Regex("\\s+")).any { word ->
@@ -253,8 +252,8 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 		}
 	}
 
-	fun showSearchInput(inputComponent: RHMIComponent.Input) {
-		val inputState = object : InputState<MusicMetadata>(inputComponent) {
+	fun showSearchInput(inputState: RHMIState) {
+		val showState = object : InputState<MusicMetadata>(inputState) {
 			val SEARCHRESULT_SEARCHING = MusicMetadata(mediaId="__SEARCHING__", title=L.MUSIC_BROWSE_SEARCHING)
 			val SEARCHRESULT_EMPTY = MusicMetadata(mediaId="__EMPTY__", title=L.MUSIC_BROWSE_EMPTY)
 			val MAX_RETRIES = 2

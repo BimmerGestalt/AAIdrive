@@ -1102,12 +1102,13 @@ class TestMusicApp {
 		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
 		browseView.initWidgets(playbackView, app.states[IDs.INPUT_STATE]!!)
 		val browsePageView = browseView.pushBrowsePage(null, null)
+		val inputState = app.states[IDs.INPUT_STATE]!!
 		val inputComponent = app.components[IDs.INPUT_COMPONENT]?.asInput()!!
 
 		val searchResults = CompletableDeferred<List<MusicMetadata>>()
 		whenever(musicController.searchAsync(anyOrNull())) doAnswer { searchResults }
 
-		browsePageView.showSearchInput(inputComponent)
+		browsePageView.showSearchInput(inputState)
 
 		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "mario"))
 		await().untilAsserted { verify(musicController, times(1)).searchAsync(any()) }

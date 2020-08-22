@@ -6,9 +6,18 @@ import me.hufman.idriveconnectionkit.rhmi.*
 const val TAG = "InputState"
 
 /** Handles letter entry from the car's input widget */
-abstract class InputState<T:Any>(val inputComponent: RHMIComponent.Input) {
+abstract class InputState<T:Any>(val state: RHMIState) {
 	var input = ""
 	var suggestions: MutableList<T> = ArrayList()
+
+	val inputComponent = state.componentsList.filterIsInstance<RHMIComponent.Input>().first()
+
+	companion object {
+		fun fits(state: RHMIState): Boolean {
+			return state.componentsList.size == 1 &&
+				state.componentsList[0] is RHMIComponent.Input
+		}
+	}
 
 	init {
 		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionSpellerCallback { letter ->
