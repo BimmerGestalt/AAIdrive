@@ -249,7 +249,9 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		val appActions = withController { controller ->
 			controller.getCustomActions()
 		} ?: LinkedList()
-		return if (isSupportedAction(MusicAction.SEEK_TO)) {
+		return if (((getMetadata()?.duration ?: -1) > 0) || isSupportedAction(MusicAction.SEEK_TO)) {
+			// Rocket Player claims to not support SEEK_TO
+			// Spotify's duration sometimes goes missing
 			appActions + seekingController.seekingActions
 		} else {
 			appActions
