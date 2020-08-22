@@ -22,13 +22,7 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 	init {
 		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionSpellerCallback { letter ->
 			Log.i(TAG, "Received speller input $letter")
-			when (letter) {
-				"delall" -> input = ""
-				"del" -> input = input.dropLast(1)
-				else -> input += letter
-			}
-			inputComponent.getResultModel()?.asRaDataModel()?.value = input
-			onEntry(input)
+			onInput(letter)
 		}
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 			val suggestion = suggestions.getOrNull(index)
@@ -51,6 +45,16 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 		val outputList = RHMIModel.RaListModel.RHMIListConcrete(1)
 		newSuggestions.forEach { outputList.addRow(arrayOf(convertRow(it))) }
 		outputListModel.setValue(outputList, 0, outputList.height, outputList.height)
+	}
+
+	fun onInput(letter: String) {
+		when (letter) {
+			"delall" -> input = ""
+			"del" -> input = input.dropLast(1)
+			else -> input += letter
+		}
+		inputComponent.getResultModel()?.asRaDataModel()?.value = input
+		onEntry(input)
 	}
 
 	/**
