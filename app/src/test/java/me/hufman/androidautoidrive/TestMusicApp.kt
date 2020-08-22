@@ -469,9 +469,25 @@ class TestMusicApp {
 			queueView.show()
 			val list = mockServer.data[IDs.QUEUE_MODEL] as BMWRemoting.RHMIDataTable
 			assertEquals(3, list.totalRows)
-			assertArrayEquals(arrayOf("", "", "Song 1"), list.data[0])
-			assertArrayEquals(arrayOf("", "", "Song 3"), list.data[1])
-			assertArrayEquals(arrayOf("", "", "Song 6"), list.data[2])
+			assertArrayEquals(arrayOf("Song 1", "Song 3", "Song 6"), list.data.map {it[2]}.toTypedArray())
+
+			val checkmarkResource = list.data[0][0] as BMWRemoting.RHMIResourceIdentifier
+			val song1Row = list.data[0]
+			assertEquals(149, checkmarkResource.id)
+			assertEquals(BMWRemoting.RHMIResourceType.IMAGEID, checkmarkResource.type)
+			assertEquals("", song1Row[1])
+			assertEquals("Song 1", song1Row[2])
+
+			val song3Row = list.data[1]
+			assertEquals("", song3Row[0])
+			assertEquals("", song3Row[1])
+			assertEquals("Song 3", song3Row[2])
+
+			val song6Row = list.data[2]
+			assertEquals("", song6Row[0])
+			assertEquals("", song6Row[1])
+			assertEquals("Song 6", song6Row[2])
+
 			assertEquals(true, mockServer.properties[IDs.QUEUE_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id])
 		}
 	}
