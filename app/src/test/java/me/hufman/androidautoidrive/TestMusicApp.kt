@@ -265,7 +265,7 @@ class TestMusicApp {
 		mockClient.rhmi_onActionEvent(1, "unused", IDs.APPLIST_ACTION, mapOf(1.toByte() to 1))
 		assertEquals(0, mockServer.avCurrentContext)
 		mockClient.av_connectionGranted(0, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
-		verify(musicController, atLeastOnce()).connectApp(argThat { this.name == "Test2" } )
+		verify(musicController, atLeastOnce()).connectAppManually(argThat { this.name == "Test2" } )
 		mockClient.av_requestPlayerState(0, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 		verify(musicController, atLeastOnce()).play()
 
@@ -1269,7 +1269,7 @@ class TestMusicApp {
 			}
 		}
 		discoveryListenerCapture.lastValue.run()
-		verify(musicController).connectApp(same(nowPlayingApp))
+		verify(musicController).connectAppAutomatically(same(nowPlayingApp))
 		// async sets the musicBrowser to the correct connection
 		whenever(musicController.currentAppInfo).doReturn(nowPlayingApp)
 		whenever(musicAppDiscovery.validApps) doAnswer {
@@ -1293,6 +1293,6 @@ class TestMusicApp {
 					browseableApp)
 		}
 		discoveryListenerCapture.lastValue.run()
-		verify(musicController).connectApp(same(browseableApp))
+		verify(musicController).connectAppAutomatically(same(browseableApp))
 	}
 }

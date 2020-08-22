@@ -100,7 +100,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 				val discoveredApp = musicAppDiscovery.validApps.firstOrNull {
 					it == nowPlaying
 				} ?: nowPlaying
-				musicController.connectApp(discoveredApp)
+				musicController.connectAppAutomatically(discoveredApp)
 			}
 		}
 		musicAppDiscovery.discoverApps()    // trigger the discovery, to show the apps when the handler starts running

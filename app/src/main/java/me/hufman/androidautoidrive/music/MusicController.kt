@@ -27,6 +27,9 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 
 		// how often to reconnect to an app if it returns NULL metadata
 		private const val RECONNECT_TIMEOUT = 1000
+
+		// disable autoswitch for a time after the user picks an app manually
+		private const val DISABLE_AUTOSWITCH_TIMEOUT = 5000
 	}
 
 	val musicSessions = MusicSessions(context)
@@ -37,6 +40,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	)
 	val connector = CombinedMusicAppController.Connector(connectors)
 
+	var disableAutoswitchUntil = 0L
 	var lastConnectTime = 0L
 	var currentAppInfo: MusicAppInfo? = null
 	var currentAppController: MusicAppController? = null
@@ -96,7 +100,18 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		}
 	}
 
-	fun connectApp(app: MusicAppInfo) {
+	fun connectAppManually(app: MusicAppInfo) {
+		disableAutoswitchUntil = System.currentTimeMillis() + DISABLE_AUTOSWITCH_TIMEOUT
+		connectApp(app)
+	}
+
+	fun connectAppAutomatically(app: MusicAppInfo) {
+		if (System.currentTimeMillis() > disableAutoswitchUntil) {
+			connectApp(app)
+		}
+	}
+
+	private fun connectApp(app: MusicAppInfo) {
 		val previousAppInfo = currentAppInfo
 		currentAppInfo = app
 		asyncRpc {
