@@ -249,7 +249,11 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		val appActions = withController { controller ->
 			controller.getCustomActions()
 		} ?: LinkedList()
-		return appActions + seekingController.seekingActions
+		return if (isSupportedAction(MusicAction.SEEK_TO)) {
+			appActions + seekingController.seekingActions
+		} else {
+			appActions
+		}
 	}
 
 	fun isSupportedAction(action: MusicAction): Boolean {
