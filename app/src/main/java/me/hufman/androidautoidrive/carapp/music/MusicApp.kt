@@ -4,6 +4,7 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
+import kotlinx.coroutines.cancelChildren
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.Utils.loadZipfile
@@ -169,6 +170,9 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 						args?.get(4.toByte()) as? Boolean == false)
 				{
 					enqueuedViewVisible = false
+
+					//kill any threads still running
+					enqueuedView.killLoaderJobs()
 				}
 				if (componentId == customActionsView.state.id &&
 						eventId == 1 &&

@@ -295,6 +295,9 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		}
 	}
 
+	//TODO: return better playlist metadata structure that contains:
+	//  - Playlist Title
+	//  - List<MusicMetadata> songs
 	override fun getQueue(): List<MusicMetadata> {
 		// unreliable per https://github.com/spotify/android-sdk/issues/10
 		return queueItems ?: LinkedList()
