@@ -12,7 +12,7 @@ How do I fix the Bluetooth apps connection?
 
   - Open the Connected app
   - Initiate the Bluetooth connection from the car, by clicking the Apps checkbox within the connection menu
-  - Try disabling and reenabling the Music connection from the car
+  - Try disabling and re-enabling the Music connection from the car
 
 The Connected app should now show the notification with the Connected To Car status.
 
@@ -20,7 +20,7 @@ Is my phone compatible?
 : This Android app has been successfully tested on Android Nougat, Oreo, and later. iPhone users do not need this app, because BMW supports more apps and Apple Carplay for iPhones.
 
 Is my car compatible?
-: Any model-year 2015 or later BMW or Mini with the navigation option should be compatible. As a sure test of compatibility, the official BMW or Mini Connected phone app should add a Calendar to the car's Connected Apps menu: This app uses that same protocol. However, Live Cockpit (IDrive 7) is not compatible, but is compatible with standard Android Auto.
+: Any model-year 2015 or later BMW or Mini with NBT and the navigation option should be compatible. As a sure test of compatibility, the official BMW or Mini Connected phone app should add a Calendar to the car's Connected Apps menu: This app uses that same protocol. However, Live Cockpit Professional (IDrive 7) is not compatible, but is compatible with standard Android Auto.
 
 Is it safe? What is it doing to the car?
 : This phone app runs on the same BMW Connected Apps connection as the official apps, such as Spotify, and does not modify the car in any way. The phone app connects to the car and sends new menus and labels to the display, and then updates the contents of the labels in response to user input, all remotely. Nothing permanent is changed in the car, and everything disappears when the phone is disconnected from the car.
@@ -40,14 +40,17 @@ Can you add support for this other music app?
 What is different in this app's version of Spotify?
 : The official Connected App of Spotify is not allowed to run if the phone is connected over USB, because the necessary Android Open Accessory 2.0 Audio protocol was removed in Android Oreo. This app provides a workaround to control Spotify over the USB Apps connection while listening over Bluetooth audio. Additionally, this interface provides Spotify's Search capabilities.
 
+Why doesn't Spotify show cover art or browse my library?
+: These features require that this app be granted access to control Spotify. Spotify can only verify the API key if it is online, and some ad blockers have been found to also block this API authentication.
+
 Why aren't Google Maps compiled into the app by default?
 : Google Maps support is mainly to demonstrate Android Auto features being implemented as Connected Apps. It is against the [general license](https://cloud.google.com/maps-platform/terms/#3-license) to show Google Maps in the car. The performance is also poor, because it is taking a screenshot of Google Maps on the phone and uploading it to the car as fast as possible, which goes about 10fps over USB and 1fps over Bluetooth.
 
 Which version should I install?
-: To help test this app, the APK labelled `sentry` should be installed, which will automatically upload crash reports to Sentry. The `nonalytics` version has all crash reporting functionality removed.
+: To help test this app, the APK labeled `sentry` should be installed, which will automatically upload crash reports to Sentry. The `nonalytics` version does not include any crash reporting functionality.
 
 Why isn't this available on the Google Play Store?
 : During this early stage, the app needs further testing before releasing to a wider anonymous public.
 
 How do I get past this other problem?
-: Please [reach out](mailto:hufman+androidautoidrive@gmail.com?subject=Android Auto IDrive Question) for support!
+: Please [reach out](mailto:hufman+androidautoidrive@gmail.com?subject=Android Auto IDrive Question) for support! If you can, please also provide suspicious `adb logcat` output, which will greatly help with any debugging.
