@@ -13,6 +13,7 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.Utils
 import me.hufman.androidautoidrive.getThemeColor
 import me.hufman.androidautoidrive.music.MusicController
+import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 
 class MusicNowPlayingFragment: Fragment() {
 	companion object {
@@ -93,5 +94,25 @@ class MusicNowPlayingFragment: Fragment() {
 		val position = musicController.getPlaybackPosition()
 		seekProgress.progress = (position.getPosition() / 1000).toInt()
 		seekProgress.max = (position.maximumPosition / 1000).toInt()
+
+		// show any spotify errors
+		val fragmentManager = activity?.supportFragmentManager
+		val spotifyError = musicController.connectors.filterIsInstance<SpotifyAppController.Connector>().firstOrNull()?.lastError
+		if (fragmentManager != null && spotifyError != null) {
+			imgError.visible = true
+			imgError.setOnClickListener {
+				val arguments = Bundle().apply {
+					putString(SpotifyApiErrorDialog.EXTRA_CLASSNAME, spotifyError?.javaClass?.simpleName)
+					putString(SpotifyApiErrorDialog.EXTRA_MESSAGE, spotifyError?.message)
+				}
+				SpotifyApiErrorDialog().apply {
+					setArguments(arguments)
+					show(fragmentManager, "spotify_error")
+				}
+			}
+		} else {
+			imgError.visible = false
+			imgError.setOnClickListener(null)
+		}
 	}
 }

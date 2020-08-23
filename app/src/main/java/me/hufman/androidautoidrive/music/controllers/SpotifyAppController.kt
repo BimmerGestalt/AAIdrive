@@ -53,6 +53,8 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	}
 
 	class Connector(val context: Context): MusicAppController.Connector {
+		var lastError: Throwable? = null
+
 		override fun connect(appInfo: MusicAppInfo): Observable<SpotifyAppController> {
 			val pendingController = MutableObservable<SpotifyAppController>()
 			if (appInfo.packageName != "com.spotify.music") {
@@ -73,6 +75,10 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			val remoteListener = object: com.spotify.android.appremote.api.Connector.ConnectionListener {
 				override fun onFailure(e: Throwable?) {
 					Log.e(TAG, "Failed to connect to Spotify Remote: $e")
+					if (hasSupport(context)) {
+						// show an error to the UI, unless we don't have an API key
+						this@Connector.lastError = e
+					}
 					// disconnect an existing session, if any
 					pendingController.value?.disconnect()
 					if (pendingController.pending) {
