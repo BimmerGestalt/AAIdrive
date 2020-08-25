@@ -237,7 +237,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	}
 
 	private fun redrawQueueButton() {
-		val queue = controller.getQueue()
+		val queue = controller.getQueue()?.songs
 		queueToolbarButton.setEnabled(queue?.isNotEmpty() == true)
 	}
 

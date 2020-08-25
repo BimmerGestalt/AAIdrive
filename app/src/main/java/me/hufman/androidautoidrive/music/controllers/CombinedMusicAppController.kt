@@ -79,7 +79,7 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 	 */
 	fun getQueueController(): MusicAppController? {
 		return withController {
-			if (it.getQueue().isEmpty()) {
+			if (it.getQueue() == null || it.getQueue()?.songs?.isEmpty()!!) {
 				throw UnsupportedOperationException()
 			}
 			it
@@ -185,8 +185,8 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 		}
 	}
 
-	override fun getQueue(): List<MusicMetadata> {
-		return getQueueController()?.getQueue() ?: LinkedList()
+	override fun getQueue(): QueueMetadata? {
+		return getQueueController()?.getQueue()
 	}
 
 	override fun getMetadata(): MusicMetadata? {

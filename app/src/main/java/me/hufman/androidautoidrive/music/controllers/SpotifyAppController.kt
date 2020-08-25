@@ -148,6 +148,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	var currentTrackLibrary: Boolean? = null
 	var queueUri: String? = null
 	var queueItems: List<MusicMetadata> = LinkedList()
+	var queueMetadata: QueueMetadata? = null
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -234,6 +235,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 				if (destination.size < items.total && items.items.isNotEmpty()) {   // more tracks to load
 					loadPaginatedItems(destination, parentItem, stillValid, onComplete)
 				} else {
+					queueMetadata = QueueMetadata(parentItem.title, queueItems)
 					onComplete(destination)
 				}
 			}
@@ -295,12 +297,9 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		}
 	}
 
-	//TODO: return better playlist metadata structure that contains:
-	//  - Playlist Title
-	//  - List<MusicMetadata> songs
-	override fun getQueue(): List<MusicMetadata> {
+	override fun getQueue(): QueueMetadata? {
 		// unreliable per https://github.com/spotify/android-sdk/issues/10
-		return queueItems ?: LinkedList()
+		return queueMetadata
 	}
 
 	override suspend fun getSongQueueCoverArtImage(imageUri: ImageUri): Bitmap? {
@@ -361,16 +360,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	override fun isShuffling(): Boolean {
 		return playerOptions?.isShuffling == true
 	}
-
-	//test
-	override fun getCoverArtByMediaId(): HashMap<String?, ByteArray?> {
-		return coverArtByMediaIdMap
-	}
-	//
-
-//	override fun getCoverArtByMediaId(): HashMap<String?, Bitmap?> {
-//		return coverArtByMediaIdMap
-//	}
 
 	override suspend fun browse(directory: MusicMetadata?): List<MusicMetadata> {
 		val deferred = CompletableDeferred<List<MusicMetadata>>()

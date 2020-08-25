@@ -87,7 +87,7 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 
 		//reason why app doesn't start with the queue already loaded is due to async nature of getting the queue and it not being ready when getQueue is called
 		loaderJob = launch {
-			val result = musicController.getQueue()
+			val result = musicController.getQueue()?.songs
 			this@MusicQueuePageFragment.contents.clear()
 			result?.forEach {
 				this@MusicQueuePageFragment.contents.add(it)

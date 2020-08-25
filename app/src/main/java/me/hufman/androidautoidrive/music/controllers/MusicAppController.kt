@@ -32,7 +32,7 @@ interface MusicAppController {
 	fun toggleShuffle()
 
 	/* Current state */
-	fun getQueue(): List<MusicMetadata>
+	fun getQueue(): QueueMetadata?
 
 	fun getMetadata(): MusicMetadata?
 

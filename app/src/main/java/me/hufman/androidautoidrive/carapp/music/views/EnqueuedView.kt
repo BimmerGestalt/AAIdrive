@@ -29,11 +29,6 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 	}
 
-	//TODO: add playlist information (title and image)? Image seems like a waste since it is only at the top
-	//TODO: Now Playing - {playlist name} for the title at the very least?
-
-	//TODO: make list take up full size of screen and resize when right hand sidebar is pulled up
-
 	val listComponent: RHMIComponent.List
 	var currentSong: MusicMetadata? = null
 	val songsList = ArrayList<MusicMetadata>()
@@ -48,13 +43,10 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 			var title = item.title ?: ""
 			if(title.length > ROW_LINE_MAX_LENGTH) {
-				title = title.substring(0, 21) + "..."
+				title = title.substring(0, 20) + "..."
 			}
 
-			var artist = item.artist ?: ""
-			if(artist.length > ROW_LINE_MAX_LENGTH) {
-				artist = artist.substring(0, 21) + "..."
-			}
+			val artist = item.artist ?: ""
 
 			val songMetaDataText = "${title}\n${artist}"
 
@@ -76,8 +68,6 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {
-		state.getTextModel()?.asRaDataModel()?.value = L.MUSIC_QUEUE_TITLE
-
 		//problem of overlapped rows
 //		listComponent.setProperty(RHMIProperty.PropertyId.WIDTH, 1000)
 //		listComponent.setProperty(RHMIProperty.PropertyId.HEIGHT,100)
@@ -96,12 +86,13 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	}
 
 	fun show() {
-		//TODO: need to set to the playlist name
-		state.getTextModel()?.asRaDataModel()?.value = "TEST"
-
 		currentSong = musicController.getMetadata()
 		songsList.clear()
-		val songs = musicController.getQueue()
+		val queueMetadata = musicController.getQueue()
+
+		state.getTextModel()?.asRaDataModel()?.value = "Now Playing - ${queueMetadata?.title}"
+
+		val songs = queueMetadata?.songs
 		if (songs?.isNotEmpty() == true) {
 			listComponent.setEnabled(true)
 			listComponent.setSelectable(true)
@@ -110,24 +101,10 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			listComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
 				showList(startIndex, numRows)
 
-				//as scrolling the latest requestDataCallback always will take priority for cover art
-				//other running coroutines need to be cancelled
-				//above is stored as Job[] for each getCoverArt async call
-				//getCoverArt method is run for all requestDataCallback songs at beginning of dequeue
-				//  result is pushed to LRUCache
-				//  call showList again for completed job row
-
-				//adapter will reference LRUCache for coverArt and is a dumb convert method
-
-				//biggest issue is when the user is scrolling quickly through the list, spawning tons of jobs that lag the system badly
-				//when they finally get to their destination -> we need the destination jobs to be the priority
-
-				//issue: sometimes when loading a bunch of cover art then switching playlists then loading more cover art then going to browse the browse job hangs
-				//maybe caused by too many threads still running somehow?
-
 				killLoaderJobs()
 				loaderJob = launch {
-					val requestDataSongs: List<MusicMetadata> = songsListAdapter.realData.subList(startIndex,startIndex+numRows)
+					val endIndex = if(startIndex+numRows >= songsList.size) songsList.size-1 else startIndex+numRows
+					val requestDataSongs: List<MusicMetadata> = songsListAdapter.realData.subList(startIndex,endIndex)
 					requestDataSongs.forEachIndexed { index, song ->
 						if(coverArtCache.get(song.mediaId) == null) {
 							launch {
