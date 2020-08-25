@@ -25,7 +25,7 @@ Getting Started
 
 This app requires that the BMW or Mini Connected app for your car is installed and can successfully add Connected and Calendar entries to your car's Connected Apps menu.
 
-Download the APK from the [Releases page](https://github.com/hufman/AndroidAutoIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. After starting, the app should detect the Connected Classic app and start waiting for the car connection.
+Download the APK from the [Releases page](https://github.com/hufman/AndroidAutoIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. After starting, the app should detect the Connected app and start waiting for the car connection.
 
 Check out the [FAQ](https://hufman.github.io/AndroidAutoIdrive/faq.html) if you run into problems.
 
@@ -79,6 +79,7 @@ Implemented Features
         - [Podcast Addict](https://play.google.com/store/apps/details?id=com.bambuna.podcastaddict)
         - [Voice Audiobook Player](https://play.google.com/store/apps/details?id=de.ph1b.audiobook)
       - Music Library
+        - [AIMP](https://play.google.com/store/apps/details?id=com.aimp.player)
         - [Black Player](https://play.google.com/store/apps/details?id=com.musicplayer.blackplayerfree)
         - [DSub](https://play.google.com/store/apps/details?id=github.daneren2005.dsub)
         - [jetAudio HD](https://play.google.com/store/apps/details?id=com.jetappfactory.jetaudio)
