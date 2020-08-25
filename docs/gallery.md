@@ -6,7 +6,7 @@ permalink: /gallery
 
 <div class="gallery">
 <figure>
-	<img src="images/screenshot-app.png" alt="Phone App Interface" width="270" height="480"/>
+	<img src="images/screenshot-app.png" alt="Phone App Interface" width="270" height="480" style="width: 270px"/>
 	<figcaption>Phone App Interface</figcaption>
 </figure>
 <figure>
