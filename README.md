@@ -84,6 +84,7 @@ Implemented Features
         - [DSub](https://play.google.com/store/apps/details?id=github.daneren2005.dsub)
         - [jetAudio HD](https://play.google.com/store/apps/details?id=com.jetappfactory.jetaudio)
         - [Media Monkey](https://play.google.com/store/apps/details?id=com.ventismedia.android.mediamonkey)
+        - [Neutron Music Player](https://play.google.com/store/apps/details?id=com.neutroncode.mp)
         - [Plex](https://play.google.com/store/apps/details?id=com.plexapp.android) (only music and podcasts)
         - [PowerAmp](https://play.google.com/store/apps/details?id=com.maxmpz.audioplayer)
         - [Retro Music Player](https://play.google.com/store/apps/details?id=code.name.monkey.retromusic)

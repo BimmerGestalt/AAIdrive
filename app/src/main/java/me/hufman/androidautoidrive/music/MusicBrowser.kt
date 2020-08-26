@@ -90,6 +90,8 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 			"fm.libro.librofm" -> "/"   // Libro FM
 			"se.sr.android" -> "root"  // Sveriges Radio
 			"com.bambuna.podcastaddict" -> "__ROOT__"  // Podcast Addict
+			"com.neutroncode.mp" -> "root"    // Neutron
+			"com.neutroncode.mpeval" -> "root"    // Neutron (Eval)
 			else -> mediaBrowser.root
 		}
 	}
