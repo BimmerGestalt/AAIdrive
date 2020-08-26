@@ -146,7 +146,9 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 	}
 
 	override fun toggleShuffle() {
-		mediaController.transportControls.setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL)
+		remoteCall {
+			mediaController.transportControls.setShuffleMode(if (isShuffling()) PlaybackStateCompat.SHUFFLE_MODE_NONE else PlaybackStateCompat.SHUFFLE_MODE_ALL)
+		}
 	}
 
 	override fun isShuffling(): Boolean {

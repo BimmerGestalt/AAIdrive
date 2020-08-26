@@ -211,8 +211,7 @@ class TestSpotifyMusicAppController {
 			spotifyCallback.lastValue.onEvent(state)
 
 			controller.toggleShuffle()
-
-			assertTrue(controller.shuffling)
+			verify(playerApi).setShuffle(true)
 		}
 
 		// test shuffle bool is flipped when shuffle is called: true -> false
@@ -229,8 +228,7 @@ class TestSpotifyMusicAppController {
 			spotifyCallback.lastValue.onEvent(state)
 
 			controller.toggleShuffle()
-
-			assertFalse(controller.shuffling)
+			verify(playerApi).setShuffle(false)
 		}
 	}
 

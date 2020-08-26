@@ -157,7 +157,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		buttons[4].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = customActionsView.state.id
 
 		buttons[5].setEnabled(false)
-		buttons[5].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SPOTIFY_TURN_SHUFFLE_ON
+		buttons[5].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_ON
 		buttons[5].getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.toggleShuffle() }
 
 		buttons[6].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SKIP_PREVIOUS
@@ -253,11 +253,11 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		shuffleButton.setEnabled(controller.isSupportedAction(MusicAction.SET_SHUFFLE_MODE))
 
 		if(controller.isShuffling()) {
-			shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF
+			shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_OFF
 			shuffleButton.getImageModel()?.asImageIdModel()?.imageId = IMAGEID_SHUFFLE_ON
 		}
 		else {
-			shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SPOTIFY_TURN_SHUFFLE_ON
+			shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_ON
 			shuffleButton.getImageModel()?.asImageIdModel()?.imageId = IMAGEID_SHUFFLE_OFF
 		}
 	}

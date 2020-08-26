@@ -135,7 +135,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	var currentTrackLibrary: Boolean? = null
 	var queueUri: String? = null
 	var queueItems: List<MusicMetadata>? = null
-	var shuffling: Boolean = false
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -144,9 +143,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			// update the available actions
 			playerActions = playerState.playbackRestrictions
 			playerOptions = playerState.playbackOptions
-
-			// update shuffling status
-			shuffling = playerOptions?.isShuffling == true
 
 			// update the current track info
 			val track = playerState.track
@@ -304,12 +300,12 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	}
 
 	override fun toggleShuffle() {
-		shuffling = !shuffling
-		remote.playerApi.setShuffle(shuffling)
+		val shuffling = isShuffling()
+		remote.playerApi.setShuffle(!shuffling)
 	}
 
 	override fun isShuffling(): Boolean {
-		return shuffling
+		return playerOptions?.isShuffling == true
 	}
 
 	override suspend fun browse(directory: MusicMetadata?): List<MusicMetadata> {
