@@ -218,6 +218,16 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		}
 	}
 
+	fun toggleShuffle() = asyncControl { controller ->
+		controller.toggleShuffle()
+	}
+
+	fun isShuffling(): Boolean {
+		return withController { controller ->
+			return controller.isShuffling()
+		} ?: false
+	}
+
 	fun browseAsync(directory: MusicMetadata?): Deferred<List<MusicMetadata>> {
 		val results: CompletableDeferred<List<MusicMetadata>> = CompletableDeferred()
 		withController { controller ->

@@ -233,6 +233,26 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 		return actions
 	}
 
+	override fun toggleShuffle() {
+		withController {
+			if (!it.isSupportedAction(MusicAction.SET_SHUFFLE_MODE)) {
+				throw UnsupportedOperationException()
+			}
+			it.toggleShuffle()
+		}
+	}
+
+	override fun isShuffling(): Boolean {
+		var isShuffling: Boolean = false
+		withController {
+			if (!it.isSupportedAction(MusicAction.SET_SHUFFLE_MODE)) {
+				throw UnsupportedOperationException()
+			}
+			isShuffling = it.isShuffling()
+		}
+		return isShuffling
+	}
+
 	private suspend fun waitforConnect() {
 		if (isPending()) {
 			for (i in 0..10) {
