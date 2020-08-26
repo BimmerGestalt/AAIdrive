@@ -59,6 +59,8 @@ class MusicPlayerActivity: AppCompatActivity() {
 			fun update(position: Int) {
 				if(position == 0) {
 					adapter.updateNowPlaying()
+				} else if (position == 1) {
+					adapter.updateBrowse()
 				} else if (position == 2) {
 					adapter.updateQueue()
 				}
@@ -121,6 +123,10 @@ class MusicPlayerPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm
 
 	fun updateNowPlaying() {
 		(tabs["Now Playing"] as MusicNowPlayingFragment).onActive()
+	}
+
+	fun updateBrowse() {
+		((tabs["Browse"] as MusicBrowseFragment).fragment as MusicBrowsePageFragment).onActive()
 	}
 
 	fun updateQueue() {

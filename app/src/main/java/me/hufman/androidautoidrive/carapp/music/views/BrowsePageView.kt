@@ -216,6 +216,7 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 		// redraw all currently visible rows if one of them has a cover art that was retrieved
 		for ((index, metadata) in visibleRowsOriginalMusicMetadata.withIndex()) {
 			if (metadata != visibleRows[index]) {
+				// can only see roughly 5 rows
 				showList(max(0, selectedIndex - 4), 8)
 				break
 			}
