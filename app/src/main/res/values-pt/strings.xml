@@ -15,7 +15,7 @@
     <string name="message_notifications">Mensagem de Notificação</string>
     <string name="notification_popups">Popups de Notificação</string>
     <string name="notification_popups_passenger">Popups para passageiro</string>
-    <string name="lbl_popupVersion">Popups apenas trabalha com IDrive4</string>
+    <string name="lbl_popupVersion">Popups apenas trabalham com IDrive4</string>
     <string name="lbl_smsPermission">Garantir permissão de SMS para ver imagens de SMS recebidas. O texto em si é sempre visível.</string>
 
     <string name="enable_google_maps">Activar Google Maps</string>
@@ -44,15 +44,15 @@
     <string name="btn_configure">Configurar …</string>
 
     <string name="connectionStatusMissingConnectedApp">Não consegue encontrar app Connected ou Connected Classic</string>
-    <string name="connectionStatusWaiting">Aguardado pela ligação à viatura</string>
+    <string name="connectionStatusWaiting">Aguarda ligação à viatura</string>
 
-    <string name="nowplaying_notconnected">&lt;Não Contectado&gt;</string>
+    <string name="nowplaying_notconnected">&lt;Não Conectado&gt;</string>
     <string name="nowplaying_unknown">&lt;Desconhecido&gt;</string>
 
-    <string name="txt_setup_bmw_ready">A app está pronta para conectar-se ao BMW<</string>
-    <string name="txt_setup_mini_ready">A app está pronta para conectar-se ao Mini</string>
-    <string name="txt_setup_bmw_missing">A app não está pronta para conectar-se ao BMW:</string>
-    <string name="txt_setup_mini_missing">A app não está pronta para conectar-se ao Mini:</string>
+    <string name="txt_setup_bmw_ready">A app está pronta a ligar-se ao BMW</string>
+    <string name="txt_setup_mini_ready">A app está pronta a ligar-se ao Mini</string>
+    <string name="txt_setup_bmw_missing">A app não está pronta se ligar ao BMW:</string>
+    <string name="txt_setup_mini_missing">A app não está pronta para se ligar ao Mini:</string>
     <string name="txt_setup_security_missing">Centro de Segurança não está disponível:</string>
     <string name="txt_setup_bt_disconnected">Sem viatura ligada por Bluetooth</string>
     <string name="txt_setup_bt_connected">Viatura ligada por Bluetooth</string>
@@ -120,12 +120,12 @@
     <string name="MUSIC_SKIP_NEXT">Seguinte</string>
 
     <plurals name="MUSIC_ACTION_SEEK_BACK">
-        <item quantity="one">Voltar atrás back %s segundo</item>
-        <item quantity="other">Voltar atrás back %s segundos</item>
+        <item quantity="one">Voltar atrás %s segundo</item>
+        <item quantity="other">Voltar atrás %s segundos</item>
     </plurals>
     <plurals name="MUSIC_ACTION_SEEK_FORWARD">
         <item quantity="one">Avançar %s segundo</item>
-        <item quantity="other">Avançar forward %s segundos</item>
+        <item quantity="other">Avançar %s segundos</item>
     </plurals>
 
     <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_ON">Ligar shuffle</string>
