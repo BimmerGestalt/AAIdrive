@@ -3,10 +3,7 @@ package me.hufman.androidautoidrive.carapp.notifications.views
 import android.util.Log
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
-import me.hufman.androidautoidrive.carapp.notifications.CarNotification
-import me.hufman.androidautoidrive.carapp.notifications.CarNotificationController
-import me.hufman.androidautoidrive.carapp.notifications.NotificationsState
-import me.hufman.androidautoidrive.carapp.notifications.TAG
+import me.hufman.androidautoidrive.carapp.notifications.*
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.ArrayList
 import kotlin.math.min
@@ -28,6 +25,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 	val titleWidget: RHMIComponent.Label    // the widget to display the title in
 	val listWidget: RHMIComponent.List     // the widget to display the text
 	val imageWidget: RHMIComponent.Image
+	lateinit var inputView: RHMIState
 
 	var visible = false
 	var selectedNotification: CarNotification? = null
@@ -41,8 +39,9 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		imageWidget = state.componentsList.filterIsInstance<RHMIComponent.Image>().first()
 	}
 
-	fun initWidgets(listView: NotificationListView) {
+	fun initWidgets(listView: NotificationListView, inputState: RHMIState) {
 		state as RHMIState.ToolbarState
+		this.inputView = inputState
 
 		state.focusCallback = FocusCallback { focused ->
 			visible = focused
@@ -188,16 +187,20 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 				button.setSelectable(false)
 				button.getAction()?.asRAAction()?.rhmiActionCallback = null // don't leak memory
 			} else {
-				if (action.remoteInputs != null && action.remoteInputs.isNotEmpty()) {
-					// TODO Implement <input> view reply
-					button.setEnabled(false)
-				} else {
-					button.setEnabled(true)
-				}
+				button.setEnabled(true)
 				button.setSelectable(true)
-				button.getTooltipModel()?.asRaDataModel()?.value = action.title.toString()
+				button.getTooltipModel()?.asRaDataModel()?.value = action.name.toString()
 				button.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-					controller.action(notification, action.title.toString())
+					if (action.supportsReply ) {
+						// show input to reply
+						button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputView.id
+						val replyController = ReplyControllerNotification(notification, action, controller)
+						ReplyView(listViewId, inputView, replyController)
+					} else {
+						// trigger the custom action
+						controller.action(notification, action)
+						button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listViewId
+					}
 				}
 			}
 		}

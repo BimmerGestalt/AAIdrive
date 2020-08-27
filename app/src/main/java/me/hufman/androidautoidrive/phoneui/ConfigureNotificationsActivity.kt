@@ -1,10 +1,7 @@
 package me.hufman.androidautoidrive.phoneui
 
 import android.Manifest
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -46,9 +43,16 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 		btnTestNotification.setOnClickListener {
 			createNotificationChannel()
 			val actionIntent = Intent(this, CustomActionListener::class.java)
+			val replyInput = RemoteInput.Builder("reply")
+					.setChoices(arrayOf("Yes", "No", "\uD83D\uDC4C"))
+					.build()
 
-			val action = Notification.Action.Builder(null, "Custom action test",
+			val action = Notification.Action.Builder(null, "Custom Action",
 					PendingIntent.getBroadcast(this, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+					.build()
+			val inputAction = Notification.Action.Builder(null, "Reply",
+					PendingIntent.getBroadcast(this, 1, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+					.addRemoteInput(replyInput)
 					.build()
 			val notificationBuilder = Notification.Builder(this)
 					.setSmallIcon(android.R.drawable.ic_menu_gallery)
@@ -56,6 +60,7 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 					.setContentText("This is a test notification \ud83d\udc4d")
 					.setSubText("SubText")
 					.addAction(action)
+					.addAction(inputAction)
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				notificationBuilder.setChannelId(MainActivity.NOTIFICATION_CHANNEL_ID)
 			}
@@ -102,8 +107,19 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 
 	class CustomActionListener: BroadcastReceiver() {
 		override fun onReceive(context: Context?, intent: Intent?) {
-			Log.i(MainActivity.TAG, "Received custom action")
-			Toast.makeText(context, "Custom Action press", Toast.LENGTH_SHORT).show()
+			if (intent != null) {
+				if (RemoteInput.getResultsFromIntent(intent) != null) {
+					val reply = RemoteInput.getResultsFromIntent(intent)
+					Log.i(MainActivity.TAG, "Received reply")
+					Toast.makeText(context, "Reply: ${reply.getCharSequence("reply")}", Toast.LENGTH_SHORT).show()
+
+					val manager = NotificationManagerCompat.from(context!!)
+					manager.cancel(1)
+				} else {
+					Log.i(MainActivity.TAG, "Received custom action")
+					Toast.makeText(context, "Custom Action press", Toast.LENGTH_SHORT).show()
+				}
+			}
 		}
 	}
 }
