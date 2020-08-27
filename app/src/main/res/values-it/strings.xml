@@ -115,12 +115,12 @@
     <string name="MUSIC_QUEUE_EMPTY">&lt;La coda è vuota&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Precedente</string>
     <string name="MUSIC_SKIP_NEXT">Successivo</string>
+    <string name="MUSIC_TURN_SHUFFLE_ON">Attiva modalità Shuffle</string>
+    <string name="MUSIC_TURN_SHUFFLE_OFF">Disattiva modalità Shuffle</string>
 
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_ON">Attiva modalità Shuffle</string>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Non mi piace</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Attiva la radio dal brano</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Attiva modalità Repeat sempre</string>
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_OFF">Disattiva modalità Shuffle</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Attiva modalità Repeat singola</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Disattiva Repeat</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>

@@ -113,6 +113,8 @@
     <string name="MUSIC_QUEUE_EMPTY">&lt;Listă goală&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Anteriorul</string>
     <string name="MUSIC_SKIP_NEXT">Următorul</string>
+    <string name="MUSIC_TURN_SHUFFLE_ON">Pornește amestecare</string>
+    <string name="MUSIC_TURN_SHUFFLE_OFF">Oprește amestecare</string>
 
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Derulează înapoi %s secundă</item>
@@ -123,11 +125,9 @@
         <item quantity="other">Derulează înainte %s secunde</item>
    </plurals>
 
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_ON">Pornește amestecare</string>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Dislike</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Pornește radio</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Pornește repetare tot</string>
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_OFF">Oprește amestecare</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Pornește repetă una</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Oprește repetare</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>

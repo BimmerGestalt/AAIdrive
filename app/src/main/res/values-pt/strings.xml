@@ -118,6 +118,8 @@
     <string name="MUSIC_QUEUE_EMPTY">&lt;Esvaziar Lista&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Voltar</string>
     <string name="MUSIC_SKIP_NEXT">Seguinte</string>
+    <string name="MUSIC_TURN_SHUFFLE_ON">Ligar shuffle</string>
+    <string name="MUSIC_TURN_SHUFFLE_OFF">Desligar shuffle</string>
 
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Voltar atrás %s segundo</item>
@@ -128,11 +130,9 @@
         <item quantity="other">Avançar %s segundos</item>
     </plurals>
 
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_ON">Ligar shuffle</string>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Já não gosto</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Criar estação de Radio</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Repetir tudo</string>
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_OFF">Desligar shuffle</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Ligar Repetir Uma Vez</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Desligar Repetir Uma Vez</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Gosto</string>
