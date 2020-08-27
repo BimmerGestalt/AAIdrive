@@ -13,7 +13,7 @@ class CarNotification(val packageName: String, val key: String, val icon: Icon, 
 				return Action(action.title,
 						remoteInputs.any { it.allowFreeFormInput },
 						remoteInputs.flatMap {
-							it.choices.toList()
+							it.choices?.toList() ?: emptyList()
 						})
 			}
 		}
