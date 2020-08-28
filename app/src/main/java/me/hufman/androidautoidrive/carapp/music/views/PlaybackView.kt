@@ -156,7 +156,6 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		buttons[4].setEnabled(false)
 		buttons[4].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = customActionsView.state.id
 
-		buttons[5].setEnabled(false)
 		buttons[5].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_ON
 		buttons[5].getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.toggleShuffle() }
 
@@ -250,7 +249,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	}
 
 	private fun redrawShuffleButton() {
-		shuffleButton.setEnabled(controller.isSupportedAction(MusicAction.SET_SHUFFLE_MODE))
+		shuffleButton.setVisible(controller.isSupportedAction(MusicAction.SET_SHUFFLE_MODE))
 
 		if(controller.isShuffling()) {
 			shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_OFF
