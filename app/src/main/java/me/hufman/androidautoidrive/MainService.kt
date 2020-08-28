@@ -3,7 +3,8 @@ package me.hufman.androidautoidrive
 import ChassisCode
 import android.app.*
 import android.app.Notification.PRIORITY_LOW
-import android.content.Intent
+import android.content.*
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
@@ -120,6 +121,11 @@ class MainService: Service() {
 		} else {
 			carProberThread.schedule(1000)
 		}
+
+		packageManager.setComponentEnabledSetting(
+				ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.NavActivity"),
+				PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
+		)
 	}
 
 	private fun createNotificationChannel() {
@@ -355,6 +361,11 @@ class MainService: Service() {
 			securityAccess.listener = Runnable {}
 			securityServiceThread.disconnect()
 		}
+
+		packageManager.setComponentEnabledSetting(
+				ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.NavActivity"),
+				PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP
+		)
 	}
 
 	private fun stopServiceNotification() {
