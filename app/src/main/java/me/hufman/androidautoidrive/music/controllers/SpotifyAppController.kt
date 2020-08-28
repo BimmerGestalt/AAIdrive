@@ -39,7 +39,8 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		}
 		fun MusicMetadata.Companion.fromSpotify(listItem: ListItem, coverArt: Bitmap? = null): MusicMetadata {
 			// browse result
-			return MusicMetadata(mediaId = listItem.uri, title = listItem.title, subtitle = listItem.subtitle,
+			return MusicMetadata(mediaId = listItem.uri, queueId = listItem.uri.hashCode().toLong(),
+					title = listItem.title, subtitle = listItem.subtitle,
 					playable = listItem.playable, browseable = listItem.hasChildren, coverArt = coverArt)
 		}
 		fun MusicMetadata.toListItem(): ListItem {
@@ -138,7 +139,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	var position: PlaybackPosition = PlaybackPosition(true, 0, 0, -1)
 	var currentTrackLibrary: Boolean? = null
 	var queueUri: String? = null
-	var queueItems: List<MusicMetadata>? = null
+	var queueItems: List<MusicMetadata> = LinkedList()
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -183,24 +184,54 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			Log.d(TAG, "Heard an update from Spotify queue: ${playerContext.uri}")
 			// update the current queue
 			val uri = playerContext.uri
-			queueUri = uri
-			if (uri != null) {
-				val listItem = ListItem(uri, uri, null, playerContext.title, playerContext.subtitle, false, true)
-				remote.contentApi.getChildrenOfItem(listItem, 100, 0).setResultCallback { currentQueue ->
-					Log.d(TAG, "The received queue: ${currentQueue?.items?.map{it.toString()}}")
-					if (currentQueue != null) {
-						queueItems = currentQueue.items.mapIndexed { index: Int, listItem: ListItem? ->
-							MusicMetadata(queueId = listItem?.uri?.hashCode()?.toLong(), title = listItem?.title ?: "Track $index")
-						}
-					} else {
-						queueItems = LinkedList()
+			if (queueUri != uri) {
+				queueUri = uri
+				queueItems = emptyList()
+				if (uri != null) {
+					val listItem = ListItem(uri, uri, null, playerContext.title, playerContext.subtitle, false, true)
+					loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
+						queueItems = it
+						callback?.invoke(this)
 					}
-				}.setErrorCallback {
-					Log.w(TAG, "Unable to fetch Spotify queue", it)
 				}
 			}
 
 			callback?.invoke(this)
+		}
+	}
+
+	/**
+	 * Loads the complete children contents of the given parentItem
+	 * checking if stillValid at each step
+	 * and then passing it to onComplete at the end
+	 */
+	private fun loadPaginatedItems(parentItem: ListItem,
+	                               stillValid: () -> Boolean, onComplete: (List<MusicMetadata>) -> Unit) {
+		loadPaginatedItems(LinkedList(), parentItem, stillValid, onComplete)
+	}
+
+	/**
+	 * Loads the complete children contents of the given parentItem
+	 * into the destination list
+	 * checking if stillValid at each step
+	 * and passing the destination list to onComplete at the end
+	 */
+	private fun loadPaginatedItems(destination: MutableList<MusicMetadata>, parentItem: ListItem,
+	                               stillValid: () -> Boolean, onComplete: (List<MusicMetadata>) -> Unit) {
+		remote.contentApi.getChildrenOfItem(parentItem, 200, destination.size).setResultCallback { items ->
+			if (items != null && stillValid()) {    // this is still a valid request
+				destination.addAll(items.items.filterNotNull().map { listItem: ListItem ->
+					MusicMetadata.fromSpotify(listItem)
+				})
+				if (destination.size < items.total && items.items.isNotEmpty()) {   // more tracks to load
+					loadPaginatedItems(destination, parentItem, stillValid, onComplete)
+				} else {
+					onComplete(destination)
+				}
+			}
+		}.setErrorCallback {
+			Log.w(TAG, "Unable to fetch Spotify content", it)
+			onComplete(destination)
 		}
 	}
 
@@ -310,17 +341,18 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 
 	override suspend fun browse(directory: MusicMetadata?): List<MusicMetadata> {
 		val deferred = CompletableDeferred<List<MusicMetadata>>()
-		val result = if (directory?.mediaId == null) {
-			remote.contentApi.getRecommendedContentItems("default-cars")
+		if (directory?.mediaId == null) {
+			remote.contentApi.getRecommendedContentItems("default-cars").setResultCallback { results ->
+				deferred.complete(results?.items?.map {
+					MusicMetadata.fromSpotify(it)
+				} ?: LinkedList())
+			}.setErrorCallback {
+				deferred.complete(LinkedList())
+			}
 		} else {
-			remote.contentApi.getChildrenOfItem(directory.toListItem(), 200, 0)
-		}
-		result.setResultCallback { results ->
-			deferred.complete(results?.items?.map {
-				MusicMetadata.fromSpotify(it)
-			} ?: LinkedList())
-		}.setErrorCallback {
-			deferred.complete(LinkedList())
+			loadPaginatedItems(directory.toListItem(), { !deferred.isCancelled }) {
+				deferred.complete(it)
+			}
 		}
 		return deferred.await()
 	}

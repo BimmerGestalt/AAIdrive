@@ -271,14 +271,21 @@ class TestSpotifyMusicAppController {
 	fun testQueue() {
 		// load a queue
 		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", "title", "subtitle", "playlist"))
-		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, "title", "subtitle", false, true), 100, 0)
-		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, "title", "subtitle", false, true), 200, 0)
+		contentCallback.lastValue.onResult(ListItems(200, 0, 2, arrayOf(
 				ListItem("id", "uri", null, "Title", "Subtitle", true, false)
 		)))
+		// it should request again
+		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, "title", "subtitle", false, true), 200, 1)
+		contentCallback.lastValue.onResult(ListItems(200, 1, 2, arrayOf(
+				ListItem("id2", "uri2", null, "Title2", "Subtitle", true, false)
+		)))
+
 		val queue = controller.getQueue()
-		assertEquals(1, queue.size)
+		assertEquals(2, queue.size)
 		assertNotEquals(null, queue[0].queueId)
 		assertEquals("Title", queue[0].title)
+		assertEquals("Title2", queue[1].title)
 
 		// fail to skip
 		controller.playQueue(MusicMetadata(queueId = 345))
@@ -358,12 +365,18 @@ class TestSpotifyMusicAppController {
 			delay(1000)
 			assertFalse(deferredResults.isCompleted)
 			verify(contentApi).getChildrenOfItem(ListItem("library", "library", null, null, null, false, true), 200, 0)
-			contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+			contentCallback.lastValue.onResult(ListItems(1, 0, 2, arrayOf(
 					ListItem("id", "uri", null, "Favorite", "Subtitle", true, false)
+			)))
+			// it should check again
+			verify(contentApi).getChildrenOfItem(ListItem("library", "library", null, null, null, false, true), 200, 1)
+			contentCallback.lastValue.onResult(ListItems(200, 1, 2, arrayOf(
+					ListItem("id2", "uri", null, "Favorite2", "Subtitle", true, false)
 			)))
 			val results = deferredResults.await()
 			assertTrue(deferredResults.isCompleted)
 			assertEquals("Favorite", results[0].title)
+			assertEquals("Favorite2", results[1].title)
 		}
 	}
 
