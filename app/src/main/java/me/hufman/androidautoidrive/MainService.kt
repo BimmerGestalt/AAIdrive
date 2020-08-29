@@ -121,11 +121,6 @@ class MainService: Service() {
 		} else {
 			carProberThread.schedule(1000)
 		}
-
-		packageManager.setComponentEnabledSetting(
-				ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.NavActivity"),
-				PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
-		)
 	}
 
 	private fun createNotificationChannel() {
@@ -242,6 +237,9 @@ class MainService: Service() {
 							// update the notification
 							carCapabilities = capabilities
 							startServiceNotification(IDriveConnectionListener.brand, ChassisCode.fromCode(carCapabilities["vehicle.type"] ?: "Unknown"))
+
+							// enable navigation listener, if supported
+							startNavigationListener()
 						}
 
 					})
@@ -342,12 +340,40 @@ class MainService: Service() {
 		threadAssistant = null
 	}
 
+	fun startNavigationListener() {
+		if (carCapabilities["navi"] == "true") {
+			if (IDriveConnectionListener.brand?.toLowerCase() == "bmw") {
+				packageManager.setComponentEnabledSetting(
+						ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityBMW"),
+						PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
+				)
+			} else if (IDriveConnectionListener.brand?.toLowerCase() == "mini") {
+				packageManager.setComponentEnabledSetting(
+						ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityMINI"),
+						PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
+				)
+			}
+		}
+	}
+
+	fun stopNavigationListener() {
+		packageManager.setComponentEnabledSetting(
+				ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityBMW"),
+				PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP
+		)
+		packageManager.setComponentEnabledSetting(
+				ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityMINI"),
+				PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP
+		)
+	}
+
 	private fun stopCarApps() {
 		stopCarCapabilities()
 		stopNotifications()
 		stopMaps()
 		stopMusic()
 		stopAssistant()
+		stopNavigationListener()
 		stopServiceNotification()
 	}
 
@@ -361,11 +387,6 @@ class MainService: Service() {
 			securityAccess.listener = Runnable {}
 			securityServiceThread.disconnect()
 		}
-
-		packageManager.setComponentEnabledSetting(
-				ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.NavActivity"),
-				PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP
-		)
 	}
 
 	private fun stopServiceNotification() {

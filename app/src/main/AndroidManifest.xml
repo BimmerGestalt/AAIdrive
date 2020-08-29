@@ -30,16 +30,37 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".phoneui.NavActivity"
+            >
+        </activity>
+
         <activity-alias
-            android:name=".NavActivity"
-            android:targetActivity=".phoneui.MainActivity"
-            android:label="Car Navigation"
+            android:name=".phoneui.NavActivityBMW"
+            android:targetActivity=".phoneui.NavActivity"
+            android:label="@string/navigation_listener_bmw"
             android:enabled="false"
             >
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="geo" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".phoneui.NavActivityMINI"
+            android:targetActivity=".phoneui.NavActivity"
+            android:label="@string/navigation_listener_mini"
+            android:enabled="false"
+            >
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="geo" />
             </intent-filter>
         </activity-alias>
