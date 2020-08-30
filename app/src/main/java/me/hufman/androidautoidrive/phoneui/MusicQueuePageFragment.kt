@@ -1,17 +1,14 @@
 package me.hufman.androidautoidrive.phoneui
 
-import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
+import android.util.LruCache
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,12 +20,7 @@ import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
-import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
-import java.lang.Exception
-import java.lang.ref.WeakReference
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.coroutines.CoroutineContext
 
 class MusicQueuePageFragment: Fragment(), CoroutineScope {
@@ -46,9 +38,11 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 	}
 
 	lateinit var musicController: MusicController
+	lateinit var placeholderCoverArt: Bitmap
+
 	var loaderJob: Job? = null
 	val contents = ArrayList<MusicMetadata>()
-	val cachedCoverArtImages: HashMap<String?,Bitmap?> = HashMap()
+	val cachedCoverArtImages = LruCache<String?,Bitmap?>(50)
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.music_queuepage, container, false)
@@ -58,6 +52,7 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 		val viewModel = ViewModelProviders.of(requireActivity()).get(MusicActivityModel::class.java)
 		val musicController = viewModel.musicController ?: return
 		this.musicController = musicController
+		placeholderCoverArt = viewModel.icons[MusicNowPlayingFragment.PLACEHOLDER_ID]!!
 
 		listQueue.setHasFixedSize(true)
 		listQueue.layoutManager = LinearLayoutManager(this.context)
@@ -103,10 +98,20 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 				listQueue.removeAllViews()
 				listQueue.adapter?.notifyDataSetChanged()
 			}
+
+			val coverArtImage = musicController.getQueue()?.coverArt
+			if(coverArtImage != null) {
+				playlistCoverArt.setImageBitmap(coverArtImage)
+			}
+			else {
+				playlistCoverArt.setImageBitmap(placeholderCoverArt)
+			}
+
+			playlistName.setText(musicController.getQueue()?.title)
 		}
 	}
 
-	inner class QueueAdapter(val context: Context, val contents: ArrayList<MusicMetadata>, val cachedCoverArtImages: HashMap<String?,Bitmap?>, val clickListener: (MusicMetadata?) -> Unit): RecyclerView.Adapter<QueueAdapter.ViewHolder>() {
+	inner class QueueAdapter(val context: Context, val contents: ArrayList<MusicMetadata>, val cachedCoverArtImages: LruCache<String?,Bitmap?>, val clickListener: (MusicMetadata?) -> Unit): RecyclerView.Adapter<QueueAdapter.ViewHolder>() {
 
 		inner class ViewHolder(val view: View, val coverArtImageView: ImageView): RecyclerView.ViewHolder(view), View.OnClickListener {
 			init {
@@ -132,52 +137,20 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 		override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 			val item = contents.getOrNull(position) ?: return
 
-//			val cachedCoverArtImage = cachedCoverArtImages[item.mediaId]
-			//holder.coverArtImageView.setImageBitmap(cachedCoverArtImage); //TODO: working version, currently disabled due to experimentation
+			val cachedCoverArtImage = cachedCoverArtImages[item.mediaId]
+			holder.coverArtImageView.setImageBitmap(cachedCoverArtImage)
 
-//			if(cachedCoverArtImage == null) {
-//				doInBackground({
-//					musicController.getSongCoverArtAsync(ImageUri(item.coverArtUri))
-//				}) { fragment, result ->
-//					result.onSuccess { value ->
-//						launch {
-//							value.await()
-//							cachedCoverArtImages[item.mediaId] = value.getCompleted()
-//							holder.coverArtImageView.setImageBitmap(value.getCompleted())
-//						}
-//					}
-//				}
-//			}
+			if(cachedCoverArtImage == null) {
+				launch {
+					val coverArt = musicController.getSongCoverArtAsync(ImageUri(item.coverArtUri))
+							.await()
+					cachedCoverArtImages.put(item.mediaId, coverArt)
+					holder.coverArtImageView.setImageBitmap(coverArt)
+				}
+			}
 
 			holder.view.findViewById<TextView>(R.id.txtBrowseEntryTitle).setText(item.title)
 			holder.view.findViewById<TextView>(R.id.txtBrowseEntrySubtitle).setText(item.artist)
 		}
 	}
-}
-
-class BackgroundTask<A: Fragment, R>(activity: A, val task: () -> R, val resultHandler: (Activity: A?, result: Result<R>) -> Result<Deferred<Bitmap?>>): AsyncTask<Unit,Unit,R?>() {
-	val activityReference = WeakReference<A>(activity)
-	var value: R? = null
-	var exception: Exception? = null
-
-	override fun doInBackground(vararg params: Unit?): R? {
-		try {
-			value = task()
-		} catch(exception: Exception) {
-			this.exception = exception
-		}
-		return value
-	}
-
-	override fun onPostExecute(result: R?) {
-		resultHandler(activityReference.get(), if(exception == null) {
-			Result.success(value!!)
-		} else {
-			Result.failure(exception!!)
-		})
-	}
-}
-
-fun <A: Fragment, R> A.doInBackground(task: () -> R, resultHandler: (Activity: A?, result: Result<R>) -> Result<Deferred<Bitmap?>>) {
-	BackgroundTask(this, task, resultHandler).execute()
 }

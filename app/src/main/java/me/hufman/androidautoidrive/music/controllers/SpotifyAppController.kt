@@ -21,6 +21,7 @@ import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
+import me.hufman.androidautoidrive.music.controllers.SpotifyAppController.Companion.toListItem
 import java.lang.Exception
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -236,6 +237,13 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 					loadPaginatedItems(destination, parentItem, stillValid, onComplete)
 				} else {
 					queueMetadata = QueueMetadata(parentItem.title, queueItems)
+					val recentlyPlayedUri = "com.spotify.recently-played"
+					val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
+					remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
+						remote.imagesApi.getImage(recentlyPlayed?.items?.get(0)?.imageUri, Image.Dimension.MEDIUM).setResultCallback { coverArt ->
+							queueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, queueItems, coverArt)
+						}
+					}
 					onComplete(destination)
 				}
 			}

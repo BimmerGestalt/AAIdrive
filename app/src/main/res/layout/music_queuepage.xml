@@ -6,29 +6,41 @@
     android:orientation="vertical"
     android:padding="15dp">
 
-    <TextView
-        android:id="@+id/txtQueueLocation"
-        android:layout_width="0dp"
+    <ImageView
+        android:id="@+id/playlistCoverArt"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="50dp"
+        android:minHeight="50dp"
+        android:src="@drawable/ic_notify"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/playlistName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playlistCoverArt" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/listQueueRefresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playlistName">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/listQueue"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            app:layout_constraintBottom_toTopOf="@+id/txtEmpty"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtQueueLocation" />
-
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <TextView
@@ -38,5 +50,5 @@
         android:text="@string/MUSIC_QUEUE_EMPTY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 </android.support.constraint.ConstraintLayout>
