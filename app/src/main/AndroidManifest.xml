@@ -31,13 +31,13 @@
         </activity>
 
         <activity
-            android:name=".phoneui.NavActivity"
+            android:name=".phoneui.NavIntentActivity"
             >
         </activity>
 
         <activity-alias
             android:name=".phoneui.NavActivityBMW"
-            android:targetActivity=".phoneui.NavActivity"
+            android:targetActivity=".phoneui.NavIntentActivity"
             android:label="@string/navigation_listener_bmw"
             android:enabled="false"
             >
@@ -52,7 +52,7 @@
 
         <activity-alias
             android:name=".phoneui.NavActivityMINI"
-            android:targetActivity=".phoneui.NavActivity"
+            android:targetActivity=".phoneui.NavIntentActivity"
             android:label="@string/navigation_listener_mini"
             android:enabled="false"
             >

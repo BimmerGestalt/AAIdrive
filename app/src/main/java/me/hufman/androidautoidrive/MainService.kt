@@ -15,14 +15,12 @@ import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
 import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
-import me.hufman.androidautoidrive.phoneui.DebugStatus
-import me.hufman.androidautoidrive.phoneui.DonationRequest
-import me.hufman.androidautoidrive.phoneui.MainActivity
-import me.hufman.androidautoidrive.phoneui.SetupActivity
+import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import org.json.JSONObject
 import java.lang.IllegalArgumentException
 
 class MainService: Service() {
@@ -240,6 +238,12 @@ class MainService: Service() {
 
 							// enable navigation listener, if supported
 							startNavigationListener()
+						}
+
+						override fun onCdsProperty(propertyName: String, propertyValue: String, parsedValue: JSONObject?) {
+							if (propertyName == "navigation.guidanceStatus" && parsedValue?.getInt("guidanceStatus") == 1) {
+								sendBroadcast(Intent(NavIntentActivity.INTENT_NAV_SUCCESS))
+							}
 						}
 
 					})
