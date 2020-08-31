@@ -98,6 +98,9 @@ class TestMusicApp {
 		const val INPUT_COMPONENT = 119
 		const val INPUT_RESULT_MODEL = 512
 		const val INPUT_SUGGEST_MODEL = 509
+
+		const val IMAGEID_SHUFFLE_ON = 151
+		const val IMAGEID_SHUFFLE_OFF = 158
 	}
 
 	val handler = mock<Handler> {
@@ -423,6 +426,64 @@ class TestMusicApp {
 		// the Artist field should say Not Connected
 		assertEquals("<Not Connected>", mockServer.data[IDs.ARTIST_LARGE_MODEL])
 		assertEquals("<Not Connected>", mockServer.data[IDs.ARTIST_SMALL_MODEL])
+	}
+
+	@Test
+	fun testShuffleButtonRedraw() {
+		val app = RHMIApplicationConcrete()
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val state = app.states[IDs.PLAYBACK_STATE] as RHMIState.ToolbarState
+		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_STATE]!!, musicAppDiscovery, mock(), graphicsHelpers)
+		val playbackView = PlaybackView(state, musicController, mapOf(), phoneAppResources, graphicsHelpers)
+		val enqueuedView = EnqueuedView(app.states[IDs.QUEUE_STATE]!!, musicController)
+		val actionView = CustomActionsView(app.states[IDs.ACTION_STATE]!!, graphicsHelpers, musicController)
+
+		playbackView.initWidgets(appSwitcherView, enqueuedView, mock(), actionView)
+
+		// redraw when the button is supported and not currently shuffling
+		whenever(musicController.isSupportedAction(MusicAction.SET_SHUFFLE_MODE)) doAnswer { true }
+		whenever(musicController.isShuffling()) doAnswer { false }
+		playbackView.redraw()
+
+		assertEquals(L.MUSIC_TURN_SHUFFLE_ON, playbackView.shuffleButton.getTooltipModel()?.asRaDataModel()?.value)
+		assertEquals(IDs.IMAGEID_SHUFFLE_OFF, playbackView.shuffleButton.getImageModel()?.asImageIdModel()?.imageId)
+
+		// redraw when the button is supported and currently shuffling
+		playbackView.shuffleButton.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
+		verify(musicController).toggleShuffle()
+
+		whenever(musicController.isShuffling()) doAnswer { true }
+		playbackView.redraw()
+
+		assertEquals(L.MUSIC_TURN_SHUFFLE_OFF, playbackView.shuffleButton.getTooltipModel()?.asRaDataModel()?.value)
+		assertEquals(IDs.IMAGEID_SHUFFLE_ON, playbackView.shuffleButton.getImageModel()?.asImageIdModel()?.imageId)
+	}
+
+	@Test
+	fun testShuffleButtonRedrawUnsupported() {
+		val app = RHMIApplicationConcrete()
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val state = app.states[IDs.PLAYBACK_STATE] as RHMIState.ToolbarState
+		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_STATE]!!, musicAppDiscovery, mock(), graphicsHelpers)
+		val playbackView = PlaybackView(state, musicController, mapOf(), phoneAppResources, graphicsHelpers)
+		val enqueuedView = EnqueuedView(app.states[IDs.QUEUE_STATE]!!, musicController)
+		val actionView = CustomActionsView(app.states[IDs.ACTION_STATE]!!, graphicsHelpers, musicController)
+
+		playbackView.initWidgets(appSwitcherView, enqueuedView, mock(), actionView)
+
+		whenever(musicController.isSupportedAction(MusicAction.SET_SHUFFLE_MODE)) doAnswer { false }
+
+		//iDrive 4 hiding button
+		playbackView.redraw()
+
+		assertEquals(0, playbackView.shuffleButton.getImageModel()?.asImageIdModel()?.imageId)
+
+		//iDrive 5+ hiding button
+		// exception throwing logic is not working for tests so assume the isNewerIDrive flag is set properly
+		playbackView.isNewerIDrive = true
+		playbackView.redraw()
+
+		assertEquals(false, playbackView.shuffleButton.properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
 	}
 
 	@Test

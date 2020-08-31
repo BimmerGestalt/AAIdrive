@@ -58,6 +58,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	var displayedApp: MusicAppInfo? = null  // the app that was last redrawn
 	var displayedSong: MusicMetadata? = null    // the song  that was last redrawn
 	var displayedConnected: Boolean = false     // whether the controller was connected during redraw
+	var isNewerIDrive: Boolean = false
 
 	init {
 		// discover widgets
@@ -249,15 +250,31 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	}
 
 	private fun redrawShuffleButton() {
-		shuffleButton.setVisible(controller.isSupportedAction(MusicAction.SET_SHUFFLE_MODE))
+		if (controller.isSupportedAction(MusicAction.SET_SHUFFLE_MODE)) {
+			if (controller.isShuffling()) {
+				shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_OFF
+				shuffleButton.getImageModel()?.asImageIdModel()?.imageId = IMAGEID_SHUFFLE_ON
+			} else {
+				shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_ON
+				shuffleButton.getImageModel()?.asImageIdModel()?.imageId = IMAGEID_SHUFFLE_OFF
+			}
+			shuffleButton.setVisible(true)
+		} else {
+			if (isNewerIDrive) {
+				shuffleButton.setVisible(false)
+			} else {
+				try {
+					shuffleButton.getImageModel()?.asImageIdModel()?.imageId = 0
+				} catch (e: BMWRemoting.ServiceException) {
+					isNewerIDrive = true
+					shuffleButton.setVisible(false)
 
-		if(controller.isShuffling()) {
-			shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_OFF
-			shuffleButton.getImageModel()?.asImageIdModel()?.imageId = IMAGEID_SHUFFLE_ON
-		}
-		else {
-			shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_ON
-			shuffleButton.getImageModel()?.asImageIdModel()?.imageId = IMAGEID_SHUFFLE_OFF
+					// the car has cleared the icon even though it threw an exception
+					// so set the icon to a valid imageId again
+					// to make sure the idempotent layer properly sets the icon in the future
+					shuffleButton.getImageModel()?.asImageIdModel()?.imageId = IMAGEID_SONG
+				}
+			}
 		}
 	}
 
