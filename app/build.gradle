@@ -155,6 +155,7 @@ dependencies {
     implementation project(path: ':spotify-app-remote')
     implementation "com.google.code.gson:gson:2.8.5"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.0.1"
+    implementation "com.google.openlocationcode:openlocationcode:1.0.4"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

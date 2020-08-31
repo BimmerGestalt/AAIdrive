@@ -6,20 +6,30 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Handler
 import android.util.Log
+import com.google.openlocationcode.OpenLocationCode
 import me.hufman.androidautoidrive.carapp.NavigationTrigger.Companion.TAG
 import me.hufman.androidautoidrive.carapp.maps.LatLong
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplication
 import me.hufman.idriveconnectionkit.rhmi.RHMIEvent
+import java.lang.IllegalArgumentException
 
 interface NavigationTrigger {
 	companion object {
 		val TAG = "NavTrigger"
 		val LATLNG_MATCHER = Regex("^([-0-9.]+,[-0-9.]+).*")
 		val LATLNG_LABEL_MATCHER = Regex("^q=([-0-9.]+,[-0-9.]+)(,[-0-9.]+)?\\s*(\\(.*\\))?$")
+		val PLUSCODE_URL_MATCHER = Regex("^https?://plus.codes/(.*)(,(.*))?$")
 
-		fun parseGeoUrl(url: String?): String? {
+		fun parseUrl(url: String?): String? {
 			url ?: return null
-			if (!url.startsWith("geo:")) return null
+			if (url.startsWith("geo:")) return parseGeoUrl(url)
+			if (url.startsWith("http")) {
+				return parsePlusCode(url)
+			}
+			return null
+		}
+
+		fun parseGeoUrl(url: String): String? {
 			val data = url.substring(4)
 			val query = if (data.contains('?')) { data.split('?', limit=2)[1] } else null
 
@@ -29,16 +39,35 @@ interface NavigationTrigger {
 			val latlng = query_result?.groupValues?.getOrNull(1) ?: authority_result?.groupValues?.getOrNull(1)
 			val latlong = if (latlng?.contains(',') == true) {
 				val splits = latlng.split(',')
-				LatLong(splits[0].toDouble() / 360 * Int.MAX_VALUE * 2, splits[1].toDouble() / 360 * Int.MAX_VALUE * 2)
+				LatLong(splits[0].toDouble(), splits[1].toDouble())
 			} else null
 			val label = query_result?.groupValues?.getOrNull(3)?.replace(";", "") ?: ""
 
 			return if (latlong != null) {
-				// [lastName];[firstName];[street];[houseNumber];[zipCode];[city];[country];[latitude];[longitude];[poiName]
-				";;;;;;;${latlong.latitude.toBigDecimal()};${latlong.longitude.toBigDecimal()};$label"
+				latlongToRHMI(latlong, label)
 			} else {
 				null
 			}
+		}
+
+		fun parsePlusCode(url: String): String? {
+			val matcher = PLUSCODE_URL_MATCHER.matchEntire(url) ?: return null
+			val olc = try {
+				OpenLocationCode(matcher.groupValues[1])
+			} catch (e: IllegalArgumentException) {
+				return null
+			}
+			if (olc.isShort) return null    // don't know what reference point to recover from
+
+			val area = olc.decode()
+			return latlongToRHMI(LatLong(area.centerLatitude, area.centerLongitude), matcher.groupValues.getOrNull(3) ?: "")
+		}
+
+		fun latlongToRHMI(latlong: LatLong, label: String = ""): String {
+			// [lastName];[firstName];[street];[houseNumber];[zipCode];[city];[country];[latitude];[longitude];[poiName]
+			val lat = (latlong.latitude / 360 * Int.MAX_VALUE * 2).toBigDecimal()
+			val lng = (latlong.longitude / 360 * Int.MAX_VALUE * 2).toBigDecimal()
+			return ";;;;;;;$lat;$lng;$label"
 		}
 	}
 

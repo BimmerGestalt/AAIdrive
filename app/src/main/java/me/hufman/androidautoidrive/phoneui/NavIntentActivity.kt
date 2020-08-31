@@ -14,7 +14,7 @@ import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import kotlinx.android.synthetic.main.activity_navintent.*
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.carapp.NavigationTrigger.Companion.parseGeoUrl
+import me.hufman.androidautoidrive.carapp.NavigationTrigger.Companion.parseUrl
 import me.hufman.androidautoidrive.carapp.NavigationTriggerSender
 
 class NavIntentActivity: Activity() {
@@ -60,8 +60,8 @@ class NavIntentActivity: Activity() {
 		super.onResume()
 		val url = intent?.data
 		if (url != null) {
-			val rhmiNavigationData = parseGeoUrl(url.toString())
-			Log.i(TAG, "Parsing GEO Uri $url to $rhmiNavigationData initiate IDrive navigation")
+			val rhmiNavigationData = parseUrl(url.toString())
+			Log.i(TAG, "Parsing Nav Uri $url to $rhmiNavigationData initiate IDrive navigation")
 			if (rhmiNavigationData != null) {
 				NavigationTriggerSender(this).triggerNavigation(rhmiNavigationData)
 				onBegin()

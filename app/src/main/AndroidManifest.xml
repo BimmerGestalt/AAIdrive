@@ -41,12 +41,39 @@
             android:label="@string/navigation_listener_bmw"
             android:enabled="false"
             >
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="geo" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="plus.codes" />
+                <data android:pathPattern="/2.......+.*" />
+                <data android:pathPattern="/3.......+.*" />
+                <data android:pathPattern="/4.......+.*" />
+                <data android:pathPattern="/5.......+.*" />
+                <data android:pathPattern="/6.......+.*" />
+                <data android:pathPattern="/7.......+.*" />
+                <data android:pathPattern="/8.......+.*" />
+                <data android:pathPattern="/9.......+.*" />
+                <data android:pathPattern="/C.......+.*" />
+                <data android:pathPattern="/F.......+.*" />
+                <data android:pathPattern="/G.......+.*" />
+                <data android:pathPattern="/H.......+.*" />
+                <data android:pathPattern="/J.......+.*" />
+                <data android:pathPattern="/M.......+.*" />
+                <data android:pathPattern="/P.......+.*" />
+                <data android:pathPattern="/Q.......+.*" />
+                <data android:pathPattern="/R.......+.*" />
+                <data android:pathPattern="/V.......+.*" />
+                <data android:pathPattern="/W.......+.*" />
+                <data android:pathPattern="/X.......+.*" />
             </intent-filter>
         </activity-alias>
 
@@ -56,12 +83,39 @@
             android:label="@string/navigation_listener_mini"
             android:enabled="false"
             >
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="geo" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="plus.codes" />
+                <data android:pathPattern="/2.......+.*" />
+                <data android:pathPattern="/3.......+.*" />
+                <data android:pathPattern="/4.......+.*" />
+                <data android:pathPattern="/5.......+.*" />
+                <data android:pathPattern="/6.......+.*" />
+                <data android:pathPattern="/7.......+.*" />
+                <data android:pathPattern="/8.......+.*" />
+                <data android:pathPattern="/9.......+.*" />
+                <data android:pathPattern="/C.......+.*" />
+                <data android:pathPattern="/F.......+.*" />
+                <data android:pathPattern="/G.......+.*" />
+                <data android:pathPattern="/H.......+.*" />
+                <data android:pathPattern="/J.......+.*" />
+                <data android:pathPattern="/M.......+.*" />
+                <data android:pathPattern="/P.......+.*" />
+                <data android:pathPattern="/Q.......+.*" />
+                <data android:pathPattern="/R.......+.*" />
+                <data android:pathPattern="/V.......+.*" />
+                <data android:pathPattern="/W.......+.*" />
+                <data android:pathPattern="/X.......+.*" />
             </intent-filter>
         </activity-alias>
 

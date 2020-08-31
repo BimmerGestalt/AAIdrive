@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive
 
-import me.hufman.androidautoidrive.carapp.NavigationTrigger.Companion.parseGeoUrl
+import me.hufman.androidautoidrive.carapp.NavigationTrigger.Companion.parseUrl
 import me.hufman.androidautoidrive.carapp.NavigationTriggerApp
 import me.hufman.idriveconnectionkit.rhmi.RHMIAction
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
@@ -13,16 +13,25 @@ class TestNavTrigger {
 	@Test
 	fun testParseGeo() {
 		val invalid = "geo:abc"
-		val incorrect = parseGeoUrl(invalid)
+		val incorrect = parseUrl(invalid)
 		assertNull(incorrect)
 
 		val geo = "geo:37.786971,-122.399677;u=35"
-		val parsed = parseGeoUrl(geo)
+		val parsed = parseUrl(geo)
 		assertEquals(";;;;;;;450816123.84535134;-1460285026.4199002;", parsed)
 
 		val geoQuery = "geo:0,0?q=37.330593,-121.859425"
-		val parsedQuery = parseGeoUrl(geoQuery)
+		val parsedQuery = parseUrl(geoQuery)
 		assertEquals(";;;;;;;445371322.2239593;-1453839569.0017943;", parsedQuery)
+	}
+
+	@Test
+	fun testParsePlusCode() {
+		val parsed = parseUrl("http://plus.codes/849VQJQ5+XX")
+		assertEquals(";;;;;;;450851515.5689004;-1460170320.9669886;", parsed)
+
+		val cantParseShort = parseUrl("https://plus.codes/QJQ5+XX,San%20Francisco")
+		assertNull(cantParseShort)
 	}
 
 	@Test
