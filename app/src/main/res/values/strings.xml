@@ -118,6 +118,8 @@
     <string name="MUSIC_QUEUE_EMPTY">&lt;Empty Queue&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Back</string>
     <string name="MUSIC_SKIP_NEXT">Next</string>
+    <string name="MUSIC_TURN_SHUFFLE_ON">Turn Shuffle On</string>
+    <string name="MUSIC_TURN_SHUFFLE_OFF">Turn Shuffle Off</string>
 
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Seek back %s second</item>
@@ -128,11 +130,9 @@
         <item quantity="other">Seek forward %s seconds</item>
     </plurals>
 
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_ON">Turn Shuffle On</string>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Dislike</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Make Radio Station</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Turn Repeat All On</string>
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_OFF">Turn Shuffle Off</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Turn Repeat One On</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Turn Repeat Off</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>

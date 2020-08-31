@@ -145,6 +145,18 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 		} ?: LinkedList()
 	}
 
+	override fun toggleShuffle() {
+		remoteCall {
+			mediaController.transportControls.setShuffleMode(if (isShuffling()) PlaybackStateCompat.SHUFFLE_MODE_NONE else PlaybackStateCompat.SHUFFLE_MODE_ALL)
+		}
+	}
+
+	override fun isShuffling(): Boolean {
+		return remoteData {
+			mediaController.shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL || mediaController.shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_GROUP
+		} ?: false
+	}
+
 	/**
 	 * Spotify does not post the queue or custom actions to the MediaSession normally
 	 * Instead, it only updates the queue and custom actions as part of a browse loadChildren

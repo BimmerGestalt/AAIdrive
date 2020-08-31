@@ -27,6 +27,8 @@ interface MusicAppController {
 
 	fun customAction(action: CustomAction)
 
+	fun toggleShuffle()
+
 	/* Current state */
 	fun getQueue(): List<MusicMetadata>
 
@@ -37,6 +39,8 @@ interface MusicAppController {
 	fun isSupportedAction(action: MusicAction): Boolean
 
 	fun getCustomActions(): List<CustomAction>
+
+	fun isShuffling(): Boolean
 
 	suspend fun browse(directory: MusicMetadata?): List<MusicMetadata>
 

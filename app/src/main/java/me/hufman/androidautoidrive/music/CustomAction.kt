@@ -25,11 +25,11 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 				when(ca.action)
 				{
 					"TURN_SHUFFLE_ON" ->
-						niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_ON
+						niceName = L.MUSIC_TURN_SHUFFLE_ON
 					"TURN_REPEAT_SHUFFLE_OFF" ->
-						niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF
+						niceName = L.MUSIC_TURN_SHUFFLE_OFF
 					"TURN_SHUFFLE_OFF" ->
-						niceName = L.MUSIC_SPOTIFY_TURN_SHUFFLE_OFF
+						niceName = L.MUSIC_TURN_SHUFFLE_OFF
 
 					"REMOVE_FROM_COLLECTION" ->
 						niceName = L.MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION

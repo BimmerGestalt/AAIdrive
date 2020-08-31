@@ -35,6 +35,8 @@ object L {
 	var MUSIC_QUEUE_EMPTY = "<Empty Queue>"
 	var MUSIC_SKIP_PREVIOUS = "Back"
 	var MUSIC_SKIP_NEXT = "Next"
+	var MUSIC_TURN_SHUFFLE_ON = "Turn Shuffle On"
+	var MUSIC_TURN_SHUFFLE_OFF = "Turn Shuffle Off"
 
 	var MUSIC_ACTION_SEEK_BACK_5 = "Seek back 5 seconds"
 	var MUSIC_ACTION_SEEK_BACK_10 = "Seek back 10 seconds"
@@ -45,11 +47,9 @@ object L {
 	var MUSIC_ACTION_SEEK_FORWARD_20 = "Seek forward 20 seconds"
 	var MUSIC_ACTION_SEEK_FORWARD_60 = "Seek forward 60 seconds"
 
-	var MUSIC_SPOTIFY_TURN_SHUFFLE_ON = "Turn Shuffle On"
 	var MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION = "Dislike"
 	var MUSIC_SPOTIFY_START_RADIO = "Make Radio Station"
 	var MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON = "Turn Repeat All On"
-	var MUSIC_SPOTIFY_TURN_SHUFFLE_OFF = "Turn Shuffle Off"
 	var MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON = "Turn Repeat One On"
 	var MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF = "Turn Repeat Off"
 	var MUSIC_SPOTIFY_ADD_TO_COLLECTION = "Like"

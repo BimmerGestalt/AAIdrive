@@ -109,10 +109,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	}
 
 	// create the Custom Actions during client creation, so that the language is loaded
-	val CUSTOM_ACTION_TURN_SHUFFLE_ON = CustomAction.fromSpotify("TURN_SHUFFLE_ON",
-			context.getDrawable(R.drawable.spotify_shuffle_off))
-	val CUSTOM_ACTION_TURN_SHUFFLE_OFF = CustomAction.fromSpotify("TURN_SHUFFLE_OFF",
-			context.getDrawable(R.drawable.spotify_shuffle_on))
 	val CUSTOM_ACTION_TURN_REPEAT_ALL_ON = CustomAction.fromSpotify("TURN_REPEAT_ALL_ON",
 			context.getDrawable(R.drawable.spotify_repeat_off))
 	val CUSTOM_ACTION_TURN_REPEAT_ONE_ON = CustomAction.fromSpotify("TURN_REPEAT_ONE_ON",
@@ -279,8 +275,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 
 	override fun customAction(action: CustomAction) {
 		when (action) {
-			CUSTOM_ACTION_TURN_SHUFFLE_ON -> remote.playerApi.setShuffle(true)
-			CUSTOM_ACTION_TURN_SHUFFLE_OFF -> remote.playerApi.setShuffle(false)
 			CUSTOM_ACTION_TURN_REPEAT_ALL_ON -> remote.playerApi.setRepeat(Repeat.ALL)
 			CUSTOM_ACTION_TURN_REPEAT_ONE_ON -> remote.playerApi.setRepeat(Repeat.ONE)
 			CUSTOM_ACTION_TURN_REPEAT_ONE_OFF -> remote.playerApi.setRepeat(Repeat.OFF)
@@ -311,6 +305,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			MusicAction.PAUSE -> true
 			MusicAction.SEEK_TO -> playerActions?.canSeek == true
 			MusicAction.SKIP_TO_QUEUE_ITEM -> false
+			MusicAction.SET_SHUFFLE_MODE -> playerActions?.canToggleShuffle == true
 			// figure out search
 			else -> false
 		}
@@ -318,10 +313,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 
 	override fun getCustomActions(): List<CustomAction> {
 		val actions = LinkedList<CustomAction>()
-		if (playerActions?.canToggleShuffle == true) {
-			if (playerOptions?.isShuffling == true) actions.add(CUSTOM_ACTION_TURN_SHUFFLE_OFF)
-			if (playerOptions?.isShuffling == false) actions.add(CUSTOM_ACTION_TURN_SHUFFLE_ON)
-		}
 		if (playerOptions?.repeatMode == Repeat.OFF) {
 			if (playerActions?.canRepeatContext == true) actions.add(CUSTOM_ACTION_TURN_REPEAT_ALL_ON)
 			else if (playerActions?.canRepeatTrack == true) actions.add(CUSTOM_ACTION_TURN_REPEAT_ONE_ON)
@@ -337,6 +328,15 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		// START_RADIO is blocked on https://github.com/spotify/android-sdk/issues/66
 
 		return actions
+	}
+
+	override fun toggleShuffle() {
+		val shuffling = isShuffling()
+		remote.playerApi.setShuffle(!shuffling)
+	}
+
+	override fun isShuffling(): Boolean {
+		return playerOptions?.isShuffling == true
 	}
 
 	override suspend fun browse(directory: MusicMetadata?): List<MusicMetadata> {
