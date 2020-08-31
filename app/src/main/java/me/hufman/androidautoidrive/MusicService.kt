@@ -1,8 +1,8 @@
 package me.hufman.androidautoidrive
 
 import android.content.Context
-import me.hufman.androidautoidrive.carapp.NavigationTriggerReceiver
-import me.hufman.androidautoidrive.carapp.NavigationTriggerApp
+import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerReceiver
+import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerApp
 import me.hufman.androidautoidrive.carapp.music.MusicApp
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.music.MusicAppDiscovery

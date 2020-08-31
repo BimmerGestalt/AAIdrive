@@ -1,37 +1,76 @@
 package me.hufman.androidautoidrive
 
-import me.hufman.androidautoidrive.carapp.NavigationTrigger.Companion.parseUrl
-import me.hufman.androidautoidrive.carapp.NavigationTriggerApp
+import android.location.Address
+import com.nhaarman.mockito_kotlin.*
+import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
+import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
+import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerApp
 import me.hufman.idriveconnectionkit.rhmi.RHMIAction
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
 import me.hufman.idriveconnectionkit.rhmi.RHMIEvent
 import me.hufman.idriveconnectionkit.rhmi.RHMIModel
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 
 class TestNavTrigger {
+	lateinit var addressSearcher: AddressSearcher
+	lateinit var parser: NavigationParser
+
+	@Before
+	fun setUp() {
+		addressSearcher = mock()
+		parser = NavigationParser(addressSearcher)
+	}
+
+	@Test
+	fun testParseUrl() {
+		assertNull(parser.parseUrl("smtp:lol"))
+	}
+
 	@Test
 	fun testParseGeo() {
 		val invalid = "geo:abc"
-		val incorrect = parseUrl(invalid)
+		val incorrect = parser.parseUrl(invalid)
 		assertNull(incorrect)
 
 		val geo = "geo:37.786971,-122.399677;u=35"
-		val parsed = parseUrl(geo)
+		val parsed = parser.parseUrl(geo)
 		assertEquals(";;;;;;;450816123.84535134;-1460285026.4199002;", parsed)
 
 		val geoQuery = "geo:0,0?q=37.330593,-121.859425"
-		val parsedQuery = parseUrl(geoQuery)
+		val parsedQuery = parser.parseUrl(geoQuery)
 		assertEquals(";;;;;;;445371322.2239593;-1453839569.0017943;", parsedQuery)
+
+		val geoLabel = "geo:0,0?q=37.330593,-121.859425(Main Street)"
+		val parsedLabel = parser.parseUrl(geoLabel)
+		assertEquals(";;;;;;;445371322.2239593;-1453839569.0017943;Main Street", parsedLabel)
+
+		val geoSpaceLabel = "geo:0,0?q=37.330593,-121.859425 (Main Street)"
+		val parsedSpaceLabel = parser.parseUrl(geoSpaceLabel)
+		assertEquals(";;;;;;;445371322.2239593;-1453839569.0017943;Main Street", parsedSpaceLabel)
 	}
 
 	@Test
 	fun testParsePlusCode() {
-		val parsed = parseUrl("http://plus.codes/849VQJQ5+XX")
+		val invalid = parser.parseUrl("https://plus.codes/849QJQ5+XX")
+		assertNull(invalid)
+
+		val parsed = parser.parseUrl("http://plus.codes/849VQJQ5+XX")
 		assertEquals(";;;;;;;450851515.5689004;-1460170320.9669886;", parsed)
 
-		val cantParseShort = parseUrl("https://plus.codes/QJQ5+XX,San%20Francisco")
+		val invalidShort = parser.parseUrl("https://plus.codes/QJQ5+XX")
+		assertNull(invalidShort)
+		val cantParseShort = parser.parseUrl("https://plus.codes/QJQ5+XX,San%20Francisco")
 		assertNull(cantParseShort)
+
+		val addressResult = mock<Address> {
+			on { latitude } doReturn 37.7773
+			on { longitude } doReturn -122.41
+		}
+		whenever(addressSearcher.search(eq("San Francisco"))) doReturn addressResult
+		val canParseShort = parser.parseUrl("https://plus.codes/QJQ5+XX,San%20Francisco")
+		assertEquals(";;;;;;;450851515.5689004;-1460170320.9669886;", canParseShort)
 	}
 
 	@Test

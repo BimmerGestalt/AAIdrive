@@ -15,8 +15,9 @@
     <string name="navigation_listener_bmw">BMW Navigation</string>
     <string name="navigation_listener_mini">MINI Navigation</string>
     <!-- Labels on the navigation trigger activity -->
+    <string name="lbl_navigation_listener_searching">Searching for destination</string>
+    <string name="lbl_navigation_listener_parsefailure">Could not locate destination</string>
     <string name="lbl_navigation_listener_pending">Starting navigation</string>
-    <string name="lbl_navigation_listener_parsefailure">Could not understand destination</string>
     <string name="lbl_navigation_listener_success">Success</string>
 
     <string name="spawn_test_notification">Test Notification</string>

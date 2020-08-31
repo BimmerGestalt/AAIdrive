@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Point
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -14,8 +15,9 @@ import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import kotlinx.android.synthetic.main.activity_navintent.*
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.carapp.NavigationTrigger.Companion.parseUrl
-import me.hufman.androidautoidrive.carapp.NavigationTriggerSender
+import me.hufman.androidautoidrive.carapp.navigation.AndroidGeocoderSearcher
+import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
+import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerSender
 
 class NavIntentActivity: Activity() {
 	companion object {
@@ -26,6 +28,27 @@ class NavIntentActivity: Activity() {
 		val SUCCESS = 1000L
 	}
 
+	class ParserTask(val parent: NavIntentActivity): AsyncTask<String, Unit, String?>() {
+		val parser = NavigationParser(AndroidGeocoderSearcher(parent))
+
+		override fun doInBackground(vararg p0: String?): String? {
+			val url = p0.getOrNull(0) ?: return null
+			val rhmi = parser.parseUrl(url)
+			Log.i(TAG, "Parsed $url into car nav $rhmi")
+			return rhmi
+		}
+
+		override fun onPostExecute(result: String?) {
+			if (result == null) {
+				parent.onParseFailure()
+			} else {
+				NavigationTriggerSender(parent).triggerNavigation(result)
+				parent.onBegin()
+			}
+		}
+	}
+
+	var parsingTask: ParserTask? = null
 	var listening = false
 	val successListener = object: BroadcastReceiver() {
 		override fun onReceive(p0: Context?, p1: Intent?) {
@@ -60,29 +83,13 @@ class NavIntentActivity: Activity() {
 		super.onResume()
 		val url = intent?.data
 		if (url != null) {
-			val rhmiNavigationData = parseUrl(url.toString())
-			Log.i(TAG, "Parsing Nav Uri $url to $rhmiNavigationData initiate IDrive navigation")
-			if (rhmiNavigationData != null) {
-				NavigationTriggerSender(this).triggerNavigation(rhmiNavigationData)
-				onBegin()
-			} else {
-				onParseFailure()
-			}
+			txtNavLabel.text = getText(R.string.lbl_navigation_listener_searching)
+			txtNavError.text = ""
+			prgNavSpinner.visible = true
+			prgNavSpinner.isIndeterminate = true
+			parsingTask = ParserTask(this)
+			parsingTask?.execute(url.toString())
 		}
-	}
-
-	fun onBegin() {
-		registerReceiver(successListener, IntentFilter(INTENT_NAV_SUCCESS))
-		listening = true
-
-		txtNavLabel.text = getText(R.string.lbl_navigation_listener_pending)
-		txtNavError.text = ""
-		prgNavSpinner.visible = true
-		prgNavSpinner.isIndeterminate = true
-
-		Handler().postDelayed({
-			finish()
-		}, TIMEOUT)
 	}
 
 	fun onParseFailure() {
@@ -91,6 +98,18 @@ class NavIntentActivity: Activity() {
 		prgNavSpinner.visible = false
 		prgNavSpinner.isIndeterminate = false
 		prgNavSpinner.progress = 0
+	}
+
+	fun onBegin() {
+		registerReceiver(successListener, IntentFilter(INTENT_NAV_SUCCESS))
+		listening = true
+
+		txtNavLabel.text = getText(R.string.lbl_navigation_listener_pending)
+		txtNavError.text = ""
+
+		Handler().postDelayed({
+			finish()
+		}, TIMEOUT)
 	}
 
 	fun onSuccess() {
@@ -110,6 +129,7 @@ class NavIntentActivity: Activity() {
 
 	override fun onPause() {
 		super.onPause()
+		parsingTask?.cancel(false)
 		if (listening) {
 			unregisterReceiver(successListener)
 			listening = false
