@@ -3,7 +3,6 @@ package me.hufman.androidautoidrive.carapp
 import android.util.Log
 import me.hufman.idriveconnectionkit.rhmi.*
 
-const val TAG = "InputState"
 
 /** Handles letter entry from the car's input widget */
 abstract class InputState<T:Any>(val state: RHMIState) {
@@ -13,6 +12,7 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 	val inputComponent = state.componentsList.filterIsInstance<RHMIComponent.Input>().first()
 
 	companion object {
+		const val TAG = "InputState"
 		fun fits(state: RHMIState): Boolean {
 			return state.componentsList.size == 1 &&
 				state.componentsList[0] is RHMIComponent.Input

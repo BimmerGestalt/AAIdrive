@@ -6,6 +6,8 @@ import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import org.json.JSONException
+import org.json.JSONObject
 import java.lang.Exception
 
 class CarInformationDiscovery(securityAccess: SecurityAccess, carAppAssets: CarAppResources, val listener: CarInformationDiscoveryListener?) {
@@ -27,7 +29,7 @@ class CarInformationDiscovery(securityAccess: SecurityAccess, carAppAssets: CarA
 	fun onCreate() {
 		getCapabilities()
 
-		onDestroy()
+		subscribeToCds()
 	}
 
 	private fun getCapabilities() {
@@ -56,19 +58,32 @@ class CarInformationDiscovery(securityAccess: SecurityAccess, carAppAssets: CarA
 		Analytics.reportCarCapabilities(reportedCapabilities)
 	}
 
+	fun subscribeToCds() {
+		val handle = carConnection.cds_create()
+		carConnection.cds_addPropertyChangedEventHandler(handle, "navigation.guidanceStatus", "63", 1000)
+	}
+
 	inner class CarAppListener: BaseBMWRemotingClient() {
 		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
-			super.cds_onPropertyChangedEvent(handle, ident, propertyName, propertyValue)
+			if (propertyName != null && propertyValue != null) {
+				val parsed = try {
+					JSONObject(propertyValue)
+				} catch (e: JSONException) {
+					null
+				}
+				listener?.onCdsProperty(propertyName, propertyValue, parsed)
+			}
 		}
 	}
 
 	fun onDestroy() {
 		try {
 			IDriveConnection.disconnectEtchConnection(carConnection)
-		} catch (e: java.lang.Exception) {}
+		} catch (e: Exception) {}
 	}
 }
 
 interface CarInformationDiscoveryListener {
 	fun onCapabilities(capabilities: Map<String, String?>)
+	fun onCdsProperty(propertyName: String, propertyValue: String, parsedValue: JSONObject?)
 }

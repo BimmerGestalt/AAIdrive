@@ -11,6 +11,15 @@
     <string name="notification_description_bmw">Connected to BMW</string>
     <string name="notification_description_mini">Connected to Mini</string>
 
+    <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <string name="navigation_listener_bmw">BMW Navigation</string>
+    <string name="navigation_listener_mini">MINI Navigation</string>
+    <!-- Labels on the navigation trigger activity -->
+    <string name="lbl_navigation_listener_searching">Searching for destination</string>
+    <string name="lbl_navigation_listener_parsefailure">Could not locate destination</string>
+    <string name="lbl_navigation_listener_pending">Starting navigation</string>
+    <string name="lbl_navigation_listener_success">Success</string>
+
     <string name="spawn_test_notification">Test Notification</string>
     <string name="message_notifications">Message Notifications</string>
     <string name="notification_popups">Notification Popups</string>
