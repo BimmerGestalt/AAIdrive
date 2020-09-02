@@ -102,7 +102,7 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 			Log.w(TAG, "Wanted to requestContext for missing app $ident?")
 	}
 	fun av_requestContext(app: MusicAppInfo) {
-		controller.connectApp(app)  // prepare the music controller, so that av_connectionGranted can use it
+		controller.connectAppManually(app)  // prepare the music controller, so that av_connectionGranted can use it
 		if (musicAppMode.shouldRequestAudioContext()) {
 			this.app.runSynchronized {
 				createAvHandle()    // make sure we have an avHandle
@@ -138,7 +138,7 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		val desiredAppInfo = controller.currentAppInfo
 		if (desiredAppInfo != null && controller.currentAppController == null) {
 			// MusicController wants to play an app, but the controller isn't ready yet
-			controller.connectApp(desiredAppInfo)
+			controller.connectAppAutomatically(desiredAppInfo)
 		}
 		// otherwise, the controller.currentApp was set in an av_requestContext call
 	}
@@ -156,7 +156,7 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		val appInfo = knownApps[amAppIdentifier]
 		if (appInfo != null) {
 			Log.i(TAG, "Found previously-remembered app to resume playback: ${appInfo.packageName}")
-			controller.connectApp(appInfo)
+			controller.connectAppAutomatically(appInfo)
 		} else if (appName != "") {
 			Log.i(TAG, "Previously-remembered app $appName not found yet in MusicAppDiscovery")
 		} else {

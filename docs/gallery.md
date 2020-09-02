@@ -6,8 +6,12 @@ permalink: /gallery
 
 <div class="gallery">
 <figure>
-	<img src="images/screenshot-app.png" alt="Phone App Interface" width="270" height="480"/>
+	<img src="images/screenshot-app.png" alt="Phone App Interface" width="270" height="480" style="width: 270px"/>
 	<figcaption>Phone App Interface</figcaption>
+</figure>
+<figure>
+	<video src="images/demo-connwizard.mp4" alt="Connection Debugging Wizard" autoplay muted controls loop width="270" height="480"></video>
+	<figcaption>Connection Debugging Wizard</figcaption>
 </figure>
 <figure>
 	<img src="images/screenshot-musicapplist.jpg" alt="Music App List" width="480" height="179"/>
@@ -29,6 +33,10 @@ permalink: /gallery
 <figure>
 	<video src="images/demo-notifications.mp4" alt="Notifications" autoplay muted controls loop width="480" height="200"></video>
 	<figcaption>New phone notifications pop up in the dashboard and can be interacted with</figcaption>
+</figure>
+<figure>
+	<video src="images/demo-assistant.mp4" alt="Assistant" autoplay muted controls loop width="480" height="200"></video>
+	<figcaption>Google Assistant, and other voice assistants, can be triggered from the Connected menu</figcaption>
 </figure>
 <figure>
 	<video src="images/demo-applist.mp4" alt="App List" autoplay muted controls loop width="480" height="200"></video>

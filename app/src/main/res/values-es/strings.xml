@@ -62,13 +62,71 @@
     <string name="MUSIC_QUEUE_EMPTY">&lt;Lista Vacía&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Atrás</string>
     <string name="MUSIC_SKIP_NEXT">Siguiente</string>
+    <string name="MUSIC_TURN_SHUFFLE_ON">Activar shuffle</string>
+    <string name="MUSIC_TURN_SHUFFLE_OFF">Desactivar shuffle</string>
 
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_ON">Activar shuffle</string>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Ya no me gusta</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Crear estación de radio</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Activar repetir todo</string>
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_OFF">Desactivar shuffle</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Activar repetir actual</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Desactivar repetir</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Me gusta</string>
+
+    <!-- new -->
+    <string name="donation_title">Te gusta esta aplicación?</string>
+    <string name="lbl_popupVersion">Las ventanillas emergentes solo trabajan con IDrive4</string>
+    <string name="musicAppNotes_oldSpotify">Porfavor degrade Spotify para un completo funcionamiento (Buscando)</string>
+    <string name="txt_setup_bcl_connected_transport">La conexión de la aplicación esta funcionando al %s</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">No te gustó</string>
+    <string name="txt_setup_spp_disconnected">Las aplicaciones con Bluetooth no están disponibles</string>
+    <string name="txt_setup_enable_usbmtp">Cambia el teléfono a modo USB para transferir archivos</string>
+    <string name="musicAppHidden">Oculto</string>
+    <string name="musicAppNotes_oldSpotifyInstructions">Esta aplicación solo puede proveer completo control, así como buscar, a partir de la versión 8.4.96.953 de Spotify. Para un completo control, porfavor descargue una versión más antigua, de APKPure o similar.</string>
+    <string name="lbl_ok">OK</string>
+    <string name="lbl_cancel">Cancel</string>
+    <string name="txt_setup_bt_disconnected">El automóvil no está conectado al Bluetooth</string>
+    <string name="musicAppUnavailable">No disponible</string>
+    <string name="txt_setup_enable_usbacc">Habilitar el modo accesiorio de USB o la opción de la aplicación en el automóvil por este %s</string>
+    <string name="txt_bcl_report">Rendimiento del túnel BCL:</string>
+    <string name="txt_setup_a2dp_disconnected">La música de Bluetooth no está conectada</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Te gustó</string>
+    <string name="txt_setup_security_missing">No se puede localizar el Servicio de Seguridad:</string>
+    <string name="MUSIC_SPOTIFY_THUMB_UP">Te gustó</string>
+    <string name="musicAppControllable">Controlable mientras se opera</string>
+    <string name="txt_setup_bcl_connecting">La conexión de la aplicación se está conectando</string>
+    <string name="notification_assistant_description">Solo es necesario porque la pantalla está prendida</string>
+    <string name="notification_assistant_tap">Toque para iniciar %s</string>
+    <string name="NOTIFICATION_OPTIONS">Opciones</string>
+    <string name="txt_setup_a2dp_connected">La música de Bluetooth está conectada</string>
+    <string name="txt_setup_usb_disconnected">Ningún automóvil está conectado a través del USB</string>
+    <string name="donation_text">Considere mostrarnos su apoyo con una pequena donación</string>
+    <string name="txt_car_capabilities">Capacidades del automóvil informadas:</string>
+    <string name="musicAppNotes_unauthorizedSpotify">Presione aquí para autorizar el acceso a Spotify</string>
+    <string name="nowplaying_notconnected">&lt;No conectado&gt;</string>
+    <string name="txt_setup_spp_connected">Aplicaciones de Bluetooth están sostenidas</string>
+    <string name="lbl_smsPermission">Otorgue el permiso de SMS para ver las imágenes entrantes de imágenes SMS en el automóvil. El texto siempre será visible.</string>
+    <string name="nowplaying_unknown">&lt;Desconocido&gt;</string>
+    <string name="lbl_grant">Grant</string>
+    <string name="txt_setup_usb_connected">USB está conectado en modo de carga</string>
+    <string name="txt_setup_usbmtp_connected">USB está conectado en modo de almacenamiento</string>
+
+    <string name="lbl_advanced_settings">Mostrar configuración avanzada</string>
+    <string name="lbl_assistant">Asistente de voz (Beta)</string>
+    <string name="btn_configure">Configurar …</string>
+    <string name="txt_setup_usbacc_connected">USB está conectado en modo de accesorio</string>
+    <string name="txt_build_info">Construir versión: %1$s %2$s</string>
+    <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Tocar desde la busqueda</string>
+    <string name="lbl_grant_sessions">Control sobre la aplicación de música activa:</string>
+    <string name="MUSIC_DISCONNECTED">&lt;No Conectado&gt;</string>
+    <string name="MUSIC_SPOTIFY_THUMB_DOWN">no te gustó</string>
+    <string name="txt_setup_bcl_init_stuck">La conexión de la aplicación no está disponible:</string>
+
+    <string name="txt_setup_enable_bcl_mode">Habilite la opción de la aplicación en el automóvil para este %s</string>
+    <string name="txt_setup_enable_bclspp">Trate de alternar la música de Bluetooth o conecte por USB</string>
+    <string name="txt_setup_bcl_connected">La conexión de la aplicación esta operando</string>
+    <string name="txt_setup_bcl_disconnected">La conexión de la aplicación está desconectado:</string>
+
+    <string name="musicAppNowPlaying">Ahora esta sonando</string>
+    <string name="txt_setup_bt_connected">El automóvil se encuentra conectado al Bluetooth</string>
+    <string name="lbl_assistant_empty">No se encontró</string>
 </resources>

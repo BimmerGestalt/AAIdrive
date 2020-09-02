@@ -268,6 +268,75 @@ class TestCombinedMusicAppController {
 	}
 
 	@Test
+	fun testIsShufflingLeftController() {
+		leftObservable.value = leftController
+		rightObservable.value = rightController
+
+		whenever(leftController.isSupportedAction(any())) doReturn true
+		whenever(rightController.isSupportedAction(any())) doReturn false
+		whenever(leftController.isShuffling()) doReturn false
+		whenever(rightController.isShuffling()) doReturn false
+
+		assertFalse(controller.isShuffling())
+		verify(leftController, times(1)).isShuffling()
+		verify(rightController, never()).isShuffling()
+	}
+
+	@Test
+	fun testIsShufflingRightController() {
+		leftObservable.value = leftController
+		rightObservable.value = rightController
+
+		whenever(leftController.isSupportedAction(any())) doReturn false
+		whenever(rightController.isSupportedAction(any())) doReturn true
+		whenever(leftController.isShuffling()) doReturn false
+		whenever(rightController.isShuffling()) doReturn true
+
+		assertTrue(controller.isShuffling())
+		verify(leftController, never()).isShuffling()
+		verify(rightController, times(1)).isShuffling()
+	}
+
+	@Test
+	fun testIsShufflingNotSupported() {
+		leftObservable.value = leftController
+		rightObservable.value = rightController
+
+		whenever(leftController.isSupportedAction(any())) doReturn false
+		whenever(rightController.isSupportedAction(any())) doReturn false
+
+		assertFalse(controller.isShuffling())
+	}
+
+	@Test
+	fun testToggleShuffleLeftController() {
+		leftObservable.value = leftController
+		rightObservable.value = rightController
+
+		whenever(leftController.isSupportedAction(any())) doReturn true
+		whenever(rightController.isSupportedAction(any())) doReturn false
+
+		controller.toggleShuffle()
+
+		verify(leftController, times(1)).toggleShuffle()
+		verify(rightController, never()).toggleShuffle()
+	}
+
+	@Test
+	fun testToggleShuffleRightController() {
+		leftObservable.value = leftController
+		rightObservable.value = rightController
+
+		whenever(leftController.isSupportedAction(any())) doReturn false
+		whenever(rightController.isSupportedAction(any())) doReturn true
+
+		controller.toggleShuffle()
+
+		verify(leftController, never()).toggleShuffle()
+		verify(rightController, times(1)).toggleShuffle()
+	}
+
+	@Test
 	fun testBrowse() {
 		runBlocking {
 			leftObservable.value = leftController

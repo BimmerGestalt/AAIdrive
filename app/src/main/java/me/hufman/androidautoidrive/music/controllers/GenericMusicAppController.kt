@@ -122,6 +122,8 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 		} else {
 			val metadata = getMetadata()
 			val isPaused = (
+					state.state == PlaybackStateCompat.STATE_NONE ||
+					state.state == PlaybackStateCompat.STATE_STOPPED ||
 					state.state == PlaybackStateCompat.STATE_PAUSED ||
 					state.state == PlaybackStateCompat.STATE_CONNECTING ||
 					state.state == PlaybackStateCompat.STATE_BUFFERING
@@ -141,6 +143,18 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 		return remoteData { mediaController.playbackState?.customActions }?.map {
 			CustomAction.fromMediaCustomAction(context, mediaController.packageName, it)
 		} ?: LinkedList()
+	}
+
+	override fun toggleShuffle() {
+		remoteCall {
+			mediaController.transportControls.setShuffleMode(if (isShuffling()) PlaybackStateCompat.SHUFFLE_MODE_NONE else PlaybackStateCompat.SHUFFLE_MODE_ALL)
+		}
+	}
+
+	override fun isShuffling(): Boolean {
+		return remoteData {
+			mediaController.shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL || mediaController.shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_GROUP
+		} ?: false
 	}
 
 	/**

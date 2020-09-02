@@ -27,6 +27,7 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 
 	val notificationListView: RHMIComponent.List    // the list component of notifications
 	val settingsListView: RHMIComponent.List    // the list component of notifications
+	val notificationIconEvent: RHMIEvent.NotificationIconEvent    // to trigger the status bar icon
 
 	var visible = false                 // whether the notification list is showing
 
@@ -61,13 +62,15 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 	init {
 		notificationListView = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 		settingsListView = state.componentsList.filterIsInstance<RHMIComponent.List>().last()
+		notificationIconEvent = state.app.events.values.filterIsInstance<RHMIEvent.NotificationIconEvent>().first()
 	}
 
 	fun initWidgets(detailsView: DetailsView) {
 		// refresh the list when we are displayed
 		state.focusCallback = FocusCallback { focused ->
-			visible = true
+			visible = focused
 			if (focused) {
+				hideStatusBarIcon()
 				redrawNotificationList()
 				settings.callback = {
 					redrawNotificationList()
@@ -118,14 +121,22 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 				throw RHMIActionAbort()
 			}
 		}
+
+		notificationIconEvent.getImageIdModel()?.asImageIdModel()?.imageId = 157
 	}
 
 	fun onCreate(handler: Handler) {
 		deferredUpdate = DeferredUpdate(handler)
 	}
 
-	/** Only redraw if the user hasn't clicked it recently */
+	/** Only redraw if the user hasn't clicked it recently
+	 *  Gets called whenever the notification list changes
+	 */
 	fun gentlyUpdateNotificationList() {
+		if (NotificationsState.cloneNotifications().isEmpty()) {
+			hideStatusBarIcon()
+		}
+
 		if (!visible) {
 			return
 		}
@@ -158,4 +169,23 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 		}
 		settingsListView.getModel()?.value = menuSettingsListData
 	}
+
+	fun showStatusBarIcon() {
+		// a new message arrived but the window is not visible, show the icon
+		if (!visible) {
+			try {
+				notificationIconEvent.triggerEvent(mapOf(0 to true))
+			} catch (e: BMWRemoting.ServiceException) {
+				// error showing icon
+			}
+		}
+	}
+	fun hideStatusBarIcon() {
+		try {
+			notificationIconEvent.triggerEvent(mapOf(0 to false))
+		} catch (e: BMWRemoting.ServiceException) {
+			// error hiding icon
+		}
+	}
+
 }

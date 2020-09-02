@@ -33,9 +33,12 @@
     <string name="enable_audio_context">Force Audio Focus</string>
     <string name="lbl_grant_sessions">Control over active music apps:</string>
     <string name="lbl_grant">Grant</string>
-    <string name="musicAppNotes_unauthorizedSpotify">Click here to authorize Spotify access</string>
-    <string name="musicAppNotes_oldSpotify">Please downgrade Spotify for full functionality (Browsing)</string>
-    <string name="musicAppNotes_oldSpotifyInstructions">This app can only provide full control over Spotify up to version 8.4.96.953, such as browsing playlists and searching. For full control, please download an older version, from APKPure or similar.</string>
+    <string name="musicAppNotes_unauthorizedSpotify">Tap here to authorize Spotify access</string>
+    <string name="musicAppNotes_oldSpotify">Please downgrade Spotify for full functionality (Searching)</string>
+    <string name="musicAppNotes_oldSpotifyInstructions">This app can only provide full control over Spotify up to version 8.4.96.953, such as searching. For full control, please download an older version, from APKPure or similar.</string>
+    <string name="musicAppNotes_spotify_apiNotFound">Please install the official Spotify client</string>
+    <string name="musicAppNotes_spotify_apiUnavailable">Please confirm internet connectivity and disable any ad blocking</string>
+
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancel</string>
     <string name="btn_configure">Configure …</string>
@@ -115,12 +118,21 @@
     <string name="MUSIC_QUEUE_EMPTY">&lt;Empty Queue&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Back</string>
     <string name="MUSIC_SKIP_NEXT">Next</string>
+    <string name="MUSIC_TURN_SHUFFLE_ON">Turn Shuffle On</string>
+    <string name="MUSIC_TURN_SHUFFLE_OFF">Turn Shuffle Off</string>
 
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_ON">Turn Shuffle On</string>
+    <plurals name="MUSIC_ACTION_SEEK_BACK">
+        <item quantity="one">Seek back %s second</item>
+        <item quantity="other">Seek back %s seconds</item>
+    </plurals>
+    <plurals name="MUSIC_ACTION_SEEK_FORWARD">
+        <item quantity="one">Seek forward %s second</item>
+        <item quantity="other">Seek forward %s seconds</item>
+    </plurals>
+
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Dislike</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Make Radio Station</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Turn Repeat All On</string>
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_OFF">Turn Shuffle Off</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Turn Repeat One On</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Turn Repeat Off</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>

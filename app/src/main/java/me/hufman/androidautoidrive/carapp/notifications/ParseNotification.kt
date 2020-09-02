@@ -13,6 +13,7 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat.*
 import android.util.Log
+import me.hufman.androidautoidrive.UnicodeCleaner
 
 object ParseNotification {
 
@@ -82,7 +83,9 @@ object ParseNotification {
 		title = title?.let { UnicodeCleaner.clean(it) }
 		text = text?.let { UnicodeCleaner.clean(it) }
 
-		val summarized = CarNotification(sbn.packageName, sbn.key, icon, sbn.isClearable, sbn.notification.actions ?: arrayOf(),
+		val actions = sbn.notification.actions?.map { CarNotification.Action.parse(it) } ?: emptyList()
+
+		val summarized = CarNotification(sbn.packageName, sbn.key, icon, sbn.isClearable, actions,
 				title ?: "", text?.trim() ?: "", picture, pictureUri)
 		return summarized
 	}
@@ -137,7 +140,7 @@ object ParseNotification {
 		val extras = sbn.notification.extras
 		val details = extras?.keySet()?.map { "  ${it}=>${extras.get(it)}" }?.joinToString("\n") ?: ""
 		Log.i(NotificationListenerServiceImpl.TAG, "$title from ${sbn.packageName}: ${extras?.get("android.title")} with the keys:\n$details")
-		Log.i(NotificationListenerServiceImpl.TAG, "Ranking: isAmbient:${ranking?.isAmbient} matchesFilter:${ranking?.matchesInterruptionFilter()} importance:${ranking?.importance}")
+		Log.i(NotificationListenerServiceImpl.TAG, "Ranking: isAmbient:${ranking?.isAmbient} matchesFilter:${ranking?.matchesInterruptionFilter()}")
 	}
 	fun dumpMessage(title: String, bundle: Bundle) {
 		val details = bundle.keySet()?.map { key -> "  ${key}=>${bundle.get(key)}" }?.joinToString("\n") ?: ""

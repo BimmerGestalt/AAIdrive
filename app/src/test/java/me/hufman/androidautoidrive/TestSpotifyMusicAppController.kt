@@ -10,6 +10,7 @@ import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
@@ -77,7 +78,7 @@ class TestSpotifyMusicAppController {
 
 	@Before
 	fun setup() {
-		controller = SpotifyAppController(remote)
+		controller = SpotifyAppController(mock(), remote)
 	}
 
 	@Test
@@ -105,11 +106,6 @@ class TestSpotifyMusicAppController {
 
 	@Test
 	fun testCustomActions() {
-		controller.customAction(controller.CUSTOM_ACTION_TURN_SHUFFLE_ON)
-		verify(playerApi).setShuffle(true)
-		controller.customAction(controller.CUSTOM_ACTION_TURN_SHUFFLE_OFF)
-		verify(playerApi).setShuffle(false)
-
 		controller.customAction(controller.CUSTOM_ACTION_TURN_REPEAT_ALL_ON)
 		verify(playerApi).setRepeat(Repeat.ALL)
 		controller.customAction(controller.CUSTOM_ACTION_TURN_REPEAT_ONE_ON)
@@ -127,14 +123,113 @@ class TestSpotifyMusicAppController {
 
 	@Test
 	fun testCustomActionNames() {
-		assertEquals("Turn Shuffle On", controller.CUSTOM_ACTION_TURN_SHUFFLE_ON.name)
-		assertEquals("Turn Shuffle Off", controller.CUSTOM_ACTION_TURN_SHUFFLE_OFF.name)
 		assertEquals("Turn Repeat All On", controller.CUSTOM_ACTION_TURN_REPEAT_ALL_ON.name)
 		assertEquals("Turn Repeat One On", controller.CUSTOM_ACTION_TURN_REPEAT_ONE_ON.name)
 		assertEquals("Turn Repeat Off", controller.CUSTOM_ACTION_TURN_REPEAT_ONE_OFF.name)
 		assertEquals("Like", controller.CUSTOM_ACTION_ADD_TO_COLLECTION.name)
 		assertEquals("Dislike", controller.CUSTOM_ACTION_REMOVE_FROM_COLLECTION.name)
 		assertEquals("Make Radio Station", controller.CUSTOM_ACTION_START_RADIO.name)
+	}
+
+	@Test
+	fun testIsShuffling() {
+		// test shuffle is started on app start
+		run {
+			val state = PlayerState(
+					Track(
+							Artist("artist", "uri"),
+							listOf(Artist("artist", "uri")),
+							Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+					false, 1.0f, 200,
+					PlayerOptions(true, Repeat.OFF),
+					PlayerRestrictions(true, true, true, true, true, true)
+			)
+			spotifyCallback.lastValue.onEvent(state)
+
+			assertTrue(controller.isShuffling())
+		}
+
+		// test shuffle is not started on app start
+		run {
+			val state = PlayerState(
+					Track(
+							Artist("artist", "uri"),
+							listOf(Artist("artist", "uri")),
+							Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+					false, 1.0f, 200,
+					PlayerOptions(false, Repeat.OFF),
+					PlayerRestrictions(true, true, true, true, true, true)
+			)
+			spotifyCallback.lastValue.onEvent(state)
+
+			assertFalse(controller.isShuffling())
+		}
+
+		// test shuffle bool is flipped upon spotify callback changing
+		run {
+			val initialState = PlayerState(
+					Track(
+							Artist("artist", "uri"),
+							listOf(Artist("artist", "uri")),
+							Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+					false, 1.0f, 200,
+					PlayerOptions(false, Repeat.OFF),
+					PlayerRestrictions(true, true, true, true, true, true)
+			)
+			spotifyCallback.lastValue.onEvent(initialState)
+
+			assertFalse(controller.isShuffling())
+
+			val newState = PlayerState(
+					Track(
+							Artist("artist", "uri"),
+							listOf(Artist("artist", "uri")),
+							Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+					false, 1.0f, 200,
+					PlayerOptions(true, Repeat.OFF),
+					PlayerRestrictions(true, true, true, true, true, true)
+			)
+			spotifyCallback.lastValue.onEvent(newState)
+
+			assertTrue(controller.isShuffling())
+		}
+	}
+
+	@Test
+	fun testToggleShuffle() {
+		// test shuffle bool is flipped when shuffle is called: false -> true
+		run {
+			val state = PlayerState(
+					Track(
+							Artist("artist", "uri"),
+							listOf(Artist("artist", "uri")),
+							Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+					false, 1.0f, 200,
+					PlayerOptions(false, Repeat.OFF),
+					PlayerRestrictions(true, true, true, true, true, true)
+			)
+			spotifyCallback.lastValue.onEvent(state)
+
+			controller.toggleShuffle()
+			verify(playerApi).setShuffle(true)
+		}
+
+		// test shuffle bool is flipped when shuffle is called: true -> false
+		run {
+			val state = PlayerState(
+					Track(
+							Artist("artist", "uri"),
+							listOf(Artist("artist", "uri")),
+							Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+					false, 1.0f, 200,
+					PlayerOptions(true, Repeat.OFF),
+					PlayerRestrictions(true, true, true, true, true, true)
+			)
+			spotifyCallback.lastValue.onEvent(state)
+
+			controller.toggleShuffle()
+			verify(playerApi).setShuffle(false)
+		}
 	}
 
 	@Test
@@ -153,20 +248,17 @@ class TestSpotifyMusicAppController {
 			spotifyCallback.lastValue.onEvent(state)
 
 			assertEquals(setOf(
-					controller.CUSTOM_ACTION_TURN_SHUFFLE_ON,
 					controller.CUSTOM_ACTION_TURN_REPEAT_ALL_ON
 			), controller.getCustomActions().toSet())
 
 			libraryCallback.lastValue.onResult(LibraryState("uri", false, true))
 			assertEquals(setOf(
-					controller.CUSTOM_ACTION_TURN_SHUFFLE_ON,
 					controller.CUSTOM_ACTION_TURN_REPEAT_ALL_ON,
 					controller.CUSTOM_ACTION_ADD_TO_COLLECTION
 			), controller.getCustomActions().toSet())
 
 			libraryCallback.lastValue.onResult(LibraryState("uri", true, true))
 			assertEquals(setOf(
-					controller.CUSTOM_ACTION_TURN_SHUFFLE_ON,
 					controller.CUSTOM_ACTION_TURN_REPEAT_ALL_ON,
 					controller.CUSTOM_ACTION_REMOVE_FROM_COLLECTION
 			), controller.getCustomActions().toSet())
@@ -186,7 +278,6 @@ class TestSpotifyMusicAppController {
 			spotifyCallback.lastValue.onEvent(state)
 
 			assertEquals(setOf(
-					controller.CUSTOM_ACTION_TURN_SHUFFLE_ON,
 					controller.CUSTOM_ACTION_TURN_REPEAT_ONE_ON
 			), controller.getCustomActions().toSet())
 		}
@@ -204,9 +295,7 @@ class TestSpotifyMusicAppController {
 			)
 			spotifyCallback.lastValue.onEvent(state)
 
-			assertEquals(setOf(
-					controller.CUSTOM_ACTION_TURN_SHUFFLE_ON
-			), controller.getCustomActions().toSet())
+			assertEquals(emptySet<CustomAction>(), controller.getCustomActions().toSet())
 		}
 
 		// shuffle on, repeat all, can repeat playlist and track
@@ -223,7 +312,6 @@ class TestSpotifyMusicAppController {
 			spotifyCallback.lastValue.onEvent(state)
 
 			assertEquals(setOf(
-					controller.CUSTOM_ACTION_TURN_SHUFFLE_OFF,
 					controller.CUSTOM_ACTION_TURN_REPEAT_ONE_ON
 			), controller.getCustomActions().toSet())
 		}
@@ -242,7 +330,6 @@ class TestSpotifyMusicAppController {
 			spotifyCallback.lastValue.onEvent(state)
 
 			assertEquals(setOf(
-					controller.CUSTOM_ACTION_TURN_SHUFFLE_OFF,
 					controller.CUSTOM_ACTION_TURN_REPEAT_ONE_OFF
 			), controller.getCustomActions().toSet())
 		}
@@ -261,7 +348,6 @@ class TestSpotifyMusicAppController {
 			spotifyCallback.lastValue.onEvent(state)
 
 			assertEquals(setOf(
-					controller.CUSTOM_ACTION_TURN_SHUFFLE_OFF,
 					controller.CUSTOM_ACTION_TURN_REPEAT_ONE_OFF
 			), controller.getCustomActions().toSet())
 		}
@@ -271,14 +357,21 @@ class TestSpotifyMusicAppController {
 	fun testQueue() {
 		// load a queue
 		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", "title", "subtitle", "playlist"))
-		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, "title", "subtitle", false, true), 100, 0)
-		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, "title", "subtitle", false, true), 200, 0)
+		contentCallback.lastValue.onResult(ListItems(200, 0, 2, arrayOf(
 				ListItem("id", "uri", null, "Title", "Subtitle", true, false)
 		)))
+		// it should request again
+		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, "title", "subtitle", false, true), 200, 1)
+		contentCallback.lastValue.onResult(ListItems(200, 1, 2, arrayOf(
+				ListItem("id2", "uri2", null, "Title2", "Subtitle", true, false)
+		)))
+
 		val queue = controller.getQueue()
-		assertEquals(1, queue.size)
+		assertEquals(2, queue.size)
 		assertNotEquals(null, queue[0].queueId)
 		assertEquals("Title", queue[0].title)
+		assertEquals("Title2", queue[1].title)
 
 		// fail to skip
 		controller.playQueue(MusicMetadata(queueId = 345))
@@ -358,12 +451,18 @@ class TestSpotifyMusicAppController {
 			delay(1000)
 			assertFalse(deferredResults.isCompleted)
 			verify(contentApi).getChildrenOfItem(ListItem("library", "library", null, null, null, false, true), 200, 0)
-			contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+			contentCallback.lastValue.onResult(ListItems(1, 0, 2, arrayOf(
 					ListItem("id", "uri", null, "Favorite", "Subtitle", true, false)
+			)))
+			// it should check again
+			verify(contentApi).getChildrenOfItem(ListItem("library", "library", null, null, null, false, true), 200, 1)
+			contentCallback.lastValue.onResult(ListItems(200, 1, 2, arrayOf(
+					ListItem("id2", "uri", null, "Favorite2", "Subtitle", true, false)
 			)))
 			val results = deferredResults.await()
 			assertTrue(deferredResults.isCompleted)
 			assertEquals("Favorite", results[0].title)
+			assertEquals("Favorite2", results[1].title)
 		}
 	}
 

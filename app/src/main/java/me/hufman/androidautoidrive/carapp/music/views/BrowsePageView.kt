@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.carapp.music.views
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import kotlinx.coroutines.*
+import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.awaitPending
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
@@ -84,7 +85,6 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 	}
 
 	fun initWidgets(inputState: RHMIState) {
-		val inputComponent = inputState.componentsList.filterIsInstance<RHMIComponent.Input>().first()
 		folderNameLabel.setVisible(true)
 		// handle action clicks
 		actionsListComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
@@ -95,11 +95,11 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 				}
 				BrowseAction.FILTER -> {
 					musicListComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputState.id
-					showFilterInput(inputComponent)
+					showFilterInput(inputState)
 				}
 				BrowseAction.SEARCH -> {
 					musicListComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputState.id
-					showSearchInput(inputComponent)
+					showSearchInput(inputState)
 				}
 			}
 		}
@@ -170,7 +170,7 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 								if (previouslySelected == item) checkmarkIcon else "",
 								if (item.browseable) folderIcon else
 									if (item.playable) songIcon else "",
-								item.title ?: ""
+								UnicodeCleaner.clean(item.title ?: "")
 						)
 					}
 				}
@@ -228,15 +228,15 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 		musicListComponent.getModel()?.setValue(currentListModel, startIndex, numRows, currentListModel.height)
 	}
 
-	fun showFilterInput(inputComponent: RHMIComponent.Input) {
-		val inputState = object: InputState<MusicMetadata>(inputComponent) {
+	fun showFilterInput(inputState: RHMIState) {
+		val showState = object: InputState<MusicMetadata>(inputState) {
 			override fun onEntry(input: String) {
 				val suggestions = musicList.asSequence().filter {
-					(it.title ?: "").split(Regex("\\s+")).any { word ->
+					UnicodeCleaner.clean(it.title ?: "").split(Regex("\\s+")).any { word ->
 						word.toLowerCase().startsWith(input.toLowerCase())
 					}
 				} + musicList.asSequence().filter {
-					it.title?.toLowerCase()?.contains(input.toLowerCase()) ?: false
+					UnicodeCleaner.clean(it.title?: "").toLowerCase().contains(input.toLowerCase())
 				}
 				sendSuggestions(suggestions.take(15).distinct().toList())
 			}
@@ -245,11 +245,15 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 				previouslySelected = item  // update the selection state for future redraws
 				browseController.onListSelection(item, inputComponent.getSuggestAction()?.asHMIAction())
 			}
+
+			override fun convertRow(row: MusicMetadata): String {
+				return UnicodeCleaner.clean(row.title ?: "")
+			}
 		}
 	}
 
-	fun showSearchInput(inputComponent: RHMIComponent.Input) {
-		val inputState = object : InputState<MusicMetadata>(inputComponent) {
+	fun showSearchInput(inputState: RHMIState) {
+		val showState = object : InputState<MusicMetadata>(inputState) {
 			val SEARCHRESULT_SEARCHING = MusicMetadata(mediaId="__SEARCHING__", title=L.MUSIC_BROWSE_SEARCHING)
 			val SEARCHRESULT_EMPTY = MusicMetadata(mediaId="__EMPTY__", title=L.MUSIC_BROWSE_EMPTY)
 			val MAX_RETRIES = 2
@@ -305,9 +309,9 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 
 			override fun convertRow(row: MusicMetadata): String {
 				if (row.subtitle != null) {
-					return "${row.title}\n${row.subtitle}"
+					return UnicodeCleaner.clean("${row.title}\n${row.subtitle}")
 				} else {
-					return row.title ?: ""
+					return UnicodeCleaner.clean(row.title ?: "")
 				}
 			}
 		}

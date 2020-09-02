@@ -106,6 +106,44 @@ class TestGenericMusicAppController {
 	}
 
 	@Test
+	fun testIsShuffling() {
+		whenever(mediaController.shuffleMode) doAnswer {
+			PlaybackStateCompat.SHUFFLE_MODE_ALL
+		}
+		assertTrue(controller.isShuffling())
+
+		whenever(mediaController.shuffleMode) doAnswer {
+			PlaybackStateCompat.SHUFFLE_MODE_GROUP
+		}
+		assertTrue(controller.isShuffling())
+
+		whenever(mediaController.shuffleMode) doAnswer {
+			PlaybackStateCompat.SHUFFLE_MODE_NONE
+		}
+		assertFalse(controller.isShuffling())
+
+		whenever(mediaController.shuffleMode) doAnswer {
+			PlaybackStateCompat.SHUFFLE_MODE_INVALID
+		}
+		assertFalse(controller.isShuffling())
+	}
+
+	@Test
+	fun testToggleShuffle() {
+		whenever(mediaController.shuffleMode) doAnswer {
+			PlaybackStateCompat.SHUFFLE_MODE_NONE
+		}
+		controller.toggleShuffle()
+		verify(mediaTransportControls).setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL)
+
+		whenever(mediaController.shuffleMode) doAnswer {
+			PlaybackStateCompat.SHUFFLE_MODE_ALL
+		}
+		controller.toggleShuffle()
+		verify(mediaTransportControls).setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE)
+	}
+
+	@Test
 	fun testQueue() {
 		val mediaDescription = mock<MediaDescriptionCompat> {
 			on { iconBitmap } doAnswer { mock() }
@@ -147,6 +185,12 @@ class TestGenericMusicAppController {
 		assertTrue(controller.getPlaybackPosition().playbackPaused)
 
 		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_CONNECTING, 1000, 0) }
+		assertTrue(controller.getPlaybackPosition().playbackPaused)
+
+		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_STOPPED, 1000, 0) }
+		assertTrue(controller.getPlaybackPosition().playbackPaused)
+
+		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_NONE, 1000, 0) }
 		assertTrue(controller.getPlaybackPosition().playbackPaused)
 
 		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_PLAYING, 1000, 0) }

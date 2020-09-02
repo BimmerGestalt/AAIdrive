@@ -115,12 +115,12 @@
     <string name="MUSIC_QUEUE_EMPTY">&lt;Leere Warteschlange&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Zurück</string>
     <string name="MUSIC_SKIP_NEXT">Nächster</string>
+    <string name="MUSIC_TURN_SHUFFLE_ON">Zufallswiedergabe aktivieren</string>
+    <string name="MUSIC_TURN_SHUFFLE_OFF">Zufallswiedergabe deaktivieren</string>
 
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_ON">Zufallswiedergabe aktivieren</string>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Gefällt mir nicht</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Erstelle Radiostation</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Alle Wiederholen aktivieren</string>
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_OFF">Zufallswiedergabe deaktivieren</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Einzelnen Titel wiederholen</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Wiederholen deaktivieren</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Gefällt mir</string>

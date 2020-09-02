@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.carapp.notifications
+package me.hufman.androidautoidrive
 
 import android.content.Context
 import android.support.annotation.VisibleForTesting

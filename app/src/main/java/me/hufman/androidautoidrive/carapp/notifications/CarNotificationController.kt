@@ -11,7 +11,8 @@ interface CarNotificationController {
 	 * When the user selects a thing in the car, this Controller reacts and updates the phone
 	 */
 	fun clear(notification: CarNotification)
-	fun action(notification: CarNotification, actionTitle: String)
+	fun action(notification: CarNotification, action: CarNotification.Action)
+	fun reply(notification: CarNotification, action: CarNotification.Action, reply: String)
 }
 
 class CarNotificationControllerIntent(val context: Context): CarNotificationController {
@@ -24,14 +25,24 @@ class CarNotificationControllerIntent(val context: Context): CarNotificationCont
 		)
 	}
 
-	override fun action(notification: CarNotification, actionTitle: String) {
-		Log.i(TAG, "Sending request to custom action ${notification.key}:${actionTitle}")
+	override fun action(notification: CarNotification, action: CarNotification.Action) {
+		Log.i(TAG, "Sending request to custom action ${notification.key}:${action.name}")
 		context.sendBroadcast(Intent(INTENT_INTERACTION)
 				.setPackage(context.packageName)
 				.putExtra(NotificationListenerServiceImpl.EXTRA_INTERACTION, NotificationListenerServiceImpl.EXTRA_INTERACTION_ACTION)
 				.putExtra(NotificationListenerServiceImpl.EXTRA_KEY, notification.key)
-				.putExtra(NotificationListenerServiceImpl.EXTRA_ACTION, actionTitle)
+				.putExtra(NotificationListenerServiceImpl.EXTRA_ACTION, action.name)
 		)
 	}
 
+	override fun reply(notification: CarNotification, action: CarNotification.Action, reply: String) {
+		Log.i(TAG, "Sending reply to custom action ${notification.key}:${action.name}")
+		context.sendBroadcast(Intent(INTENT_INTERACTION)
+				.setPackage(context.packageName)
+				.putExtra(NotificationListenerServiceImpl.EXTRA_INTERACTION, NotificationListenerServiceImpl.EXTRA_INTERACTION_REPLY)
+				.putExtra(NotificationListenerServiceImpl.EXTRA_KEY, notification.key)
+				.putExtra(NotificationListenerServiceImpl.EXTRA_ACTION, action.name)
+				.putExtra(NotificationListenerServiceImpl.EXTRA_REPLY, reply)
+		)
+	}
 }

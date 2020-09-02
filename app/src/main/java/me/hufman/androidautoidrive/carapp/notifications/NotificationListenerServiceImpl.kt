@@ -1,13 +1,17 @@
 package me.hufman.androidautoidrive.carapp.notifications
 
 import android.app.Notification
+import android.app.PendingIntent
+import android.app.RemoteInput
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Bundle
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.notifications.ParseNotification.dumpNotification
 import me.hufman.androidautoidrive.carapp.notifications.ParseNotification.shouldPopupNotification
 import me.hufman.androidautoidrive.carapp.notifications.ParseNotification.shouldShowNotification
@@ -34,7 +38,9 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		const val EXTRA_INTERACTION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotificationUpdate.EXTRA_INTERACTION"
 		const val EXTRA_INTERACTION_CLEAR = "EXTRA_INTERACTION_CLEAR"
 		const val EXTRA_INTERACTION_ACTION = "EXTRA_INTERACTION_ACTION"
+		const val EXTRA_INTERACTION_REPLY = "EXTRA_INTERACTION_REPLY"
 		const val EXTRA_ACTION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotificationUpdate.EXTRA_ACTION"
+		const val EXTRA_REPLY = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotificationUpdate.EXTRA_REPLY"
 
 	}
 
@@ -146,6 +152,28 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 				Log.w(TAG, "Unable to send action $action to notification $key: $e")
 			}
 		}
+		open fun sendNotificationReply(key: String, action: String?, reply: String?) {
+			try {
+				val notification = this@NotificationListenerServiceImpl.activeNotifications.find { it.key == key }
+				val action = notification?.notification?.actions?.find { it.title == action }
+				if (action != null) {
+					val results = Bundle()
+					action.remoteInputs.forEach {
+						if (it.allowFreeFormInput) {
+							results.putString(it.resultKey, reply)
+						}
+					}
+					val intent = Intent().addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
+					RemoteInput.addResultsToIntent(action.remoteInputs, intent, results)
+					RemoteInput.setResultsSource(intent, RemoteInput.SOURCE_FREE_FORM_INPUT)
+					action.actionIntent.send(this@NotificationListenerServiceImpl, 0, intent)
+				}
+			} catch (e: SecurityException) {
+				Log.w(TAG, "Unable to send reply to $action to notification $key: $e")
+			} catch (e: PendingIntent.CanceledException) {
+				Log.w(TAG, "Unable to send reply to $action to notification $key: $e")
+			}
+		}
 	}
 
 	class IDriveNotificationInteraction(private val listener: InteractionListener, private val controller: NotificationUpdater): BroadcastReceiver() {
@@ -162,6 +190,11 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 				} else if (interaction == EXTRA_INTERACTION_CLEAR) {
 					Log.i(TAG, "Received request to clear notification $key")
 					listener.cancelNotification(key)
+				} else if (interaction == EXTRA_INTERACTION_REPLY) {
+					val action = intent.getStringExtra(EXTRA_ACTION)
+					val reply = intent.getStringExtra(EXTRA_REPLY)
+					Log.i(TAG, "Received request to reply to $key of action $action with reply $reply")
+					listener.sendNotificationReply(key, action, reply)
 				} else {
 					Log.i(TAG, "Unknown interaction! $interaction")
 				}

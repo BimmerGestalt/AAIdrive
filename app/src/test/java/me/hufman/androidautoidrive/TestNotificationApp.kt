@@ -148,17 +148,16 @@ class TestNotificationApp {
 			on { getCharSequence(eq(Notification.EXTRA_TEXT)) } doReturn text
 			on { getCharSequence(eq(Notification.EXTRA_SUMMARY_TEXT)) } doReturn summary
 		}
-		phoneNotification.actions = arrayOf(mock<Notification.Action> {
-		})
+		phoneNotification.actions = arrayOf(mock {})
 		phoneNotification.actions[0].title = "Custom Action"
 		phoneNotification.actions[0].actionIntent = mock()
-		val statusbarNotification = mock<StatusBarNotification> {
+
+		return mock {
 			on { key } doReturn "testKey"
 			on { notification } doReturn phoneNotification
 			on { getPackageName() } doReturn packageName
 			on { isClearable } doReturn clearable
 		}
-		return statusbarNotification
 	}
 
 	@Test
@@ -174,7 +173,7 @@ class TestNotificationApp {
 		assertTrue(notificationObject.isClearable)
 
 		assertEquals(1, notificationObject.actions.size)
-		assertEquals("Custom Action", notificationObject.actions[0].title)
+		assertEquals("Custom Action", notificationObject.actions[0].name)
 
 		whenever(notification.notification.extras.getParcelable<Bitmap>(eq(Notification.EXTRA_PICTURE))) doReturn mock<Bitmap>()
 		val notificationImageObject = ParseNotification.summarizeNotification(notification)
@@ -310,13 +309,12 @@ class TestNotificationApp {
 	}
 
 	fun createNotificationObject(title:String, text:String, clearable:Boolean=false,
-	                             picture: Bitmap? = null, pictureUri: String? = null): CarNotification {
-		val actions = arrayOf(mock<Notification.Action> {
-		})
-		actions[0].title = "Custom Action"
-		actions[0].actionIntent = mock()
+	                             picture: Bitmap? = null, pictureUri: String? = null, actions: List<CarNotification.Action>? = null): CarNotification {
+		val usedNotifications = actions ?: listOf(CarNotification.Action(
+				"Custom Action", false, emptyList()
+		))
 
-		return CarNotification("me.hufman.androidautoidrive", "test$title", mock<Icon>(), clearable, actions,
+		return CarNotification("me.hufman.androidautoidrive", "test$title", mock(), clearable, usedNotifications,
 				title, text, picture, pictureUri)
 	}
 
@@ -329,6 +327,9 @@ class TestNotificationApp {
 		val bundle = createNotificationObject("Title", "FirstLine\nText")
 
 		app.notificationListener.onNotification(bundle)
+
+		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
+		assertEquals(157, (mockServer.data[551] as BMWRemoting.RHMIResourceIdentifier).id)
 
 		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent
 		val expectedHeader = "Test AppName"
@@ -546,6 +547,9 @@ class TestNotificationApp {
 		// and show the main list
 		mockClient.rhmi_onHmiEvent(0, "don't care", 8, 1, mapOf(4.toByte() to true))
 
+		// check that any statusbar icon is hidden
+		assertFalse(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
+
 		// check that there are contents now
 		run {
 			val list = mockServer.data[386] as BMWRemoting.RHMIDataTable
@@ -614,7 +618,7 @@ class TestNotificationApp {
 
 		// now try clicking the custom action
 		callbacks.rhmi_onActionEvent(1, "Dont care", 330, mapOf(0.toByte() to 1))
-		verify(carNotificationController, times(1)).action(notification2, notification2.actions[0].title.toString())
+		verify(carNotificationController, times(1)).action(notification2, notification2.actions[0])
 		// clicking the clear action
 		callbacks.rhmi_onActionEvent(1, "Dont care", 326, mapOf(0.toByte() to 1))
 		verify(carNotificationController, times(1)).clear(notification2)
@@ -639,6 +643,67 @@ class TestNotificationApp {
 		app.viewDetails.redraw()
 		assertEquals(true, mockServer.properties[120]?.get(RHMIProperty.PropertyId.VISIBLE.id))
 		assertArrayEquals("Drawable{400x300}".toByteArray(), (mockServer.data[510] as BMWRemoting.RHMIResourceData).data as ByteArray)
+	}
+
+	@Test
+	fun testViewReplyNotification() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
+
+		val actions = listOf(
+			CarNotification.Action("Reply", true, listOf("Yes", "No")),
+			CarNotification.Action("Mark Read", false, emptyList())
+		)
+		val notification = createNotificationObject("Title", "Text",true, actions = actions)
+		NotificationsState.notifications.add(0, notification)
+		app.viewDetails.selectedNotification = notification
+		app.viewDetails.visible = true
+		app.viewDetails.show()
+
+		// verify the right buttons are enabled
+		val buttons = app.viewDetails.state.asToolbarState()!!.toolbarComponentsList.subList(1, 7)
+		assertEquals(true, buttons[0].properties[RHMIProperty.PropertyId.ENABLED.id]?.value)  // clear this notification button
+		assertEquals(true, buttons[0].properties[RHMIProperty.PropertyId.SELECTABLE.id]?.value)  // clear this notification button
+		assertEquals(true, buttons[0].properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
+		assertEquals(app.viewList.state.id, buttons[0].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
+		assertEquals("Clear", buttons[0].getTooltipModel()?.asRaDataModel()?.value)  // clear this notification button
+		assertEquals(true, buttons[1].properties[RHMIProperty.PropertyId.ENABLED.id]?.value)
+		assertEquals(true, buttons[1].properties[RHMIProperty.PropertyId.SELECTABLE.id]?.value)
+		assertEquals(true, buttons[1].properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
+		assertEquals("Reply", buttons[1].getTooltipModel()?.asRaDataModel()?.value)  // reply button
+		assertEquals(true, buttons[2].properties[RHMIProperty.PropertyId.ENABLED.id]?.value)
+		assertEquals(true, buttons[2].properties[RHMIProperty.PropertyId.SELECTABLE.id]?.value)
+		assertEquals(true, buttons[2].properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
+		assertEquals("Mark Read", buttons[2].getTooltipModel()?.asRaDataModel()?.value)  // custom action button
+		assertEquals(false, buttons[3].properties[RHMIProperty.PropertyId.ENABLED.id]?.value)  // empty button
+		assertEquals(false, buttons[3].properties[RHMIProperty.PropertyId.SELECTABLE.id]?.value)
+		assertEquals(true, buttons[3].properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
+		assertEquals("", buttons[3].getTooltipModel()?.asRaDataModel()?.value)    // empty button
+
+		buttons[2].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(emptyMap<Int, Any>())
+		assertEquals(app.viewList.state.id, buttons[2].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
+		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(emptyMap<Int, Any>())
+		assertEquals(app.stateInput.id, buttons[1].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
+
+		val inputComponent = app.stateInput.componentsList[0] as RHMIComponent.Input
+		// show the suggested replies
+		app.stateInput.focusCallback?.onFocus(true) // shown to user
+		assertEquals(listOf("Yes", "No"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
+		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
+		verify(carNotificationController).reply(notification, notification.actions[0], "No")
+
+		// show the user's input
+		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "Spoken text"))
+		assertEquals(listOf("Spoken text"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
+		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		verify(carNotificationController).reply(notification, notification.actions[0], "Spoken text")
+
+		// erase, should show the suggestions again
+		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "delall"))
+		assertEquals(listOf("Yes", "No"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
+		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		verify(carNotificationController).reply(notification, notification.actions[0], "Yes")
 	}
 
 	@Test

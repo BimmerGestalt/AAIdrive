@@ -39,7 +39,7 @@ class MusicPlayerActivity: AppCompatActivity() {
 		// load the viewmodel
 		val viewModel = ViewModelProviders.of(this).get(MusicActivityModel::class.java)
 		viewModel.musicController = viewModel.musicController ?: MusicController(applicationContext, Handler(this.mainLooper))
-		viewModel.musicController?.connectApp(musicApp)
+		viewModel.musicController?.connectAppManually(musicApp)
 		musicController = viewModel.musicController
 
 		// load the icons

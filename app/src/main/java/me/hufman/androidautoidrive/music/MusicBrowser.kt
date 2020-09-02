@@ -87,6 +87,11 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 			"com.radio.fmradio" -> "__ROOT__"   // Radio FM
 			"app.sunshinelive.de.sunshinelive" -> "/"   // Sunshine Live
 			"com.google.android.apps.books" -> "com.google.android.apps.play.books.orson"  // Google Play Books
+			"fm.libro.librofm" -> "/"   // Libro FM
+			"se.sr.android" -> "root"  // Sveriges Radio
+			"com.bambuna.podcastaddict" -> "__ROOT__"  // Podcast Addict
+			"com.neutroncode.mp" -> "root"    // Neutron
+			"com.neutroncode.mpeval" -> "root"    // Neutron (Eval)
 			else -> mediaBrowser.root
 		}
 	}
@@ -102,7 +107,11 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 		val deferred = CompletableDeferred<List<MediaBrowserCompat.MediaItem>>()
 		withContext(handler.asCoroutineDispatcher()) {
 			if (connected) {
-				val browsePath = path ?: getRoot()
+				val browsePath = (path ?: getRoot()).let {
+					// the browsePath (parentId) is not allowed to be blank
+					if (it.isEmpty()) { "/" } else it
+				}
+
 				var callback: MediaBrowserCompat.SubscriptionCallback? = null
 				callback = object : MediaBrowserCompat.SubscriptionCallback() {
 					override fun onError(parentId: String) {
