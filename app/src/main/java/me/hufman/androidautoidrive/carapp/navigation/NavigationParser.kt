@@ -34,10 +34,17 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 		val GOOGLE_QLL_MATCHER = Regex("^(.*[&?])?q=([-0-9.]+,\\s*[-0-9.]+).*")
 		val GOOGLE_LL_MATCHER = Regex("^(.*[&?])?ll=([-0-9.]+,\\s*[-0-9.]+).*")
 		val GOOGLE_SEARCHPATHLL_MATCHER = Regex("/maps/search/+()([-0-9.]+\\s*,\\s*[-0-9.]+\\s*).*")
-		val GOOGLE_PLACEPATHLL_MATCHER = Regex("/maps/place/+([^/]+)/+@([-0-9.]+\\s*,\\s*[-0-9.]+\\s*).*")
-		val GOOGLE_DIRPATHLL_MATCHER = Regex("/maps/dir/+[^/]+/+()([^/]+).*")
+		val GOOGLE_PLACEPATHLL_MATCHER = Regex("/maps/place/([^/]*)/+@([-0-9.]+\\s*,\\s*[-0-9.]+\\s*).*")
+		val GOOGLE_DIRPATHLL_MATCHER = Regex("/maps/dir/[^/]*/+()([-0-9.]+\\s*,\\s*[-0-9.]+\\s*).*")
+		val GOOGLE_SEARCHPATH_MATCHER = Regex("/maps/search/+([^/]+).*")
+		val GOOGLE_DIRPATH_MATCHER = Regex("/maps/dir/[^/]*/+([^/]+).*")
 		val GOOGLE_QUERYLL_MATCHER = Regex("^(.*[&?])?(q|query|daddr|destination)=(loc:\\s+)?([-0-9.]+\\s*,\\s*[-0-9.]+\\s*).*")
 		val GOOGLE_QUERY_MATCHER = Regex("^(.*[&?])?(q|query|daddr|destination)=([^&]*).*")
+
+		fun latlongToRHMI(latlong: String, label: String = ""): String {
+			val splits = latlong.split(',')
+			return latlongToRHMI(LatLong(splits[0].toDouble(), splits[1].toDouble()), label)
+		}
 
 		fun latlongToRHMI(latlong: LatLong, label: String = ""): String {
 			// [lastName];[firstName];[street];[houseNumber];[zipCode];[city];[country];[latitude];[longitude];[poiName]
@@ -136,8 +143,7 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 		val data = uri.schemeSpecificPart.replace('+', ' ')
 		val googleQLL = GOOGLE_QLL_MATCHER.matchEntire(data)
 		if (googleQLL != null) {
-			val splits = googleQLL.groupValues[2].split(',')
-			return latlongToRHMI(LatLong(splits[0].trim().toDouble(), splits[1].trim().toDouble()))
+			return latlongToRHMI(googleQLL.groupValues[2])
 		}
 
 		val googleQ = GOOGLE_Q_MATCHER.matchEntire(data)
@@ -163,13 +169,23 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 		// https://www.google.com/maps/search/47.5951518,-122.3316393
 		val googlePathLL = GOOGLE_DIRPATHLL_MATCHER.matchEntire(path) ?: GOOGLE_PLACEPATHLL_MATCHER.matchEntire(path) ?: GOOGLE_SEARCHPATHLL_MATCHER.matchEntire(path)
 		if (googlePathLL != null) {
-			val splits = googlePathLL.groupValues[2].split(',')
-			return latlongToRHMI(LatLong(splits[0].trim().toDouble(), splits[1].trim().toDouble()), googlePathLL.groupValues[1])
+			return latlongToRHMI(googlePathLL.groupValues[2], googlePathLL.groupValues[1])
 		}
 		// https://www.google.com/maps/dir//QJQ5+XX,San%20Francisco
 		val googleOlc = GOOGLE_OLC_MATCHER.matchEntire(uri.path ?: "")
 		if (googleOlc != null) {
 			return parsePlusCode(googleOlc.groupValues[1])
+		}
+
+		// https://www.google.com/maps/search/1970+Naglee+Ave+San+Jose,+CA
+		// https://www.google.com/maps/dir/Current+Location/1970+Naglee+Ave+San+Jose,+CA
+		val googlePath = GOOGLE_DIRPATH_MATCHER.matchEntire(path) ?: GOOGLE_SEARCHPATH_MATCHER.matchEntire(path)
+		if (googlePath != null) {
+			val result = addressSearcher.search(googlePath.groupValues[1])
+			if (result != null) {
+				Log.i(TAG, "Parsed ${googlePath.groupValues[1]} to $result -> ${addressToRHMI(result)}")
+				return addressToRHMI(result)
+			}
 		}
 
 		val query = uri.query?.replace('+', ' ') ?: ""
@@ -180,8 +196,7 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 		val googleQueryLL = GOOGLE_QUERYLL_MATCHER.matchEntire(query)
 		val googleQuery = GOOGLE_QUERY_MATCHER.matchEntire(query)
 		if (googleQueryLL != null) {
-			val splits = googleQueryLL.groupValues[4].split(',')
-			return latlongToRHMI(LatLong(splits[0].trim().toDouble(), splits[1].trim().toDouble()), "")
+			return latlongToRHMI(googleQueryLL.groupValues[4], "")
 		}
 
 		// some urls can include an &ll parameter, use that instead of conducting a search
@@ -189,9 +204,7 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 		// http://maps.google.com/maps?q=loc:47.5951518,-122.3316393&z=15
 		val googleLL = GOOGLE_LL_MATCHER.matchEntire(query)
 		if (googleLL != null) {
-			val splits = googleLL.groupValues[2].split(',')
-			val q = googleQuery?.groupValues?.getOrNull(3)
-			return latlongToRHMI(LatLong(splits[0].trim().toDouble(), splits[1].trim().toDouble()), q ?: "")
+			return latlongToRHMI(googleLL.groupValues[2], googleQuery?.groupValues?.getOrNull(3) ?: "")
 		}
 
 		// https://developers.google.com/maps/documentation/urls/get-started
@@ -200,7 +213,7 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 		if (googleQuery != null) {
 			val result = addressSearcher.search(googleQuery.groupValues[3])
 			if (result != null) {
-				Log.i(TAG, "Parsed ${googleQuery.groupValues[2]} to $result -> ${addressToRHMI(result)}")
+				Log.i(TAG, "Parsed ${googleQuery.groupValues[3]} to $result -> ${addressToRHMI(result)}")
 				return addressToRHMI(result)
 			}
 		}
