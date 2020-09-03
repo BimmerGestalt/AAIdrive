@@ -11,7 +11,7 @@ import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
 import kotlin.coroutines.CoroutineContext
 
-class EnqueuedView(val state: RHMIState, val musicController: MusicController, val graphicsHelpers: GraphicsHelpers, carAppImages: Map<String, ByteArray>): CoroutineScope {
+class EnqueuedView(val state: RHMIState, val musicController: MusicController, val graphicsHelpers: GraphicsHelpers): CoroutineScope {
 	override val coroutineContext: CoroutineContext
 		get() = Dispatchers.IO
 
@@ -35,7 +35,6 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	val songsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3)
 	val coverArtCache = LruCache<String, ByteArray>(50)
 	var loaderJob: Job? = null
-	val placeholderPlaylistCoverArt = carAppImages["146.png"]
 
 	var songsListAdapter = object: RHMIListAdapter<MusicMetadata>(4, songsList) {
 		override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
@@ -61,27 +60,33 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	}
 
 	val imageComponent: RHMIComponent.Image
-	val labelComponent: RHMIComponent.Label
+	val labelComponent0: RHMIComponent.Label
+	val labelComponent1: RHMIComponent.Label
+	val labelcomponent2: RHMIComponent.Label
 
 	init {
 		state as RHMIState.PlainState
+
+		state.setProperty(24, 3)
 
 		listComponent = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 
 		imageComponent = state.componentsList.filterIsInstance<RHMIComponent.Image>().first()
 
 		//all 3 labels next to image at top of list don't scroll and are static
-		//  can detect when the user scrolls or an event for selecting an index is triggered and then hide the text?
-		//  - will need to watch for focusEvent HMI event and RA action for scrolling
-		labelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>().get(0)
+		//TODO: IDEA - can have it so the playlist information is on the right side of the screen in the blank space and is fixed
+		//      problem is that this isn't independent of screen sizes and not flexible in the cases of operations such as pulling up
+		//      the sidebar and running splitscreen
+		//      IDEA - figure out how to move the Y position of the listComponent down so the image + text is above the list. The position component
+		//      of the listView is having an effect where all the children are fixed at the specified position and is not applying to the container itself
+		labelComponent0 = state.componentsList.filterIsInstance<RHMIComponent.Label>()[0]
+		labelComponent1 = state.componentsList.filterIsInstance<RHMIComponent.Label>()[1]
+		labelcomponent2 = state.componentsList.filterIsInstance<RHMIComponent.Label>()[2]
 
 		songsEmptyList.addRow(arrayOf("", "", L.MUSIC_QUEUE_EMPTY))
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {
-		//TODO: TEST THIS
-		imageComponent.setProperty(18,100)
-
 		//this is required for pagination system
 		listComponent.setProperty(RHMIProperty.PropertyId.VALID, false)
 
@@ -92,7 +97,9 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	}
 
 	fun showList(startIndex: Int = 0, numRows: Int = 10) {
-		listComponent.getModel()?.setValue(songsListAdapter, startIndex, numRows, songsListAdapter.height)
+		if(startIndex >= 0) {
+			listComponent.getModel()?.setValue(songsListAdapter, startIndex, numRows, songsListAdapter.height)
+		}
 	}
 
 	fun show() {
@@ -151,10 +158,12 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 		if(queueMetadata?.coverArt != null) {
 			imageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(musicController.getQueue()?.coverArt!!, 200, 200, quality = 60)
-			//labelComponent.getModel()?.asRaDataModel()?.value = queueMetadata.title ?: ""
+			labelComponent0.getModel()?.asRaDataModel()?.value = queueMetadata.title ?: ""
+			//labelComponent1.getModel()?.asRaDataModel()?.value = "LINE 2"
+			//labelcomponent2.getModel()?.asRaDataModel()?.value = "LINE 3"
 		}
 		else {
-			imageComponent.getModel()?.asRaImageModel()?.value = placeholderPlaylistCoverArt
+			imageComponent.setVisible(false)
 		}
 	}
 
