@@ -4,3 +4,6 @@
 [submodule "IDriveConnectKitAndroid"]
 	path = IDriveConnectKitAndroid
 	url = https://github.com/hufman/IDriveConnectKitAndroid.git
+[submodule "completely_wordlist"]
+	path = completely_wordlist
+	url = https://github.com/hufman/completely_wordlist.git

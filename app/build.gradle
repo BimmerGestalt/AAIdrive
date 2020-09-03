@@ -169,6 +169,7 @@ dependencies {
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
     implementation project(path: ':IDriveConnectKitAndroid')
     implementation project(path: ':IDriveConnectKit')
+    implementation project(path: ':completely_wordlist')
     testImplementation project(path: ':IDriveConnectKit')
     androidTestImplementation project(path: ':IDriveConnectKitAndroid')
     androidTestImplementation project(path: ':IDriveConnectKit')
