@@ -3,7 +3,8 @@ package me.hufman.androidautoidrive
 import ChassisCode
 import android.app.*
 import android.app.Notification.PRIORITY_LOW
-import android.content.Intent
+import android.content.*
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
@@ -14,14 +15,12 @@ import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
 import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
-import me.hufman.androidautoidrive.phoneui.DebugStatus
-import me.hufman.androidautoidrive.phoneui.DonationRequest
-import me.hufman.androidautoidrive.phoneui.MainActivity
-import me.hufman.androidautoidrive.phoneui.SetupActivity
+import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import org.json.JSONObject
 import java.lang.IllegalArgumentException
 
 class MainService: Service() {
@@ -236,6 +235,15 @@ class MainService: Service() {
 							// update the notification
 							carCapabilities = capabilities
 							startServiceNotification(IDriveConnectionListener.brand, ChassisCode.fromCode(carCapabilities["vehicle.type"] ?: "Unknown"))
+
+							// enable navigation listener, if supported
+							startNavigationListener()
+						}
+
+						override fun onCdsProperty(propertyName: String, propertyValue: String, parsedValue: JSONObject?) {
+							if (propertyName == "navigation.guidanceStatus" && parsedValue?.getInt("guidanceStatus") == 1) {
+								sendBroadcast(Intent(NavIntentActivity.INTENT_NAV_SUCCESS))
+							}
 						}
 
 					})
@@ -336,12 +344,40 @@ class MainService: Service() {
 		threadAssistant = null
 	}
 
+	fun startNavigationListener() {
+		if (carCapabilities["navi"] == "true") {
+			if (IDriveConnectionListener.brand?.toLowerCase() == "bmw") {
+				packageManager.setComponentEnabledSetting(
+						ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityBMW"),
+						PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
+				)
+			} else if (IDriveConnectionListener.brand?.toLowerCase() == "mini") {
+				packageManager.setComponentEnabledSetting(
+						ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityMINI"),
+						PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
+				)
+			}
+		}
+	}
+
+	fun stopNavigationListener() {
+		packageManager.setComponentEnabledSetting(
+				ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityBMW"),
+				PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP
+		)
+		packageManager.setComponentEnabledSetting(
+				ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityMINI"),
+				PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP
+		)
+	}
+
 	private fun stopCarApps() {
 		stopCarCapabilities()
 		stopNotifications()
 		stopMaps()
 		stopMusic()
 		stopAssistant()
+		stopNavigationListener()
 		stopServiceNotification()
 	}
 
