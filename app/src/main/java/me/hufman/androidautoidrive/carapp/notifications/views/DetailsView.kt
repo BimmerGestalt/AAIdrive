@@ -4,6 +4,9 @@ import android.util.Log
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.notifications.*
+import me.hufman.androidautoidrive.notifications.CarNotification
+import me.hufman.androidautoidrive.notifications.CarNotificationController
+import me.hufman.androidautoidrive.notifications.NotificationsState
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.ArrayList
 import kotlin.math.min

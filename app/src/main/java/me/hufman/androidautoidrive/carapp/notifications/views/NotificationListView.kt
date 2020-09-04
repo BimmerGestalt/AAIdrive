@@ -6,9 +6,9 @@ import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
-import me.hufman.androidautoidrive.carapp.notifications.CarNotification
+import me.hufman.androidautoidrive.notifications.CarNotification
 import me.hufman.androidautoidrive.carapp.notifications.NotificationSettings
-import me.hufman.androidautoidrive.carapp.notifications.NotificationsState
+import me.hufman.androidautoidrive.notifications.NotificationsState
 import me.hufman.androidautoidrive.carapp.notifications.TAG
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*

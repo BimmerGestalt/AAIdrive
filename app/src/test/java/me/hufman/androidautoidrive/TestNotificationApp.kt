@@ -16,6 +16,10 @@ import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
 import me.hufman.androidautoidrive.carapp.notifications.*
 import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
+import me.hufman.androidautoidrive.notifications.CarNotification
+import me.hufman.androidautoidrive.notifications.CarNotificationController
+import me.hufman.androidautoidrive.notifications.NotificationsState
+import me.hufman.androidautoidrive.notifications.ParseNotification
 
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources

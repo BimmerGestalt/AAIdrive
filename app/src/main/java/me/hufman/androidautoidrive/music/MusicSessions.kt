@@ -11,7 +11,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.Observable
-import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
+import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.music.controllers.GenericMusicAppController
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import java.util.*
