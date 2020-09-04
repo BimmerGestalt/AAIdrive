@@ -58,7 +58,7 @@
         <LinearLayout
             android:id="@+id/paneSMSPermission"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
@@ -73,7 +73,41 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/lbl_grant" />
+
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/paneDictionaryLanguage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="24dp">
+
+            <TextView
+                android:id="@+id/txtDictionaryLanguage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_languageChoice" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ProgressBar
+                android:id="@+id/prgDownloading"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="24dp"
+                android:maxHeight="24dp"
+                android:minWidth="24dp"
+                android:minHeight="24dp"
+                android:visibility="invisible" />
+
+            <Spinner
+                android:id="@+id/spnLanguageChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

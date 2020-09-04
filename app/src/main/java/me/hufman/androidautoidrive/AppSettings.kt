@@ -17,6 +17,7 @@ object AppSettings {
 		ENABLED_NOTIFICATIONS("Enabled_Notifications", "false", "Show phone notifications in the car"),
 		ENABLED_NOTIFICATIONS_POPUP("Enabled_Notifications_Popup", "true", "Show notification popups in the car"),
 		ENABLED_NOTIFICATIONS_POPUP_PASSENGER("Enabled_Notifications_Popup_Passenger", "false", "Show notification popups in the car when a passenger is seated"),
+		INPUT_COMPLETION_LANGUAGE("Input_Completion_Language", "", "The dictionary language to use for input word completion"),
 		ENABLED_GMAPS("Enabled_GMaps", "false", "Show Google Maps in the car"),
 		MAP_WIDESCREEN("Map_Widescreen", "false", "Show Map in widescreen"),
 		GMAPS_STYLE("GMaps_Style", "auto", "GMaps style"),
