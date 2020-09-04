@@ -47,9 +47,12 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 					title = track.name, album = track.album.name, artist = track.artist.name, coverArt = coverArt)
 		}
 
-		//TODO
-		// new method with
-		// artist = listItem?.subtitle, coverArtUri = listItem?.imageUri?.raw, mediaId = listItem?.uri
+		fun MusicMetadata.Companion.fromSpotifyQueueListItem(listItem: ListItem): MusicMetadata {
+			return MusicMetadata(mediaId = listItem.uri, queueId = listItem.uri.hashCode().toLong(),
+					title = listItem.title, artist = listItem.subtitle,
+					playable = listItem.playable, browseable = listItem.hasChildren, coverArtUri = listItem.imageUri?.raw)
+		}
+
 		fun MusicMetadata.Companion.fromSpotify(listItem: ListItem, coverArt: Bitmap? = null): MusicMetadata {
 			// browse result
 			return MusicMetadata(mediaId = listItem.uri, queueId = listItem.uri.hashCode().toLong(),
@@ -201,12 +204,27 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 					val listItem = ListItem(uri, uri, null, playerContext.title, playerContext.subtitle, false, true)
 					loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
 						queueItems = it
+						buildQueueMetadata(playerContext.title, playerContext.subtitle)
 						callback?.invoke(this)
 					}
 				}
 			}
 
 			callback?.invoke(this)
+		}
+	}
+
+	private fun buildQueueMetadata(title: String?, subtitle: String?) {
+		//first build QueueMetadata without cover art image so that is readily available
+		//queueMetadata = QueueMetadata(title, subtitle, queueItems)
+
+		//now retrieve playlist cover art and rebuild QueueMetadata with that cover art
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
+		remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
+			remote.imagesApi.getImage(recentlyPlayed?.items?.get(0)?.imageUri, Image.Dimension.MEDIUM).setResultCallback { coverArt ->
+				queueMetadata = QueueMetadata(title, subtitle, queueItems, coverArt)
+			}
 		}
 	}
 
@@ -231,19 +249,11 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		remote.contentApi.getChildrenOfItem(parentItem, 200, destination.size).setResultCallback { items ->
 			if (items != null && stillValid()) {    // this is still a valid request
 				destination.addAll(items.items.filterNotNull().map { listItem: ListItem ->
-					MusicMetadata.fromSpotify(listItem)
+					MusicMetadata.fromSpotifyQueueListItem(listItem)
 				})
 				if (destination.size < items.total && items.items.isNotEmpty()) {   // more tracks to load
 					loadPaginatedItems(destination, parentItem, stillValid, onComplete)
 				} else {
-					queueMetadata = QueueMetadata(parentItem.title, queueItems)
-					val recentlyPlayedUri = "com.spotify.recently-played"
-					val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
-					remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
-						remote.imagesApi.getImage(recentlyPlayed?.items?.get(0)?.imageUri, Image.Dimension.MEDIUM).setResultCallback { coverArt ->
-							queueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, queueItems, coverArt)
-						}
-					}
 					onComplete(destination)
 				}
 			}

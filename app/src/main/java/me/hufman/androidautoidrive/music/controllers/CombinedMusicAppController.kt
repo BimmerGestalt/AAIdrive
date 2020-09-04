@@ -235,16 +235,6 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 		return actions
 	}
 
-	//test
-	override fun getCoverArtByMediaId(): HashMap<String?, ByteArray?> {
-		return getQueueController()?.getCoverArtByMediaId()!!
-	}
-	//
-
-//	override fun getCoverArtByMediaId(): HashMap<String?, Bitmap?> {
-//		return getQueueController()?.getCoverArtByMediaId()!!
-//	}
-
 	override fun toggleShuffle() {
 		withController {
 			if (!it.isSupportedAction(MusicAction.SET_SHUFFLE_MODE)) {
