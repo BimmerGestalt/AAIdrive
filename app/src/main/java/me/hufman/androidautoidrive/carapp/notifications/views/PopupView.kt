@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive.carapp.notifications.views
 
 import android.util.Log
 import me.hufman.androidautoidrive.PhoneAppResources
-import me.hufman.androidautoidrive.carapp.notifications.CarNotification
+import me.hufman.androidautoidrive.notifications.CarNotification
 import me.hufman.androidautoidrive.carapp.notifications.PopupHistory
 import me.hufman.androidautoidrive.carapp.notifications.TAG
 import me.hufman.idriveconnectionkit.rhmi.*

@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.carapp.notifications
+package me.hufman.androidautoidrive.notifications
 
 import android.app.Notification
 import android.app.PendingIntent
@@ -12,10 +12,10 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import me.hufman.androidautoidrive.UnicodeCleaner
-import me.hufman.androidautoidrive.carapp.notifications.ParseNotification.dumpNotification
-import me.hufman.androidautoidrive.carapp.notifications.ParseNotification.shouldPopupNotification
-import me.hufman.androidautoidrive.carapp.notifications.ParseNotification.shouldShowNotification
-import me.hufman.androidautoidrive.carapp.notifications.ParseNotification.summarizeNotification
+import me.hufman.androidautoidrive.notifications.ParseNotification.dumpNotification
+import me.hufman.androidautoidrive.notifications.ParseNotification.shouldPopupNotification
+import me.hufman.androidautoidrive.notifications.ParseNotification.shouldShowNotification
+import me.hufman.androidautoidrive.notifications.ParseNotification.summarizeNotification
 import me.hufman.androidautoidrive.phoneui.UIState
 import me.hufman.androidautoidrive.phoneui.MainActivity
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.EXTRA_NOTIFICATION

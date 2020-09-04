@@ -964,7 +964,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".carapp.notifications.NotificationListenerServiceImpl"
+        <service android:name=".notifications.NotificationListenerServiceImpl"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>

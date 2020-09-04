@@ -1,9 +1,10 @@
-package me.hufman.androidautoidrive.carapp.notifications
+package me.hufman.androidautoidrive.notifications
 
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl.Companion.INTENT_INTERACTION
+import me.hufman.androidautoidrive.carapp.notifications.TAG
+import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl.Companion.INTENT_INTERACTION
 
 
 interface CarNotificationController {

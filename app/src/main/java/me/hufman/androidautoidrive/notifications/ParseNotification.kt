@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.carapp.notifications
+package me.hufman.androidautoidrive.notifications
 
 import android.app.Notification
 import android.graphics.Bitmap

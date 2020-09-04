@@ -161,6 +161,12 @@ class TestNavTrigger {
 
 		val daddr = "http://maps.google.com/maps?saddr=1970+Naglee+Ave+San+Jose,+CA+95126&daddr=1970%20Naglee%20Ave%20San%20Jose,%20CA%2095126"
 		assertEquals(correctAnswer, parser.parseUrl(daddr))
+
+		val pathDirQuery = "https://www.google.com/maps/dir//1970%20Naglee%20Ave%20San%20Jose,%20CA%2095126"
+		assertEquals(correctAnswer, parser.parseUrl(pathDirQuery))
+
+		val pathSearchQuery = "https://www.google.com/maps/search/1970%20Naglee%20Ave%20San%20Jose,%20CA%2095126"
+		assertEquals(correctAnswer, parser.parseUrl(pathSearchQuery))
 	}
 
 	@Test

@@ -1,5 +1,7 @@
 package me.hufman.androidautoidrive.carapp.notifications
 
+import me.hufman.androidautoidrive.notifications.CarNotification
+import me.hufman.androidautoidrive.notifications.CarNotificationController
 
 interface ReplyController {
 	fun getSuggestions(draft: String): List<CharSequence>
