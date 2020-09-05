@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.carapp.notifications.views
 import android.util.Log
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.carapp.TextInputState
 import me.hufman.androidautoidrive.carapp.notifications.*
 import me.hufman.androidautoidrive.notifications.CarNotification
 import me.hufman.androidautoidrive.notifications.CarNotificationController
@@ -197,8 +198,8 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 					if (action.supportsReply ) {
 						// show input to reply
 						button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputView.id
-						val replyController = ReplyControllerNotification(notification, action, controller)
-						ReplyView(listViewId, inputView, replyController)
+						val replyController = ReplyInputController(notification, action, controller)
+						TextInputState(listViewId, inputView, replyController)
 					} else {
 						// trigger the custom action
 						controller.action(notification, action)
