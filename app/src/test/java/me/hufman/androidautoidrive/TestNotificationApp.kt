@@ -83,7 +83,7 @@ class TestNotificationApp {
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, mock(), appSettings)
 
 		// test entry button
 		run {
@@ -326,7 +326,7 @@ class TestNotificationApp {
 	fun testPopupNewNotification() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, mock(), appSettings)
 
 		val bundle = createNotificationObject("Title", "FirstLine\nText")
 
@@ -351,7 +351,7 @@ class TestNotificationApp {
 	fun testPopupExistingNotification() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, mock(), appSettings)
 
 		val bundle = createNotificationObject("Title", "Text")
 
@@ -376,7 +376,7 @@ class TestNotificationApp {
 	fun testDismissPopup() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, mock(), appSettings)
 
 		val bundle = createNotificationObject("Title", "Text")
 
@@ -405,7 +405,7 @@ class TestNotificationApp {
 	fun testPopupNotificationHistoryClearing() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, mock(), appSettings)
 
 		val bundle = createNotificationObject("Title", "Text")
 
@@ -440,7 +440,7 @@ class TestNotificationApp {
 	fun testViewEmptyNotifications() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, mock(), appSettings)
 
 		NotificationsState.notifications.clear()
 		app.viewList.redrawNotificationList()
@@ -458,7 +458,7 @@ class TestNotificationApp {
 	fun testViewNotifications() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, mock(), appSettings)
 		app.viewList.initWidgets(app.viewDetails)
 
 		val item1 = createNotificationObject("Title", "Text")
@@ -533,7 +533,7 @@ class TestNotificationApp {
 	fun testClickEntryButton() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, mock(), appSettings)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
 		val statusbarNotification = createNotificationObject("Title", "Text")
@@ -566,7 +566,7 @@ class TestNotificationApp {
 	fun testClickNotification() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, mock(), appSettings)
 
 		val notification = createNotificationObject("Title", "Text",false)
 		val notification2 = createNotificationObject("Title2", "Text2\nTest3",true)
@@ -653,7 +653,7 @@ class TestNotificationApp {
 	fun testViewReplyNotification() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, mock(), appSettings)
 
 		val actions = listOf(
 			CarNotification.Action("Reply", true, listOf("Yes", "No")),
@@ -714,7 +714,7 @@ class TestNotificationApp {
 	fun testClickMenu() {
 		val mockServer = spy(MockBMWRemotingServer())
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, mock(), appSettings)
 		app.viewList.initWidgets(app.viewDetails)
 		whenever(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP]) doReturn "true"
 		whenever(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER]) doReturn "false"
@@ -763,7 +763,7 @@ class TestNotificationApp {
 	fun testViewEmptyNotification() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, appSettings)
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, mock(), appSettings)
 
 		NotificationsState.notifications.clear()
 		val notification = createNotificationObject("Title", "Text", false)

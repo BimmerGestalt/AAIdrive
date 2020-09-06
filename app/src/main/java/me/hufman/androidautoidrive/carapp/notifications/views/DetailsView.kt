@@ -12,7 +12,7 @@ import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.ArrayList
 import kotlin.math.min
 
-class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController) {
+class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val suggestionStrategy: SuggestionStrategy) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.ToolbarState &&
@@ -198,7 +198,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 					if (action.supportsReply ) {
 						// show input to reply
 						button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputView.id
-						val replyController = ReplyInputController(notification, action, controller)
+						val replyController = ReplyInputController(notification, action, controller, suggestionStrategy)
 						TextInputState(listViewId, inputView, replyController)
 					} else {
 						// trigger the custom action

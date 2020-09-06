@@ -12,10 +12,13 @@ import android.util.Log
 import com.bmwgroup.connected.car.app.BrandType
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
+import me.hufman.androidautoidrive.carapp.notifications.CompletelySuggestionStrategy
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
+import me.hufman.androidautoidrive.carapp.notifications.WordListPersistence
 import me.hufman.androidautoidrive.phoneui.*
+import me.hufman.completelywordlist.CompletelyWordList
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
@@ -272,17 +275,29 @@ class MainService: Service() {
 						if (handler == null) {
 							Log.e(TAG, "CarThread Handler is null?")
 						}
+						val autocomplete = CompletelyWordList.createEngine()
+						val suggestionStrategy = CompletelySuggestionStrategy(autocomplete)
 						carappNotifications = PhoneNotifications(securityAccess,
 								CarAppAssetManager(this, "basecoreOnlineServices"),
 								PhoneAppResourcesAndroid(this),
 								GraphicsHelpersAndroid(),
 								CarNotificationControllerIntent(this),
+								suggestionStrategy,
 								MutableAppSettings(this, handler))
 						if (handler != null) {
 							carappNotifications?.onCreate(this, handler)
 						}
 						// request an initial draw
 						sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
+
+						// load up the dictionary, specifically after an initial draw
+						handler?.postDelayed({
+							val persistence = WordListPersistence(this@MainService)
+							val language = AppSettings[AppSettings.KEYS.INPUT_COMPLETION_LANGUAGE]
+							if (persistence.isLanguageDownloaded(language)) {
+								persistence.load(autocomplete, language)
+							}
+						}, 1000)
 					}
 					threadNotifications?.start()
 				}

@@ -32,7 +32,7 @@ import java.util.*
 
 const val TAG = "PhoneNotifications"
 
-class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val appSettings: MutableAppSettings) {
+class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val suggestionStrategy: SuggestionStrategy, val appSettings: MutableAppSettings) {
 	companion object {
 		const val INTENT_UPDATE_NOTIFICATIONS = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.UPDATE_NOTIFICATIONS"
 		const val INTENT_NEW_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.NEW_NOTIFICATION"
@@ -83,7 +83,7 @@ class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAp
 		// figure out which views to use
 		viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources, PopupHistory())
 		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings)
-		viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller)
+		viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller, suggestionStrategy)
 
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first{
 			it.componentsList.filterIsInstance<RHMIComponent.Input>().isNotEmpty()
