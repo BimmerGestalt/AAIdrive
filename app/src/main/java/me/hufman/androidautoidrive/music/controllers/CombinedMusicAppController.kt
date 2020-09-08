@@ -197,7 +197,11 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 		// update the queueId to be used by the queue controller
 		val queueController = getQueueController()
 		if (queueController != null) {
-			metadata = metadata?.copy(queueId = queueController.getMetadata()?.queueId)
+			//metadata = metadata?.copy(queueId = queueController.getMetadata()?.queueId)
+
+			metadata = MusicMetadata(mediaId = metadata?.mediaId, queueId = queueController.getMetadata()?.queueId, playable = metadata!!.playable, browseable = metadata.browseable,
+					duration = metadata.duration, coverArt = metadata.coverArt, coverArtUri = metadata.coverArtUri, icon = metadata.icon, artist = metadata.artist, album = metadata.album,
+					title = metadata.title, subtitle = metadata.subtitle, trackCount = metadata.trackCount, trackNumber = metadata.trackNumber)
 		}
 		return metadata
 	}

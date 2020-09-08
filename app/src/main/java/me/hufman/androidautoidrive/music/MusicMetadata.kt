@@ -10,21 +10,21 @@ import android.util.Log
 import me.hufman.androidautoidrive.dumpToString
 
 private const val TAG = "MusicMetadata"
-data class MusicMetadata(val mediaId: String? = null,
-                        val queueId: Long? = null,
-                         val playable: Boolean = false,
-                         val browseable: Boolean = false,
-                    val duration: Long? = null,
-                    val coverArt: Bitmap? = null,
-                    val coverArtUri: String? = null,
-                    val icon: Bitmap? = null,
-                    val artist: String? = null,
-                    val album: String? = null,
-                    val title: String? = null,
-                    val subtitle: String? = null,
-                    val trackNumber: Long? = null,
-                    val trackCount: Long? = null,
-                         val extras: Bundle? = null
+open class MusicMetadata(val mediaId: String? = null,
+						 val queueId: Long? = null,
+						 val playable: Boolean = false,
+						 val browseable: Boolean = false,
+						 val duration: Long? = null,
+						 open val coverArt: Bitmap? = null,
+						 val coverArtUri: String? = null,
+						 val icon: Bitmap? = null,
+						 val artist: String? = null,
+						 val album: String? = null,
+						 val title: String? = null,
+						 val subtitle: String? = null,
+						 val trackNumber: Long? = null,
+						 val trackCount: Long? = null,
+						 val extras: Bundle? = null
                     ) {
 	companion object {
 		var lastLoggedMetadata: MediaMetadataCompat? = null

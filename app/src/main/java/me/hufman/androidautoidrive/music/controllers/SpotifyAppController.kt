@@ -15,15 +15,14 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.hufman.androidautoidrive.GraphicsHelpersAndroid
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
-import me.hufman.androidautoidrive.music.controllers.SpotifyAppController.Companion.toListItem
 import java.lang.Exception
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
 
 
@@ -50,7 +49,8 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		fun MusicMetadata.Companion.fromSpotifyQueueListItem(listItem: ListItem): MusicMetadata {
 			return MusicMetadata(mediaId = listItem.uri, queueId = listItem.uri.hashCode().toLong(),
 					title = listItem.title, artist = listItem.subtitle,
-					playable = listItem.playable, browseable = listItem.hasChildren, coverArtUri = listItem.imageUri?.raw)
+					playable = listItem.playable, browseable = listItem.hasChildren,
+					coverArtUri = listItem.imageUri?.raw)
 		}
 
 		fun MusicMetadata.Companion.fromSpotify(listItem: ListItem, coverArt: Bitmap? = null): MusicMetadata {
@@ -214,16 +214,46 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		}
 	}
 
-	private fun buildQueueMetadata(title: String?, subtitle: String?) {
-		//first build QueueMetadata without cover art image so that is readily available
-		//queueMetadata = QueueMetadata(title, subtitle, queueItems)
+	//test
+	val coverArtCache = LruCache<ImageUri, Bitmap>(50)
 
-		//now retrieve playlist cover art and rebuild QueueMetadata with that cover art
+	fun getCoverArt(imageUri: ImageUri): Bitmap? {
+		//check if image is in LRU cache
+		val coverArt = coverArtCache.get(imageUri)
+		if (coverArt != null) {
+			return coverArt
+		}
+		//need to make api call to get image
+		else {
+			launch {
+				remote.imagesApi.getImage(imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArtResponse ->
+					coverArtCache.put(imageUri, coverArtResponse)
+				}
+			}
+		}
+		return null
+	}
+
+	private fun fromMusicMetadataToSpotifyMusicMetadata(musicMetadataList: List<MusicMetadata>): List<SpotifyMusicMetadata> {
+		val spotifyMusicMetadataList = ArrayList<SpotifyMusicMetadata>()
+		musicMetadataList.forEach {
+			val spotifyMusicMetadata = SpotifyMusicMetadata(this, s_mediaId = it.mediaId, s_queueId = it.queueId, s_title = it.title, s_artist = it.artist, s_coverArtUri = it.coverArtUri)
+			spotifyMusicMetadataList.add(spotifyMusicMetadata)
+		}
+		return spotifyMusicMetadataList
+	}
+	//
+
+	private fun buildQueueMetadata(title: String?, subtitle: String?) {
 		val recentlyPlayedUri = "com.spotify.recently-played"
 		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
 		remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
 			remote.imagesApi.getImage(recentlyPlayed?.items?.get(0)?.imageUri, Image.Dimension.MEDIUM).setResultCallback { coverArt ->
-				queueMetadata = QueueMetadata(title, subtitle, queueItems, coverArt)
+				//queueMetadata = QueueMetadata(title, subtitle, queueItems, coverArt)
+
+				//test
+				queueMetadata = QueueMetadata(title,subtitle,fromMusicMetadataToSpotifyMusicMetadata(queueItems),coverArt)
+				//
 			}
 		}
 	}
@@ -234,7 +264,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	 * and then passing it to onComplete at the end
 	 */
 	private fun loadPaginatedItems(parentItem: ListItem,
-	                               stillValid: () -> Boolean, onComplete: (List<MusicMetadata>) -> Unit) {
+								   stillValid: () -> Boolean, onComplete: (List<MusicMetadata>) -> Unit) {
 		loadPaginatedItems(LinkedList(), parentItem, stillValid, onComplete)
 	}
 
@@ -245,7 +275,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	 * and passing the destination list to onComplete at the end
 	 */
 	private fun loadPaginatedItems(destination: MutableList<MusicMetadata>, parentItem: ListItem,
-	                               stillValid: () -> Boolean, onComplete: (List<MusicMetadata>) -> Unit) {
+								   stillValid: () -> Boolean, onComplete: (List<MusicMetadata>) -> Unit) {
 		remote.contentApi.getChildrenOfItem(parentItem, 200, destination.size).setResultCallback { items ->
 			if (items != null && stillValid()) {    // this is still a valid request
 				destination.addAll(items.items.filterNotNull().map { listItem: ListItem ->
@@ -294,7 +324,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		// so, we have to iterate through the queue to find the user's selected queueId
 		val queueUri = this.queueUri
 		if (song.queueId != null) {
-			queueItems?.forEachIndexed { index, it ->
+			queueItems.forEachIndexed { index, it ->
 				if (it.queueId == song.queueId) {
 					remote.playerApi.skipToIndex(queueUri, index)
 				}

@@ -20,6 +20,8 @@ import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
+import java.util.concurrent.Semaphore
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
 
@@ -81,6 +83,7 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 		}
 
 		//reason why app doesn't start with the queue already loaded is due to async nature of getting the queue and it not being ready when getQueue is called
+		//need to have a redraw method or something that periodically checks to see if the musicController.getQueue is not empty and if it is then display everything otherwise keep waiting
 		loaderJob = launch {
 			val result = musicController.getQueue()?.songs
 			this@MusicQueuePageFragment.contents.clear()
@@ -112,7 +115,6 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 	}
 
 	inner class QueueAdapter(val context: Context, val contents: ArrayList<MusicMetadata>, val cachedCoverArtImages: LruCache<String?,Bitmap?>, val clickListener: (MusicMetadata?) -> Unit): RecyclerView.Adapter<QueueAdapter.ViewHolder>() {
-
 		inner class ViewHolder(val view: View, val coverArtImageView: ImageView): RecyclerView.ViewHolder(view), View.OnClickListener {
 			init {
 				view.setOnClickListener(this)
@@ -134,20 +136,57 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 			return ViewHolder(layout, layout.findViewById(R.id.imgBrowseType))
 		}
 
+//		inner class Test {
+//			private val semaphore = Semaphore(1)
+//			var counter = 0
+//				private set
+//
+//			fun retrieveCoverArt(coverArtUri: String, mediaId: String, holder: ViewHolder) {
+//				semaphore.acquire()
+//				counter++
+//				launch {
+//					val coverArt = musicController.getSongCoverArtAsync(ImageUri(coverArtUri)).await()
+//					cachedCoverArtImages.put(mediaId, coverArt)
+//					holder.coverArtImageView.setImageBitmap(coverArt)
+//					//delay(TimeUnit.SECONDS.toSeconds(10))
+//					semaphore.release()
+//				}
+//			}
+//
+//			fun t() {
+//				s.acquire()
+//				launch {
+//					delay(TimeUnit.SECONDS.toSeconds(5))
+//					s.release()
+//				}
+//			}
+//		}
+//
+//		val test = Test()
+//
+//		val s = Semaphore(1)
+
 		override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 			val item = contents.getOrNull(position) ?: return
 
-			val cachedCoverArtImage = cachedCoverArtImages[item.mediaId]
-			holder.coverArtImageView.setImageBitmap(cachedCoverArtImage)
+//			val cachedCoverArtImage = cachedCoverArtImages[item.mediaId]
+//			holder.coverArtImageView.setImageBitmap(cachedCoverArtImage)
+//
+//			if(cachedCoverArtImage == null) {
+//				launch {
+//					val coverArt = musicController.getSongCoverArtAsync(ImageUri(item.coverArtUri)).await()
+//					cachedCoverArtImages.put(item.mediaId, coverArt)
+//					holder.coverArtImageView.setImageBitmap(coverArt)
+//				}
+			holder.coverArtImageView.setImageBitmap(item.coverArt)
 
-			if(cachedCoverArtImage == null) {
-				launch {
-					val coverArt = musicController.getSongCoverArtAsync(ImageUri(item.coverArtUri))
-							.await()
-					cachedCoverArtImages.put(item.mediaId, coverArt)
-					holder.coverArtImageView.setImageBitmap(coverArt)
-				}
-			}
+				//test.retrieveCoverArt(item.coverArtUri!!, item.mediaId!!, holder)
+
+//				launch {
+//					//test.t()
+//					//delay(15000)
+//				}
+//			}
 
 			holder.view.findViewById<TextView>(R.id.txtBrowseEntryTitle).setText(item.title)
 			holder.view.findViewById<TextView>(R.id.txtBrowseEntrySubtitle).setText(item.artist)

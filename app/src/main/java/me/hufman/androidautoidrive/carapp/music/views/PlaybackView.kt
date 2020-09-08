@@ -201,8 +201,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		albumModel.value = UnicodeCleaner.clean(song?.album ?: "")
 		trackModel.value = UnicodeCleaner.clean(song?.title ?: "")
 		if (song?.coverArt != null) {
-			albumArtBigModel.value = graphicsHelpers.compress(song.coverArt, 320, 320, quality = 65)
-			albumArtSmallModel.value = graphicsHelpers.compress(song.coverArt, 200, 200, quality = 65)
+			albumArtBigModel.value = graphicsHelpers.compress(song.coverArt!!, 320, 320, quality = 65)
+			albumArtSmallModel.value = graphicsHelpers.compress(song.coverArt!!, 200, 200, quality = 65)
 			albumArtBigComponent.setVisible(true)
 			albumArtSmallComponent.setVisible(true)
 		} else if (song?.coverArtUri != null) {
