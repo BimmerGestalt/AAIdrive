@@ -22,9 +22,7 @@ import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
 import java.lang.Exception
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
-
 
 class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): MusicAppController, CoroutineScope {
 	override val coroutineContext: CoroutineContext
@@ -153,6 +151,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	var queueUri: String? = null
 	var queueItems: List<MusicMetadata> = LinkedList()
 	var queueMetadata: QueueMetadata? = null
+	val coverArtCache = LruCache<ImageUri, Bitmap>(50)
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -214,9 +213,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		}
 	}
 
-	//test
-	val coverArtCache = LruCache<ImageUri, Bitmap>(50)
-
+	//probably should wrap the cache calls in synchronized blocks
 	fun getCoverArt(imageUri: ImageUri): Bitmap? {
 		//check if image is in LRU cache
 		val coverArt = coverArtCache.get(imageUri)
@@ -234,26 +231,12 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		return null
 	}
 
-	private fun fromMusicMetadataToSpotifyMusicMetadata(musicMetadataList: List<MusicMetadata>): List<SpotifyMusicMetadata> {
-		val spotifyMusicMetadataList = ArrayList<SpotifyMusicMetadata>()
-		musicMetadataList.forEach {
-			val spotifyMusicMetadata = SpotifyMusicMetadata(this, s_mediaId = it.mediaId, s_queueId = it.queueId, s_title = it.title, s_artist = it.artist, s_coverArtUri = it.coverArtUri)
-			spotifyMusicMetadataList.add(spotifyMusicMetadata)
-		}
-		return spotifyMusicMetadataList
-	}
-	//
-
 	private fun buildQueueMetadata(title: String?, subtitle: String?) {
 		val recentlyPlayedUri = "com.spotify.recently-played"
 		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
 		remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
 			remote.imagesApi.getImage(recentlyPlayed?.items?.get(0)?.imageUri, Image.Dimension.MEDIUM).setResultCallback { coverArt ->
-				//queueMetadata = QueueMetadata(title, subtitle, queueItems, coverArt)
-
-				//test
-				queueMetadata = QueueMetadata(title,subtitle,fromMusicMetadataToSpotifyMusicMetadata(queueItems),coverArt)
-				//
+				queueMetadata = QueueMetadata(title,subtitle,SpotifyMusicMetadata.createSpotifyMusicMetadataList(this, queueItems),coverArt)
 			}
 		}
 	}
@@ -348,14 +331,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	override fun getQueue(): QueueMetadata? {
 		// unreliable per https://github.com/spotify/android-sdk/issues/10
 		return queueMetadata
-	}
-
-	override suspend fun getSongQueueCoverArtImage(imageUri: ImageUri): Bitmap? {
-		val deferred = CompletableDeferred<Bitmap?>()
-		remote.imagesApi.getImage(imageUri,Image.Dimension.THUMBNAIL).setResultCallback { coverArtImg ->
-			deferred.complete(coverArtImg)
-		}
-		return deferred.await()
 	}
 
 	override fun getMetadata(): MusicMetadata? {

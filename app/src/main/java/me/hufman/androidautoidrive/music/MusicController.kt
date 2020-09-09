@@ -252,18 +252,6 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		return results
 	}
 
-
-	fun getSongCoverArtAsync(imageUri: ImageUri): Deferred<Bitmap?> {
-		val result: CompletableDeferred<Bitmap?> = CompletableDeferred()
-		withController { controller ->
-			//getCoverArtJob?.cancel()
-			launch {
-				result.complete(controller.getSongQueueCoverArtImage(imageUri))
-			}
-		}
-		return result
-	}
-
 	/* Current state */
 	/** Gets the current queue */
 	fun getQueue(): QueueMetadata? {

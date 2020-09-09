@@ -157,8 +157,9 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 						playbackView.show()
 					}
 				}
+				//gained focus
 				if (componentId == enqueuedView.state.id &&
-						eventId == 1 &&     //Focus
+						eventId == 1 &&
 						args?.get(4.toByte()) as? Boolean == true
 				) {
 					enqueuedViewVisible = true
@@ -170,9 +171,6 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 						args?.get(4.toByte()) as? Boolean == false)
 				{
 					enqueuedViewVisible = false
-
-					//kill any threads still running
-					enqueuedView.killLoaderJobs()
 				}
 				if (componentId == customActionsView.state.id &&
 						eventId == 1 &&

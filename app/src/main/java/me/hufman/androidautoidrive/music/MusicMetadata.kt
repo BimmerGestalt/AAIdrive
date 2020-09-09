@@ -82,6 +82,12 @@ open class MusicMetadata(val mediaId: String? = null,
 					extras = desc.extras
 			)
 		}
+
+		fun copy(other: MusicMetadata): MusicMetadata {
+			return MusicMetadata(mediaId = other.mediaId, queueId = other.queueId, playable = other.playable, browseable = other.browseable,
+					duration = other.duration, coverArt = other.coverArt, coverArtUri = other.coverArtUri, icon = other.icon, artist = other.artist, album = other.album,
+					title = other.title, subtitle = other.subtitle, trackCount = other.trackCount, trackNumber = other.trackNumber)
+		}
 	}
 
 	override fun equals(other: Any?): Boolean {

@@ -1,8 +1,5 @@
 package me.hufman.androidautoidrive.music.controllers
 
-import android.graphics.Bitmap
-import android.os.DeadObjectException
-import com.spotify.protocol.types.ImageUri
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.music.*
 
@@ -47,8 +44,6 @@ interface MusicAppController {
 	suspend fun browse(directory: MusicMetadata?): List<MusicMetadata>
 
 	suspend fun search(query: String): List<MusicMetadata>?
-
-	suspend fun getSongQueueCoverArtImage(imageUri: ImageUri): Bitmap?
 
 	/**
 	 * Subscribes to receive notice of new metadata or other status

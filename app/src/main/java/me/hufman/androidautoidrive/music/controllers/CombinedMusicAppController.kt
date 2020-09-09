@@ -1,9 +1,7 @@
 package me.hufman.androidautoidrive.music.controllers
 
-import android.graphics.Bitmap
 import android.os.DeadObjectException
 import android.util.Log
-import com.spotify.protocol.types.ImageUri
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.Observable
@@ -196,10 +194,8 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 		// the first working controller may not have a queue, so
 		// update the queueId to be used by the queue controller
 		val queueController = getQueueController()
-		if (queueController != null) {
-			//metadata = metadata?.copy(queueId = queueController.getMetadata()?.queueId)
-
-			metadata = MusicMetadata(mediaId = metadata?.mediaId, queueId = queueController.getMetadata()?.queueId, playable = metadata!!.playable, browseable = metadata.browseable,
+		if (queueController != null && metadata != null) {
+			metadata = MusicMetadata(mediaId = metadata.mediaId, queueId = queueController.getMetadata()?.queueId, playable = metadata.playable, browseable = metadata.browseable,
 					duration = metadata.duration, coverArt = metadata.coverArt, coverArtUri = metadata.coverArtUri, icon = metadata.icon, artist = metadata.artist, album = metadata.album,
 					title = metadata.title, subtitle = metadata.subtitle, trackCount = metadata.trackCount, trackNumber = metadata.trackNumber)
 		}
@@ -301,15 +297,6 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 			// make the Play and Browse commands dig through the search results
 			this@CombinedMusicAppController.browseableController = controller
 			return results
-		}
-		return null
-	}
-
-	override suspend fun getSongQueueCoverArtImage(imageUri: ImageUri): Bitmap? {
-		waitforConnect()
-		for(pendingController in controllers) {
-			val controller = pendingController.value ?: continue
-			return controller.getSongQueueCoverArtImage(imageUri) ?: continue
 		}
 		return null
 	}

@@ -1,7 +1,5 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
-import android.util.LruCache
-import com.spotify.protocol.types.ImageUri
 import de.bmw.idrive.BMWRemoting
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.GraphicsHelpers
@@ -11,6 +9,7 @@ import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.QueueMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
 import kotlin.coroutines.CoroutineContext
+import kotlin.math.max
 
 class EnqueuedView(val state: RHMIState, val musicController: MusicController, val graphicsHelpers: GraphicsHelpers): CoroutineScope {
 	override val coroutineContext: CoroutineContext
@@ -34,22 +33,16 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	var currentSong: MusicMetadata? = null
 	val songsList = ArrayList<MusicMetadata>()
 	val songsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3)
-	val coverArtCache = LruCache<String, ByteArray>(50)
-	var loaderJob: Job? = null
+	var queueMetadata: QueueMetadata? = null
+	var currentlyVisibleRows: List<MusicMetadata> = emptyList()
+	var currentVisibleRowsMusicMetadata: ArrayList<MusicMetadata> = ArrayList()
+	var currentIndex: Int = 0
 
 	var songsListAdapter = object: RHMIListAdapter<MusicMetadata>(4, songsList) {
 		override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
 			val checkmark = if (item.queueId == currentSong?.queueId) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, IMAGEID_CHECKMARK) else ""
-			//val coverArtImage = if(coverArtCache[item.mediaId] != null) coverArtCache[item.mediaId] else ""
 
-			//test
-			val coverArtRaw = item.coverArt
-			var coverArtImage: Any = ""
-			if(coverArtRaw != null) {
-				coverArtImage = graphicsHelpers.compress(coverArtRaw, 90, 90, quality = 30)
-
-			}
-			//
+			val coverArtImage = if (item.coverArt != null) graphicsHelpers.compress(item.coverArt!!, 90, 90, quality = 30) else ""
 
 			var title = item.title ?: ""
 			if(title.length > ROW_LINE_MAX_LENGTH) {
@@ -72,7 +65,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	val imageComponent: RHMIComponent.Image
 	val labelComponent0: RHMIComponent.Label
 	val labelComponent1: RHMIComponent.Label
-	val labelcomponent2: RHMIComponent.Label
+	val labelComponent2: RHMIComponent.Label
 
 	init {
 		state as RHMIState.PlainState
@@ -89,7 +82,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		//      of the listView is having an effect where all the children are fixed at the specified position and is not applying to the container itself
 		labelComponent0 = state.componentsList.filterIsInstance<RHMIComponent.Label>()[0]
 		labelComponent1 = state.componentsList.filterIsInstance<RHMIComponent.Label>()[1]
-		labelcomponent2 = state.componentsList.filterIsInstance<RHMIComponent.Label>()[2]
+		labelComponent2 = state.componentsList.filterIsInstance<RHMIComponent.Label>()[2]
 
 		songsEmptyList.addRow(arrayOf("", "", L.MUSIC_QUEUE_EMPTY))
 	}
@@ -122,11 +115,9 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 //		}
 //	}
 
-	//test
 	fun onSelectAction(index: Int) {
-		startIndex = index
+		currentIndex = index
 	}
-	//
 
 	fun showList(startIndex: Int = 0, numRows: Int = 10) {
 		if(startIndex >= 0) {
@@ -134,19 +125,10 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 	}
 
-	var currentlyVisibleRows: List<MusicMetadata> = emptyList()
-
-	var queueMetadata: QueueMetadata? = null
-
-	//test
-	var currentVisibleRowsMusicMetadata: ArrayList<MusicMetadata> = ArrayList()
-	var startIndex: Int = 0
-	//
-
 	fun show() {
 		currentSong = musicController.getMetadata()
-		songsList.clear()
 		queueMetadata = musicController.getQueue()
+		songsList.clear()
 
 		val songs = queueMetadata?.songs
 		if (songs?.isNotEmpty() == true) {
@@ -157,40 +139,13 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			listComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
 				showList(startIndex, numRows)
 
-				val endIndex = if(startIndex+numRows >= songsList.size) songsList.size-1 else startIndex+numRows
+				val endIndex = if (startIndex+numRows >= songsList.size) songsList.size-1 else startIndex+numRows
 				currentlyVisibleRows = songsListAdapter.realData.subList(startIndex,endIndex+1)
 
-				//test
 				currentVisibleRowsMusicMetadata.clear()
-				currentlyVisibleRows.forEach { metadata ->
-					currentVisibleRowsMusicMetadata.add(MusicMetadata(mediaId = metadata.mediaId, queueId = metadata.queueId, playable = metadata.playable, browseable = metadata.browseable,
-							duration = metadata.duration, coverArt = metadata.coverArt, coverArtUri = metadata.coverArtUri, icon = metadata.icon, artist = metadata.artist, album = metadata.album,
-							title = metadata.title, subtitle = metadata.subtitle, trackCount = metadata.trackCount, trackNumber = metadata.trackNumber))
+				currentlyVisibleRows.forEach { musicMetadata ->
+					currentVisibleRowsMusicMetadata.add(MusicMetadata.copy(musicMetadata))
 				}
-
-				//
-
-//				loaderJob = launch {
-//					currentlyVisibleRows.forEachIndexed { index, song ->
-//						if(coverArtCache.get(song.mediaId) == null) {
-//							launch {
-//								val coverArtRaw = musicController.getSongCoverArtAsync(ImageUri(song.coverArtUri)).await()
-//								if (coverArtRaw != null) {
-//									val coverArtImage = graphicsHelpers.compress(coverArtRaw, 90, 90, quality = 30)
-//
-//									synchronized(coverArtCache) {
-//										coverArtCache.put(song.mediaId, coverArtImage)
-//									}
-//
-//									//only redraw the visible rows
-//									if(currentlyVisibleRows.contains(song)) {
-//										showList(startIndex+index,1)
-//									}
-//								}
-//							}
-//						}
-//					}
-//				}
 			}
 
 			val selectedIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
@@ -205,7 +160,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			imageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(musicController.getQueue()?.coverArt!!, 200, 200, quality = 60)
 //			labelComponent0.getModel()?.asRaDataModel()?.value = queueMetadata.title ?: ""
 //			labelComponent1.getModel()?.asRaDataModel()?.value = queueMetadata.subtitle ?: ""
-			//labelcomponent2.getModel()?.asRaDataModel()?.value = "LINE 3"
+//			labelComponent2.getModel()?.asRaDataModel()?.value = "LINE 3"
 		}
 		else {
 			imageComponent.setVisible(false)
@@ -229,6 +184,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		//need a full redraw as the queue is either different or has been modified
 		if(musicController.getQueue()?.title != queueMetadata?.title || musicController.getQueue()?.songs?.size != queueMetadata?.songs?.size) {
 			show()
+			return
 		}
 
 		//song actually playing is different than what the current song is then update checkmark
@@ -244,15 +200,15 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			showList(playingIndex, 1)
 		}
 
-		//test
-		//TODO: cover art doesn't show up for rows 0 - 4 in every playlist
-		for ((index, value) in currentVisibleRowsMusicMetadata.withIndex()) {
-			if(value != currentlyVisibleRows[index]) {
-				showList(startIndex-3,10)
+		//redraw currently visible rows if one of them has a cover art that was retrieved
+		for ((index, metadata) in currentVisibleRowsMusicMetadata.withIndex()) {
+			if(metadata != currentlyVisibleRows[index]) {
+
+				//can only see roughly 5 rows (2 before selected index)
+				showList(max(0,currentIndex-3),4)
 				break
 			}
 		}
-		//
 	}
 
 	fun onClick(index: Int) {
@@ -260,10 +216,5 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		if (song?.queueId != null) {
 			musicController.playQueue(song)
 		}
-	}
-
-	fun killLoaderJobs() {
-		loaderJob?.cancelChildren()
-		loaderJob?.cancel()
 	}
 }
