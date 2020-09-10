@@ -14,6 +14,10 @@ object L {
 	var NOTIFICATION_OPTIONS = "Options"
 	var NOTIFICATION_POPUPS = "Notification Popups"
 	var NOTIFICATION_POPUPS_PASSENGER = "Popups with passenger"
+	var NOTIFICATION_READOUT = "Speak when viewing notifications"
+	var NOTIFICATION_READOUT_POPUP = "Speak new notifications"
+	var NOTIFICATION_READOUT_POPUP_PASSENGER = "... with a passenger"
+	var READOUT_DESCRIPTION = "This app is used for readout purposes"
 
 	var MAP_ACTION_VIEWMAP = "View Full Map"
 	var MAP_ACTION_SEARCH = "Search for Place"

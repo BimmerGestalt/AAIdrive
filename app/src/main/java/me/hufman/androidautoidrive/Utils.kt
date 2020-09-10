@@ -13,6 +13,8 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.withTimeout
 import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
 import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.util.zip.ZipInputStream
@@ -235,4 +237,18 @@ fun getComponentLocation(component: RHMIComponent, layout: Int = 0): Pair<Int, I
 		else -> -1
 	}
 	return Pair(x,y)
+}
+
+fun loadJSON(str: String?): JSONObject? {
+	if (str == null) return null
+	try {
+		return JSONObject(str)
+	} catch (e: JSONException) {
+		return null
+	}
+}
+fun JSONObject.toMap(): Map<String, Any?> {
+	return this.keys().asSequence().map {
+		it to this[it]
+	}.toMap()
 }
