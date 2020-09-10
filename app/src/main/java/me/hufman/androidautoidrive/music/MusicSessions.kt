@@ -86,16 +86,27 @@ class MusicSessions(val context: Context) {
 			}.groupBy { it.packageName }
 
 			sessionControllers.forEach {
+				val oldController = it.value.value
 				val session = sessionsByName[it.key]?.firstOrNull()
-				if (session != null && it.value.value == null) {
-					val mediaController = MediaControllerCompat(context, MediaSessionCompat.Token.fromToken(session.sessionToken))
-					it.value.value = GenericMusicAppController(context, mediaController, null)
+				if (session != null) {
+					if (oldController?.connected != true) {
+						oldController?.disconnect()
+						val mediaController = MediaControllerCompat(context, MediaSessionCompat.Token.fromToken(session.sessionToken))
+						it.value.value = GenericMusicAppController(context, mediaController, null)
+					}
 				} else {
+					oldController?.disconnect()
 					it.value.value = null
 				}
 			}
 		} catch (e: SecurityException) {
 			// user hasn't granted Notification Access yet
+			// disconnect any existing controllers
+			sessionControllers.forEach {
+				val oldController = it.value.value
+				oldController?.disconnect()
+				it.value.value = null
+			}
 		}
 	}
 
