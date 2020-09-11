@@ -43,6 +43,16 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 	val contents = ArrayList<MusicMetadata>()
 	var currentQueueMetadata: QueueMetadata? = null
 
+	fun onActive() {
+		musicController.listener = Runnable {
+			if(currentQueueMetadata?.title != musicController.getQueue()?.title || currentQueueMetadata?.songs?.size != musicController.getQueue()?.songs?.size) {
+				redrawQueueUI()
+			}
+
+			(listQueue.adapter as QueueAdapter).notifyDataSetChanged()
+		}
+	}
+
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.music_queuepage, container, false)
 	}
@@ -70,14 +80,6 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 		}
 
 		txtQueueEmpty.text = getString(R.string.MUSIC_BROWSE_LOADING)
-
-		musicController.listener = Runnable {
-			if(currentQueueMetadata?.title != musicController.getQueue()?.title || currentQueueMetadata?.songs?.size != musicController.getQueue()?.songs?.size) {
-				redrawQueueUI()
-			}
-
-			(listQueue.adapter as QueueAdapter).notifyDataSetChanged()
-		}
 	}
 
 	fun redrawQueueUI() {

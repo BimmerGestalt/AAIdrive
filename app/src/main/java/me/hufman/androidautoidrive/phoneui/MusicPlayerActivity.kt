@@ -7,12 +7,12 @@ import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_musicplayer.*
 import me.hufman.androidautoidrive.CarAppAssetManager
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.Utils
-import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
@@ -49,9 +49,30 @@ class MusicPlayerActivity: AppCompatActivity() {
 			viewModel.icons[id] = BitmapFactory.decodeByteArray(images[id], 0, images[id]?.size ?: 0)
 		}
 
+		val adapter = MusicPlayerPagerAdapter(supportFragmentManager)
+
 		// set up the paging
-		pgrMusicPlayer.adapter = MusicPlayerPagerAdapter(supportFragmentManager)
+		pgrMusicPlayer.adapter = adapter
 		pgrMusicPlayer.offscreenPageLimit = 2
+
+		pgrMusicPlayer.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+			fun update(position: Int) {
+				if(position == 0) {
+					adapter.updateNowPlaying()
+				} else if (position == 2) {
+					adapter.updateQueue()
+				}
+			}
+
+			override fun onPageSelected(position: Int) {
+				update(position)
+			}
+			override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+				update(position)
+			}
+			override fun onPageScrollStateChanged(state: Int) {}
+		})
+
 		tabMusicPlayer.setupWithViewPager(pgrMusicPlayer)
 	}
 
@@ -85,10 +106,18 @@ class MusicPlayerActivity: AppCompatActivity() {
 }
 
 class MusicPlayerPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
-	val tabs = LinkedHashMap<String, Fragment>(2).apply {
+	val tabs = LinkedHashMap<String, Fragment>(3).apply {
 		this["Now Playing"] = MusicNowPlayingFragment()
 		this["Browse"] = MusicBrowseFragment.newInstance(MusicBrowsePageFragment.newInstance(null))
-		this["Queue"] = MusicBrowseFragment.newInstance(MusicQueuePageFragment.newInstance())
+		this["Queue"] = MusicQueueFragment.newInstance(MusicQueuePageFragment.newInstance())
+	}
+
+	fun updateNowPlaying() {
+		(tabs["Now Playing"] as MusicNowPlayingFragment).onActive()
+	}
+
+	fun updateQueue() {
+		((tabs["Queue"] as MusicQueueFragment).fragment as MusicQueuePageFragment).onActive()
 	}
 
 	override fun getCount(): Int {

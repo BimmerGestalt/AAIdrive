@@ -13,9 +13,9 @@ class MusicQueueFragment: Fragment() {
 	var fm: FragmentManager? = null
 
 	companion object {
-		fun newInstance(fragment: Fragment): MusicBrowseFragment {
-			val instance = MusicBrowseFragment()
-			instance.fragment = fragment;
+		fun newInstance(fragment: Fragment): MusicQueueFragment {
+			val instance = MusicQueueFragment()
+			instance.fragment = fragment
 			return instance
 		}
 	}
