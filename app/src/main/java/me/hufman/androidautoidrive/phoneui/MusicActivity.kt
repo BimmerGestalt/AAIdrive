@@ -52,6 +52,9 @@ class MusicActivity : AppCompatActivity() {
 		swAudioContext.setOnCheckedChangeListener { buttonView, isChecked ->
 			AppSettings.saveSetting(this, AppSettings.KEYS.AUDIO_FORCE_CONTEXT, isChecked.toString())
 		}
+		swSpotifyLayout.setOnCheckedChangeListener { button, isChecked ->
+			AppSettings.saveSetting(this, AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT, isChecked.toString())
+		}
 		btnGrantSessions.setOnClickListener {
 			promptNotificationPermission()
 		}
@@ -105,6 +108,8 @@ class MusicActivity : AppCompatActivity() {
 		val showAdvancedSettings = AppSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
 		swAudioContext.visible = showAdvancedSettings || BuildConfig.MANUAL_AUDIO_CONTEXT
 		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT].toBoolean()
+		swSpotifyLayout.visible = showAdvancedSettings
+		swSpotifyLayout.isChecked = AppSettings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT].toBoolean()
 		paneGrantSessions.visibility = if (hasNotificationPermission()) View.GONE else View.VISIBLE
 		appDiscoveryThread.discovery()
 	}

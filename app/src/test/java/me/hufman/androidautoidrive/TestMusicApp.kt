@@ -14,6 +14,7 @@ import me.hufman.androidautoidrive.carapp.music.MusicApp
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeAudioState
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeToolbarState
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.carapp.music.MusicImageIDsMultimedia
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
@@ -185,7 +186,7 @@ class TestMusicApp {
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MusicApp(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
+		val app = MusicApp(securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
 
 		// verify the right elements are selected
 		testAppInitSwitcher(app.appSwitcherView)
@@ -221,7 +222,7 @@ class TestMusicApp {
 		whenever(carAppResources.getUiDescription()).doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_multimedia_v3.xml") }
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MusicApp(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
+		val app = MusicApp(securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
 		val playbackView = app.playbackView
 		val state = playbackView.state as RHMIState.AudioHmiState
 		assertEquals(IDs.AUDIOSTATE_TITLE_MODEL, playbackView.appTitleModel.id)
@@ -249,7 +250,7 @@ class TestMusicApp {
 		whenever(carAppResources.getUiDescription()).doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_multimedia_v3.xml") }
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MusicApp(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
+		val app = MusicApp(securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
 		val state = app.playbackView.state as RHMIState.AudioHmiState
 		state.toolbarComponentsList[5].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
 		verify(musicController).toggleShuffle()
@@ -280,7 +281,7 @@ class TestMusicApp {
 		val mode = mock<MusicAppMode> {
 			on { shouldRequestAudioContext() } doReturn true
 		}
-		val app = MusicApp(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mode)
+		val app = MusicApp(securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mode)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
 		// click into the trigger a redraw
@@ -431,7 +432,7 @@ class TestMusicApp {
 		val app = RHMIApplicationEtch(mockServer, 1)
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		var state = app.states[IDs.PLAYBACK_STATE] as RHMIState.ToolbarState
-		val playbackView = PlaybackView(state, musicController, mapOf("147.png" to "Placeholder".toByteArray()), phoneAppResources, graphicsHelpers)
+		val playbackView = PlaybackView(state, musicController, mapOf("147.png" to "Placeholder".toByteArray()), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
 
 		whenever(musicController.getQueue()).doAnswer {null}
 		whenever(musicController.currentAppInfo).doReturn(MusicAppInfo("Test2", mock(), "package", "class"))
@@ -495,9 +496,9 @@ class TestMusicApp {
 		val app = RHMIApplicationConcrete()
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val state = app.states[IDs.PLAYBACK_STATE] as RHMIState.ToolbarState
-		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_STATE]!!, musicAppDiscovery, mock(), graphicsHelpers)
-		val playbackView = PlaybackView(state, musicController, mapOf(), phoneAppResources, graphicsHelpers)
-		val enqueuedView = EnqueuedView(app.states[IDs.QUEUE_STATE]!!, musicController)
+		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_STATE]!!, musicAppDiscovery, mock(), graphicsHelpers, MusicImageIDsMultimedia)
+		val playbackView = PlaybackView(state, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val enqueuedView = EnqueuedView(app.states[IDs.QUEUE_STATE]!!, musicController, MusicImageIDsMultimedia)
 		val actionView = CustomActionsView(app.states[IDs.ACTION_STATE]!!, graphicsHelpers, musicController)
 
 		playbackView.initWidgets(appSwitcherView, enqueuedView, mock(), actionView)
@@ -526,9 +527,9 @@ class TestMusicApp {
 		val app = RHMIApplicationConcrete()
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val state = app.states[IDs.PLAYBACK_STATE] as RHMIState.ToolbarState
-		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_STATE]!!, musicAppDiscovery, mock(), graphicsHelpers)
-		val playbackView = PlaybackView(state, musicController, mapOf(), phoneAppResources, graphicsHelpers)
-		val enqueuedView = EnqueuedView(app.states[IDs.QUEUE_STATE]!!, musicController)
+		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_STATE]!!, musicAppDiscovery, mock(), graphicsHelpers, MusicImageIDsMultimedia)
+		val playbackView = PlaybackView(state, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val enqueuedView = EnqueuedView(app.states[IDs.QUEUE_STATE]!!, musicController, MusicImageIDsMultimedia)
 		val actionView = CustomActionsView(app.states[IDs.ACTION_STATE]!!, graphicsHelpers, musicController)
 
 		playbackView.initWidgets(appSwitcherView, enqueuedView, mock(), actionView)
@@ -553,9 +554,9 @@ class TestMusicApp {
 		val app = RHMIApplicationConcrete()
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		var state = app.states[IDs.PLAYBACK_STATE] as RHMIState.ToolbarState
-		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_STATE]!!, musicAppDiscovery, mock(), graphicsHelpers)
-		val playbackView = PlaybackView(state, musicController, mapOf(), phoneAppResources, graphicsHelpers)
-		val enqueuedView = EnqueuedView(app.states[IDs.QUEUE_STATE]!!, musicController)
+		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_STATE]!!, musicAppDiscovery, mock(), graphicsHelpers, MusicImageIDsMultimedia)
+		val playbackView = PlaybackView(state, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val enqueuedView = EnqueuedView(app.states[IDs.QUEUE_STATE]!!, musicController, MusicImageIDsMultimedia)
 		val actionView = CustomActionsView(app.states[IDs.ACTION_STATE]!!, graphicsHelpers, musicController)
 
 		playbackView.initWidgets(appSwitcherView, enqueuedView, mock(), actionView)
@@ -572,7 +573,7 @@ class TestMusicApp {
 		val app = RHMIApplicationEtch(mockServer, 1)
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		var state = app.states[IDs.QUEUE_STATE] as RHMIState.PlainState
-		val queueView = EnqueuedView(state, musicController)
+		val queueView = EnqueuedView(state, musicController, MusicImageIDsMultimedia)
 
 		run {
 			whenever(musicController.getQueue()) doAnswer { LinkedList() }
@@ -621,8 +622,8 @@ class TestMusicApp {
 		val app = RHMIApplicationEtch(mockServer, 1)
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		var state = app.states[IDs.QUEUE_STATE] as RHMIState.PlainState
-		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers)
-		val enqueuedView = EnqueuedView(state, musicController)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val enqueuedView = EnqueuedView(state, musicController, MusicImageIDsMultimedia)
 
 		whenever(musicController.getQueue()) doAnswer { listOf(
 				MusicMetadata(queueId=10, title="Song 1"),
@@ -718,8 +719,8 @@ class TestMusicApp {
 		val mockServer = MockBMWRemotingServer()
 		val app = RHMIApplicationEtch(mockServer, 1)
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
-		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers)
-		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController, MusicImageIDsMultimedia)
 		browseView.initWidgets(playbackView, inputState)
 
 		val browseResults = CompletableDeferred<List<MusicMetadata>>()
@@ -938,8 +939,8 @@ class TestMusicApp {
 		val mockServer = MockBMWRemotingServer()
 		val app = RHMIApplicationEtch(mockServer, 1)
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
-		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers)
-		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController, MusicImageIDsMultimedia)
 		browseView.initWidgets(playbackView, inputState)
 
 		whenever(musicController.browseAsync(null)) doAnswer {
@@ -969,8 +970,8 @@ class TestMusicApp {
 		val mockServer = MockBMWRemotingServer()
 		val app = RHMIApplicationEtch(mockServer, 1)
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
-		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers)
-		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController, MusicImageIDsMultimedia)
 		browseView.initWidgets(playbackView, inputState)
 
 		whenever(musicController.browseAsync(null)) doAnswer {
@@ -1085,8 +1086,8 @@ class TestMusicApp {
 		val mockServer = MockBMWRemotingServer()
 		val app = RHMIApplicationEtch(mockServer, 1)
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
-		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers)
-		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController, MusicImageIDsMultimedia)
 		browseView.initWidgets(playbackView, app.states[IDs.INPUT_STATE]!!)
 
 		val browseResults = CompletableDeferred<List<MusicMetadata>>()
@@ -1140,8 +1141,8 @@ class TestMusicApp {
 		val mockServer = MockBMWRemotingServer()
 		val app = RHMIApplicationEtch(mockServer, 1)
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
-		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers)
-		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController, MusicImageIDsMultimedia)
 		browseView.initWidgets(playbackView, app.states[IDs.INPUT_STATE]!!)
 
 		// prepare results
@@ -1221,8 +1222,8 @@ class TestMusicApp {
 		val mockServer = MockBMWRemotingServer()
 		val app = RHMIApplicationEtch(mockServer, 1)
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
-		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers)
-		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController, MusicImageIDsMultimedia)
 		browseView.initWidgets(playbackView, app.states[IDs.INPUT_STATE]!!)
 		val browsePageView = browseView.pushBrowsePage(null, null)
 		val inputState = app.states[IDs.INPUT_STATE]!!
@@ -1270,8 +1271,8 @@ class TestMusicApp {
 		val mockServer = MockBMWRemotingServer()
 		val app = RHMIApplicationEtch(mockServer, 1)
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
-		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers)
-		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!), musicController, MusicImageIDsMultimedia)
 		browseView.initWidgets(playbackView, app.states[IDs.INPUT_STATE]!!)
 
 		// prepare results
@@ -1321,7 +1322,7 @@ class TestMusicApp {
 		val mockServer = MockBMWRemotingServer()
 		val app = RHMIApplicationEtch(mockServer, 1)
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
-		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
 		val actionView = CustomActionsView(app.states[IDs.ACTION_STATE]!!, graphicsHelpers, musicController)
 		actionView.initWidgets(playbackView)
 
@@ -1348,7 +1349,7 @@ class TestMusicApp {
 	fun testMusicSessions() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MusicApp(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
+		val app = MusicApp(securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
 		val discoveryListenerCapture = argumentCaptor<Runnable>()

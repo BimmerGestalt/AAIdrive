@@ -7,6 +7,7 @@ import me.hufman.androidautoidrive.TimeUtils.formatTime
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
+import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGauge
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeAudioState
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeToolbarState
@@ -17,15 +18,7 @@ import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
 
-private const val IMAGEID_COVERART_SMALL = 146
-private const val IMAGEID_COVERART_LARGE = 147
-private const val IMAGEID_ARTIST = 150
-private const val IMAGEID_ALBUM = 148
-private const val IMAGEID_SONG = 152
-private const val IMAGEID_SHUFFLE_OFF = 158
-private const val IMAGEID_SHUFFLE_ON = 151
-
-class PlaybackView(val state: RHMIState, val controller: MusicController, carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers) {
+class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.AudioHmiState || (
@@ -57,8 +50,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	var skipNextButton: RHMIComponent.ToolbarButton? = null
 	val shuffleButton: RHMIComponent.ToolbarButton
 
-	val albumArtPlaceholderBig = carAppImages["$IMAGEID_COVERART_LARGE.png"]
-	val albumArtPlaceholderSmall = carAppImages["$IMAGEID_COVERART_SMALL.png"]
+	val albumArtPlaceholderBig = carAppImages["${musicImageIDs.COVERART_LARGE}.png"]
+	val albumArtPlaceholderSmall = carAppImages["${musicImageIDs.COVERART_SMALL}.png"]
 
 	var displayedApp: MusicAppInfo? = null  // the app that was last redrawn
 	var displayedSong: MusicMetadata? = null    // the song  that was last redrawn
@@ -120,17 +113,17 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 			albumArtSmallModel = albumArtSmallComponent.getModel()?.asRaImageModel()!!
 
 			val artists = arrayOf(smallComponents, wideComponents).map { components ->
-				findAdjacentComponent(components) { it.asImage()?.getModel()?.asImageIdModel()?.imageId == IMAGEID_ARTIST }
+				findAdjacentComponent(components) { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.ARTIST }
 			}
 			artistModel = RHMIModelMultiSetterData(artists.map { it?.asLabel()?.getModel()?.asRaDataModel() })
 
 			val albums = arrayOf(smallComponents, wideComponents).map { components ->
-				findAdjacentComponent(components) { it.asImage()?.getModel()?.asImageIdModel()?.imageId == IMAGEID_ALBUM }
+				findAdjacentComponent(components) { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.ALBUM }
 			}
 			albumModel = RHMIModelMultiSetterData(albums.map { it?.asLabel()?.getModel()?.asRaDataModel() })
 
 			val titles = arrayOf(smallComponents, wideComponents).map { components ->
-				findAdjacentComponent(components) { it.asImage()?.getModel()?.asImageIdModel()?.imageId == IMAGEID_SONG }
+				findAdjacentComponent(components) { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.SONG }
 			}
 			trackModel = RHMIModelMultiSetterData(titles.map { it?.asLabel()?.getModel()?.asRaDataModel() })
 
@@ -196,16 +189,19 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 			}
 			buttons[3].setSelectable(false)
 		}
-
 		if (state is RHMIState.AudioHmiState) {
+			// weird that official Spotify doesn't need to do this
+			state.getArtistImageModel()?.asRaImageModel()?.value = carAppImages["${musicImageIDs.ARTIST}.png"]
+			state.getAlbumImageModel()?.asRaImageModel()?.value = carAppImages["${musicImageIDs.ALBUM}.png"]
+
 			buttons[3].setVisible(false)
 
 			val playlistModel = state.getPlayListModel()?.asRaListModel()
 			if (playlistModel != null) {
 				val playlist = RHMIModel.RaListModel.RHMIListConcrete(3)
-				playlist.addRow(arrayOf(false, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 159), L.MUSIC_SKIP_PREVIOUS))
-				playlist.addRow(arrayOf(false, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 149), ""))
-				playlist.addRow(arrayOf(false, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 160), L.MUSIC_SKIP_NEXT))
+				playlist.addRow(arrayOf(false, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_BACK), L.MUSIC_SKIP_PREVIOUS))
+				playlist.addRow(arrayOf(false, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK), ""))
+				playlist.addRow(arrayOf(false, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_NEXT), L.MUSIC_SKIP_NEXT))
 				playlistModel.setValue(playlist, 0, 3, 3)
 			}
 			state.getPlayListFocusRowModel()?.asRaIntModel()?.value = 1
@@ -221,6 +217,11 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 
 	fun show() {
 		redraw()
+
+		if (state is RHMIState.AudioHmiState) {
+			// set the highlight to the middle when showing the window
+			state.getPlayListFocusRowModel()?.asRaIntModel()?.value = 1
+		}
 	}
 
 	fun redraw() {
@@ -276,16 +277,20 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		}
 
 		// update the audio state playlist
+		redrawAudiostatePlaylist(song?.title ?: "")
+
+		displayedSong = song
+		displayedConnected = controller.isConnected()
+	}
+
+	private fun redrawAudiostatePlaylist(title: String) {
 		if (state is RHMIState.AudioHmiState) {
 			val playlistModel = state.getPlayListModel()?.asRaListModel()
 			val playlist = RHMIModel.RaListModel.RHMIListConcrete(3)
 			playlist.addRow(arrayOf(false, "", ""))     // need some blank row so that the setValue startIndex works
-			playlist.addRow(arrayOf(false, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 149), song?.title ?: ""))
+			playlist.addRow(arrayOf(false, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK), title))
 			playlistModel?.setValue(playlist, 1, 1, 3)
 		}
-
-		displayedSong = song
-		displayedConnected = controller.isConnected()
 	}
 
 	private fun showPlaceholderCoverart() {
@@ -314,20 +319,25 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		skipNextButton?.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_NEXT))
 	}
 
+
 	private fun redrawShuffleButton() {
 		if (controller.isSupportedAction(MusicAction.SET_SHUFFLE_MODE)) {
 			if (controller.isShuffling()) {
 				shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_OFF
-				shuffleButton.getImageModel()?.asImageIdModel()?.imageId = IMAGEID_SHUFFLE_ON
+				shuffleButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.SHUFFLE_ON
 			} else {
 				shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_ON
-				shuffleButton.getImageModel()?.asImageIdModel()?.imageId = IMAGEID_SHUFFLE_OFF
+				shuffleButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.SHUFFLE_OFF
 			}
+			shuffleButton.setEnabled(true)
 			shuffleButton.setVisible(true)
 		} else {
-			if (isNewerIDrive) {
+			if (state is RHMIState.AudioHmiState) {
+				shuffleButton.setEnabled(false)
+			}
+			else if (isNewerIDrive) {   // Audioplayer layout on id5
 				shuffleButton.setVisible(false)
-			} else {
+			} else {                    // Audioplayer on id4
 				try {
 					shuffleButton.getImageModel()?.asImageIdModel()?.imageId = 0
 				} catch (e: BMWRemoting.ServiceException) {
@@ -337,7 +347,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 					// the car has cleared the icon even though it threw an exception
 					// so set the icon to a valid imageId again
 					// to make sure the idempotent layer properly sets the icon in the future
-					shuffleButton.getImageModel()?.asImageIdModel()?.imageId = IMAGEID_SONG
+					shuffleButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.SONG
 				}
 			}
 		}
