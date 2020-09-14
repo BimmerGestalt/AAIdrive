@@ -187,6 +187,13 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 		}
 		apps.sortBy { it.name.toLowerCase() }
 
+		// clear out any apps that are no longer active sessions
+		for (app in apps) {
+			if (mediaSessionApps.find {it.packageName == app.packageName} == null) {
+				app.controllable = false
+			}
+		}
+
 		synchronized(this.combinedApps) {
 			this.combinedApps.clear()
 			this.combinedApps.addAll(apps)
