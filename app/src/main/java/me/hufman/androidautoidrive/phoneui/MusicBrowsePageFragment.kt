@@ -60,10 +60,10 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 		listBrowse.adapter = BrowseAdapter(this.context!!, viewModel.icons, contents) { mediaEntry ->
 			if (mediaEntry != null) {
 				if (mediaEntry.browseable) {
-					(activity as MusicActivity).pushBrowse(mediaEntry)
+					(activity as MusicPlayerActivity).pushBrowse(mediaEntry)
 				} else {
 					musicController.playSong(mediaEntry)
-					(activity as MusicActivity).showNowPlaying()
+					(activity as MusicPlayerActivity).showNowPlaying()
 				}
 			}
 		}

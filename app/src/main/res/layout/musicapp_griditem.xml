@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:layout_gravity="center"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/imgMusicAppIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:contentDescription="@string/musicAppIcon"
+        android:scaleType="fitStart"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imgNowPlaying"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/musicAppNowPlaying"
+        android:tint="?android:attr/textColorSecondary"
+        app:srcCompat="@drawable/ic_equalizer_black_24dp" />
+
+</RelativeLayout>

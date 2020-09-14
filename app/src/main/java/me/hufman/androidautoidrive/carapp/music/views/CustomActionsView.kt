@@ -1,8 +1,11 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import me.hufman.androidautoidrive.GraphicsHelpers
+import me.hufman.androidautoidrive.UnicodeCleaner
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.CustomAction
+import me.hufman.androidautoidrive.music.CustomActionDwell
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.idriveconnectionkit.rhmi.*
 
@@ -18,11 +21,12 @@ class CustomActionsView(val state: RHMIState, val graphicsHelpers: GraphicsHelpe
 	val actionList = ArrayList<CustomAction>()
 	val listAdapter = object: RHMIListAdapter<CustomAction>(3, actionList) {
 		override fun convertRow(index: Int, item: CustomAction): Array<Any> {
+			val name = UnicodeCleaner.clean(item.name)
 			if (item.icon != null) {
 				val invert = graphicsHelpers.isDark(item.icon)
-				return arrayOf(graphicsHelpers.compress(item.icon, 48, 48, invert), "", item.name)
+				return arrayOf(graphicsHelpers.compress(item.icon, 48, 48, invert), "", name)
 			} else {
-				return arrayOf("", "", item.name)
+				return arrayOf("", "", name)
 			}
 		}
 	}
@@ -38,8 +42,12 @@ class CustomActionsView(val state: RHMIState, val graphicsHelpers: GraphicsHelpe
 			if (action != null) {
 				musicController.customAction(action)
 			}
-			// show the playback view, but don't add it to the stack
-			state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().triggerEvent(mapOf(0.toByte() to playbackView.state.id))
+			if (action is CustomActionDwell) {
+				throw RHMIActionAbort()
+			} else {
+				// show the playback view, but don't add it to the stack
+				state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().triggerEvent(mapOf(0.toByte() to playbackView.state.id))
+			}
 		}
 		listComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,0,*")
 	}

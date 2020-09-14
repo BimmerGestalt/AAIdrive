@@ -1,11 +1,14 @@
 package me.hufman.androidautoidrive.carapp.music
 
+import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
+import kotlin.math.max
+import kotlin.math.min
 
 class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 	val multimediaInfoEvent: RHMIEvent.MultimediaInfoEvent
@@ -26,6 +29,9 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 	companion object {
 		val QUEUE_SKIPPREVIOUS = MusicMetadata(mediaId = "__QUEUE_SKIPBACK__", title="< ${L.MUSIC_SKIP_PREVIOUS}")
 		val QUEUE_SKIPNEXT = MusicMetadata(mediaId = "__QUEUE_SKIPNEXT__", title="${L.MUSIC_SKIP_NEXT} >")
+
+		const val QUEUE_BACK_COUNT = 15 // how far back to allow scrolling
+		const val QUEUE_NEXT_COUNT = 25 // how far forward to allow scrolling
 	}
 
 	fun initWidgets() {
@@ -33,7 +39,7 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 	}
 
 	fun redraw() {
-		val app = if (!controller.getPlaybackPosition().playbackPaused) controller.musicBrowser?.musicAppInfo else null
+		val app = if (!controller.getPlaybackPosition().playbackPaused) controller.currentAppInfo else null
 		if (app != null && app != displayedApp) {
 			showApp(app)
 		}
@@ -65,11 +71,11 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 		// show in the sidebar
 		val trackModel = multimediaInfoEvent.getTextModel1()?.asRaDataModel()
 		val artistModel = multimediaInfoEvent.getTextModel2()?.asRaDataModel()
-		trackModel?.value = song.title ?: ""
-		artistModel?.value = song.artist ?: ""
+		trackModel?.value = UnicodeCleaner.clean(song.title ?: "")
+		artistModel?.value = UnicodeCleaner.clean(song.artist ?: "")
 
 		// show in the IC
-		instrumentCluster.getTextModel()?.asRaDataModel()?.value = song.title ?: ""
+		instrumentCluster.getTextModel()?.asRaDataModel()?.value = UnicodeCleaner.clean(song.title ?: "")
 
 		// actually tell the car to load the data
 		multimediaInfoEvent.triggerEvent()
@@ -88,18 +94,18 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 			addNext()
 		} else {
 			val index = songQueue.indexOfFirst { it.queueId == currentSong?.queueId }
-			if (index >= 0) {
+			if (currentSong != null && index >= 0) {
 				// add the previous/next actions around the current song
 				// This allows for using the shuffle mode's back/next and also the queue selection
-				queue.addAll(songQueue.subList(0, index))
+				queue.addAll(songQueue.subList(max(0, index - QUEUE_BACK_COUNT), index))
 				addPrevious()
-				queue.add(songQueue[index])
+				queue.add(currentSong)
 				addNext()
 				if (index < songQueue.count()) {
-					queue.addAll(songQueue.subList(index + 1, songQueue.count()))
+					queue.addAll(songQueue.subList(index + 1, min(songQueue.count(), index + QUEUE_NEXT_COUNT)))
 				}
 			} else {
-				queue.addAll(songQueue)
+				queue.addAll(songQueue.subList(0, min(songQueue.count(), QUEUE_NEXT_COUNT)))
 			}
 		}
 		return queue
@@ -113,9 +119,9 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 				val selected = item.queueId == currentSong?.queueId
 				return arrayOf(
 						index,  // index
-						item.title ?: "",   // title
-						item.artist ?: "",  // artist
-						item.album ?: "",   // album
+						UnicodeCleaner.clean(item.title ?: ""),   // title
+						UnicodeCleaner.clean(item.artist ?: ""),  // artist
+						UnicodeCleaner.clean(item.album ?: ""),   // album
 						-1,
 						if (selected) 1 else 0, // checked
 						true
@@ -131,6 +137,7 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 		when {
 			song == QUEUE_SKIPPREVIOUS -> controller.skipToPrevious()
 			song == QUEUE_SKIPNEXT -> controller.skipToNext()
+			song == controller.getMetadata() -> controller.seekTo(0)
 			song?.queueId != null -> controller.playQueue(song)
 		}
 	}

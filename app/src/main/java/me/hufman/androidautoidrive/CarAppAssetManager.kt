@@ -3,8 +3,7 @@ package me.hufman.androidautoidrive
 import android.content.Context
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.CertMangling
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import java.io.ByteArrayInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
@@ -26,7 +25,7 @@ class CarAppAssetManager(val context: Context, val name: String): CarAppResource
 
 	override fun getAppCertificate(brand: String): InputStream? {
 		val appCert = getAppCertificateRaw(brand)?.readBytes() as ByteArray
-		val signedCert = CertMangling.mergeBMWCert(appCert, SecurityService.fetchBMWCerts(brandHint= brand))
+		val signedCert = CertMangling.mergeBMWCert(appCert, SecurityAccess.getInstance(context).fetchBMWCerts(brandHint= brand))
 		return ByteArrayInputStream(signedCert)
 	}
 

@@ -4,6 +4,7 @@ import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.TimeUtils.formatTime
+import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGauge
@@ -21,6 +22,8 @@ private const val IMAGEID_COVERART_LARGE = 147
 private const val IMAGEID_ARTIST = 150
 private const val IMAGEID_ALBUM = 148
 private const val IMAGEID_SONG = 152
+private const val IMAGEID_SHUFFLE_OFF = 158
+private const val IMAGEID_SHUFFLE_ON = 151
 
 class PlaybackView(val state: RHMIState, val controller: MusicController, carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers) {
 	companion object {
@@ -50,8 +53,9 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 
 	val queueToolbarButton: RHMIComponent.ToolbarButton
 	val customActionButton: RHMIComponent.ToolbarButton
-	val skipBackButton: RHMIComponent.ToolbarButton
-	val skipNextButton: RHMIComponent.ToolbarButton
+	var skipBackButton: RHMIComponent.ToolbarButton? = null
+	var skipNextButton: RHMIComponent.ToolbarButton? = null
+	val shuffleButton: RHMIComponent.ToolbarButton
 
 	val albumArtPlaceholderBig = carAppImages["$IMAGEID_COVERART_LARGE.png"]
 	val albumArtPlaceholderSmall = carAppImages["$IMAGEID_COVERART_SMALL.png"]
@@ -59,6 +63,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	var displayedApp: MusicAppInfo? = null  // the app that was last redrawn
 	var displayedSong: MusicMetadata? = null    // the song  that was last redrawn
 	var displayedConnected: Boolean = false     // whether the controller was connected during redraw
+	var isNewerIDrive: Boolean = false
 
 	init {
 		// discover widgets
@@ -82,9 +87,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 			// playlist model populates the back/title/next section
 
 			queueToolbarButton = state.toolbarComponentsList[2]
-			customActionButton = state.toolbarComponentsList[3]
-			skipBackButton = state.toolbarComponentsList[4]
-			skipNextButton = state.toolbarComponentsList[5]
+			customActionButton = state.toolbarComponentsList[4]
+			shuffleButton = state.toolbarComponentsList[5]
 		} else {
 			state as RHMIState.ToolbarState
 			appTitleModel = state.getTextModel()?.asRaDataModel()!!
@@ -145,6 +149,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 
 			queueToolbarButton = state.toolbarComponentsList[2]
 			customActionButton = state.toolbarComponentsList[4]
+			shuffleButton = state.toolbarComponentsList[5]
 			skipBackButton = state.toolbarComponentsList[6]
 			skipNextButton = state.toolbarComponentsList[7]
 		}
@@ -172,11 +177,14 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		customActionButton.setEnabled(false)
 		customActionButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = customActionsView.state.id
 
-		skipBackButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SKIP_PREVIOUS
-		skipBackButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.skipToPrevious() }
+		shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_ON
+		shuffleButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.toggleShuffle() }
 
-		skipNextButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SKIP_NEXT
-		skipNextButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.skipToNext() }
+		skipBackButton?.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SKIP_PREVIOUS
+		skipBackButton?.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.skipToPrevious() }
+
+		skipNextButton?.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SKIP_NEXT
+		skipNextButton?.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.skipToNext() }
 
 		// try to hide extra buttons
 		if (state !is RHMIState.AudioHmiState) {
@@ -187,17 +195,11 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 				buttons[3].setVisible(false)
 			}
 			buttons[3].setSelectable(false)
-
-			// shuffle isn't supported with MediaController for some reason, maybe try parsing custom actions
-			try {
-				buttons[5].getImageModel()?.asImageIdModel()?.imageId = 0
-			} catch (e: BMWRemoting.ServiceException) {
-				buttons[5].setVisible(false)
-			}
-			buttons[5].setSelectable(false)
 		}
 
 		if (state is RHMIState.AudioHmiState) {
+			buttons[3].setVisible(false)
+
 			val playlistModel = state.getPlayListModel()?.asRaListModel()
 			if (playlistModel != null) {
 				val playlist = RHMIModel.RaListModel.RHMIListConcrete(3)
@@ -222,7 +224,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	}
 
 	fun redraw() {
-		if (displayedApp != controller.musicBrowser?.musicAppInfo) {
+		if (displayedApp != controller.currentAppInfo) {
 			redrawApp()
 		}
 		if (displayedSong != controller.getMetadata() ||
@@ -230,12 +232,13 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 			redrawSong()
 		}
 		redrawQueueButton()
+		redrawShuffleButton()
 		redrawActions()
 		redrawPosition()
 	}
 
 	private fun redrawApp() {
-		val app = controller.musicBrowser?.musicAppInfo ?: return
+		val app = controller.currentAppInfo ?: return
 		appTitleModel.value = app.name
 		val image = graphicsHelpers.compress(app.icon, 48, 48)
 		appLogoModel.value = image
@@ -243,12 +246,12 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 	}
 
 	private fun redrawSong() {
-		val blacklistedUriApps = setOf("Spotify")   // apps that don't let us resolve URIs
-
 		val song = controller.getMetadata()
-		artistModel.value = if (controller.isConnected()) { song?.artist ?: "" } else { L.MUSIC_DISCONNECTED }
-		albumModel.value = song?.album ?: ""
-		trackModel.value = song?.title ?: ""
+		artistModel.value = if (controller.isConnected()) {
+			UnicodeCleaner.clean(song?.artist ?: "")
+		} else { L.MUSIC_DISCONNECTED }
+		albumModel.value = UnicodeCleaner.clean(song?.album ?: "")
+		trackModel.value = UnicodeCleaner.clean(song?.title ?: "")
 		if (song?.coverArt != null) {
 			albumArtBigModel.value = graphicsHelpers.compress(song.coverArt, 320, 320, quality = 65)
 			if (albumArtSmallModel != null) {
@@ -307,8 +310,37 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, carApp
 		val customactions = controller.getCustomActions()
 		customActionButton.setEnabled(customactions.isNotEmpty())
 
-		skipBackButton.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS))
-		skipNextButton.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_NEXT))
+		skipBackButton?.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS))
+		skipNextButton?.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_NEXT))
+	}
+
+	private fun redrawShuffleButton() {
+		if (controller.isSupportedAction(MusicAction.SET_SHUFFLE_MODE)) {
+			if (controller.isShuffling()) {
+				shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_OFF
+				shuffleButton.getImageModel()?.asImageIdModel()?.imageId = IMAGEID_SHUFFLE_ON
+			} else {
+				shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_ON
+				shuffleButton.getImageModel()?.asImageIdModel()?.imageId = IMAGEID_SHUFFLE_OFF
+			}
+			shuffleButton.setVisible(true)
+		} else {
+			if (isNewerIDrive) {
+				shuffleButton.setVisible(false)
+			} else {
+				try {
+					shuffleButton.getImageModel()?.asImageIdModel()?.imageId = 0
+				} catch (e: BMWRemoting.ServiceException) {
+					isNewerIDrive = true
+					shuffleButton.setVisible(false)
+
+					// the car has cleared the icon even though it threw an exception
+					// so set the icon to a valid imageId again
+					// to make sure the idempotent layer properly sets the icon in the future
+					shuffleButton.getImageModel()?.asImageIdModel()?.imageId = IMAGEID_SONG
+				}
+			}
+		}
 	}
 
 	private fun redrawPosition() {

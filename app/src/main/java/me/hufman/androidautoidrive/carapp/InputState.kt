@@ -3,23 +3,32 @@ package me.hufman.androidautoidrive.carapp
 import android.util.Log
 import me.hufman.idriveconnectionkit.rhmi.*
 
-const val TAG = "InputState"
 
 /** Handles letter entry from the car's input widget */
-abstract class InputState<T:Any>(val inputComponent: RHMIComponent.Input) {
+abstract class InputState<T:Any>(val state: RHMIState) {
 	var input = ""
 	var suggestions: MutableList<T> = ArrayList()
 
+	val inputComponent = state.componentsList.filterIsInstance<RHMIComponent.Input>().first()
+
+	companion object {
+		const val TAG = "InputState"
+		fun fits(state: RHMIState): Boolean {
+			return state.componentsList.size == 1 &&
+				state.componentsList[0] is RHMIComponent.Input
+		}
+	}
+
 	init {
+		// show any suggestions right when it shows up
+		state.focusCallback = FocusCallback { focus ->
+			if (focus) {
+				onEntry(input)
+			}
+		}
 		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionSpellerCallback { letter ->
 			Log.i(TAG, "Received speller input $letter")
-			when (letter) {
-				"delall" -> input = ""
-				"del" -> input = input.dropLast(1)
-				else -> input += letter
-			}
-			inputComponent.getResultModel()?.asRaDataModel()?.value = input
-			onEntry(input)
+			onInput(letter)
 		}
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 			val suggestion = suggestions.getOrNull(index)
@@ -42,6 +51,16 @@ abstract class InputState<T:Any>(val inputComponent: RHMIComponent.Input) {
 		val outputList = RHMIModel.RaListModel.RHMIListConcrete(1)
 		newSuggestions.forEach { outputList.addRow(arrayOf(convertRow(it))) }
 		outputListModel.setValue(outputList, 0, outputList.height, outputList.height)
+	}
+
+	fun onInput(letter: String) {
+		when (letter) {
+			"delall" -> input = ""
+			"del" -> input = input.dropLast(1)
+			else -> input += letter
+		}
+		inputComponent.getResultModel()?.asRaDataModel()?.value = input
+		onEntry(input)
 	}
 
 	/**

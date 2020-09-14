@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AndroidAutoIdrive</string>
+    <string name="permlab_accessNotifications">IDrive toegangs melding</string>
+    <string name="permlab_bindNotificationListenerService">IDrive toegangs melding</string>
+    <string name="permdesc_accessNotifications">IDrive toegangs melding</string>
+    <string name="permdesc_bindNotificationListenerService">IDrive toegangs melding</string>
+    <string name="notification_title">Android Auto voor IDrive</string>
+    <string name="notification_description">Verbonden met uw auto</string>
+    <string name="notification_description_chassiscode">Verbonden met %s</string>
+    <string name="notification_description_bmw">Verbonden met uw BMW</string>
+    <string name="notification_description_mini">Verbonden met uw Mini</string>
+
+    <string name="spawn_test_notification">Test bericht</string>
+    <string name="message_notifications">Meldingen</string>
+    <string name="notification_popups">Popups</string>
+    <string name="notification_popups_passenger">Popup berichten met passagier</string>
+    <string name="lbl_popupVersion">Popups werken enkel met IDrive4</string>
+    <string name="lbl_smsPermission">Geef de SMS toegang om afbeeldingen weer te geven van inkomende SMS berichten in de auto. De tekst blijft altijd zichtbaar.</string>
+
+    <string name="enable_google_maps">Google Maps inschakelen</string>
+    <string name="lbl_widescreen_map">Breedbeeld map</string>
+    <string name="gmapStyleLabel">Map stijl</string>
+    <string name="lbl_music_apps">Muziek apps</string>
+    <string name="musicAppIcon">App icoon</string>
+    <string name="musicAppNowPlaying">Speelt nu</string>
+    <string name="musicAppControllable">Bediendaar</string>
+    <string name="musicAppConnectable">Volledig bedienbaar</string>
+    <string name="musicAppBrowseable">Bladeren</string>
+    <string name="musicAppSearchable">Zoeken</string>
+    <string name="musicAppUnavailable">Niet beschikbaar</string>
+    <string name="musicAppHidden">Niet zichtbaar</string>
+    <string name="enable_audio_context">Audio focus gevraagd</string>
+    <string name="lbl_grant_sessions">Controlle over muziek app:</string>
+    <string name="lbl_grant">Verlenen</string>
+    <string name="musicAppNotes_unauthorizedSpotify">Klik hier om Spotify toegang te verlenen</string>
+    <string name="musicAppNotes_oldSpotify">Downgrade Spotify om van de volledige functionaliteit gebruik te maken</string>
+    <string name="musicAppNotes_oldSpotifyInstructions">AndriodAutoIdrive kan enkel de volledige functionaliteit van Spotify versie 8.4.96.953 of ouder bieden. Download een oudere versie van Spotify via APKPure of anderen.</string>
+    <string name="lbl_ok">Ok</string>
+    <string name="lbl_cancel">Annuleren</string>
+    <string name="btn_configure">Configureren …</string>
+
+    <string name="connectionStatusMissingConnectedApp">Connected of Connected Classic app niet gevonden</string>
+    <string name="connectionStatusWaiting">Wacht op verbinding</string>
+
+    <string name="nowplaying_notconnected">&lt;Niet verdbonden&gt;</string>
+    <string name="nowplaying_unknown">&lt;Onbekend&gt;</string>
+
+    <string name="txt_setup_bmw_ready">De app is klaar om verbinding te maken met uw BMW</string>
+    <string name="txt_setup_mini_ready">De app is klaar om verbinding te maken met uw Mini</string>
+    <string name="txt_setup_bmw_missing">Niet klaar om met uw BMW te verbinden:</string>
+    <string name="txt_setup_mini_missing">Niet klaar om met uw Mini te verbinden:</string>
+    <string name="txt_setup_security_missing">Security Service is onbereikbaar:</string>
+    <string name="txt_setup_bt_disconnected">Auto is niet verbonden via Bluetooth</string>
+    <string name="txt_setup_bt_connected">Auto is verbonden via Bluetooth</string>
+    <string name="txt_setup_a2dp_disconnected">Bluetooth audio is niet verbonden</string>
+    <string name="txt_setup_a2dp_connected">Bluetooth audio is verbonden</string>
+    <string name="txt_setup_spp_disconnected">Bluetooth Apps worden niet ondersteund</string>
+    <string name="txt_setup_spp_connected">Bluetooth Apps zijn ondersteund</string>
+    <string name="txt_setup_usb_disconnected">Auto is niet verbonden via USB</string>
+    <string name="txt_setup_usb_connected">USB verbonden in oplaad modus</string>
+    <string name="txt_setup_enable_usbmtp">Schakel de USB mode van uw GSM naar bestandsoverdracht</string>
+    <string name="txt_setup_enable_usbacc">Schakel de USB Accessoire of de Apps optie in de auto %s</string>
+    <string name="txt_setup_usbmtp_connected">USB aangesloten in opslag mode</string>
+    <string name="txt_setup_usbacc_connected">USB aangesloten in accessoire mode</string>
+    <string name="txt_setup_bcl_init_stuck">Apps verbinding is niet ingeschakeld:</string>
+    <string name="txt_setup_enable_bcl_mode">Schakel de Apps optie in om gerbuik te maken van %s</string>
+    <string name="txt_setup_bcl_disconnected">Apps verbinding is niet beschikbaar:</string>
+    <string name="txt_setup_enable_bclspp">Herstart de Bluetooth verbinding of maak verbinding via USB</string>
+    <string name="txt_setup_bcl_connecting">Apps maakt verbinding</string>
+    <string name="txt_setup_bcl_connected">Apps is verbonden</string>
+    <string name="txt_setup_bcl_connected_transport">Apps is verbonden via %s</string>
+    <string name="txt_build_info">Build versie: %1$s %2$s</string>
+    <string name="txt_bcl_report">BCL Tunnel prestaties:</string>
+    <string name="txt_car_capabilities">Auto mogelijkheden:</string>
+    <string name="btn_install">Installeren</string>
+    <string name="btn_install_bmw">Installeer BMW Connected</string>
+    <string name="btn_install_mini">Installeer Mini Connected</string>
+    <string name="btn_install_bmwclassic">Installeer BMW Connected Classic</string>
+    <string name="btn_install_miniclassic">Installeer Mini Connected Classic</string>
+    <string name="lbl_advanced_settings">Toon geavanceerde instellingen</string>
+    <string name="lbl_assistant">Stem assistant (Beta)</string>
+    <string name="lbl_assistant_empty">None found</string>
+    <string name="notification_assistant_tap">Druk om te starten %s</string>
+    <string name="notification_assistant_description">Enkel nodig omdat het scherm aan is</string>
+    <string name="donation_title">Vindt je deze app leuk?</string>
+    <string name="donation_text">Toon je support middels een kleine donatie</string>
+
+
+    <!-- car app strings -->
+    <string name="NOTIFICATIONS_TITLE">Meldingen</string>
+    <string name="NOTIFICATIONS_EMPTY_LIST">Geen meldingen</string>
+    <string name="NOTIFICATION_CLEAR_ACTION">Wis meldingen</string>
+    <string name="NOTIFICATION_OPTIONS">Options</string>
+    <string name="NOTIFICATION_POPUPS">Popup meldingen</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER">Popups meldingen met bijrijder</string>
+
+    <string name="MAP_ACTION_VIEWMAP">Toon volledige map</string>
+    <string name="MAP_ACTION_SEARCH">Locatie zoeken</string>
+    <string name="MAP_ACTION_CLEARNAV">Wis bestemming</string>
+
+    <string name="MUSIC_APPLIST_TITLE">Apps</string>
+    <string name="MUSIC_APPLIST_EMPTY">&lt;Geen apps&gt;</string>
+    <string name="MUSIC_CUSTOMACTIONS_TITLE">Acties</string>
+    <string name="MUSIC_DISCONNECTED">&lt;Niet verbonden&gt;</string>
+    <string name="MUSIC_BROWSE_TITLE">Bladeren</string>
+    <string name="MUSIC_BROWSE_EMPTY">&lt;Leeg&gt;</string>
+    <string name="MUSIC_BROWSE_LOADING">&lt;Bezig met laden&gt;</string>
+    <string name="MUSIC_BROWSE_SEARCHING">&lt;Zoeken&gt;</string>
+    <string name="MUSIC_BROWSE_ACTION_JUMPBACK">Vorige</string>
+    <string name="MUSIC_BROWSE_ACTION_FILTER">Filteren</string>
+    <string name="MUSIC_BROWSE_ACTION_SEARCH">Zoeken</string>
+    <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Afspelen van zoekactie</string>
+    <string name="MUSIC_QUEUE_TITLE">Speelt nu</string>
+    <string name="MUSIC_QUEUE_EMPTY">&lt;Wachtrij leeg&gt;</string>
+    <string name="MUSIC_SKIP_PREVIOUS">Vorige</string>
+    <string name="MUSIC_SKIP_NEXT">Volgende</string>
+    <string name="MUSIC_TURN_SHUFFLE_ON">Shuffle aan</string>
+    <string name="MUSIC_TURN_SHUFFLE_OFF">Shuffle uit</string>
+
+    <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Uit collectie verwijderen</string>
+    <string name="MUSIC_SPOTIFY_START_RADIO">Radio zender maken</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Alles herhalen</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Eenmalig herhalen aan</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Herhalen uit</string>
+    <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Aan collectie toevoegen</string>
+    <string name="MUSIC_SPOTIFY_THUMB_UP">Vind ik leuk</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Leuk gevonden</string>
+    <string name="MUSIC_SPOTIFY_THUMB_DOWN">Vind ik niet leuk</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Niet leuk gevonden</string>
+</resources>

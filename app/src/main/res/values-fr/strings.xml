@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AndroidAutoIdrive</string>
     <string name="permlab_accessNotifications">Notification d\'accès iDrive</string>
@@ -6,6 +7,7 @@
     <string name="permdesc_bindNotificationListenerService">Notification d\'accès iDrive</string>
     <string name="notification_title">Android Auto pour iDrive</string>
     <string name="notification_description">Connecté à la Voiture</string>
+    <string name="notification_description_chassiscode">Connecté à votre %s</string>
     <string name="notification_description_bmw">Connecté à votre BMW</string>
     <string name="notification_description_mini">Connecté à votre Mini</string>
 
@@ -13,22 +15,85 @@
     <string name="message_notifications">Notifications de Message</string>
     <string name="notification_popups">Popups de Notification</string>
     <string name="notification_popups_passenger">Popups de Notification Passager</string>
+    <string name="lbl_popupVersion">Les popups ne fonctionnent qu\'avec IDrive4</string>
+    <string name="lbl_smsPermission">Autorise l\'accès aux images contenues dans les SMS depuis la voiture. Le text est quant à lui toujours visible.</string>
+
     <string name="enable_google_maps">Activer Google Maps</string>
     <string name="lbl_widescreen_map">Carte Elargie</string>
     <string name="gmapStyleLabel">Style de Carte</string>
     <string name="lbl_music_apps">Applications de Musique</string>
     <string name="musicAppIcon">Icône de l\'Application</string>
+    <string name="musicAppNowPlaying">Lecture en Cours</string>
+    <string name="musicAppControllable">Contrôlable lorsque l\'app est lancée</string>
     <string name="musicAppConnectable">Connectable</string>
     <string name="musicAppBrowseable">Navigable</string>
-    <string name="musicAppSearchable">Consultable</string>
+    <string name="musicAppSearchable">Cherchable</string>
+    <string name="musicAppUnavailable">Non Disponible</string>
+    <string name="musicAppHidden">Non Visible</string>
     <string name="enable_audio_context">Demande de Focus Audio</string>
+    <string name="lbl_grant_sessions">Contrôle des applications de musiques:</string>
+    <string name="lbl_grant">Autoriser</string>
+    <string name="musicAppNotes_unauthorizedSpotify">Cliquer ici pour autoriser l\'accès à Spotify</string>
+    <string name="musicAppNotes_oldSpotify">Installez une version plus ancienne de Spotify pour un contrôle complet (navigation)</string>
+    <string name="musicAppNotes_oldSpotifyInstructions">Cette app peut fournir un contrôle complet de Spotify (tel qu\'acceder aux playlistes et faire des recherches) pour les versions 8.4.96.953 ou antérieures. Pour un contrôle complet, telecharger une version moins récente (depuis APKPure ou similaire).</string>
+    <string name="lbl_ok">OK</string>
+    <string name="lbl_cancel">Annuler</string>
+    <string name="btn_configure">Configurer …</string>
+
     <string name="connectionStatusMissingConnectedApp">Applications Connected ou Connected Classic non trouvées</string>
     <string name="connectionStatusWaiting">En Attente de Connection</string>
+
+    <string name="nowplaying_notconnected">&lt;Non Connecté&gt;</string>
+    <string name="nowplaying_unknown">&lt;Inconnu&gt;</string>
+
+    <string name="txt_setup_bmw_ready">L\'app est prête à être connectée à une BMW</string>
+    <string name="txt_setup_mini_ready">L\'app est prête à être connectée à une Mini</string>
+    <string name="txt_setup_bmw_missing">App non prête à être connectée à une BMW:</string>
+    <string name="txt_setup_mini_missing">App non prête à être connectée à une Mini:</string>
+    <string name="txt_setup_security_missing">Le service Security est manquant:</string>
+    <string name="txt_setup_bt_disconnected">Aucune voiture n\'est connectée en Bluetooth</string>
+    <string name="txt_setup_bt_connected">Voiture connectée en Bluetooth</string>
+    <string name="txt_setup_a2dp_disconnected">Bluetooth Music n\'est pas connecté</string>
+    <string name="txt_setup_a2dp_connected">Bluetooth Music est connecté</string>
+    <string name="txt_setup_spp_disconnected">Les Apps Bluetooth ne sont pas supportées</string>
+    <string name="txt_setup_spp_connected">Les Apps Bluetooth sont supportées</string>
+    <string name="txt_setup_usb_disconnected">Aucune voiture n\'est connectée en USB</string>
+    <string name="txt_setup_usb_connected">USB connecté en mode Chargement</string>
+    <string name="txt_setup_enable_usbmtp">Changez le mode USB du téléphone en mode Transfer de Fichier</string>
+    <string name="txt_setup_enable_usbacc">Activer Accessoires USB ou l\'option Apps dans la voiture pour ce/cette %s</string>
+    <string name="txt_setup_usbmtp_connected">USB connecté en mode Stockage</string>
+    <string name="txt_setup_usbacc_connected">USB connecté en mode Accessoire</string>
+    <string name="txt_setup_bcl_init_stuck">Apps Connection n\'est pas activée:</string>
+    <string name="txt_setup_enable_bcl_mode">Activer l\'option Apps dans la voiture pour ce/cette %s</string>
+    <string name="txt_setup_bcl_disconnected">Apps Connection n\'est pas prêt:</string>
+    <string name="txt_setup_enable_bclspp">Essayer de lancer Bluetooth Music ou de brancher un cable USB</string>
+    <string name="txt_setup_bcl_connecting">Apps Connection est connectée</string>
+    <string name="txt_setup_bcl_connected">Apps Connection est lancée</string>
+    <string name="txt_setup_bcl_connected_transport">Apps Connection est lancée en %s</string>
+    <string name="txt_build_info">Version de Build: %1$s %2$s</string>
+    <string name="txt_bcl_report">Performance Tunnel BCL:</string>
+    <string name="txt_car_capabilities">Capacités reportées de la voiture:</string>
+    <string name="btn_install">Installer</string>
+    <string name="btn_install_bmw">Installer BMW Connected</string>
+    <string name="btn_install_mini">Installer Mini Connected</string>
+    <string name="btn_install_bmwclassic">Installer BMW Connected Classic</string>
+    <string name="btn_install_miniclassic">Installer Mini Connected Classic</string>
+    <string name="lbl_advanced_settings">Afficher les Paramètres Avancés</string>
+    <string name="lbl_assistant">Assistant Vocal (Beta)</string>
+    <string name="lbl_assistant_empty">Aucun résultat trouvé</string>
+    <string name="notification_assistant_tap">Appuyer pour lancer %s</string>
+    <string name="notification_assistant_description">Nécessaire uniquement car l\'écran est</string>
+    <string name="donation_title">Vous aimez cette app?</string>
+    <string name="donation_text">Considérez montrer votre soutien avec un petit don</string>
+
 
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notifications</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Pas de Notifications</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Supprimer</string>
+    <string name="NOTIFICATION_OPTIONS">Options</string>
+    <string name="NOTIFICATION_POPUPS">Popups de Notification</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER">Popups de Notification Passager</string>
 
     <string name="MAP_ACTION_VIEWMAP">Plein Ecran</string>
     <string name="MAP_ACTION_SEARCH">Rechercher un endroit</string>
@@ -37,6 +102,7 @@
     <string name="MUSIC_APPLIST_TITLE">Applications</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Liste Vide&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Actions</string>
+    <string name="MUSIC_DISCONNECTED">&lt;Non Connecté&gt;</string>
     <string name="MUSIC_BROWSE_TITLE">Naviguer</string>
     <string name="MUSIC_BROWSE_EMPTY">&lt;Vide&gt;</string>
     <string name="MUSIC_BROWSE_LOADING">&lt;Chargement&gt;</string>
@@ -44,8 +110,22 @@
     <string name="MUSIC_BROWSE_ACTION_JUMPBACK">Retour au Précédent</string>
     <string name="MUSIC_BROWSE_ACTION_FILTER">Filtrer</string>
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Rechercher</string>
+    <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Jouer Depuis La Recherche</string>
     <string name="MUSIC_QUEUE_TITLE">Lecture en Cours</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;Liste Vide&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Précédent</string>
     <string name="MUSIC_SKIP_NEXT">Suivant</string>
+    <string name="MUSIC_TURN_SHUFFLE_ON">Activer la Lecture Aléatoire</string>
+    <string name="MUSIC_TURN_SHUFFLE_OFF">Désactiver la Lecture Aléatoire</string>
+
+    <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Dislike</string>
+    <string name="MUSIC_SPOTIFY_START_RADIO">Créer une Station Radio</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Activer Repeat All</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Activer Repeat One</string>
+    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Désactiver Repeat</string>
+    <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>
+    <string name="MUSIC_SPOTIFY_THUMB_UP">Thumb Up</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>
+    <string name="MUSIC_SPOTIFY_THUMB_DOWN">Thumb Down</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Thumbed Down</string>
 </resources>

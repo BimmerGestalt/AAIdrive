@@ -5,12 +5,16 @@ import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import org.json.JSONException
+import org.json.JSONObject
+import java.lang.Exception
 
-class CarInformationDiscovery(carAppAssets: CarAppResources) {
+class CarInformationDiscovery(securityAccess: SecurityAccess, carAppAssets: CarAppResources, val listener: CarInformationDiscoveryListener?) {
 
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
+	var capabilities: Map<String, String?>? = null
 
 	init {
 		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host
@@ -18,18 +22,30 @@ class CarInformationDiscovery(carAppAssets: CarAppResources) {
 		val appCert = carAppAssets.getAppCertificate(IDriveConnectionListener.brand
 				?: "")?.readBytes() as ByteArray
 		val sas_challenge = carConnection.sas_certificate(appCert)
-		val sas_login = SecurityService.signChallenge(challenge = sas_challenge)
+		val sas_login = securityAccess.signChallenge(challenge = sas_challenge)
 		carConnection.sas_login(sas_login)
 	}
 
 	fun onCreate() {
 		getCapabilities()
 
-		onDestroy()
+		subscribeToCds()
 	}
 
 	private fun getCapabilities() {
 		val capabilities = carConnection.rhmi_getCapabilities("", 255)
+
+		// report the capabilities to any debug view
+		val stringCapabilities = capabilities
+				.mapKeys { it.key as String }
+				.mapValues { it.value?.toString() }
+		this.capabilities = stringCapabilities
+		try {
+			listener?.onCapabilities(stringCapabilities)
+		} catch (e: Exception) {
+		}
+
+		// report the capabilities to analytics
 		val reportedKeys = setOf(
 				"vehicle.type", "vehicle.country", "vehicle.productiondate",
 				"hmi.type", "hmi.version", "hmi.display-width", "hmi.display-height", "hmi.role",
@@ -42,15 +58,32 @@ class CarInformationDiscovery(carAppAssets: CarAppResources) {
 		Analytics.reportCarCapabilities(reportedCapabilities)
 	}
 
+	fun subscribeToCds() {
+		val handle = carConnection.cds_create()
+		carConnection.cds_addPropertyChangedEventHandler(handle, "navigation.guidanceStatus", "63", 1000)
+	}
+
 	inner class CarAppListener: BaseBMWRemotingClient() {
 		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
-			super.cds_onPropertyChangedEvent(handle, ident, propertyName, propertyValue)
+			if (propertyName != null && propertyValue != null) {
+				val parsed = try {
+					JSONObject(propertyValue)
+				} catch (e: JSONException) {
+					null
+				}
+				listener?.onCdsProperty(propertyName, propertyValue, parsed)
+			}
 		}
 	}
 
 	fun onDestroy() {
 		try {
 			IDriveConnection.disconnectEtchConnection(carConnection)
-		} catch (e: java.lang.Exception) {}
+		} catch (e: Exception) {}
 	}
+}
+
+interface CarInformationDiscoveryListener {
+	fun onCapabilities(capabilities: Map<String, String?>)
+	fun onCdsProperty(propertyName: String, propertyValue: String, parsedValue: JSONObject?)
 }

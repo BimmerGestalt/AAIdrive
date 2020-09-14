@@ -17,6 +17,8 @@ apply from: 'buildtools/SentryProperties.gradle'
 
 apply from: 'buildtools/checksums.gradle'
 
+def TRAVIS_BRANCH = System.env.TRAVIS_PULL_REQUEST == "true" ? System.env.TRAVIS_PULL_REQUEST_BRANCH : System.env.TRAVIS_BRANCH
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -27,6 +29,14 @@ android {
         versionName androidGitVersion.name()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         archivesBaseName = "androidautoidrive-${androidGitVersion.name()}"
+        buildConfigField "long", "BUILD_TIME", System.currentTimeMillis() + "L"
+
+        manifestPlaceholders = [spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey]
+
+        // show the Audio Context option for advanced users
+        // Forcing it is only useful for old phones with Android Open Accessory v2 Audio support
+        // because the detection logic for AUDIO_SUPPORTS_USB only guesses based on version
+        buildConfigField "boolean", "MANUAL_AUDIO_CONTEXT", "false"
     }
 
     signingConfigs {
@@ -53,6 +63,7 @@ android {
         }
     }
     lintOptions {
+        checkReleaseBuilds false
         abortOnError false
     }
     testOptions {
@@ -76,14 +87,52 @@ android {
         gmap {
             dimension "map"
             // load api keys from ~/.gradle/gradle.properties
-            manifestPlaceholders = [gmaps_api_key:AndroidAutoIdrive_GmapsApiKey]
+            manifestPlaceholders = [spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey,
+                                    gmaps_api_key: AndroidAutoIdrive_GmapsApiKey]
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
 }
 
 //tasks.matching {it instanceof Test}.all {
 //    it.outputs.upToDateWhen {false}
 //}
+
+// compile all the debug variants
+task compileDebug {
+    dependsOn {
+        android.applicationVariants.findAll { it.name.endsWith("Debug") }.collect { variant ->
+            "compile${variant.name.capitalize()}Sources"
+        }
+    }
+}
+
+// lint all the debug variants
+task lintDebug {
+    dependsOn {
+        android.applicationVariants.findAll { it.name.endsWith("Debug") }.collect { variant ->
+            "lint${variant.name.capitalize()}"
+        }
+    }
+}
+
+// unit test all the debug variants
+task testDebug {
+    dependsOn {
+        android.applicationVariants.findAll { it.name.endsWith("Debug") }.collect { variant ->
+            "test${variant.name.capitalize()}UnitTest"
+        }
+    }
+}
+
+// like check, but only with debug variants
+task checkDebug {
+    dependsOn(lintDebug, testDebug)
+}
 
 repositories {
     jcenter()
@@ -103,6 +152,10 @@ dependencies {
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'android.arch.lifecycle:viewmodel:1.1.1'
     implementation 'com.github.wax911:android-emojify:1.5.3'
+    implementation project(path: ':spotify-app-remote')
+    implementation "com.google.code.gson:gson:2.8.5"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.0.1"
+    implementation "com.google.openlocationcode:openlocationcode:1.0.4"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
@@ -111,11 +164,12 @@ dependencies {
     testImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     testImplementation 'org.awaitility:awaitility-scala:3.1.5'
     testImplementation 'org.json:json:20180813'
-    androidTestImplementation "org.mockito:mockito-android:2.23.4"
+    androidTestImplementation "org.mockito:mockito-android:2.18.3"
     androidTestImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
     implementation project(path: ':IDriveConnectKitAndroid')
     implementation project(path: ':IDriveConnectKit')
+    testImplementation project(path: ':IDriveConnectKit')
     androidTestImplementation project(path: ':IDriveConnectKitAndroid')
     androidTestImplementation project(path: ':IDriveConnectKit')
     androidTestImplementation "org.bouncycastle:bcmail-jdk16:1.46"

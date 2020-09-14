@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.carapp.maps
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.hardware.display.VirtualDisplay
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.content.ContextCompat
@@ -13,7 +14,6 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.*
@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
 
-class GMapsController(private val context: Context, private val resultsController: MapResultsController, private val screenCapture: VirtualDisplayScreenCapture): MapInteractionController {
+class GMapsController(private val context: Context, private val resultsController: MapResultsController, private val virtualDisplay: VirtualDisplay): MapInteractionController {
 	val TAG = "GMapsController"
 	var handler = Handler(context.mainLooper)
 	var projection: GMapsProjection? = null
@@ -88,7 +88,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 
 		if (projection == null) {
 			Log.i(TAG, "First showing of the map")
-			val projection = GMapsProjection(context, screenCapture.virtualDisplay.display)
+			val projection = GMapsProjection(context, virtualDisplay.display)
 			this.projection = projection
 			projection.mapListener = Runnable {
 				// when getMapAsync finishes
@@ -176,10 +176,11 @@ class GMapsController(private val context: Context, private val resultsControlle
 	}
 
 	private fun updateCamera() {
+		val location = currentLocation ?: return
 		if (!animatingCamera || zoomingCamera) {
 			// if the camera is idle or we are zooming the camera already
 			animatingCamera = true
-			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, currentZoom), animationFinishedCallback)
+			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(location, currentZoom), animationFinishedCallback)
 		}
 	}
 

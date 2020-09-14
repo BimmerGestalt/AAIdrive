@@ -9,19 +9,21 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
-import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.GraphicsHelpers
-import me.hufman.androidautoidrive.PhoneAppResources
-import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
+import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
 import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
 import me.hufman.androidautoidrive.carapp.notifications.views.PopupView
-import me.hufman.androidautoidrive.removeFirst
+import me.hufman.androidautoidrive.notifications.CarNotification
+import me.hufman.androidautoidrive.notifications.CarNotificationController
+import me.hufman.androidautoidrive.notifications.NotificationsState
 import me.hufman.idriveconnectionkit.IDriveConnection
+import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
+import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -30,7 +32,7 @@ import java.util.*
 
 const val TAG = "PhoneNotifications"
 
-class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController) {
+class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val appSettings: MutableAppSettings) {
 	companion object {
 		const val INTENT_UPDATE_NOTIFICATIONS = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.UPDATE_NOTIFICATIONS"
 		const val INTENT_NEW_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.NEW_NOTIFICATION"
@@ -40,7 +42,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	var notificationReceiver: PhoneNotificationUpdate? = null
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
-	val carApp: RHMIApplication
+	val carApp: RHMIApplicationSynchronized
 	val viewPopup: PopupView                // notification about notification
 	val viewList: NotificationListView      // show a list of active notifications
 	val viewDetails: DetailsView            // view a notification with actions to do
@@ -53,7 +55,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
 		val appCert = carAppAssets.getAppCertificate(IDriveConnectionListener.brand ?: "")?.readBytes() as ByteArray
 		val sas_challenge = carConnection.sas_certificate(appCert)
-		val sas_login = SecurityService.signChallenge(challenge=sas_challenge)
+		val sas_login = securityAccess.signChallenge(challenge=sas_challenge)
 		carConnection.sas_login(sas_login)
 		carappListener.server = carConnection
 
@@ -64,16 +66,23 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB("common"))
 		carConnection.rhmi_initialize(rhmiHandle)
 
+		// get the list of capabilities, to decide what settings to show
+		val capabilities = carConnection.rhmi_getCapabilities("", rhmiHandle)
+				.filter { it.key is String && it.value is String }
+				.mapKeys { it.key as String }
+				.mapValues { it.value as String }
+		val notificationSettings = NotificationSettings(capabilities, appSettings)
+
 		// set up the app in the car
-		carApp = RHMIApplicationSynchronized(RHMIApplicationEtch(carConnection, rhmiHandle))
+		carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)))
 		carappListener.app = carApp
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
 		val unclaimedStates = LinkedList(carApp.states.values)
 
 		// figure out which views to use
-		viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
-		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources, graphicsHelpers)
+		viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources, PopupHistory())
+		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings)
 		viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller)
 
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first{
@@ -91,7 +100,7 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		viewPopup.initWidgets()
 
 		// set up the details view
-		viewDetails.initWidgets(viewList)
+		viewDetails.initWidgets(viewList, stateInput)
 
 		// subscribe to CDS for passenger seat info
 		val cdsHandle = carConnection.cds_create()
@@ -117,10 +126,20 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 			Log.w(TAG, "Received rhmi_onActionEvent: handle=$handle ident=$ident actionId=$actionId")
 			try {
 				app?.actions?.get(actionId)?.asRAAction()?.rhmiActionCallback?.onActionEvent(args)
+				carApp.runSynchronized {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
+				}
+			} catch (e: RHMIActionAbort) {
+				// Action handler requested that we don't claim success
+				carApp.runSynchronized {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, false)
+				}
 			} catch (e: Exception) {
 				Log.e(TAG, "Exception while calling onActionEvent handler! $e")
+				carApp.runSynchronized {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
+				}
 			}
-			server?.rhmi_ackActionEvent(handle, actionId, 1, true)
 		}
 
 		override fun rhmi_onHmiEvent(handle: Int?, ident: String?, componentId: Int?, eventId: Int?, args: MutableMap<*, *>?) {
@@ -166,18 +185,15 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 		}
 	}
 
-	fun onCreate(context: Context, handler: Handler? = null) {
+	fun onCreate(context: Context, handler: Handler) {
 		Log.i(TAG, "Registering car thread listeners for notifications")
 		val notificationReceiver = this.notificationReceiver ?:
 			PhoneNotificationUpdate(notificationListener)
 		this.notificationReceiver = notificationReceiver
-		if (handler != null) {
-			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_NEW_NOTIFICATION), null, handler)
-			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_UPDATE_NOTIFICATIONS), null, handler)
-		} else {
-			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_NEW_NOTIFICATION))
-			context.registerReceiver(notificationReceiver, IntentFilter(INTENT_UPDATE_NOTIFICATIONS))
-		}
+		context.registerReceiver(notificationReceiver, IntentFilter(INTENT_NEW_NOTIFICATION), null, handler)
+		context.registerReceiver(notificationReceiver, IntentFilter(INTENT_UPDATE_NOTIFICATIONS), null, handler)
+
+		viewList.onCreate(handler)
 	}
 	fun onDestroy(context: Context) {
 		val notificationReceiver = this.notificationReceiver
@@ -195,13 +211,15 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 	open inner class PhoneNotificationListener {
 		open fun onNotification(sbn: CarNotification) {
 			Log.i(TAG, "Received a new notification to show in the car: $sbn")
+			viewList.showStatusBarIcon()
+
 			if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
-					(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
-							!passengerSeated)
+				(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
+					!passengerSeated)
 			) {
 				lastPopup = sbn
 
-				if (!sbn.equalsKey(NotificationsState.selectedNotification)) {
+				if (!sbn.equalsKey(viewDetails.selectedNotification)) {
 					viewPopup.showNotification(sbn)
 				}
 			}
@@ -213,16 +231,20 @@ class PhoneNotifications(val carAppAssets: CarAppResources, val phoneAppResource
 
 			viewDetails.redraw()
 
+			// clear out any popped notifications that don't exist anymore
+			val currentNotifications = NotificationsState.cloneNotifications()
+			viewPopup.popupHistory.retainAll(currentNotifications)
+
 			// if the notification we popped up disappeared, clear the popup
-			if (NotificationsState.getNotificationByKey(lastPopup?.key) == null) {
+			if (currentNotifications.find { it.key == lastPopup?.key } == null) {
 				viewPopup.hideNotification()
 			}
+
 		}
 	}
 
 	class PhoneNotificationUpdate(val listener: PhoneNotificationListener): BroadcastReceiver() {
 		override fun onReceive(context: Context?, intent: Intent?) {
-
 			if (intent != null && intent.action == INTENT_NEW_NOTIFICATION) {
 				val notificationKey = intent.getStringExtra(EXTRA_NOTIFICATION)
 				if (notificationKey != null) {

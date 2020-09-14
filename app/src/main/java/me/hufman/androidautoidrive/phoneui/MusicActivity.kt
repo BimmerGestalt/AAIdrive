@@ -1,103 +1,251 @@
 package me.hufman.androidautoidrive.phoneui
 
-import android.arch.lifecycle.ViewModelProviders
-import android.graphics.BitmapFactory
+import android.content.Context
+import android.content.Intent
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Typeface
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_music.*
-import me.hufman.androidautoidrive.CarAppAssetManager
-import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.Utils
+import kotlinx.android.synthetic.main.activity_music.btnGrantSessions
+import kotlinx.android.synthetic.main.activity_music.listMusicApps
+import kotlinx.android.synthetic.main.activity_music.paneGrantSessions
+import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.music.MusicAppInfo
-import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 
-class MusicActivity: AppCompatActivity() {
+class MusicActivity : AppCompatActivity() {
 
-	companion object {
-		const val TAG = "MusicActivity"
+	val handler = Handler()
+
+	val displayedApps = ArrayList<MusicAppInfo>()
+	val appDiscoveryThread = AppDiscoveryThread(this) { appDiscovery ->
+		handler.post {
+			displayedApps.clear()
+			displayedApps.addAll(appDiscovery.combinedApps)
+			listMusicApps.adapter?.notifyDataSetChanged() // redraw the app list
+		}
 	}
-
-	var musicApp: MusicAppInfo? = null
-	var musicController: MusicController? = null
+	val appSettings by lazy { MutableAppSettings(this, handler) }
+	val hiddenApps by lazy { ListSetting(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS) }
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-
 		setContentView(R.layout.activity_music)
 
-		val musicApp = UIState.selectedMusicApp ?: return
-		this.musicApp = musicApp
-		txtAppName.text = musicApp.name
-		imgAppIcon.setImageDrawable(musicApp.icon)
-
-		// load the viewmodel
-		val viewModel = ViewModelProviders.of(this).get(MusicActivityModel::class.java)
-		viewModel.musicController = viewModel.musicController ?: MusicController(applicationContext, Handler(this.mainLooper))
-		viewModel.musicController?.connectApp(musicApp)
-		musicController = viewModel.musicController
-
-		// load the icons
-		val appAssets = CarAppAssetManager(this, "multimedia")
-		val images = Utils.loadZipfile(appAssets.getImagesDB("common"))
-		for (id in listOf("150.png", "148.png", "152.png", "147.png", "155.png")) {
-			viewModel.icons[id] = BitmapFactory.decodeByteArray(images[id], 0, images[id]?.size ?: 0)
+		swAudioContext.setOnCheckedChangeListener { buttonView, isChecked ->
+			AppSettings.saveSetting(this, AppSettings.KEYS.AUDIO_FORCE_CONTEXT, isChecked.toString())
+		}
+		btnGrantSessions.setOnClickListener {
+			promptNotificationPermission()
 		}
 
-		// set up the paging
-		pgrMusic.adapter = MusicActivityPagerAdapter(supportFragmentManager)
-		pgrMusic.offscreenPageLimit = 2
-		tabMusic.setupWithViewPager(pgrMusic)
+		// build list of discovered music apps
+		appDiscoveryThread.start()
+
+		listMusicApps.setHasFixedSize(true)
+		listMusicApps.layoutManager = LinearLayoutManager(this)
+		listMusicApps.adapter = MusicAppListAdapter(this, handler, supportFragmentManager, displayedApps, appDiscoveryThread, hiddenApps)
+
+		listMusicAppsRefresh.setOnRefreshListener {
+			appDiscoveryThread.forceDiscovery()
+			handler.postDelayed({
+				listMusicAppsRefresh.isRefreshing = false
+			}, 2000)
+		}
+
+		val swipeCallback = object: ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+			override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
+				return false
+			}
+
+			override fun onSwiped(view: RecyclerView.ViewHolder, direction: Int) {
+				val musicAppInfo = (view as? MusicAppListAdapter.ViewHolder)?.appInfo
+				if (musicAppInfo != null) {
+					val previous = hiddenApps.contains(musicAppInfo.packageName)
+					if (previous) {
+						hiddenApps.remove(musicAppInfo.packageName)
+					} else {
+						hiddenApps.add(musicAppInfo.packageName)
+					}
+					listMusicApps.adapter?.notifyItemChanged(view.adapterPosition)
+				}
+			}
+		}
+		ItemTouchHelper(swipeCallback).attachToRecyclerView(listMusicApps)
+	}
+
+	override fun onResume() {
+		super.onResume()
+		redraw()
 	}
 
 	override fun onDestroy() {
 		super.onDestroy()
-		musicController?.disconnectApp(pause=false)
+		appDiscoveryThread.stopDiscovery()
 	}
 
-	fun pushBrowse(directory: MusicMetadata?) {
-		val container = (pgrMusic.adapter as MusicActivityPagerAdapter).getItem(1) as MusicBrowseFragment
-		container.replaceFragment(MusicBrowsePageFragment.newInstance(directory), true)
+	fun redraw() {
+		val showAdvancedSettings = AppSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
+		swAudioContext.visible = showAdvancedSettings || BuildConfig.MANUAL_AUDIO_CONTEXT
+		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT].toBoolean()
+		paneGrantSessions.visibility = if (hasNotificationPermission()) View.GONE else View.VISIBLE
+		appDiscoveryThread.discovery()
 	}
 
-	fun showNowPlaying() {
-		pgrMusic.currentItem = 0
+	fun promptNotificationPermission() {
+		startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
 	}
 
-	override fun onBackPressed() {
-		if (pgrMusic.currentItem == 0) {
-			// pass through default behavior, to close the Activity
-			super.onBackPressed()
-		}
-		if (pgrMusic.currentItem == 1) {
-			val container = (pgrMusic.adapter as MusicActivityPagerAdapter).getItem(1) as MusicBrowseFragment
-			val popped = container.onBackPressed()
-			if (!popped) {
-				pgrMusic.currentItem = 0
-			}
-		}
+	fun hasNotificationPermission(): Boolean {
+		return UIState.notificationListenerConnected && NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
 	}
 }
 
-class MusicActivityPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
-	val tabs = LinkedHashMap<String, Fragment>(2).apply {
-		this["Now Playing"] = MusicNowPlayingFragment()
-		this["Browse"] = MusicBrowseFragment.newInstance(MusicBrowsePageFragment.newInstance(null))
+class MusicAppListAdapter(val context: Context, val handler: Handler, val supportFragmentManager: FragmentManager, val contents: ArrayList<MusicAppInfo>, val appDiscoveryThread: AppDiscoveryThread, val hiddenApps: Set<String>): RecyclerView.Adapter<MusicAppListAdapter.ViewHolder>() {
+
+	// animations for the music session
+	val animationLoopCallback = object: Animatable2.AnimationCallback() {
+		override fun onAnimationEnd(drawable: Drawable?) {
+			handler.post { (drawable as AnimatedVectorDrawable).start() }
+		}
+	}
+	val equalizerStatic = context.getDrawable(R.drawable.ic_equalizer_black_24dp)
+	val equalizerAnimated = (context.getDrawable(R.drawable.ic_dancing_equalizer) as AnimatedVectorDrawable).apply {
+		this.registerAnimationCallback(animationLoopCallback)
+	}
+	val grayscaleColorFilter = ColorMatrixColorFilter(
+			ColorMatrix().apply { setSaturation(0.0f) }
+	)
+
+	// high level handling to link a row View to a specific MusicAppInfo
+	inner class ViewHolder(val view: View): RecyclerView.ViewHolder(view), View.OnClickListener {
+		var appInfo: MusicAppInfo? = null
+
+		val imgMusicAppIcon = view.findViewById<ImageView>(R.id.imgMusicAppIcon)
+		val txtMusicAppName = view.findViewById<TextView>(R.id.txtMusicAppName)
+		val imgNowPlaying = view.findViewById<ImageView>(R.id.imgNowPlaying)
+		val imgControllable = view.findViewById<ImageView>(R.id.imgControllable)
+		val imgConnectable = view.findViewById<ImageView>(R.id.imgConnectable)
+		val imgBrowseable = view.findViewById<ImageView>(R.id.imgBrowseable)
+		val imgSearchable = view.findViewById<ImageView>(R.id.imgSearchable)
+		val imgBlock = view.findViewById<ImageView>(R.id.imgBlock)
+		val txtMusicAppFeatures = view.findViewById<TextView>(R.id.txtMusicAppFeatures)
+		val paneMusicAppFeatures = view.findViewById<LinearLayout>(R.id.paneMusicAppFeatures)
+		val txtMusicAppNotes = view.findViewById<TextView>(R.id.txtMusicAppNotes)
+
+		init {
+			view.setOnClickListener(this)
+		}
+
+		fun bind(appInfo: MusicAppInfo?) {
+			this.appInfo = appInfo
+			if (appInfo == null) {
+				txtMusicAppName.text = "Error"
+			} else {
+				val icon = appInfo.icon
+				icon.mutate()
+
+				if (hiddenApps.contains(appInfo.packageName)) {
+					imgMusicAppIcon.alpha = 0.4f
+					icon.colorFilter = grayscaleColorFilter
+					txtMusicAppName.setTextColor(txtMusicAppName.textColors.withAlpha(128))
+					txtMusicAppName.setTypeface(null, Typeface.ITALIC)
+				} else {
+					imgMusicAppIcon.alpha = 1.0f
+					icon.colorFilter = null
+					txtMusicAppName.setTextColor(txtMusicAppName.textColors.withAlpha(255))
+					txtMusicAppName.setTypeface(null, Typeface.NORMAL)
+				}
+				imgMusicAppIcon.setImageDrawable(icon)
+				txtMusicAppName.text = appInfo.name
+
+				if (appInfo.packageName == appDiscoveryThread.discovery?.musicSessions?.getPlayingApp()?.packageName) {
+					imgNowPlaying.setImageDrawable(equalizerAnimated)
+					equalizerAnimated.start()
+					imgNowPlaying.visibility = View.VISIBLE
+				} else {
+					imgNowPlaying.setImageDrawable(equalizerStatic)
+					imgNowPlaying.visibility = View.GONE
+				}
+				imgControllable.visible = appInfo.controllable && !appInfo.connectable
+				imgConnectable.visible = appInfo.connectable
+				imgBrowseable.visible = appInfo.browseable
+				imgSearchable.visible = appInfo.searchable || appInfo.playsearchable
+				imgBlock.visible = !(appInfo.controllable || appInfo.connectable)
+				val features = listOfNotNull(
+						if (appInfo.controllable && !appInfo.connectable) context.getString(R.string.musicAppControllable) else null,
+						if (appInfo.connectable) context.getString(R.string.musicAppConnectable) else null,
+						if (appInfo.browseable) context.getString(R.string.musicAppBrowseable) else null,
+						if (appInfo.searchable || appInfo.playsearchable) context.getString(R.string.musicAppSearchable) else null,
+						if (appInfo.controllable || appInfo.connectable) null else context.getString(R.string.musicAppUnavailable),
+						if (hiddenApps.contains(appInfo.packageName)) context.getString(R.string.musicAppHidden) else null
+				).joinToString(", ")
+				txtMusicAppFeatures.text = features
+				paneMusicAppFeatures.setOnClickListener {
+					val txtFeatures = txtMusicAppFeatures
+					txtFeatures.visible = !txtFeatures.visible
+				}
+
+				// show app-specific notes
+				if (appInfo.packageName == "com.spotify.music" && appInfo.probed && !appInfo.connectable) {
+					if (SpotifyAppController.hasSupport(context)) {
+						// prompt the user to click again to show the Spotify auth dialog
+						txtMusicAppNotes.text = context.getString(R.string.musicAppNotes_unauthorizedSpotify)
+						txtMusicAppNotes.visible = false
+						txtMusicAppNotes.setOnClickListener(null)
+					} else {
+						// show a note to downgrade Spotify
+						txtMusicAppNotes.text = context.getString(R.string.musicAppNotes_oldSpotify)
+						txtMusicAppNotes.visible = true
+						txtMusicAppNotes.setOnClickListener {
+							SpotifyDowngradeDialog().show(supportFragmentManager, "notes")
+						}
+					}
+					txtMusicAppNotes.visible = true
+				} else {
+					txtMusicAppNotes.visible = false
+					txtMusicAppNotes.setOnClickListener(null)
+				}
+			}
+		}
+
+		override fun onClick(item: View?) {
+			if (this.appInfo != null) {
+				UIState.selectedMusicApp = appInfo
+				val intent = Intent(context, MusicPlayerActivity::class.java)
+				context.startActivity(intent)
+			}
+		}
 	}
 
-	override fun getCount(): Int {
-		return tabs.size
+	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+		val layout = LayoutInflater.from(context).inflate(R.layout.musicapp_listitem, parent,false)
+		return ViewHolder(layout)
 	}
 
-	override fun getPageTitle(position: Int): CharSequence? {
-		return tabs.keys.elementAt(position)
+	override fun getItemCount(): Int {
+		return contents.size
 	}
 
-	override fun getItem(index: Int): Fragment {
-		return tabs.values.elementAt(index)
+	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+		val appInfo = contents.getOrNull(position)
+		holder.bind(appInfo)
 	}
 }

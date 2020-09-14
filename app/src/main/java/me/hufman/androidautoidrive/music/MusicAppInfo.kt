@@ -6,11 +6,11 @@ import android.graphics.drawable.Drawable
 data class MusicAppInfo(val name: String, val icon: Drawable,
                         val packageName: String, val className: String?) {
 	var probed = false
-	var connectable = false
-	var controllable = false
-	var browseable = false
-	var searchable = false
-	var playsearchable = false
+	var connectable = false     // whether MediaBrowser can connect
+	var controllable = false    // whether MediaSession can control it
+	var browseable = false      // whether any media items were discovered
+	var searchable = false      // whether any search results came back
+	var playsearchable = false  // whether the controller indicated PlayFromSearch support
 
 	companion object {
 		fun getInstance(context: Context, packageName: String, className: String?): MusicAppInfo {

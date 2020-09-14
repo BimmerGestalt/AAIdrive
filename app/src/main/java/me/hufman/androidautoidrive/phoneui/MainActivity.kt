@@ -12,22 +12,21 @@ import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.os.HandlerThread
-import android.provider.Settings
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.listMusicApps
 import me.hufman.androidautoidrive.*
-import me.hufman.androidautoidrive.music.MusicAppDiscovery
+import me.hufman.androidautoidrive.carapp.assistant.AssistantAppInfo
+import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import java.lang.IllegalStateException
 import kotlin.math.max
 
@@ -36,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 	companion object {
 		const val INTENT_REDRAW = "me.hufman.androidautoidrive.REDRAW"
 		const val TAG = "MainActivity"
+		const val NOTIFICATION_SERVICE_TIMEOUT = 1000
 		const val SECURITY_SERVICE_TIMEOUT = 1000
 		const val REDRAW_INTERVAL = 5000L
 		const val REQUEST_LOCATION = 4000
@@ -46,14 +46,17 @@ class MainActivity : AppCompatActivity() {
 	val handler = Handler()
 	val redrawListener = RedrawListener()
 	val redrawTask = RedrawTask()
-	val displayedApps = ArrayList<MusicAppInfo>()
-	val appDiscoveryThread = AppDiscoveryThread(this) { apps ->
+	val displayedMusicApps = ArrayList<MusicAppInfo>()
+	val appDiscoveryThread = AppDiscoveryThread(this) { appDiscovery ->
 		handler.post {
-			displayedApps.clear()
-			displayedApps.addAll(apps)
+			displayedMusicApps.clear()
+			displayedMusicApps.addAll(appDiscovery.validApps)
 			listMusicApps.invalidateViews() // redraw the app list
 		}
 	}
+
+	val assistantController by lazy { AssistantControllerAndroid(this, PhoneAppResourcesAndroid(this)) }
+	val displayedAssistantApps = ArrayList<AssistantAppInfo>()
 	var whenActivityStarted = 0L
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,12 +93,10 @@ class MainActivity : AppCompatActivity() {
 		swGmapWidescreen.setOnCheckedChangeListener { buttonView, isChecked ->
 			AppSettings.saveSetting(this, AppSettings.KEYS.MAP_WIDESCREEN, isChecked.toString())
 		}
-		swAudioContext.setOnCheckedChangeListener { buttonView, isChecked ->
-			AppSettings.saveSetting(this, AppSettings.KEYS.AUDIO_ENABLE_CONTEXT, isChecked.toString())
-		}
 
-		btnGrantSessions.setOnClickListener {
-			promptNotificationPermission()
+		btnConfigureMusic.setOnClickListener {
+			val intent = Intent(this, MusicActivity::class.java)
+			startActivity(intent)
 		}
 		btnHelp.setOnClickListener {
 			val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://hufman.github.io/AndroidAutoIdrive/faq.html"))
@@ -104,7 +105,16 @@ class MainActivity : AppCompatActivity() {
 
 		// build list of discovered music apps
 		appDiscoveryThread.start()
-		listMusicApps.adapter = object: ArrayAdapter<MusicAppInfo>(this, R.layout.musicapp_listitem, displayedApps) {
+
+		listMusicApps.setOnItemClickListener { adapterView, view, i, l ->
+			val appInfo = adapterView.adapter.getItem(i) as? MusicAppInfo
+			if (appInfo != null) {
+				UIState.selectedMusicApp = appInfo
+				val intent = Intent(this, MusicPlayerActivity::class.java)
+				startActivity(intent)
+			}
+		}
+		listMusicApps.adapter = object: ArrayAdapter<MusicAppInfo>(this, R.layout.musicapp_listitem, displayedMusicApps) {
 			val animationLoopCallback = object: Animatable2.AnimationCallback() {
 				override fun onAnimationEnd(drawable: Drawable?) {
 					handler.post { (drawable as AnimatedVectorDrawable).start() }
@@ -117,50 +127,19 @@ class MainActivity : AppCompatActivity() {
 
 			override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 				val appInfo = getItem(position)
-				val layout = convertView ?: layoutInflater.inflate(R.layout.musicapp_listitem, parent,false)
+				val layout = convertView ?: layoutInflater.inflate(R.layout.musicapp_griditem, parent,false)
 				return if (appInfo != null) {
 					layout.findViewById<ImageView>(R.id.imgMusicAppIcon).setImageDrawable(appInfo.icon)
-					layout.findViewById<TextView>(R.id.txtMusicAppName).setText(appInfo.name)
+					layout.findViewById<ImageView>(R.id.imgMusicAppIcon).contentDescription = appInfo.name
 
 					if (appInfo.packageName == appDiscoveryThread.discovery?.musicSessions?.getPlayingApp()?.packageName) {
 						layout.findViewById<ImageView>(R.id.imgNowPlaying).setImageDrawable(equalizerAnimated)
 						equalizerAnimated.start()
-						layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = VISIBLE
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = View.VISIBLE
 					} else {
 						layout.findViewById<ImageView>(R.id.imgNowPlaying).setImageDrawable(equalizerStatic)
-						layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = GONE
+						layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = View.GONE
 					}
-					layout.findViewById<ImageView>(R.id.imgControllable).visibility = if (appInfo.controllable && !appInfo.connectable) VISIBLE else GONE
-					layout.findViewById<ImageView>(R.id.imgConnectable).visibility = if (appInfo.connectable) VISIBLE else GONE
-					layout.findViewById<ImageView>(R.id.imgBrowseable).visibility = if (appInfo.browseable) VISIBLE else GONE
-					layout.findViewById<ImageView>(R.id.imgSearchable).visibility = if (appInfo.searchable || appInfo.playsearchable) VISIBLE else GONE
-					layout.findViewById<ImageView>(R.id.imgBlock).visibility = if (appInfo.controllable || appInfo.connectable) GONE else VISIBLE
-					val features = listOfNotNull(
-							if (appInfo.controllable && !appInfo.connectable) getString(R.string.musicAppControllable) else null,
-							if (appInfo.connectable) getString(R.string.musicAppConnectable) else null,
-							if (appInfo.browseable) getString(R.string.musicAppBrowseable) else null,
-							if (appInfo.searchable || appInfo.playsearchable) getString(R.string.musicAppSearchable) else null,
-							if (appInfo.controllable || appInfo.connectable) null else getString(R.string.musicAppUnavailable)
-					).joinToString(", ")
-					layout.findViewById<TextView>(R.id.txtMusicAppFeatures).text = features
-					layout.findViewById<LinearLayout>(R.id.paneMusicAppFeatures).setOnClickListener {
-						val txtFeatures = layout.findViewById<TextView>(R.id.txtMusicAppFeatures)
-						txtFeatures.visibility = if (txtFeatures.visibility == VISIBLE) GONE else VISIBLE
-					}
-
-					// show app-specific notes
-					val notes = layout.findViewById<TextView>(R.id.txtMusicAppNotes)
-					if (appInfo.packageName == "com.spotify.music" && appInfo.probed && !appInfo.connectable) {
-						notes.text = getString(R.string.musicAppNotes_oldSpotify)
-						notes.visibility = VISIBLE
-						notes.setOnClickListener {
-							SpotifyDowngradeDialog().show(supportFragmentManager, "notes")
-						}
-					} else {
-						notes.visibility = GONE
-						notes.setOnClickListener(null)
-					}
-
 					layout
 				} else {
 					layout.findViewById<TextView>(R.id.txtMusicAppName).setText("Error")
@@ -169,19 +148,30 @@ class MainActivity : AppCompatActivity() {
 			}
 		}
 
-		listMusicAppsRefresh.setOnRefreshListener {
-			appDiscoveryThread.forceDiscovery()
-			handler.postDelayed({
-				listMusicAppsRefresh.isRefreshing = false
-			}, 2000)
-		}
+		listAssistantApps.adapter = object: ArrayAdapter<AssistantAppInfo>(this, R.layout.assistantapp_listitem, displayedAssistantApps) {
+			override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+				val appInfo = getItem(position)
+				val layout = convertView ?: layoutInflater.inflate(R.layout.assistantapp_listitem, parent,false)
+				return if (appInfo != null) {
+					layout.findViewById<ImageView>(R.id.imgAssistantAppIcon).setImageDrawable(appInfo.icon)
+					layout.findViewById<ImageView>(R.id.imgAssistantAppIcon).contentDescription = appInfo.name
+					layout.findViewById<TextView>(R.id.txtAssistantAppName).text = appInfo.name
+					layout.findViewById<ImageView>(R.id.imgAssistantSettingsIcon).visible = assistantController.supportsSettings(appInfo)
 
-		listMusicApps.setOnItemClickListener { adapterView, view, i, l ->
-			val appInfo = adapterView.adapter.getItem(i) as? MusicAppInfo
+					layout.findViewById<ImageView>(R.id.imgAssistantSettingsIcon).setOnClickListener {
+						assistantController.openSettings(appInfo)
+					}
+					layout
+				} else {
+					layout.findViewById<TextView>(R.id.txtAssistantAppName).setText("Error")
+					layout
+				}
+			}
+		}
+		listAssistantApps.setOnItemClickListener { adapterView, view, i, l ->
+			val appInfo = adapterView.adapter.getItem(i) as? AssistantAppInfo
 			if (appInfo != null) {
-				UIState.selectedMusicApp = appInfo
-				val intent = Intent(this, MusicActivity::class.java)
-				startActivity(intent)
+				assistantController.triggerAssistant(appInfo)
 			}
 		}
 
@@ -204,7 +194,8 @@ class MainActivity : AppCompatActivity() {
 		AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS, isChecked.toString())
 		if (isChecked) {
 			// make sure we have permissions to read the notifications
-			if (!hasNotificationPermission() || !UIState.notificationListenerConnected) {
+			val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
+			if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && (!hasNotificationPermission() || !UIState.notificationListenerConnected)) {
 				promptNotificationPermission()
 			} else {
 				startMainService()
@@ -219,8 +210,7 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	fun hasNotificationPermission(): Boolean {
-		return (Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true
-				|| UIState.notificationListenerConnected)
+		return UIState.notificationListenerConnected && NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
 	}
 
 	fun onChangedSwitchGMaps(buttonView: CompoundButton, isChecked: Boolean) {
@@ -264,14 +254,28 @@ class MainActivity : AppCompatActivity() {
 		// update the music apps list, including any music sessions
 		appDiscoveryThread.discovery()
 
+		// reload assistants
+		displayedAssistantApps.clear()
+		displayedAssistantApps.addAll(assistantController.getAssistants().toList().sortedBy { it.name })
+		listAssistantApps.emptyView = txtEmptyAssistantApps
+		listAssistantApps.invalidateViews()
+
 		// try starting the service, to try connecting to the car with current app settings
 		// for example, after we resume from enabling the notification
 		startMainService()
 	}
 
 	fun redraw() {
-		swMessageNotifications.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
-				UIState.notificationListenerConnected
+		val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
+
+		if (ageOfActivity > NOTIFICATION_SERVICE_TIMEOUT) {
+			// wait a bit to make sure the Notification Listener actually is running
+			// sometimes when restarting, the listener takes a bit to start up
+			swMessageNotifications.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
+					UIState.notificationListenerConnected
+		} else {
+			swMessageNotifications.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
+		}
 		paneNotifications.visible = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
 		swGMaps.isChecked = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
 		paneGMaps.visible = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
@@ -282,21 +286,22 @@ class MainActivity : AppCompatActivity() {
 		}.indexOf(AppSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase())
 		swGmapSyle.setSelection(max(0, gmapStylePosition))
 
-		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_ENABLE_CONTEXT].toBoolean()
-		paneGrantSessions.visibility = if (hasNotificationPermission()) GONE else VISIBLE
-
-		val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
-		if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && !SecurityService.success) {
+		if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && !SecurityAccess.getInstance(this).isConnected()) {
 			txtConnectionStatus.text = resources.getString(R.string.connectionStatusMissingConnectedApp)
 			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionError, null))
 		} else if (!IDriveConnectionListener.isConnected) {
 			txtConnectionStatus.text = resources.getString(R.string.connectionStatusWaiting)
 			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionWaiting, null))
 		} else {
-			txtConnectionStatus.text = when (IDriveConnectionListener.brand?.toLowerCase()) {
-				"bmw" -> resources.getString(R.string.notification_description_bmw)
-				"mini" -> resources.getString(R.string.notification_description_mini)
-				else -> resources.getString(R.string.notification_description)
+			val chassisCode = ChassisCode.fromCode(DebugStatus.carCapabilities["vehicle.type"] ?: "Unknown")
+			txtConnectionStatus.text = if (chassisCode != null) {
+				resources.getString(R.string.notification_description_chassiscode, chassisCode.toString())
+			} else {
+				when (IDriveConnectionListener.brand?.toLowerCase()) {
+					"bmw" -> resources.getString(R.string.notification_description_bmw)
+					"mini" -> resources.getString(R.string.notification_description_mini)
+					else -> resources.getString(R.string.notification_description)
+				}
 			}
 			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionConnected, null))
 		}
@@ -329,55 +334,4 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
-	class AppDiscoveryThread(val context: Context, val callback: (List<MusicAppInfo>) -> Unit): HandlerThread("MusicAppDiscovery UI") {
-		private var handler: Handler? = null
-		var discovery: MusicAppDiscovery? = null
-			private set
-
-		override fun onLooperPrepared() {
-			val handler = Handler(this.looper)
-			this.handler = handler
-			val discovery = MusicAppDiscovery(context, handler)
-			this.discovery = discovery
-			discovery.listener = Runnable {
-				scheduleRedraw()
-			}
-			discovery.discoverApps()
-			discovery.probeApps(false)
-		}
-
-		private val redrawRunnable = Runnable {
-			val apps = discovery?.combinedApps
-			if (apps != null) {
-				callback(apps)
-			}
-		}
-
-		private fun scheduleRedraw() {
-			val handler = handler ?: return
-			handler.removeCallbacks(redrawRunnable)
-			handler.postDelayed(redrawRunnable, 100)
-		}
-
-		fun discovery() {
-			val handler = handler ?: return
-			handler.post {
-				discovery?.discoverApps()
-			}
-		}
-
-		fun forceDiscovery() {
-			val handler = handler ?: return
-			handler.post {
-				discovery?.cancelDiscovery()
-				discovery?.discoverApps()
-				discovery?.probeApps(true)
-			}
-		}
-
-		fun stopDiscovery() {
-			discovery?.cancelDiscovery()
-			quitSafely()
-		}
-	}
 }

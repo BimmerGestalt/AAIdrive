@@ -8,8 +8,12 @@ import kotlin.reflect.full.memberProperties
 object L {
 	// all of the strings used in the car app
 	// these default string values are used in tests, Android resources are used for real
+	var NOTIFICATIONS_TITLE = "Notifications"
 	var NOTIFICATIONS_EMPTY_LIST = "No Notifications"
 	var NOTIFICATION_CLEAR_ACTION = "Clear"
+	var NOTIFICATION_OPTIONS = "Options"
+	var NOTIFICATION_POPUPS = "Notification Popups"
+	var NOTIFICATION_POPUPS_PASSENGER = "Popups with passenger"
 
 	var MAP_ACTION_VIEWMAP = "View Full Map"
 	var MAP_ACTION_SEARCH = "Search for Place"
@@ -31,16 +35,28 @@ object L {
 	var MUSIC_QUEUE_EMPTY = "<Empty Queue>"
 	var MUSIC_SKIP_PREVIOUS = "Back"
 	var MUSIC_SKIP_NEXT = "Next"
-	val NOTIFICATIONS_TITLE = "Notifications"
+	var MUSIC_TURN_SHUFFLE_ON = "Turn Shuffle On"
+	var MUSIC_TURN_SHUFFLE_OFF = "Turn Shuffle Off"
 
-	val MUSIC_SPOTIFY_TURN_SHUFFLE_ON = "Turn Shuffle On"
-	val MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION = "Dislike"
+	var MUSIC_ACTION_SEEK_BACK_5 = "Seek back 5 seconds"
+	var MUSIC_ACTION_SEEK_BACK_10 = "Seek back 10 seconds"
+	var MUSIC_ACTION_SEEK_BACK_20 = "Seek back 20 seconds"
+	var MUSIC_ACTION_SEEK_BACK_60 = "Seek back 60 seconds"
+	var MUSIC_ACTION_SEEK_FORWARD_5 = "Seek forward 5 seconds"
+	var MUSIC_ACTION_SEEK_FORWARD_10 = "Seek forward 10 seconds"
+	var MUSIC_ACTION_SEEK_FORWARD_20 = "Seek forward 20 seconds"
+	var MUSIC_ACTION_SEEK_FORWARD_60 = "Seek forward 60 seconds"
+
+	var MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION = "Dislike"
 	var MUSIC_SPOTIFY_START_RADIO = "Make Radio Station"
 	var MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON = "Turn Repeat All On"
-	var MUSIC_SPOTIFY_TURN_SHUFFLE_OFF = "Turn Shuffle Off"
 	var MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON = "Turn Repeat One On"
 	var MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF = "Turn Repeat Off"
-	val MUSIC_SPOTIFY_ADD_TO_COLLECTION = "Like"
+	var MUSIC_SPOTIFY_ADD_TO_COLLECTION = "Like"
+	var MUSIC_SPOTIFY_THUMB_UP = "Thumb Up"
+	var MUSIC_SPOTIFY_THUMBS_UP_SELECTED = "Thumbed Up"
+	var MUSIC_SPOTIFY_THUMB_DOWN = "Thumb Down"
+	var MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED = "Thumbed Down"    // not sure if this exists, but just to be complete
 
 	fun loadResources(context: Context, locale: Locale? = null) {
 		val thisContext = if (locale == null) { context } else {
@@ -51,13 +67,20 @@ object L {
 		}
 		val stringProperties = L::class.memberProperties.filterIsInstance<KMutableProperty1<L, String>>()
 		for (member in stringProperties) {
-			if (member.name.matches(Regex("[A-Z_]+"))) {
+			if (member.name.matches(Regex("[A-Z_]+$"))) {
 				// this should crash the app if a new L string is created without a matching resource
 				val id = thisContext.resources.getIdentifier(member.name, "string", context.packageName)
 				if (id == 0) {
 					throw AssertionError("Could not find Resource value for string ${member.name}")
 				}
 				val value =	thisContext.resources.getString(id)
+				member.set(L, value)
+			} else if (member.name.matches(Regex("[A-Z_]+_[0-9]+$"))) {
+				val nameMatch = Regex("([A-Z_]+)_([0-9]+)$").matchEntire(member.name)
+						?: throw AssertionError("Could not parse L name ${member.name}")
+				val id = thisContext.resources.getIdentifier(nameMatch.groupValues[1], "plurals", context.packageName)
+				val quantity = nameMatch.groupValues[2].toInt()
+				val value = thisContext.resources.getQuantityString(id, quantity, quantity)
 				member.set(L, value)
 			}
 		}

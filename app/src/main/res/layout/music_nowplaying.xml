@@ -38,10 +38,19 @@
 
             <TextView
                 android:id="@+id/txtArtist"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingEnd="0dp"
+                android:layout_weight="1"
+                android:paddingEnd="16dp"
                 android:paddingStart="16dp" />
+
+            <ImageView
+                android:id="@+id/imgError"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_error_outline_black_24dp"
+                android:tint="?android:attr/textColorSecondary" />
         </LinearLayout>
 
         <LinearLayout

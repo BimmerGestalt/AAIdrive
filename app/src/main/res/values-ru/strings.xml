@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AndroidAutoIdrive</string>
     <string name="permlab_accessNotifications"> Доступ к Уведомлениям IDrive</string>
@@ -6,6 +7,7 @@
     <string name="permdesc_bindNotificationListenerService">Доступ к Уведомлениям IDrive</string>
     <string name="notification_title">Android Auto для IDrive</string>
     <string name="notification_description">Подклучен к Машыне</string>
+    <string name="notification_description_chassiscode">Подклучен к %s</string>
     <string name="notification_description_bmw">Подклучен к БМВ</string>
     <string name="notification_description_mini">Подклучен к Мини</string>
 
@@ -13,6 +15,10 @@
     <string name="message_notifications">Уведомления о Сообщениях</string>
     <string name="notification_popups">Всплывающие Уведомления</string>
     <string name="notification_popups_passenger">Всплывающие Уведомления с Пасажиром</string>
+
+    <string name="lbl_popupVersion">Всплывающие уведомления только работают с IDrive4</string>
+    <string name="lbl_smsPermission">Доступ машине SMS фотографиям. Текст всегда виден.</string>
+
     <string name="enable_google_maps">Включить Google Maps</string>
     <string name="lbl_widescreen_map">Широкоэкранные Карты</string>
     <string name="gmapStyleLabel">Стиль Карты</string>
@@ -28,6 +34,14 @@
     <string name="lbl_grant_sessions">Контроль над Активными Музыкальными Приложениями:</string>
     <string name="lbl_grant">Разрешить</string>
 
+    <string name="musicAppNotes_unauthorizedSpotify">Нажмите здесь, чтобы авторизовать доступ Spotify</string>
+    <string name="musicAppNotes_oldSpotify">Пожалуйста, понизьте версию Spotify для полной функциональности (просмотр)</string>
+    <string name="musicAppNotes_oldSpotifyInstructions">Это приложение может обеспечить полный контроль над Spotify до версии 8.4.96.953. Для полного контроля загрузите старую версию.</string>
+    <string name="lbl_ok">Хорошо</string>
+    <string name="lbl_cancel">Отмена</string>
+    <string name="btn_configure">Настроить ...</string>
+
+
     <string name="connectionStatusMissingConnectedApp">Не найдено приложения Connected или Connected Classic</string>
     <string name="connectionStatusWaiting">Ждем подключения к машине</string>
 
@@ -36,18 +50,34 @@
 
     <string name="txt_setup_bmw_ready">Приложение готово для подключения к БМВ</string>
     <string name="txt_setup_mini_ready">Приложение готово для подключения к Мини</string>
-    <string name="txt_setup_discovered_new_bmw">Приложение BMW Connected обнаружено, но для работы этого приложения также необходимо установить приложение Mini Connected Classic:</string>
-    <string name="txt_setup_discovered_new_mini">Приложение Mini Connected обнаружено, но для работы этого приложения также необходимо установить приложение BMW Connected Classic:</string>
     <string name="txt_setup_bmw_missing">Не готово к подключению к БМВ:</string>
     <string name="txt_setup_mini_missing">Не готово к подключению к Мини:</string>
+
+    <string name="txt_build_info">Версия сборки: %1$s %2$s</string>
+    <string name="txt_bcl_report">Производительность туннеля BCL:</string>
+    <string name="txt_car_capabilities">Сообщенные автомобильные возможности:</string>
+
     <string name="btn_install">Установить</string>
-    <string name="btn_install_bmw">Установить BMW Connected Classic</string>
-    <string name="btn_install_mini">Установить Mini Connected Classic</string>
+    <string name="btn_install_bmw">Установить BMW Connected</string>
+    <string name="btn_install_mini">Установить Mini Connected</string>
+    <string name="btn_install_bmwclassic">Установить BMW Connected Classic</string>
+    <string name="btn_install_miniclassic">Установить Mini Connected Classic</string>
+
+    <string name="lbl_advanced_settings">Показать расширенные настройки</string>
+    <string name="lbl_assistant">Виртуальный помощник (бета)</string>
+    <string name="lbl_assistant_empty">Не найдено</string>
+    <string name="notification_assistant_tap">Нажмите, чтобы запустить %s</string>
+    <string name="notification_assistant_description">Только необходимо, потому что экран включен</string>
+    <string name="donation_title">Понравилось приложение?</string>
+    <string name="donation_text">Поддержите нас</string>
+
 
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Уведомления</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Нет Уведомлений</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Очищить </string>
+    <string name="NOTIFICATION_POPUPS">Всплывающие Уведомления</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER">Всплывающие Уведомления с Пасажиром</string>
 
     <string name="MAP_ACTION_VIEWMAP">Посмотреть Полную Карту</string>
     <string name="MAP_ACTION_SEARCH">Поиск Места</string>
@@ -68,13 +98,18 @@
     <string name="MUSIC_QUEUE_EMPTY">&lt;Пустая очередь&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Предыдущий</string>
     <string name="MUSIC_SKIP_NEXT">Следующую</string>
+    <string name="MUSIC_TURN_SHUFFLE_ON">Перемешивать</string>
+    <string name="MUSIC_TURN_SHUFFLE_OFF">Не Перемешивать</string>
 
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_ON">Перемешивать</string>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Не Нравится</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Сделать Радиостанцию</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Повторить Все</string>
-    <string name="MUSIC_SPOTIFY_TURN_SHUFFLE_OFF">Не Перемешивать</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Повторить Одну</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Выключить Повтор</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Нравится</string>
+
+    <string name="MUSIC_SPOTIFY_THUMB_UP">Палец вверх</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Стоит палец вверх</string>
+    <string name="MUSIC_SPOTIFY_THUMB_DOWN">Палец вниз</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Стоит палец вверх</string>
 </resources>

@@ -8,26 +8,26 @@ import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.Utils.loadZipfile
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
-import me.hufman.androidautoidrive.carapp.RHMIApplicationIdempotent
-import me.hufman.androidautoidrive.carapp.RHMIApplicationSynchronized
 import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.removeFirst
 import me.hufman.idriveconnectionkit.IDriveConnection
+import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
+import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
-import me.hufman.idriveconnectionkit.android.SecurityService
+import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*
 
 const val TAG = "MusicApp"
 
-class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController) {
+class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController, musicAppMode: MusicAppMode) {
 	val carApp = createRHMIApp()
 
-	val avContext = AVContextHandler(carApp, musicController, graphicsHelpers)
+	val avContext = AVContextHandler(carApp, musicController, graphicsHelpers, musicAppMode)
 	val globalMetadata = GlobalMetadata(carApp, musicController)
 	var appListViewVisible = false
 	var playbackViewVisible = false
@@ -43,7 +43,7 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		val carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
 		val appCert = carAppAssets.getAppCertificate(IDriveConnectionListener.brand ?: "")?.readBytes() as ByteArray
 		val sas_challenge = carConnection.sas_certificate(appCert)
-		val sas_login = SecurityService.signChallenge(challenge=sas_challenge)
+		val sas_login = securityAccess.signChallenge(challenge=sas_challenge)
 		carConnection.sas_login(sas_login)
 		carappListener.server = carConnection
 
@@ -92,19 +92,19 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 		initWidgets()
 
 		musicAppDiscovery.listener = Runnable {
-			avContext.updateApps(musicAppDiscovery.validApps)
+			avContext.updateApps(musicAppDiscovery.connectableApps)
 			// redraw the app list
 			if (appListViewVisible) {
 				appSwitcherView.redraw()
 			}
 			// switch the interface to the currently playing app
 			val nowPlaying = musicController.musicSessions.getPlayingApp()
-			val changedApp = musicController.musicSessions.mediaController?.packageName != nowPlaying?.packageName
+			val changedApp = musicController.currentAppInfo != nowPlaying
 			if (nowPlaying != null && changedApp) {
 				val discoveredApp = musicAppDiscovery.validApps.firstOrNull {
 					it == nowPlaying
 				} ?: nowPlaying
-				musicController.connectApp(discoveredApp)
+				musicController.connectAppAutomatically(discoveredApp)
 			}
 		}
 		musicAppDiscovery.discoverApps()    // trigger the discovery, to show the apps when the handler starts running
@@ -243,12 +243,12 @@ class MusicApp(val carAppAssets: CarAppResources, val phoneAppResources: PhoneAp
 	private fun initWidgets() {
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
 			it.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-				if (musicController.musicSessions.mediaController == null && musicController.musicBrowser?.connected != true) {
+				if (musicController.currentAppController == null) {
 					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
 				} else {
 					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
 
-					val currentApp = musicController.musicBrowser?.musicAppInfo
+					val currentApp = musicController.currentAppInfo
 					if (currentApp != null) {
 						avContext.av_requestContext(currentApp)
 					}

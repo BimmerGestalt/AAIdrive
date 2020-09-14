@@ -6,19 +6,16 @@ import android.graphics.drawable.Icon
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import android.util.Log
-import me.hufman.androidautoidrive.carapp.notifications.NotificationListenerServiceImpl
+import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import com.nhaarman.mockito_kotlin.*
-import me.hufman.androidautoidrive.carapp.notifications.CarNotification
-import me.hufman.androidautoidrive.carapp.notifications.CarNotificationControllerIntent
+import me.hufman.androidautoidrive.notifications.CarNotification
+import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import org.awaitility.Awaitility.await
-import org.junit.After
-import org.junit.Before
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -27,16 +24,6 @@ import org.junit.Before
  */
 @RunWith(AndroidJUnit4::class)
 class InstrumentedTestNotificationApp {
-
-	@Before
-	fun setUp() {
-		/* NotificationListenerServiceImpl only sends announcements if the car is connected */
-		IDriveConnectionListener.setConnection("test", "127.0.0.1", 7000)
-	}
-	@After
-	fun tearDown() {
-		IDriveConnectionListener.reset()
-	}
 
 	@Test
 	fun testNotificationUpdate() {
@@ -53,7 +40,7 @@ class InstrumentedTestNotificationApp {
 		// prepare a notification
 		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)
 		val notification = CarNotification(appContext.packageName, "test", icon, true, arrayOf(),
-				"Test", "Test Summary", "Test Text", null, null)
+				"Test", "Test Text", null, null)
 
 		// send an update from the phone
 		val controller = NotificationListenerServiceImpl.NotificationUpdater(appContext)
@@ -80,7 +67,7 @@ class InstrumentedTestNotificationApp {
 		// prepare a notification
 		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)
 		val notification = CarNotification(appContext.packageName, "test", icon, true, arrayOf(),
-				"Test", "Test Summary", "Test Text", null, null)
+				"Test", "Test Text", null, null)
 
 		val carController = CarNotificationControllerIntent(appContext)
 		// send an interaction from the car

@@ -1,6 +1,5 @@
 package me.hufman.androidautoidrive
 
-import me.hufman.androidautoidrive.carapp.notifications.UnicodeCleaner
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test

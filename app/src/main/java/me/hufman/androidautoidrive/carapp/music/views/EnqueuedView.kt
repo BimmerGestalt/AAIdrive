@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import de.bmw.idrive.BMWRemoting
+import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
@@ -26,7 +27,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController) {
 			val checkmark = if (item.queueId == currentSong?.queueId) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, IMAGEID_CHECKMARK) else ""
 			return arrayOf(checkmark,
 						"",
-						item.title ?: "")
+						UnicodeCleaner.clean(item.title ?: ""))
 		}
 	}
 
@@ -47,7 +48,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController) {
 	}
 
 	fun show() {
-		val currentSong = musicController.getMetadata()
+		currentSong = musicController.getMetadata()
 		songsList.clear()
 		val songs = musicController.getQueue()
 		if (songs?.isNotEmpty() == true) {

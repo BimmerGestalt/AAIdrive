@@ -3,6 +3,7 @@
 apply plugin: 'jacoco'
 
 project.afterEvaluate {
+    // create variant-specific ones
     android.applicationVariants.all { variant ->
         def testTaskName = "test${variant.name.capitalize()}UnitTest"
         tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {
@@ -20,13 +21,13 @@ project.afterEvaluate {
                     '**/R$*.class'
             ]
             def kotlinClasses = fileTree(dir: "$buildDir/tmp/kotlin-classes/${variant.name}", excludes: excludes)
-            classDirectories = files([kotlinClasses])
+            classDirectories.setFrom(files([kotlinClasses]))
 
-            sourceDirectories = files([
+            sourceDirectories.setFrom(files([
                     "${project.projectDir}/src/main/java",
                     "${project.projectDir}/src/${variant.name}/java"
-            ])
-            executionData = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+            ]))
+            executionData.setFrom(files("${project.buildDir}/jacoco/${testTaskName}.exec"))
         }
     }
 }
