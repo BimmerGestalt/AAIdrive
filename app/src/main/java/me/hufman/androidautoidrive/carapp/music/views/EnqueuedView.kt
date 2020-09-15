@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.carapp.music.views
 import de.bmw.idrive.BMWRemoting
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.GraphicsHelpers
+import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
@@ -30,6 +31,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	}
 
 	val listComponent: RHMIComponent.List
+	val queueImageComponent: RHMIComponent.Image
 	var currentSong: MusicMetadata? = null
 	val songsList = ArrayList<MusicMetadata>()
 	val songsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3)
@@ -44,12 +46,12 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 			val coverArtImage = if (item.coverArt != null) graphicsHelpers.compress(item.coverArt!!, 90, 90, quality = 30) else ""
 
-			var title = item.title ?: ""
+			var title = UnicodeCleaner.clean(item.title ?: "")
 			if(title.length > ROW_LINE_MAX_LENGTH) {
 				title = title.substring(0, 20) + "..."
 			}
 
-			val artist = item.artist ?: ""
+			val artist = UnicodeCleaner.clean(item.artist ?: "")
 
 			val songMetaDataText = "${title}\n${artist}"
 
@@ -62,7 +64,6 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 	}
 
-	val imageComponent: RHMIComponent.Image
 	val labelComponent0: RHMIComponent.Label
 	val labelComponent1: RHMIComponent.Label
 	val labelComponent2: RHMIComponent.Label
@@ -71,8 +72,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		state as RHMIState.PlainState
 
 		listComponent = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
-
-		imageComponent = state.componentsList.filterIsInstance<RHMIComponent.Image>().first()
+		queueImageComponent = state.componentsList.filterIsInstance<RHMIComponent.Image>().first()
 
 		//all 3 labels next to image at top of list don't scroll and are static
 		//TODO: IDEA - can have it so the playlist information is on the right side of the screen in the blank space and is fixed
@@ -153,16 +153,17 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 
 		if(queueMetadata?.coverArt != null) {
-			imageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(musicController.getQueue()?.coverArt!!, 200, 200, quality = 60)
+			queueImageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(musicController.getQueue()?.coverArt!!, 200, 200, quality = 60)
 //			labelComponent0.getModel()?.asRaDataModel()?.value = queueMetadata.title ?: ""
 //			labelComponent1.getModel()?.asRaDataModel()?.value = queueMetadata.subtitle ?: ""
 //			labelComponent2.getModel()?.asRaDataModel()?.value = "LINE 3"
 		}
 		else {
-			imageComponent.setVisible(false)
+			queueImageComponent.setVisible(false)
 		}
 
-		state.getTextModel()?.asRaDataModel()?.value = "Now Playing - ${queueMetadata?.title}"
+		val queueTitle = UnicodeCleaner.clean(queueMetadata?.title ?: "")
+		state.getTextModel()?.asRaDataModel()?.value = "Now Playing - $queueTitle"
 	}
 
 	fun redraw() {
