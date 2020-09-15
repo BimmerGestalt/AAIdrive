@@ -115,19 +115,16 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 //		}
 //	}
 
-	fun onSelectAction(index: Int) {
-		currentIndex = index
-	}
-
-	fun showList(startIndex: Int = 0, numRows: Int = 10) {
-		if(startIndex >= 0) {
-			listComponent.getModel()?.setValue(songsListAdapter, startIndex, numRows, songsListAdapter.height)
-		}
-	}
-
 	fun show() {
 		currentSong = musicController.getMetadata()
 		queueMetadata = musicController.getQueue()
+
+		//same queue as before, just select currently playing song
+		if(songsList == queueMetadata?.songs) {
+			showCurrentlyPlayingSong()
+			return
+		}
+
 		songsList.clear()
 
 		val songs = queueMetadata?.songs
@@ -148,14 +145,13 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 				}
 			}
 
-			val selectedIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
-			showList(selectedIndex)
-			setSelectionToCurrentSong(selectedIndex)
+			showCurrentlyPlayingSong()
 		} else {
 			listComponent.setEnabled(false)
 			listComponent.setSelectable(false)
 			listComponent.getModel()?.setValue(songsEmptyList, 0, songsEmptyList.height, songsEmptyList.height)
 		}
+
 		if(queueMetadata?.coverArt != null) {
 			imageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(musicController.getQueue()?.coverArt!!, 200, 200, quality = 60)
 //			labelComponent0.getModel()?.asRaDataModel()?.value = queueMetadata.title ?: ""
@@ -167,17 +163,6 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 
 		state.getTextModel()?.asRaDataModel()?.value = "Now Playing - ${queueMetadata?.title}"
-	}
-
-	/**
-	 * Sets the selection to the current song
-	 */
-	fun setSelectionToCurrentSong(index: Int) {
-		if (index >= 0) {
-			state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
-					mapOf(0.toByte() to listComponent.id, 41.toByte() to index)
-			)
-		}
 	}
 
 	fun redraw() {
@@ -205,13 +190,40 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			if(metadata != currentlyVisibleRows[index]) {
 
 				//can only see roughly 5 rows (2 before selected index)
-				showList(max(0,currentIndex-3),4)
+				showList(max(0,currentIndex-4),8)
 				break
 			}
 		}
 	}
 
-	fun onClick(index: Int) {
+	/**
+	 * Sets the list selection to the current song
+	 */
+	private fun setSelectionToCurrentSong(index: Int) {
+		if (index >= 0) {
+			state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
+					mapOf(0.toByte() to listComponent.id, 41.toByte() to index)
+			)
+		}
+	}
+
+	private fun onSelectAction(index: Int) {
+		currentIndex = index
+	}
+
+	private fun showList(startIndex: Int = 0, numRows: Int = 10) {
+		if(startIndex >= 0) {
+			listComponent.getModel()?.setValue(songsListAdapter, startIndex, numRows, songsListAdapter.height)
+		}
+	}
+
+	private fun showCurrentlyPlayingSong() {
+		val selectedIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
+		showList(selectedIndex)
+		setSelectionToCurrentSong(selectedIndex)
+	}
+
+	private fun onClick(index: Int) {
 		val song = songsList.getOrNull(index)
 		if (song?.queueId != null) {
 			musicController.playQueue(song)
