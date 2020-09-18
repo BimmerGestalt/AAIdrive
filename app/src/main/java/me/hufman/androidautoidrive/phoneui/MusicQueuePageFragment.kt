@@ -1,8 +1,12 @@
 package me.hufman.androidautoidrive.phoneui
 
+import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
@@ -39,9 +43,11 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 	lateinit var musicController: MusicController
 	lateinit var placeholderCoverArt: Bitmap
 
-	var loaderJob: Job? = null
-	val contents = ArrayList<MusicMetadata>()
-	var currentQueueMetadata: QueueMetadata? = null
+	private var loaderJob: Job? = null
+	private val contents = ArrayList<MusicMetadata>()
+	private var currentQueueMetadata: QueueMetadata? = null
+
+	val handler = Handler()
 
 	fun onActive() {
 		musicController.listener = Runnable {
@@ -49,7 +55,7 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 				redrawQueueUI()
 			}
 
-			(listQueue.adapter as QueueAdapter).notifyDataSetChanged()
+			(this.context as Activity).listQueue.adapter?.notifyDataSetChanged()
 		}
 	}
 
@@ -82,7 +88,7 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 		txtQueueEmpty.text = getString(R.string.MUSIC_BROWSE_LOADING)
 	}
 
-	fun redrawQueueUI() {
+	private fun redrawQueueUI() {
 		if(loaderJob != null) {
 			loaderJob?.cancel()
 		}
@@ -114,7 +120,7 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 				playlistCoverArt.setImageBitmap(placeholderCoverArt)
 			}
 
-			playlistName.setText(currentQueueMetadata?.title)
+			playlistName.text = currentQueueMetadata?.title
 		}
 	}
 
@@ -130,6 +136,15 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 			}
 		}
 
+		private val animationLoopCallback = object: Animatable2.AnimationCallback() {
+			override fun onAnimationEnd(drawable: Drawable?) {
+				handler.post { (drawable as AnimatedVectorDrawable).start() }
+			}
+		}
+		private val equalizerAnimated = (resources.getDrawable(R.drawable.ic_dancing_equalizer, null) as AnimatedVectorDrawable).apply {
+			this.registerAnimationCallback(animationLoopCallback)
+		}
+
 		override fun getItemCount(): Int {
 			return contents.size
 		}
@@ -142,14 +157,15 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 		override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 			val item = contents.getOrNull(position) ?: return
 
-			if(item.queueId == musicController.getMetadata()?.queueId) {
-				holder.checkmarkImageView.setImageDrawable(resources.getDrawable(R.drawable.ic_equalizer_black_24dp, null))
+			if(item.queueId == musicController.getMetadata()?.queueId && !musicController.getPlaybackPosition().playbackPaused) {
+				holder.checkmarkImageView.setImageDrawable(equalizerAnimated)
+				equalizerAnimated.start()
 			} else {
 				holder.checkmarkImageView.setImageDrawable(null)
 			}
 			holder.coverArtImageView.setImageBitmap(item.coverArt)
-			holder.songTextView.setText(item.title)
-			holder.artistTextView.setText(item.artist)
+			holder.songTextView.text = item.title
+			holder.artistTextView.text = item.artist
 		}
 	}
 }
