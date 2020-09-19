@@ -8,6 +8,7 @@ import me.hufman.androidautoidrive.awaitPending
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
@@ -24,7 +25,7 @@ enum class BrowseAction(val getLabel: () -> String) {
 		return getLabel()
 	}
 }
-class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel, val browseController: BrowsePageController, var previouslySelected: MusicMetadata?): CoroutineScope {
+class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val browsePageModel: BrowsePageModel, val browseController: BrowsePageController, var previouslySelected: MusicMetadata?): CoroutineScope {
 	override val coroutineContext: CoroutineContext
 		get() = Dispatchers.IO
 
@@ -38,9 +39,6 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 		val loadingList = RHMIModel.RaListModel.RHMIListConcrete(3).apply {
 			this.addRow(arrayOf("", "", L.MUSIC_BROWSE_LOADING))
 		}
-		val checkmarkIcon = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 149)
-		val folderIcon = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 155)
-		val songIcon = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 152)
 
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.PlainState &&
@@ -74,6 +72,10 @@ class BrowsePageView(val state: RHMIState, val browsePageModel: BrowsePageModel,
 	private var musicList = ArrayList<MusicMetadata>()
 	private var currentListModel: RHMIModel.RaListModel.RHMIList = loadingList
 	private var shortcutSteps = 0
+
+	val checkmarkIcon = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK)
+	val folderIcon = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.BROWSE)
+	val songIcon = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SONG)
 
 	private val actions = ArrayList<BrowseAction>()
 	private val actionsListModel = RHMIListAdapter<BrowseAction>(3, actions)
