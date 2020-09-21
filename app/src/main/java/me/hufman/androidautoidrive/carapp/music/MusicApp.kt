@@ -231,14 +231,15 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 
 		override fun am_onAppEvent(handle: Int?, ident: String?, appId: String?, event: BMWRemoting.AMEvent?) {
 			Log.i(TAG, "Received am_onAppEvent: handle=$handle ident=$ident appId=$appId event=$event")
+			appId ?: return
 			try {
-				if (appId != null) {
-					avContext.av_requestContext(appId)
-				}
+				val appInfo = avContext.getAppInfo(appId) ?: return
+				avContext.av_requestContext(appInfo)
 				app?.events?.values?.filterIsInstance<RHMIEvent.FocusEvent>()?.firstOrNull()?.triggerEvent(mapOf(0.toByte() to playbackView.state.id))
 				carApp.runSynchronized {
 					server?.am_showLoadedSuccessHint(avContext.amHandle)
 				}
+				avContext.amRecreateApp(appInfo)
 			} catch (e: Exception) {
 				Log.e(TAG, "Received exception while handling am_onAppEvent", e)
 			}

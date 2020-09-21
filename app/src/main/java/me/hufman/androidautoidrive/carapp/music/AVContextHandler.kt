@@ -74,6 +74,20 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		}
 	}
 
+	/**
+	 * Recreate an AM app entry, which removes the spinning animation
+	 */
+	fun amRecreateApp(appInfo: MusicAppInfo) {
+		amHandle ?: return
+		app.runSynchronized {
+			try {
+				carConnection.am_registerApp(amHandle, appInfo.amAppIdentifier, getAMInfo(appInfo))
+			} catch (e: Exception) {
+				Log.w(TAG, "Received exception during AM app redraw", e)
+			}
+		}
+	}
+
 	/** What weight to assign for the AM app, to sort it in the list properly */
 	fun getAppWeight(appName: String): Int {
 		val name = appName.toLowerCase().toCharArray().filter { it.isLetter() }
@@ -101,10 +115,10 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		return amInfo
 	}
 
-	fun av_requestContext(ident: String) {
-		knownApps[ident]?.apply { av_requestContext(this) } ?:
-			Log.w(TAG, "Wanted to requestContext for missing app $ident?")
+	fun getAppInfo(appId: String): MusicAppInfo? {
+		return knownApps[appId]
 	}
+
 	fun av_requestContext(app: MusicAppInfo) {
 		controller.connectAppManually(app)  // prepare the music controller, so that av_connectionGranted can use it
 		if (musicAppMode.shouldRequestAudioContext()) {
