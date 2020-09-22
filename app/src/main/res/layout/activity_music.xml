@@ -33,6 +33,13 @@
             android:text="@string/enable_audio_context"
             android:layout_marginBottom="8dp" />
 
+        <Switch
+            android:id="@+id/swSpotifyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/enable_spotify_layout"
+            android:layout_marginBottom="8dp" />
+
         <LinearLayout
             android:id="@+id/paneGrantSessions"
             android:layout_width="match_parent"
@@ -40,7 +47,7 @@
             android:layout_marginBottom="4dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:visibility="gone" >
+            android:visibility="visible">
 
             <TextView
                 android:id="@+id/txtGrantSessionsLabel"

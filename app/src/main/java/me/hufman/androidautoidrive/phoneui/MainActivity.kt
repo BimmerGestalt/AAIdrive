@@ -12,8 +12,8 @@ import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.provider.Settings
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
@@ -210,7 +210,7 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	fun hasNotificationPermission(): Boolean {
-		return Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true
+		return UIState.notificationListenerConnected && NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
 	}
 
 	fun onChangedSwitchGMaps(buttonView: CompoundButton, isChecked: Boolean) {

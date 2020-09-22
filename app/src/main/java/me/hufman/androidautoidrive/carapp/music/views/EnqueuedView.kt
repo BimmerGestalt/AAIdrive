@@ -5,6 +5,7 @@ import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.QueueMetadata
@@ -12,13 +13,11 @@ import me.hufman.idriveconnectionkit.rhmi.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
 
-class EnqueuedView(val state: RHMIState, val musicController: MusicController, val graphicsHelpers: GraphicsHelpers): CoroutineScope {
+class EnqueuedView(val state: RHMIState, val musicController: MusicController, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs): CoroutineScope {
 	override val coroutineContext: CoroutineContext
 		get() = Dispatchers.IO
 
 	companion object {
-		private const val IMAGEID_CHECKMARK = 149
-
 		//current default row width only supports 22 chars before rolling over
 		private const val ROW_LINE_MAX_LENGTH = 22
 
@@ -42,7 +41,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 	var songsListAdapter = object: RHMIListAdapter<MusicMetadata>(4, songsList) {
 		override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
-			val checkmark = if (item.queueId == currentSong?.queueId) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, IMAGEID_CHECKMARK) else ""
+			val checkmark = if (item.queueId == currentSong?.queueId) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK) else ""
 
 			val coverArtImage = if (item.coverArt != null) graphicsHelpers.compress(item.coverArt!!, 90, 90, quality = 30) else ""
 

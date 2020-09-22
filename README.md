@@ -68,6 +68,7 @@ Implemented Features
     - Automatically updates the screen to follow the active app
     - Recommended compatible apps:
       - Audiobooks and Podcasts:
+        - [Acast Podcast Player](https://play.google.com/store/apps/details?id=com.acast.nativeapp)
         - [AntennaPod](https://play.google.com/store/apps/details?id=de.danoeh.antennapod)
         - [The Bob & Tom Show](https://play.google.com/store/apps/details?id=com.radio.station.BOB.TOM)
         - [Castbox](https://play.google.com/store/apps/details?id=fm.castbox.audiobook.radio.podcast)
@@ -97,7 +98,9 @@ Implemented Features
         - [ARD Audiothek](https://play.google.com/store/apps/details?id=de.ard.audiothek)
         - [BFM](https://play.google.com/store/apps/details?id=my.bfm.app)
         - [Dash Radio](https://play.google.com/store/apps/details?id=com.dashradio.dash)
+        - [DI.FM](https://play.google.com/store/apps/details?id=com.audioaddict.di)
         - [Energy Radio](https://play.google.com/store/apps/details?id=radioenergy.app)
+        - [HOT97 Official](https://play.google.com/store/apps/details?id=com.jacapps.whhl)
         - [Nederland.FM](https://play.google.com/store/apps/details?id=nl.nibbixsoft.app)
         - [NHL](https://play.google.com/store/apps/details?id=com.nhl.gc1112.free)
         - [ntv Nachrichten](https://play.google.com/store/apps/details?id=de.lineas.lit.ntv.android)

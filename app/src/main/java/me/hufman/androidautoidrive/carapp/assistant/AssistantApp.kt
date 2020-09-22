@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.carapp.assistant
 
+import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
@@ -15,7 +16,9 @@ val AssistantAppInfo.amAppIdentifier: String
 	get() = "androidautoidrive.assistant.${this.packageName}"
 
 class AssistantApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val controller: AssistantController, val graphicsHelpers: GraphicsHelpers) {
+	val TAG = "AssistantApp"
 	val carConnection = createRHMIApp()
+	val amHandle: Int
 
 	private fun createRHMIApp(): BMWRemotingServer {
 		val carappListener = CarAppListener()
@@ -28,12 +31,26 @@ class AssistantApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppR
 		return carConnection
 	}
 
+	init {
+		amHandle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
+	}
+
 	fun onCreate() {
-		val amHandle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
 		carConnection.am_addAppEventHandler(amHandle, "me.hufman.androidautoidrive.assistant")
 		val assistants = controller.getAssistants()
 		assistants.forEach {
 			carConnection.am_registerApp(amHandle, it.amAppIdentifier, getAMInfo(it))
+		}
+	}
+
+	/**
+	 * Recreate an AM app entry, which removes the spinning animation
+	 */
+	fun amRecreateApp(appInfo: AssistantAppInfo) {
+		try {
+			carConnection.am_registerApp(amHandle, appInfo.amAppIdentifier, getAMInfo(appInfo))
+		} catch (e: Exception) {
+			Log.w(TAG, "Received exception during AM app redraw", e)
 		}
 	}
 
@@ -46,6 +63,8 @@ class AssistantApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppR
 			assistants.forEach {
 				if (it.amAppIdentifier == appId) {
 					controller.triggerAssistant(it)
+					Thread.sleep(2000)
+					amRecreateApp(it)
 				}
 			}
 		}

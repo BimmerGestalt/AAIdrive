@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.carapp.music.views
 
 import android.util.Log
 import kotlinx.coroutines.Deferred
+import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
@@ -14,7 +15,7 @@ import java.util.*
 data class BrowseState(val location: MusicMetadata?,    // the directory the user selected
                        var pageView: BrowsePageView? = null     // the PageView that is showing for this location
 )
-class BrowseView(val states: List<RHMIState>, val musicController: MusicController) {
+class BrowseView(val states: List<RHMIState>, val musicController: MusicController, val musicImageIDs: MusicImageIDs) {
 	companion object {
 		val SEARCHRESULT_PLAY_FROM_SEARCH = MusicMetadata(mediaId="__PLAY_FROM_SEARCH__", title=L.MUSIC_BROWSE_PLAY_FROM_SEARCH)
 		fun fits(state: RHMIState): Boolean {
@@ -114,7 +115,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		}
 
 		val browseModel = BrowsePageModel(this, musicController, directory)
-		val browsePage = BrowsePageView(state, browseModel, pageController, stack.getOrNull(index+1)?.location)
+		val browsePage = BrowsePageView(state, musicImageIDs, browseModel, pageController, stack.getOrNull(index+1)?.location)
 		browsePage.initWidgets(inputState)
 		stackSlot.pageView = browsePage
 		return browsePage
