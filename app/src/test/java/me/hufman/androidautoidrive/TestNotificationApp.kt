@@ -366,7 +366,7 @@ class TestNotificationApp {
 		// now hide the notification, and try to popup again
 		app.viewDetails.state.focusCallback?.onFocus(false)
 		app.notificationListener.onNotification(bundle2)
-		assertNotNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup that we just read
 	}
 
 	/**
@@ -429,7 +429,7 @@ class TestNotificationApp {
 		// verify that clearing the notification resets the history
 		NotificationsState.notifications.clear()
 		app.notificationListener.updateNotificationList()
-		assertEquals(0, app.viewPopup.popupHistory.poppedNotifications.size)
+		assertEquals(0, app.readHistory.poppedNotifications.size)
 		// it should trigger a popup now
 		app.notificationListener.onNotification(bundle)
 		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent
