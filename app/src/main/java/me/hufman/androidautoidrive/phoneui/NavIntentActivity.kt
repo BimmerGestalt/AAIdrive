@@ -33,9 +33,13 @@ class NavIntentActivity: Activity() {
 
 		override fun doInBackground(vararg p0: String?): String? {
 			val url = p0.getOrNull(0) ?: return null
-			val rhmi = parser.parseUrl(url)
-			Log.i(TAG, "Parsed $url into car nav $rhmi")
-			return rhmi
+			try {
+				val rhmi = parser.parseUrl(url)
+				Log.i(TAG, "Parsed $url into car nav $rhmi")
+				return rhmi
+			} catch (e: Exception) {
+				return null
+			}
 		}
 
 		override fun onPostExecute(result: String?) {
