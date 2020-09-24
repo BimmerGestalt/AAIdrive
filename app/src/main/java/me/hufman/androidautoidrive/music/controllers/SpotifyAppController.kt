@@ -12,9 +12,6 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.*
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.R
@@ -22,12 +19,8 @@ import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
 import java.lang.Exception
 import java.util.*
-import kotlin.coroutines.CoroutineContext
 
-class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): MusicAppController, CoroutineScope {
-	override val coroutineContext: CoroutineContext
-		get() = Dispatchers.IO
-
+class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): MusicAppController {
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
@@ -213,24 +206,26 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		}
 	}
 
-	//probably should wrap the cache calls in synchronized blocks
+	/**
+	 * Retrieves the cover art Bitmap for the provided ImageUri. If it is present in the coverArtCache
+	 * then the Bitmap is returned otherwise the imagesApi is called to asynchronously add the cover
+	 * art Bitmap to the cache and returns null in the meantime.
+	 */
 	fun getCoverArt(imageUri: ImageUri): Bitmap? {
-		//check if image is in LRU cache
 		val coverArt = coverArtCache.get(imageUri)
 		if (coverArt != null) {
 			return coverArt
-		}
-		//need to make api call to get image
-		else {
-			launch {
-				remote.imagesApi.getImage(imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArtResponse ->
-					coverArtCache.put(imageUri, coverArtResponse)
-				}
+		} else {
+			remote.imagesApi.getImage(imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArtResponse ->
+				coverArtCache.put(imageUri, coverArtResponse)
 			}
 		}
 		return null
 	}
 
+	/**
+	 * Creates the QueueMetadata for the current queue with the title, subtitle, and queue cover art
+	 */
 	private fun buildQueueMetadata(title: String?, subtitle: String?) {
 		val recentlyPlayedUri = "com.spotify.recently-played"
 		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)

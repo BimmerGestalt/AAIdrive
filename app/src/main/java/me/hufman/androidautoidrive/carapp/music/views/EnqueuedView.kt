@@ -189,7 +189,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		for ((index, metadata) in currentVisibleRowsMusicMetadata.withIndex()) {
 			if(metadata != currentlyVisibleRows[index]) {
 
-				//can only see roughly 5 rows (2 before selected index)
+				//can only see roughly 5 rows
 				showList(max(0,currentIndex-4),8)
 				break
 			}

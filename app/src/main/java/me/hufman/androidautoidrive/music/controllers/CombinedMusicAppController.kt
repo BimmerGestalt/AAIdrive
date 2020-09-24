@@ -77,7 +77,8 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 	 */
 	fun getQueueController(): MusicAppController? {
 		return withController {
-			if (it.getQueue() == null || it.getQueue()?.songs?.isEmpty()!!) {
+			val queue = it.getQueue()
+			if (queue == null || queue.songs?.isEmpty()!!) {
 				throw UnsupportedOperationException()
 			}
 			it
