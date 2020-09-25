@@ -1,8 +1,10 @@
 package me.hufman.androidautoidrive.notifications
 
 import android.app.Notification
+import android.app.NotificationManager
 import android.graphics.Bitmap
 import android.graphics.drawable.Icon
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -16,6 +18,10 @@ import android.util.Log
 import me.hufman.androidautoidrive.UnicodeCleaner
 
 object ParseNotification {
+	/**
+	 * Add a NotificationManager (which is tied to a context) t
+	 */
+	var notificationManager: NotificationManager? = null
 
 	/**
 	 * Any package names that should not trigger popups
@@ -25,6 +31,13 @@ object ParseNotification {
 	/** Any notification levels that should not show popups */
 	val SUPPRESSED_POPUP_IMPORTANCES = setOf(IMPORTANCE_LOW, IMPORTANCE_MIN, IMPORTANCE_NONE)
 
+	inline fun <R> ifOreo(callable: () -> R): R? {
+		return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			callable()
+		} else {
+			null
+		}
+	}
 	/**
 	 * Summarize an Android Notification into what should be shown in the car
 	 */
@@ -85,8 +98,10 @@ object ParseNotification {
 
 		val actions = sbn.notification.actions?.map { CarNotification.Action.parse(it) } ?: emptyList()
 
+		val soundUri = getNotificationSound(sbn.notification)
+
 		val summarized = CarNotification(sbn.packageName, sbn.key, icon, sbn.isClearable, actions,
-				title ?: "", text?.trim() ?: "", picture, pictureUri)
+				title ?: "", text?.trim() ?: "", picture, pictureUri, soundUri)
 		return summarized
 	}
 
@@ -106,6 +121,18 @@ object ParseNotification {
 			it.getParcelable("uri") as Uri
 		}.lastOrNull()?.toString()
 		return MessagingNotificationParsed(text, pictureUri)
+	}
+
+	fun getNotificationSound(notification: Notification): Uri {
+		val channelSoundUri = ifOreo { getChannelSound(notification) }
+		return notification.sound ?: channelSoundUri ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+	}
+
+	@RequiresApi(Build.VERSION_CODES.O)
+	fun getChannelSound(notification: Notification): Uri? {
+		val channelId = notification.channelId
+		val channel = notificationManager?.getNotificationChannel(channelId)
+		return channel?.sound
 	}
 
 	fun shouldPopupNotification(sbn: StatusBarNotification?, ranking: NotificationListenerService.Ranking?): Boolean {

@@ -3,9 +3,10 @@ package me.hufman.androidautoidrive.notifications
 import android.app.Notification
 import android.graphics.Bitmap
 import android.graphics.drawable.Icon
+import android.net.Uri
 
 class CarNotification(val packageName: String, val key: String, val icon: Icon, val isClearable: Boolean, val actions: List<Action>,
-                      val title: String, val text: String, val picture: Bitmap?, val pictureUri: String?) {
+                      val title: String, val text: String, val picture: Bitmap?, val pictureUri: String?, val soundUri: Uri?) {
 	data class Action(val name: CharSequence, val supportsReply: Boolean, val suggestedReplies: List<CharSequence>) {
 		companion object {
 			fun parse(action: Notification.Action): Action {
