@@ -10,14 +10,20 @@
     <string name="notification_description_chassiscode">Connecté à votre %s</string>
     <string name="notification_description_bmw">Connecté à votre BMW</string>
     <string name="notification_description_mini">Connecté à votre Mini</string>
-
+    <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <string name="navigation_listener_bmw">BMW Navigation</string>
+    <string name="navigation_listener_mini">MINI Navigation</string>
+    <!-- Labels on the navigation trigger activity -->
+    <string name="lbl_navigation_listener_searching">Searching for destination</string>
+    <string name="lbl_navigation_listener_parsefailure">Could not locate destination</string>
+    <string name="lbl_navigation_listener_pending">Starting navigation</string>
+    <string name="lbl_navigation_listener_success">Success</string>
     <string name="spawn_test_notification">Tester les Notifications</string>
     <string name="message_notifications">Notifications de Message</string>
     <string name="notification_popups">Popups de Notification</string>
     <string name="notification_popups_passenger">Popups de Notification Passager</string>
     <string name="lbl_popupVersion">Les popups ne fonctionnent qu\'avec IDrive4</string>
     <string name="lbl_smsPermission">Autorise l\'accès aux images contenues dans les SMS depuis la voiture. Le text est quant à lui toujours visible.</string>
-
     <string name="enable_google_maps">Activer Google Maps</string>
     <string name="lbl_widescreen_map">Carte Elargie</string>
     <string name="gmapStyleLabel">Style de Carte</string>
@@ -31,21 +37,21 @@
     <string name="musicAppUnavailable">Non Disponible</string>
     <string name="musicAppHidden">Non Visible</string>
     <string name="enable_audio_context">Demande de Focus Audio</string>
+    <string name="enable_spotify_layout">Always appear as Spotify app in IDrive5+</string>
     <string name="lbl_grant_sessions">Contrôle des applications de musiques:</string>
     <string name="lbl_grant">Autoriser</string>
     <string name="musicAppNotes_unauthorizedSpotify">Cliquer ici pour autoriser l\'accès à Spotify</string>
     <string name="musicAppNotes_oldSpotify">Installez une version plus ancienne de Spotify pour un contrôle complet (navigation)</string>
     <string name="musicAppNotes_oldSpotifyInstructions">Cette app peut fournir un contrôle complet de Spotify (tel qu\'acceder aux playlistes et faire des recherches) pour les versions 8.4.96.953 ou antérieures. Pour un contrôle complet, telecharger une version moins récente (depuis APKPure ou similaire).</string>
+    <string name="musicAppNotes_spotify_apiNotFound">Please install the official Spotify client</string>
+    <string name="musicAppNotes_spotify_apiUnavailable">Please confirm internet connectivity and disable any ad blocking</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Annuler</string>
     <string name="btn_configure">Configurer …</string>
-
     <string name="connectionStatusMissingConnectedApp">Applications Connected ou Connected Classic non trouvées</string>
     <string name="connectionStatusWaiting">En Attente de Connection</string>
-
     <string name="nowplaying_notconnected">&lt;Non Connecté&gt;</string>
     <string name="nowplaying_unknown">&lt;Inconnu&gt;</string>
-
     <string name="txt_setup_bmw_ready">L\'app est prête à être connectée à une BMW</string>
     <string name="txt_setup_mini_ready">L\'app est prête à être connectée à une Mini</string>
     <string name="txt_setup_bmw_missing">App non prête à être connectée à une BMW:</string>
@@ -85,8 +91,6 @@
     <string name="notification_assistant_description">Nécessaire uniquement car l\'écran est</string>
     <string name="donation_title">Vous aimez cette app?</string>
     <string name="donation_text">Considérez montrer votre soutien avec un petit don</string>
-
-
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notifications</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Pas de Notifications</string>
@@ -94,11 +98,9 @@
     <string name="NOTIFICATION_OPTIONS">Options</string>
     <string name="NOTIFICATION_POPUPS">Popups de Notification</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">Popups de Notification Passager</string>
-
     <string name="MAP_ACTION_VIEWMAP">Plein Ecran</string>
     <string name="MAP_ACTION_SEARCH">Rechercher un endroit</string>
     <string name="MAP_ACTION_CLEARNAV">Effacer Itinéraire</string>
-
     <string name="MUSIC_APPLIST_TITLE">Applications</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Liste Vide&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Actions</string>
@@ -117,7 +119,14 @@
     <string name="MUSIC_SKIP_NEXT">Suivant</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Activer la Lecture Aléatoire</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Désactiver la Lecture Aléatoire</string>
-
+    <plurals name="MUSIC_ACTION_SEEK_BACK">
+        <item quantity="one">Seek back %s second</item>
+        <item quantity="other">Seek back %s seconds</item>
+    </plurals>
+    <plurals name="MUSIC_ACTION_SEEK_FORWARD">
+        <item quantity="one">Seek forward %s second</item>
+        <item quantity="other">Seek forward %s seconds</item>
+    </plurals>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Dislike</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Créer une Station Radio</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Activer Repeat All</string>
