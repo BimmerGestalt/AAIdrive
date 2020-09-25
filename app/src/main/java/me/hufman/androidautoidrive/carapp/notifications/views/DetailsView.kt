@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.carapp.notifications.views
 
 import android.util.Log
+import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.notifications.*
@@ -128,7 +129,11 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		// find the notification, or bail to the list
 		val notification = NotificationsState.getNotificationByKey(selectedNotification?.key)
 		if (notification == null) {
-			state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to listViewId))
+			try {
+				state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to listViewId))
+			} catch (e: BMWRemoting.ServiceException) {
+				Log.w(TAG, "Failed to close detailsView showing a missing notification: $e")
+			}
 			return
 		}
 

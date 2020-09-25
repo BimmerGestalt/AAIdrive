@@ -38,6 +38,8 @@ class PopupView(val state: RHMIState, val phoneAppResources: PhoneAppResources) 
 	}
 
 	fun showNotification(sbn: CarNotification) {
+		currentNotification = sbn
+
 		try {
 			val appname = phoneAppResources.getAppName(sbn.packageName)
 			titleLabel.value = appname
@@ -46,15 +48,7 @@ class PopupView(val state: RHMIState, val phoneAppResources: PhoneAppResources) 
 			popEvent?.triggerEvent(mapOf(0 to true))
 		} catch (e: Exception) {
 			Log.e(TAG, "Error while triggering notification popup: $e")
-
-			try {
-				focusEvent?.triggerEvent(mapOf(0 to state.id))
-			} catch (e: Exception) {
-				Log.e(TAG, "Error while focusing notification popup: $e")
-			}
 		}
-
-		currentNotification = sbn
 	}
 
 	fun hideNotification() {
