@@ -196,7 +196,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 					val listItem = ListItem(uri, uri, null, playerContext.title, playerContext.subtitle, false, true)
 					loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
 						queueItems = it
-						buildQueueMetadata(playerContext.title, playerContext.subtitle)
+						buildQueueMetadata()
 						callback?.invoke(this)
 					}
 				}
@@ -224,14 +224,18 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	}
 
 	/**
-	 * Creates the QueueMetadata for the current queue with the title, subtitle, and queue cover art
+	 * Creates the QueueMetadata for the current queue containing the title, subtitle, queue songs,
+	 * and queue cover art.
 	 */
-	private fun buildQueueMetadata(title: String?, subtitle: String?) {
+	private fun buildQueueMetadata() {
 		val recentlyPlayedUri = "com.spotify.recently-played"
 		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
 		remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
-			remote.imagesApi.getImage(recentlyPlayed?.items?.get(0)?.imageUri, Image.Dimension.MEDIUM).setResultCallback { coverArt ->
-				queueMetadata = QueueMetadata(title,subtitle,SpotifyMusicMetadata.createSpotifyMusicMetadataList(this, queueItems),coverArt)
+			val item = recentlyPlayed?.items?.get(0)
+			if(item != null) {
+				remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
+					queueMetadata = QueueMetadata(item.title,item.subtitle,SpotifyMusicMetadata.createSpotifyMusicMetadataList(this, queueItems),coverArt)
+				}
 			}
 		}
 	}

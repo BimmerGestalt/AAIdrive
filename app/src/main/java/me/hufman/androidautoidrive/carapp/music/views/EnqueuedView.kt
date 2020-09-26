@@ -1,7 +1,6 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import de.bmw.idrive.BMWRemoting
-import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
@@ -10,13 +9,9 @@ import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.QueueMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
-import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
 
-class EnqueuedView(val state: RHMIState, val musicController: MusicController, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs): CoroutineScope {
-	override val coroutineContext: CoroutineContext
-		get() = Dispatchers.IO
-
+class EnqueuedView(val state: RHMIState, val musicController: MusicController, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {
 		//current default row width only supports 22 chars before rolling over
 		private const val ROW_LINE_MAX_LENGTH = 22
@@ -31,6 +26,8 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 	val listComponent: RHMIComponent.List
 	val queueImageComponent: RHMIComponent.Image
+	val titleLabelComponent: RHMIComponent.Label
+	val subtitleLabelComponent: RHMIComponent.Label
 	var currentSong: MusicMetadata? = null
 	val songsList = ArrayList<MusicMetadata>()
 	val songsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3)
@@ -63,25 +60,17 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 	}
 
-	val labelComponent0: RHMIComponent.Label
-	val labelComponent1: RHMIComponent.Label
-	val labelComponent2: RHMIComponent.Label
-
 	init {
 		state as RHMIState.PlainState
 
 		listComponent = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 		queueImageComponent = state.componentsList.filterIsInstance<RHMIComponent.Image>().first()
 
-		//all 3 labels next to image at top of list don't scroll and are static
-		//TODO: IDEA - can have it so the playlist information is on the right side of the screen in the blank space and is fixed
-		//      problem is that this isn't independent of screen sizes and not flexible in the cases of operations such as pulling up
-		//      the sidebar and running splitscreen
-		//      IDEA - figure out how to move the Y position of the listComponent down so the image + text is above the list. The position component
-		//      of the listView is having an effect where all the children are fixed at the specified position and is not applying to the container itself
-		labelComponent0 = state.componentsList.filterIsInstance<RHMIComponent.Label>()[0]
-		labelComponent1 = state.componentsList.filterIsInstance<RHMIComponent.Label>()[1]
-		labelComponent2 = state.componentsList.filterIsInstance<RHMIComponent.Label>()[2]
+		//all labels next to image at top of list don't scroll and are static
+		titleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[0]
+		titleLabelComponent.setProperty(RHMIProperty.PropertyId.VISIBLE, false)
+		subtitleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[1]
+		subtitleLabelComponent.setProperty(RHMIProperty.PropertyId.VISIBLE, false)
 
 		songsEmptyList.addRow(arrayOf("", "", L.MUSIC_QUEUE_EMPTY))
 	}
@@ -94,25 +83,8 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		listComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,90,10,*")
 		listComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
 		listComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { onClick(it) }
-		listComponent.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index -> onSelectAction(index) }
+		listComponent.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { onSelectAction(it) }
 	}
-
-//	var prevIndex = 0
-//	fun onSelectAction(index: Int) {
-//		//WIP hacky solution to hiding text
-//		var scrollingUp = false
-//		if(index < prevIndex) {
-//			scrollingUp = true
-//		}
-//		if(index > 1 && !scrollingUp) {
-//			labelComponent0.setVisible(false)
-//			labelComponent1.setVisible(false)
-//		}
-//		else if(index == 0) {
-//			labelComponent0.setVisible(true)
-//			labelComponent1.setVisible(true)
-//		}
-//	}
 
 	fun show() {
 		currentSong = musicController.getMetadata()
@@ -125,7 +97,6 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 
 		songsList.clear()
-
 		val songs = queueMetadata?.songs
 		if (songs?.isNotEmpty() == true) {
 			listComponent.setEnabled(true)
@@ -152,17 +123,23 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 
 		if(queueMetadata?.coverArt != null) {
-			queueImageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(musicController.getQueue()?.coverArt!!, 200, 200, quality = 60)
-//			labelComponent0.getModel()?.asRaDataModel()?.value = queueMetadata.title ?: ""
-//			labelComponent1.getModel()?.asRaDataModel()?.value = queueMetadata.subtitle ?: ""
-//			labelComponent2.getModel()?.asRaDataModel()?.value = "LINE 3"
+			queueImageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(musicController.getQueue()?.coverArt!!, 180, 180, quality = 60)
 		}
 		else {
 			queueImageComponent.setVisible(false)
 		}
 
 		val queueTitle = UnicodeCleaner.clean(queueMetadata?.title ?: "")
-		state.getTextModel()?.asRaDataModel()?.value = "Now Playing - $queueTitle"
+		val queueSubtitle = UnicodeCleaner.clean(queueMetadata?.subtitle ?: "")
+
+		if(queueTitle.isBlank() && queueSubtitle.isBlank()) {
+			state.getTextModel()?.asRaDataModel()?.value = "Now Playing"
+		} else {
+			state.getTextModel()?.asRaDataModel()?.value = "$queueTitle - $queueSubtitle"
+		}
+
+		titleLabelComponent.getModel()?.asRaDataModel()?.value = queueTitle
+		subtitleLabelComponent.getModel()?.asRaDataModel()?.value = queueSubtitle
 	}
 
 	fun redraw() {
@@ -209,6 +186,15 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 	private fun onSelectAction(index: Int) {
 		currentIndex = index
+
+		//if this is too slow check and see if assigning the value to "" is quicker
+		if(index != 0) {
+			titleLabelComponent.setVisible(false)
+			subtitleLabelComponent.setVisible(false)
+		} else {
+			titleLabelComponent.setVisible(true)
+			subtitleLabelComponent.setVisible(true)
+		}
 	}
 
 	private fun showList(startIndex: Int = 0, numRows: Int = 10) {

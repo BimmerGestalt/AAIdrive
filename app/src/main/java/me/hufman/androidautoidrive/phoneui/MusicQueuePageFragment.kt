@@ -114,13 +114,14 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 
 			val coverArtImage = currentQueueMetadata?.coverArt
 			if(coverArtImage != null) {
-				playlistCoverArt.setImageBitmap(coverArtImage)
+				queueCoverArt.setImageBitmap(coverArtImage)
 			}
 			else {
-				playlistCoverArt.setImageBitmap(placeholderCoverArt)
+				queueCoverArt.setImageBitmap(placeholderCoverArt)
 			}
 
-			playlistName.text = currentQueueMetadata?.title
+			queueTitle.text = currentQueueMetadata?.title
+			queueSubtitle.text = currentQueueMetadata?.subtitle
 		}
 	}
 
