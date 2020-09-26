@@ -228,6 +228,16 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		} ?: false
 	}
 
+	fun toggleRepeat() = asyncControl { controller ->
+		controller.toggleRepeat()
+	}
+
+	fun getRepeatMode(): RepeatMode {
+		return withController { controller ->
+			return controller.getRepeatMode()
+		} ?: RepeatMode.OFF
+	}
+
 	fun browseAsync(directory: MusicMetadata?): Deferred<List<MusicMetadata>> {
 		val results: CompletableDeferred<List<MusicMetadata>> = CompletableDeferred()
 		withController { controller ->

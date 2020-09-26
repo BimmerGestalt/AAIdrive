@@ -137,6 +137,9 @@
     <string name="MUSIC_SKIP_NEXT">Next</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Turn Shuffle On</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Turn Shuffle Off</string>
+    <string name="MUSIC_TURN_REPEAT_ALL_ON">Turn Repeat All On</string>
+    <string name="MUSIC_TURN_REPEAT_ONE_ON">Turn Repeat One On</string>
+    <string name="MUSIC_TURN_REPEAT_OFF">Turn Repeat Off</string>
 
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Seek back %s second</item>
@@ -149,9 +152,6 @@
 
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Dislike</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Make Radio Station</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Turn Repeat All On</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Turn Repeat One On</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Turn Repeat Off</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>
     <string name="MUSIC_SPOTIFY_THUMB_UP">Thumb Up</string>
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>

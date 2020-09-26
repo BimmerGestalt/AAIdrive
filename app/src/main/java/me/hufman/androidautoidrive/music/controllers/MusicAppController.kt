@@ -29,6 +29,8 @@ interface MusicAppController {
 
 	fun toggleShuffle()
 
+	fun toggleRepeat()
+
 	/* Current state */
 	fun getQueue(): List<MusicMetadata>
 
@@ -41,6 +43,8 @@ interface MusicAppController {
 	fun getCustomActions(): List<CustomAction>
 
 	fun isShuffling(): Boolean
+
+	fun getRepeatMode(): RepeatMode
 
 	suspend fun browse(directory: MusicMetadata?): List<MusicMetadata>
 

@@ -9,12 +9,9 @@ import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
-import me.hufman.androidautoidrive.carapp.music.GlobalMetadata
-import me.hufman.androidautoidrive.carapp.music.MusicApp
+import me.hufman.androidautoidrive.carapp.music.*
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeAudioState
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeToolbarState
-import me.hufman.androidautoidrive.carapp.music.MusicAppMode
-import me.hufman.androidautoidrive.carapp.music.MusicImageIDsMultimedia
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
@@ -203,6 +200,7 @@ class TestMusicApp {
 
 	fun testAppInitPlaybackView(playbackView: PlaybackView) {
 		val state = playbackView.state as RHMIState.ToolbarState
+		assertNull(playbackView.repeatButton)
 		assertEquals(IDs.APPLIST_STATE, state.toolbarComponentsList[0].getAction()?.asHMIAction()?.getTargetState()?.id)
 		assertEquals(IDs.QUEUE_STATE, state.toolbarComponentsList[2].getAction()?.asHMIAction()?.getTargetState()?.id)
 		assertEquals(IDs.ACTION_STATE, state.toolbarComponentsList[4].getAction()?.asHMIAction()?.getTargetState()?.id)
@@ -222,14 +220,14 @@ class TestMusicApp {
 		whenever(carAppResources.getUiDescription()).doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_multimedia_v3.xml") }
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MusicApp(securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
+		val app = MusicApp(securityAccess, carAppResources, MusicImageIDsSpotify, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
 		val playbackView = app.playbackView
 		val state = playbackView.state as RHMIState.AudioHmiState
 		assertEquals(IDs.AUDIOSTATE_TITLE_MODEL, playbackView.appTitleModel.id)
 		assertEquals(IDs.APPLIST_ID5_STATE, state.toolbarComponentsList[0].getAction()?.asHMIAction()?.getTargetState()?.id)
 		assertEquals(IDs.QUEUE_ID5_STATE, state.toolbarComponentsList[2].getAction()?.asHMIAction()?.getTargetState()?.id)
-		assertEquals(false, state.toolbarComponentsList[3].properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
-		assertEquals(IDs.ACTION_ID5_STATE, state.toolbarComponentsList[4].getAction()?.asHMIAction()?.getTargetState()?.id)
+		assertNotNull(playbackView.repeatButton)
+		assertEquals(IDs.ACTION_ID5_STATE, state.toolbarComponentsList[3].getAction()?.asHMIAction()?.getTargetState()?.id)
 		assertEquals(IDs.AUDIOSTATE_PROVIDER_MODEL, playbackView.appLogoModel.id)
 		assertEquals(IDs.AUDIOSTATE_COVERART_MODEL, playbackView.albumArtBigModel.id)
 		assertEquals(null, playbackView.albumArtSmallModel?.id)
@@ -250,10 +248,12 @@ class TestMusicApp {
 		whenever(carAppResources.getUiDescription()).doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_multimedia_v3.xml") }
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MusicApp(securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
+		val app = MusicApp(securityAccess, carAppResources, MusicImageIDsSpotify, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
 		val state = app.playbackView.state as RHMIState.AudioHmiState
-		state.toolbarComponentsList[5].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
+		state.toolbarComponentsList[4].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
 		verify(musicController).toggleShuffle()
+		state.toolbarComponentsList[5].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
+		verify(musicController).toggleRepeat()
 		state.getPlayListAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		verify(musicController, times(1)).skipToPrevious()
 		state.getPlayListAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
@@ -547,6 +547,64 @@ class TestMusicApp {
 		playbackView.redraw()
 
 		assertEquals(false, playbackView.shuffleButton.properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
+	}
+
+	@Test
+	fun testRepeatButtonRedraw() {
+		// repeat button only available in iDrive 5+ audioHmiState
+		val app = RHMIApplicationConcrete()
+		app.loadFromXML(this.javaClass.classLoader.getResourceAsStream("ui_description_multimedia_v3.xml")?.readBytes() as ByteArray)
+		val state = app.states[IDs.AUDIO_STATE] as RHMIState.AudioHmiState
+		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_ID5_STATE]!!, musicAppDiscovery, mock(), graphicsHelpers, MusicImageIDsSpotify)
+		val playbackView = PlaybackView(state, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsSpotify)
+		val enqueuedView = EnqueuedView(app.states[IDs.APPLIST_ID5_STATE]!!, musicController, MusicImageIDsSpotify)
+		val actionView = CustomActionsView(app.states[IDs.ACTION_ID5_STATE]!!, graphicsHelpers, musicController)
+
+		playbackView.initWidgets(appSwitcherView, enqueuedView, mock(), actionView)
+
+		// redraw when not repeating and supported
+		whenever(musicController.isSupportedAction(MusicAction.SET_REPEAT_MODE)) doAnswer { true }
+		whenever(musicController.getRepeatMode()).thenReturn(RepeatMode.OFF)
+		playbackView.redraw()
+
+		assertEquals(L.MUSIC_TURN_REPEAT_ALL_ON, playbackView.repeatButton!!.getTooltipModel()?.asRaDataModel()?.value)
+		assertEquals(MusicImageIDsSpotify.REPEAT_OFF, playbackView.repeatButton!!.getImageModel()?.asImageIdModel()?.imageId)
+
+		// redraw when repeating all and supported
+		playbackView.repeatButton!!.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
+		verify(musicController, times(1)).toggleRepeat()
+
+		whenever(musicController.getRepeatMode()).thenReturn(RepeatMode.ALL)
+		playbackView.redraw()
+
+		assertEquals(L.MUSIC_TURN_REPEAT_ONE_ON, playbackView.repeatButton!!.getTooltipModel()?.asRaDataModel()?.value)
+		assertEquals(MusicImageIDsSpotify.REPEAT_ALL_ON, playbackView.repeatButton!!.getImageModel()?.asImageIdModel()?.imageId)
+
+		// redraw when repeating one and supported
+		playbackView.repeatButton!!.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
+		verify(musicController, times(2)).toggleRepeat()
+
+		whenever(musicController.getRepeatMode()).thenReturn(RepeatMode.ONE)
+		playbackView.redraw()
+
+		assertEquals(L.MUSIC_TURN_REPEAT_OFF, playbackView.repeatButton!!.getTooltipModel()?.asRaDataModel()?.value)
+		assertEquals(MusicImageIDsSpotify.REPEAT_ONE_ON, playbackView.repeatButton!!.getImageModel()?.asImageIdModel()?.imageId)
+
+		// redraw when not repeating and supported
+		playbackView.repeatButton!!.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
+		verify(musicController, times(3)).toggleRepeat()
+
+		whenever(musicController.getRepeatMode()).thenReturn(RepeatMode.OFF)
+		playbackView.redraw()
+
+		assertEquals(L.MUSIC_TURN_REPEAT_ALL_ON, playbackView.repeatButton!!.getTooltipModel()?.asRaDataModel()?.value)
+		assertEquals(MusicImageIDsSpotify.REPEAT_OFF, playbackView.repeatButton!!.getImageModel()?.asImageIdModel()?.imageId)
+
+		// redraw when not supported
+		whenever(musicController.isSupportedAction(MusicAction.SET_REPEAT_MODE)) doAnswer { false }
+		playbackView.redraw()
+
+		assertEquals(false, playbackView.repeatButton!!.properties[RHMIProperty.PropertyId.ENABLED.id]?.value)
 	}
 
 	@Test

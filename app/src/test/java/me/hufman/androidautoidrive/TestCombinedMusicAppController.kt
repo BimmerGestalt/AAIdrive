@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.music.RepeatMode
 import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import org.junit.Assert.*
@@ -334,6 +335,77 @@ class TestCombinedMusicAppController {
 
 		verify(leftController, never()).toggleShuffle()
 		verify(rightController, times(1)).toggleShuffle()
+	}
+
+	@Test
+	fun testGetRepeatingModeLeftController() {
+		leftObservable.value = leftController
+		rightObservable.value = rightController
+
+		whenever(leftController.isSupportedAction(any())) doReturn true
+		whenever(rightController.isSupportedAction(any())) doReturn false
+		whenever(leftController.getRepeatMode()).thenReturn(RepeatMode.ALL)
+		whenever(rightController.getRepeatMode()).thenReturn(RepeatMode.OFF)
+
+		assertEquals(RepeatMode.ALL, controller.getRepeatMode())
+		verify(leftController, times(1)).getRepeatMode()
+		verify(rightController, never()).getRepeatMode()
+	}
+
+	@Test
+	fun testGetRepeatModeRightController() {
+		leftObservable.value = leftController
+		rightObservable.value = rightController
+
+		whenever(leftController.isSupportedAction(any())) doReturn false
+		whenever(rightController.isSupportedAction(any())) doReturn true
+		whenever(leftController.getRepeatMode()).thenReturn(RepeatMode.OFF)
+		whenever(rightController.getRepeatMode()).thenReturn(RepeatMode.ONE)
+
+		assertEquals(RepeatMode.ONE, controller.getRepeatMode())
+		verify(leftController, never()).getRepeatMode()
+		verify(rightController, times(1)).getRepeatMode()
+	}
+
+	@Test
+	fun testIsRepeatingAllNotSupported() {
+		leftObservable.value = leftController
+		rightObservable.value = rightController
+
+		whenever(leftController.isSupportedAction(any())) doReturn false
+		whenever(rightController.isSupportedAction(any())) doReturn false
+
+		assertEquals(RepeatMode.OFF, controller.getRepeatMode())
+		verify(leftController, never()).getRepeatMode()
+		verify(rightController, never()).getRepeatMode()
+	}
+
+	@Test
+	fun testToggleRepeatLeftController() {
+		leftObservable.value = leftController
+		rightObservable.value = rightController
+
+		whenever(leftController.isSupportedAction(any())) doReturn true
+		whenever(rightController.isSupportedAction(any())) doReturn false
+
+		controller.toggleRepeat()
+
+		verify(leftController, times(1)).toggleRepeat()
+		verify(rightController, never()).toggleRepeat()
+	}
+
+	@Test
+	fun testToggleRepeatRightController() {
+		leftObservable.value = leftController
+		rightObservable.value = rightController
+
+		whenever(leftController.isSupportedAction(any())) doReturn false
+		whenever(rightController.isSupportedAction(any())) doReturn true
+
+		controller.toggleRepeat()
+
+		verify(leftController, never()).toggleRepeat()
+		verify(rightController, times(1)).toggleRepeat()
 	}
 
 	@Test

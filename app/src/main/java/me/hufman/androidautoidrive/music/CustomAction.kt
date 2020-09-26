@@ -38,11 +38,11 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 						niceName = L.MUSIC_SPOTIFY_START_RADIO
 
 					"TURN_REPEAT_ALL_ON" ->
-						niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON
+						niceName = L.MUSIC_TURN_REPEAT_ALL_ON
 					"TURN_REPEAT_ONE_ON" ->
-						niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON
+						niceName = L.MUSIC_TURN_REPEAT_ONE_ON
 					"TURN_REPEAT_ONE_OFF" ->
-						niceName = L.MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF
+						niceName = L.MUSIC_TURN_REPEAT_OFF
 					"ADD_TO_COLLECTION" ->
 						niceName = L.MUSIC_SPOTIFY_ADD_TO_COLLECTION
 					"THUMB_UP" ->
