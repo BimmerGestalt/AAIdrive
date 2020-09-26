@@ -10,14 +10,14 @@
     <string name="notification_description_chassiscode">Conectat la %s</string>
     <string name="notification_description_bmw">Conectat la BMW</string>
     <string name="notification_description_mini">Conectat la Mini</string>
-
+    <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <!-- Labels on the navigation trigger activity -->
     <string name="spawn_test_notification">Notificare de test</string>
     <string name="message_notifications">Notificări mesaj</string>
     <string name="notification_popups">Popup-uri notificări</string>
     <string name="notification_popups_passenger">Popup-uri pasager</string>
     <string name="lbl_popupVersion">Popup-urile funcționează doar cu IDrive4</string>
     <string name="lbl_smsPermission">Permisiune SMS necesară pentru a vedea imaginile din mesaje în mașină. Textul este disponibil întotdeauna.</string>
-
     <string name="enable_google_maps">Activează Google Maps</string>
     <string name="lbl_widescreen_map">Hartă widescreen</string>
     <string name="gmapStyleLabel">Stil hartă</string>
@@ -38,13 +38,10 @@
     <string name="lbl_ok">Ok</string>
     <string name="lbl_cancel">Anulare</string>
     <string name="btn_configure">Configurare …</string>
-
     <string name="connectionStatusMissingConnectedApp">Nu am găsit aplicația Connected sau Connected Classic</string>
     <string name="connectionStatusWaiting">Aștept conectarea la masină</string>
-
     <string name="nowplaying_notconnected">&lt;Neconectat&gt;</string>
     <string name="nowplaying_unknown">&lt;Necunoscut&gt;</string>
-
     <string name="txt_setup_bmw_ready">Aplicația este gata să se conecteze la un BMW</string>
     <string name="txt_setup_mini_ready">Aplicația este gata să se conecteze la un Mini</string>
     <string name="txt_setup_bmw_missing">Nepregătit pentru conectare la BMW:</string>
@@ -84,7 +81,6 @@
     <string name="notification_assistant_description">Necesar pentru că ecranul este pornit</string>
     <string name="donation_title">Îți place aplicația ?</string>
     <string name="donation_text">Consideră o mică donație pentru a-ți arăta aprecierea</string>
-
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notificări</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Nu există notificări</string>
@@ -92,11 +88,9 @@
     <string name="NOTIFICATION_OPTIONS">Opțiuni</string>
     <string name="NOTIFICATION_POPUPS">Popup-uri notificări</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">Popup-uri cu pasager</string>
-
     <string name="MAP_ACTION_VIEWMAP">Vezi harta întreagă</string>
     <string name="MAP_ACTION_SEARCH">Caută loc</string>
     <string name="MAP_ACTION_CLEARNAV">Curăță navigare</string>
-
     <string name="MUSIC_APPLIST_TITLE">Aplicații</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Nu există aplicații&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acțiuni</string>
@@ -115,16 +109,16 @@
     <string name="MUSIC_SKIP_NEXT">Următorul</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Pornește amestecare</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Oprește amestecare</string>
-
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Derulează înapoi %s secundă</item>
+        <item quantity="few">Derulează înapoi %s secunde</item>
         <item quantity="other">Derulează înapoi %s secunde</item>
     </plurals>
     <plurals name="MUSIC_ACTION_SEEK_FORWARD">
         <item quantity="one">Derulează înainte %s secundă</item>
+        <item quantity="few">Derulează înainte %s secunde</item>
         <item quantity="other">Derulează înainte %s secunde</item>
-   </plurals>
-
+    </plurals>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Dislike</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Pornește radio</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Pornește repetare tot</string>
