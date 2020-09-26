@@ -10,14 +10,14 @@
     <string name="notification_description_chassiscode">Verbunden mit %s</string>
     <string name="notification_description_bmw">Verbunden mit BMW</string>
     <string name="notification_description_mini">Verbunden mit Mini</string>
-
+    <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <!-- Labels on the navigation trigger activity -->
     <string name="spawn_test_notification">Test Benachrichtigung</string>
     <string name="message_notifications">Benachrichtigungen für Mitteilungen</string>
     <string name="notification_popups">PopUp-Benachrichtigung</string>
     <string name="notification_popups_passenger">PopUps mit Beifahrer</string>
     <string name="lbl_popupVersion">PopUps funktionieren nur mit IDrive4</string>
     <string name="lbl_smsPermission">Erteile Zugriff für SMS-Nachrichten um Bilder von Nachrichten im Fahrzeug zu sehen. Text ist immer sichtbar.</string>
-
     <string name="enable_google_maps">Google Maps aktivieren</string>
     <string name="lbl_widescreen_map">Breitbild (Widescreen) Karte</string>
     <string name="gmapStyleLabel">Kartenstil</string>
@@ -39,18 +39,15 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Abbrechen</string>
     <string name="btn_configure">Konfigurieren …</string>
-
     <string name="connectionStatusMissingConnectedApp">Kann Connected oder Connected Classic App nicht finden</string>
     <string name="connectionStatusWaiting">Warte auf Verbindung mit Fahrzeug</string>
-
     <string name="nowplaying_notconnected">&lt;Nicht Verbunden&gt;</string>
     <string name="nowplaying_unknown">&lt;Unbekannt&gt;</string>
-
     <string name="txt_setup_bmw_ready">Diese App ist bereit für die Verbindung mit einem BMW</string>
     <string name="txt_setup_mini_ready">Diese App ist bereit für die Verbindung mit einem Mini</string>
     <string name="txt_setup_bmw_missing">Nicht bereit für die Verbindung mit einem BMW:</string>
     <string name="txt_setup_mini_missing">Nicht bereit für die Verbindung mit einem Mini:</string>
-	 <string name="txt_setup_security_missing">Security Service ist nicht erreichbar:</string>
+    <string name="txt_setup_security_missing">Security Service ist nicht erreichbar:</string>
     <string name="txt_setup_bt_disconnected">Fahrzeug nicht mit Bluetooth verbunden</string>
     <string name="txt_setup_bt_connected">Fahrzeug mit Bluetooth verbunden</string>
     <string name="txt_setup_a2dp_disconnected">Bluetooth Audio nicht verbunden</string>
@@ -83,10 +80,8 @@
     <string name="lbl_assistant_empty">Nichts gefunden</string>
     <string name="notification_assistant_tap">Drücke um %s zu starten</string>
     <string name="notification_assistant_description">Nur nötig, weil der Bildschirm an ist</string>
-	<string name="donation_title">Gefällt Dir diese App?</string>
+    <string name="donation_title">Gefällt Dir diese App?</string>
     <string name="donation_text">Unterstütze den Entwickler mit einer kleinen Spende</string>
-
-
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Benachrichtigungen</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Keine Benachrichtigungen</string>
@@ -94,11 +89,9 @@
     <string name="NOTIFICATION_OPTIONS">Optionen</string>
     <string name="NOTIFICATION_POPUPS">PopUp-Benachrichtigung</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">PopUps mit Beifahrer</string>
-
     <string name="MAP_ACTION_VIEWMAP">Volle Karte zeigen</string>
     <string name="MAP_ACTION_SEARCH">Ort suchen</string>
     <string name="MAP_ACTION_CLEARNAV">Navigation leeren</string>
-
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Keine Apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Aktionen</string>
@@ -117,7 +110,6 @@
     <string name="MUSIC_SKIP_NEXT">Nächster</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Zufallswiedergabe aktivieren</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Zufallswiedergabe deaktivieren</string>
-
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Gefällt mir nicht</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Erstelle Radiostation</string>
     <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Alle Wiederholen aktivieren</string>
