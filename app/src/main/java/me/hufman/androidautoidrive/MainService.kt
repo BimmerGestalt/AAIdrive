@@ -16,6 +16,7 @@ import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
+import me.hufman.androidautoidrive.carapp.notifications.ReadoutApp
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
@@ -54,6 +55,7 @@ class MainService: Service() {
 
 	var threadNotifications: CarThread? = null
 	var carappNotifications: PhoneNotifications? = null
+	var carappReadout: ReadoutApp? = null
 
 	var mapService = MapService(this, securityAccess)
 
@@ -289,6 +291,12 @@ class MainService: Service() {
 						}
 						// request an initial draw
 						sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
+
+						// start up the readout app
+						val carappReadout = ReadoutApp(securityAccess,
+								CarAppAssetManager(this, "news"))
+						carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
+						this.carappReadout = carappReadout
 					}
 					threadNotifications?.start()
 				}
@@ -304,6 +312,8 @@ class MainService: Service() {
 	}
 
 	fun stopNotifications() {
+		carappReadout?.onDestroy()
+		carappReadout = null
 		carappNotifications?.onDestroy(this)
 		carappNotifications = null
 		threadNotifications?.handler?.looper?.quitSafely()
