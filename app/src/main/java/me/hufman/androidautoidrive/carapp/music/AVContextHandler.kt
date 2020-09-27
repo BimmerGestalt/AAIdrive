@@ -55,13 +55,14 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 
 			for (app in apps) {
 				if (!knownApps.containsKey(app.amAppIdentifier)) {
+					knownApps[app.amAppIdentifier] = app
+
 					if (musicAppMode.shouldId5Playback() && app.packageName == "com.spotify.music") {
 						continue    // don't create an AM for Spotify, we have the real icon
 					}
 					Log.i(TAG, "Creating am app for new app ${app.name}")
 					carConnection.am_registerApp(amHandle, app.amAppIdentifier, getAMInfo(app))
 
-					knownApps[app.amAppIdentifier] = app
 				}
 			}
 
