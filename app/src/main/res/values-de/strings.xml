@@ -88,6 +88,7 @@
     <string name="NOTIFICATION_CLEAR_ACTION">Leeren</string>
     <string name="NOTIFICATION_OPTIONS">Optionen</string>
     <string name="NOTIFICATION_POPUPS">PopUp-Benachrichtigung</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER">PopUps mit Beifahrer</string>
     <string name="MAP_ACTION_VIEWMAP">Volle Karte zeigen</string>
     <string name="MAP_ACTION_SEARCH">Ort suchen</string>
     <string name="MAP_ACTION_CLEARNAV">Navigation leeren</string>
