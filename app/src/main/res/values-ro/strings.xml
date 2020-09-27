@@ -87,6 +87,7 @@
     <string name="NOTIFICATION_CLEAR_ACTION">Șterge tot</string>
     <string name="NOTIFICATION_OPTIONS">Opțiuni</string>
     <string name="NOTIFICATION_POPUPS">Popup-uri notificări</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER">Popup-uri cu pasager</string>
     <string name="MAP_ACTION_VIEWMAP">Vezi harta întreagă</string>
     <string name="MAP_ACTION_SEARCH">Caută loc</string>
     <string name="MAP_ACTION_CLEARNAV">Curăță navigare</string>
