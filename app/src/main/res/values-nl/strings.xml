@@ -88,7 +88,6 @@
     <string name="NOTIFICATION_CLEAR_ACTION">Wis meldingen</string>
     <string name="NOTIFICATION_OPTIONS">Options</string>
     <string name="NOTIFICATION_POPUPS">Popup meldingen</string>
-    <string name="NOTIFICATION_POPUPS_PASSENGER">Popups meldingen met bijrijder</string>
     <string name="MAP_ACTION_VIEWMAP">Toon volledige map</string>
     <string name="MAP_ACTION_SEARCH">Locatie zoeken</string>
     <string name="MAP_ACTION_CLEARNAV">Wis bestemming</string>
