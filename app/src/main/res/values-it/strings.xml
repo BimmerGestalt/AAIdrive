@@ -88,7 +88,6 @@
     <string name="NOTIFICATION_CLEAR_ACTION">Pulisci</string>
     <string name="NOTIFICATION_OPTIONS">Opzioni</string>
     <string name="NOTIFICATION_POPUPS">Popup notiifiche</string>
-    <string name="NOTIFICATION_POPUPS_PASSENGER">Popup con passeggero</string>
     <string name="MAP_ACTION_VIEWMAP">Visualizza la mappa fullscreen</string>
     <string name="MAP_ACTION_SEARCH">Cerca un luogo</string>
     <string name="MAP_ACTION_CLEARNAV">Cancella la navigazione</string>
