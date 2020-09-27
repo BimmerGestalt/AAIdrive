@@ -35,6 +35,7 @@
     <string name="NOTIFICATIONS_EMPTY_LIST">Neniuj Novaĵoj</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Eksigi</string>
     <string name="NOTIFICATION_POPUPS">Novaĵoj Saltadaj</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER">Saltadoj apud pasaĝero</string>
     <string name="MAP_ACTION_VIEWMAP">Montru Plenan Mapon</string>
     <string name="MAP_ACTION_SEARCH">Serĉu Lokon</string>
     <string name="MAP_ACTION_CLEARNAV">Eksigu Vojplanon</string>
