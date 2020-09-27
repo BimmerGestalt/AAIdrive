@@ -88,7 +88,6 @@
     <string name="NOTIFICATION_CLEAR_ACTION">Limpiar</string>
     <string name="NOTIFICATION_OPTIONS">Opciones</string>
     <string name="NOTIFICATION_POPUPS">Popups de notificación</string>
-    <string name="NOTIFICATION_POPUPS_PASSENGER">Popups para el pasajero</string>
     <string name="MAP_ACTION_VIEWMAP">Ver Mapa Entero</string>
     <string name="MAP_ACTION_SEARCH">Buscar por Lugar</string>
     <string name="MAP_ACTION_CLEARNAV">Limpiar Navegación</string>
