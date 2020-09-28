@@ -8,6 +8,7 @@ import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
+import me.hufman.androidautoidrive.carapp.music.components.PlaylistItem
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGauge
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeAudioState
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeToolbarState
@@ -57,6 +58,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	var displayedSong: MusicMetadata? = null    // the song  that was last redrawn
 	var displayedConnected: Boolean = false     // whether the controller was connected during redraw
 	var isNewerIDrive: Boolean = false
+	var skipBackEnabled: Boolean = true
+	var skipNextEnabled: Boolean = true
 
 	init {
 		// discover widgets
@@ -196,14 +199,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 			buttons[3].setVisible(false)
 
-			val playlistModel = state.getPlayListModel()?.asRaListModel()
-			if (playlistModel != null) {
-				val playlist = RHMIModel.RaListModel.RHMIListConcrete(3)
-				playlist.addRow(arrayOf(false, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_BACK), L.MUSIC_SKIP_PREVIOUS))
-				playlist.addRow(arrayOf(false, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK), ""))
-				playlist.addRow(arrayOf(false, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_NEXT), L.MUSIC_SKIP_NEXT))
-				playlistModel.setValue(playlist, 0, 3, 3)
-			}
+			redrawAudiostatePlaylist("", true)
 			state.getPlayListFocusRowModel()?.asRaIntModel()?.value = 1
 			state.getPlayListAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 				when (index) {
@@ -277,19 +273,24 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		}
 
 		// update the audio state playlist
-		redrawAudiostatePlaylist(song?.title ?: "")
+		redrawAudiostatePlaylist(song?.title ?: "", false)
 
 		displayedSong = song
 		displayedConnected = controller.isConnected()
 	}
 
-	private fun redrawAudiostatePlaylist(title: String) {
+	private fun redrawAudiostatePlaylist(title: String, includeActions: Boolean) {
 		if (state is RHMIState.AudioHmiState) {
 			val playlistModel = state.getPlayListModel()?.asRaListModel()
-			val playlist = RHMIModel.RaListModel.RHMIListConcrete(3)
-			playlist.addRow(arrayOf(false, "", ""))     // need some blank row so that the setValue startIndex works
-			playlist.addRow(arrayOf(false, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK), title))
-			playlistModel?.setValue(playlist, 1, 1, 3)
+			val playlist = RHMIModel.RaListModel.RHMIListConcrete(10)
+			playlist.addRow(PlaylistItem(false, skipBackEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_BACK), L.MUSIC_SKIP_PREVIOUS))
+			playlist.addRow(PlaylistItem(false, true, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK), title))
+			playlist.addRow(PlaylistItem(false, skipNextEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_NEXT), L.MUSIC_SKIP_NEXT))
+			if (includeActions) {
+				playlistModel?.asRaListModel()?.setValue(playlist, 0, 3, 3)
+			} else {
+				playlistModel?.setValue(playlist, 1, 1, 3)
+			}
 		}
 	}
 
@@ -315,8 +316,20 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		val customactions = controller.getCustomActions()
 		customActionButton.setEnabled(customactions.isNotEmpty())
 
-		skipBackButton?.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS))
-		skipNextButton?.setEnabled(controller.isSupportedAction(MusicAction.SKIP_TO_NEXT))
+		// redraw if the skip actions changed status
+		// the AudioState playlist isn't cached, so we have to track when to redraw
+		if (
+			skipBackEnabled != controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS) ||
+			skipNextEnabled != controller.isSupportedAction(MusicAction.SKIP_TO_NEXT)
+		) {
+			skipBackEnabled = controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS)
+			skipNextEnabled = controller.isSupportedAction(MusicAction.SKIP_TO_NEXT)
+
+			skipBackButton?.setEnabled(skipBackEnabled)
+			skipNextButton?.setEnabled(skipNextEnabled)
+
+			redrawAudiostatePlaylist(controller.getMetadata()?.title ?: "", true)
+		}
 	}
 
 
