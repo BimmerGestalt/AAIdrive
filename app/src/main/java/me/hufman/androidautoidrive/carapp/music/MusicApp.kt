@@ -300,7 +300,10 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 		if (playbackViewVisible || playbackView.state is RHMIState.AudioHmiState) {
 			playbackView.redraw()
 		}
-		globalMetadata.redraw()
+		// if running over USB or audio context is granted, set the global metadata
+		if (!musicAppMode.shouldRequestAudioContext() || avContext.currentContext) {
+			globalMetadata.redraw()
+		}
 	}
 
 }
