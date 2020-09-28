@@ -3,13 +3,13 @@ package me.hufman.androidautoidrive.carapp.music.views
 import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
 
-class EnqueuedView(val state: RHMIState, val musicController: MusicController) {
+class EnqueuedView(val state: RHMIState, val musicController: MusicController, val musicImageIDs: MusicImageIDs) {
 	companion object {
-		private const val IMAGEID_CHECKMARK = 149
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.PlainState &&
 					state.componentsList.filterIsInstance<RHMIComponent.List>().isNotEmpty() &&
@@ -24,7 +24,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController) {
 	val songsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3)
 	val songsListAdapter = object: RHMIListAdapter<MusicMetadata>(3, songsList) {
 		override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
-			val checkmark = if (item.queueId == currentSong?.queueId) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, IMAGEID_CHECKMARK) else ""
+			val checkmark = if (item.queueId == currentSong?.queueId) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK) else ""
 			return arrayOf(checkmark,
 						"",
 						UnicodeCleaner.clean(item.title ?: ""))

@@ -50,6 +50,10 @@ class TestNavTrigger {
 		val parsedSpaceLabel = parser.parseUrl(geoSpaceLabel)
 		assertEquals(";;;;;;;445371322.2239593;-1453839569.0017943;Main Street", parsedSpaceLabel)
 
+		val geoWhiteSpaceLabel = "geo:0,0?q=37.330593,-121.859425 (Main Street)"
+		val parsedWhiteSpaceLabel = parser.parseUrl(geoWhiteSpaceLabel)
+		assertEquals(";;;;;;;445371322.2239593;-1453839569.0017943;Main Street", parsedWhiteSpaceLabel)
+
 		// free form query
 		val addressResult = mock<Address> {
 			on { latitude } doReturn 37.7773
@@ -65,6 +69,9 @@ class TestNavTrigger {
 		val geoAddress = "geo:0,0?q=1970+Naglee+Ave+San+Jose,+CA+95126"
 		val addressParsed = parser.parseUrl(geoAddress)
 		assertEquals(correctAnswer, addressParsed)
+		val geoWhitespaceAddress = "geo:0,0?q=1970 Naglee Ave San Jose, CA 95126"
+		val addressWhitespaceParsed = parser.parseUrl(geoWhitespaceAddress)
+		assertEquals(correctAnswer, addressWhitespaceParsed)
 	}
 
 	@Test

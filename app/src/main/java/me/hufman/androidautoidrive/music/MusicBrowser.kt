@@ -92,7 +92,11 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 			"com.bambuna.podcastaddict" -> "__ROOT__"  // Podcast Addict
 			"com.neutroncode.mp" -> "root"    // Neutron
 			"com.neutroncode.mpeval" -> "root"    // Neutron (Eval)
-			else -> mediaBrowser.root
+			"com.acast.nativeapp" -> "root"     // Acast Podcast Player
+			else -> return when(musicAppInfo.className) {   // some apps have a shared service library
+				"com.itmwpb.vanilla.radioapp.player.MusicService" -> "/"    // OneCMS (HOT97 Official)
+				else -> mediaBrowser.root
+			}
 		}
 	}
 

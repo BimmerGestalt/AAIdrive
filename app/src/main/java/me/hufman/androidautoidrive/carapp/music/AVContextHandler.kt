@@ -55,10 +55,14 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 
 			for (app in apps) {
 				if (!knownApps.containsKey(app.amAppIdentifier)) {
+					knownApps[app.amAppIdentifier] = app
+
+					if (musicAppMode.shouldId5Playback() && app.packageName == "com.spotify.music") {
+						continue    // don't create an AM for Spotify, we have the real icon
+					}
 					Log.i(TAG, "Creating am app for new app ${app.name}")
 					carConnection.am_registerApp(amHandle, app.amAppIdentifier, getAMInfo(app))
 
-					knownApps[app.amAppIdentifier] = app
 				}
 			}
 
@@ -71,22 +75,37 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		}
 	}
 
+	/**
+	 * Recreate an AM app entry, which removes the spinning animation
+	 */
+	fun amRecreateApp(appInfo: MusicAppInfo) {
+		amHandle ?: return
+		app.runSynchronized {
+			try {
+				carConnection.am_registerApp(amHandle, appInfo.amAppIdentifier, getAMInfo(appInfo))
+			} catch (e: Exception) {
+				Log.w(TAG, "Received exception during AM app redraw", e)
+			}
+		}
+	}
+
 	/** What weight to assign for the AM app, to sort it in the list properly */
-	fun getAppWeight(app: MusicAppInfo): Int {
-		val name = app.name.toLowerCase().toCharArray().filter { it.isLetter() }
+	fun getAppWeight(appName: String): Int {
+		val name = appName.toLowerCase().toCharArray().filter { it.isLetter() }
 		var score = min(name[0].toInt() - 'a'.toInt(), 'z'.toInt())
 		score = score * 6 + ((name[1].toInt() / 6.0).roundToInt())
 		return score
 	}
 
 	fun getAMInfo(app: MusicAppInfo): Map<Int, Any> {
+		val adjustment = if (musicAppMode.shouldId5Playback()) { getAppWeight("Spotify") - (800 - 500) } else 0
 		val amInfo = mutableMapOf<Int, Any>(
 			0 to 145,   // basecore version
 			1 to app.name,  // app name
 			2 to graphicsHelpers.compress(app.icon, 48, 48), // icon
 			3 to "Multimedia",   // section
 			4 to true,
-			5 to 800 - getAppWeight(app),   // weight
+			5 to 800 - (getAppWeight(app.name) - adjustment),   // weight
 			8 to -1  // mainstateId
 		)
 		// language translations, dunno which one is which
@@ -97,10 +116,10 @@ class AVContextHandler(val app: RHMIApplicationSynchronized, val controller: Mus
 		return amInfo
 	}
 
-	fun av_requestContext(ident: String) {
-		knownApps[ident]?.apply { av_requestContext(this) } ?:
-			Log.w(TAG, "Wanted to requestContext for missing app $ident?")
+	fun getAppInfo(appId: String): MusicAppInfo? {
+		return knownApps[appId]
 	}
+
 	fun av_requestContext(app: MusicAppInfo) {
 		controller.connectAppManually(app)  // prepare the music controller, so that av_connectionGranted can use it
 		if (musicAppMode.shouldRequestAudioContext()) {

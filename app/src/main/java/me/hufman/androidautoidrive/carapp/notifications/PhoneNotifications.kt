@@ -25,14 +25,12 @@ import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
-import org.json.JSONException
-import org.json.JSONObject
 import java.lang.RuntimeException
 import java.util.*
 
 const val TAG = "PhoneNotifications"
 
-class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val appSettings: MutableAppSettings) {
+class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val appSettings: MutableAppSettings) {
 	companion object {
 		const val INTENT_UPDATE_NOTIFICATIONS = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.UPDATE_NOTIFICATIONS"
 		const val INTENT_NEW_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.NEW_NOTIFICATION"
@@ -43,13 +41,14 @@ class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAp
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
 	val carApp: RHMIApplicationSynchronized
+	val readHistory = PopupHistory()       // suppress any duplicate New Notification actions
 	val viewPopup: PopupView                // notification about notification
 	val viewList: NotificationListView      // show a list of active notifications
 	val viewDetails: DetailsView            // view a notification with actions to do
 	val stateInput: RHMIState.PlainState    // show a reply input form
+	var readoutInteractions = ReadoutInteractions(appSettings)
 
 	var passengerSeated = false             // whether a passenger is seated
-	var lastPopup: CarNotification? = null  // the last notification that we popped up
 
 	init {
 		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
@@ -81,9 +80,9 @@ class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAp
 		val unclaimedStates = LinkedList(carApp.states.values)
 
 		// figure out which views to use
-		viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources, PopupHistory())
-		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings)
-		viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller)
+		viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
+		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings, readoutInteractions)
+		viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller, readoutInteractions)
 
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first{
 			it.componentsList.filterIsInstance<RHMIComponent.Input>().isNotEmpty()
@@ -91,6 +90,9 @@ class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAp
 
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
 			it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = viewList.state.id
+			it.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+				viewList.entryButtonTimestamp = System.currentTimeMillis()
+			}
 		}
 
 		// set up the list
@@ -153,22 +155,12 @@ class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAp
 			component?.onHmiEvent(eventId, args)
 		}
 
-		fun loadJSON(str: String?): JSONObject? {
-			if (str == null) return null
-			try {
-				return JSONObject(str)
-			} catch (e: JSONException) {
-				return null
-			}
-		}
 		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
-			if (propertyValue == null || loadJSON(propertyValue) == null) {
-				return
-			}
 			val propertyData = loadJSON(propertyValue) ?: return
 
 			if (propertyName == "sensors.seatOccupiedPassenger") {
 				passengerSeated = propertyData.getInt("seatOccupiedPassenger") != 0
+				readoutInteractions.passengerSeated = propertyData.getInt("seatOccupiedPassenger") != 0
 			}
 			if (propertyName == "driving.gear") {
 				val GEAR_PARK = 3
@@ -211,17 +203,23 @@ class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAp
 	open inner class PhoneNotificationListener {
 		open fun onNotification(sbn: CarNotification) {
 			Log.i(TAG, "Received a new notification to show in the car: $sbn")
-			viewList.showStatusBarIcon()
 
-			if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
-				(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
-					!passengerSeated)
-			) {
-				lastPopup = sbn
+			// only show if we haven't popped it before
+			val alreadyShown = readHistory.contains(sbn)
+			readHistory.add(sbn)
+			if (!alreadyShown) {
+				viewList.showStatusBarIcon()
 
-				if (!sbn.equalsKey(viewDetails.selectedNotification)) {
-					viewPopup.showNotification(sbn)
+				if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
+					(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
+						!passengerSeated)
+				) {
+					if (!sbn.equalsKey(viewDetails.selectedNotification)) {
+						viewPopup.showNotification(sbn)
+					}
 				}
+
+				readoutInteractions.triggerPopupReadout(sbn)
 			}
 		}
 
@@ -233,13 +231,17 @@ class PhoneNotifications(securityAccess: SecurityAccess, val carAppAssets: CarAp
 
 			// clear out any popped notifications that don't exist anymore
 			val currentNotifications = NotificationsState.cloneNotifications()
-			viewPopup.popupHistory.retainAll(currentNotifications)
+			readHistory.retainAll(currentNotifications)
 
 			// if the notification we popped up disappeared, clear the popup
-			if (currentNotifications.find { it.key == lastPopup?.key } == null) {
+			if (currentNotifications.find { it.key == viewPopup.currentNotification?.key } == null) {
 				viewPopup.hideNotification()
 			}
 
+			// cancel the notification readout if it goes away
+			if (currentNotifications.find { it.key == readoutInteractions.currentNotification?.key } == null) {
+				readoutInteractions.cancel()
+			}
 		}
 	}
 

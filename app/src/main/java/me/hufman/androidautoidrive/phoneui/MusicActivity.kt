@@ -10,8 +10,8 @@ import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
-import android.provider.Settings
 import android.support.v4.app.FragmentManager
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -51,6 +51,9 @@ class MusicActivity : AppCompatActivity() {
 
 		swAudioContext.setOnCheckedChangeListener { buttonView, isChecked ->
 			AppSettings.saveSetting(this, AppSettings.KEYS.AUDIO_FORCE_CONTEXT, isChecked.toString())
+		}
+		swSpotifyLayout.setOnCheckedChangeListener { button, isChecked ->
+			AppSettings.saveSetting(this, AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT, isChecked.toString())
 		}
 		btnGrantSessions.setOnClickListener {
 			promptNotificationPermission()
@@ -105,7 +108,10 @@ class MusicActivity : AppCompatActivity() {
 		val showAdvancedSettings = AppSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
 		swAudioContext.visible = showAdvancedSettings || BuildConfig.MANUAL_AUDIO_CONTEXT
 		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT].toBoolean()
+		swSpotifyLayout.visible = showAdvancedSettings
+		swSpotifyLayout.isChecked = AppSettings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT].toBoolean()
 		paneGrantSessions.visibility = if (hasNotificationPermission()) View.GONE else View.VISIBLE
+		appDiscoveryThread.discovery()
 	}
 
 	fun promptNotificationPermission() {
@@ -113,7 +119,7 @@ class MusicActivity : AppCompatActivity() {
 	}
 
 	fun hasNotificationPermission(): Boolean {
-		return Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true
+		return UIState.notificationListenerConnected && NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
 	}
 }
 

@@ -35,6 +35,16 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 		swNotificationPopupPassenger.setOnCheckedChangeListener { buttonView, isChecked ->
 			appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER] = isChecked.toString()
 		}
+		swNotificationReadout.setOnCheckedChangeListener { buttonView, isChecked ->
+			appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT] = isChecked.toString()
+			redraw()
+		}
+		swNotificationReadoutPopup.setOnCheckedChangeListener { buttonView, isChecked ->
+			appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP] = isChecked.toString()
+		}
+		swNotificationReadoutPopupPassenger.setOnCheckedChangeListener { buttonView, isChecked ->
+			appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER] = isChecked.toString()
+		}
 		btnGrantSMS.setOnClickListener {
 			ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_SMS), 20)
 		}
@@ -91,6 +101,10 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 		swNotificationPopup.isChecked = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
 		paneNotificationPopup.visible = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
 		swNotificationPopupPassenger.isChecked = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean()
+		swNotificationReadout.isChecked = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT].toBoolean()
+		swNotificationReadoutPopup.isChecked = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP].toBoolean()
+		paneNotificationReadout.visible = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP].toBoolean()
+		swNotificationReadoutPopupPassenger.isChecked = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER].toBoolean()
 		paneSMSPermission.visible = !hasSMSPermission()
 	}
 

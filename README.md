@@ -3,9 +3,11 @@ Android Auto for IDrive
 
 [![Build Status](https://travis-ci.org/hufman/AndroidAutoIdrive.svg?branch=master)](https://travis-ci.org/hufman/AndroidAutoIdrive)
 [![Coverage Status](https://coveralls.io/repos/github/hufman/AndroidAutoIdrive/badge.svg?branch=master)](https://coveralls.io/github/hufman/AndroidAutoIdrive?branch=master)
+[![Crowdin](https://badges.crowdin.net/androidautoidrive/localized.svg)](https://crowdin.com/project/androidautoidrive)
 [![Release Download](https://img.shields.io/github/release/hufman/AndroidAutoIdrive.svg)](https://github.com/hufman/AndroidAutoIdrive/releases/latest)
+[![Download Counter](https://img.shields.io/github/downloads/hufman/AndroidAutoIdrive/total.svg)](https://github.com/hufman/AndroidAutoIdrive/releases/latest)
 [![Gitter](https://badges.gitter.im/AndroidAutoIdrive/community.svg)](https://gitter.im/AndroidAutoIdrive/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[<img title="Buy me a coffee" src="https://cdn.buymeacoffee.com/buttons/default-blue.png" width="85" height="20" />](https://www.buymeacoffee.com/q4JVoxz)
+[![Buy Me A Coffee](https://img.shields.io/badge/support-buymeacoffee-5f7fff)](https://www.buymeacoffee.com/q4JVoxz)
 
 The BMW/Mini IDrive NBT does not offer native Android Auto integration, but does provide a very powerful Connected Apps convergence option with many exciting integration points into the car. This project is an effort to implement most of the features of Android Auto as unofficial BMW/Mini Connected Apps.
 
@@ -26,6 +28,8 @@ Getting Started
 This app requires that the BMW or Mini Connected app for your car is installed and can successfully add Connected and Calendar entries to your car's Connected Apps menu.
 
 Download the APK from the [Releases page](https://github.com/hufman/AndroidAutoIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. After starting, the app should detect the Connected app and start waiting for the car connection.
+
+If you'd like to try out the latest build, [download it here](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-nonalytics-release.apk)!
 
 Check out the [FAQ](https://hufman.github.io/AndroidAutoIdrive/faq.html) if you run into problems.
 
@@ -68,6 +72,7 @@ Implemented Features
     - Automatically updates the screen to follow the active app
     - Recommended compatible apps:
       - Audiobooks and Podcasts:
+        - [Acast Podcast Player](https://play.google.com/store/apps/details?id=com.acast.nativeapp)
         - [AntennaPod](https://play.google.com/store/apps/details?id=de.danoeh.antennapod)
         - [The Bob & Tom Show](https://play.google.com/store/apps/details?id=com.radio.station.BOB.TOM)
         - [Castbox](https://play.google.com/store/apps/details?id=fm.castbox.audiobook.radio.podcast)
@@ -97,7 +102,9 @@ Implemented Features
         - [ARD Audiothek](https://play.google.com/store/apps/details?id=de.ard.audiothek)
         - [BFM](https://play.google.com/store/apps/details?id=my.bfm.app)
         - [Dash Radio](https://play.google.com/store/apps/details?id=com.dashradio.dash)
+        - [DI.FM](https://play.google.com/store/apps/details?id=com.audioaddict.di)
         - [Energy Radio](https://play.google.com/store/apps/details?id=radioenergy.app)
+        - [HOT97 Official](https://play.google.com/store/apps/details?id=com.jacapps.whhl)
         - [Nederland.FM](https://play.google.com/store/apps/details?id=nl.nibbixsoft.app)
         - [NHL](https://play.google.com/store/apps/details?id=com.nhl.gc1112.free)
         - [ntv Nachrichten](https://play.google.com/store/apps/details?id=de.lineas.lit.ntv.android)

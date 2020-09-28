@@ -8,7 +8,7 @@ import me.hufman.androidautoidrive.carapp.notifications.TAG
 import me.hufman.idriveconnectionkit.rhmi.*
 import me.hufman.idriveconnectionkit.rhmi.mocking.RHMIApplicationMock
 
-class PopupView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val popupHistory: PopupHistory) {
+class PopupView(val state: RHMIState, val phoneAppResources: PhoneAppResources) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.PopupState &&
@@ -21,6 +21,8 @@ class PopupView(val state: RHMIState, val phoneAppResources: PhoneAppResources, 
 	val bodyLabel2: RHMIModel.RaDataModel
 	val popEvent: RHMIEvent.PopupEvent?
 	val focusEvent: RHMIEvent.FocusEvent?
+
+	var currentNotification: CarNotification? = null
 
 	init {
 		val dummyLabel = RHMIModel.RaDataModel(RHMIApplicationMock(), 0)
@@ -36,12 +38,7 @@ class PopupView(val state: RHMIState, val phoneAppResources: PhoneAppResources, 
 	}
 
 	fun showNotification(sbn: CarNotification) {
-		// only show if we haven't popped it before
-		val alreadyShown = popupHistory.contains(sbn)
-		popupHistory.add(sbn)
-		if (alreadyShown) {
-			return
-		}
+		currentNotification = sbn
 
 		try {
 			val appname = phoneAppResources.getAppName(sbn.packageName)
@@ -51,12 +48,6 @@ class PopupView(val state: RHMIState, val phoneAppResources: PhoneAppResources, 
 			popEvent?.triggerEvent(mapOf(0 to true))
 		} catch (e: Exception) {
 			Log.e(TAG, "Error while triggering notification popup: $e")
-
-			try {
-				focusEvent?.triggerEvent(mapOf(0 to state.id))
-			} catch (e: Exception) {
-				Log.e(TAG, "Error while focusing notification popup: $e")
-			}
 		}
 	}
 

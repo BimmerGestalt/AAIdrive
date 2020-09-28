@@ -10,7 +10,7 @@ class NotificationSettings(val capabilities: Map<String, String>, val appSetting
 
 	fun getSettings(): List<AppSettings.KEYS> {
 		val idrive4 = capabilities["hmi.type"]?.contains("ID4") == true
-		val settings = if (idrive4) {
+		val popupSettings = if (idrive4) {
 			listOf(
 					AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP,
 					AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER
@@ -18,7 +18,12 @@ class NotificationSettings(val capabilities: Map<String, String>, val appSetting
 		} else {
 			listOf()
 		}
-		return settings
+		val readoutSettings = listOf(
+				AppSettings.KEYS.NOTIFICATIONS_READOUT,
+				AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP,
+				AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
+		)
+		return popupSettings + readoutSettings
 	}
 
 	fun toggleSetting(setting: AppSettings.KEYS) {
