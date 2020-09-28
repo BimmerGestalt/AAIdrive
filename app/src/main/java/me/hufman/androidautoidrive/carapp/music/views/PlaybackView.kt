@@ -355,16 +355,23 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 	private fun redrawPosition() {
 		val progress = controller.getPlaybackPosition()
-		if (progress.maximumPosition > 0) {
-			gaugeModel.value = (100 * progress.getPosition() / progress.maximumPosition).toInt()
+		if (state is RHMIState.AudioHmiState && progress.maximumPosition <= 0) {
+			// hide the progress bar from the sidebar
+			gaugeModel.value = 0
+			currentTimeModel.value = ""
+			maximumTimeModel.value = ""
 		} else {
-			gaugeModel.value = 50
-		}
-		maximumTimeModel.value = formatTime(progress.maximumPosition)
-		currentTimeModel.value = if (progress.playbackPaused && System.currentTimeMillis() % 1000 >= 500) {
-			"   :  "
-		} else {
-			formatTime(progress.getPosition())
+			if (progress.maximumPosition <= 0) {
+				gaugeModel.value = 50
+			} else {
+				gaugeModel.value = (100 * progress.getPosition() / progress.maximumPosition).toInt()
+			}
+			if (progress.playbackPaused && System.currentTimeMillis() % 1000 >= 500) {
+				currentTimeModel.value = "   :  "
+			} else {
+				currentTimeModel.value = formatTime(progress.getPosition())
+			}
+			maximumTimeModel.value = formatTime(progress.maximumPosition)
 		}
 	}
 
