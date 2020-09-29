@@ -31,6 +31,9 @@ object ParseNotification {
 	/** Any notification levels that should not show popups */
 	val SUPPRESSED_POPUP_IMPORTANCES = setOf(IMPORTANCE_LOW, IMPORTANCE_MIN, IMPORTANCE_NONE)
 
+	/**
+	 * Runs this block if the phone is Oreo or newer
+	 */
 	inline fun <R> ifOreo(callable: () -> R): R? {
 		return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			callable()
@@ -38,6 +41,7 @@ object ParseNotification {
 			null
 		}
 	}
+
 	/**
 	 * Summarize an Android Notification into what should be shown in the car
 	 */

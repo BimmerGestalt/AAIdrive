@@ -18,6 +18,7 @@ import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
 import me.hufman.androidautoidrive.carapp.notifications.ReadoutApp
+import me.hufman.androidautoidrive.notifications.AudioPlayer
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
@@ -291,6 +292,7 @@ class MainService: Service() {
 								PhoneAppResourcesAndroid(this),
 								GraphicsHelpersAndroid(),
 								CarNotificationControllerIntent(this),
+								AudioPlayer(this),
 								notificationSettings)
 						if (handler != null) {
 							carappNotifications?.onCreate(this, handler)

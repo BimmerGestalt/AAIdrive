@@ -24,6 +24,7 @@
     <string name="message_notifications">Message Notifications</string>
     <string name="notification_popups">Notification Popups</string>
     <string name="notification_popups_passenger">Popups with passenger</string>
+    <string name="notification_sound">Play notification sound</string>
     <string name="notification_readout">Speak when viewing notifications</string>
     <string name="notification_readout_popup">Speak new notifications</string>
     <string name="notification_readout_popup_passenger">... with a passenger</string>
@@ -110,6 +111,7 @@
     <string name="NOTIFICATION_OPTIONS">Options</string>
     <string name="NOTIFICATION_POPUPS">Notification Popups</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER"> ... with a passenger</string>
+    <string name="NOTIFICATION_SOUND">Play notification sound</string>
     <string name="NOTIFICATION_READOUT">Speak when viewing notifications</string>
     <string name="NOTIFICATION_READOUT_POPUP">Speak new notifications</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> ... with a passenger</string>

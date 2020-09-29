@@ -17,14 +17,14 @@ class TestNotificationSettings {
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++", "tts" to "true"), appSettings)
 			assertEquals(listOf(
-					AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER,
+					AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER, AppSettings.KEYS.NOTIFICATIONS_SOUND,
 					AppSettings.KEYS.NOTIFICATIONS_READOUT, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
 			), settings.getSettings())
 		}
 
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5", "tts" to "true"), appSettings)
-			assertEquals(listOf(
+			assertEquals(listOf(AppSettings.KEYS.NOTIFICATIONS_SOUND,
 					AppSettings.KEYS.NOTIFICATIONS_READOUT, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
 			), settings.getSettings())
 		}
@@ -32,13 +32,14 @@ class TestNotificationSettings {
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++", "tts" to "false"), appSettings)
 			assertEquals(listOf(
-					AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER
+					AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER,
+					AppSettings.KEYS.NOTIFICATIONS_SOUND
 			), settings.getSettings())
 		}
 
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5", "tts" to "false"), appSettings)
-			assertEquals(emptyList<AppSettings.KEYS>(), settings.getSettings())
+			assertEquals(listOf(AppSettings.KEYS.NOTIFICATIONS_SOUND), settings.getSettings())
 		}
 	}
 
@@ -46,12 +47,14 @@ class TestNotificationSettings {
 	fun testSettings() {
 		whenever(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP]) doReturn "true"
 		whenever(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER]) doReturn "false"
+		whenever(appSettings[AppSettings.KEYS.NOTIFICATIONS_SOUND]) doReturn "true"
 		whenever(appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT]) doReturn "true"
 		whenever(appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP]) doReturn "true"
 		whenever(appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER]) doReturn "false"
 		val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++", "tts" to "true"), appSettings)
 		assertTrue(settings.shouldPopup(false))
 		assertFalse(settings.shouldPopup(true))
+		assertTrue(settings.shouldPlaySound())
 		assertTrue(settings.shouldReadoutNotificationDetails())
 		assertTrue(settings.shouldReadoutNotificationPopup(false))
 		assertFalse(settings.shouldReadoutNotificationPopup(true))

@@ -21,6 +21,9 @@ class NotificationSettings(val capabilities: Map<String, String?>, val appSettin
 		} else {
 			listOf()
 		}
+		val soundSettings = listOf(
+				AppSettings.KEYS.NOTIFICATIONS_SOUND
+		)
 		val readoutSettings = if (tts) {
 			listOf(
 					AppSettings.KEYS.NOTIFICATIONS_READOUT,
@@ -30,7 +33,7 @@ class NotificationSettings(val capabilities: Map<String, String?>, val appSettin
 		} else {
 			listOf()
 		}
-		return popupSettings + readoutSettings
+		return popupSettings + soundSettings + readoutSettings
 	}
 
 	fun toggleSetting(setting: AppSettings.KEYS) {
@@ -46,6 +49,10 @@ class NotificationSettings(val capabilities: Map<String, String?>, val appSettin
 			appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
 			(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
 				!passengerSeated)
+	}
+
+	fun shouldPlaySound(): Boolean {
+		return appSettings[AppSettings.KEYS.NOTIFICATIONS_SOUND].toBoolean()
 	}
 
 	fun shouldReadoutNotificationPopup(passengerSeated: Boolean): Boolean {

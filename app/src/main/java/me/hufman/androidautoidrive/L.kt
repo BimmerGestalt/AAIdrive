@@ -14,6 +14,7 @@ object L {
 	var NOTIFICATION_OPTIONS = "Options"
 	var NOTIFICATION_POPUPS = "Notification Popups"
 	var NOTIFICATION_POPUPS_PASSENGER = "Popups with passenger"
+	var NOTIFICATION_SOUND = "Play notification sound"
 	var NOTIFICATION_READOUT = "Speak when viewing notifications"
 	var NOTIFICATION_READOUT_POPUP = "Speak new notifications"
 	var NOTIFICATION_READOUT_POPUP_PASSENGER = "... with a passenger"

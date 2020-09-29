@@ -48,6 +48,13 @@
         </LinearLayout>
 
         <Switch
+            android:id="@+id/swNotificationSound"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/notification_sound" />
+
+        <Switch
             android:id="@+id/swNotificationReadout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
