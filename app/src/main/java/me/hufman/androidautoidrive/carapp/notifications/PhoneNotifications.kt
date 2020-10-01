@@ -30,7 +30,7 @@ import java.util.*
 
 const val TAG = "PhoneNotifications"
 
-class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val appSettings: MutableAppSettings) {
+class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, appSettings: MutableAppSettings) {
 	companion object {
 		const val INTENT_UPDATE_NOTIFICATIONS = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.UPDATE_NOTIFICATIONS"
 		const val INTENT_NEW_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.NEW_NOTIFICATION"
@@ -38,6 +38,8 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 	}
 	val notificationListener = PhoneNotificationListener()
 	var notificationReceiver: PhoneNotificationUpdate? = null
+	val notificationSettings: NotificationSettings
+	var readoutInteractions: ReadoutInteractions
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
 	val carApp: RHMIApplicationSynchronized
@@ -46,7 +48,6 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 	val viewList: NotificationListView      // show a list of active notifications
 	val viewDetails: DetailsView            // view a notification with actions to do
 	val stateInput: RHMIState.PlainState    // show a reply input form
-	var readoutInteractions = ReadoutInteractions(appSettings)
 
 	var passengerSeated = false             // whether a passenger is seated
 
@@ -70,7 +71,8 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 				.filter { it.key is String && it.value is String }
 				.mapKeys { it.key as String }
 				.mapValues { it.value as String }
-		val notificationSettings = NotificationSettings(capabilities, appSettings)
+		notificationSettings = NotificationSettings(capabilities, appSettings)
+		readoutInteractions = ReadoutInteractions(notificationSettings)
 
 		// set up the app in the car
 		carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)))
@@ -210,10 +212,7 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 			if (!alreadyShown) {
 				viewList.showStatusBarIcon()
 
-				if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
-					(AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
-						!passengerSeated)
-				) {
+				if (notificationSettings.shouldPopup(passengerSeated)) {
 					if (!sbn.equalsKey(viewDetails.selectedNotification)) {
 						viewPopup.showNotification(sbn)
 					}

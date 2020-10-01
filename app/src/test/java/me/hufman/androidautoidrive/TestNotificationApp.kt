@@ -68,7 +68,10 @@ class TestNotificationApp {
 	val carNotificationController = mock<CarNotificationController> {
 	}
 	val readoutController = mock<ReadoutController>()
-	val appSettings = mock<MutableAppSettings>()
+	val appSettings = mock<MutableAppSettings> {
+		val captor = argumentCaptor<AppSettings.KEYS>()
+		on { get(captor.capture()) } doAnswer {AppSettings[captor.lastValue]}
+	}
 
 	init {
 		AppSettings.loadDefaultSettings()

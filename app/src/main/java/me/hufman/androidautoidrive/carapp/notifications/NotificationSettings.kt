@@ -33,4 +33,20 @@ class NotificationSettings(val capabilities: Map<String, String>, val appSetting
 	fun isChecked(setting: AppSettings.KEYS): Boolean {
 		return appSettings[setting].toBoolean()
 	}
+
+	fun shouldPopup(passengerSeated: Boolean): Boolean {
+		return appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
+				(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
+						!passengerSeated)
+	}
+
+	fun shouldReadoutNotificationPopup(passengerSeated: Boolean): Boolean {
+		val main = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP].toBoolean()
+		val passenger = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER].toBoolean()
+		return main && (passenger || !passengerSeated)
+	}
+
+	fun shouldReadoutNotificationDetails(): Boolean {
+		return appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT].toBoolean()
+	}
 }
