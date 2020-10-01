@@ -1,7 +1,5 @@
 package me.hufman.androidautoidrive.carapp.notifications
 
-import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.carapp.ReadoutController
 import me.hufman.androidautoidrive.notifications.CarNotification
 
@@ -18,7 +16,7 @@ import me.hufman.androidautoidrive.notifications.CarNotification
  *   - User clicks into a DetailsView, it starts speaking that notification (if enabled)
  *   - User presses Back, which stops the current speaking
  */
-class ReadoutInteractions(val settings: MutableAppSettings) {
+class ReadoutInteractions(val settings: NotificationSettings) {
 	companion object {
 		/**
 		 * Return a trimmed version of the first line that is duplicated in the second line
@@ -45,19 +43,9 @@ class ReadoutInteractions(val settings: MutableAppSettings) {
 
 	var passengerSeated: Boolean = false
 
-	val shouldPopupReadout: Boolean
-		get() {
-			val main = AppSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP].toBoolean()
-			val passenger = AppSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER].toBoolean()
-			return main && (passenger || !passengerSeated)
-		}
-
-	val shouldDisplayReadout: Boolean
-		get() = AppSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT].toBoolean()
-
 	fun triggerPopupReadout(carNotification: CarNotification) {
 		// read the latest line of a new notification, if we aren't currently reading
-		if (shouldPopupReadout && currentNotification == null) {
+		if (settings.shouldReadoutNotificationPopup(passengerSeated) && currentNotification == null) {
 			currentNotification = carNotification
 			val line = carNotification.text.split("\n").lastOrNull() ?: ""
 			val lines = mutableListOf(line)
@@ -70,7 +58,7 @@ class ReadoutInteractions(val settings: MutableAppSettings) {
 	}
 
 	fun triggerDisplayReadout(carNotification: CarNotification) {
-		if (shouldDisplayReadout && carNotification != currentNotification) {
+		if (settings.shouldReadoutNotificationDetails() && carNotification != currentNotification) {
 			if (currentNotification != null) {
 				readoutController?.cancel()
 				Thread.sleep(500)

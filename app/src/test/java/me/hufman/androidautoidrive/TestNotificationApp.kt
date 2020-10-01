@@ -68,7 +68,10 @@ class TestNotificationApp {
 	val carNotificationController = mock<CarNotificationController> {
 	}
 	val readoutController = mock<ReadoutController>()
-	val appSettings = mock<MutableAppSettings>()
+	val appSettings = mock<MutableAppSettings> {
+		val captor = argumentCaptor<AppSettings.KEYS>()
+		on { get(captor.capture()) } doAnswer {AppSettings[captor.lastValue]}
+	}
 
 	init {
 		AppSettings.loadDefaultSettings()
@@ -521,13 +524,14 @@ class TestNotificationApp {
 		val state = rhmiApp.states[8]!!
 
 		run {
-			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++"), appSettings)
+			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++", "tts" to "true"), appSettings)
 			val id4Menu = NotificationListView(state, phoneAppResources, graphicsHelpers, settings, mock())
 			id4Menu.initWidgets(mock())
 			id4Menu.redrawNotificationList()
 
 			val label = rhmiApp.modelData[393]
 			assertEquals("Options", label)
+			assertEquals(true, rhmiApp.propertyData[id4Menu.settingsListView.id]!![RHMIProperty.PropertyId.VISIBLE.id])
 			val menu = rhmiApp.modelData[394] as BMWRemoting.RHMIDataTable
 			assertEquals(5, menu.numRows)
 			assertEquals(listOf(L.NOTIFICATION_POPUPS, L.NOTIFICATION_POPUPS_PASSENGER,
@@ -536,16 +540,31 @@ class TestNotificationApp {
 
 		rhmiApp.modelData.clear()
 		run {
-			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5"), appSettings)
+			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5", "tts" to "true"), appSettings)
 			val id5Menu = NotificationListView(state, phoneAppResources, graphicsHelpers, settings, mock())
 			id5Menu.initWidgets(mock())
 			id5Menu.redrawNotificationList()
 
 			val label = rhmiApp.modelData[393]
 			assertEquals("Options", label)
+			assertEquals(true, rhmiApp.propertyData[id5Menu.settingsListView.id]!![RHMIProperty.PropertyId.VISIBLE.id])
 			val menu = rhmiApp.modelData[394] as BMWRemoting.RHMIDataTable
 			assertEquals(3, menu.numRows)
 			assertEquals(listOf(L.NOTIFICATION_READOUT, L.NOTIFICATION_READOUT_POPUP, L.NOTIFICATION_READOUT_POPUP_PASSENGER), menu.data.map { it[2] })
+		}
+		rhmiApp.modelData.clear()
+		run {
+			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5", "tts" to "false"), appSettings)
+			val id5Menu = NotificationListView(state, phoneAppResources, graphicsHelpers, settings, mock())
+			id5Menu.initWidgets(mock())
+			id5Menu.redrawNotificationList()
+
+			val label = rhmiApp.modelData[393]
+			assertEquals(null, label)
+			assertEquals(false, rhmiApp.propertyData[id5Menu.settingsListView.id]!![RHMIProperty.PropertyId.VISIBLE.id])
+			val menu = rhmiApp.modelData[394] as BMWRemoting.RHMIDataTable
+			assertEquals(0, menu.numRows)
+			assertEquals(emptyList<String>(), menu.data.map { it[2] })
 		}
 	}
 

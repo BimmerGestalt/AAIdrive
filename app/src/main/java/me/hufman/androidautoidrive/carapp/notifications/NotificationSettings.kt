@@ -8,8 +8,11 @@ class NotificationSettings(val capabilities: Map<String, String>, val appSetting
 		get() = appSettings.callback
 		set(value) { appSettings.callback = value }
 
+	// car's supported features
+	val idrive4 = capabilities["hmi.type"]?.contains("ID4") == true
+	val tts = capabilities["tts"]?.toLowerCase() == "true"
+
 	fun getSettings(): List<AppSettings.KEYS> {
-		val idrive4 = capabilities["hmi.type"]?.contains("ID4") == true
 		val popupSettings = if (idrive4) {
 			listOf(
 					AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP,
@@ -18,11 +21,15 @@ class NotificationSettings(val capabilities: Map<String, String>, val appSetting
 		} else {
 			listOf()
 		}
-		val readoutSettings = listOf(
-				AppSettings.KEYS.NOTIFICATIONS_READOUT,
-				AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP,
-				AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
-		)
+		val readoutSettings = if (tts) {
+			listOf(
+					AppSettings.KEYS.NOTIFICATIONS_READOUT,
+					AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP,
+					AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
+			)
+		} else {
+			listOf()
+		}
 		return popupSettings + readoutSettings
 	}
 
@@ -32,5 +39,22 @@ class NotificationSettings(val capabilities: Map<String, String>, val appSetting
 
 	fun isChecked(setting: AppSettings.KEYS): Boolean {
 		return appSettings[setting].toBoolean()
+	}
+
+	fun shouldPopup(passengerSeated: Boolean): Boolean {
+		return idrive4 &&
+			appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
+			(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
+				!passengerSeated)
+	}
+
+	fun shouldReadoutNotificationPopup(passengerSeated: Boolean): Boolean {
+		val main = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP].toBoolean()
+		val passenger = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER].toBoolean()
+		return tts && main && (passenger || !passengerSeated)
+	}
+
+	fun shouldReadoutNotificationDetails(): Boolean {
+		return tts && appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT].toBoolean()
 	}
 }
