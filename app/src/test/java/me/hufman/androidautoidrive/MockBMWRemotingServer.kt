@@ -23,7 +23,8 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 	val capabilities = mutableMapOf(
 		"hmi.display-width" to "1280",
 		"hmi.display-height" to "480",
-		"hmi.type" to "MINI ID4++"
+		"hmi.type" to "MINI ID4++",
+		"tts" to "true"
 	)
 
 	override fun sas_certificate(data: ByteArray?): ByteArray {
