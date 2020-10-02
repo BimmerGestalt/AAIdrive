@@ -105,8 +105,9 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 					focusEvent.triggerEvent(mapOf(0 to notificationListView.id, 41 to index))
 				}
 
+				redrawSettingsList()
 				settings.callback = {
-					redrawNotificationList()
+					redrawSettingsList()
 				}
 			} else {
 				settings.callback = null
@@ -200,6 +201,9 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 		} else {
 			notificationListView.getModel()?.value = notificationListData
 		}
+	}
+
+	fun redrawSettingsList() {
 		settingsListView.getModel()?.value = menuSettingsListData
 	}
 

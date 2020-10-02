@@ -532,6 +532,7 @@ class TestNotificationApp {
 			val id4Menu = NotificationListView(state, phoneAppResources, graphicsHelpers, settings, mock())
 			id4Menu.initWidgets(mock())
 			id4Menu.redrawNotificationList()
+			id4Menu.redrawSettingsList()
 
 			val label = rhmiApp.modelData[393]
 			assertEquals("Options", label)
@@ -547,6 +548,7 @@ class TestNotificationApp {
 			val id5Menu = NotificationListView(state, phoneAppResources, graphicsHelpers, settings, mock())
 			id5Menu.initWidgets(mock())
 			id5Menu.redrawNotificationList()
+			id5Menu.redrawSettingsList()
 
 			val label = rhmiApp.modelData[393]
 			assertEquals("Options", label)
@@ -561,6 +563,7 @@ class TestNotificationApp {
 			val id5Menu = NotificationListView(state, phoneAppResources, graphicsHelpers, settings, mock())
 			id5Menu.initWidgets(mock())
 			id5Menu.redrawNotificationList()
+			id5Menu.redrawSettingsList()
 
 			val label = rhmiApp.modelData[393]
 			assertEquals("Options", label)
