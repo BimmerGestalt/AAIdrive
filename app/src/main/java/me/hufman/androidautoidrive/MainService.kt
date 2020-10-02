@@ -18,6 +18,7 @@ import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
 import me.hufman.androidautoidrive.carapp.notifications.ReadoutApp
+import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.notifications.AudioPlayer
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
@@ -286,7 +287,8 @@ class MainService: Service() {
 						if (handler == null) {
 							Log.e(TAG, "CarThread Handler is null?")
 						}
-						val notificationSettings = NotificationSettings(carCapabilities, MutableAppSettings(this, handler))
+						val notificationSettings = NotificationSettings(carCapabilities, BtStatus(this) {}, MutableAppSettings(this, handler))
+						notificationSettings.btStatus.register()
 						carappNotifications = PhoneNotifications(securityAccess,
 								CarAppAssetManager(this, "basecoreOnlineServices"),
 								PhoneAppResourcesAndroid(this),
@@ -322,6 +324,7 @@ class MainService: Service() {
 	fun stopNotifications() {
 		carappReadout?.onDestroy()
 		carappReadout = null
+		carappNotifications?.notificationSettings?.btStatus?.unregister()
 		carappNotifications?.onDestroy(this)
 		carappNotifications = null
 		threadNotifications?.handler?.looper?.quitSafely()

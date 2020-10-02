@@ -2,8 +2,9 @@ package me.hufman.androidautoidrive.carapp.notifications
 
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
+import me.hufman.androidautoidrive.connections.BtStatus
 
-class NotificationSettings(val capabilities: Map<String, String?>, val appSettings: MutableAppSettings) {
+class NotificationSettings(val capabilities: Map<String, String?>, val btStatus: BtStatus, val appSettings: MutableAppSettings) {
 	var callback
 		get() = appSettings.callback
 		set(value) { appSettings.callback = value }
@@ -52,7 +53,7 @@ class NotificationSettings(val capabilities: Map<String, String?>, val appSettin
 	}
 
 	fun shouldPlaySound(): Boolean {
-		return appSettings[AppSettings.KEYS.NOTIFICATIONS_SOUND].toBoolean()
+		return btStatus.isA2dpConnected && appSettings[AppSettings.KEYS.NOTIFICATIONS_SOUND].toBoolean()
 	}
 
 	fun shouldReadoutNotificationPopup(passengerSeated: Boolean): Boolean {
