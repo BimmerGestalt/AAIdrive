@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive.carapp.notifications
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
 
-class NotificationSettings(val capabilities: Map<String, String>, val appSettings: MutableAppSettings) {
+class NotificationSettings(val capabilities: Map<String, String?>, val appSettings: MutableAppSettings) {
 	var callback
 		get() = appSettings.callback
 		set(value) { appSettings.callback = value }

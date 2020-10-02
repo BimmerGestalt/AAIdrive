@@ -30,7 +30,7 @@ import java.util.*
 
 const val TAG = "PhoneNotifications"
 
-class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, appSettings: MutableAppSettings) {
+class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val notificationSettings: NotificationSettings) {
 	companion object {
 		const val INTENT_UPDATE_NOTIFICATIONS = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.UPDATE_NOTIFICATIONS"
 		const val INTENT_NEW_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.NEW_NOTIFICATION"
@@ -38,7 +38,6 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 	}
 	val notificationListener = PhoneNotificationListener()
 	var notificationReceiver: PhoneNotificationUpdate? = null
-	val notificationSettings: NotificationSettings
 	var readoutInteractions: ReadoutInteractions
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
@@ -71,7 +70,6 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 				.filter { it.key is String && it.value is String }
 				.mapKeys { it.key as String }
 				.mapValues { it.value as String }
-		notificationSettings = NotificationSettings(capabilities, appSettings)
 		readoutInteractions = ReadoutInteractions(notificationSettings)
 
 		// set up the app in the car

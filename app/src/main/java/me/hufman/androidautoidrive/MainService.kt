@@ -13,6 +13,7 @@ import com.bmwgroup.connected.car.app.BrandType
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.carapp.notifications.NotificationSettings
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
@@ -59,9 +60,7 @@ class MainService: Service() {
 
 	var mapService = MapService(this, securityAccess)
 
-	val musicService by lazy {
-		MusicService(this, securityAccess, MusicAppMode.build(carCapabilities, this))
-	}
+	var musicService: MusicService? = null
 
 	var threadAssistant: CarThread? = null
 	var carappAssistant: AssistantApp? = null
@@ -225,6 +224,8 @@ class MainService: Service() {
 	fun startCarCapabilities() {
 		synchronized(this) {
 			if (threadCapabilities == null) {
+				// clear the capabilities to not start dependent services until it's ready
+				carCapabilities = emptyMap()
 				threadCapabilities = CarThread("Capabilities") {
 					Log.i(TAG, "Starting to discover car capabilities")
 
@@ -243,6 +244,9 @@ class MainService: Service() {
 
 							// now that we have capabilities, start up the music app
 							startMusic()
+
+							// also start Notifications
+							startNotifications()
 
 							// enable navigation listener, if supported
 							startNavigationListener()
@@ -270,22 +274,24 @@ class MainService: Service() {
 	}
 
 	fun startNotifications(): Boolean {
-		if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
-				Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true) {
+		val enabled = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
+				Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true
+		if (enabled) {
 			synchronized(this) {
-				if (threadNotifications == null) {
+				if (carCapabilities.isNotEmpty() && threadNotifications == null) {
 					threadNotifications = CarThread("Notifications") {
 						Log.i(TAG, "Starting notifications app")
 						val handler = threadNotifications?.handler
 						if (handler == null) {
 							Log.e(TAG, "CarThread Handler is null?")
 						}
+						val notificationSettings = NotificationSettings(carCapabilities, MutableAppSettings(this, handler))
 						carappNotifications = PhoneNotifications(securityAccess,
 								CarAppAssetManager(this, "basecoreOnlineServices"),
 								PhoneAppResourcesAndroid(this),
 								GraphicsHelpersAndroid(),
 								CarNotificationControllerIntent(this),
-								MutableAppSettings(this, handler))
+								notificationSettings)
 						if (handler != null) {
 							carappNotifications?.onCreate(this, handler)
 						}
@@ -329,13 +335,15 @@ class MainService: Service() {
 	}
 
 	fun startMusic(): Boolean {
-		if (carCapabilities.isNotEmpty()) {
-			musicService.start()
+		if (carCapabilities.isNotEmpty() && musicService == null) {
+			musicService = MusicService(this, securityAccess, MusicAppMode.build(carCapabilities, this))
+			musicService?.start()
 		}
 		return true
 	}
 	fun stopMusic() {
-		musicService.stop()
+		musicService?.stop()
+		musicService = null
 	}
 
 	fun startAssistant(): Boolean {
