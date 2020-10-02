@@ -284,7 +284,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			val playlistModel = state.getPlayListModel()?.asRaListModel()
 			val playlist = RHMIModel.RaListModel.RHMIListConcrete(10)
 			playlist.addRow(PlaylistItem(false, skipBackEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_BACK), L.MUSIC_SKIP_PREVIOUS))
-			playlist.addRow(PlaylistItem(false, true, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK), title))
+			playlist.addRow(PlaylistItem(false, true, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SONG), title))
 			playlist.addRow(PlaylistItem(false, skipNextEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_NEXT), L.MUSIC_SKIP_NEXT))
 			if (includeActions) {
 				playlistModel?.asRaListModel()?.setValue(playlist, 0, 3, 3)
