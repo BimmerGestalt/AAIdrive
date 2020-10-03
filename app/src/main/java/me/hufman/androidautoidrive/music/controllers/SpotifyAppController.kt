@@ -306,6 +306,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			MusicAction.SEEK_TO -> playerActions?.canSeek == true
 			MusicAction.SKIP_TO_QUEUE_ITEM -> false
 			MusicAction.SET_SHUFFLE_MODE -> playerActions?.canToggleShuffle == true
+			MusicAction.SET_REPEAT_MODE -> playerActions?.canRepeatContext == true || playerActions?.canRepeatTrack == true
 			// figure out search
 			else -> false
 		}
@@ -313,15 +314,27 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 
 	override fun getCustomActions(): List<CustomAction> {
 		val actions = LinkedList<CustomAction>()
-		if (playerOptions?.repeatMode == Repeat.OFF) {
-			if (playerActions?.canRepeatContext == true) actions.add(CUSTOM_ACTION_TURN_REPEAT_ALL_ON)
-			else if (playerActions?.canRepeatTrack == true) actions.add(CUSTOM_ACTION_TURN_REPEAT_ONE_ON)
+
+		// Needed for when the repeat button isn't supported by the hmiState
+		if (getRepeatMode() == RepeatMode.ALL) {
+			if (playerActions?.canRepeatTrack == true) {
+				actions.add(CUSTOM_ACTION_TURN_REPEAT_ONE_ON)
+			}
+			else {
+				actions.add(CUSTOM_ACTION_TURN_REPEAT_ONE_OFF)
+			}
+		} else if (getRepeatMode() == RepeatMode.ONE) {
+			actions.add(CUSTOM_ACTION_TURN_REPEAT_ONE_OFF)
 		}
-		if (playerOptions?.repeatMode == Repeat.ALL) {
-			if (playerActions?.canRepeatTrack == true) actions.add(CUSTOM_ACTION_TURN_REPEAT_ONE_ON)
-			else actions.add(CUSTOM_ACTION_TURN_REPEAT_ONE_OFF)
+		else {
+			if (playerActions?.canRepeatContext == true) {
+				actions.add(CUSTOM_ACTION_TURN_REPEAT_ALL_ON)
+			}
+			else if (playerActions?.canRepeatTrack == true) {
+				actions.add(CUSTOM_ACTION_TURN_REPEAT_ONE_ON)
+			}
 		}
-		if (playerOptions?.repeatMode == Repeat.ONE) actions.add(CUSTOM_ACTION_TURN_REPEAT_ONE_OFF)
+
 		if (currentTrackLibrary == false) actions.add(CUSTOM_ACTION_ADD_TO_COLLECTION)
 		if (currentTrackLibrary == true) actions.add(CUSTOM_ACTION_REMOVE_FROM_COLLECTION)
 
@@ -335,8 +348,35 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		remote.playerApi.setShuffle(!shuffling)
 	}
 
+	override fun toggleRepeat() {
+		if (playerOptions?.repeatMode == Repeat.OFF) {
+			if (playerActions?.canRepeatContext == true) {
+				remote.playerApi.setRepeat(Repeat.ALL)
+			} else if (playerActions?.canRepeatTrack == true) {
+				remote.playerApi.setRepeat(Repeat.ONE)
+			}
+		} else if (playerOptions?.repeatMode == Repeat.ALL) {
+			if (playerActions?.canRepeatTrack == true) {
+				remote.playerApi.setRepeat(Repeat.ONE)
+			} else {
+				remote.playerApi.setRepeat(Repeat.OFF)
+			}
+		} else {
+			remote.playerApi.setRepeat(Repeat.OFF)
+		}
+	}
+
 	override fun isShuffling(): Boolean {
 		return playerOptions?.isShuffling == true
+	}
+
+	override fun getRepeatMode(): RepeatMode {
+		return when(playerOptions?.repeatMode) {
+			Repeat.ALL -> RepeatMode.ALL
+			Repeat.ONE -> RepeatMode.ONE
+			Repeat.OFF -> RepeatMode.OFF
+			else -> RepeatMode.OFF
+		}
 	}
 
 	override suspend fun browse(directory: MusicMetadata?): List<MusicMetadata> {

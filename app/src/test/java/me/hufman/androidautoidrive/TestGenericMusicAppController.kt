@@ -5,10 +5,7 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.nhaarman.mockito_kotlin.*
 import kotlinx.coroutines.runBlocking
-import me.hufman.androidautoidrive.music.CustomAction
-import me.hufman.androidautoidrive.music.MusicAction
-import me.hufman.androidautoidrive.music.MusicBrowser
-import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.controllers.GenericMusicAppController
 import org.junit.Assert.*
 import org.junit.Before
@@ -141,6 +138,45 @@ class TestGenericMusicAppController {
 		}
 		controller.toggleShuffle()
 		verify(mediaTransportControls).setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE)
+	}
+
+	@Test
+	fun testGetRepeatMode() {
+		whenever(mediaController.repeatMode) doAnswer {
+			PlaybackStateCompat.REPEAT_MODE_NONE
+		}
+		assertEquals(RepeatMode.OFF, controller.getRepeatMode())
+
+		whenever(mediaController.repeatMode) doAnswer {
+			PlaybackStateCompat.REPEAT_MODE_ALL
+		}
+		assertEquals(RepeatMode.ALL, controller.getRepeatMode())
+
+		whenever(mediaController.repeatMode) doAnswer {
+			PlaybackStateCompat.REPEAT_MODE_ONE
+		}
+		assertEquals(RepeatMode.ONE, controller.getRepeatMode())
+	}
+
+	@Test
+	fun testRepeatToggle() {
+		whenever(mediaController.repeatMode) doAnswer {
+			PlaybackStateCompat.REPEAT_MODE_NONE
+		}
+		controller.toggleRepeat()
+		verify(mediaTransportControls).setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL)
+
+		whenever(mediaController.repeatMode) doAnswer {
+			PlaybackStateCompat.REPEAT_MODE_ALL
+		}
+		controller.toggleRepeat()
+		verify(mediaTransportControls).setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ONE)
+
+		whenever(mediaController.repeatMode) doAnswer {
+			PlaybackStateCompat.REPEAT_MODE_ONE
+		}
+		controller.toggleRepeat()
+		verify(mediaTransportControls).setRepeatMode(PlaybackStateCompat.REPEAT_MODE_NONE)
 	}
 
 	@Test
