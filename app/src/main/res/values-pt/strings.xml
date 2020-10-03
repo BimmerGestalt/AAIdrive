@@ -122,9 +122,6 @@
     </plurals>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Já não gosto</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Criar estação de Radio</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Repetir tudo</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Ligar Repetir Uma Vez</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Desligar Repetir Uma Vez</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Gosto</string>
     <string name="MUSIC_SPOTIFY_THUMB_UP">Subir</string>
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Subido</string>
