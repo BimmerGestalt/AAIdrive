@@ -64,13 +64,12 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		state as RHMIState.PlainState
 
 		listComponent = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
+
 		queueImageComponent = state.componentsList.filterIsInstance<RHMIComponent.Image>().first()
 
 		//all labels next to image at top of list don't scroll and are static
 		titleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[0]
-		titleLabelComponent.setProperty(RHMIProperty.PropertyId.VISIBLE, false)
 		subtitleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[1]
-		subtitleLabelComponent.setProperty(RHMIProperty.PropertyId.VISIBLE, false)
 
 		songsEmptyList.addRow(arrayOf("", "", L.MUSIC_QUEUE_EMPTY))
 	}
@@ -88,14 +87,15 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 	fun show() {
 		currentSong = musicController.getMetadata()
-		queueMetadata = musicController.getQueue()
+		val newQueueMetadata = musicController.getQueue()
 
-		//same queue as before, just select currently playing song
-		if(songsList == queueMetadata?.songs) {
+		// same queue as before, just select currently playing song
+		if(queueMetadata != null && queueMetadata == newQueueMetadata) {
 			showCurrentlyPlayingSong()
 			return
 		}
 
+		queueMetadata = newQueueMetadata
 		songsList.clear()
 		val songs = queueMetadata?.songs
 		if (songs?.isNotEmpty() == true) {
@@ -108,7 +108,6 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 				val endIndex = if (startIndex+numRows >= songsList.size) songsList.size-1 else startIndex+numRows
 				currentlyVisibleRows = songsListAdapter.realData.subList(startIndex,endIndex+1)
-
 				currentVisibleRowsMusicMetadata.clear()
 				currentlyVisibleRows.forEach { musicMetadata ->
 					currentVisibleRowsMusicMetadata.add(MusicMetadata.copy(musicMetadata))
@@ -122,35 +121,35 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			listComponent.getModel()?.setValue(songsEmptyList, 0, songsEmptyList.height, songsEmptyList.height)
 		}
 
-		if(queueMetadata?.coverArt != null) {
-			queueImageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(musicController.getQueue()?.coverArt!!, 180, 180, quality = 60)
-		}
-		else {
-			queueImageComponent.setVisible(false)
-		}
-
 		val queueTitle = UnicodeCleaner.clean(queueMetadata?.title ?: "")
 		val queueSubtitle = UnicodeCleaner.clean(queueMetadata?.subtitle ?: "")
-
-		if(queueTitle.isBlank() && queueSubtitle.isBlank()) {
+		if (queueTitle.isBlank() && queueSubtitle.isBlank()) {
 			state.getTextModel()?.asRaDataModel()?.value = "Now Playing"
 		} else {
 			state.getTextModel()?.asRaDataModel()?.value = "$queueTitle - $queueSubtitle"
 		}
 
-		titleLabelComponent.getModel()?.asRaDataModel()?.value = queueTitle
-		subtitleLabelComponent.getModel()?.asRaDataModel()?.value = queueSubtitle
+		if(queueMetadata?.coverArt != null) {
+			queueImageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(musicController.getQueue()?.coverArt!!, 180, 180, quality = 60)
+			titleLabelComponent.getModel()?.asRaDataModel()?.value = queueTitle
+			subtitleLabelComponent.getModel()?.asRaDataModel()?.value = queueSubtitle
+		}
+		else {
+			titleLabelComponent.getModel()?.asRaDataModel()?.value = ""
+			subtitleLabelComponent.getModel()?.asRaDataModel()?.value = ""
+			queueImageComponent.setVisible(false)
+		}
 	}
 
 	fun redraw() {
-		//need a full redraw as the queue is either different or has been modified
-		if(musicController.getQueue()?.title != queueMetadata?.title || musicController.getQueue()?.songs?.size != queueMetadata?.songs?.size) {
+		// need a full redraw if the queue is different or has been modified
+		if (musicController.getQueue() != queueMetadata) {
 			show()
 			return
 		}
 
-		//song actually playing is different than what the current song is then update checkmark
-		if(currentSong?.mediaId != musicController.getMetadata()?.mediaId) {
+		// song actually playing is different than what the current song is then update checkmark
+		if (currentSong?.mediaId != musicController.getMetadata()?.mediaId) {
 			val oldPlayingIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
 			currentSong = musicController.getMetadata()
 			val playingIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
@@ -164,8 +163,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 		//redraw currently visible rows if one of them has a cover art that was retrieved
 		for ((index, metadata) in currentVisibleRowsMusicMetadata.withIndex()) {
-			if(metadata != currentlyVisibleRows[index]) {
-
+			if (metadata != currentlyVisibleRows[index]) {
 				//can only see roughly 5 rows
 				showList(max(0,currentIndex-4),8)
 				break
@@ -187,7 +185,6 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	private fun onSelectAction(index: Int) {
 		currentIndex = index
 
-		//if this is too slow check and see if assigning the value to "" is quicker
 		if(index != 0) {
 			titleLabelComponent.setVisible(false)
 			subtitleLabelComponent.setVisible(false)

@@ -401,9 +401,8 @@ class TestSpotifyMusicAppController {
 				ListItem("queueId", "queueUri", queueImageUri, queueTitle, queueSubtitle, false, true)
 		)))
 
-		verify(imagesApi).getImage(queueImageUri, Image.Dimension.MEDIUM)
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
 		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
-
 
 		val queue = controller.getQueue()
 		assertNotNull(queue)
