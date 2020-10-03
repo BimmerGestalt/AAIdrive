@@ -87,6 +87,9 @@
     <string name="MUSIC_SKIP_NEXT">Следующую</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Перемешивать</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Не Перемешивать</string>
+    <string name="MUSIC_TURN_REPEAT_ALL_ON">Повторить Все</string>
+    <string name="MUSIC_TURN_REPEAT_ONE_ON">Повторить Одну</string>
+    <string name="MUSIC_TURN_REPEAT_OFF">Выключить Повтор</string>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Не Нравится</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Сделать Радиостанцию</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Нравится</string>
