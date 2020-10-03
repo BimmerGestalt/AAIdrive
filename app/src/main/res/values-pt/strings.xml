@@ -112,6 +112,9 @@
     <string name="MUSIC_SKIP_NEXT">Seguinte</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Ligar shuffle</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Desligar shuffle</string>
+    <string name="MUSIC_TURN_REPEAT_ALL_ON">Repetir tudo</string>
+    <string name="MUSIC_TURN_REPEAT_ONE_ON">Ligar Repetir Uma Vez</string>
+    <string name="MUSIC_TURN_REPEAT_OFF">Desligar Repetir Uma Vez</string>
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Voltar atrás %s segundo</item>
         <item quantity="other">Voltar atrás %s segundos</item>
