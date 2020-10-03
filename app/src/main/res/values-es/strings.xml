@@ -110,6 +110,9 @@
     <string name="MUSIC_SKIP_NEXT">Siguiente</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Activar shuffle</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Desactivar shuffle</string>
+    <string name="MUSIC_TURN_REPEAT_ALL_ON">Activar repetir todo</string>
+    <string name="MUSIC_TURN_REPEAT_ONE_ON">Activar repetir actual</string>
+    <string name="MUSIC_TURN_REPEAT_OFF">Desactivar repetir</string>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Ya no me gusta</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Crear estación de radio</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Me gusta</string>
