@@ -110,6 +110,9 @@
     <string name="MUSIC_SKIP_NEXT">Volgende</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Shuffle aan</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Shuffle uit</string>
+    <string name="MUSIC_TURN_REPEAT_ALL_ON">Alles herhalen</string>
+    <string name="MUSIC_TURN_REPEAT_ONE_ON">Eenmalig herhalen aan</string>
+    <string name="MUSIC_TURN_REPEAT_OFF">Herhalen uit</string>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Uit collectie verwijderen</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Radio zender maken</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Aan collectie toevoegen</string>
