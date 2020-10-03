@@ -121,9 +121,6 @@
     </plurals>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Dislike</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Pornește radio</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Pornește repetare tot</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Pornește repetă una</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Oprește repetare</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>
     <string name="MUSIC_SPOTIFY_THUMB_UP">Thumb Up</string>
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>
