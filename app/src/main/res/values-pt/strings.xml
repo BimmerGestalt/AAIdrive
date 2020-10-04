@@ -10,14 +10,14 @@
     <string name="notification_description_chassiscode">Conectado com %s</string>
     <string name="notification_description_bmw">Conectado com BMW</string>
     <string name="notification_description_mini">Conectado com Mini</string>
-
+    <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <!-- Labels on the navigation trigger activity -->
     <string name="spawn_test_notification">Teste de Notificação</string>
     <string name="message_notifications">Mensagem de Notificação</string>
     <string name="notification_popups">Popups de Notificação</string>
     <string name="notification_popups_passenger">Popups para passageiro</string>
     <string name="lbl_popupVersion">Popups apenas trabalham com IDrive4</string>
     <string name="lbl_smsPermission">Garantir permissão de SMS para ver imagens de SMS recebidas. O texto em si é sempre visível.</string>
-
     <string name="enable_google_maps">Activar Google Maps</string>
     <string name="lbl_widescreen_map">Mapa Panorâmico</string>
     <string name="gmapStyleLabel">Estilo de Mapa</string>
@@ -38,17 +38,13 @@
     <string name="musicAppNotes_oldSpotifyInstructions">Esta app pode apenas controlar Spotify até versão 8.4.96.953, tal como pesquisa. Para controlo total, descarregue versão anterior, por ex, de APKPure ou similar.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Por favor instale o cliente oficial Spotify</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Por favor confirme ligação à internet e desative adblocking</string>
-
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancelar</string>
     <string name="btn_configure">Configurar …</string>
-
     <string name="connectionStatusMissingConnectedApp">Não consegue encontrar app Connected ou Connected Classic</string>
     <string name="connectionStatusWaiting">Aguarda ligação à viatura</string>
-
     <string name="nowplaying_notconnected">&lt;Não Conectado&gt;</string>
     <string name="nowplaying_unknown">&lt;Desconhecido&gt;</string>
-
     <string name="txt_setup_bmw_ready">A app está pronta a ligar-se ao BMW</string>
     <string name="txt_setup_mini_ready">A app está pronta a ligar-se ao Mini</string>
     <string name="txt_setup_bmw_missing">A app não está pronta se ligar ao BMW:</string>
@@ -88,8 +84,6 @@
     <string name="notification_assistant_description">Apenas necessário quando ecrã ligado</string>
     <string name="donation_title">Gosta desta app?</string>
     <string name="donation_text">Considera mostrar suporte com pequeno donativo</string>
-
-
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notificação</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Sem Notificação</string>
@@ -97,11 +91,9 @@
     <string name="NOTIFICATION_OPTIONS">Opções</string>
     <string name="NOTIFICATION_POPUPS">Popups de Notificação</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">Popups para passageiro</string>
-
     <string name="MAP_ACTION_VIEWMAP">Ver Mapa Completo</string>
     <string name="MAP_ACTION_SEARCH">Procurar por Local</string>
     <string name="MAP_ACTION_CLEARNAV">Limpar Navigação</string>
-
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Sem Apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acções</string>
@@ -120,7 +112,6 @@
     <string name="MUSIC_SKIP_NEXT">Seguinte</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Ligar shuffle</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Desligar shuffle</string>
-
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Voltar atrás %s segundo</item>
         <item quantity="other">Voltar atrás %s segundos</item>
@@ -129,12 +120,11 @@
         <item quantity="one">Avançar %s segundo</item>
         <item quantity="other">Avançar %s segundos</item>
     </plurals>
-
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Já não gosto</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Criar estação de Radio</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Repetir tudo</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Ligar Repetir Uma Vez</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Desligar Repetir Uma Vez</string>
+    <string name="MUSIC_TURN_REPEAT_ALL_ON">Repetir tudo</string>
+    <string name="MUSIC_TURN_REPEAT_ONE_ON">Ligar Repetir Uma Vez</string>
+    <string name="MUSIC_TURN_REPEAT_OFF">Desligar Repetir Uma Vez</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Gosto</string>
     <string name="MUSIC_SPOTIFY_THUMB_UP">Subir</string>
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Subido</string>

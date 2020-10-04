@@ -4,6 +4,9 @@ import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
 import me.hufman.idriveconnectionkit.rhmi.RHMIModel
 
 interface ProgressGauge {
+	/**
+	 * Sets the percentage of progress, in [0..100]
+	 */
 	var value: Int
 }
 

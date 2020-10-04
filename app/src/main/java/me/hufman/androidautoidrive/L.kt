@@ -14,6 +14,11 @@ object L {
 	var NOTIFICATION_OPTIONS = "Options"
 	var NOTIFICATION_POPUPS = "Notification Popups"
 	var NOTIFICATION_POPUPS_PASSENGER = "Popups with passenger"
+	var NOTIFICATION_SOUND = "Play notification sound"
+	var NOTIFICATION_READOUT = "Speak when viewing notifications"
+	var NOTIFICATION_READOUT_POPUP = "Speak new notifications"
+	var NOTIFICATION_READOUT_POPUP_PASSENGER = "... with a passenger"
+	var READOUT_DESCRIPTION = "This app is used for readout purposes"
 
 	var MAP_ACTION_VIEWMAP = "View Full Map"
 	var MAP_ACTION_SEARCH = "Search for Place"
@@ -37,6 +42,9 @@ object L {
 	var MUSIC_SKIP_NEXT = "Next"
 	var MUSIC_TURN_SHUFFLE_ON = "Turn Shuffle On"
 	var MUSIC_TURN_SHUFFLE_OFF = "Turn Shuffle Off"
+	var MUSIC_TURN_REPEAT_ALL_ON = "Turn Repeat All On"
+	var MUSIC_TURN_REPEAT_ONE_ON = "Turn Repeat One On"
+	var MUSIC_TURN_REPEAT_OFF = "Turn Repeat Off"
 
 	var MUSIC_ACTION_SEEK_BACK_5 = "Seek back 5 seconds"
 	var MUSIC_ACTION_SEEK_BACK_10 = "Seek back 10 seconds"
@@ -49,9 +57,6 @@ object L {
 
 	var MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION = "Dislike"
 	var MUSIC_SPOTIFY_START_RADIO = "Make Radio Station"
-	var MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON = "Turn Repeat All On"
-	var MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON = "Turn Repeat One On"
-	var MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF = "Turn Repeat Off"
 	var MUSIC_SPOTIFY_ADD_TO_COLLECTION = "Like"
 	var MUSIC_SPOTIFY_THUMB_UP = "Thumb Up"
 	var MUSIC_SPOTIFY_THUMBS_UP_SELECTED = "Thumbed Up"

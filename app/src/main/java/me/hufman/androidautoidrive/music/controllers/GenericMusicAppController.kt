@@ -156,6 +156,28 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 		} ?: false
 	}
 
+	override fun toggleRepeat() {
+		remoteCall {
+			mediaController.transportControls.setRepeatMode(
+					if (getRepeatMode() == RepeatMode.ALL)
+						PlaybackStateCompat.REPEAT_MODE_ONE
+					else if (getRepeatMode() == RepeatMode.ONE)
+						PlaybackStateCompat.REPEAT_MODE_NONE
+					else
+						PlaybackStateCompat.REPEAT_MODE_ALL
+			)
+		}
+	}
+
+	override fun getRepeatMode(): RepeatMode {
+		return when(mediaController.repeatMode) {
+			PlaybackStateCompat.REPEAT_MODE_ALL -> RepeatMode.ALL
+			PlaybackStateCompat.REPEAT_MODE_ONE -> RepeatMode.ONE
+			PlaybackStateCompat.REPEAT_MODE_NONE -> RepeatMode.OFF
+			else -> RepeatMode.OFF
+		}
+	}
+
 	/**
 	 * Spotify does not post the queue or custom actions to the MediaSession normally
 	 * Instead, it only updates the queue and custom actions as part of a browse loadChildren

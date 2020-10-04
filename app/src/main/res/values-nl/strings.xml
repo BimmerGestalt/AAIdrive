@@ -10,14 +10,14 @@
     <string name="notification_description_chassiscode">Verbonden met %s</string>
     <string name="notification_description_bmw">Verbonden met uw BMW</string>
     <string name="notification_description_mini">Verbonden met uw Mini</string>
-
+    <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <!-- Labels on the navigation trigger activity -->
     <string name="spawn_test_notification">Test bericht</string>
     <string name="message_notifications">Meldingen</string>
     <string name="notification_popups">Popups</string>
     <string name="notification_popups_passenger">Popup berichten met passagier</string>
     <string name="lbl_popupVersion">Popups werken enkel met IDrive4</string>
     <string name="lbl_smsPermission">Geef de SMS toegang om afbeeldingen weer te geven van inkomende SMS berichten in de auto. De tekst blijft altijd zichtbaar.</string>
-
     <string name="enable_google_maps">Google Maps inschakelen</string>
     <string name="lbl_widescreen_map">Breedbeeld map</string>
     <string name="gmapStyleLabel">Map stijl</string>
@@ -39,13 +39,10 @@
     <string name="lbl_ok">Ok</string>
     <string name="lbl_cancel">Annuleren</string>
     <string name="btn_configure">Configureren …</string>
-
     <string name="connectionStatusMissingConnectedApp">Connected of Connected Classic app niet gevonden</string>
     <string name="connectionStatusWaiting">Wacht op verbinding</string>
-
     <string name="nowplaying_notconnected">&lt;Niet verdbonden&gt;</string>
     <string name="nowplaying_unknown">&lt;Onbekend&gt;</string>
-
     <string name="txt_setup_bmw_ready">De app is klaar om verbinding te maken met uw BMW</string>
     <string name="txt_setup_mini_ready">De app is klaar om verbinding te maken met uw Mini</string>
     <string name="txt_setup_bmw_missing">Niet klaar om met uw BMW te verbinden:</string>
@@ -85,8 +82,6 @@
     <string name="notification_assistant_description">Enkel nodig omdat het scherm aan is</string>
     <string name="donation_title">Vindt je deze app leuk?</string>
     <string name="donation_text">Toon je support middels een kleine donatie</string>
-
-
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Meldingen</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Geen meldingen</string>
@@ -94,11 +89,9 @@
     <string name="NOTIFICATION_OPTIONS">Options</string>
     <string name="NOTIFICATION_POPUPS">Popup meldingen</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">Popups meldingen met bijrijder</string>
-
     <string name="MAP_ACTION_VIEWMAP">Toon volledige map</string>
     <string name="MAP_ACTION_SEARCH">Locatie zoeken</string>
     <string name="MAP_ACTION_CLEARNAV">Wis bestemming</string>
-
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Geen apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acties</string>
@@ -117,12 +110,11 @@
     <string name="MUSIC_SKIP_NEXT">Volgende</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Shuffle aan</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Shuffle uit</string>
-
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Uit collectie verwijderen</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Radio zender maken</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Alles herhalen</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Eenmalig herhalen aan</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Herhalen uit</string>
+    <string name="MUSIC_TURN_REPEAT_ALL_ON">Alles herhalen</string>
+    <string name="MUSIC_TURN_REPEAT_ONE_ON">Eenmalig herhalen aan</string>
+    <string name="MUSIC_TURN_REPEAT_OFF">Herhalen uit</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Aan collectie toevoegen</string>
     <string name="MUSIC_SPOTIFY_THUMB_UP">Vind ik leuk</string>
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Leuk gevonden</string>

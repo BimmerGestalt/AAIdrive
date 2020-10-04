@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.carapp.notifications.views
 
 import android.util.Log
+import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.notifications.*
@@ -11,7 +12,7 @@ import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.ArrayList
 import kotlin.math.min
 
-class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController) {
+class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val readoutInteractions: ReadoutInteractions) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.ToolbarState &&
@@ -50,6 +51,12 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			visible = focused
 			if (focused) {
 				show()
+
+				// read out
+				val selectedNotification = selectedNotification
+				if (selectedNotification != null) {
+					readoutInteractions.triggerDisplayReadout(selectedNotification)
+				}
 			} else {
 				selectedNotification = null
 			}
@@ -128,7 +135,11 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		// find the notification, or bail to the list
 		val notification = NotificationsState.getNotificationByKey(selectedNotification?.key)
 		if (notification == null) {
-			state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to listViewId))
+			try {
+				state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to listViewId))
+			} catch (e: BMWRemoting.ServiceException) {
+				Log.w(TAG, "Failed to close detailsView showing a missing notification: $e")
+			}
 			return
 		}
 
@@ -199,6 +210,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 						button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputView.id
 						val replyController = ReplyControllerNotification(notification, action, controller)
 						ReplyView(listViewId, inputView, replyController)
+						readoutInteractions.cancel()
 					} else {
 						// trigger the custom action
 						controller.action(notification, action)

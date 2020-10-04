@@ -10,14 +10,14 @@
     <string name="notification_description_chassiscode">Connesso a %s</string>
     <string name="notification_description_bmw">Connesso a BMW</string>
     <string name="notification_description_mini">Connesso a Mini</string>
-
+    <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <!-- Labels on the navigation trigger activity -->
     <string name="spawn_test_notification">Notifica di prova</string>
     <string name="message_notifications">Notifica messaggi</string>
     <string name="notification_popups">Popup di notifica</string>
     <string name="notification_popups_passenger">Popup con passeggero</string>
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
-
     <string name="enable_google_maps">Abilita Google Maps</string>
     <string name="lbl_widescreen_map">Mappa a tutto schermo</string>
     <string name="gmapStyleLabel">Stile della mappa</string>
@@ -39,13 +39,10 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancella</string>
     <string name="btn_configure">Configura…</string>
-
     <string name="connectionStatusMissingConnectedApp">Non trovo l\'app Connected o Connected Classic</string>
     <string name="connectionStatusWaiting">In attesa della connessione con l\'auto</string>
-
     <string name="nowplaying_notconnected">&lt;Non connessa&gt;</string>
     <string name="nowplaying_unknown">&lt;Sconosciuto&gt;</string>
-
     <string name="txt_setup_bmw_ready">L\'app è pronta a connettersi con una BMW</string>
     <string name="txt_setup_mini_ready">L\'app è pronta a connettersi con una Mini</string>
     <string name="txt_setup_bmw_missing">Non pronta a connettersi con una BMW:</string>
@@ -85,8 +82,6 @@
     <string name="notification_assistant_description">Necessario solo se lo schermo è attivo</string>
     <string name="donation_title">Ti piace questa app?</string>
     <string name="donation_text">Valuta di mostrare il tuo supporta con una piccola donazione</string>
-
-
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notifiche</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Nessuna notifica</string>
@@ -94,11 +89,9 @@
     <string name="NOTIFICATION_OPTIONS">Opzioni</string>
     <string name="NOTIFICATION_POPUPS">Popup notiifiche</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">Popup con passeggero</string>
-
     <string name="MAP_ACTION_VIEWMAP">Visualizza la mappa fullscreen</string>
     <string name="MAP_ACTION_SEARCH">Cerca un luogo</string>
     <string name="MAP_ACTION_CLEARNAV">Cancella la navigazione</string>
-
     <string name="MUSIC_APPLIST_TITLE">App</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Nessuna App</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Azioni</string>
@@ -117,12 +110,11 @@
     <string name="MUSIC_SKIP_NEXT">Successivo</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Attiva modalità Shuffle</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Disattiva modalità Shuffle</string>
-
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Non mi piace</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Attiva la radio dal brano</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ALL_ON">Attiva modalità Repeat sempre</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_ON">Attiva modalità Repeat singola</string>
-    <string name="MUSIC_SPOTIFY_TURN_REPEAT_ONE_OFF">Disattiva Repeat</string>
+    <string name="MUSIC_TURN_REPEAT_ALL_ON">Attiva modalità Repeat sempre</string>
+    <string name="MUSIC_TURN_REPEAT_ONE_ON">Attiva modalità Repeat singola</string>
+    <string name="MUSIC_TURN_REPEAT_OFF">Disattiva Repeat</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>
     <string name="MUSIC_SPOTIFY_THUMB_UP">Thumb Up</string>
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>

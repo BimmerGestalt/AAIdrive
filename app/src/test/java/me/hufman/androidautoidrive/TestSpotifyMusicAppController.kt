@@ -13,6 +13,7 @@ import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.music.RepeatMode
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import org.junit.Assert.*
 import org.junit.Before
@@ -128,9 +129,6 @@ class TestSpotifyMusicAppController {
 
 	@Test
 	fun testCustomActionNames() {
-		assertEquals("Turn Repeat All On", controller.CUSTOM_ACTION_TURN_REPEAT_ALL_ON.name)
-		assertEquals("Turn Repeat One On", controller.CUSTOM_ACTION_TURN_REPEAT_ONE_ON.name)
-		assertEquals("Turn Repeat Off", controller.CUSTOM_ACTION_TURN_REPEAT_ONE_OFF.name)
 		assertEquals("Like", controller.CUSTOM_ACTION_ADD_TO_COLLECTION.name)
 		assertEquals("Dislike", controller.CUSTOM_ACTION_REMOVE_FROM_COLLECTION.name)
 		assertEquals("Make Radio Station", controller.CUSTOM_ACTION_START_RADIO.name)
@@ -235,6 +233,194 @@ class TestSpotifyMusicAppController {
 			controller.toggleShuffle()
 			verify(playerApi).setShuffle(false)
 		}
+	}
+
+	@Test
+	fun testRepeatMode() {
+		// test repeat is off
+		run {
+			val state = PlayerState(
+					Track(
+							Artist("artist", "uri"),
+							listOf(Artist("artist", "uri")),
+							Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+					false, 1.0f, 200,
+					PlayerOptions(false, Repeat.OFF),
+					PlayerRestrictions(true, true, true, true, true, true)
+			)
+			spotifyCallback.lastValue.onEvent(state)
+
+			assertEquals(RepeatMode.OFF, controller.getRepeatMode())
+		}
+
+		// test repeating all
+		run {
+			val state = PlayerState(
+					Track(
+							Artist("artist", "uri"),
+							listOf(Artist("artist", "uri")),
+							Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+					false, 1.0f, 200,
+					PlayerOptions(false, Repeat.ALL),
+					PlayerRestrictions(true, true, true, true, true, true)
+			)
+			spotifyCallback.lastValue.onEvent(state)
+
+			assertEquals(RepeatMode.ALL, controller.getRepeatMode())
+		}
+
+		// test repeating one
+		run {
+			val state = PlayerState(
+					Track(
+							Artist("artist", "uri"),
+							listOf(Artist("artist", "uri")),
+							Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+					false, 1.0f, 200,
+					PlayerOptions(false, Repeat.ONE),
+					PlayerRestrictions(true, true, true, true, true, true)
+			)
+			spotifyCallback.lastValue.onEvent(state)
+
+			assertEquals(RepeatMode.ONE, controller.getRepeatMode())
+		}
+
+		// test when switching to repeating all
+		run {
+			val state = PlayerState(
+					Track(
+							Artist("artist", "uri"),
+							listOf(Artist("artist", "uri")),
+							Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+					false, 1.0f, 200,
+					PlayerOptions(false, Repeat.OFF),
+					PlayerRestrictions(true, true, true, true, true, true)
+			)
+			spotifyCallback.lastValue.onEvent(state)
+
+			assertEquals(RepeatMode.OFF, controller.getRepeatMode())
+
+			val newState = PlayerState(
+					Track(
+							Artist("artist", "uri"),
+							listOf(Artist("artist", "uri")),
+							Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+					false, 1.0f, 200,
+					PlayerOptions(false, Repeat.ALL),
+					PlayerRestrictions(true, true, true, true, true, true)
+			)
+			spotifyCallback.lastValue.onEvent(newState)
+
+			assertEquals(RepeatMode.ALL, controller.getRepeatMode())
+		}
+	}
+
+	@Test
+	fun testToggleRepeatFromOff_CannotRepeatTrackOrContext() {
+		// repeat off -> repeat all, cannot repeat track, cannot repeat context
+		val state = PlayerState(
+				Track(
+						Artist("artist", "uri"),
+						listOf(Artist("artist", "uri")),
+						Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+				false, 1.0f, 200,
+				PlayerOptions(false, Repeat.OFF),
+				PlayerRestrictions(true, true, false, false, true, true)
+		)
+		spotifyCallback.lastValue.onEvent(state)
+		controller.toggleRepeat()
+
+		verify(playerApi, never()).setRepeat(any())
+	}
+
+	@Test
+	fun testToggleRepeatFromOff_CanRepeatTrackAndContext() {
+		// repeat off -> repeat all, can repeat track, can repeat context
+		val state = PlayerState(
+				Track(
+						Artist("artist", "uri"),
+						listOf(Artist("artist", "uri")),
+						Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+				false, 1.0f, 200,
+				PlayerOptions(false, Repeat.OFF),
+				PlayerRestrictions(true, true, true, true, true, true)
+		)
+		spotifyCallback.lastValue.onEvent(state)
+		controller.toggleRepeat()
+
+		verify(playerApi).setRepeat(Repeat.ALL)
+	}
+
+	@Test
+	fun testToggleRepeatFromOff_CanRepeatTrackCannotRepeatContext() {
+		// repeat off -> repeat all, can repeat track, cannot repeat context
+		val state = PlayerState(
+				Track(
+						Artist("artist", "uri"),
+						listOf(Artist("artist", "uri")),
+						Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+				false, 1.0f, 200,
+				PlayerOptions(false, Repeat.OFF),
+				PlayerRestrictions(true, true, true, false, true, true)
+		)
+		spotifyCallback.lastValue.onEvent(state)
+		controller.toggleRepeat()
+
+		verify(playerApi).setRepeat(Repeat.ONE)
+	}
+
+	@Test
+	fun testToggleRepeatFromAll_CanRepeatTrackAndContext() {
+		// repeat all -> repeat one, can repeat track, can repeat context
+		val state = PlayerState(
+				Track(
+						Artist("artist", "uri"),
+						listOf(Artist("artist", "uri")),
+						Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+				false, 1.0f, 200,
+				PlayerOptions(false, Repeat.ALL),
+				PlayerRestrictions(true, true, true, true, true, true)
+		)
+		spotifyCallback.lastValue.onEvent(state)
+		controller.toggleRepeat()
+
+		verify(playerApi).setRepeat(Repeat.ONE)
+	}
+
+	@Test
+	fun testToggleRepeatFromAll_CannotRepeatTrackCanRepeatContext() {
+		// repeat all -> repeat one, cannot repeat track, can repeat context
+		val state = PlayerState(
+				Track(
+						Artist("artist", "uri"),
+						listOf(Artist("artist", "uri")),
+						Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+				false, 1.0f, 200,
+				PlayerOptions(false, Repeat.ALL),
+				PlayerRestrictions(true, true, false, true, true, true)
+		)
+		spotifyCallback.lastValue.onEvent(state)
+		controller.toggleRepeat()
+
+		verify(playerApi).setRepeat(Repeat.OFF)
+	}
+
+	@Test
+	fun testToggleRepeatFromOne() {
+		// repeat one -> repeat off
+		val state = PlayerState(
+				Track(
+						Artist("artist", "uri"),
+						listOf(Artist("artist", "uri")),
+						Album("album", "uri"), 300000, "name", "uri", mock(), false, false),
+				false, 1.0f, 200,
+				PlayerOptions(false, Repeat.ONE),
+				PlayerRestrictions(true, true, true, true, true, true)
+		)
+		spotifyCallback.lastValue.onEvent(state)
+		controller.toggleRepeat()
+
+		verify(playerApi).setRepeat(Repeat.OFF)
 	}
 
 	@Test

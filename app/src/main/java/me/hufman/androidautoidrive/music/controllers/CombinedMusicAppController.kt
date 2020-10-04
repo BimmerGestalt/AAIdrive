@@ -254,6 +254,24 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 		} ?: false
 	}
 
+	override fun toggleRepeat() {
+		withController {
+			if (!it.isSupportedAction(MusicAction.SET_REPEAT_MODE)) {
+				throw UnsupportedOperationException()
+			}
+			it.toggleRepeat()
+		}
+	}
+
+	override fun getRepeatMode(): RepeatMode {
+		return withController {
+			if (!it.isSupportedAction(MusicAction.SET_REPEAT_MODE)) {
+				throw UnsupportedOperationException()
+			}
+			it.getRepeatMode()
+		} ?: RepeatMode.OFF
+	}
+
 	private suspend fun waitforConnect() {
 		if (isPending()) {
 			for (i in 0..10) {

@@ -8,6 +8,8 @@ import com.google.openlocationcode.OpenLocationCode
 import me.hufman.androidautoidrive.carapp.maps.LatLong
 import java.lang.IllegalArgumentException
 import java.net.URI
+import java.net.URISyntaxException
+import java.net.URLEncoder
 
 
 interface AddressSearcher {
@@ -63,6 +65,14 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 			val label = address.featureName?.replace(';', ' ') ?: ""
 			return ";;$street;$houseNumber;${address.postalCode ?: ""};${address.locality ?: ""};${address.countryCode ?: ""};$lat;$lng;$label"
 		}
+
+		fun parseUri(url: String): URI {
+			try {
+				return URI(url)
+			} catch (e: URISyntaxException) {
+				return URI(URLEncoder.encode(url, "UTF-8"))
+			}
+		}
 	}
 
 	fun parseUrl(url: String?): String? {
@@ -77,7 +87,7 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 	}
 
 	private fun parseGeoUrl(url: String): String? {
-		val uri = URI(url)
+		val uri = parseUri(url)
 		val data = uri.schemeSpecificPart.replace('+', ' ')
 		val query = if (data.contains('?')) { data.split('?', limit=2)[1] } else null
 
@@ -109,7 +119,7 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 
 	private fun parsePlusUrl(url: String): String? {
 		if (!url.contains("plus.codes")) return null
-		val uri = URI(url)
+		val uri = parseUri(url)
 		val matcher = PLUSCODE_URL_MATCHER.matchEntire(uri.path) ?: return null
 		return parsePlusCode(matcher.groupValues[1])
 	}
@@ -139,7 +149,7 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 	private fun parseGoogleUri(url: String): String? {
 		// https://developers.google.com/maps/documentation/urls/android-intents
 		// google.navigation:q=Taronga+Zoo,+Sydney+Australia
-		val uri = URI(url)
+		val uri = parseUri(url)
 		val data = uri.schemeSpecificPart.replace('+', ' ')
 		val googleQLL = GOOGLE_QLL_MATCHER.matchEntire(data)
 		if (googleQLL != null) {
@@ -160,7 +170,7 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 	}
 
 	private fun parseGoogleUrl(url: String): String? {
-		val uri = URI(url)
+		val uri = parseUri(url)
 		if (!uri.authority.contains("google")) return null
 
 		val path = uri.path?.replace('+', ' ') ?: ""

@@ -241,14 +241,6 @@ class MainActivity : AppCompatActivity() {
 
 		whenActivityStarted = System.currentTimeMillis()
 
-		// reset the Notification setting to false if we don't have permission
-		if (!hasNotificationPermission()) {
-			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS, "false")
-		}
-		// reset the GMaps setting if we don't have permission
-		if (!hasLocationPermission()) {
-			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_GMAPS, "false")
-		}
 		redraw()
 
 		// update the music apps list, including any music sessions
@@ -268,14 +260,18 @@ class MainActivity : AppCompatActivity() {
 	fun redraw() {
 		val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
 
-		if (ageOfActivity > NOTIFICATION_SERVICE_TIMEOUT) {
-			// wait a bit to make sure the Notification Listener actually is running
-			// sometimes when restarting, the listener takes a bit to start up
-			swMessageNotifications.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
-					UIState.notificationListenerConnected
-		} else {
-			swMessageNotifications.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
+		// reset the Notification setting to false if we don't have permission
+		// wait a bit to make sure the Notification Listener actually is running
+		// sometimes when restarting, the listener takes a bit to start up
+		if (ageOfActivity > NOTIFICATION_SERVICE_TIMEOUT && !hasNotificationPermission()) {
+			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS, "false")
 		}
+		// reset the GMaps setting if we don't have permission
+		if (!hasLocationPermission()) {
+			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_GMAPS, "false")
+		}
+
+		swMessageNotifications.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
 		paneNotifications.visible = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
 		swGMaps.isChecked = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
 		paneGMaps.visible = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
