@@ -72,7 +72,7 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 		listQueue.setHasFixedSize(true)
 		listQueue.layoutManager = LinearLayoutManager(this.context)
 		listQueue.adapter = QueueAdapter(this.context!!, contents) { mediaEntry ->
-			if(mediaEntry != null) {
+			if (mediaEntry != null) {
 				musicController.playQueue(mediaEntry)
 				(activity as MusicPlayerActivity).showNowPlaying()
 			}
@@ -89,7 +89,7 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 	}
 
 	private fun redrawQueueUI() {
-		if(loaderJob != null) {
+		if (loaderJob != null) {
 			loaderJob?.cancel()
 		}
 
@@ -113,7 +113,7 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 			}
 
 			val coverArtImage = currentQueueMetadata?.coverArt
-			if(coverArtImage != null) {
+			if (coverArtImage != null) {
 				queueCoverArt.setImageBitmap(coverArtImage)
 			}
 			else {
@@ -158,7 +158,7 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 		override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 			val item = contents.getOrNull(position) ?: return
 
-			if(item.queueId == musicController.getMetadata()?.queueId && !musicController.getPlaybackPosition().playbackPaused) {
+			if (item.queueId == musicController.getMetadata()?.queueId && !musicController.getPlaybackPosition().playbackPaused) {
 				holder.checkmarkImageView.setImageDrawable(equalizerAnimated)
 				equalizerAnimated.start()
 			} else {

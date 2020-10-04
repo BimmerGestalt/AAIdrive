@@ -32,9 +32,9 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	val songsList = ArrayList<MusicMetadata>()
 	val songsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3)
 	var queueMetadata: QueueMetadata? = null
-	var currentlyVisibleRows: List<MusicMetadata> = emptyList()
-	var currentVisibleRowsMusicMetadata: ArrayList<MusicMetadata> = ArrayList()
-	var currentIndex: Int = 0
+	var visibleRows: List<MusicMetadata> = emptyList()
+	var visibleRowsOriginalMusicMetadata: ArrayList<MusicMetadata> = ArrayList()
+	var selectedIndex: Int = 0
 
 	var songsListAdapter = object: RHMIListAdapter<MusicMetadata>(4, songsList) {
 		override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
@@ -43,12 +43,10 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			val coverArtImage = if (item.coverArt != null) graphicsHelpers.compress(item.coverArt!!, 90, 90, quality = 30) else ""
 
 			var title = UnicodeCleaner.clean(item.title ?: "")
-			if(title.length > ROW_LINE_MAX_LENGTH) {
+			if (title.length > ROW_LINE_MAX_LENGTH) {
 				title = title.substring(0, 20) + "..."
 			}
-
 			val artist = UnicodeCleaner.clean(item.artist ?: "")
-
 			val songMetaDataText = "${title}\n${artist}"
 
 			return arrayOf(
@@ -75,7 +73,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {
-		//this is required for pagination system
+		// this is required for pagination system
 		listComponent.setProperty(RHMIProperty.PropertyId.VALID, false)
 
 		listComponent.setVisible(true)
@@ -90,7 +88,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		val newQueueMetadata = musicController.getQueue()
 
 		// same queue as before, just select currently playing song
-		if(queueMetadata != null && queueMetadata == newQueueMetadata) {
+		if (queueMetadata != null && queueMetadata == newQueueMetadata) {
 			showCurrentlyPlayingSong()
 			return
 		}
@@ -107,10 +105,10 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 				showList(startIndex, numRows)
 
 				val endIndex = if (startIndex+numRows >= songsList.size) songsList.size-1 else startIndex+numRows
-				currentlyVisibleRows = songsListAdapter.realData.subList(startIndex,endIndex+1)
-				currentVisibleRowsMusicMetadata.clear()
-				currentlyVisibleRows.forEach { musicMetadata ->
-					currentVisibleRowsMusicMetadata.add(MusicMetadata.copy(musicMetadata))
+				visibleRows = songsListAdapter.realData.subList(startIndex,endIndex+1)
+				visibleRowsOriginalMusicMetadata.clear()
+				visibleRows.forEach { musicMetadata ->
+					visibleRowsOriginalMusicMetadata.add(MusicMetadata.copy(musicMetadata))
 				}
 			}
 
@@ -129,7 +127,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			state.getTextModel()?.asRaDataModel()?.value = "$queueTitle - $queueSubtitle"
 		}
 
-		if(queueMetadata?.coverArt != null) {
+		if (queueMetadata?.coverArt != null) {
 			queueImageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(musicController.getQueue()?.coverArt!!, 180, 180, quality = 60)
 			titleLabelComponent.getModel()?.asRaDataModel()?.value = queueTitle
 			subtitleLabelComponent.getModel()?.asRaDataModel()?.value = queueSubtitle
@@ -157,15 +155,15 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			// remove checkmark from old song
 			showList(oldPlayingIndex, 1)
 
-			//add checkmark to new song
+			// add checkmark to new song
 			showList(playingIndex, 1)
 		}
 
-		//redraw currently visible rows if one of them has a cover art that was retrieved
-		for ((index, metadata) in currentVisibleRowsMusicMetadata.withIndex()) {
-			if (metadata != currentlyVisibleRows[index]) {
-				//can only see roughly 5 rows
-				showList(max(0,currentIndex-4),8)
+		// redraw all currently visible rows if one of them has a cover art that was retrieved
+		for ((index, metadata) in visibleRowsOriginalMusicMetadata.withIndex()) {
+			if (metadata != visibleRows[index]) {
+				// can only see roughly 5 rows
+				showList(max(0,selectedIndex-4),8)
 				break
 			}
 		}
@@ -183,9 +181,9 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	}
 
 	private fun onSelectAction(index: Int) {
-		currentIndex = index
+		selectedIndex = index
 
-		if(index != 0) {
+		if (index != 0) {
 			titleLabelComponent.setVisible(false)
 			subtitleLabelComponent.setVisible(false)
 		} else {
@@ -195,11 +193,14 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	}
 
 	private fun showList(startIndex: Int = 0, numRows: Int = 10) {
-		if(startIndex >= 0) {
+		if (startIndex >= 0) {
 			listComponent.getModel()?.setValue(songsListAdapter, startIndex, numRows, songsListAdapter.height)
 		}
 	}
 
+	/**
+	 * Shows and sets the selection to the currently playing song.
+	 */
 	private fun showCurrentlyPlayingSong() {
 		val selectedIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
 		showList(selectedIndex)

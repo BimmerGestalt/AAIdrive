@@ -138,7 +138,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	var playerActions: PlayerRestrictions? = null
 	var playerOptions: PlayerOptions? = null
 	var currentTrack: MusicMetadata? = null
-	var coverArts = LruCache<ImageUri, Bitmap>(4)
+	var currentSongCoverArtCache = LruCache<ImageUri, Bitmap>(4)
 	var position: PlaybackPosition = PlaybackPosition(true, 0, 0, -1)
 	var currentTrackLibrary: Boolean? = null
 	var queueUri: String? = null
@@ -157,14 +157,14 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			// update the current track info
 			val track = playerState.track
 			if (track != null) {
-				val cachedCoverArt = coverArts[track.imageUri]
+				val cachedCoverArt = currentSongCoverArtCache[track.imageUri]
 				currentTrack = MusicMetadata.fromSpotify(track, coverArt = cachedCoverArt)
 				val loadingTrack = currentTrack
 				if (cachedCoverArt == null) {
 					// try to load the coverart
 					val coverArtLoader = remote.imagesApi.getImage(track.imageUri)
 					coverArtLoader.setResultCallback { coverArt ->
-						coverArts.put(track.imageUri, coverArt)
+						currentSongCoverArtCache.put(track.imageUri, coverArt)
 						if (loadingTrack?.mediaId == currentTrack?.mediaId) {   // still playing the same song
 							currentTrack = MusicMetadata.fromSpotify(track, coverArt = coverArt)
 							callback?.invoke(this)
@@ -232,7 +232,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
 		remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
 			val item = recentlyPlayed?.items?.get(0)
-			if(item != null) {
+			if (item != null) {
 				remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
 					queueMetadata = QueueMetadata(item.title,item.subtitle,SpotifyMusicMetadata.createSpotifyMusicMetadataList(this, queueItems),coverArt)
 				}

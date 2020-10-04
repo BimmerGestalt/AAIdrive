@@ -310,7 +310,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 		if (playbackViewVisible || playbackView.state is RHMIState.AudioHmiState) {
 			playbackView.redraw()
 		}
-		if(enqueuedViewVisible) {
+		if (enqueuedViewVisible) {
 			enqueuedView.redraw()
 		}
 		globalMetadata.redraw()
