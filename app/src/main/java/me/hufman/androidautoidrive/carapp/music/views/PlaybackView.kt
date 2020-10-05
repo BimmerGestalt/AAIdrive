@@ -12,7 +12,7 @@ import me.hufman.androidautoidrive.carapp.music.components.PlaylistItem
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGauge
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeAudioState
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeToolbarState
-import me.hufman.androidautoidrive.findAdjacentComponent
+import me.hufman.androidautoidrive.carapp.RHMIUtils.findAdjacentComponent
 import me.hufman.androidautoidrive.music.*
 import me.hufman.idriveconnectionkit.rhmi.*
 
