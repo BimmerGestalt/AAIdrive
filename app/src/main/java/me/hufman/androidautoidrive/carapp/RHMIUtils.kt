@@ -35,18 +35,18 @@ object RHMIUtils {
 	 * Iterate through the given components to find the component that is
 	 * horizontally aligned, to the right, to the component matched by the predicate
 	 */
-	fun findAdjacentComponent(components: Iterable<RHMIComponent>, predicate: (RHMIComponent) -> Boolean): RHMIComponent? {
-		val found = components.firstOrNull(predicate) ?: return null
-		val layout = getComponentLayout(found)
-		val foundLocation = getComponentLocation(found, layout)
+	fun findAdjacentComponent(components: Iterable<RHMIComponent>, nearTo: RHMIComponent?): RHMIComponent? {
+		nearTo ?: return null
+		val layout = getComponentLayout(nearTo)
+		val nearToLocation = getComponentLocation(nearTo, layout)
 		val neighbors = components.filter {
 			val location = getComponentLocation(it, layout)
-			abs(foundLocation.second - location.second) < 10 && // same height
-					foundLocation.first < location.first    // first compnent left of second
+			abs(nearToLocation.second - location.second) < 10 && // same height
+			nearToLocation.first < location.first    // first component left of second
 		}
-		return neighbors.sortedBy {
+		return neighbors.minBy {
 			getComponentLocation(it, layout).first
-		}.firstOrNull()
+		}
 	}
 
 	fun getComponentLayout(component: RHMIComponent): Int {

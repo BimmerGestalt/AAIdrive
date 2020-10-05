@@ -115,17 +115,20 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			albumArtSmallModel = albumArtSmallComponent.getModel()?.asRaImageModel()!!
 
 			val artists = arrayOf(smallComponents, wideComponents).map { components ->
-				findAdjacentComponent(components) { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.ARTIST }
+				val icon = components.firstOrNull { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.ARTIST }
+				findAdjacentComponent(components, icon)
 			}
 			artistModel = RHMIModelMultiSetterData(artists.map { it?.asLabel()?.getModel()?.asRaDataModel() })
 
 			val albums = arrayOf(smallComponents, wideComponents).map { components ->
-				findAdjacentComponent(components) { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.ALBUM }
+				val icon = components.firstOrNull { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.ALBUM }
+				findAdjacentComponent(components, icon)
 			}
 			albumModel = RHMIModelMultiSetterData(albums.map { it?.asLabel()?.getModel()?.asRaDataModel() })
 
 			val titles = arrayOf(smallComponents, wideComponents).map { components ->
-				findAdjacentComponent(components) { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.SONG }
+				val icon = components.firstOrNull { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.SONG }
+				findAdjacentComponent(components, icon)
 			}
 			trackModel = RHMIModelMultiSetterData(titles.map { it?.asLabel()?.getModel()?.asRaDataModel() })
 
