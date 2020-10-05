@@ -50,7 +50,7 @@ object RHMIUtils {
 	}
 
 	fun getComponentLayout(component: RHMIComponent): Int {
-		val xProperty = component.properties.get(20)
+		val xProperty = component.properties[RHMIProperty.PropertyId.POSITION_X.id]
 		return if (xProperty is RHMIProperty.LayoutBag) {
 			xProperty.values.keys.firstOrNull { (xProperty.values[it] as Int) < 1600 } ?: 0
 		} else {
@@ -58,8 +58,8 @@ object RHMIUtils {
 		}
 	}
 	fun getComponentLocation(component: RHMIComponent, layout: Int = 0): Pair<Int, Int> {
-		val xProperty = component.properties[20]
-		val yProperty = component.properties[21]
+		val xProperty = component.properties[RHMIProperty.PropertyId.POSITION_X.id]
+		val yProperty = component.properties[RHMIProperty.PropertyId.POSITION_Y.id]
 		val x = when (xProperty) {
 			is RHMIProperty.SimpleProperty -> xProperty.value as Int
 			is RHMIProperty.LayoutBag -> xProperty.get(layout) as Int

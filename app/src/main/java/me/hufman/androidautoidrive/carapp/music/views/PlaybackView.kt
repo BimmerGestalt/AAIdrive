@@ -88,32 +88,38 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			state as RHMIState.ToolbarState
 			appTitleModel = state.getTextModel()?.asRaDataModel()!!
 			appLogoModel = state.componentsList.filterIsInstance<RHMIComponent.Image>().filter {
-				var property = it.properties[20]
+				// The one single image which is visible in both wide and small screen modes
+				val property = it.properties[RHMIProperty.PropertyId.POSITION_X.id]
 				val smallPosition = (property as? RHMIProperty.LayoutBag)?.get(1)
 				val widePosition = (property as? RHMIProperty.LayoutBag)?.get(0)
 				(smallPosition is Int && smallPosition < 1900) &&
-						(widePosition is Int && widePosition < 1900)
+				(widePosition is Int && widePosition < 1900)
 			}.first().getModel()?.asRaImageModel()!!
 
+			// group the components into which widescreen state they are visible in
+			// the layout hides the components by setting their X to 2000
 			val smallComponents = state.componentsList.filter {
-				val property = it.properties[20]
+				val property = it.properties[RHMIProperty.PropertyId.POSITION_X.id]
 				val smallPosition = (property as? RHMIProperty.LayoutBag)?.get(1)
 				smallPosition is Int && smallPosition < 1900
 			}
 			val wideComponents = state.componentsList.filter {
-				val property = it.properties[20]
+				val property = it.properties[RHMIProperty.PropertyId.POSITION_X.id]
 				val widePosition = (property as? RHMIProperty.LayoutBag)?.get(0)
 				widePosition is Int && widePosition < 1900
 			}
+
+			// remember the two cover arts as separate images, to resize to the correct size in each
 			albumArtBigComponent = wideComponents.filterIsInstance<RHMIComponent.Image>().first {
-				(it.properties[10]?.value as? Int ?: 0) == 320
+				(it.properties[RHMIProperty.PropertyId.HEIGHT.id]?.value as? Int ?: 0) == 320
 			}
 			albumArtBigModel = albumArtBigComponent.getModel()?.asRaImageModel()!!
 			albumArtSmallComponent = smallComponents.filterIsInstance<RHMIComponent.Image>().first {
-				(it.properties[10]?.value as? Int ?: 0) == 200
+				(it.properties[RHMIProperty.PropertyId.HEIGHT.id]?.value as? Int ?: 0) == 200
 			}
 			albumArtSmallModel = albumArtSmallComponent.getModel()?.asRaImageModel()!!
 
+			// set up model multisetters for duplicate components
 			val artists = arrayOf(smallComponents, wideComponents).map { components ->
 				val icon = components.firstOrNull { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.ARTIST }
 				findAdjacentComponent(components, icon)
@@ -145,6 +151,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			}
 			gaugeModel = ProgressGaugeToolbarState(RHMIModelMultiSetterInt(gauges.map { it.getModel()?.asRaIntModel() }))
 
+			// remember the toolbar buttons for convenient redrawing of their status
 			queueToolbarButton = state.toolbarComponentsList[2]
 			customActionButton = state.toolbarComponentsList[4]
 			shuffleButton = state.toolbarComponentsList[5]

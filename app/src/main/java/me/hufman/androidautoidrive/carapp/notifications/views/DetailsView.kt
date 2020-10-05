@@ -69,15 +69,15 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			setVisible(true)
 			setEnabled(true)
 			setSelectable(true)
-			setProperty(6, "55,0,*")
+			setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id, "55,0,*")
 		}
 		titleWidget.apply {
 			setVisible(true)
 			setEnabled(true)
 		}
 		imageWidget.apply {
-			setProperty(9, 400)
-			setProperty(10, 300)
+			setProperty(RHMIProperty.PropertyId.WIDTH.id, 400)
+			setProperty(RHMIProperty.PropertyId.HEIGHT.id, 300)
 		}
 		listWidget.apply {
 			// text
