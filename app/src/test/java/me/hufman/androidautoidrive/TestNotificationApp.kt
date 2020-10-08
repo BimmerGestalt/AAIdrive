@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat.IMPORTANCE_LOW
 import android.support.v4.app.NotificationManagerCompat.IMPORTANCE_HIGH
 import com.nhaarman.mockito_kotlin.*
@@ -147,12 +148,15 @@ class TestNotificationApp {
 	}
 
 	fun createNotification(tickerText:String, title:String?, text: String?, summary:String, clearable: Boolean=false, packageName: String="me.hufman.androidautoidrive"): StatusBarNotification {
+		val smallIconMock = mock<Icon>()
+		val largeIconMock = mock<Icon>()
 		val phoneNotification = mock<Notification> {
-			on { getLargeIcon() } doReturn mock<Icon>()
-			on { smallIcon } doReturn mock<Icon>()
+			on { getLargeIcon() } doReturn largeIconMock
+			on { smallIcon } doReturn smallIconMock
 		}
 		phoneNotification.tickerText = tickerText
 		phoneNotification.extras = mock<Bundle> {
+			on { get(eq(Notification.EXTRA_TITLE)) } doReturn title
 			on { getCharSequence(eq(Notification.EXTRA_TITLE)) } doReturn title
 			on { getCharSequence(eq(Notification.EXTRA_TEXT)) } doReturn text
 			on { getCharSequence(eq(Notification.EXTRA_SUMMARY_TEXT)) } doReturn summary
@@ -185,9 +189,17 @@ class TestNotificationApp {
 		assertEquals(1, notificationObject.actions.size)
 		assertEquals("Custom Action", notificationObject.actions[0].name)
 
+		val largeIcon = mock<Icon>()
 		whenever(notification.notification.extras.getParcelable<Bitmap>(eq(Notification.EXTRA_PICTURE))) doReturn mock<Bitmap>()
+		whenever(notification.notification.extras.getParcelable<Icon>(eq(NotificationCompat.EXTRA_LARGE_ICON))) doReturn largeIcon
+		whenever(notification.notification.extras.getParcelable<Icon>(eq(NotificationCompat.EXTRA_LARGE_ICON_BIG))) doReturn largeIcon
 		val notificationImageObject = ParseNotification.summarizeNotification(notification)
 		assertNotNull(notificationImageObject.picture)
+		assertEquals(largeIcon, notificationImageObject.icon)
+
+		// make sure the dump method doesn't crash
+		ParseNotification.dumpNotification("Title", notification, null)
+		ParseNotification.dumpMessage("Title", notification.notification.extras)
 	}
 
 	@Test
