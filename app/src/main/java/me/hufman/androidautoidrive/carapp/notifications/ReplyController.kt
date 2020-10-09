@@ -15,6 +15,6 @@ class ReplyControllerNotification(val notification: CarNotification, val action:
 	}
 
 	override fun sendReply(reply: String) {
-		controller.reply(notification, action, reply)
+		controller.reply(notification.key, action.name.toString(), reply)
 	}
 }

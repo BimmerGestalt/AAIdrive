@@ -186,7 +186,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			clearButton.setEnabled(true)
 			clearButton.getTooltipModel()?.asRaDataModel()?.value = L.NOTIFICATION_CLEAR_ACTION
 			clearButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-				controller.clear(notification)
+				controller.clear(notification.key)
 			}
 		} else {
 			clearButton.setEnabled(false)
@@ -213,7 +213,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 						readoutInteractions.cancel()
 					} else {
 						// trigger the custom action
-						controller.action(notification, action)
+						controller.action(notification.key, action.name.toString())
 						button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listViewId
 					}
 				}

@@ -3,7 +3,6 @@ package me.hufman.androidautoidrive.carapp.notifications
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Handler
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
@@ -15,10 +14,7 @@ import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
 import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
 import me.hufman.androidautoidrive.carapp.notifications.views.PopupView
-import me.hufman.androidautoidrive.notifications.AudioPlayer
-import me.hufman.androidautoidrive.notifications.CarNotification
-import me.hufman.androidautoidrive.notifications.CarNotificationController
-import me.hufman.androidautoidrive.notifications.NotificationsState
+import me.hufman.androidautoidrive.notifications.*
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
@@ -37,8 +33,9 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 		const val INTENT_NEW_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.NEW_NOTIFICATION"
 		const val EXTRA_NOTIFICATION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.EXTRA_NOTIFICATION"
 	}
-	val notificationListener = PhoneNotificationListener()
-	var notificationReceiver: PhoneNotificationUpdate? = null
+	val notificationListener = PhoneNotificationListener(this)
+	val notificationReceiver = NotificationUpdaterControllerIntent.Receiver(notificationListener)
+	var notificationBroadcastReceiver: BroadcastReceiver? = null
 	var readoutInteractions: ReadoutInteractions
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
@@ -180,16 +177,19 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 
 	fun onCreate(context: Context, handler: Handler) {
 		Log.i(TAG, "Registering car thread listeners for notifications")
-		val notificationReceiver = this.notificationReceiver ?:
-			PhoneNotificationUpdate(notificationListener)
-		this.notificationReceiver = notificationReceiver
-		context.registerReceiver(notificationReceiver, IntentFilter(INTENT_NEW_NOTIFICATION), null, handler)
-		context.registerReceiver(notificationReceiver, IntentFilter(INTENT_UPDATE_NOTIFICATIONS), null, handler)
+		val notificationBroadcastReceiver = this.notificationBroadcastReceiver ?: object: BroadcastReceiver() {
+			override fun onReceive(p0: Context?, p1: Intent?) {
+				p1 ?: return
+				notificationReceiver.onReceive(p1)
+			}
+		}
+		this.notificationBroadcastReceiver = notificationBroadcastReceiver
+		notificationReceiver.register(context, notificationBroadcastReceiver, handler)
 
 		viewList.onCreate(handler)
 	}
 	fun onDestroy(context: Context) {
-		val notificationReceiver = this.notificationReceiver
+		val notificationReceiver = this.notificationBroadcastReceiver
 		if (notificationReceiver != null) {
 			context.unregisterReceiver(notificationReceiver)
 		}
@@ -201,8 +201,13 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 	}
 
 	/** All open, so that we can mock them in tests */
-	open inner class PhoneNotificationListener {
-		open fun onNotification(sbn: CarNotification) {
+	open inner class PhoneNotificationListener(val phoneNotifications: PhoneNotifications): NotificationUpdaterController {
+		override fun onNewNotification(key: String) {
+			val sbn = NotificationsState.getNotificationByKey(key) ?: return
+			onNotification(sbn)
+		}
+
+		fun onNotification(sbn: CarNotification) {
 			Log.i(TAG, "Received a new notification to show in the car: $sbn")
 
 			// only show if we haven't popped it before
@@ -228,7 +233,7 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 			}
 		}
 
-		open fun updateNotificationList() {
+		override fun onUpdatedList() {
 			Log.i(TAG, "Received a list of new notifications to show")
 			viewList.gentlyUpdateNotificationList()
 
@@ -248,22 +253,5 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 				readoutInteractions.cancel()
 			}
 		}
-	}
-
-	class PhoneNotificationUpdate(val listener: PhoneNotificationListener): BroadcastReceiver() {
-		override fun onReceive(context: Context?, intent: Intent?) {
-			if (intent != null && intent.action == INTENT_NEW_NOTIFICATION) {
-				val notificationKey = intent.getStringExtra(EXTRA_NOTIFICATION)
-				if (notificationKey != null) {
-					val notification = NotificationsState.getNotificationByKey(notificationKey)
-					if (notification != null)
-						listener.onNotification(notification)
-				}
-			}
-			if (intent != null && intent.action == INTENT_UPDATE_NOTIFICATIONS) {
-				listener.updateNotificationList()
-			}
-		}
-
 	}
 }

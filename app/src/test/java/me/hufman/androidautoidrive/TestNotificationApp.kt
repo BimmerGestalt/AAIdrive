@@ -424,7 +424,7 @@ class TestNotificationApp {
 
 		// swipe it away
 		NotificationsState.notifications.clear()
-		app.notificationListener.updateNotificationList()
+		app.notificationListener.onUpdatedList()
 		assertEquals(false, mockServer.triggeredEvents[1]?.get(0))
 
 		// make sure it cancels any readout
@@ -461,7 +461,7 @@ class TestNotificationApp {
 
 		// verify that clearing the notification resets the history
 		NotificationsState.notifications.clear()
-		app.notificationListener.updateNotificationList()
+		app.notificationListener.onUpdatedList()
 		assertEquals(0, app.readHistory.poppedNotifications.size)
 		// it should trigger a popup now
 		app.notificationListener.onNotification(bundle)
@@ -709,15 +709,15 @@ class TestNotificationApp {
 		// it should not cancel readout if the list is updated
 		reset(readoutController)
 		whenever(readoutController.isActive) doReturn true
-		app.notificationListener.updateNotificationList()
+		app.notificationListener.onUpdatedList()
 		verify(readoutController, never()).cancel()
 
 		// now try clicking the custom action
 		callbacks.rhmi_onActionEvent(1, "Dont care", 330, mapOf(0.toByte() to 1))
-		verify(carNotificationController, times(1)).action(notification2, notification2.actions[0])
+		verify(carNotificationController, times(1)).action(notification2.key, notification2.actions[0].name.toString())
 		// clicking the clear action
 		callbacks.rhmi_onActionEvent(1, "Dont care", 326, mapOf(0.toByte() to 1))
-		verify(carNotificationController, times(1)).clear(notification2)
+		verify(carNotificationController, times(1)).clear(notification2.key)
 		assertEquals("Returns to main list", app.viewList.state.id, mockServer.data[328])
 
 		// test clicking surprise notifications
@@ -787,19 +787,19 @@ class TestNotificationApp {
 		app.stateInput.focusCallback?.onFocus(true) // shown to user
 		assertEquals(listOf("Yes", "No"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
-		verify(carNotificationController).reply(notification, notification.actions[0], "No")
+		verify(carNotificationController).reply(notification.key, notification.actions[0].name.toString(), "No")
 
 		// show the user's input
 		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "Spoken text"))
 		assertEquals(listOf("Spoken text"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
-		verify(carNotificationController).reply(notification, notification.actions[0], "Spoken text")
+		verify(carNotificationController).reply(notification.key, notification.actions[0].name.toString(), "Spoken text")
 
 		// erase, should show the suggestions again
 		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "delall"))
 		assertEquals(listOf("Yes", "No"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
-		verify(carNotificationController).reply(notification, notification.actions[0], "Yes")
+		verify(carNotificationController).reply(notification.key, notification.actions[0].name.toString(), "Yes")
 	}
 
 	@Test

@@ -1,6 +1,9 @@
 package me.hufman.androidautoidrive
 
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.drawable.Icon
 import android.support.test.InstrumentationRegistry
@@ -15,6 +18,7 @@ import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.notifications.CarNotification
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
+import me.hufman.androidautoidrive.notifications.NotificationUpdaterControllerIntent
 import org.awaitility.Awaitility.await
 
 /**
@@ -33,21 +37,25 @@ class InstrumentedTestNotificationApp {
 
 		// prepare to listen to updates from the phone
 		val mockListener = mock<PhoneNotifications.PhoneNotificationListener> {}
-		val updateListener = PhoneNotifications.PhoneNotificationUpdate(mockListener)
-		appContext.registerReceiver(updateListener, IntentFilter(PhoneNotifications.INTENT_NEW_NOTIFICATION))
-		appContext.registerReceiver(updateListener, IntentFilter(PhoneNotifications.INTENT_UPDATE_NOTIFICATIONS))
+		val updateListener = NotificationUpdaterControllerIntent.Receiver(mockListener)
+		val updateReceiver = object: BroadcastReceiver() {
+			override fun onReceive(p0: Context?, p1: Intent?) {
+				updateListener.onReceive(p1!!)
+			}
+		}
+		updateListener.register(appContext, updateReceiver, null)
 
 		// prepare a notification
 		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)
-		val notification = CarNotification(appContext.packageName, "test", icon, true, arrayOf(),
-				"Test", "Test Text", null, null)
+		val notification = CarNotification(appContext.packageName, "test", icon, true, listOf(),
+				"Test", "Test Text", null, null, null)
 
 		// send an update from the phone
-		val controller = NotificationListenerServiceImpl.NotificationUpdater(appContext)
-		controller.sendNotificationList()
+		val controller = NotificationUpdaterControllerIntent(appContext)
+		controller.onUpdatedList()
 
 		// verify that it made it across
-		await().untilAsserted { verify(mockListener, times(1)).updateNotificationList() }
+		await().untilAsserted { verify(mockListener, times(1)).onUpdatedList() }
 		Log.i("Testing", "Finished the tests")
 	}
 
@@ -58,24 +66,31 @@ class InstrumentedTestNotificationApp {
 		val appContext = InstrumentationRegistry.getTargetContext()
 
 		// prepare to listen to the interaction from the car
-		val mockListener = mock<NotificationListenerServiceImpl.InteractionListener> { }
-		val controller = NotificationListenerServiceImpl.NotificationUpdater(appContext)
-		val interactionListener = NotificationListenerServiceImpl.IDriveNotificationInteraction(mockListener, controller)
-		appContext.registerReceiver(interactionListener, IntentFilter(NotificationListenerServiceImpl.INTENT_INTERACTION))
-		appContext.registerReceiver(interactionListener, IntentFilter(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
+		val mockListener = mock<NotificationListenerServiceImpl.CarNotificationControllerListener> { }
+		val controllerListener = CarNotificationControllerIntent.Receiver(mockListener)
+		val interactionListener = NotificationListenerServiceImpl.NotificationInteractionListener(controllerListener, mock())
+		val interactionReceiver = object: BroadcastReceiver() {
+			override fun onReceive(p0: Context?, p1: Intent?) {
+				interactionListener.onReceive(p1!!)
+			}
+		}
+		controllerListener.register(appContext, interactionReceiver)
+		appContext.registerReceiver(interactionReceiver, IntentFilter(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
 
 		// prepare a notification
 		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)
-		val notification = CarNotification(appContext.packageName, "test", icon, true, arrayOf(),
-				"Test", "Test Text", null, null)
+		val notification = CarNotification(appContext.packageName, "test", icon, true, listOf(),
+				"Test", "Test Text", null, null, null)
 
 		val carController = CarNotificationControllerIntent(appContext)
 		// send an interaction from the car
-		carController.clear(notification)
-		await().untilAsserted { verify(mockListener, times(1)).cancelNotification(notification.key) }
+		carController.clear(notification.key)
+		await().untilAsserted { verify(mockListener, times(1)).clear(notification.key) }
 		// send a custom action from the car
-		carController.action(notification, "custom")
-		await().untilAsserted { verify(mockListener, times(1)).sendNotificationAction(notification.key, "custom") }
-
+		carController.action(notification.key, "custom")
+		await().untilAsserted { verify(mockListener, times(1)).action(notification.key, "custom") }
+		// send a reply from the car
+		carController.reply(notification.key, "reply", "text")
+		await().untilAsserted { verify(mockListener, times(1)).reply(notification.key, "reply", "text") }
 	}
 }
