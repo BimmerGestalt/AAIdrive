@@ -90,7 +90,16 @@ class TestNotificationApp {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
+		// test the AM button
+		run {
+			assertEquals(1, mockServer.amApps.size)
+			assertEquals("androidautoidrive.notifications", mockServer.amApps[0])
+
+			mockClient.am_onAppEvent(1, "1", mockServer.amApps[0], BMWRemoting.AMEvent.AM_APP_START)
+			assertEquals(app.viewList.state.id, mockServer.triggeredEvents[app.focusEvent.id]?.get(0.toByte()))
+		}
 		// test entry button
 		run {
 			val buttons = app.carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>()

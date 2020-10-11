@@ -35,6 +35,8 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
 	val carApp: RHMIApplicationSynchronized
+	val amHandle: Int
+	val focusEvent: RHMIEvent.FocusEvent
 	val readHistory = PopupHistory()       // suppress any duplicate New Notification actions
 	val viewPopup: PopupView                // notification about notification
 	val viewList: NotificationListView      // show a list of active notifications
@@ -83,6 +85,12 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 			}
 		}
 
+		// set up the AM icon in the "Calendar"/Communications section
+		amHandle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
+		carConnection.am_addAppEventHandler(amHandle, "me.hufman.androidautoidrive.notifications")
+		focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
+		createAmApp()
+
 		// set up the list
 		viewList.initWidgets(viewDetails)
 
@@ -109,9 +117,36 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1, -1)
 	}
 
+	fun createAmApp() {
+		val name = L.NOTIFICATIONS_TITLE
+		val carAppImages = Utils.loadZipfile(carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
+
+		val amInfo = mutableMapOf<Int, Any>(
+				0 to 145,   // basecore version
+				1 to name,  // app name
+				2 to (carAppImages["157.png"] ?: ""),
+				3 to "Addressbook",   // section
+				4 to true,
+				5 to 800,   // weight
+				8 to viewList.state.id  // mainstateId
+		)
+		// language translations, dunno which one is which
+		for (languageCode in 101..123) {
+			amInfo[languageCode] = name
+		}
+
+		carConnection.am_registerApp(amHandle, "androidautoidrive.notifications", amInfo)
+	}
+
 	inner class CarAppListener: BaseBMWRemotingClient() {
 		var server: BMWRemotingServer? = null
 		var app: RHMIApplication? = null
+
+		override fun am_onAppEvent(handle: Int?, ident: String?, appId: String?, event: BMWRemoting.AMEvent?) {
+			focusEvent.triggerEvent(mapOf(0.toByte() to viewList.state.id))
+			createAmApp()
+		}
+
 		override fun rhmi_onActionEvent(handle: Int?, ident: String?, actionId: Int?, args: MutableMap<*, *>?) {
 			Log.w(TAG, "Received rhmi_onActionEvent: handle=$handle ident=$ident actionId=$actionId")
 			try {
