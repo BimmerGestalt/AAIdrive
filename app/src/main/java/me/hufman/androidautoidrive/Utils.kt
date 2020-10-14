@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.support.annotation.AttrRes
 import android.support.annotation.ColorInt
 import android.util.TypedValue
+import ar.com.hjg.pngj.*
+import ar.com.hjg.pngj.chunks.PngChunkPLTE
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.withTimeout
@@ -141,6 +143,71 @@ object Utils {
 			contents[next.name] = imageStream.readBytes()
 		}
 		return contents
+	}
+
+	/**
+	 * Converts a 8 bit PNG file to a single channel grayscale 8 bit PNG. This supports both indexed
+	 * color and RGB/RGBA PNGs. The resulting PNG is returned as a ByteArray.
+	 */
+	fun convertPngToGrayscale(png: ByteArray): ByteArray {
+		val inputPngReader = PngReaderInt(png.inputStream())
+		if (inputPngReader.imgInfo.greyscale) {
+			return png
+		}
+
+		val outputImageSettings = ImageInfo(inputPngReader.imgInfo.cols, inputPngReader.imgInfo.rows, 8, false, true, false)
+		val byteArrayOutputStream = ByteArrayOutputStream()
+		val outputPngWriter = PngWriter(byteArrayOutputStream, outputImageSettings)
+		val outputImageLine = ImageLineInt(outputImageSettings)
+		val channels = inputPngReader.imgInfo.channels
+		val palette = if (inputPngReader.imgInfo.indexed) {
+			inputPngReader.chunksList.getById("PLTE")[0] as PngChunkPLTE
+		} else {
+			null
+		}
+
+		for (rowIndex in 0 until inputPngReader.imgInfo.rows) {
+			val inputImageLine = inputPngReader.readRow()
+			val scanLine = (inputImageLine as ImageLineInt).scanline
+			for (colIndex in 0 until inputPngReader.imgInfo.cols) {
+				val i = colIndex * channels
+				val grayscaleRgbVal = if (palette != null) {
+					getGrayscaleValue(palette.getEntry(scanLine[i]))
+				} else {
+					getGrayscaleValue(scanLine[i], scanLine[i + 1], scanLine[i + 2])
+				}
+				val grayscaleVal = if (channels == 4) { //rgba
+					val alpha = scanLine[i + 3]
+					(grayscaleRgbVal * (alpha / 255.0)).toInt()
+				} else {
+					grayscaleRgbVal
+				}
+				outputImageLine.scanline[colIndex] = grayscaleVal
+			}
+			outputPngWriter.writeRow(outputImageLine, rowIndex)
+		}
+
+		inputPngReader.end()
+		outputPngWriter.end()
+		return byteArrayOutputStream.toByteArray()
+	}
+
+	/**
+	 * Gets the grayscale value from red, green, and blue provided values.
+	 */
+	private fun getGrayscaleValue(r: Int, g: Int, b: Int): Int {
+		return (r * 0.299 + g * 0.587 + b * 0.114).toInt()
+	}
+
+	/**
+	 * Gets the grayscale value from a RGB hexidecimal value.
+	 */
+	private fun getGrayscaleValue(rgbValue: Int): Int {
+		val r = rgbValue shr 16
+		val g = (rgbValue shr 8) and 0xff
+		val b = rgbValue and 0xff
+		val grayscaleVal = getGrayscaleValue(r, g, b) and 0xff
+		return ((grayscaleVal shl 16) or (grayscaleVal shl 8) or grayscaleVal)
 	}
 }
 
