@@ -143,7 +143,11 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 		var app: RHMIApplication? = null
 
 		override fun am_onAppEvent(handle: Int?, ident: String?, appId: String?, event: BMWRemoting.AMEvent?) {
-			focusEvent.triggerEvent(mapOf(0.toByte() to viewList.state.id))
+			try {
+				focusEvent.triggerEvent(mapOf(0.toByte() to viewList.state.id))
+			} catch (e: BMWRemoting.ServiceException) {
+				Log.w(TAG, "Failed to trigger focus event for AM icon: $e")
+			}
 			createAmApp()
 		}
 
