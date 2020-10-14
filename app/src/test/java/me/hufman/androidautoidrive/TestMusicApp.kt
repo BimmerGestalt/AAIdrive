@@ -82,7 +82,9 @@ class TestMusicApp {
 		const val QUEUE_LIST_MODEL = 532
 		const val QUEUE_IMAGE_MODEL = 531
 		const val QUEUE_TITLE_MODEL = 527
+		const val QUEUE_TITLE_COMPONENT = 135
 		const val QUEUE_SUBTITLE_MODEL = 528
+		const val QUEUE_SUBTITLE_COMPONENT = 136
 
 		const val TOOLBAR_ACTION_BUTTON = 115
 		const val ACTION_STATE = 21
@@ -564,7 +566,7 @@ class TestMusicApp {
 		val state = app.states[IDs.AUDIO_STATE] as RHMIState.AudioHmiState
 		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_ID5_STATE]!!, musicAppDiscovery, mock(), graphicsHelpers, MusicImageIDsSpotify)
 		val playbackView = PlaybackView(state, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsSpotify)
-		val enqueuedView = EnqueuedView(app.states[IDs.APPLIST_ID5_STATE]!!, musicController, MusicImageIDsSpotify)
+		val enqueuedView = EnqueuedView(app.states[IDs.QUEUE_ID5_STATE]!!, musicController, graphicsHelpers, MusicImageIDsSpotify)
 		val actionView = CustomActionsView(app.states[IDs.ACTION_ID5_STATE]!!, graphicsHelpers, musicController)
 
 		playbackView.initWidgets(appSwitcherView, enqueuedView, mock(), actionView)
@@ -986,6 +988,46 @@ class TestMusicApp {
 		verify(musicController, never()).playQueue(any())
 		state.components[IDs.QUEUE_LIST_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
 		verify(musicController).playQueue(MusicMetadata(queueId=15, title=song2Title, artist = song2Artist))
+	}
+
+	@Test
+	fun testQueueViewQueueTitleAndSubtitle() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val state = app.states[IDs.QUEUE_STATE] as RHMIState.PlainState
+		val queueView = EnqueuedView(state, musicController, graphicsHelpers, MusicImageIDsMultimedia)
+		queueView.initWidgets(playbackView)
+		val queueTitle = "queue title"
+		val queueSubtitle = "queue subtitle"
+		val queueCoverArt: Bitmap = mock()
+		val musicMetadata1 = MusicMetadata(queueId=10, title="Song 1", artist="Artist 1", mediaId="mediaId1")
+		val musicMetadata2 = MusicMetadata(queueId=15, title="Song 2", artist="Artist 2", mediaId="mediaId2")
+		val musicMetadata3 = MusicMetadata(queueId=20, title="Song 3", artist="Artist 3", mediaId="mediaId3")
+		whenever(musicController.getQueue()) doAnswer { QueueMetadata(queueTitle, queueSubtitle, listOf(
+				musicMetadata1,
+				musicMetadata2,
+				musicMetadata3
+		), queueCoverArt) }
+		queueView.show()
+
+		// song 1 is selected
+		assertEquals(0, queueView.selectedIndex)
+		assertEquals(queueTitle, mockServer.data[IDs.QUEUE_TITLE_MODEL])
+		assertEquals(queueSubtitle, mockServer.data[IDs.QUEUE_SUBTITLE_MODEL])
+
+		// song 2 is selected
+		app.components[IDs.QUEUE_LIST_COMPONENT]?.asList()?.getSelectAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
+		assertEquals(1, queueView.selectedIndex)
+		assertEquals(false, mockServer.properties[IDs.QUEUE_TITLE_COMPONENT]!![RHMIProperty.PropertyId.VISIBLE.id] as Boolean?)
+		assertEquals(false, mockServer.properties[IDs.QUEUE_SUBTITLE_COMPONENT]!![RHMIProperty.PropertyId.VISIBLE.id] as Boolean?)
+
+		// song 1 is selected
+		app.components[IDs.QUEUE_LIST_COMPONENT]?.asList()?.getSelectAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(0, queueView.selectedIndex)
+		assertEquals(true, mockServer.properties[IDs.QUEUE_TITLE_COMPONENT]!![RHMIProperty.PropertyId.VISIBLE.id] as Boolean?)
+		assertEquals(true, mockServer.properties[IDs.QUEUE_SUBTITLE_COMPONENT]!![RHMIProperty.PropertyId.VISIBLE.id] as Boolean?)
 	}
 
 	@Test
