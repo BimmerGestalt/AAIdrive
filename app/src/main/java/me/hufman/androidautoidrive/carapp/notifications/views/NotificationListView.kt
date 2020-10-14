@@ -119,7 +119,7 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 		state.componentsList.forEach { it.setVisible(false) }
 
 		notificationListView.setVisible(true)
-		notificationListView.setProperty(6, "55,0,*")
+		notificationListView.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id, "55,0,*")
 		notificationListView.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 			val notification = shownNotifications.getOrNull(index)
 			detailsView.selectedNotification = notification
@@ -146,7 +146,7 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 			}
 
 			settingsListView.setVisible(true)
-			settingsListView.setProperty(6, "55,0,*")
+			settingsListView.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id, "55,0,*")
 			settingsListView.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 				val setting = menuSettingsListData.realData.getOrNull(index)
 				if (setting != null) {

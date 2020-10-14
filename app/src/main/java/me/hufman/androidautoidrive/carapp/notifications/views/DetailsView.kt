@@ -69,15 +69,15 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			setVisible(true)
 			setEnabled(true)
 			setSelectable(true)
-			setProperty(6, "55,0,*")
+			setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id, "55,0,*")
 		}
 		titleWidget.apply {
 			setVisible(true)
 			setEnabled(true)
 		}
 		imageWidget.apply {
-			setProperty(9, 400)
-			setProperty(10, 300)
+			setProperty(RHMIProperty.PropertyId.WIDTH.id, 400)
+			setProperty(RHMIProperty.PropertyId.HEIGHT.id, 300)
 		}
 		listWidget.apply {
 			// text
@@ -186,7 +186,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			clearButton.setEnabled(true)
 			clearButton.getTooltipModel()?.asRaDataModel()?.value = L.NOTIFICATION_CLEAR_ACTION
 			clearButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-				controller.clear(notification)
+				controller.clear(notification.key)
 			}
 		} else {
 			clearButton.setEnabled(false)
@@ -213,7 +213,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 						readoutInteractions.cancel()
 					} else {
 						// trigger the custom action
-						controller.action(notification, action)
+						controller.action(notification.key, action.name.toString())
 						button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listViewId
 					}
 				}

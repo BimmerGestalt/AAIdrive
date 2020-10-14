@@ -4,10 +4,7 @@ import android.util.Log
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.maps.FrameUpdater
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
-import me.hufman.idriveconnectionkit.rhmi.FocusCallback
-import me.hufman.idriveconnectionkit.rhmi.RHMIActionListCallback
-import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
+import me.hufman.idriveconnectionkit.rhmi.*
 
 class MenuView(val state: RHMIState, val interaction: MapInteractionController, val frameUpdater: FrameUpdater) {
 	companion object {
@@ -43,10 +40,10 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 
 		menuMap.setVisible(true)
 		menuMap.setSelectable(true)
-		menuMap.setProperty(6, "350,0,*")
+		menuMap.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id, "350,0,*")
 		menuMap.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateMap.id
 
-		menuList.setProperty(6, "100,0,*")
+		menuList.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id, "100,0,*")
 		menuList.setVisible(true)
 		menuList.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {  listIndex ->
 			val destStateId = when (listIndex) {
