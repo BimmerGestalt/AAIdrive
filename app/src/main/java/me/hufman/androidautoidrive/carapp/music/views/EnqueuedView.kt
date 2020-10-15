@@ -62,10 +62,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		state as RHMIState.PlainState
 
 		listComponent = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
-
 		queueImageComponent = state.componentsList.filterIsInstance<RHMIComponent.Image>().first()
-
-		//all labels next to image at top of list don't scroll and are static
 		titleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[0]
 		subtitleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[1]
 
@@ -104,8 +101,8 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			listComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
 				showList(startIndex, numRows)
 
-				val endIndex = if (startIndex+numRows >= songsList.size) songsList.size-1 else startIndex+numRows
-				visibleRows = songsListAdapter.realData.subList(startIndex,endIndex+1)
+				val endIndex = if (startIndex + numRows >= songsList.size) songsList.size - 1 else startIndex + numRows
+				visibleRows = songsListAdapter.realData.subList(startIndex, endIndex + 1)
 				visibleRowsOriginalMusicMetadata.clear()
 				visibleRows.forEach { musicMetadata ->
 					visibleRowsOriginalMusicMetadata.add(MusicMetadata.copy(musicMetadata))
@@ -163,14 +160,14 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		for ((index, metadata) in visibleRowsOriginalMusicMetadata.withIndex()) {
 			if (metadata != visibleRows[index]) {
 				// can only see roughly 5 rows
-				showList(max(0,selectedIndex-4),8)
+				showList(max(0, selectedIndex - 4), 8)
 				break
 			}
 		}
 	}
 
 	/**
-	 * Sets the list selection to the current song
+	 * Sets the list selection to the current song.
 	 */
 	private fun setSelectionToCurrentSong(index: Int) {
 		if (index >= 0) {
@@ -180,6 +177,9 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 	}
 
+	/**
+	 * On select action callback. This is called every time the user scrolls in the queue list component.
+	 */
 	private fun onSelectAction(index: Int) {
 		selectedIndex = index
 
@@ -192,6 +192,9 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 	}
 
+	/**
+	 * Shows the list component content from the start index for the specified number of rows.
+	 */
 	private fun showList(startIndex: Int = 0, numRows: Int = 10) {
 		if (startIndex >= 0) {
 			listComponent.getModel()?.setValue(songsListAdapter, startIndex, numRows, songsListAdapter.height)
@@ -207,6 +210,9 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		setSelectionToCurrentSong(selectedIndex)
 	}
 
+	/**
+	 * On click callback for when the user selects a queue list item.
+	 */
 	private fun onClick(index: Int) {
 		val song = songsList.getOrNull(index)
 		if (song?.queueId != null) {
