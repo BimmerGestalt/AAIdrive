@@ -379,6 +379,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		} else {
 			if (state is RHMIState.AudioHmiState) {
 				shuffleButton.setEnabled(false)
+				shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_UNAVAILABLE
+				shuffleButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.SHUFFLE_OFF
 			}
 			else if (isNewerIDrive) {   // Audioplayer layout on id5
 				shuffleButton.setVisible(false)
@@ -414,6 +416,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			repeatButton.setVisible(true)
 		} else {
 			repeatButton?.setEnabled(false)
+			repeatButton?.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_REPEAT_UNAVAILABLE
+			repeatButton?.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.REPEAT_OFF
 		}
 	}
 

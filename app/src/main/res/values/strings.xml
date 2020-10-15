@@ -137,8 +137,10 @@
     <string name="MUSIC_QUEUE_EMPTY">&lt;Empty Queue&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Back</string>
     <string name="MUSIC_SKIP_NEXT">Next</string>
+    <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Shuffle Unavailable</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Turn Shuffle On</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Turn Shuffle Off</string>
+    <string name="MUSIC_TURN_REPEAT_UNAVAILABLE">Repeat Unavailable</string>
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Turn Repeat All On</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Turn Repeat One On</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Turn Repeat Off</string>
