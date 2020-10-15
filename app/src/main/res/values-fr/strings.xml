@@ -110,11 +110,11 @@
     <string name="MUSIC_SKIP_NEXT">Suivant</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Activer la Lecture Aléatoire</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Désactiver la Lecture Aléatoire</string>
-    <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Dislike</string>
-    <string name="MUSIC_SPOTIFY_START_RADIO">Créer une Station Radio</string>
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Activer Repeat All</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Activer Repeat One</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Désactiver Repeat</string>
+    <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Dislike</string>
+    <string name="MUSIC_SPOTIFY_START_RADIO">Créer une Station Radio</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>
     <string name="MUSIC_SPOTIFY_THUMB_UP">Thumb Up</string>
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>
