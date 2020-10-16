@@ -251,13 +251,13 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 					}
 				}
 
-				if (notificationSettings.shouldPlaySound()) {
-					val played = audioPlayer.playRingtone(sbn.soundUri)
-					if (played) {
-						Thread.sleep(3000)
-					}
-				}
+				val played = if (notificationSettings.shouldPlaySound()) {
+					audioPlayer.playRingtone(sbn.soundUri)
+				} else false
 
+				if (notificationSettings.shouldReadoutNotificationPopup(passengerSeated) && played) {
+					Thread.sleep(3000)
+				}
 				readoutInteractions.triggerPopupReadout(sbn)
 			}
 		}
