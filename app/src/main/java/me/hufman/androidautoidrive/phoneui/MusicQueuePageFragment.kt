@@ -95,9 +95,9 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 
 		loaderJob = launch {
 			currentQueueMetadata = musicController.getQueue()
-			val result = currentQueueMetadata?.songs
+			val songs = currentQueueMetadata?.songs
 			this@MusicQueuePageFragment.contents.clear()
-			result?.forEach {
+			songs?.forEach {
 				this@MusicQueuePageFragment.contents.add(it)
 			}
 

@@ -196,6 +196,12 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 					val listItem = ListItem(uri, uri, null, playerContext.title, playerContext.subtitle, false, true)
 					loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
 						queueItems = it
+
+						// shuffle play button somehow gets returned with the rest of the tracks when loading an album
+						if (queueItems.isNotEmpty() && queueItems[0].artist == "" && queueItems[0].title == "Shuffle Play") {
+							queueItems = queueItems.drop(1)
+						}
+
 						buildQueueMetadata()
 						callback?.invoke(this)
 					}
