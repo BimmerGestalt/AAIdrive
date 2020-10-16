@@ -35,6 +35,9 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 		swNotificationPopupPassenger.setOnCheckedChangeListener { buttonView, isChecked ->
 			appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER] = isChecked.toString()
 		}
+		swNotificationSound.setOnCheckedChangeListener { _, isChecked ->
+			appSettings[AppSettings.KEYS.NOTIFICATIONS_SOUND] = isChecked.toString()
+		}
 		swNotificationReadout.setOnCheckedChangeListener { buttonView, isChecked ->
 			appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT] = isChecked.toString()
 			redraw()
@@ -101,6 +104,7 @@ class ConfigureNotificationsActivity: AppCompatActivity() {
 		swNotificationPopup.isChecked = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
 		paneNotificationPopup.visible = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
 		swNotificationPopupPassenger.isChecked = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean()
+		swNotificationSound.isChecked = appSettings[AppSettings.KEYS.NOTIFICATIONS_SOUND].toBoolean()
 		swNotificationReadout.isChecked = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT].toBoolean()
 		swNotificationReadoutPopup.isChecked = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP].toBoolean()
 		paneNotificationReadout.visible = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP].toBoolean()

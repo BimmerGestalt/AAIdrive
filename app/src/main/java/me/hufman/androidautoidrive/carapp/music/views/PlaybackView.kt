@@ -12,11 +12,8 @@ import me.hufman.androidautoidrive.carapp.music.components.PlaylistItem
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGauge
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeAudioState
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeToolbarState
-import me.hufman.androidautoidrive.findAdjacentComponent
-import me.hufman.androidautoidrive.music.MusicAction
-import me.hufman.androidautoidrive.music.MusicAppInfo
-import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.carapp.RHMIUtils.findAdjacentComponent
+import me.hufman.androidautoidrive.music.*
 import me.hufman.idriveconnectionkit.rhmi.*
 
 class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
@@ -50,6 +47,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	var skipBackButton: RHMIComponent.ToolbarButton? = null
 	var skipNextButton: RHMIComponent.ToolbarButton? = null
 	val shuffleButton: RHMIComponent.ToolbarButton
+	val repeatButton: RHMIComponent.ToolbarButton?
 
 	val albumArtPlaceholderBig = carAppImages["${musicImageIDs.COVERART_LARGE}.png"]
 	val albumArtPlaceholderSmall = carAppImages["${musicImageIDs.COVERART_SMALL}.png"]
@@ -83,50 +81,60 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			// playlist model populates the back/title/next section
 
 			queueToolbarButton = state.toolbarComponentsList[2]
-			customActionButton = state.toolbarComponentsList[4]
-			shuffleButton = state.toolbarComponentsList[5]
+			customActionButton = state.toolbarComponentsList[3]
+			shuffleButton = state.toolbarComponentsList[4]
+			repeatButton = state.toolbarComponentsList[5]
 		} else {
 			state as RHMIState.ToolbarState
 			appTitleModel = state.getTextModel()?.asRaDataModel()!!
 			appLogoModel = state.componentsList.filterIsInstance<RHMIComponent.Image>().filter {
-				var property = it.properties[20]
+				// The one single image which is visible in both wide and small screen modes
+				val property = it.properties[RHMIProperty.PropertyId.POSITION_X.id]
 				val smallPosition = (property as? RHMIProperty.LayoutBag)?.get(1)
 				val widePosition = (property as? RHMIProperty.LayoutBag)?.get(0)
 				(smallPosition is Int && smallPosition < 1900) &&
-						(widePosition is Int && widePosition < 1900)
+				(widePosition is Int && widePosition < 1900)
 			}.first().getModel()?.asRaImageModel()!!
 
+			// group the components into which widescreen state they are visible in
+			// the layout hides the components by setting their X to 2000
 			val smallComponents = state.componentsList.filter {
-				val property = it.properties[20]
+				val property = it.properties[RHMIProperty.PropertyId.POSITION_X.id]
 				val smallPosition = (property as? RHMIProperty.LayoutBag)?.get(1)
 				smallPosition is Int && smallPosition < 1900
 			}
 			val wideComponents = state.componentsList.filter {
-				val property = it.properties[20]
+				val property = it.properties[RHMIProperty.PropertyId.POSITION_X.id]
 				val widePosition = (property as? RHMIProperty.LayoutBag)?.get(0)
 				widePosition is Int && widePosition < 1900
 			}
+
+			// remember the two cover arts as separate images, to resize to the correct size in each
 			albumArtBigComponent = wideComponents.filterIsInstance<RHMIComponent.Image>().first {
-				(it.properties[10]?.value as? Int ?: 0) == 320
+				(it.properties[RHMIProperty.PropertyId.HEIGHT.id]?.value as? Int ?: 0) == 320
 			}
 			albumArtBigModel = albumArtBigComponent.getModel()?.asRaImageModel()!!
 			albumArtSmallComponent = smallComponents.filterIsInstance<RHMIComponent.Image>().first {
-				(it.properties[10]?.value as? Int ?: 0) == 200
+				(it.properties[RHMIProperty.PropertyId.HEIGHT.id]?.value as? Int ?: 0) == 200
 			}
 			albumArtSmallModel = albumArtSmallComponent.getModel()?.asRaImageModel()!!
 
+			// set up model multisetters for duplicate components
 			val artists = arrayOf(smallComponents, wideComponents).map { components ->
-				findAdjacentComponent(components) { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.ARTIST }
+				val icon = components.firstOrNull { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.ARTIST }
+				findAdjacentComponent(components, icon)
 			}
 			artistModel = RHMIModelMultiSetterData(artists.map { it?.asLabel()?.getModel()?.asRaDataModel() })
 
 			val albums = arrayOf(smallComponents, wideComponents).map { components ->
-				findAdjacentComponent(components) { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.ALBUM }
+				val icon = components.firstOrNull { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.ALBUM }
+				findAdjacentComponent(components, icon)
 			}
 			albumModel = RHMIModelMultiSetterData(albums.map { it?.asLabel()?.getModel()?.asRaDataModel() })
 
 			val titles = arrayOf(smallComponents, wideComponents).map { components ->
-				findAdjacentComponent(components) { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.SONG }
+				val icon = components.firstOrNull { it.asImage()?.getModel()?.asImageIdModel()?.imageId == musicImageIDs.SONG }
+				findAdjacentComponent(components, icon)
 			}
 			trackModel = RHMIModelMultiSetterData(titles.map { it?.asLabel()?.getModel()?.asRaDataModel() })
 
@@ -143,11 +151,15 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			}
 			gaugeModel = ProgressGaugeToolbarState(RHMIModelMultiSetterInt(gauges.map { it.getModel()?.asRaIntModel() }))
 
+			// remember the toolbar buttons for convenient redrawing of their status
 			queueToolbarButton = state.toolbarComponentsList[2]
 			customActionButton = state.toolbarComponentsList[4]
 			shuffleButton = state.toolbarComponentsList[5]
 			skipBackButton = state.toolbarComponentsList[6]
 			skipNextButton = state.toolbarComponentsList[7]
+
+			// repeat button is only available for Spotify (audioHmiState) due to lack of repeat button icon
+			repeatButton = null
 		}
 	}
 
@@ -197,7 +209,10 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			state.getArtistImageModel()?.asRaImageModel()?.value = carAppImages["${musicImageIDs.ARTIST}.png"]
 			state.getAlbumImageModel()?.asRaImageModel()?.value = carAppImages["${musicImageIDs.ALBUM}.png"]
 
-			buttons[3].setVisible(false)
+			// setting the actions button icon since the button has a book icon by default
+			customActionButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.ACTIONS
+
+			repeatButton?.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionCallback { controller.toggleRepeat() }
 
 			redrawAudiostatePlaylist("", true)
 			state.getPlayListFocusRowModel()?.asRaIntModel()?.value = 1
@@ -230,6 +245,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		}
 		redrawQueueButton()
 		redrawShuffleButton()
+		redrawRepeatButton()
 		redrawActions()
 		redrawPosition()
 	}
@@ -284,7 +300,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			val playlistModel = state.getPlayListModel()?.asRaListModel()
 			val playlist = RHMIModel.RaListModel.RHMIListConcrete(10)
 			playlist.addRow(PlaylistItem(false, skipBackEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_BACK), L.MUSIC_SKIP_PREVIOUS))
-			playlist.addRow(PlaylistItem(false, true, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK), title))
+			playlist.addRow(PlaylistItem(false, true, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SONG), title))
 			playlist.addRow(PlaylistItem(false, skipNextEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_NEXT), L.MUSIC_SKIP_NEXT))
 			if (includeActions) {
 				playlistModel?.asRaListModel()?.setValue(playlist, 0, 3, 3)
@@ -363,6 +379,25 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 					shuffleButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.SONG
 				}
 			}
+		}
+	}
+
+	private fun redrawRepeatButton() {
+		if (repeatButton != null && controller.isSupportedAction(MusicAction.SET_REPEAT_MODE)) {
+			if (controller.getRepeatMode() == RepeatMode.ALL) {
+				repeatButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_REPEAT_ONE_ON
+				repeatButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.REPEAT_ALL_ON
+			} else if (controller.getRepeatMode() == RepeatMode.ONE) {
+				repeatButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_REPEAT_OFF
+				repeatButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.REPEAT_ONE_ON
+			} else {
+				repeatButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_REPEAT_ALL_ON
+				repeatButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.REPEAT_OFF
+			}
+			repeatButton.setEnabled(true)
+			repeatButton.setVisible(true)
+		} else {
+			repeatButton?.setEnabled(false)
 		}
 	}
 

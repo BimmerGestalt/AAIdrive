@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.notifications
 
 import android.app.Notification
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.RemoteInput
 import android.content.BroadcastReceiver
@@ -57,9 +58,12 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		Log.i(TAG, "Registering CarNotificationInteraction listeners")
 		this.registerReceiver(interactionListener, IntentFilter(INTENT_INTERACTION))
 		this.registerReceiver(interactionListener, IntentFilter(INTENT_REQUEST_DATA))
+
+		ParseNotification.notificationManager = getSystemService(NotificationManager::class.java)
 	}
 
 	override fun onDestroy() {
+		ParseNotification.notificationManager = null
 		super.onDestroy()
 		try {
 			this.unregisterReceiver(interactionListener)

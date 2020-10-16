@@ -59,6 +59,7 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 			val name = when (item) {
 				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP -> L.NOTIFICATION_POPUPS
 				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER -> L.NOTIFICATION_POPUPS_PASSENGER
+				AppSettings.KEYS.NOTIFICATIONS_SOUND -> L.NOTIFICATION_SOUND
 				AppSettings.KEYS.NOTIFICATIONS_READOUT -> L.NOTIFICATION_READOUT
 				AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP -> L.NOTIFICATION_READOUT_POPUP
 				AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER -> L.NOTIFICATION_READOUT_POPUP_PASSENGER
@@ -104,8 +105,9 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 					focusEvent.triggerEvent(mapOf(0 to notificationListView.id, 41 to index))
 				}
 
+				redrawSettingsList()
 				settings.callback = {
-					redrawNotificationList()
+					redrawSettingsList()
 				}
 			} else {
 				settings.callback = null
@@ -117,7 +119,7 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 		state.componentsList.forEach { it.setVisible(false) }
 
 		notificationListView.setVisible(true)
-		notificationListView.setProperty(6, "55,0,*")
+		notificationListView.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id, "55,0,*")
 		notificationListView.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 			val notification = shownNotifications.getOrNull(index)
 			detailsView.selectedNotification = notification
@@ -144,7 +146,7 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 			}
 
 			settingsListView.setVisible(true)
-			settingsListView.setProperty(6, "55,0,*")
+			settingsListView.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id, "55,0,*")
 			settingsListView.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 				val setting = menuSettingsListData.realData.getOrNull(index)
 				if (setting != null) {
@@ -199,6 +201,9 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 		} else {
 			notificationListView.getModel()?.value = notificationListData
 		}
+	}
+
+	fun redrawSettingsList() {
 		settingsListView.getModel()?.value = menuSettingsListData
 	}
 

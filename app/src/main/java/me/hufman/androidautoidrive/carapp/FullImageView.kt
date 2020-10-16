@@ -37,8 +37,8 @@ class FullImageView(val state: RHMIState, val title: String, val interaction: Fu
 		state.focusCallback = FocusCallback { focused ->
 			if (focused) {
 				Log.i(TAG, "Showing map on full screen")
-				imageComponent.setProperty(9, getWidth())
-				imageComponent.setProperty(10, getHeight())
+				imageComponent.setProperty(RHMIProperty.PropertyId.WIDTH.id, getWidth())
+				imageComponent.setProperty(RHMIProperty.PropertyId.HEIGHT.id, getHeight())
 				frameUpdater.showWindow(getWidth(), getHeight(), imageModel)
 			} else {
 				Log.i(TAG, "Hiding map on full screen")
@@ -83,16 +83,16 @@ class FullImageView(val state: RHMIState, val title: String, val interaction: Fu
 			}
 		}
 		inputList.setVisible(true)
-		inputList.setProperty(20, 50000)  // positionX, so that we don't see it but should still be interacting with it
-		inputList.setProperty(21, 50000)  // positionY, so that we don't see it but should still be interacting with it
+		inputList.setProperty(RHMIProperty.PropertyId.POSITION_X.id, 50000)  // positionX, so that we don't see it but should still be interacting with it
+		inputList.setProperty(RHMIProperty.PropertyId.POSITION_Y.id, 50000)  // positionY, so that we don't see it but should still be interacting with it
 		inputList.setProperty(22, true)
 
 		imageComponent.setVisible(true)
 		imageComponent.setProperty(18, 0)    // offsetX
 		imageComponent.setProperty(19, 0)    // offsetY
-		imageComponent.setProperty(20, -78)    // positionX -16
-		imageComponent.setProperty(21, -80)    // positionY 0
-		imageComponent.setProperty(9, getWidth())
-		imageComponent.setProperty(10, getHeight())
+		imageComponent.setProperty(RHMIProperty.PropertyId.POSITION_X.id, -78)    // positionX -16
+		imageComponent.setProperty(RHMIProperty.PropertyId.POSITION_Y.id, -80)    // positionY 0
+		imageComponent.setProperty(RHMIProperty.PropertyId.WIDTH.id, getWidth())
+		imageComponent.setProperty(RHMIProperty.PropertyId.HEIGHT.id, getHeight())
 	}
 }

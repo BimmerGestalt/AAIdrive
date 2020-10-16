@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.phoneui
+package me.hufman.androidautoidrive.connections
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -9,7 +9,7 @@ import android.text.format.DateUtils
 import java.lang.StringBuilder
 import java.text.NumberFormat
 
-class BclStatusListener(val callback: () -> Unit = {}): BroadcastReceiver() {
+class BclStatusListener(val context: Context, val callback: () -> Unit = {}): BroadcastReceiver() {
 	companion object {
 		const val BCL_REPORT = "com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_INFO"
 		const val BCL_TRANSPORT = "com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_TRANSPORT_SWITCH"
@@ -39,11 +39,11 @@ class BclStatusListener(val callback: () -> Unit = {}): BroadcastReceiver() {
 	val stateAge
 		get() = SystemClock.uptimeMillis() - stateUpdate
 
-	fun subscribe(context: Context) {
+	fun subscribe() {
 		context.registerReceiver(this, IntentFilter(BCL_REPORT))
 		context.registerReceiver(this, IntentFilter(BCL_TRANSPORT))
 	}
-	fun unsubscribe(context: Context) {
+	fun unsubscribe() {
 		context.unregisterReceiver(this)
 	}
 

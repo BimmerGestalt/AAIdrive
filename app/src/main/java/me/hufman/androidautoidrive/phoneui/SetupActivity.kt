@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.os.SystemClock
 import android.provider.Settings
 import android.support.v7.app.AppCompatActivity
@@ -16,6 +17,8 @@ import kotlinx.android.synthetic.main.activity_setup.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.connections.BclStatusListener
+import me.hufman.androidautoidrive.connections.CarConnectionDebugging
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,12 +31,14 @@ class SetupActivity : AppCompatActivity() {
 		}
 	}
 
-	val connectionDebugging by lazy { CarConnectionDebugging(this) }
+	val connectionDebugging by lazy {
+		CarConnectionDebugging(this) { redraw() }
+	}
 
 	var bclNextRedraw: Long = 0
-	val bclStatusListener = BclStatusListener {
+	val bclStatusListener = BclStatusListener(this) {
 		if (bclNextRedraw < SystemClock.uptimeMillis()) {
-			sendBroadcast(Intent(INTENT_REDRAW))
+			redraw()
 			bclNextRedraw = SystemClock.uptimeMillis() + REDRAW_DEBOUNCE
 		}
 	}
@@ -70,13 +75,13 @@ class SetupActivity : AppCompatActivity() {
 
 		redraw()
 
-		bclStatusListener.subscribe(this)
+		bclStatusListener.subscribe()
 	}
 
 	override fun onPause() {
 		super.onPause()
 
-		bclStatusListener.unsubscribe(this)
+		bclStatusListener.unsubscribe()
 	}
 
 	override fun onDestroy() {
@@ -97,6 +102,12 @@ class SetupActivity : AppCompatActivity() {
 	}
 
 	fun redraw() {
+		// only redraw on the main thread
+		if (!Looper.getMainLooper().isCurrentThread) {
+			sendBroadcast(Intent(INTENT_REDRAW))
+			return
+		}
+
 		val deviceName = Settings.Global.getString(this.contentResolver, "device_name")
 
 		showEither(paneBMWMissing, paneBMWReady) {

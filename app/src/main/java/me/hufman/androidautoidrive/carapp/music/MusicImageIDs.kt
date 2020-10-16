@@ -14,6 +14,9 @@ abstract class MusicImageIDs {
 	abstract val SHUFFLE_OFF: Int
 	abstract val SHUFFLE_ON: Int
 	abstract val CHECKMARK: Int
+	abstract val REPEAT_OFF: Int
+	abstract val REPEAT_ALL_ON: Int
+	abstract val REPEAT_ONE_ON: Int
 }
 
 object MusicImageIDsMultimedia: MusicImageIDs() {
@@ -30,6 +33,9 @@ object MusicImageIDsMultimedia: MusicImageIDs() {
 	override val SHUFFLE_OFF = 158
 	override val SHUFFLE_ON = 151
 	override val CHECKMARK = 149
+	override val REPEAT_OFF = 0
+	override val REPEAT_ALL_ON = 0
+	override val REPEAT_ONE_ON = 0
 }
 object MusicImageIDsSpotify: MusicImageIDs() {
 	override val COVERART_SMALL = 147
@@ -45,4 +51,7 @@ object MusicImageIDsSpotify: MusicImageIDs() {
 	override val SHUFFLE_OFF = 159
 	override val SHUFFLE_ON = 152
 	override val CHECKMARK = 150
+	override val REPEAT_OFF = 1015
+	override val REPEAT_ALL_ON = 1007
+	override val REPEAT_ONE_ON = 1008
 }
