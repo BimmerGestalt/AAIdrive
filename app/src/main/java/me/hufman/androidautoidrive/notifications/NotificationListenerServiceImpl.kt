@@ -13,15 +13,13 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import me.hufman.androidautoidrive.UnicodeCleaner
+import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent.Companion.INTENT_INTERACTION
 import me.hufman.androidautoidrive.notifications.ParseNotification.dumpNotification
 import me.hufman.androidautoidrive.notifications.ParseNotification.shouldPopupNotification
 import me.hufman.androidautoidrive.notifications.ParseNotification.shouldShowNotification
 import me.hufman.androidautoidrive.notifications.ParseNotification.summarizeNotification
 import me.hufman.androidautoidrive.phoneui.UIState
 import me.hufman.androidautoidrive.phoneui.MainActivity
-import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.EXTRA_NOTIFICATION
-import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.INTENT_NEW_NOTIFICATION
-import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications.Companion.INTENT_UPDATE_NOTIFICATIONS
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 
 fun Notification.isGroupSummary(): Boolean {
@@ -33,20 +31,19 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	companion object {
 		const val TAG = "IDriveNotifications"
 		const val LOG_NOTIFICATIONS = false
-		const val INTENT_INTERACTION = "me.hufman.androidaudoidrive.PhoneNotificationUpdate.INTERACTION"
 		const val INTENT_REQUEST_DATA = "me.hufman.androidaudoidrive.PhoneNotificationUpdate.REQUEST_DATA"
-		const val EXTRA_KEY = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotificationUpdate.EXTRA_KEY"
-		const val EXTRA_INTERACTION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotificationUpdate.EXTRA_INTERACTION"
-		const val EXTRA_INTERACTION_CLEAR = "EXTRA_INTERACTION_CLEAR"
-		const val EXTRA_INTERACTION_ACTION = "EXTRA_INTERACTION_ACTION"
-		const val EXTRA_INTERACTION_REPLY = "EXTRA_INTERACTION_REPLY"
-		const val EXTRA_ACTION = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotificationUpdate.EXTRA_ACTION"
-		const val EXTRA_REPLY = "me.hufman.androidautoidrive.carapp.notifications.PhoneNotificationUpdate.EXTRA_REPLY"
-
 	}
 
-	val controller = NotificationUpdater(this)
-	val interactionListener = IDriveNotificationInteraction(InteractionListener(), controller)
+	val carController = NotificationUpdaterControllerIntent(this)
+	var carNotificationReceiver = CarNotificationControllerIntent.Receiver(CarNotificationControllerListener(this))
+	val interactionListener = NotificationInteractionListener(carNotificationReceiver, carController)
+	val broadcastReceiver = object: BroadcastReceiver() {
+		// Instantiating a BroadcastReceiver in a unit test is hard, so it's factored out a bit
+		override fun onReceive(p0: Context?, p1: Intent?) {
+			p1 ?: return
+			interactionListener.onReceive(p1)
+		}
+	}
 	val ranking = Ranking() // object to receive new notification rankings
 
 	override fun onCreate() {
@@ -56,8 +53,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		UnicodeCleaner.init(this)
 
 		Log.i(TAG, "Registering CarNotificationInteraction listeners")
-		this.registerReceiver(interactionListener, IntentFilter(INTENT_INTERACTION))
-		this.registerReceiver(interactionListener, IntentFilter(INTENT_REQUEST_DATA))
+		carNotificationReceiver.register(this, broadcastReceiver)
+		this.registerReceiver(broadcastReceiver, IntentFilter(INTENT_REQUEST_DATA))
 
 		ParseNotification.notificationManager = getSystemService(NotificationManager::class.java)
 	}
@@ -66,7 +63,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		ParseNotification.notificationManager = null
 		super.onDestroy()
 		try {
-			this.unregisterReceiver(interactionListener)
+			this.unregisterReceiver(broadcastReceiver)
 		} catch (e: Exception) {}
 	}
 
@@ -104,7 +101,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 
 		val shouldPopup = shouldPopupNotification(sbn, ranking)
 		if (sbn != null && shouldPopup) {
-			controller.sendNotification(sbn)
+			carController.onNewNotification(sbn.key)
 		}
 
 		super.onNotificationPosted(sbn, rankingMap)
@@ -122,44 +119,27 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		} catch (e: SecurityException) {
 			Log.w(TAG, "Unable to fetch activeNotifications: $e")
 		}
-		controller.sendNotificationList()
+		carController.onUpdatedList()
 	}
 
-	open class NotificationUpdater(private val context: Context) {
-		/** Sends data from the phone NotificationListenerService to the car service */
-		open fun sendNotificationList() {
-			Log.i(TAG, "Sending notification list to the car thread")
-			val intent = Intent(INTENT_UPDATE_NOTIFICATIONS)
-					.setPackage(context.packageName)
-			context.sendBroadcast(intent)
+	open class CarNotificationControllerListener(private val listenerService: NotificationListenerService): CarNotificationController {
+		/** Handles interactions from the car app and handles them in the NotificationListenerService */
+		override fun clear(key: String) {
+			listenerService.cancelNotification(key)
 		}
-		open fun sendNotification(notification: StatusBarNotification) {
-			Log.i(TAG, "Sending new notification to the car thread")
-			val intent = Intent(INTENT_NEW_NOTIFICATION)
-					.setPackage(context.packageName)
-					.putExtra(EXTRA_NOTIFICATION, notification.key)
-			context.sendBroadcast(intent)
-		}
-	}
-
-	open inner class InteractionListener {
-		/** Handles interactions from the car */
-		open fun cancelNotification(key: String) {
-			this@NotificationListenerServiceImpl.cancelNotification(key)
-		}
-		open fun sendNotificationAction(key: String, action: String?) {
+		override fun action(key: String, actionName: String) {
 			try {
-				val notification = this@NotificationListenerServiceImpl.activeNotifications.find { it.key == key }
-				val intent = notification?.notification?.actions?.find { it.title == action }?.actionIntent
+				val notification = listenerService.activeNotifications.find { it.key == key }
+				val intent = notification?.notification?.actions?.find { it.title == actionName }?.actionIntent
 				intent?.send()
 			} catch (e: SecurityException) {
-				Log.w(TAG, "Unable to send action $action to notification $key: $e")
+				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
 			}
 		}
-		open fun sendNotificationReply(key: String, action: String?, reply: String?) {
+		override fun reply(key: String, actionName: String, reply: String) {
 			try {
-				val notification = this@NotificationListenerServiceImpl.activeNotifications.find { it.key == key }
-				val action = notification?.notification?.actions?.find { it.title == action }
+				val notification = listenerService.activeNotifications.find { it.key == key }
+				val action = notification?.notification?.actions?.find { it.title == actionName }
 				if (action != null) {
 					val results = Bundle()
 					action.remoteInputs.forEach {
@@ -170,43 +150,30 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 					val intent = Intent().addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
 					RemoteInput.addResultsToIntent(action.remoteInputs, intent, results)
 					RemoteInput.setResultsSource(intent, RemoteInput.SOURCE_FREE_FORM_INPUT)
-					action.actionIntent.send(this@NotificationListenerServiceImpl, 0, intent)
+					action.actionIntent.send(listenerService, 0, intent)
 				}
 			} catch (e: SecurityException) {
-				Log.w(TAG, "Unable to send reply to $action to notification $key: $e")
+				Log.w(TAG, "Unable to send reply to $actionName to notification $key: $e")
 			} catch (e: PendingIntent.CanceledException) {
-				Log.w(TAG, "Unable to send reply to $action to notification $key: $e")
+				Log.w(TAG, "Unable to send reply to $actionName to notification $key: $e")
 			}
 		}
 	}
 
-	class IDriveNotificationInteraction(private val listener: InteractionListener, private val controller: NotificationUpdater): BroadcastReceiver() {
-		/** Listens to Broadcast Intents from the car service */
-		override fun onReceive(context: Context?, intent: Intent?) {
-			if (intent?.action == INTENT_INTERACTION) {
-				// handle a notification interaction
-				val interaction = intent.getStringExtra(EXTRA_INTERACTION)
-				val key = intent.getStringExtra(EXTRA_KEY)
-				if (interaction == EXTRA_INTERACTION_ACTION) {
-					val action = intent.getStringExtra(EXTRA_ACTION)
-					Log.i(TAG, "Received request to send action to $key of type $action")
-					listener.sendNotificationAction(key, action)
-				} else if (interaction == EXTRA_INTERACTION_CLEAR) {
-					Log.i(TAG, "Received request to clear notification $key")
-					listener.cancelNotification(key)
-				} else if (interaction == EXTRA_INTERACTION_REPLY) {
-					val action = intent.getStringExtra(EXTRA_ACTION)
-					val reply = intent.getStringExtra(EXTRA_REPLY)
-					Log.i(TAG, "Received request to reply to $key of action $action with reply $reply")
-					listener.sendNotificationReply(key, action, reply)
-				} else {
-					Log.i(TAG, "Unknown interaction! $interaction")
-				}
-			} else if (intent?.action == INTENT_REQUEST_DATA) {
+	/**
+	 * Handles incoming Intents to make requests of the NotificationListenerService
+	 * For example, incoming CarNotificationController actions
+	 */
+	class NotificationInteractionListener(private val listenerController: CarNotificationControllerIntent.Receiver, private val carController: NotificationUpdaterController) {
+		/** Handles Intents from the car app thread */
+		fun onReceive(intent: Intent) {
+			if (intent.action == INTENT_INTERACTION) {
+				listenerController.onReceive(intent)
+			} else if (intent.action == INTENT_REQUEST_DATA) {
 				// send a full list of notifications to the car
-				controller.sendNotificationList()
+				carController.onUpdatedList()
 			} else {
-				Log.w(TAG, "Received unknown notification interaction: ${intent?.action}")
+				Log.w(TAG, "Received unknown notification interaction: ${intent.action}")
 			}
 		}
 	}

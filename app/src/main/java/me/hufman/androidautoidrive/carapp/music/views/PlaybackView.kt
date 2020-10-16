@@ -5,6 +5,7 @@ import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.TimeUtils.formatTime
 import me.hufman.androidautoidrive.UnicodeCleaner
+import me.hufman.androidautoidrive.Utils
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
@@ -30,7 +31,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	}
 
 	val appTitleModel: RHMIModel.RaDataModel
-	val appLogoModel: RHMIModel.RaImageModel
+	val appLogoModel: RHMIModel.RaImageModel?
 	val albumArtBigComponent: RHMIComponent.Image?
 	val albumArtSmallComponent: RHMIComponent.Image?
 	val albumArtBigModel: RHMIModel.RaImageModel
@@ -51,6 +52,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 	val albumArtPlaceholderBig = carAppImages["${musicImageIDs.COVERART_LARGE}.png"]
 	val albumArtPlaceholderSmall = carAppImages["${musicImageIDs.COVERART_SMALL}.png"]
+	val grayscaleNoteIcon: Any
 
 	var displayedApp: MusicAppInfo? = null  // the app that was last redrawn
 	var displayedSong: MusicMetadata? = null    // the song  that was last redrawn
@@ -63,7 +65,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		// discover widgets
 		if (state is RHMIState.AudioHmiState) {
 			appTitleModel = state.getTextModel()?.asRaDataModel()!!
-			appLogoModel = state.getProviderLogoImageModel()?.asRaImageModel()!!
+			appLogoModel = null
 
 			albumArtBigComponent = null
 			albumArtSmallComponent = null
@@ -161,6 +163,14 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			// repeat button is only available for Spotify (audioHmiState) due to lack of repeat button icon
 			repeatButton = null
 		}
+
+		// memoize grayscale note icon
+		val noteIcon = carAppImages["${musicImageIDs.SONG}.png"]
+		grayscaleNoteIcon = if (noteIcon != null) {
+			Utils.convertPngToGrayscale(noteIcon)
+		} else {
+			""
+		}
 	}
 
 	fun initWidgets(appSwitcherView: AppSwitcherView, enqueuedView: EnqueuedView, browseView: BrowseView, customActionsView: CustomActionsView) {
@@ -206,8 +216,14 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		}
 		if (state is RHMIState.AudioHmiState) {
 			// weird that official Spotify doesn't need to do this
-			state.getArtistImageModel()?.asRaImageModel()?.value = carAppImages["${musicImageIDs.ARTIST}.png"]
-			state.getAlbumImageModel()?.asRaImageModel()?.value = carAppImages["${musicImageIDs.ALBUM}.png"]
+			val artistIcon = carAppImages["${musicImageIDs.ARTIST}.png"]
+			if (artistIcon != null) {
+				state.getArtistImageModel()?.asRaImageModel()?.value = Utils.convertPngToGrayscale(artistIcon)
+			}
+			val albumIcon = carAppImages["${musicImageIDs.ALBUM}.png"]
+			if (albumIcon != null) {
+				state.getAlbumImageModel()?.asRaImageModel()?.value = Utils.convertPngToGrayscale(albumIcon)
+			}
 
 			// setting the actions button icon since the button has a book icon by default
 			customActionButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.ACTIONS
@@ -254,7 +270,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		val app = controller.currentAppInfo ?: return
 		appTitleModel.value = app.name
 		val image = graphicsHelpers.compress(app.icon, 48, 48)
-		appLogoModel.value = image
+		appLogoModel?.value = image
 		displayedApp = app
 	}
 
@@ -300,7 +316,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			val playlistModel = state.getPlayListModel()?.asRaListModel()
 			val playlist = RHMIModel.RaListModel.RHMIListConcrete(10)
 			playlist.addRow(PlaylistItem(false, skipBackEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_BACK), L.MUSIC_SKIP_PREVIOUS))
-			playlist.addRow(PlaylistItem(false, true, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SONG), title))
+			playlist.addRow(PlaylistItem(false, true, grayscaleNoteIcon, title))
 			playlist.addRow(PlaylistItem(false, skipNextEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_NEXT), L.MUSIC_SKIP_NEXT))
 			if (includeActions) {
 				playlistModel?.asRaListModel()?.setValue(playlist, 0, 3, 3)
@@ -363,6 +379,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		} else {
 			if (state is RHMIState.AudioHmiState) {
 				shuffleButton.setEnabled(false)
+				shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_UNAVAILABLE
+				shuffleButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.SHUFFLE_OFF
 			}
 			else if (isNewerIDrive) {   // Audioplayer layout on id5
 				shuffleButton.setVisible(false)
@@ -398,6 +416,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			repeatButton.setVisible(true)
 		} else {
 			repeatButton?.setEnabled(false)
+			repeatButton?.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_REPEAT_UNAVAILABLE
+			repeatButton?.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.REPEAT_OFF
 		}
 	}
 

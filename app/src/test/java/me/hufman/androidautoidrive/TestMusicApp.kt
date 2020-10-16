@@ -204,7 +204,7 @@ class TestMusicApp {
 		assertEquals(IDs.APPLIST_STATE, state.toolbarComponentsList[0].getAction()?.asHMIAction()?.getTargetState()?.id)
 		assertEquals(IDs.QUEUE_STATE, state.toolbarComponentsList[2].getAction()?.asHMIAction()?.getTargetState()?.id)
 		assertEquals(IDs.ACTION_STATE, state.toolbarComponentsList[4].getAction()?.asHMIAction()?.getTargetState()?.id)
-		assertEquals(IDs.APPICON_MODEL, playbackView.appLogoModel.id)
+		assertEquals(IDs.APPICON_MODEL, playbackView.appLogoModel!!.id)
 		assertEquals(IDs.COVERART_LARGE_MODEL, playbackView.albumArtBigModel.id)
 		assertEquals(IDs.COVERART_SMALL_MODEL, playbackView.albumArtSmallModel?.id)
 		assertEquals(setOf(IDs.ARTIST_LARGE_MODEL, IDs.ARTIST_SMALL_MODEL), playbackView.artistModel.members.map { it?.id }.toSet())
@@ -228,7 +228,7 @@ class TestMusicApp {
 		assertEquals(IDs.QUEUE_ID5_STATE, state.toolbarComponentsList[2].getAction()?.asHMIAction()?.getTargetState()?.id)
 		assertNotNull(playbackView.repeatButton)
 		assertEquals(IDs.ACTION_ID5_STATE, state.toolbarComponentsList[3].getAction()?.asHMIAction()?.getTargetState()?.id)
-		assertEquals(IDs.AUDIOSTATE_PROVIDER_MODEL, playbackView.appLogoModel.id)
+		assertNull(playbackView.appLogoModel)
 		assertEquals(IDs.AUDIOSTATE_COVERART_MODEL, playbackView.albumArtBigModel.id)
 		assertEquals(null, playbackView.albumArtSmallModel?.id)
 		assertEquals(setOf(IDs.AUDIOSTATE_ARTIST_MODEL), playbackView.artistModel.members.map { it?.id }.toSet())
@@ -241,6 +241,13 @@ class TestMusicApp {
 		assertEquals(3, playlist.totalRows)
 		assertEquals(listOf("Back", "", "Next"), playlist.data.map { it[2] })
 		assertEquals(1, state.getPlayListFocusRowModel()?.asRaIntModel()?.value)
+
+		// test disabled buttons in id5 audioHmiState
+		whenever(musicController.isSupportedAction(MusicAction.SET_REPEAT_MODE)) doReturn false
+		whenever(musicController.isSupportedAction(MusicAction.SET_SHUFFLE_MODE)) doReturn false
+		playbackView.redraw()
+		assertEquals("Shuffle Unavailable", playbackView.shuffleButton.getTooltipModel()?.asRaDataModel()?.value)
+		assertEquals("Repeat Unavailable", playbackView.repeatButton?.getTooltipModel()?.asRaDataModel()?.value)
 	}
 
 	@Test
@@ -310,6 +317,8 @@ class TestMusicApp {
 			IDriveConnectionListener.setConnection("", "localhost", 4008, 9)
 			lastValue.run()
 			assertEquals(1, mockServer.avConnections.size)
+			IDriveConnectionListener.reset()
+			IDriveConnectionListener.setConnection("", "localhost", 4008, null)
 			IDriveConnectionListener.reset()
 		}
 
@@ -564,7 +573,7 @@ class TestMusicApp {
 
 		// redraw when not repeating and supported
 		whenever(musicController.isSupportedAction(MusicAction.SET_REPEAT_MODE)) doAnswer { true }
-		whenever(musicController.getRepeatMode()).thenReturn(RepeatMode.OFF)
+		whenever(musicController.getRepeatMode()) doReturn RepeatMode.OFF
 		playbackView.redraw()
 
 		assertEquals(L.MUSIC_TURN_REPEAT_ALL_ON, playbackView.repeatButton!!.getTooltipModel()?.asRaDataModel()?.value)
@@ -574,7 +583,7 @@ class TestMusicApp {
 		playbackView.repeatButton!!.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
 		verify(musicController, times(1)).toggleRepeat()
 
-		whenever(musicController.getRepeatMode()).thenReturn(RepeatMode.ALL)
+		whenever(musicController.getRepeatMode()) doReturn RepeatMode.ALL
 		playbackView.redraw()
 
 		assertEquals(L.MUSIC_TURN_REPEAT_ONE_ON, playbackView.repeatButton!!.getTooltipModel()?.asRaDataModel()?.value)
@@ -584,7 +593,7 @@ class TestMusicApp {
 		playbackView.repeatButton!!.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
 		verify(musicController, times(2)).toggleRepeat()
 
-		whenever(musicController.getRepeatMode()).thenReturn(RepeatMode.ONE)
+		whenever(musicController.getRepeatMode()) doReturn RepeatMode.ONE
 		playbackView.redraw()
 
 		assertEquals(L.MUSIC_TURN_REPEAT_OFF, playbackView.repeatButton!!.getTooltipModel()?.asRaDataModel()?.value)
@@ -594,7 +603,7 @@ class TestMusicApp {
 		playbackView.repeatButton!!.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
 		verify(musicController, times(3)).toggleRepeat()
 
-		whenever(musicController.getRepeatMode()).thenReturn(RepeatMode.OFF)
+		whenever(musicController.getRepeatMode()) doReturn RepeatMode.OFF
 		playbackView.redraw()
 
 		assertEquals(L.MUSIC_TURN_REPEAT_ALL_ON, playbackView.repeatButton!!.getTooltipModel()?.asRaDataModel()?.value)
