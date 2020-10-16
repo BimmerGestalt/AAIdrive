@@ -31,7 +31,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	}
 
 	val appTitleModel: RHMIModel.RaDataModel
-	val appLogoModel: RHMIModel.RaImageModel
+	val appLogoModel: RHMIModel.RaImageModel?
 	val albumArtBigComponent: RHMIComponent.Image?
 	val albumArtSmallComponent: RHMIComponent.Image?
 	val albumArtBigModel: RHMIModel.RaImageModel
@@ -65,7 +65,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		// discover widgets
 		if (state is RHMIState.AudioHmiState) {
 			appTitleModel = state.getTextModel()?.asRaDataModel()!!
-			appLogoModel = state.getProviderLogoImageModel()?.asRaImageModel()!!
+			appLogoModel = null
 
 			albumArtBigComponent = null
 			albumArtSmallComponent = null
@@ -270,7 +270,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		val app = controller.currentAppInfo ?: return
 		appTitleModel.value = app.name
 		val image = graphicsHelpers.compress(app.icon, 48, 48)
-		appLogoModel.value = image
+		appLogoModel?.value = image
 		displayedApp = app
 	}
 
