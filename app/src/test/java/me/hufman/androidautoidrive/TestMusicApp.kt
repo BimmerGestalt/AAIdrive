@@ -248,6 +248,13 @@ class TestMusicApp {
 		assertEquals(3, playlist.totalRows)
 		assertEquals(listOf("Back", "", "Next"), playlist.data.map { it[2] })
 		assertEquals(1, state.getPlayListFocusRowModel()?.asRaIntModel()?.value)
+
+		// test disabled buttons in id5 audioHmiState
+		whenever(musicController.isSupportedAction(MusicAction.SET_REPEAT_MODE)) doReturn false
+		whenever(musicController.isSupportedAction(MusicAction.SET_SHUFFLE_MODE)) doReturn false
+		playbackView.redraw()
+		assertEquals("Shuffle Unavailable", playbackView.shuffleButton.getTooltipModel()?.asRaDataModel()?.value)
+		assertEquals("Repeat Unavailable", playbackView.repeatButton?.getTooltipModel()?.asRaDataModel()?.value)
 	}
 
 	@Test
