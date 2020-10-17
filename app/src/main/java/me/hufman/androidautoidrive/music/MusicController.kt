@@ -1,11 +1,9 @@
 package me.hufman.androidautoidrive.music
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.os.DeadObjectException
 import android.os.Handler
 import android.util.Log
-import com.spotify.protocol.types.ImageUri
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import me.hufman.androidautoidrive.AppSettings

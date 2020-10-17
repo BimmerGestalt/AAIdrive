@@ -40,7 +40,8 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
 			val checkmark = if (item.queueId == currentSong?.queueId) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK) else ""
 
-			val coverArtImage = if (item.coverArt != null) graphicsHelpers.compress(item.coverArt!!, 90, 90, quality = 30) else ""
+			val coverArt = item.coverArt
+			val coverArtImage = if (coverArt != null) graphicsHelpers.compress(coverArt, 90, 90, quality = 30) else ""
 
 			var title = UnicodeCleaner.clean(item.title ?: "")
 			if (title.length > ROW_LINE_MAX_LENGTH) {
@@ -119,13 +120,15 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		val queueTitle = UnicodeCleaner.clean(queueMetadata?.title ?: "")
 		val queueSubtitle = UnicodeCleaner.clean(queueMetadata?.subtitle ?: "")
 		if (queueTitle.isBlank() && queueSubtitle.isBlank()) {
-			state.getTextModel()?.asRaDataModel()?.value = "Now Playing"
+			state.getTextModel()?.asRaDataModel()?.value = L.MUSIC_QUEUE_TITLE
 		} else {
 			state.getTextModel()?.asRaDataModel()?.value = "$queueTitle - $queueSubtitle"
 		}
 
-		if (queueMetadata?.coverArt != null) {
-			queueImageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(musicController.getQueue()?.coverArt!!, 180, 180, quality = 60)
+		val queueCoverArt = queueMetadata?.coverArt
+		if (queueCoverArt != null) {
+			queueImageComponent.setVisible(true)
+			queueImageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(queueCoverArt, 180, 180, quality = 60)
 			titleLabelComponent.getModel()?.asRaDataModel()?.value = queueTitle
 			subtitleLabelComponent.getModel()?.asRaDataModel()?.value = queueSubtitle
 		}

@@ -20,12 +20,7 @@ class SpotifyMusicMetadata(
 		}
 
 		fun createSpotifyMusicMetadataList(spotifyAppController: SpotifyAppController, musicMetadataList: List<MusicMetadata>): List<SpotifyMusicMetadata> {
-			val spotifyMusicMetadataList = ArrayList<SpotifyMusicMetadata>()
-			musicMetadataList.forEach {
-				val spotifyMusicMetadata = fromMusicMetadata(spotifyAppController, it)
-				spotifyMusicMetadataList.add(spotifyMusicMetadata)
-			}
-			return spotifyMusicMetadataList
+			return musicMetadataList.map { fromMusicMetadata(spotifyAppController, it) }
 		}
 	}
 
