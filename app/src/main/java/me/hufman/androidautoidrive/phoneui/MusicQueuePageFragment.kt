@@ -43,7 +43,6 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 	lateinit var musicController: MusicController
 	lateinit var placeholderCoverArt: Bitmap
 
-	private var loaderJob: Job? = null
 	private val contents = ArrayList<MusicMetadata>()
 	private var currentQueueMetadata: QueueMetadata? = null
 
@@ -85,44 +84,38 @@ class MusicQueuePageFragment: Fragment(), CoroutineScope {
 			}, 1000)
 		}
 
-		txtQueueEmpty.text = getString(R.string.MUSIC_BROWSE_LOADING)
+		txtQueueEmpty.text = getString(R.string.MUSIC_QUEUE_EMPTY)
 	}
 
 	private fun redrawQueueUI() {
-		if (loaderJob != null) {
-			loaderJob?.cancel()
+		currentQueueMetadata = musicController.getQueue()
+		val songs = currentQueueMetadata?.songs
+		contents.clear()
+		songs?.forEach {
+			contents.add(it)
 		}
 
-		loaderJob = launch {
-			currentQueueMetadata = musicController.getQueue()
-			val songs = currentQueueMetadata?.songs
-			this@MusicQueuePageFragment.contents.clear()
-			songs?.forEach {
-				this@MusicQueuePageFragment.contents.add(it)
+		if (isVisible) {
+			if (contents.isEmpty()) {
+				txtQueueEmpty.text = getString(R.string.MUSIC_BROWSE_EMPTY)
+			} else {
+				txtQueueEmpty.text = ""
 			}
 
-			if (isVisible) {
-				if (contents.isEmpty()) {
-					txtQueueEmpty.text = getString(R.string.MUSIC_BROWSE_EMPTY)
-				} else {
-					txtQueueEmpty.text = ""
-				}
-
-				listQueue.removeAllViews()
-				listQueue.adapter?.notifyDataSetChanged()
-			}
-
-			val coverArtImage = currentQueueMetadata?.coverArt
-			if (coverArtImage != null) {
-				queueCoverArt.setImageBitmap(coverArtImage)
-			}
-			else {
-				queueCoverArt.setImageBitmap(placeholderCoverArt)
-			}
-
-			queueTitle.text = currentQueueMetadata?.title
-			queueSubtitle.text = currentQueueMetadata?.subtitle
+			listQueue.removeAllViews()
+			listQueue.adapter?.notifyDataSetChanged()
 		}
+
+		val coverArtImage = currentQueueMetadata?.coverArt
+		if (coverArtImage != null) {
+			queueCoverArt.setImageBitmap(coverArtImage)
+		}
+		else {
+			queueCoverArt.setImageBitmap(placeholderCoverArt)
+		}
+
+		queueTitle.text = currentQueueMetadata?.title
+		queueSubtitle.text = currentQueueMetadata?.subtitle
 	}
 
 	inner class QueueAdapter(val context: Context, val contents: ArrayList<MusicMetadata>, val clickListener: (MusicMetadata?) -> Unit): RecyclerView.Adapter<QueueAdapter.ViewHolder>() {
