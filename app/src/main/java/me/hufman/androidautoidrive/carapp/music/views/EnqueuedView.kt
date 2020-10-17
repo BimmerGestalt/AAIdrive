@@ -98,7 +98,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			listComponent.setEnabled(true)
 			listComponent.setSelectable(true)
 			songsList.addAll(songs)
-
+			showList()
 			listComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
 				showList(startIndex, numRows)
 
@@ -177,6 +177,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
 					mapOf(0.toByte() to listComponent.id, 41.toByte() to index)
 			)
+			onSelectAction(index)
 		}
 	}
 
