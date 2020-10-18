@@ -24,12 +24,8 @@ import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.QueueMetadata
 import kotlin.collections.ArrayList
-import kotlin.coroutines.CoroutineContext
 
-class MusicQueuePageFragment: Fragment(), CoroutineScope {
-	override val coroutineContext: CoroutineContext
-		get() = Dispatchers.Main
-
+class MusicQueuePageFragment: Fragment() {
 	companion object {
 		fun newInstance(): MusicQueuePageFragment {
 			val fragment = MusicQueuePageFragment()
