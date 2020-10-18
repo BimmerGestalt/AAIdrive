@@ -240,6 +240,9 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 				}
 			}
 		}
+
+		queueToolbarButton.setProperty(RHMIProperty.PropertyId.BOOKMARKABLE, true)
+		customActionButton.setProperty(RHMIProperty.PropertyId.BOOKMARKABLE, true)
 	}
 
 	fun show() {

@@ -213,6 +213,8 @@ class TestMusicApp {
 		assertEquals(setOf(IDs.TIME_NUMBER_LARGE_MODEL, IDs.TIME_NUMBER_SMALL_MODEL), playbackView.currentTimeModel.members.map { it?.id }.toSet())
 		assertEquals(setOf(IDs.MAXTIME_NUMBER_LARGE_MODEL, IDs.MAXTIME_NUMBER_SMALL_MODEL), playbackView.maximumTimeModel.members.map { it?.id }.toSet())
 		assertEquals(setOf(IDs.TIME_GAUGE_MODEL), (playbackView.gaugeModel as ProgressGaugeToolbarState).model.members.map { it?.id }.toSet())
+		assertEquals(true, playbackView.queueToolbarButton.properties[RHMIProperty.PropertyId.BOOKMARKABLE.id]?.value)
+		assertEquals(true, playbackView.customActionButton.properties[RHMIProperty.PropertyId.BOOKMARKABLE.id]?.value)
 	}
 
 	@Test
