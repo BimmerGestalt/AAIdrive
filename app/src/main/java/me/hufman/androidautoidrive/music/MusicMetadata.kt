@@ -84,12 +84,9 @@ open class MusicMetadata(val mediaId: String? = null,
 		}
 
 		fun copy(other: MusicMetadata, mediaId: String? = null, queueId: Long? = null, playable: Boolean? = null, browseable: Boolean? = null, duration: Long? = null, coverArt: Bitmap? = null,
-                 coverArtUri: String? = null, icon: Bitmap? = null, artist: String? = null, album: String? = null, title: String? = null, subtitle: String? = null, trackCount: Long? = null,
-                 trackNumber: Long? = null): MusicMetadata {
-			return MusicMetadata(mediaId = mediaId ?: other.mediaId, queueId = queueId ?: other.queueId, playable = playable ?: other.playable, browseable = browseable ?: other.browseable,
-					duration = duration ?: other.duration, coverArt = coverArt ?: other.coverArt, coverArtUri = coverArtUri ?: other.coverArtUri, icon = icon ?: other.icon,
-                    artist = artist ?: other.artist, album = album ?: other.album, title = title ?: other.title, subtitle = subtitle ?: other.subtitle, trackCount = trackCount ?: other.trackCount,
-                    trackNumber = trackNumber ?: other.trackNumber)
+		         coverArtUri: String? = null, icon: Bitmap? = null, artist: String? = null, album: String? = null, title: String? = null, subtitle: String? = null, trackCount: Long? = null,
+		         trackNumber: Long? = null): MusicMetadata {
+			return MusicMetadata(mediaId = mediaId ?: other.mediaId, queueId = queueId ?: other.queueId, playable = playable ?: other.playable, browseable = browseable ?: other.browseable, duration = duration ?: other.duration, coverArt = coverArt ?: other.coverArt, coverArtUri = coverArtUri ?: other.coverArtUri, icon = icon ?: other.icon, artist = artist ?: other.artist, album = album ?: other.album, title = title ?: other.title, subtitle = subtitle ?: other.subtitle, trackCount = trackCount ?: other.trackCount, trackNumber = trackNumber ?: other.trackNumber)
 		}
 	}
 
