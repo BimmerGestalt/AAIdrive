@@ -33,7 +33,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	val songsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3)
 	var queueMetadata: QueueMetadata? = null
 	var visibleRows: List<MusicMetadata> = emptyList()
-	var visibleRowsOriginalMusicMetadata: ArrayList<MusicMetadata> = ArrayList()
+	var visibleRowsOriginalMusicMetadata: List<MusicMetadata> = emptyList()
 	var selectedIndex: Int = 0
 
 	var songsListAdapter = object: RHMIListAdapter<MusicMetadata>(4, songsList) {
@@ -103,11 +103,8 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 				showList(startIndex, numRows)
 
 				val endIndex = if (startIndex + numRows >= songsList.size) songsList.size - 1 else startIndex + numRows
-				visibleRows = songsListAdapter.realData.subList(startIndex, endIndex + 1)
-				visibleRowsOriginalMusicMetadata.clear()
-				visibleRows.forEach { musicMetadata ->
-					visibleRowsOriginalMusicMetadata.add(MusicMetadata.copy(musicMetadata))
-				}
+				visibleRows = songsListAdapter.realData.subList(startIndex, endIndex + 1).toMutableList()
+				visibleRowsOriginalMusicMetadata = visibleRows.map { MusicMetadata.copy(it) }
 			}
 
 			showCurrentlyPlayingSong()
