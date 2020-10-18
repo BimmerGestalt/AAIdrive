@@ -252,7 +252,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	 * and then passing it to onComplete at the end
 	 */
 	private fun loadPaginatedItems(parentItem: ListItem,
-                                   stillValid: () -> Boolean, onComplete: (List<MusicMetadata>) -> Unit) {
+	                               stillValid: () -> Boolean, onComplete: (List<MusicMetadata>) -> Unit) {
 		loadPaginatedItems(LinkedList(), parentItem, stillValid, onComplete)
 	}
 
@@ -263,7 +263,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	 * and passing the destination list to onComplete at the end
 	 */
 	private fun loadPaginatedItems(destination: MutableList<MusicMetadata>, parentItem: ListItem,
-                                   stillValid: () -> Boolean, onComplete: (List<MusicMetadata>) -> Unit) {
+	                               stillValid: () -> Boolean, onComplete: (List<MusicMetadata>) -> Unit) {
 		remote.contentApi.getChildrenOfItem(parentItem, 200, destination.size).setResultCallback { items ->
 			if (items != null && stillValid()) {    // this is still a valid request
 				destination.addAll(items.items.filterNotNull().map { listItem: ListItem ->
