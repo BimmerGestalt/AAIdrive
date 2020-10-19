@@ -115,7 +115,7 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 		}
 
 		state.getTextModel()?.asRaDataModel()?.value = L.NOTIFICATIONS_TITLE
-		state.setProperty(24, 3)
+		state.setProperty(RHMIProperty.PropertyId.HMISTATE_TABLETYPE, 3)
 		state.componentsList.forEach { it.setVisible(false) }
 
 		notificationListView.setVisible(true)

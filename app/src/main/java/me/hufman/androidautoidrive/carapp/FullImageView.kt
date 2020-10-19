@@ -28,8 +28,8 @@ class FullImageView(val state: RHMIState, val title: String, val interaction: Fu
 	fun initWidgets() {
 		// set up the components on the map
 		state.getTextModel()?.asRaDataModel()?.value = title
-		state.setProperty(24, 3)
-		state.setProperty(26, "1,0,7")
+		state.setProperty(RHMIProperty.PropertyId.HMISTATE_TABLETYPE, 3)
+		state.setProperty(RHMIProperty.PropertyId.HMISTATE_TABLELAYOUT, "1,0,7")
 		state.componentsList.forEach {
 			it.setVisible(false)
 		}
@@ -85,7 +85,7 @@ class FullImageView(val state: RHMIState, val title: String, val interaction: Fu
 		inputList.setVisible(true)
 		inputList.setProperty(RHMIProperty.PropertyId.POSITION_X.id, 50000)  // positionX, so that we don't see it but should still be interacting with it
 		inputList.setProperty(RHMIProperty.PropertyId.POSITION_Y.id, 50000)  // positionY, so that we don't see it but should still be interacting with it
-		inputList.setProperty(22, true)
+		inputList.setProperty(RHMIProperty.PropertyId.BOOKMARKABLE, true)
 
 		imageComponent.setVisible(true)
 		imageComponent.setProperty(18, 0)    // offsetX
