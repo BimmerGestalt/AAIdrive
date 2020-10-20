@@ -131,6 +131,7 @@ def RHMISources = [
                 "basecore/rhmi/common/texts.zip": "basecoreOnlineServices/rhmi/common/texts.zip",
 
                 // Smartthings UI layout
+                // SmartThings <= v2.3.1 uses OnlineServices v2, >= v2.3.6 uses v3
                 "basecore/rhmi/onlineservices/id5/v2/ui_description.xml": "smartthings/rhmi/ui_description.xml",
                 // spotify UI layout, newer versions of Spotify package don't include this file
                 "basecore/rhmi/multimedia/id5/v3/ui_description.xml": "spotify/rhmi/ui_description.xml",

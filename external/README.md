@@ -14,7 +14,7 @@ Please place copies of the following Android APKs in this `external` directory:
   - [BMW Connected](https://apkpure.com/bmw-connected/de.bmw.connected.na/download?from=details)
   - [MINI Connected Classic](https://apkpure.com/mini-connected-classic/com.bmwgroup.connected.mini.usa/download?from=details)
   - [MINI Connected](https://apkpure.com/mini-connected/de.mini.connected.na/download?from=details)
-  - [SmartThings Classic](https://apkpure.com/smartthings-classic/com.smartthings.android/download/217883-APK?from=versions%2Fversion) v2.10.1 or earlier
+  - [SmartThings Classic](https://apkpure.com/smartthings-classic/com.smartthings.android/download/211001-APK?from=versions%2Fversion) v2.3.1 or earlier
   - [Spotify](https://spotify.en.uptodown.com/android/download/2292403) v8.5.66 or earlier
 
 After placing these files in this `external` directory, re-run the build process and it should complete successfully.
