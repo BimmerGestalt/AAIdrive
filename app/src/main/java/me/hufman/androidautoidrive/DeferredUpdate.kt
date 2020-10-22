@@ -35,7 +35,11 @@ class DeferredUpdate(val handler: Handler, val currentTimeProvider: () -> Long =
 			if (task != null) {
 				val remainingTime = max(0, max(delay, deferredTime - currentTimeProvider()))
 				handler.removeCallbacks(task)
-				handler.postDelayed(task, remainingTime)
+				if (remainingTime == 0L && handler.looper.isCurrentThread) {
+					task.run()
+				} else {
+					handler.postDelayed(task, remainingTime)
+				}
 			}
 		}
 	}
