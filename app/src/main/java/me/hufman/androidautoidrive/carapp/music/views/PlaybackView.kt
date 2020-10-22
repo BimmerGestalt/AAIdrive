@@ -284,10 +284,11 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		} else { L.MUSIC_DISCONNECTED }
 		albumModel.value = UnicodeCleaner.clean(song?.album ?: "")
 		trackModel.value = UnicodeCleaner.clean(song?.title ?: "")
-		if (song?.coverArt != null) {
-			albumArtBigModel.value = graphicsHelpers.compress(song.coverArt, 320, 320, quality = 65)
+		val songCoverArt = song?.coverArt
+		if (songCoverArt != null) {
+			albumArtBigModel.value = graphicsHelpers.compress(songCoverArt, 320, 320, quality = 65)
 			if (albumArtSmallModel != null) {
-				albumArtSmallModel.value = graphicsHelpers.compress(song.coverArt, 200, 200, quality = 65)
+				albumArtSmallModel.value = graphicsHelpers.compress(songCoverArt, 200, 200, quality = 65)
 			}
 			albumArtBigComponent?.setVisible(true)
 			albumArtSmallComponent?.setVisible(true)
@@ -343,7 +344,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	}
 
 	private fun redrawQueueButton() {
-		val queue = controller.getQueue()
+		val queue = controller.getQueue()?.songs
 		queueToolbarButton.setEnabled(queue?.isNotEmpty() == true)
 	}
 

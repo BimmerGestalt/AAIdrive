@@ -185,6 +185,8 @@ class TestGenericMusicAppController {
 			on { iconBitmap } doAnswer { mock() }
 			on { title } doReturn "test title"
 		}
+		val queueTitle = "queue title"
+		whenever(mediaController.queueTitle) doAnswer { queueTitle }
 		whenever(mediaController.queue) doAnswer {
 			listOf(mock {
 				on { queueId } doReturn 2L
@@ -192,9 +194,15 @@ class TestGenericMusicAppController {
 			})
 		}
 		val queue = controller.getQueue()
-		assertEquals(1, queue.size)
-		assertEquals(2L, queue[0].queueId)
-		assertEquals("test title", queue[0].title)
+		assertNotNull(queue)
+		assertEquals(queueTitle, queue!!.title)
+		assertNull(queue.subtitle)
+
+		val songs = queue.songs
+		assertNotNull(queue.songs)
+		assertEquals(1, songs!!.size)
+		assertEquals(2L, songs[0].queueId)
+		assertEquals("test title", songs[0].title)
 	}
 
 	@Test

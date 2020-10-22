@@ -10,20 +10,20 @@ import android.util.Log
 import me.hufman.androidautoidrive.dumpToString
 
 private const val TAG = "MusicMetadata"
-data class MusicMetadata(val mediaId: String? = null,
-                        val queueId: Long? = null,
+open class MusicMetadata(val mediaId: String? = null,
+                         val queueId: Long? = null,
                          val playable: Boolean = false,
                          val browseable: Boolean = false,
-                    val duration: Long? = null,
-                    val coverArt: Bitmap? = null,
-                    val coverArtUri: String? = null,
-                    val icon: Bitmap? = null,
-                    val artist: String? = null,
-                    val album: String? = null,
-                    val title: String? = null,
-                    val subtitle: String? = null,
-                    val trackNumber: Long? = null,
-                    val trackCount: Long? = null,
+                         val duration: Long? = null,
+                         open val coverArt: Bitmap? = null,
+                         val coverArtUri: String? = null,
+                         val icon: Bitmap? = null,
+                         val artist: String? = null,
+                         val album: String? = null,
+                         val title: String? = null,
+                         val subtitle: String? = null,
+                         val trackNumber: Long? = null,
+                         val trackCount: Long? = null,
                          val extras: Bundle? = null
                     ) {
 	companion object {
@@ -81,6 +81,12 @@ data class MusicMetadata(val mediaId: String? = null,
 					album = desc.extras?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM),
 					extras = desc.extras
 			)
+		}
+
+		fun copy(other: MusicMetadata, mediaId: String? = null, queueId: Long? = null, playable: Boolean? = null, browseable: Boolean? = null, duration: Long? = null, coverArt: Bitmap? = null,
+		         coverArtUri: String? = null, icon: Bitmap? = null, artist: String? = null, album: String? = null, title: String? = null, subtitle: String? = null, trackCount: Long? = null,
+		         trackNumber: Long? = null): MusicMetadata {
+			return MusicMetadata(mediaId = mediaId ?: other.mediaId, queueId = queueId ?: other.queueId, playable = playable ?: other.playable, browseable = browseable ?: other.browseable, duration = duration ?: other.duration, coverArt = coverArt ?: other.coverArt, coverArtUri = coverArtUri ?: other.coverArtUri, icon = icon ?: other.icon, artist = artist ?: other.artist, album = album ?: other.album, title = title ?: other.title, subtitle = subtitle ?: other.subtitle, trackCount = trackCount ?: other.trackCount, trackNumber = trackNumber ?: other.trackNumber)
 		}
 	}
 

@@ -46,6 +46,11 @@ class TestSpotifyMusicAppController {
 			whenever(result.setResultCallback(imagesCallback.capture())) doReturn result
 			result
 		}
+		on { getImage(any(), any()) } doAnswer {
+			val result = mock<CallResult<Bitmap>>()
+			whenever(result.setResultCallback(imagesCallback.capture())) doReturn result
+			result
+		}
 	}
 	val playerApi = mock<PlayerApi> {
 		on { subscribeToPlayerState() } doAnswer {
@@ -540,30 +545,69 @@ class TestSpotifyMusicAppController {
 	}
 
 	@Test
+	fun testGetCoverArt() {
+		val imageUri = ImageUri("test")
+		val mockBitmap: Bitmap = mock()
+
+		// cover art cache miss
+		val nullCoverArtBitmap = controller.getCoverArt(imageUri)
+		assertNull(nullCoverArtBitmap)
+
+		verify(imagesApi).getImage(imageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(mockBitmap)
+
+		// cover art cache hit
+		val coverArtBitmap = controller.getCoverArt(imageUri)
+		assertEquals(mockBitmap, coverArtBitmap)
+	}
+
+	@Test
 	fun testQueue() {
+		val queueTitle = "title"
+		val queueSubtitle = "subtitle"
+		val queueImageUri = ImageUri("imageUri")
+		val queueCoverArtBitmap: Bitmap = mock()
+
 		// load a queue
-		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", "title", "subtitle", "playlist"))
-		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, "title", "subtitle", false, true), 200, 0)
+		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "playlist"))
+		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, queueTitle, queueSubtitle, false, true), 200, 0)
 		contentCallback.lastValue.onResult(ListItems(200, 0, 2, arrayOf(
 				ListItem("id", "uri", null, "Title", "Subtitle", true, false)
 		)))
 		// it should request again
-		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, "title", "subtitle", false, true), 200, 1)
+		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, queueTitle, queueSubtitle, false, true), 200, 1)
 		contentCallback.lastValue.onResult(ListItems(200, 1, 2, arrayOf(
 				ListItem("id2", "uri2", null, "Title2", "Subtitle", true, false)
 		)))
 
+		// it should get the QueueMetadata information
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, queueTitle, queueSubtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
 		val queue = controller.getQueue()
-		assertEquals(2, queue.size)
-		assertNotEquals(null, queue[0].queueId)
-		assertEquals("Title", queue[0].title)
-		assertEquals("Title2", queue[1].title)
+		assertNotNull(queue)
+		assertEquals(queueTitle, queue!!.title)
+		assertEquals(queueSubtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertNotEquals(null, songs[0].queueId)
+		assertEquals("Title", songs[0].title)
+		assertEquals("Title2", songs[1].title)
 
 		// fail to skip
 		controller.playQueue(MusicMetadata(queueId = 345))
 		verify(playerApi, never()).skipToIndex(any(), any())
 		// try to skip to it
-		controller.playQueue(queue[0])
+		controller.playQueue(songs[0])
 		verify(playerApi).skipToIndex("playlisturi", 0)
 	}
 
