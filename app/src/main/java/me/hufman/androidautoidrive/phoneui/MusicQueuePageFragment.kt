@@ -72,7 +72,7 @@ class MusicQueuePageFragment: Fragment() {
 				(activity as MusicPlayerActivity).showNowPlaying()
 			}
 		}
-
+		redrawQueueUI()
 		listQueueRefresh.setOnRefreshListener {
 			redrawQueueUI()
 			Handler(this.context?.mainLooper).postDelayed({

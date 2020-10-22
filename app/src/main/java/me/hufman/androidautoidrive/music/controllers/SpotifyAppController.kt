@@ -315,6 +315,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			queueItems.forEachIndexed { index, it ->
 				if (it.queueId == song.queueId) {
 					remote.playerApi.skipToIndex(queueUri, index)
+					return
 				}
 			}
 		}

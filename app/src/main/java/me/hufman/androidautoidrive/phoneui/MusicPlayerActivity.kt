@@ -102,6 +102,13 @@ class MusicPlayerActivity: AppCompatActivity() {
 				pgrMusicPlayer.currentItem = 0
 			}
 		}
+		if (pgrMusicPlayer.currentItem == 2) {
+			val container = (pgrMusicPlayer.adapter as MusicPlayerPagerAdapter).getItem(2) as MusicQueueFragment
+			val popped = container.onBackPressed()
+			if (!popped) {
+				pgrMusicPlayer.currentItem = 0
+			}
+		}
 	}
 }
 
