@@ -7,6 +7,8 @@
 /.idea/workspace.xml
 /.idea/libraries
 /.idea/caches
+/.idea/compiler.xml
+/.idea/jarRepositories.xml
 .DS_Store
 /build
 /captures

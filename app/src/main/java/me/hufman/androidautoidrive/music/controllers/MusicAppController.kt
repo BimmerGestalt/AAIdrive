@@ -1,6 +1,5 @@
 package me.hufman.androidautoidrive.music.controllers
 
-import android.os.DeadObjectException
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.music.*
 
@@ -32,7 +31,7 @@ interface MusicAppController {
 	fun toggleRepeat()
 
 	/* Current state */
-	fun getQueue(): List<MusicMetadata>
+	fun getQueue(): QueueMetadata?
 
 	fun getMetadata(): MusicMetadata?
 

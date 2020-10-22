@@ -32,6 +32,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 	var hmiContextChangedTime = 0L
 	var appListViewVisible = false
 	var playbackViewVisible = false
+	var enqueuedViewVisible = false
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
 	val enqueuedView: EnqueuedView
@@ -83,7 +84,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 		}
 		playbackView = PlaybackView(playbackStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources, graphicsHelpers, musicImageIDs)
 		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, graphicsHelpers, musicImageIDs)
-		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, musicImageIDs)
+		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, graphicsHelpers, musicImageIDs)
 		browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController, musicImageIDs)
 		inputState = unclaimedStates.removeFirst { it.componentsList.filterIsInstance<RHMIComponent.Input>().firstOrNull()?.suggestModel ?: 0 > 0 }
 		customActionsView = CustomActionsView(unclaimedStates.removeFirst { CustomActionsView.fits(it) }, graphicsHelpers, musicController)
@@ -164,11 +165,20 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 						playbackView.show()
 					}
 				}
+				//gained focus
 				if (componentId == enqueuedView.state.id &&
-						eventId == 1 &&     //Focus
+						eventId == 1 &&
 						args?.get(4.toByte()) as? Boolean == true
 				) {
+					enqueuedViewVisible = true
 					enqueuedView.show()
+				}
+				//lost focus
+				else if (componentId == enqueuedView.state.id &&
+						eventId == 1 &&
+						args?.get(4.toByte()) as? Boolean == false)
+				{
+					enqueuedViewVisible = false
 				}
 				if (componentId == customActionsView.state.id &&
 						eventId == 1 &&
@@ -299,6 +309,9 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 		}
 		if (playbackViewVisible || playbackView.state is RHMIState.AudioHmiState) {
 			playbackView.redraw()
+		}
+		if (enqueuedViewVisible) {
+			enqueuedView.redraw()
 		}
 		// if running over USB or audio context is granted, set the global metadata
 		if (!musicAppMode.shouldRequestAudioContext() || avContext.currentContext) {

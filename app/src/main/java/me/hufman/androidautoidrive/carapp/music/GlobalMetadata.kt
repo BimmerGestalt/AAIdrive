@@ -49,7 +49,7 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 			showSong(song)
 		}
 
-		val queue = controller.getQueue()
+		val queue = controller.getQueue()?.songs
 		if (queue != displayedQueue || song != displayedSong) {
 			val icQueue = prepareQueue(queue, song)
 			showQueue(icQueue, song)

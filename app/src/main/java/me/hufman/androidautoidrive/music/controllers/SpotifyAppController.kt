@@ -20,7 +20,6 @@ import me.hufman.androidautoidrive.music.PlaybackPosition
 import java.lang.Exception
 import java.util.*
 
-
 class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): MusicAppController {
 	companion object {
 		const val TAG = "SpotifyAppController"
@@ -37,6 +36,14 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			return MusicMetadata(mediaId = track.uri, queueId = track.uri.hashCode().toLong(),
 					title = track.name, album = track.album.name, artist = track.artist.name, coverArt = coverArt)
 		}
+
+		fun MusicMetadata.Companion.fromSpotifyQueueListItem(listItem: ListItem): MusicMetadata {
+			return MusicMetadata(mediaId = listItem.uri, queueId = listItem.uri.hashCode().toLong(),
+					title = listItem.title, artist = listItem.subtitle,
+					playable = listItem.playable, browseable = listItem.hasChildren,
+					coverArtUri = listItem.imageUri?.raw)
+		}
+
 		fun MusicMetadata.Companion.fromSpotify(listItem: ListItem, coverArt: Bitmap? = null): MusicMetadata {
 			// browse result
 			return MusicMetadata(mediaId = listItem.uri, queueId = listItem.uri.hashCode().toLong(),
@@ -131,11 +138,13 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	var playerActions: PlayerRestrictions? = null
 	var playerOptions: PlayerOptions? = null
 	var currentTrack: MusicMetadata? = null
-	var coverArts = LruCache<ImageUri, Bitmap>(4)
+	var currentSongCoverArtCache = LruCache<ImageUri, Bitmap>(4)
 	var position: PlaybackPosition = PlaybackPosition(true, 0, 0, -1)
 	var currentTrackLibrary: Boolean? = null
 	var queueUri: String? = null
 	var queueItems: List<MusicMetadata> = LinkedList()
+	var queueMetadata: QueueMetadata? = null
+	val coverArtCache = LruCache<ImageUri, Bitmap>(50)
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -148,14 +157,14 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			// update the current track info
 			val track = playerState.track
 			if (track != null) {
-				val cachedCoverArt = coverArts[track.imageUri]
+				val cachedCoverArt = currentSongCoverArtCache[track.imageUri]
 				currentTrack = MusicMetadata.fromSpotify(track, coverArt = cachedCoverArt)
 				val loadingTrack = currentTrack
 				if (cachedCoverArt == null) {
 					// try to load the coverart
 					val coverArtLoader = remote.imagesApi.getImage(track.imageUri)
 					coverArtLoader.setResultCallback { coverArt ->
-						coverArts.put(track.imageUri, coverArt)
+						currentSongCoverArtCache.put(track.imageUri, coverArt)
 						if (loadingTrack?.mediaId == currentTrack?.mediaId) {   // still playing the same song
 							currentTrack = MusicMetadata.fromSpotify(track, coverArt = coverArt)
 							callback?.invoke(this)
@@ -187,12 +196,53 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 					val listItem = ListItem(uri, uri, null, playerContext.title, playerContext.subtitle, false, true)
 					loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
 						queueItems = it
+
+						// shuffle play button somehow gets returned with the rest of the tracks when loading an album
+						if (queueItems.isNotEmpty() && queueItems[0].artist == "" && queueItems[0].title == "Shuffle Play") {
+							queueItems = queueItems.drop(1)
+						}
+
+						buildQueueMetadata()
 						callback?.invoke(this)
 					}
 				}
 			}
 
 			callback?.invoke(this)
+		}
+	}
+
+	/**
+	 * Retrieves the cover art Bitmap for the provided ImageUri. If it is present in the coverArtCache
+	 * then the Bitmap is returned otherwise the imagesApi is called to asynchronously add the cover
+	 * art Bitmap to the cache and returns null in the meantime.
+	 */
+	fun getCoverArt(imageUri: ImageUri): Bitmap? {
+		val coverArt = coverArtCache.get(imageUri)
+		if (coverArt != null) {
+			return coverArt
+		} else {
+			remote.imagesApi.getImage(imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArtResponse ->
+				coverArtCache.put(imageUri, coverArtResponse)
+			}
+		}
+		return null
+	}
+
+	/**
+	 * Creates the QueueMetadata for the current queue containing the title, subtitle, queue songs,
+	 * and queue cover art.
+	 */
+	private fun buildQueueMetadata() {
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
+		remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
+			val item = recentlyPlayed?.items?.get(0)
+			if (item != null) {
+				remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
+					queueMetadata = QueueMetadata(item.title,item.subtitle,SpotifyMusicMetadata.createSpotifyMusicMetadataList(this, queueItems),coverArt)
+				}
+			}
 		}
 	}
 
@@ -217,7 +267,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		remote.contentApi.getChildrenOfItem(parentItem, 200, destination.size).setResultCallback { items ->
 			if (items != null && stillValid()) {    // this is still a valid request
 				destination.addAll(items.items.filterNotNull().map { listItem: ListItem ->
-					MusicMetadata.fromSpotify(listItem)
+					MusicMetadata.fromSpotifyQueueListItem(listItem)
 				})
 				if (destination.size < items.total && items.items.isNotEmpty()) {   // more tracks to load
 					loadPaginatedItems(destination, parentItem, stillValid, onComplete)
@@ -262,9 +312,10 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		// so, we have to iterate through the queue to find the user's selected queueId
 		val queueUri = this.queueUri
 		if (song.queueId != null) {
-			queueItems?.forEachIndexed { index, it ->
+			queueItems.forEachIndexed { index, it ->
 				if (it.queueId == song.queueId) {
 					remote.playerApi.skipToIndex(queueUri, index)
+					return
 				}
 			}
 		}
@@ -283,9 +334,9 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		}
 	}
 
-	override fun getQueue(): List<MusicMetadata> {
+	override fun getQueue(): QueueMetadata? {
 		// unreliable per https://github.com/spotify/android-sdk/issues/10
-		return queueItems ?: LinkedList()
+		return queueMetadata
 	}
 
 	override fun getMetadata(): MusicMetadata? {

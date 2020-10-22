@@ -8,6 +8,7 @@ import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.RepeatMode
+import me.hufman.androidautoidrive.music.QueueMetadata
 import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import org.junit.Assert.*
@@ -156,13 +157,13 @@ class TestCombinedMusicAppController {
 		verify(rightController, times(1)).getCustomActions()
 		verify(rightController, times(1)).customAction(customAction)
 
-		whenever(leftController.getQueue()) doAnswer {LinkedList()}
-		whenever(rightController.getQueue()) doAnswer {listOf(MusicMetadata())}
+		whenever(leftController.getQueue()) doAnswer { null }
+		whenever(rightController.getQueue()) doAnswer { QueueMetadata(null, null, listOf(MusicMetadata())) }
 		controller.playQueue(MusicMetadata(queueId = 1L))
-		verify(leftController).getQueue()
-		verify(rightController).getQueue()
+		verify(leftController, times(1)).getQueue()
+		verify(rightController, times(1)).getQueue()
 		verify(leftController, never()).playQueue(any())
-		verify(rightController).playQueue(any())
+		verify(rightController, times(1)).playQueue(any())
 	}
 
 	@Test
@@ -172,7 +173,7 @@ class TestCombinedMusicAppController {
 		val queue = controller.getQueue()
 		verify(leftController, never()).getQueue()
 		verify(rightController, never()).getQueue()
-		assertTrue(queue.isEmpty())
+		assertNull(queue)
 
 		val metadata = controller.getMetadata()
 		verify(leftController, never()).getMetadata()
@@ -213,14 +214,23 @@ class TestCombinedMusicAppController {
 	fun testQueue() {
 		leftObservable.value = leftController
 		rightObservable.value = rightController
-		whenever(leftController.getQueue()).doAnswer { LinkedList() }
-		whenever(rightController.getQueue()).doAnswer { listOf(mock()) }
+
+		val queueTitle = "title"
+		val queueSubtitle = "subtitle"
+
+		whenever(leftController.getQueue()).doAnswer { null }
+		whenever(rightController.getQueue()).doAnswer { QueueMetadata(queueTitle, queueSubtitle, listOf(mock())) }
 
 		val queue = controller.getQueue()
 		verify(leftController, times(1)).getQueue()
 		verify(rightController, times(2)).getQueue()
 
-		assertEquals(1, queue.size)
+		assertNotNull(queue)
+		assertEquals(queueTitle, queue!!.title)
+		assertEquals(queueSubtitle, queue.subtitle)
+		assertNotNull(queue.songs)
+		assertEquals(1, queue.songs!!.size)
+
 		controller.playQueue(MusicMetadata(queueId = 0))
 		verify(leftController, times(2)).getQueue()
 		verify(rightController, times(3)).getQueue()

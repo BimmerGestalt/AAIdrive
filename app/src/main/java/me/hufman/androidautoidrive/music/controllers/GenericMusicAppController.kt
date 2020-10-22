@@ -101,12 +101,11 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 	}
 
 	/* Current state */
-	override fun getQueue(): List<MusicMetadata> {
+	override fun getQueue(): QueueMetadata? {
 		triggerSpotifyWorkaround()
-
 		return remoteData {
-			mediaController.queue?.map { MusicMetadata.fromQueueItem(it) }
-		} ?: LinkedList()
+			QueueMetadata(mediaController.queueTitle?.toString(), null, mediaController.queue?.map { MusicMetadata.fromQueueItem(it) })
+		}
 	}
 
 	override fun getMetadata(): MusicMetadata? = remoteData {

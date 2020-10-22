@@ -1,33 +1,61 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import de.bmw.idrive.BMWRemoting
+import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.music.QueueMetadata
 import me.hufman.idriveconnectionkit.rhmi.*
+import kotlin.math.max
 
-class EnqueuedView(val state: RHMIState, val musicController: MusicController, val musicImageIDs: MusicImageIDs) {
+class EnqueuedView(val state: RHMIState, val musicController: MusicController, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {
+		//current default row width only supports 22 chars before rolling over
+		private const val ROW_LINE_MAX_LENGTH = 22
+
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.PlainState &&
 					state.componentsList.filterIsInstance<RHMIComponent.List>().isNotEmpty() &&
-					state.componentsList.filterIsInstance<RHMIComponent.Image>().isEmpty() &&
+					state.componentsList.filterIsInstance<RHMIComponent.Image>().isNotEmpty() &&
 					state.componentsList.filterIsInstance<RHMIComponent.Separator>().isEmpty()
 		}
 	}
 
 	val listComponent: RHMIComponent.List
+	val queueImageComponent: RHMIComponent.Image
+	val titleLabelComponent: RHMIComponent.Label
+	val subtitleLabelComponent: RHMIComponent.Label
 	var currentSong: MusicMetadata? = null
 	val songsList = ArrayList<MusicMetadata>()
 	val songsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3)
-	val songsListAdapter = object: RHMIListAdapter<MusicMetadata>(3, songsList) {
+	var queueMetadata: QueueMetadata? = null
+	var visibleRows: List<MusicMetadata> = emptyList()
+	var visibleRowsOriginalMusicMetadata: List<MusicMetadata> = emptyList()
+	var selectedIndex: Int = 0
+
+	var songsListAdapter = object: RHMIListAdapter<MusicMetadata>(4, songsList) {
 		override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
 			val checkmark = if (item.queueId == currentSong?.queueId) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK) else ""
-			return arrayOf(checkmark,
-						"",
-						UnicodeCleaner.clean(item.title ?: ""))
+
+			val coverArt = item.coverArt
+			val coverArtImage = if (coverArt != null) graphicsHelpers.compress(coverArt, 90, 90, quality = 30) else ""
+
+			var title = UnicodeCleaner.clean(item.title ?: "")
+			if (title.length > ROW_LINE_MAX_LENGTH) {
+				title = title.substring(0, 20) + "..."
+			}
+			val artist = UnicodeCleaner.clean(item.artist ?: "")
+			val songMetaDataText = "${title}\n${artist}"
+
+			return arrayOf(
+					checkmark,
+					coverArtImage,
+					"",
+					songMetaDataText
+			)
 		}
 	}
 
@@ -35,43 +63,158 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		state as RHMIState.PlainState
 
 		listComponent = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
+		queueImageComponent = state.componentsList.filterIsInstance<RHMIComponent.Image>().first()
+		titleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[0]
+		subtitleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[1]
 
 		songsEmptyList.addRow(arrayOf("", "", L.MUSIC_QUEUE_EMPTY))
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {
-		state.getTextModel()?.asRaDataModel()?.value = L.MUSIC_QUEUE_TITLE
+		// this is required for pagination system
+		listComponent.setProperty(RHMIProperty.PropertyId.VALID, false)
+
 		listComponent.setVisible(true)
-		listComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,50,*")
+		listComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,90,10,*")
 		listComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
 		listComponent.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { onClick(it) }
+		listComponent.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { onSelectAction(it) }
 	}
 
 	fun show() {
 		currentSong = musicController.getMetadata()
+		val newQueueMetadata = musicController.getQueue()
+
+		// same queue as before, just select currently playing song
+		if (queueMetadata != null && queueMetadata == newQueueMetadata) {
+			showCurrentlyPlayingSong()
+			return
+		}
+
+		queueMetadata = newQueueMetadata
 		songsList.clear()
-		val songs = musicController.getQueue()
+		val songs = queueMetadata?.songs
 		if (songs?.isNotEmpty() == true) {
 			listComponent.setEnabled(true)
 			listComponent.setSelectable(true)
 			songsList.addAll(songs)
-			listComponent.getModel()?.setValue(songsListAdapter, 0, songsListAdapter.height, songsListAdapter.height)
+			showList()
+			listComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
+				showList(startIndex, numRows)
 
-			// set the selection to the current song
-			val index = songs.indexOfFirst { it.queueId == currentSong?.queueId }
-			if (index >= 0) {
-				state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
-						mapOf(0.toByte() to listComponent.id, 41.toByte() to index)
-				)
+				val endIndex = if (startIndex + numRows >= songsList.size) songsList.size - 1 else startIndex + numRows
+				visibleRows = songsListAdapter.realData.subList(startIndex, endIndex + 1).toMutableList()
+				visibleRowsOriginalMusicMetadata = visibleRows.map { MusicMetadata.copy(it) }
 			}
+
+			showCurrentlyPlayingSong()
 		} else {
 			listComponent.setEnabled(false)
 			listComponent.setSelectable(false)
 			listComponent.getModel()?.setValue(songsEmptyList, 0, songsEmptyList.height, songsEmptyList.height)
 		}
+
+		val queueTitle = UnicodeCleaner.clean(queueMetadata?.title ?: "")
+		val queueSubtitle = UnicodeCleaner.clean(queueMetadata?.subtitle ?: "")
+		if (queueTitle.isBlank() && queueSubtitle.isBlank()) {
+			state.getTextModel()?.asRaDataModel()?.value = L.MUSIC_QUEUE_TITLE
+		} else {
+			state.getTextModel()?.asRaDataModel()?.value = "$queueTitle - $queueSubtitle"
+		}
+
+		val queueCoverArt = queueMetadata?.coverArt
+		if (queueCoverArt != null) {
+			queueImageComponent.setVisible(true)
+			queueImageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(queueCoverArt, 180, 180, quality = 60)
+			titleLabelComponent.getModel()?.asRaDataModel()?.value = queueTitle
+			subtitleLabelComponent.getModel()?.asRaDataModel()?.value = queueSubtitle
+		}
+		else {
+			titleLabelComponent.getModel()?.asRaDataModel()?.value = ""
+			subtitleLabelComponent.getModel()?.asRaDataModel()?.value = ""
+			queueImageComponent.setVisible(false)
+		}
 	}
 
-	fun onClick(index: Int) {
+	fun redraw() {
+		// need a full redraw if the queue is different or has been modified
+		if (musicController.getQueue() != queueMetadata) {
+			show()
+			return
+		}
+
+		// song actually playing is different than what the current song is then update checkmark
+		if (currentSong?.mediaId != musicController.getMetadata()?.mediaId) {
+			val oldPlayingIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
+			currentSong = musicController.getMetadata()
+			val playingIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
+
+			// remove checkmark from old song
+			showList(oldPlayingIndex, 1)
+
+			// add checkmark to new song
+			showList(playingIndex, 1)
+		}
+
+		// redraw all currently visible rows if one of them has a cover art that was retrieved
+		for ((index, metadata) in visibleRowsOriginalMusicMetadata.withIndex()) {
+			if (metadata != visibleRows[index]) {
+				// can only see roughly 5 rows
+				showList(max(0, selectedIndex - 4), 8)
+				break
+			}
+		}
+	}
+
+	/**
+	 * Sets the list selection to the current song.
+	 */
+	private fun setSelectionToCurrentSong(index: Int) {
+		if (index >= 0) {
+			state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
+					mapOf(0.toByte() to listComponent.id, 41.toByte() to index)
+			)
+			onSelectAction(index)
+		}
+	}
+
+	/**
+	 * On select action callback. This is called every time the user scrolls in the queue list component.
+	 */
+	private fun onSelectAction(index: Int) {
+		selectedIndex = index
+
+		if (index != 0) {
+			titleLabelComponent.setVisible(false)
+			subtitleLabelComponent.setVisible(false)
+		} else {
+			titleLabelComponent.setVisible(true)
+			subtitleLabelComponent.setVisible(true)
+		}
+	}
+
+	/**
+	 * Shows the list component content from the start index for the specified number of rows.
+	 */
+	private fun showList(startIndex: Int = 0, numRows: Int = 10) {
+		if (startIndex >= 0) {
+			listComponent.getModel()?.setValue(songsListAdapter, startIndex, numRows, songsListAdapter.height)
+		}
+	}
+
+	/**
+	 * Shows and sets the selection to the currently playing song.
+	 */
+	private fun showCurrentlyPlayingSong() {
+		val selectedIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
+		showList(selectedIndex)
+		setSelectionToCurrentSong(selectedIndex)
+	}
+
+	/**
+	 * On click callback for when the user selects a queue list item.
+	 */
+	private fun onClick(index: Int) {
 		val song = songsList.getOrNull(index)
 		if (song?.queueId != null) {
 			musicController.playQueue(song)

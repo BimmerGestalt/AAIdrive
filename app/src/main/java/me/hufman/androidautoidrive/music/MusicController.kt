@@ -262,7 +262,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 
 	/* Current state */
 	/** Gets the current queue */
-	fun getQueue(): List<MusicMetadata>? {
+	fun getQueue(): QueueMetadata? {
 		return withController { controller ->
 			return controller.getQueue()
 		}
