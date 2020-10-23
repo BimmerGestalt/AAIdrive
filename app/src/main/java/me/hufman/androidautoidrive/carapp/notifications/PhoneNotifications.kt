@@ -63,7 +63,7 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 		readoutInteractions = ReadoutInteractions(notificationSettings)
 
 		// set up the app in the car
-		carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)))
+		carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)), carConnection)
 		carappListener.app = carApp
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
@@ -135,7 +135,9 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 			amInfo[languageCode] = name
 		}
 
-		carConnection.am_registerApp(amHandle, "androidautoidrive.notifications", amInfo)
+		synchronized(carConnection) {
+			carConnection.am_registerApp(amHandle, "androidautoidrive.notifications", amInfo)
+		}
 	}
 
 	inner class CarAppListener: BaseBMWRemotingClient() {
@@ -155,17 +157,17 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 			Log.w(TAG, "Received rhmi_onActionEvent: handle=$handle ident=$ident actionId=$actionId")
 			try {
 				app?.actions?.get(actionId)?.asRAAction()?.rhmiActionCallback?.onActionEvent(args)
-				carApp.runSynchronized {
+				synchronized(server!!) {
 					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
 				}
 			} catch (e: RHMIActionAbort) {
 				// Action handler requested that we don't claim success
-				carApp.runSynchronized {
+				synchronized(server!!) {
 					server?.rhmi_ackActionEvent(handle, actionId, 1, false)
 				}
 			} catch (e: Exception) {
 				Log.e(TAG, "Exception while calling onActionEvent handler! $e")
-				carApp.runSynchronized {
+				synchronized(server!!) {
 					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
 				}
 			}
