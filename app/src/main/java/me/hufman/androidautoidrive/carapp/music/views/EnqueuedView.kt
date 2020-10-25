@@ -21,7 +21,9 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.PlainState &&
 					state.componentsList.filterIsInstance<RHMIComponent.List>().isNotEmpty() &&
-					state.componentsList.filterIsInstance<RHMIComponent.Image>().isNotEmpty() &&
+					state.componentsList.filterIsInstance<RHMIComponent.Image>().any {
+						!it.properties.containsKey(RHMIProperty.PropertyId.POSITION_X.id)
+					} &&
 					state.componentsList.filterIsInstance<RHMIComponent.Separator>().isEmpty()
 		}
 	}
@@ -45,7 +47,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			val coverArt = item.coverArt
 			val coverArtImage = if (coverArt != null) graphicsHelpers.compress(coverArt, 90, 90, quality = 30) else ""
 
-			var title = UnicodeCleaner.clean(item.title ?: "").truncate(ROW_LINE_MAX_LENGTH)
+			val title = UnicodeCleaner.clean(item.title ?: "").truncate(ROW_LINE_MAX_LENGTH)
 			val artist = UnicodeCleaner.clean(item.artist ?: "").truncate(ROW_LINE_MAX_LENGTH)
 			val songMetaDataText = "${title}\n${artist}"
 
@@ -62,7 +64,9 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		state as RHMIState.PlainState
 
 		listComponent = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
-		queueImageComponent = state.componentsList.filterIsInstance<RHMIComponent.Image>().first()
+		queueImageComponent = state.componentsList.filterIsInstance<RHMIComponent.Image>().first {
+			!it.properties.containsKey(RHMIProperty.PropertyId.POSITION_X.id)
+		}
 		titleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[0]
 		subtitleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[1]
 
@@ -70,6 +74,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {
+		queueImageComponent.setProperty(RHMIProperty.PropertyId.WIDTH, 180)
 		titleLabelComponent.setProperty(RHMIProperty.PropertyId.CUTTYPE, 0)
 		subtitleLabelComponent.setProperty(RHMIProperty.PropertyId.CUTTYPE, 0)
 

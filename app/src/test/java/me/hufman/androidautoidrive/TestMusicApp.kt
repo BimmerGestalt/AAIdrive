@@ -283,6 +283,7 @@ class TestMusicApp {
 		assertEquals(false, enqueuedView.listComponent.properties[RHMIProperty.PropertyId.VALID.id]?.value)
 		assertEquals(true, enqueuedView.listComponent.properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
 		assertEquals("57,90,10,*", enqueuedView.listComponent.properties[RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id]?.value)
+		assertEquals(180, enqueuedView.queueImageComponent.properties[RHMIProperty.PropertyId.WIDTH.id]?.value)
 	}
 
 	fun testAppInitCustomActionsView(customActionsView: CustomActionsView) {
