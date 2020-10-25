@@ -274,3 +274,10 @@ fun JSONObject.toMap(): Map<String, Any?> {
 		it to this[it]
 	}.toMap()
 }
+
+fun String.truncate(length: Int, suffix: String = "..."): String {
+	if (this.length > length) {
+		return this.substring(0, length - suffix.length) + suffix
+	}
+	return this
+}

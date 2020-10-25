@@ -8,6 +8,7 @@ import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.QueueMetadata
+import me.hufman.androidautoidrive.truncate
 import me.hufman.idriveconnectionkit.rhmi.*
 import kotlin.math.max
 
@@ -15,6 +16,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	companion object {
 		//current default row width only supports 22 chars before rolling over
 		private const val ROW_LINE_MAX_LENGTH = 22
+		private const val TITLE_MAX_LENGTH = 35
 
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.PlainState &&
@@ -43,11 +45,8 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			val coverArt = item.coverArt
 			val coverArtImage = if (coverArt != null) graphicsHelpers.compress(coverArt, 90, 90, quality = 30) else ""
 
-			var title = UnicodeCleaner.clean(item.title ?: "")
-			if (title.length > ROW_LINE_MAX_LENGTH) {
-				title = title.substring(0, 20) + "..."
-			}
-			val artist = UnicodeCleaner.clean(item.artist ?: "")
+			var title = UnicodeCleaner.clean(item.title ?: "").truncate(ROW_LINE_MAX_LENGTH)
+			val artist = UnicodeCleaner.clean(item.artist ?: "").truncate(ROW_LINE_MAX_LENGTH)
 			val songMetaDataText = "${title}\n${artist}"
 
 			return arrayOf(
@@ -129,8 +128,8 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		if (queueCoverArt != null) {
 			queueImageComponent.setVisible(true)
 			queueImageComponent.getModel()?.asRaImageModel()?.value = graphicsHelpers.compress(queueCoverArt, 180, 180, quality = 60)
-			titleLabelComponent.getModel()?.asRaDataModel()?.value = queueTitle
-			subtitleLabelComponent.getModel()?.asRaDataModel()?.value = queueSubtitle
+			titleLabelComponent.getModel()?.asRaDataModel()?.value = queueTitle.truncate(TITLE_MAX_LENGTH)
+			subtitleLabelComponent.getModel()?.asRaDataModel()?.value = queueSubtitle.truncate(TITLE_MAX_LENGTH)
 		}
 		else {
 			titleLabelComponent.getModel()?.asRaDataModel()?.value = ""
