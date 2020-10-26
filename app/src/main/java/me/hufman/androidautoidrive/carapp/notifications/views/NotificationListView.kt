@@ -180,13 +180,14 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 			Log.w(TAG, "DeferredUpdate not built yet, redrawing immediately")
 			redrawNotificationList()
 		} else {
-			deferredUpdate.trigger {
+			deferredUpdate.trigger(0) {
 				if (visible) {
 					Log.i(TAG, "Updating list of notifications")
 					redrawNotificationList()
 				} else {
 					Log.i(TAG, "Notification list is not on screen, skipping update")
 				}
+				deferredUpdate.defer(INTERACTION_DEBOUNCE_MS.toLong())   // wait at least this long before doing another update
 			}
 		}
 	}

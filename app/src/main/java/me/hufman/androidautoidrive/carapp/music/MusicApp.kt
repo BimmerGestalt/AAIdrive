@@ -27,7 +27,7 @@ const val TAG = "MusicApp"
 class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val musicImageIDs: MusicImageIDs, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController, val musicAppMode: MusicAppMode) {
 	val carApp = createRHMIApp()
 
-	val avContext = AVContextHandler(carApp, musicController, graphicsHelpers, musicAppMode)
+	val avContext = AVContextHandler((carApp.unwrap() as RHMIApplicationEtch).remoteServer, musicController, graphicsHelpers, musicAppMode)
 	val globalMetadata = GlobalMetadata(carApp, musicController)
 	var hmiContextChangedTime = 0L
 	var appListViewVisible = false
@@ -57,12 +57,12 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		// set up the app in the car
-		val carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)))
+		val carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)), carConnection)
 		carappListener.app = carApp
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
 		// register for events from the car
-		carApp.runSynchronized {
+		synchronized(carConnection) {
 			carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1)
 			carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1, -1)
 
@@ -127,17 +127,17 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 //			Log.i(TAG, "Received rhmi_onActionEvent: handle=$handle ident=$ident actionId=$actionId")
 			try {
 				app?.actions?.get(actionId)?.asRAAction()?.rhmiActionCallback?.onActionEvent(args)
-				carApp.runSynchronized {
+				synchronized(server!!) {
 					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
 				}
 			} catch (e: RHMIActionAbort) {
 				// Action handler requested that we don't claim success
-				carApp.runSynchronized {
+				synchronized(server!!) {
 					server?.rhmi_ackActionEvent(handle, actionId, 1, false)
 				}
 			} catch (e: Exception) {
 				Log.e(TAG, "Exception while calling onActionEvent handler!", e)
-				carApp.runSynchronized {
+				synchronized(server!!) {
 					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
 				}
 			}
@@ -246,7 +246,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 				val appInfo = avContext.getAppInfo(appId) ?: return
 				avContext.av_requestContext(appInfo)
 				app?.events?.values?.filterIsInstance<RHMIEvent.FocusEvent>()?.firstOrNull()?.triggerEvent(mapOf(0.toByte() to playbackView.state.id))
-				carApp.runSynchronized {
+				synchronized(server!!) {
 					server?.am_showLoadedSuccessHint(avContext.amHandle)
 				}
 				avContext.amRecreateApp(appInfo)

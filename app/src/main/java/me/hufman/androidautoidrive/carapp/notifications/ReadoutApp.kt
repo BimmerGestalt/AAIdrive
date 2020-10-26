@@ -35,7 +35,7 @@ class ReadoutApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppRes
 		// no icons or text, so sneaky
 		carConnection.rhmi_initialize(rhmiHandle)
 
-		carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)))
+		carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)), carConnection)
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 		val readoutController = ReadoutController.build(carApp, "NotificationReadout")
 		listener.readoutController = readoutController

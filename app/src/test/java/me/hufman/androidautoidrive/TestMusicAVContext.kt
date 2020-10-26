@@ -66,7 +66,7 @@ class TestMusicAVContext {
 		val musicAppMode = mock<MusicAppMode> {
 			on { shouldId5Playback() } doReturn true
 		}
-		val avContext = AVContextHandler(RHMIApplicationSynchronized(mock<RHMIApplicationEtch>()), mock(), mock(), musicAppMode)
+		val avContext = AVContextHandler(mock(), mock(), mock(), musicAppMode)
 		val spotifyAm = avContext.getAMInfo(MusicAppInfo("Spotify", mock(), "com.spotify.music", null))
 		assertEquals(500, spotifyAm[5])
 	}
