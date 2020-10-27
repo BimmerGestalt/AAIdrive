@@ -170,7 +170,10 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	fun play() {
 		desiredPlayback = true
 		asyncControl { controller ->
-			controller.play()
+			// some apps interrupt the audio when already playing during play()
+			if (getPlaybackPosition().playbackPaused) {
+				controller.play()
+			}
 		}
 	}
 	fun playFromSearch(search: String) = asyncControl { controller ->
