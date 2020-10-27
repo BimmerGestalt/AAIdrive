@@ -12,7 +12,8 @@ class AVContextHandler(val carConnection: BMWRemotingServer, val controller: Mus
 	val MY_IDENT = "me.hufman.androidautoidrive.music"  // AM and AV ident string
 	val TAG = "AVContextHandler"
 	var avHandle: Int? = null
-	@Volatile var currentContext = false  // whether we are the current playing app.. the car doesn't grantConnection if we are already connected
+	var currentContext = false  // whether we are the current playing app.. the car doesn't grantConnection if we are already connected
+	var currentState: BMWRemoting.AVPlayerState? = null // what state the car wishes we had
 
 	/**
 	 * Creates the avHandle
@@ -47,10 +48,10 @@ class AVContextHandler(val carConnection: BMWRemotingServer, val controller: Mus
 					Log.i(TAG, "avHandle is not set up yet, not requesting context")
 				}
 			}
-			if (currentContext || avHandle == null) {
+			if (currentContext && currentState == BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY
+					|| avHandle == null) {
 				// start playback if we are the current AV context
-				// or play anyways if we have the wrong instanceId
-				// the car will respond with av_connectionDenied if instanceId is incorrect (null coalesced to a random guess)
+				// or play anyways if we don't know the context yet
 				enactPlayerState(BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 				av_playerStateChanged(avHandle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 			}
@@ -75,6 +76,7 @@ class AVContextHandler(val carConnection: BMWRemotingServer, val controller: Mus
 	fun av_requestPlayerState(handle: Int?, connectionType: BMWRemoting.AVConnectionType?, playerState: BMWRemoting.AVPlayerState?) {
 		Log.i(TAG, "Received requestPlayerState $playerState")
 		if (playerState != null) {
+			currentState = playerState
 			enactPlayerState(playerState)
 			// slightly cheating, telling the car that we are playing without being certain the app is connected
 			av_playerStateChanged(handle, connectionType, playerState)

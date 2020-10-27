@@ -128,6 +128,7 @@ class TestMusicAVContext {
 		musicAppListener.lastValue.run()
 		// the context was created
 		assertEquals(1, mockServer.avConnections.size)
+		// reset for subsequent tests
 		IDriveConnectionListener.reset()
 		IDriveConnectionListener.setConnection("", "localhost", 4008, null)
 		IDriveConnectionListener.reset()
@@ -156,6 +157,11 @@ class TestMusicAVContext {
 		mockClient.av_requestPlayerState(0, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_STOP)
 		verify(musicController).pause()
 		reset(musicController)
+
+		// test that, when paused and current context, the user requesting playback through entrybutton does not start playback
+		mockClient.am_onAppEvent(1, "1", mockServer.amApps[0], BMWRemoting.AMEvent.AM_APP_START)
+		verify(musicController).connectAppManually(musicAppInfo)    // prepares but doesn't start playing
+		verify(musicController, never()).play()
 
 		// car tells us to pause
 		mockClient.av_connectionDeactivated(0, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
