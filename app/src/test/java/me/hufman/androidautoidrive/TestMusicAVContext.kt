@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
+import me.hufman.androidautoidrive.carapp.AMAppList
 import me.hufman.androidautoidrive.carapp.music.AVContextHandler
 import me.hufman.androidautoidrive.carapp.music.MusicApp
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
@@ -63,11 +64,8 @@ class TestMusicAVContext {
 	/** Test that a Spotify AM icon lines up where the Spotify RHMI icon goes */
 	@Test
 	fun testAmSpotifyWeight() {
-		val musicAppMode = mock<MusicAppMode> {
-			on { shouldId5Playback() } doReturn true
-		}
-		val avContext = AVContextHandler(mock(), mock(), mock(), musicAppMode)
-		val spotifyAm = avContext.getAMInfo(MusicAppInfo("Spotify", mock(), "com.spotify.music", null))
+		val amHandler = AMAppList<MusicAppInfo>(mock(), mock(), "test", -173)
+		val spotifyAm = amHandler.getAMInfo(MusicAppInfo("Spotify", mock(), "com.spotify.music", null))
 		assertEquals(500, spotifyAm[5])
 	}
 
@@ -130,6 +128,7 @@ class TestMusicAVContext {
 		musicAppListener.lastValue.run()
 		// the context was created
 		assertEquals(1, mockServer.avConnections.size)
+		// reset for subsequent tests
 		IDriveConnectionListener.reset()
 		IDriveConnectionListener.setConnection("", "localhost", 4008, null)
 		IDriveConnectionListener.reset()
@@ -158,6 +157,11 @@ class TestMusicAVContext {
 		mockClient.av_requestPlayerState(0, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_STOP)
 		verify(musicController).pause()
 		reset(musicController)
+
+		// test that, when paused and current context, the user requesting playback through entrybutton does not start playback
+		mockClient.am_onAppEvent(1, "1", mockServer.amApps[0], BMWRemoting.AMEvent.AM_APP_START)
+		verify(musicController).connectAppManually(musicAppInfo)    // prepares but doesn't start playing
+		verify(musicController, never()).play()
 
 		// car tells us to pause
 		mockClient.av_connectionDeactivated(0, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
@@ -208,19 +212,27 @@ class TestMusicAVContext {
 
 		val musicAppInfo = MusicAppInfo("Test", mock(), "example.test", null)
 		whenever(musicAppDiscovery.connectableApps) doAnswer {listOf(musicAppInfo)}
-		app.avContext.updateApps(listOf(musicAppInfo))
+		whenever(musicAppDiscovery.validApps) doAnswer {listOf(musicAppInfo)}
 
-		// the previously-remembered app
+		// set the previously-remembered app
 		whenever(musicController.loadDesiredApp()) doReturn musicAppInfo.packageName
+
 		// car wants us to start playing
 		mockClient.av_connectionGranted(0, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
+		mockClient.av_requestPlayerState(0, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
+
+		// it should indicate that we want to play
+		verify(musicController).play()
+
+		// trigger app discovery callback
+		val callbackCaptor = argumentCaptor<Runnable>()
+		verify(musicAppDiscovery).listener = callbackCaptor.capture()
+		callbackCaptor.lastValue.run()
+
 		// and so it should have resumed
 		verify(musicController).connectAppAutomatically(musicAppInfo)
 
 		// claim that an app is currently playing
 		whenever(musicController.musicSessions.getPlayingApp()) doReturn musicAppInfo
-
-		// car wants us to start playing
-		mockClient.av_connectionGranted(0, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT)
 	}
 }
