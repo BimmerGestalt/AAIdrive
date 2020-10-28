@@ -7,10 +7,12 @@ import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.Utils.loadZipfile
+import me.hufman.androidautoidrive.carapp.AMAppList
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
+import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.removeFirst
 import me.hufman.idriveconnectionkit.IDriveConnection
@@ -28,6 +30,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 	val carApp = createRHMIApp()
 
 	val avContext = AVContextHandler((carApp.unwrap() as RHMIApplicationEtch).remoteServer, musicController, graphicsHelpers, musicAppMode)
+	val amAppList: AMAppList<MusicAppInfo>
 	val globalMetadata = GlobalMetadata(carApp, musicController)
 	var hmiContextChangedTime = 0L
 	var appListViewVisible = false
@@ -97,12 +100,14 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 
 		initWidgets()
 
+		// set up AM Apps
+		val adjustment = if (playbackView.state is RHMIState.AudioHmiState) { AMAppList.getAppWeight("Spotify") - (800 - 500) } else 0
+		amAppList = AMAppList((carApp.unwrap() as RHMIApplicationEtch).remoteServer, graphicsHelpers, "me.hufman.androidautoidrive.music", adjustment)
+
 		musicAppDiscovery.listener = Runnable {
-			avContext.updateApps(musicAppDiscovery.connectableApps)
-			// redraw the app list
-			if (appListViewVisible) {
-				appSwitcherView.redraw()
-			}
+			// make sure the car has AV Context
+			avContext.createAvHandle()
+
 			// switch the interface to the currently playing app
 			val nowPlaying = musicController.musicSessions.getPlayingApp()
 			val changedApp = musicController.currentAppInfo != nowPlaying
@@ -111,6 +116,26 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 					it == nowPlaying
 				} ?: nowPlaying
 				musicController.connectAppAutomatically(discoveredApp)
+			}
+
+			// connect to the previous app, if we aren't currently connected
+			if (musicController.currentAppController == null) {
+				val appName = musicController.loadDesiredApp()
+				val appInfo = musicAppDiscovery.validApps.firstOrNull { it.packageName == appName }
+				if (appInfo != null) {
+					musicController.connectAppAutomatically(appInfo)
+				}
+			}
+
+			// update the AM apps list
+			val amApps = musicAppDiscovery.connectableApps.filter {
+				!(it.packageName == "com.spotify.music" && playbackView.state is RHMIState.AudioHmiState)
+			}
+			amAppList.setApps(amApps)
+
+			// redraw the internal app list
+			if (appListViewVisible) {
+				appSwitcherView.redraw()
 			}
 		}
 		musicAppDiscovery.discoverApps()    // trigger the discovery, to show the apps when the handler starts running
@@ -243,13 +268,12 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 			Log.i(TAG, "Received am_onAppEvent: handle=$handle ident=$ident appId=$appId event=$event")
 			appId ?: return
 			try {
-				val appInfo = avContext.getAppInfo(appId) ?: return
+				val appInfo = amAppList.getAppInfo(appId) ?: return
 				avContext.av_requestContext(appInfo)
 				app?.events?.values?.filterIsInstance<RHMIEvent.FocusEvent>()?.firstOrNull()?.triggerEvent(mapOf(0.toByte() to playbackView.state.id))
 				synchronized(server!!) {
-					server?.am_showLoadedSuccessHint(avContext.amHandle)
+					amAppList.redrawApp(appInfo)
 				}
-				avContext.amRecreateApp(appInfo)
 			} catch (e: Exception) {
 				Log.e(TAG, "Received exception while handling am_onAppEvent", e)
 			}
@@ -304,6 +328,8 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 	}
 
 	fun redraw() {
+		// check if we need to create an av handle, if it's missing
+		avContext.createAvHandle()
 		if (appListViewVisible) {
 			appSwitcherView.redraw()
 		}

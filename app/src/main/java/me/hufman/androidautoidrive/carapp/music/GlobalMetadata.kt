@@ -39,7 +39,7 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 	}
 
 	fun redraw() {
-		val app = if (!controller.getPlaybackPosition().playbackPaused) controller.currentAppInfo else null
+		val app = controller.currentAppInfo
 		if (app != null && app != displayedApp) {
 			showApp(app)
 		}
