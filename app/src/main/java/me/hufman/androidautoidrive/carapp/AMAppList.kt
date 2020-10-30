@@ -31,6 +31,9 @@ interface AMAppInfo {
 		get() = "androidautoidrive.$packageName"
 }
 
+class ConcreteAMAppInfo(override val packageName: String, override val name: String,
+                        override val icon: Drawable, override val category: AMCategory): AMAppInfo
+
 class AMAppList<T: AMAppInfo>(val connection: BMWRemotingServer, val graphicsHelpers: GraphicsHelpers, val amIdent: String, val adjustment: Int = 0) {
 	companion object {
 		val TAG = "AMAppList"
@@ -73,14 +76,28 @@ class AMAppList<T: AMAppInfo>(val connection: BMWRemotingServer, val graphicsHel
 
 	/**
 	 * Updates the list of displayed apps
-	 * Make sure to synchronize it around the Etch connection
 	 */
 	fun setApps(apps: List<T>) {
-		// then create all the apps
-		for (app in apps) {
-			if (!knownApps.containsKey(app.amAppIdentifier)) {
-				createApp(app)
-				knownApps[app.amAppIdentifier] = app
+		synchronized(connection) {
+			// if there are any extra apps, clear out the list
+			val updatedApps = apps.map {it.amAppIdentifier to it}.toMap()
+			val stillCurrent = knownApps.values.filter { previous ->
+				val updated = updatedApps[previous.amAppIdentifier]
+				updated != null &&
+					previous.name == updated.name &&
+					previous.category == updated.category
+			}
+			if (stillCurrent.size < knownApps.size) {
+				reinitAm()
+				knownApps.clear()
+			}
+
+			// then create all the apps
+			for (app in apps) {
+				if (!knownApps.containsKey(app.amAppIdentifier)) {
+					createApp(app)
+					knownApps[app.amAppIdentifier] = app
+				}
 			}
 		}
 	}
@@ -91,12 +108,21 @@ class AMAppList<T: AMAppInfo>(val connection: BMWRemotingServer, val graphicsHel
 		}
 	}
 
+	private fun reinitAm() {
+		synchronized(connection) {
+			val oldHandle = amHandle
+			connection.am_removeAppEventHandler(oldHandle, amIdent)
+			connection.am_dispose(oldHandle)
+
+			val newHandle = createAm()
+			amHandle = newHandle
+		}
+	}
+
 	private fun createAm(): Int {
 		return synchronized(connection) {
 			val handle = connection.am_create("0", "\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
-			try {
-				connection.am_addAppEventHandler(handle, amIdent)
-			} catch (e: BMWRemoting.ServiceException) {}
+			connection.am_addAppEventHandler(handle, amIdent)
 			handle
 		}
 	}
