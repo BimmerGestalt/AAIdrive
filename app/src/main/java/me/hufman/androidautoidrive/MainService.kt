@@ -176,8 +176,10 @@ class MainService: Service() {
 			foregroundNotificationBuilder.setContentText(resources.getString(R.string.notification_description_chassiscode, chassisCode.toString()))
 		}
 
-		foregroundNotification = foregroundNotificationBuilder.build()
-		startForeground(ONGOING_NOTIFICATION_ID, foregroundNotification)
+		if (foregroundNotification == null) {
+			foregroundNotification = foregroundNotificationBuilder.build()
+			startForeground(ONGOING_NOTIFICATION_ID, foregroundNotification)
+		}
 	}
 
 	fun combinedCallback() {
@@ -428,5 +430,6 @@ class MainService: Service() {
 	private fun stopServiceNotification() {
 		Log.i(TAG, "Hiding foreground notification")
 		stopForeground(true)
+		foregroundNotification = null
 	}
 }
