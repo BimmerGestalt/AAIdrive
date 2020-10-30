@@ -79,7 +79,7 @@ class TestMusicAVContext {
 
 		// post a new application
 		val musicAppInfo = MusicAppInfo("Test", mock(), "example.test", null)
-		whenever(musicAppDiscovery.connectableApps) doAnswer {listOf(musicAppInfo)}
+		whenever(musicAppDiscovery.validApps) doAnswer {listOf(musicAppInfo)}
 		val musicAppListener = argumentCaptor<Runnable>()
 		verify(musicAppDiscovery).listener = musicAppListener.capture()
 		musicAppListener.lastValue.run()
@@ -143,7 +143,7 @@ class TestMusicAVContext {
 
 		// post a new application
 		val musicAppInfo = MusicAppInfo("Test", mock(), "example.test", null)
-		whenever(musicAppDiscovery.connectableApps) doAnswer {listOf(musicAppInfo)}
+		whenever(musicAppDiscovery.validApps) doAnswer {listOf(musicAppInfo)}
 		val musicAppListener = argumentCaptor<Runnable>()
 		verify(musicAppDiscovery).listener = musicAppListener.capture()
 		musicAppListener.lastValue.run()

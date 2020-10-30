@@ -128,7 +128,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 			}
 
 			// update the AM apps list
-			val amApps = musicAppDiscovery.connectableApps.filter {
+			val amApps = musicAppDiscovery.validApps.filter {
 				!(it.packageName == "com.spotify.music" && playbackView.state is RHMIState.AudioHmiState)
 			}
 			amAppList.setApps(amApps)
