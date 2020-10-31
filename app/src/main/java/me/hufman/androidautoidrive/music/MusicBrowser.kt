@@ -93,6 +93,10 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 			"com.neutroncode.mp" -> "root"    // Neutron
 			"com.neutroncode.mpeval" -> "root"    // Neutron (Eval)
 			"com.acast.nativeapp" -> "root"     // Acast Podcast Player
+			"com.podcastsapp" -> "__ROOT__"     // Audecibel
+			"com.audials" -> "root"         // Audials Radio
+			"com.audials.paid" -> "root"    // Audials Radio Pro
+			"grit.storytel.app" -> "/"      // Storytel
 			else -> return when(musicAppInfo.className) {   // some apps have a shared service library
 				"com.itmwpb.vanilla.radioapp.player.MusicService" -> "/"    // OneCMS (HOT97 Official)
 				else -> mediaBrowser.root

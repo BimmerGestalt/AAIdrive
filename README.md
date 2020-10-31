@@ -75,6 +75,7 @@ Implemented Features
       - Audiobooks and Podcasts:
         - [Acast Podcast Player](https://play.google.com/store/apps/details?id=com.acast.nativeapp)
         - [AntennaPod](https://play.google.com/store/apps/details?id=de.danoeh.antennapod)
+        - [Audecibel](https://play.google.com/store/apps/details?id=com.podcastsapp)
         - [The Bob & Tom Show](https://play.google.com/store/apps/details?id=com.radio.station.BOB.TOM)
         - [Castbox](https://play.google.com/store/apps/details?id=fm.castbox.audiobook.radio.podcast)
         - [Google Play Books](https://play.google.com/store/apps/details?id=com.google.android.apps.books)
@@ -101,10 +102,12 @@ Implemented Features
       - Radio
         - [AP News](https://play.google.com/store/apps/details?id=mnn.Android)
         - [ARD Audiothek](https://play.google.com/store/apps/details?id=de.ard.audiothek)
+        - [Audials Radio](https://play.google.com/store/apps/details?id=com.audials)
         - [BFM](https://play.google.com/store/apps/details?id=my.bfm.app)
         - [Dash Radio](https://play.google.com/store/apps/details?id=com.dashradio.dash)
         - [DI.FM](https://play.google.com/store/apps/details?id=com.audioaddict.di)
         - [Energy Radio](https://play.google.com/store/apps/details?id=radioenergy.app)
+        - [Guardian](https://play.google.com/store/apps/details?id=com.guardian)
         - [HOT97 Official](https://play.google.com/store/apps/details?id=com.jacapps.whhl)
         - [Nederland.FM](https://play.google.com/store/apps/details?id=nl.nibbixsoft.app)
         - [NHL](https://play.google.com/store/apps/details?id=com.nhl.gc1112.free)
