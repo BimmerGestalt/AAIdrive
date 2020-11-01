@@ -29,7 +29,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 
 	val avContext = AVContextHandler((carApp.unwrap() as RHMIApplicationEtch).remoteServer, musicController, graphicsHelpers, musicAppMode)
 	val amAppList: AMAppList<MusicAppInfo>
-	val amSpotifyAdjustment = AMAppInfo.getAppWeight("Spotify") - (800 - 500)
+
 	val globalMetadata = GlobalMetadata(carApp, musicController)
 	var hmiContextChangedTime = 0L
 	var appListViewVisible = false
@@ -126,6 +126,9 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 			}
 
 			// update the AM apps list
+			val amRadioAdjustment = musicAppMode.getRadioAppName()?.let {AMAppInfo.getAppWeight(it) - (800 - 500)} ?: 0
+			val amSpotifyAdjustment = AMAppInfo.getAppWeight("Spotify") - (800 - 500)
+
 			val amApps = musicAppDiscovery.validApps.filter {
 				!(it.packageName == "com.spotify.music" && playbackView.state is RHMIState.AudioHmiState)
 			}.map {
@@ -138,6 +141,9 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 					playbackView.state is RHMIState.AudioHmiState && it.category == AMCategory.MULTIMEDIA -> {
 						// if we are the Spotify icon, adjust the other Multimedia icons to sort properly
 						it.clone(weightAdjustment = amSpotifyAdjustment)
+					}
+					it.category == AMCategory.RADIO -> {
+						it.clone(weightAdjustment = amRadioAdjustment)
 					}
 					else -> {
 						it.clone()
