@@ -7,9 +7,7 @@ import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.Utils.loadZipfile
-import me.hufman.androidautoidrive.carapp.AMAppList
-import me.hufman.androidautoidrive.carapp.RHMIActionAbort
-import me.hufman.androidautoidrive.carapp.RHMIUtils
+import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
@@ -31,6 +29,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 
 	val avContext = AVContextHandler((carApp.unwrap() as RHMIApplicationEtch).remoteServer, musicController, graphicsHelpers, musicAppMode)
 	val amAppList: AMAppList<MusicAppInfo>
+	val amSpotifyAdjustment = AMAppInfo.getAppWeight("Spotify") - (800 - 500)
 	val globalMetadata = GlobalMetadata(carApp, musicController)
 	var hmiContextChangedTime = 0L
 	var appListViewVisible = false
@@ -101,8 +100,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 		initWidgets()
 
 		// set up AM Apps
-		val adjustment = if (playbackView.state is RHMIState.AudioHmiState) { AMAppList.getAppWeight("Spotify") - (800 - 500) } else 0
-		amAppList = AMAppList((carApp.unwrap() as RHMIApplicationEtch).remoteServer, graphicsHelpers, "me.hufman.androidautoidrive.music", adjustment)
+		amAppList = AMAppList((carApp.unwrap() as RHMIApplicationEtch).remoteServer, graphicsHelpers, "me.hufman.androidautoidrive.music")
 
 		musicAppDiscovery.listener = Runnable {
 			// make sure the car has AV Context
@@ -130,6 +128,17 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 			// update the AM apps list
 			val amApps = musicAppDiscovery.validApps.filter {
 				!(it.packageName == "com.spotify.music" && playbackView.state is RHMIState.AudioHmiState)
+			}.map {
+				// enforce some AM settings
+				when {
+					playbackView.state is RHMIState.AudioHmiState && it.category == AMCategory.MULTIMEDIA -> {
+						// if we are the Spotify icon, adjust the other Multimedia icons to sort properly
+						it.clone(weightAdjustment = amSpotifyAdjustment)
+					}
+					else -> {
+						it.clone()
+					}
+				}
 			}
 			amAppList.setApps(amApps)
 

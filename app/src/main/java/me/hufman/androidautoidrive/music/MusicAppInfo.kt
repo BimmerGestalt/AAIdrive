@@ -3,7 +3,9 @@ package me.hufman.androidautoidrive.music
 import android.content.Context
 import android.graphics.drawable.Drawable
 import me.hufman.androidautoidrive.carapp.AMAppInfo
+import me.hufman.androidautoidrive.carapp.AMAppInfo.Companion.getAppWeight
 import me.hufman.androidautoidrive.carapp.AMCategory
+import java.util.*
 
 data class MusicAppInfo(override val name: String, override val icon: Drawable,
                         override val packageName: String, val className: String?): AMAppInfo {
@@ -16,6 +18,13 @@ data class MusicAppInfo(override val name: String, override val icon: Drawable,
 
 	override val category = AMCategory.MULTIMEDIA
 
+	var weightAdjustment = 0
+	override val weight: Int
+		get() {
+			return 800 - (getAppWeight(this.name) - weightAdjustment)
+		}
+
+	// general helpers
 	companion object {
 		fun getInstance(context: Context, packageName: String, className: String?): MusicAppInfo {
 			val packageManager = context.packageManager
@@ -59,14 +68,17 @@ data class MusicAppInfo(override val name: String, override val icon: Drawable,
 		)
 	}
 
-	fun clone(): MusicAppInfo {
+	fun clone(probed: Boolean? = null, connectable: Boolean? = null, controllable: Boolean? = null,
+	          browseable: Boolean? = null, searchable: Boolean? = null, playsearchable: Boolean? = null,
+	          weightAdjustment: Int? = null): MusicAppInfo {
 		return MusicAppInfo(name, icon, packageName, className).also {
-			it.probed = this.probed
-			it.connectable = this.connectable
-			it.controllable = this.controllable
-			it.browseable = this.browseable
-			it.searchable = this.searchable
-			it.playsearchable = this.playsearchable
+			it.probed = probed ?: this.probed
+			it.connectable = connectable ?: this.connectable
+			it.controllable = controllable ?: this.controllable
+			it.browseable = browseable ?: this.browseable
+			it.searchable = searchable ?: this.searchable
+			it.playsearchable = playsearchable ?: this.playsearchable
+			it.weightAdjustment = weightAdjustment ?: this.weightAdjustment
 		}
 	}
 

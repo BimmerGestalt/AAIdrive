@@ -61,8 +61,10 @@ class TestMusicAVContext {
 	/** Test that a Spotify AM icon lines up where the Spotify RHMI icon goes */
 	@Test
 	fun testAmSpotifyWeight() {
-		val amHandler = AMAppList<MusicAppInfo>(mock(), mock(), "test", -173)
-		val spotifyAm = amHandler.getAMInfo(MusicAppInfo("Spotify", mock(), "com.spotify.music", null))
+		val amHandler = AMAppList<MusicAppInfo>(mock(), mock(), "test")
+		val spotifyAm = amHandler.getAMInfo(MusicAppInfo("Spotify", mock(), "com.spotify.music", null).apply {
+			weightAdjustment = -173
+		})
 		assertEquals(500, spotifyAm[5])
 	}
 
