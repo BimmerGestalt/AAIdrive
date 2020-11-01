@@ -1,5 +1,8 @@
 package me.hufman.androidautoidrive
 
+import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import com.nhaarman.mockito_kotlin.*
@@ -130,6 +133,46 @@ class TestMusicAVContext {
 		amAppList.setApps(listOf(app2Moved))
 		assertEquals(4, mockServer.amApps.size)
 		assertEquals(3, mockServer.amHandles.size)
+	}
+
+	/** Test that some apps are categorized as Radio apps */
+	@Test
+	fun testAmRadio() {
+		val mockPackageManager = mock<PackageManager> {
+			on { getApplicationInfo(any(), any()) } doReturn mock<ApplicationInfo>()
+			on { getApplicationLabel(any()) } doReturn ""
+			on { getApplicationIcon(isA<ApplicationInfo>()) } doReturn mock<Drawable>()
+		}
+		val mockContext = mock<Context> {
+			on { packageManager } doReturn mockPackageManager
+		}
+
+		val MEDIA_APPS = mapOf(
+			"Audible" to "com.audible.application",
+			"Libro.fm" to "fm.libro.librofm",
+			"Spotify" to "com.spotify.music"
+		)
+		val RADIO_APPS = mapOf(
+			"DI.FM Radio" to "com.audioaddict.di",
+			"RMC" to "it.froggy.android.rmc",
+			"SiriusXM" to "com.sirius"
+		)
+
+		MEDIA_APPS.forEach { (name, packageName) ->
+			whenever(mockPackageManager.getApplicationLabel(any())) doReturn name
+			assertEquals("$name is Multimedia", AMCategory.MULTIMEDIA, MusicAppInfo.guessCategory(packageName, name))
+			assertEquals("$name info is Multimedia", AMCategory.MULTIMEDIA, MusicAppInfo.getInstance(mockContext, packageName, null).category)
+		}
+		RADIO_APPS.forEach { (name, packageName) ->
+			whenever(mockPackageManager.getApplicationLabel(any())) doReturn name
+			assertEquals("$name is Radio", AMCategory.RADIO, MusicAppInfo.guessCategory(packageName, name))
+			assertEquals("$name info is Radio", AMCategory.RADIO, MusicAppInfo.getInstance(mockContext, packageName, null).category)
+		}
+
+		whenever(mockPackageManager.getApplicationLabel(any())) doReturn "Spotify"
+		val testCategory = MusicAppInfo.getInstance(mockContext, MEDIA_APPS.getValue("Spotify"), null)
+		testCategory.forcedCategory = AMCategory.ADDRESSBOOK
+		assertEquals(AMCategory.ADDRESSBOOK, testCategory.category)
 	}
 
 	/** Test the AV context functionality, like automatic pausing when losing it */

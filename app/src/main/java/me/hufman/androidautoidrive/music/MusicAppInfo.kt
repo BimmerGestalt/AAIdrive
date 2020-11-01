@@ -16,7 +16,11 @@ data class MusicAppInfo(override val name: String, override val icon: Drawable,
 	var searchable = false      // whether any search results came back
 	var playsearchable = false  // whether the controller indicated PlayFromSearch support
 
-	override val category = AMCategory.MULTIMEDIA
+	// AM App List display controls
+	var forcedCategory: AMCategory? = null
+
+	override val category: AMCategory
+		get() = this.forcedCategory ?: guessCategory(packageName, name)
 
 	var weightAdjustment = 0
 	override val weight: Int
@@ -33,6 +37,37 @@ data class MusicAppInfo(override val name: String, override val icon: Drawable,
 			val name = packageManager.getApplicationLabel(appInfo).toString()
 			val icon = packageManager.getApplicationIcon(appInfo)
 			return MusicAppInfo(name, icon, packageName, className)
+		}
+
+		fun guessCategory(packageName: String, label: String): AMCategory {
+			val lowLabel = label.toLowerCase(Locale.getDefault())
+
+			// any names which are Media, even though they look like radio
+			val MEDIA_NAMES = setOf("librofm")
+			if (MEDIA_NAMES.any { packageName.contains(it) || lowLabel.contains(it) }) {
+				return AMCategory.MULTIMEDIA
+			}
+
+			// any names which are Radio
+			val RADIO_NAMES = setOf(
+					"cast", "fm", "news", "radio", "live", "show",  // general keywords
+					"sirius", "tunein",     // the big ones
+					"ard", "audials", "audioaddict", "mnn", "nhl", "ntv", "rtl",   // some manual package names
+					"it.mediaset", "it.froggy",                         // Froggy Media
+					"com.global.", "com.thisisglobal.", "com.thisisaim."    // Global Media
+			)
+			if (RADIO_NAMES.any { packageName.contains(it) || lowLabel.contains(it) }) {
+				return AMCategory.RADIO
+			}
+			val RADIO_PATTERNS = setOf(
+					Regex("(8|9|10)[0-9]")
+			)
+			if (RADIO_PATTERNS.any { packageName.contains(it) || lowLabel.contains(it) }) {
+				return AMCategory.RADIO
+			}
+
+			// everything else is Media
+			return AMCategory.MULTIMEDIA
 		}
 	}
 
@@ -70,7 +105,7 @@ data class MusicAppInfo(override val name: String, override val icon: Drawable,
 
 	fun clone(probed: Boolean? = null, connectable: Boolean? = null, controllable: Boolean? = null,
 	          browseable: Boolean? = null, searchable: Boolean? = null, playsearchable: Boolean? = null,
-	          weightAdjustment: Int? = null): MusicAppInfo {
+	          forcedCategory: AMCategory? = null, weightAdjustment: Int? = null): MusicAppInfo {
 		return MusicAppInfo(name, icon, packageName, className).also {
 			it.probed = probed ?: this.probed
 			it.connectable = connectable ?: this.connectable
@@ -78,6 +113,7 @@ data class MusicAppInfo(override val name: String, override val icon: Drawable,
 			it.browseable = browseable ?: this.browseable
 			it.searchable = searchable ?: this.searchable
 			it.playsearchable = playsearchable ?: this.playsearchable
+			it.forcedCategory = forcedCategory ?: this.forcedCategory
 			it.weightAdjustment = weightAdjustment ?: this.weightAdjustment
 		}
 	}

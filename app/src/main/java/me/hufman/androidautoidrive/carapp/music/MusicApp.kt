@@ -131,6 +131,10 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 			}.map {
 				// enforce some AM settings
 				when {
+					musicAppMode.isId4() -> {
+						// if we are in id4, don't show any Radio icons
+						it.clone(forcedCategory = AMCategory.MULTIMEDIA)
+					}
 					playbackView.state is RHMIState.AudioHmiState && it.category == AMCategory.MULTIMEDIA -> {
 						// if we are the Spotify icon, adjust the other Multimedia icons to sort properly
 						it.clone(weightAdjustment = amSpotifyAdjustment)

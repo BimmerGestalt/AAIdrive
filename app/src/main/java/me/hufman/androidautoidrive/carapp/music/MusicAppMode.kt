@@ -58,6 +58,9 @@ class MusicAppMode(val capabilities: Map<String, String?>, val appSettings: Muta
 		val useBT = isBTConnection()
 		return useUSB || useBT
 	}
+	fun isId4(): Boolean {
+		return capabilities["hmi.type"]?.contains("ID4") == true
+	}
 	fun shouldId5Playback(): Boolean {
 		val idrive4 = capabilities["hmi.type"]?.contains("ID4") == true
 		val manualOverride = !idrive4 && appSettings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT].toBoolean()
