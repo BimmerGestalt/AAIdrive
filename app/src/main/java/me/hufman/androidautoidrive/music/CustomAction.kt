@@ -12,16 +12,16 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 		fun fromMediaCustomAction(context: Context, packageName: String, action: PlaybackStateCompat.CustomAction): CustomAction {
 			val resources = context.packageManager.getResourcesForApplication(packageName)
 			val icon = try {
-                                resources.getDrawable(action.icon, null)
-                        } catch (e: Exception) {
-                                try {
+				resources.getDrawable(action.icon, null)
+			} catch (e: Exception) {
+				try {
 					Resources.getSystem().getDrawable(action.icon, null)
-                                } catch (e: Exception) {
-                                        null
-                                }
-                        } catch (e: Exception) {
-                                null
-                        }
+				} catch (e: Exception) {
+					null
+				}
+			} catch (e: Exception) {
+				null
+			}
 			return formatCustomActionDisplay(
 					CustomAction(packageName, action.action, action.name.toString(), icon, action.extras)
 			)
