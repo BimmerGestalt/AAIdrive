@@ -97,6 +97,9 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 			"com.audials" -> "root"         // Audials Radio
 			"com.audials.paid" -> "root"    // Audials Radio Pro
 			"grit.storytel.app" -> "/"      // Storytel
+			"com.france24.androidapp" -> "france_media_monde"       // France 24 playlists?
+			"com.rhapsody.napster" -> "ROOT"    // napster
+			"net.faz.FAZ" -> "media_root_id"    // Faz, but it returns an empty list anyways
 			else -> return when(musicAppInfo.className) {   // some apps have a shared service library
 				"com.itmwpb.vanilla.radioapp.player.MusicService" -> "/"    // OneCMS (HOT97 Official)
 				else -> mediaBrowser.root
