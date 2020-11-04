@@ -36,6 +36,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 	var appListViewVisible = false
 	var playbackViewVisible = false
 	var enqueuedViewVisible = false
+	var browseViewVisible = false
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
 	val enqueuedView: EnqueuedView
@@ -88,13 +89,16 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 		playbackView = PlaybackView(playbackStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources, graphicsHelpers, musicImageIDs)
 		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, graphicsHelpers, musicImageIDs)
 		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, graphicsHelpers, musicImageIDs)
-		browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController, musicImageIDs)
+		browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController, musicImageIDs, graphicsHelpers, this)
 		inputState = unclaimedStates.removeFirst { it.componentsList.filterIsInstance<RHMIComponent.Input>().firstOrNull()?.suggestModel ?: 0 > 0 }
 		customActionsView = CustomActionsView(unclaimedStates.removeFirst { CustomActionsView.fits(it) }, graphicsHelpers, musicController)
 
 		Log.i(TAG, "Selected state ${appSwitcherView.state.id} for App Switcher")
 		Log.i(TAG, "Selected state ${playbackView.state.id} for Playback")
 		Log.i(TAG, "Selected state ${enqueuedView.state.id} for Enqueued")
+		Log.i(TAG, "Selected state ${browseView.states[0].id} for Browse Page 1")
+		Log.i(TAG, "Selected state ${browseView.states[1].id} for Browse Page 2")
+		Log.i(TAG, "Selected state ${browseView.states[2].id} for Browse Page 3")
 		Log.i(TAG, "Selected state ${inputState.id} for Input")
 		Log.i(TAG, "Selected state ${customActionsView.state.id} for Custom Actions")
 
@@ -339,6 +343,10 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 		if (enqueuedViewVisible) {
 			enqueuedView.redraw()
 		}
+		if (browseViewVisible) {
+			browseView.redraw()
+		}
+
 		// if running over USB or audio context is granted, set the global metadata
 		if (!musicAppMode.shouldRequestAudioContext() || avContext.currentContext) {
 			globalMetadata.redraw()

@@ -14,7 +14,7 @@ import kotlin.math.max
 
 class EnqueuedView(val state: RHMIState, val musicController: MusicController, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {
-		//current default row width only supports 22 chars before rolling over
+		// current default row width only supports 22 chars before rolling over
 		private const val ROW_LINE_MAX_LENGTH = 22
 		private const val TITLE_MAX_LENGTH = 35
 
