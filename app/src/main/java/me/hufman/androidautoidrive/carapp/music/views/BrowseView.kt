@@ -102,7 +102,9 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	}
 
 	fun pushBrowsePage(directory: MusicMetadata?, stateId: Int? = null): BrowsePageView {
-		val nextStateIndex = pageStack.size % states.size
+		val topPage = pageStack.lastOrNull()
+		val topPageIndex = states.indexOfFirst { it.id == topPage?.state?.id }
+		val nextStateIndex = (topPageIndex + 1) % states.size
 
 		// don't want the next state to be the original page state as the back action on original page state will exit to PlaybackView
 		val nextState = if (pageStack.size > 1 && nextStateIndex == 0) {

@@ -1268,6 +1268,32 @@ class TestMusicApp {
 	}
 
 	@Test
+	fun testBrowsePagesIndices() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!, app.states[IDs.BROWSE3_STATE]!!), musicController, MusicImageIDsMultimedia, graphicsHelpers, mock())
+		browseView.initWidgets(playbackView, inputState)
+
+		val root = browseView.pushBrowsePage(null)
+		assertEquals(IDs.BROWSE1_STATE, root.state.id)
+
+		val subdir1 = browseView.pushBrowsePage(mock())
+		assertEquals(IDs.BROWSE2_STATE, subdir1.state.id)
+		val subdir2 = browseView.pushBrowsePage(mock())
+		assertEquals(IDs.BROWSE3_STATE, subdir2.state.id)
+		val subdir3 = browseView.pushBrowsePage(mock())
+		assertEquals(IDs.BROWSE2_STATE, subdir3.state.id)
+		val subdir4 = browseView.pushBrowsePage(mock())
+		assertEquals(IDs.BROWSE3_STATE, subdir4.state.id)
+		val subdir5 = browseView.pushBrowsePage(mock())
+		assertEquals(IDs.BROWSE2_STATE, subdir5.state.id)
+		val subdir6 = browseView.pushBrowsePage(mock())
+		assertEquals(IDs.BROWSE3_STATE, subdir6.state.id)
+	}
+
+	@Test
 	fun testBrowsePages() {
 		val mockServer = MockBMWRemotingServer()
 		val app = RHMIApplicationEtch(mockServer, 1)
