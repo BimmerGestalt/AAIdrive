@@ -1,12 +1,16 @@
 package me.hufman.androidautoidrive
 
+import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
+import me.hufman.androidautoidrive.carapp.ConcreteAMAppInfo
 import me.hufman.androidautoidrive.carapp.AMAppList
-import me.hufman.androidautoidrive.carapp.music.AVContextHandler
+import me.hufman.androidautoidrive.carapp.AMCategory
 import me.hufman.androidautoidrive.carapp.music.MusicApp
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDsMultimedia
@@ -15,10 +19,6 @@ import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationEtch
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
-import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.ByteArrayInputStream
@@ -64,8 +64,10 @@ class TestMusicAVContext {
 	/** Test that a Spotify AM icon lines up where the Spotify RHMI icon goes */
 	@Test
 	fun testAmSpotifyWeight() {
-		val amHandler = AMAppList<MusicAppInfo>(mock(), mock(), "test", -173)
-		val spotifyAm = amHandler.getAMInfo(MusicAppInfo("Spotify", mock(), "com.spotify.music", null))
+		val amHandler = AMAppList<MusicAppInfo>(mock(), mock(), "test")
+		val spotifyAm = amHandler.getAMInfo(MusicAppInfo("Spotify", mock(), "com.spotify.music", null).apply {
+			weightAdjustment = -173
+		})
 		assertEquals(500, spotifyAm[5])
 	}
 
@@ -82,7 +84,7 @@ class TestMusicAVContext {
 
 		// post a new application
 		val musicAppInfo = MusicAppInfo("Test", mock(), "example.test", null)
-		whenever(musicAppDiscovery.connectableApps) doAnswer {listOf(musicAppInfo)}
+		whenever(musicAppDiscovery.validApps) doAnswer {listOf(musicAppInfo)}
 		val musicAppListener = argumentCaptor<Runnable>()
 		verify(musicAppDiscovery).listener = musicAppListener.capture()
 		musicAppListener.lastValue.run()
@@ -103,6 +105,76 @@ class TestMusicAVContext {
 		assertEquals("androidautoidrive.example.test", mockServer.amApps[1])
 	}
 
+	/** Test that removing a music app resets the list */
+	@Test
+	fun testAmRebuild() {
+		val mockServer = MockBMWRemotingServer()
+		val amAppList = AMAppList<ConcreteAMAppInfo>(mockServer, mock(), "testIdent")
+		val app1 = ConcreteAMAppInfo("test1", "test1", mock(), AMCategory.MULTIMEDIA)
+		val app2 = ConcreteAMAppInfo("test2", "test2", mock(), AMCategory.MULTIMEDIA)
+		amAppList.setApps(listOf(app1, app2))
+
+		assertEquals(2, mockServer.amApps.size)
+		assertEquals(1, mockServer.amHandles.size)
+
+		// update with a new smaller list
+		amAppList.setApps(listOf(app2))
+		assertEquals(3, mockServer.amApps.size) // the single app has been added
+		assertEquals(-1, mockServer.amHandles[0])   // the old amHandle was disposed
+		assertEquals(2, mockServer.amHandles.size)  // a new amHandle was added
+
+		// no changes if we have the same list
+		amAppList.setApps(listOf(app2))
+		assertEquals(3, mockServer.amApps.size)
+		assertEquals(2, mockServer.amHandles.size)
+
+		// make sure it clears if the same app exists but in a different section
+		val app2Moved = ConcreteAMAppInfo("test2", "test2", mock(), AMCategory.RADIO)
+		amAppList.setApps(listOf(app2Moved))
+		assertEquals(4, mockServer.amApps.size)
+		assertEquals(3, mockServer.amHandles.size)
+	}
+
+	/** Test that some apps are categorized as Radio apps */
+	@Test
+	fun testAmRadio() {
+		val mockPackageManager = mock<PackageManager> {
+			on { getApplicationInfo(any(), any()) } doReturn mock<ApplicationInfo>()
+			on { getApplicationLabel(any()) } doReturn ""
+			on { getApplicationIcon(isA<ApplicationInfo>()) } doReturn mock<Drawable>()
+		}
+		val mockContext = mock<Context> {
+			on { packageManager } doReturn mockPackageManager
+		}
+
+		val MEDIA_APPS = mapOf(
+			"Audible" to "com.audible.application",
+			"Libro.fm" to "fm.libro.librofm",
+			"Spotify" to "com.spotify.music"
+		)
+		val RADIO_APPS = mapOf(
+			"DI.FM Radio" to "com.audioaddict.di",
+			"RMC" to "it.froggy.android.rmc",
+			"SiriusXM" to "com.sirius"
+		)
+
+		MEDIA_APPS.forEach { (name, packageName) ->
+			whenever(mockPackageManager.getApplicationLabel(any())) doReturn name
+			assertEquals("$name is Multimedia", AMCategory.MULTIMEDIA, MusicAppInfo.guessCategory(packageName, name))
+			assertEquals("$name info is Multimedia", AMCategory.MULTIMEDIA, MusicAppInfo.getInstance(mockContext, packageName, null).category)
+		}
+		RADIO_APPS.forEach { (name, packageName) ->
+			whenever(mockPackageManager.getApplicationLabel(any())) doReturn name
+			assertEquals("$name is Radio", AMCategory.RADIO, MusicAppInfo.guessCategory(packageName, name))
+			assertEquals("$name info is Radio", AMCategory.RADIO, MusicAppInfo.getInstance(mockContext, packageName, null).category)
+		}
+
+		whenever(mockPackageManager.getApplicationLabel(any())) doReturn "Spotify"
+		val testCategory = MusicAppInfo.getInstance(mockContext, MEDIA_APPS.getValue("Spotify"), null)
+		testCategory.forcedCategory = AMCategory.ADDRESSBOOK
+		assertEquals(AMCategory.ADDRESSBOOK, testCategory.category)
+	}
+
 	/** Test the AV context functionality, like automatic pausing when losing it */
 	@Test
 	fun testAvContext() {
@@ -116,7 +188,7 @@ class TestMusicAVContext {
 
 		// post a new application
 		val musicAppInfo = MusicAppInfo("Test", mock(), "example.test", null)
-		whenever(musicAppDiscovery.connectableApps) doAnswer {listOf(musicAppInfo)}
+		whenever(musicAppDiscovery.validApps) doAnswer {listOf(musicAppInfo)}
 		val musicAppListener = argumentCaptor<Runnable>()
 		verify(musicAppDiscovery).listener = musicAppListener.capture()
 		musicAppListener.lastValue.run()

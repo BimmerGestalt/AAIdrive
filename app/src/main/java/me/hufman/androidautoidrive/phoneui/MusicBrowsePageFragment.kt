@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.phoneui
 
+import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.graphics.Bitmap
@@ -46,6 +47,12 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 	var loaderJob: Job? = null
 	val contents = ArrayList<MusicMetadata>()
 
+	fun onActive() {
+		musicController.listener = Runnable {
+			(this.context as Activity).listBrowse.adapter?.notifyDataSetChanged()
+		}
+	}
+
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.music_browsepage, container, false)
 	}
@@ -79,7 +86,7 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 		browseDirectory(mediaId)
 	}
 
-	fun browseDirectory(mediaId: String?) {
+	private fun browseDirectory(mediaId: String?) {
 		txtEmpty.text = getString(R.string.MUSIC_BROWSE_LOADING)
 
 		if (loaderJob != null) {
@@ -131,10 +138,16 @@ class BrowseAdapter(val context: Context, val icons: Map<String, Bitmap>, val co
 		holder.view.findViewById<TextView>(R.id.txtBrowseEntrySubtitle).setText(item.subtitle)
 
 		holder.view.findViewById<ImageView>(R.id.imgBrowseType).colorFilter = Utils.getIconMask(context.getThemeColor(android.R.attr.textColorSecondary))
-		if (item.browseable) {
-			holder.view.findViewById<ImageView>(R.id.imgBrowseType).setImageBitmap(icons[MusicBrowsePageFragment.FOLDER_ID])
+
+		if(item.coverArt == null) {
+			holder.view.findViewById<ImageView>(R.id.imgBrowseType).setImageBitmap(
+					if (item.browseable)
+						icons[MusicBrowsePageFragment.FOLDER_ID]
+					else
+						icons[MusicBrowsePageFragment.SONG_ID]
+			)
 		} else {
-			holder.view.findViewById<ImageView>(R.id.imgBrowseType).setImageBitmap(icons[MusicBrowsePageFragment.SONG_ID])
+			holder.view.findViewById<ImageView>(R.id.imgBrowseType).setImageBitmap(item.coverArt)
 		}
 	}
 }

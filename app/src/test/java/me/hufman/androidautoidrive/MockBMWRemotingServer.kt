@@ -15,6 +15,7 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 	val data = HashMap<Int, Any>()
 	val triggeredEvents = HashMap<Int, Map<*, *>>()
 
+	val amHandles = ArrayList<Int>()
 	val amApps = ArrayList<String>()
 	val avConnections = HashMap<Int, String>()
 	var avCurrentContext = -1
@@ -100,10 +101,20 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 	}
 
 	override fun am_create(deviceId: String?, bluetoothAddress: ByteArray?): Int {
-		return 1
+		amHandles.add(amHandles.size + 1)
+		return amHandles.size
 	}
+
+	override fun am_dispose(handle: Int?) {
+		handle ?: return
+		amHandles[handle-1] = -1
+	}
+
 	override fun am_addAppEventHandler(handle: Int?, ident: String?) {
 	}
+	override fun am_removeAppEventHandler(handle: Int?, ident: String?) {
+	}
+
 	override fun am_registerApp(handle: Int?, appId: String?, values: MutableMap<*, *>?) {
 		amApps.add(appId ?: "")
 	}

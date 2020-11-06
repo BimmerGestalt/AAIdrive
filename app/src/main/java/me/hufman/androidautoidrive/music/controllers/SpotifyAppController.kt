@@ -240,7 +240,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			val item = recentlyPlayed?.items?.get(0)
 			if (item != null) {
 				remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
-					queueMetadata = QueueMetadata(item.title,item.subtitle,SpotifyMusicMetadata.createSpotifyMusicMetadataList(this, queueItems),coverArt)
+					queueMetadata = QueueMetadata(item.title,item.subtitle,queueItems,coverArt)
 				}
 			}
 		}
@@ -267,7 +267,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		remote.contentApi.getChildrenOfItem(parentItem, 200, destination.size).setResultCallback { items ->
 			if (items != null && stillValid()) {    // this is still a valid request
 				destination.addAll(items.items.filterNotNull().map { listItem: ListItem ->
-					MusicMetadata.fromSpotifyQueueListItem(listItem)
+					SpotifyMusicMetadata.fromSpotifyQueueListItem(this, listItem)
 				})
 				if (destination.size < items.total && items.items.isNotEmpty()) {   // more tracks to load
 					loadPaginatedItems(destination, parentItem, stillValid, onComplete)
@@ -435,7 +435,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		if (directory?.mediaId == null) {
 			remote.contentApi.getRecommendedContentItems("default-cars").setResultCallback { results ->
 				deferred.complete(results?.items?.map {
-					MusicMetadata.fromSpotify(it)
+					SpotifyMusicMetadata.fromBrowseItem(this, it)
 				} ?: LinkedList())
 			}.setErrorCallback {
 				deferred.complete(LinkedList())

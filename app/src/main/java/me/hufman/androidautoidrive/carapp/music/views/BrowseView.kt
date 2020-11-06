@@ -2,6 +2,8 @@ package me.hufman.androidautoidrive.carapp.music.views
 
 import android.util.Log
 import kotlinx.coroutines.Deferred
+import me.hufman.androidautoidrive.GraphicsHelpers
+import me.hufman.androidautoidrive.carapp.music.MusicApp
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicAppInfo
@@ -15,7 +17,7 @@ import java.util.*
 data class BrowseState(val location: MusicMetadata?,    // the directory the user selected
                        var pageView: BrowsePageView? = null     // the PageView that is showing for this location
 )
-class BrowseView(val states: List<RHMIState>, val musicController: MusicController, val musicImageIDs: MusicImageIDs) {
+class BrowseView(val states: List<RHMIState>, val musicController: MusicController, val musicImageIDs: MusicImageIDs, val graphicsHelpers: GraphicsHelpers, val musicApp: MusicApp) {
 	companion object {
 		val SEARCHRESULT_PLAY_FROM_SEARCH = MusicMetadata(mediaId="__PLAY_FROM_SEARCH__", title=L.MUSIC_BROWSE_PLAY_FROM_SEARCH)
 		fun fits(state: RHMIState): Boolean {
@@ -32,6 +34,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	lateinit var inputState: RHMIState
 	lateinit var pageController: BrowsePageController
 	var lastApp: MusicAppInfo? = null
+	var currentPage: BrowsePageView? = null
 
 
 	fun initWidgets(playbackView: PlaybackView, inputState: RHMIState) {
@@ -41,8 +44,10 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 			it.focusCallback = FocusCallback { focused ->
 				Log.d("BrowseView", "Received focusedCallback for ${it.id}: $focused")
 				if (focused) {
+					musicApp.browseViewVisible = true
 					show(it.id)
 				} else {
+					musicApp.browseViewVisible = false
 					hide(it.id)
 				}
 			}
@@ -88,6 +93,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		}
 		// show the content for the page that we are showing
 		val currentPage = pageStack.last()
+		this.currentPage = currentPage
 		if (stateId == currentPage.state.id) {
 			// the system showed the page that was just added, load the info for it
 			currentPage.initWidgets(inputState)
@@ -96,7 +102,17 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	}
 
 	fun pushBrowsePage(directory: MusicMetadata?, stateId: Int? = null): BrowsePageView {
-		val nextState = states[pageStack.size % states.size]
+		val topPage = pageStack.lastOrNull()
+		val topPageIndex = states.indexOfFirst { it.id == topPage?.state?.id }
+		val nextStateIndex = (topPageIndex + 1) % states.size
+
+		// don't want the next state to be the original page state as the back action on original page state will exit to PlaybackView
+		val nextState = if (pageStack.size > 1 && nextStateIndex == 0) {
+			states[nextStateIndex+1]
+		} else {
+			states[nextStateIndex]
+		}
+
 		val state = states.firstOrNull { it.id == stateId } ?: nextState
 		val index = stack.indexOfLast { it.pageView != null } + 1 // what the next new index will be
 
@@ -115,7 +131,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		}
 
 		val browseModel = BrowsePageModel(this, musicController, directory)
-		val browsePage = BrowsePageView(state, musicImageIDs, browseModel, pageController, stack.getOrNull(index+1)?.location)
+		val browsePage = BrowsePageView(state, musicImageIDs, browseModel, pageController, stack.getOrNull(index+1)?.location, graphicsHelpers)
 		browsePage.initWidgets(inputState)
 		stackSlot.pageView = browsePage
 		return browsePage
@@ -132,6 +148,10 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 
 		// now actually play
 		musicController.playSong(song)
+	}
+
+	fun redraw() {
+		currentPage?.redraw()
 	}
 
 	/**
