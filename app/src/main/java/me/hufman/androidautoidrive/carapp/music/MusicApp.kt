@@ -25,12 +25,15 @@ import java.util.*
 const val TAG = "MusicApp"
 
 class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val musicImageIDs: MusicImageIDs, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController, val musicAppMode: MusicAppMode) {
-	val carApp = createRHMIApp()
+	val carConnection: BMWRemotingServer
+	var rhmiHandle = -1
+	val carAppSwappable: RHMIApplicationSwappable
+	val carApp: RHMIApplication
 
-	val avContext = AVContextHandler((carApp.unwrap() as RHMIApplicationEtch).remoteServer, musicController, graphicsHelpers, musicAppMode)
+	val avContext: AVContextHandler
 	val amAppList: AMAppList<MusicAppInfo>
 
-	val globalMetadata = GlobalMetadata(carApp, musicController)
+	val globalMetadata: GlobalMetadata
 	var hmiContextChangedTime = 0L
 	var appListViewVisible = false
 	var playbackViewVisible = false
@@ -43,68 +46,57 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 	val inputState: RHMIState
 	val customActionsView: CustomActionsView
 
-	private fun createRHMIApp(): RHMIApplicationSynchronized {
+	init {
 		val carappListener = CarAppListener()
-		val carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
+		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
 		val appCert = carAppAssets.getAppCertificate(IDriveConnectionListener.brand ?: "")?.readBytes() as ByteArray
 		val sas_challenge = carConnection.sas_certificate(appCert)
 		val sas_login = securityAccess.signChallenge(challenge=sas_challenge)
 		carConnection.sas_login(sas_login)
 		carappListener.server = carConnection
 
-		// create the app in the car
-		val rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.music", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive.music", "me.hufman"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB(IDriveConnectionListener.brand ?: "common"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
-		carConnection.rhmi_initialize(rhmiHandle)
-
-		// set up the app in the car
-		val carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)), carConnection)
-		carappListener.app = carApp
-		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
-
-		// register for events from the car
 		synchronized(carConnection) {
-			carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1)
-			carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1, -1)
+			carAppSwappable = RHMIApplicationSwappable(createRhmiApp())
+			carApp = RHMIApplicationSynchronized(carAppSwappable, carConnection)
+			carappListener.app = carApp
+			carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
+
+			avContext = AVContextHandler(carConnection, musicController, graphicsHelpers, musicAppMode)
+
+			// locate specific windows in the app
+			val carAppImages = loadZipfile(carAppAssets.getImagesDB(IDriveConnectionListener.brand
+					?: "common"))
+			val unclaimedStates = LinkedList(carApp.states.values)
+			val playbackStates = LinkedList<RHMIState>().apply {
+				addAll(carApp.states.values.filterIsInstance<RHMIState.AudioHmiState>())
+				addAll(carApp.states.values.filterIsInstance<RHMIState.ToolbarState>())
+			}
+			playbackView = PlaybackView(playbackStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources, graphicsHelpers, musicImageIDs)
+			appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, graphicsHelpers, musicImageIDs)
+			enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, graphicsHelpers, musicImageIDs)
+			browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController, musicImageIDs, graphicsHelpers, this)
+			inputState = unclaimedStates.removeFirst { it.componentsList.filterIsInstance<RHMIComponent.Input>().firstOrNull()?.suggestModel ?: 0 > 0 }
+			customActionsView = CustomActionsView(unclaimedStates.removeFirst { CustomActionsView.fits(it) }, graphicsHelpers, musicController)
+			globalMetadata = GlobalMetadata(carApp, musicController)
+
+			Log.i(TAG, "Selected state ${appSwitcherView.state.id} for App Switcher")
+			Log.i(TAG, "Selected state ${playbackView.state.id} for Playback")
+			Log.i(TAG, "Selected state ${enqueuedView.state.id} for Enqueued")
+			Log.i(TAG, "Selected state ${browseView.states[0].id} for Browse Page 1")
+			Log.i(TAG, "Selected state ${browseView.states[1].id} for Browse Page 2")
+			Log.i(TAG, "Selected state ${browseView.states[2].id} for Browse Page 3")
+			Log.i(TAG, "Selected state ${inputState.id} for Input")
+			Log.i(TAG, "Selected state ${customActionsView.state.id} for Custom Actions")
+
+			initWidgets()
 
 			// listen for HMI Context events
 			val cdsHandle = carConnection.cds_create()
 			carConnection.cds_addPropertyChangedEventHandler(cdsHandle, "hmi.graphicalContext", "114", 50)
 		}
 
-		return carApp
-	}
-
-	init {
-		// locate specific windows in the app
-		val carAppImages = loadZipfile(carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
-		val unclaimedStates = LinkedList(carApp.states.values)
-		val playbackStates = LinkedList<RHMIState>().apply {
-			addAll(carApp.states.values.filterIsInstance<RHMIState.AudioHmiState>())
-			addAll(carApp.states.values.filterIsInstance<RHMIState.ToolbarState>())
-		}
-		playbackView = PlaybackView(playbackStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources, graphicsHelpers, musicImageIDs)
-		appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, graphicsHelpers, musicImageIDs)
-		enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, graphicsHelpers, musicImageIDs)
-		browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController, musicImageIDs, graphicsHelpers, this)
-		inputState = unclaimedStates.removeFirst { it.componentsList.filterIsInstance<RHMIComponent.Input>().firstOrNull()?.suggestModel ?: 0 > 0 }
-		customActionsView = CustomActionsView(unclaimedStates.removeFirst { CustomActionsView.fits(it) }, graphicsHelpers, musicController)
-
-		Log.i(TAG, "Selected state ${appSwitcherView.state.id} for App Switcher")
-		Log.i(TAG, "Selected state ${playbackView.state.id} for Playback")
-		Log.i(TAG, "Selected state ${enqueuedView.state.id} for Enqueued")
-		Log.i(TAG, "Selected state ${browseView.states[0].id} for Browse Page 1")
-		Log.i(TAG, "Selected state ${browseView.states[1].id} for Browse Page 2")
-		Log.i(TAG, "Selected state ${browseView.states[2].id} for Browse Page 3")
-		Log.i(TAG, "Selected state ${inputState.id} for Input")
-		Log.i(TAG, "Selected state ${customActionsView.state.id} for Custom Actions")
-
-		initWidgets()
-
 		// set up AM Apps
-		amAppList = AMAppList((carApp.unwrap() as RHMIApplicationEtch).remoteServer, graphicsHelpers, "me.hufman.androidautoidrive.music")
+		amAppList = AMAppList(carConnection, graphicsHelpers, "me.hufman.androidautoidrive.music")
 
 		musicAppDiscovery.listener = Runnable {
 			// make sure the car has AV Context
@@ -130,31 +122,7 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 			}
 
 			// update the AM apps list
-			val amRadioAdjustment = musicAppMode.getRadioAppName()?.let {AMAppInfo.getAppWeight(it) - (800 - 500)} ?: 0
-			val amSpotifyAdjustment = AMAppInfo.getAppWeight("Spotify") - (800 - 500)
-
-			val amApps = musicAppDiscovery.validApps.filter {
-				!(it.packageName == "com.spotify.music" && playbackView.state is RHMIState.AudioHmiState)
-			}.map {
-				// enforce some AM settings
-				when {
-					musicAppMode.isId4() -> {
-						// if we are in id4, don't show any Radio icons
-						it.clone(forcedCategory = AMCategory.MULTIMEDIA)
-					}
-					playbackView.state is RHMIState.AudioHmiState && it.category == AMCategory.MULTIMEDIA -> {
-						// if we are the Spotify icon, adjust the other Multimedia icons to sort properly
-						it.clone(weightAdjustment = amSpotifyAdjustment)
-					}
-					it.category == AMCategory.RADIO -> {
-						it.clone(weightAdjustment = amRadioAdjustment)
-					}
-					else -> {
-						it.clone()
-					}
-				}
-			}
-			amAppList.setApps(amApps)
+			updateAmApps()
 
 			// redraw the internal app list
 			if (appListViewVisible) {
@@ -166,6 +134,69 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 		musicController.listener = Runnable {
 			redraw()
 		}
+	}
+
+	private fun createRhmiApp(): RHMIApplication {
+		// create the app in the car
+		rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.music", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive.music", "me.hufman"))
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB(IDriveConnectionListener.brand ?: "common"))
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
+		carConnection.rhmi_initialize(rhmiHandle)
+
+		// register for events from the car
+		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1)
+		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1, -1)
+
+		// return a convenient adapter
+		return RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle))
+	}
+
+	private fun recreateRhmiApp() {
+		synchronized(carConnection) {
+			// pause events to the underlying connection
+			carAppSwappable.isConnected = false
+			// destroy the previous RHMI app
+			carConnection.rhmi_dispose(rhmiHandle)
+
+			// clear out the cached displayed values
+			globalMetadata.forgetDisplayedInfo()
+			playbackView.forgetDisplayedInfo()
+			enqueuedView.forgetDisplayedInfo()
+
+			// create a new one
+			carAppSwappable.app = createRhmiApp()
+			// reconnect, triggering a sync down to the new RHMI Etch app
+			carAppSwappable.isConnected = true
+		}
+	}
+
+	fun updateAmApps() {
+		val amRadioAdjustment = musicAppMode.getRadioAppName()?.let {AMAppInfo.getAppWeight(it) - (800 - 500)} ?: 0
+		val amSpotifyAdjustment = AMAppInfo.getAppWeight("Spotify") - (800 - 500)
+
+		val amApps = musicAppDiscovery.validApps.filter {
+			!(it.packageName == "com.spotify.music" && playbackView.state is RHMIState.AudioHmiState)
+		}.map {
+			// enforce some AM settings
+			when {
+				musicAppMode.isId4() -> {
+					// if we are in id4, don't show any Radio icons
+					it.clone(forcedCategory = AMCategory.MULTIMEDIA)
+				}
+				playbackView.state is RHMIState.AudioHmiState && it.category == AMCategory.MULTIMEDIA -> {
+					// if we are the Spotify icon, adjust the other Multimedia icons to sort properly
+					it.clone(weightAdjustment = amSpotifyAdjustment)
+				}
+				it.category == AMCategory.RADIO -> {
+					it.clone(weightAdjustment = amRadioAdjustment)
+				}
+				else -> {
+					it.clone()
+				}
+			}
+		}
+		amAppList.setApps(amApps)
 	}
 
 	inner class CarAppListener: BaseBMWRemotingClient() {
@@ -290,15 +321,21 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 		override fun am_onAppEvent(handle: Int?, ident: String?, appId: String?, event: BMWRemoting.AMEvent?) {
 			Log.i(TAG, "Received am_onAppEvent: handle=$handle ident=$ident appId=$appId event=$event")
 			appId ?: return
+			val appInfo = amAppList.getAppInfo(appId) ?: return
+			avContext.av_requestContext(appInfo)
 			try {
-				val appInfo = amAppList.getAppInfo(appId) ?: return
-				avContext.av_requestContext(appInfo)
 				app?.events?.values?.filterIsInstance<RHMIEvent.FocusEvent>()?.firstOrNull()?.triggerEvent(mapOf(0.toByte() to playbackView.state.id))
-				synchronized(server!!) {
-					amAppList.redrawApp(appInfo)
-				}
 			} catch (e: Exception) {
-				Log.e(TAG, "Received exception while handling am_onAppEvent", e)
+				Log.i(TAG, "Failed to trigger focus event for AM icon, recreating RHMI and trying again")
+				try {
+					recreateRhmiApp()
+					app?.events?.values?.filterIsInstance<RHMIEvent.FocusEvent>()?.firstOrNull()?.triggerEvent(mapOf(0.toByte() to playbackView.state.id))
+				} catch (e: Exception) {
+					Log.e(TAG, "Received exception while handling am_onAppEvent", e)
+				}
+			}
+			synchronized(server!!) {
+				amAppList.redrawApp(appInfo)
 			}
 		}
 

@@ -143,6 +143,10 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 	}
 
+	fun forgetDisplayedInfo() {
+		queueMetadata = null
+	}
+
 	fun redraw() {
 		// need a full redraw if the queue is different or has been modified
 		if (musicController.getQueue() != queueMetadata) {

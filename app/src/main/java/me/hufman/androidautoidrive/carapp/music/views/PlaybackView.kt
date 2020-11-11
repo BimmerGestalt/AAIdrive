@@ -230,7 +230,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 			repeatButton?.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionCallback { controller.toggleRepeat() }
 
-			redrawAudiostatePlaylist("", true)
+			redrawAudiostatePlaylist("")
 			state.getPlayListFocusRowModel()?.asRaIntModel()?.value = 1
 			state.getPlayListAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 				when (index) {
@@ -252,6 +252,12 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			// set the highlight to the middle when showing the window
 			state.getPlayListFocusRowModel()?.asRaIntModel()?.value = 1
 		}
+	}
+
+	/** Clear out the cache of displayed items for a full redraw */
+	fun forgetDisplayedInfo() {
+		displayedApp = null
+		displayedSong = null
 	}
 
 	fun redraw() {
@@ -309,24 +315,20 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		}
 
 		// update the audio state playlist
-		redrawAudiostatePlaylist(song?.title ?: "", false)
+		redrawAudiostatePlaylist(song?.title ?: "")
 
 		displayedSong = song
 		displayedConnected = controller.isConnected()
 	}
 
-	private fun redrawAudiostatePlaylist(title: String, includeActions: Boolean) {
+	private fun redrawAudiostatePlaylist(title: String) {
 		if (state is RHMIState.AudioHmiState) {
 			val playlistModel = state.getPlayListModel()?.asRaListModel()
 			val playlist = RHMIModel.RaListModel.RHMIListConcrete(10)
 			playlist.addRow(PlaylistItem(false, skipBackEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_BACK), L.MUSIC_SKIP_PREVIOUS))
 			playlist.addRow(PlaylistItem(false, true, grayscaleNoteIcon, title))
 			playlist.addRow(PlaylistItem(false, skipNextEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_NEXT), L.MUSIC_SKIP_NEXT))
-			if (includeActions) {
-				playlistModel?.asRaListModel()?.setValue(playlist, 0, 3, 3)
-			} else {
-				playlistModel?.setValue(playlist, 1, 1, 3)
-			}
+			playlistModel?.asRaListModel()?.setValue(playlist, 0, 3, 3)
 		}
 	}
 
@@ -364,7 +366,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			skipBackButton?.setEnabled(skipBackEnabled)
 			skipNextButton?.setEnabled(skipNextEnabled)
 
-			redrawAudiostatePlaylist(controller.getMetadata()?.title ?: "", true)
+			redrawAudiostatePlaylist(controller.getMetadata()?.title ?: "")
 		}
 	}
 
