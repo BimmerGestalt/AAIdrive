@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
@@ -149,7 +150,9 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 					}
 					val intent = Intent().addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
 					RemoteInput.addResultsToIntent(action.remoteInputs, intent, results)
-					RemoteInput.setResultsSource(intent, RemoteInput.SOURCE_FREE_FORM_INPUT)
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {   // only added in API 28
+						RemoteInput.setResultsSource(intent, RemoteInput.SOURCE_FREE_FORM_INPUT)
+					}
 					action.actionIntent.send(listenerService, 0, intent)
 				}
 			} catch (e: SecurityException) {
