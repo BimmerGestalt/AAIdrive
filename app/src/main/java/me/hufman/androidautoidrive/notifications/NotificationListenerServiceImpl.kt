@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import android.widget.TextView
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent.Companion.INTENT_INTERACTION
 import me.hufman.androidautoidrive.notifications.NotificationParser.Companion.dumpNotification
@@ -125,8 +126,16 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		override fun action(key: String, actionName: String) {
 			try {
 				val notification = listenerService.activeNotifications.find { it.key == key }
-				val intent = notification?.notification?.actions?.find { it.title == actionName }?.actionIntent
-				intent?.send()
+				val customViewTemplate = notification?.notification?.bigContentView ?: notification?.notification?.contentView
+				if (customViewTemplate != null) {
+					val customView = customViewTemplate.apply(listenerService, null)
+					customView.collectChildren().filterIsInstance<TextView>()
+						.filter { it.isClickable }
+						.firstOrNull { it.text == key }?.performClick()
+				} else {
+					val intent = notification?.notification?.actions?.find { it.title == actionName }?.actionIntent
+					intent?.send()
+				}
 			} catch (e: SecurityException) {
 				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
 			}

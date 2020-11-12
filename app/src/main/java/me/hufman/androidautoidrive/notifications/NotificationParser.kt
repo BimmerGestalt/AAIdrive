@@ -17,11 +17,17 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat.*
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.RemoteViews
+import android.widget.TextView
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.PhoneAppResourcesAndroid
 import me.hufman.androidautoidrive.UnicodeCleaner
+import me.hufman.androidautoidrive.Utils
 
-class NotificationParser(val notificationManager: NotificationManager, val phoneAppResources: PhoneAppResources) {
+class NotificationParser(val notificationManager: NotificationManager, val phoneAppResources: PhoneAppResources, val remoteViewInflater: (RemoteViews) -> View) {
 	/**
 	 * Any package names that should not trigger popups
 	 * Spotify, for example, shows a notification that another app is controlling it
@@ -34,7 +40,8 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		fun getInstance(context: Context): NotificationParser {
 			val notificationManager = context.getSystemService(NotificationManager::class.java)
 			val phoneAppResources = PhoneAppResourcesAndroid(context)
-			return NotificationParser(notificationManager, phoneAppResources)
+			val remoteViewInflater: (RemoteViews) -> View = { it.apply(context, null) }
+			return NotificationParser(notificationManager, phoneAppResources, remoteViewInflater)
 		}
 
 		fun dumpNotification(title: String, sbn: StatusBarNotification, ranking: NotificationListenerService.Ranking?) {
@@ -70,6 +77,13 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		var icon = phoneAppResources.getIconDrawable(sbn.notification.smallIcon)
 		var picture: Drawable? = null
 		var pictureUri: String? = null
+
+		if (sbn.notification.bigContentView != null || sbn.notification.contentView != null) {
+			val parsed = summarizedCustomNotification(sbn)
+			if (parsed != null) {
+				return parsed
+			}
+		}
 
 		// get the main title and text
 		extras.getCharSequence(Notification.EXTRA_TITLE)?.let { title = it.toString() }
@@ -144,6 +158,32 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		return MessagingNotificationParsed(text, pictureUri)
 	}
 
+	fun summarizedCustomNotification(sbn: StatusBarNotification): CarNotification? {
+		val smallIcon = phoneAppResources.getIconDrawable(sbn.notification.smallIcon)
+		val extras = sbn.notification.extras
+		val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
+
+		val customViewTemplate = sbn.notification.bigContentView ?: sbn.notification.contentView ?: return null
+		val customView = remoteViewInflater.invoke(customViewTemplate)
+		val images = customView.collectChildren().filterIsInstance<ImageView>().toList()
+		val drawable = images.sortedByDescending { it.width * it.height }
+			.getOrNull(0)?.drawable
+		val lines = customView.collectChildren().filterIsInstance<TextView>()
+			.filter { ! it.isClickable }
+			.map { it.text.toString() }
+			.filter { it.isNotEmpty() }
+			.toList()
+		val actions = customView.collectChildren().filterIsInstance<TextView>()
+			.filter { it.isClickable }
+			.map { CarNotification.Action(it.text.toString(), false, emptyList()) }
+			.take(5).toList()
+
+		return CarNotification(sbn.packageName, sbn.key, smallIcon, sbn.isClearable,
+				actions, title, lines.joinToString("\n"),
+				drawable, null,
+				getNotificationSound(sbn.notification))
+	}
+
 	fun getNotificationSound(notification: Notification): Uri {
 		val channelSoundUri = ifOreo { getChannelSound(notification) }
 		return notification.sound ?: channelSoundUri ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -180,9 +220,23 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 
 	fun shouldShowNotification(sbn: StatusBarNotification): Boolean {
 		return !sbn.notification.isGroupSummary() &&
-				sbn.notification.extras.getCharSequence(Notification.EXTRA_TEXT) != null &&
-				(sbn.isClearable || sbn.notification.actions?.isNotEmpty() == true)
+				sbn.notification.extras.getCharSequence(Notification.EXTRA_TITLE) != null &&
+				(sbn.isClearable || sbn.notification.actions?.isNotEmpty() == true || sbn.notification.contentView != null)
 	}
 }
 
 data class MessagingNotificationParsed(val text: String, val pictureUri: String?)
+
+fun View.collectChildren(matches: (View) -> Boolean = { true }): Sequence<View> {
+	return if (this is ViewGroup) {
+		(0 until childCount).asSequence().map { index ->
+			getChildAt(index).collectChildren(matches)
+		}.flatten()
+	} else {
+		if (matches(this)) {
+			sequenceOf(this)
+		} else {
+			emptySequence()
+		}
+	}
+}
