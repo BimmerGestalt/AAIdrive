@@ -26,7 +26,6 @@ import android.widget.TextView
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.PhoneAppResourcesAndroid
 import me.hufman.androidautoidrive.UnicodeCleaner
-import me.hufman.androidautoidrive.Utils
 
 class NotificationParser(val notificationManager: NotificationManager, val phoneAppResources: PhoneAppResources, val remoteViewInflater: (RemoteViews) -> View) {
 	/**
@@ -75,7 +74,9 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		var text:String? = null
 		var summary:String? = null
 		val extras = sbn.notification.extras
-		var icon = phoneAppResources.getIconDrawable(sbn.notification.smallIcon)
+		val appIcon = phoneAppResources.getIconDrawable(sbn.notification.smallIcon)
+		var icon = appIcon
+		var sidePicture: Drawable? = null
 		var picture: Drawable? = null
 		var pictureUri: String? = null
 
@@ -97,18 +98,30 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)?.let { text = it.joinToString("\n") }
 
 		// icon handling
-		extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON)?.let {
-			// might have a user avatar, which might be an icon or a bitmap
-			when (it) {
-				is Icon -> icon = phoneAppResources.getIconDrawable(it)
-				is Bitmap -> icon = phoneAppResources.getBitmapDrawable(it)
+		extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON)?.also { largeIcon ->
+			// the picture on the side of a notification
+			when (largeIcon) {
+				is Icon -> phoneAppResources.getIconDrawable(largeIcon).also {
+					icon = it
+					sidePicture = it
+				}
+				is Bitmap -> phoneAppResources.getBitmapDrawable(largeIcon).also {
+					icon = it
+					sidePicture = it
+				}
 			}
 		}
-		extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON_BIG)?.let {
-			// might have a user avatar, which might be an icon or a bitmap
-			when (it) {
-				is Icon -> icon = phoneAppResources.getIconDrawable(it)
-				is Bitmap -> icon = phoneAppResources.getBitmapDrawable(it)
+		extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON_BIG)?.also { largeIcon ->
+			// the picture on the side of a notification, when expanded
+			when (largeIcon) {
+				is Icon -> phoneAppResources.getIconDrawable(largeIcon).also {
+					icon = it
+					sidePicture = it
+				}
+				is Bitmap -> phoneAppResources.getBitmapDrawable(largeIcon).also {
+					icon = it
+					sidePicture = it
+				}
 			}
 		}
 
@@ -122,7 +135,10 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 				extras.getString(Notification.EXTRA_TEMPLATE) == "android.app.Notification\$MessagingStyle") {
 			val parsed = summarizeMessagingNotification(sbn)
 			text = parsed.text
-			parsed.icon?.also { icon = it }
+			parsed.icon?.let { phoneAppResources.getIconDrawable(it) }?.also {
+				icon = it
+				sidePicture = it
+			}
 			pictureUri = parsed.pictureUri
 		}
 
@@ -138,7 +154,8 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		val soundUri = getNotificationSound(sbn.notification)
 
 		val summarized = CarNotification(sbn.packageName, sbn.key, icon, sbn.isClearable, actions,
-				title ?: "", text?.trim() ?: "", picture, pictureUri, soundUri)
+				title ?: "", text?.trim() ?: "",
+				appIcon, sidePicture, picture, pictureUri, soundUri)
 		return summarized
 	}
 
@@ -163,6 +180,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 	}
 
 	fun summarizedCustomNotification(sbn: StatusBarNotification): CarNotification? {
+		val appIcon = phoneAppResources.getIconDrawable(sbn.notification.smallIcon)
 		val smallIcon = phoneAppResources.getIconDrawable(sbn.notification.smallIcon)
 		val extras = sbn.notification.extras
 		val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
@@ -172,6 +190,8 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		val images = customView.collectChildren().filterIsInstance<ImageView>().toList()
 		val drawable = images.sortedByDescending { it.width * it.height }
 			.getOrNull(0)?.drawable
+		val sidePicture = drawable.ifMatches { it.intrinsicHeight <= 200 }
+		val picture = drawable.ifMatches { it.intrinsicHeight > 200 }
 		val lines = customView.collectChildren().filterIsInstance<TextView>()
 			.filter { ! it.isClickable }
 			.map { it.text.toString() }
@@ -183,8 +203,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 			.take(5).toList()
 
 		return CarNotification(sbn.packageName, sbn.key, smallIcon, sbn.isClearable,
-				actions, title, lines.joinToString("\n"),
-				drawable, null,
+				actions, title, lines.joinToString("\n"), appIcon, sidePicture, picture, null,
 				getNotificationSound(sbn.notification))
 	}
 
@@ -230,6 +249,14 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 }
 
 data class MessagingNotificationParsed(val text: String, val icon: Icon?, val pictureUri: String?)
+
+fun Drawable?.ifMatches(matches: (Drawable) -> Boolean): Drawable? {
+	return if (this != null && matches(this)) {
+		this
+	} else {
+		null
+	}
+}
 
 fun View.collectChildren(matches: (View) -> Boolean = { true }): Sequence<View> {
 	return if (this is ViewGroup) {
