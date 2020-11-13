@@ -293,7 +293,8 @@ class MusicApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResou
 			try {
 				val appInfo = amAppList.getAppInfo(appId) ?: return
 				avContext.av_requestContext(appInfo)
-				app?.events?.values?.filterIsInstance<RHMIEvent.FocusEvent>()?.firstOrNull()?.triggerEvent(mapOf(0.toByte() to playbackView.state.id))
+				val focusEvent = app?.events?.values?.filterIsInstance<RHMIEvent.FocusEvent>()?.sortedBy { it.id }?.firstOrNull()
+				focusEvent?.triggerEvent(mapOf(0.toByte() to playbackView.state.id))
 				synchronized(server!!) {
 					amAppList.redrawApp(appInfo)
 				}

@@ -96,9 +96,10 @@ class TestMusicAVContext {
 
 		// user clicks the icon
 		mockClient.am_onAppEvent(1, "1", ident, BMWRemoting.AMEvent.AM_APP_START)
-
 		// and it should start playing that app
 		verify(musicController).connectAppManually(musicAppInfo)
+		// it should trigger focus to the PlaybackView
+		assertEquals(mapOf(0.toByte() to TestMusicApp.IDs.PLAYBACK_STATE), mockServer.triggeredEvents[TestMusicApp.IDs.FOCUS_EVENT])
 
 		// it should also redraw the am icon
 		assertEquals(2, mockServer.amApps.size)
