@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive
 
 import android.app.Notification
 import android.app.Notification.FLAG_GROUP_SUMMARY
+import android.app.Person
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
@@ -232,8 +233,13 @@ class TestNotificationApp {
 			on { getCharSequence(eq("sender")) } doReturn "Sender"
 			on { getCharSequence(eq("text")) } doReturn "Message2"
 		}
+		val icon = mock<Icon>()
+		val person = mock<Person> {
+			on { getIcon() } doReturn icon
+		}
 		val message3 = mock<Bundle> {
 			on { getCharSequence(eq("sender")) } doReturn "Sender"
+			on { getParcelable<Person>(eq("sender_person")) } doReturn person
 			on { getCharSequence(eq("text")) } doReturn "Message3"
 			on { getCharSequence(eq("type")) } doReturn "image/"
 			on { getParcelable<Uri>(eq("uri")) } doReturn mock<Uri>()
@@ -248,6 +254,7 @@ class TestNotificationApp {
 		val notificationObject = NotificationParser(mock(), phoneAppResources, mock()).summarizeNotification(notification)
 		assertEquals("Sender: Message\nSender: Message2\nSender: Message3", notificationObject.text)
 		assertNotNull(notificationObject.pictureUri)
+		assertEquals(icon, notificationObject.icon)
 	}
 
 	@Test

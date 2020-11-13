@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.notifications
 
 import android.app.Notification
 import android.app.NotificationManager
+import android.app.Person
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -121,6 +122,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 				extras.getString(Notification.EXTRA_TEMPLATE) == "android.app.Notification\$MessagingStyle") {
 			val parsed = summarizeMessagingNotification(sbn)
 			text = parsed.text
+			parsed.icon?.also { icon = it }
 			pictureUri = parsed.pictureUri
 		}
 
@@ -150,12 +152,14 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		val text = recentMessages.joinToString("\n") {
 			"${it.getCharSequence("sender")}: ${it.getCharSequence("text")}"
 		}
+		val person = recentMessages.lastOrNull()?.getParcelable("sender_person") as? Person // last message person
+				?: extras.getParcelable(Notification.EXTRA_MESSAGING_PERSON) as? Person     // conversation person
 		val pictureUri = recentMessages.filter {
 			it.getCharSequence("type")?.startsWith("image/") == true
 		}.map {
 			it.getParcelable("uri") as Uri
 		}.lastOrNull()?.toString()
-		return MessagingNotificationParsed(text, pictureUri)
+		return MessagingNotificationParsed(text, person?.icon, pictureUri)
 	}
 
 	fun summarizedCustomNotification(sbn: StatusBarNotification): CarNotification? {
@@ -225,7 +229,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 	}
 }
 
-data class MessagingNotificationParsed(val text: String, val pictureUri: String?)
+data class MessagingNotificationParsed(val text: String, val icon: Icon?, val pictureUri: String?)
 
 fun View.collectChildren(matches: (View) -> Boolean = { true }): Sequence<View> {
 	return if (this is ViewGroup) {
