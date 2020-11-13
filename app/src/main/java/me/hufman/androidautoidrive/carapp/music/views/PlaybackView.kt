@@ -14,10 +14,11 @@ import me.hufman.androidautoidrive.carapp.music.components.ProgressGauge
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeAudioState
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeToolbarState
 import me.hufman.androidautoidrive.carapp.RHMIUtils.findAdjacentComponent
+import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.music.*
 import me.hufman.idriveconnectionkit.rhmi.*
 
-class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
+class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs, musicAppMode: MusicAppMode) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.AudioHmiState || (
@@ -34,7 +35,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	val appLogoModel: RHMIModel.RaImageModel?
 	val albumArtBigComponent: RHMIComponent.Image?
 	val albumArtSmallComponent: RHMIComponent.Image?
-	val albumArtBigModel: RHMIModel.RaImageModel
+	val albumArtBigModel: RHMIModel.RaImageModel?
 	val albumArtSmallModel: RHMIModel.RaImageModel?
 	val artistModel: RHMIModelMultiSetterData
 	val albumModel: RHMIModelMultiSetterData
@@ -69,8 +70,13 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 			albumArtBigComponent = null
 			albumArtSmallComponent = null
-			albumArtBigModel = state.getCoverImageModel()?.asRaImageModel()!!
-			albumArtSmallModel = null
+			if (musicAppMode.supportsWidescreen()) {
+				albumArtBigModel = state.getCoverImageModel()?.asRaImageModel()!!
+				albumArtSmallModel = null
+			} else {
+				albumArtBigModel = null
+				albumArtSmallModel = state.getCoverImageModel()?.asRaImageModel()!!
+			}
 
 			artistModel = RHMIModelMultiSetterData(listOf(state.getArtistTextModel()?.asRaDataModel()))
 			albumModel = RHMIModelMultiSetterData(listOf(state.getAlbumTextModel()?.asRaDataModel()))
@@ -286,7 +292,9 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		trackModel.value = UnicodeCleaner.clean(song?.title ?: "")
 		val songCoverArt = song?.coverArt
 		if (songCoverArt != null) {
-			albumArtBigModel.value = graphicsHelpers.compress(songCoverArt, 320, 320, quality = 65)
+			if (albumArtBigModel != null) {
+				albumArtBigModel.value = graphicsHelpers.compress(songCoverArt, 320, 320, quality = 65)
+			}
 			if (albumArtSmallModel != null) {
 				albumArtSmallModel.value = graphicsHelpers.compress(songCoverArt, 200, 200, quality = 65)
 			}
@@ -295,7 +303,9 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		} else if (song?.coverArtUri != null) {
 			try {
 				val coverArt = phoneAppResources.getUriDrawable(song.coverArtUri)
-				albumArtBigModel.value = graphicsHelpers.compress(coverArt, 320, 320, quality = 65)
+				if (albumArtBigModel != null) {
+					albumArtBigModel.value = graphicsHelpers.compress(coverArt, 320, 320, quality = 65)
+				}
 				if (albumArtSmallModel != null) {
 					albumArtSmallModel.value = graphicsHelpers.compress(coverArt, 200, 200, quality = 65)
 				}
@@ -332,7 +342,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 	private fun showPlaceholderCoverart() {
 		if (albumArtPlaceholderBig != null) {
-			albumArtBigModel.value = albumArtPlaceholderBig
+			albumArtBigModel?.value = albumArtPlaceholderBig
 		} else {
 			albumArtBigComponent?.setVisible(false)
 		}

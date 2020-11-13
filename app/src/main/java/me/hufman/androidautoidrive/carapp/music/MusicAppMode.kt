@@ -54,6 +54,7 @@ class MusicAppMode(val capabilities: Map<String, String?>, val appSettings: Muta
 		}
 	}
 
+	/** Audio context detection */
 	fun isBTConnection(): Boolean {
 		return TRANSPORT_PORTS.fromPort(IDriveConnectionListener.port) == TRANSPORT_PORTS.BT
 	}
@@ -69,9 +70,16 @@ class MusicAppMode(val capabilities: Map<String, String?>, val appSettings: Muta
 		val useBT = isBTConnection()
 		return useUSB || useBT
 	}
+
+	/** HMI capability summary */
+	fun supportsWidescreen(): Boolean {
+		return capabilities["hmi.display-width"]?.toIntOrNull() ?: 0 >= 1280
+	}
 	fun isId4(): Boolean {
 		return capabilities["hmi.type"]?.contains("ID4") == true
 	}
+
+	/** Whether to automatically use Spotify resources */
 	fun shouldId5Playback(): Boolean {
 		val idrive4 = capabilities["hmi.type"]?.contains("ID4") == true
 		val manualOverride = !idrive4 && appSettings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT].toBoolean()
