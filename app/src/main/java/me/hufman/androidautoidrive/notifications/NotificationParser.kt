@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.notifications
 
 import android.app.Notification
 import android.app.NotificationManager
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Icon
 import android.media.RingtoneManager
@@ -17,12 +18,7 @@ import android.support.v4.app.NotificationManagerCompat.*
 import android.util.Log
 import me.hufman.androidautoidrive.UnicodeCleaner
 
-object ParseNotification {
-	/**
-	 * Add a NotificationManager (which is tied to a context) t
-	 */
-	var notificationManager: NotificationManager? = null
-
+class NotificationParser(val notificationManager: NotificationManager) {
 	/**
 	 * Any package names that should not trigger popups
 	 * Spotify, for example, shows a notification that another app is controlling it
@@ -31,6 +27,23 @@ object ParseNotification {
 	/** Any notification levels that should not show popups */
 	val SUPPRESSED_POPUP_IMPORTANCES = setOf(IMPORTANCE_LOW, IMPORTANCE_MIN, IMPORTANCE_NONE)
 
+	companion object {
+		fun getInstance(context: Context): NotificationParser {
+			val notificationManager = context.getSystemService(NotificationManager::class.java)
+			return NotificationParser(notificationManager)
+		}
+
+		fun dumpNotification(title: String, sbn: StatusBarNotification, ranking: NotificationListenerService.Ranking?) {
+			val extras = sbn.notification.extras
+			val details = extras?.keySet()?.map { "  ${it}=>${extras.get(it)}" }?.joinToString("\n") ?: ""
+			Log.i(NotificationListenerServiceImpl.TAG, "$title from ${sbn.packageName}: ${extras?.get("android.title")} with the keys:\n$details")
+			Log.i(NotificationListenerServiceImpl.TAG, "Ranking: isAmbient:${ranking?.isAmbient} matchesFilter:${ranking?.matchesInterruptionFilter()}")
+		}
+		fun dumpMessage(title: String, bundle: Bundle) {
+			val details = bundle.keySet()?.map { key -> "  ${key}=>${bundle.get(key)}" }?.joinToString("\n") ?: ""
+			Log.i(NotificationListenerServiceImpl.TAG, "$title $details")
+		}
+	}
 	/**
 	 * Runs this block if the phone is Oreo or newer
 	 */
@@ -165,17 +178,6 @@ object ParseNotification {
 		return !sbn.notification.isGroupSummary() &&
 				sbn.notification.extras.getCharSequence(Notification.EXTRA_TEXT) != null &&
 				(sbn.isClearable || sbn.notification.actions?.isNotEmpty() == true)
-	}
-
-	fun dumpNotification(title: String, sbn: StatusBarNotification, ranking: NotificationListenerService.Ranking?) {
-		val extras = sbn.notification.extras
-		val details = extras?.keySet()?.map { "  ${it}=>${extras.get(it)}" }?.joinToString("\n") ?: ""
-		Log.i(NotificationListenerServiceImpl.TAG, "$title from ${sbn.packageName}: ${extras?.get("android.title")} with the keys:\n$details")
-		Log.i(NotificationListenerServiceImpl.TAG, "Ranking: isAmbient:${ranking?.isAmbient} matchesFilter:${ranking?.matchesInterruptionFilter()}")
-	}
-	fun dumpMessage(title: String, bundle: Bundle) {
-		val details = bundle.keySet()?.map { key -> "  ${key}=>${bundle.get(key)}" }?.joinToString("\n") ?: ""
-		Log.i(NotificationListenerServiceImpl.TAG, "$title $details")
 	}
 }
 

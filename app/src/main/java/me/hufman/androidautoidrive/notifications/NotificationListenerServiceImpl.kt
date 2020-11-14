@@ -1,7 +1,6 @@
 package me.hufman.androidautoidrive.notifications
 
 import android.app.Notification
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.RemoteInput
 import android.content.BroadcastReceiver
@@ -15,10 +14,7 @@ import android.service.notification.StatusBarNotification
 import android.util.Log
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent.Companion.INTENT_INTERACTION
-import me.hufman.androidautoidrive.notifications.ParseNotification.dumpNotification
-import me.hufman.androidautoidrive.notifications.ParseNotification.shouldPopupNotification
-import me.hufman.androidautoidrive.notifications.ParseNotification.shouldShowNotification
-import me.hufman.androidautoidrive.notifications.ParseNotification.summarizeNotification
+import me.hufman.androidautoidrive.notifications.NotificationParser.Companion.dumpNotification
 import me.hufman.androidautoidrive.phoneui.UIState
 import me.hufman.androidautoidrive.phoneui.MainActivity
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
@@ -35,6 +31,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		const val INTENT_REQUEST_DATA = "me.hufman.androidaudoidrive.PhoneNotificationUpdate.REQUEST_DATA"
 	}
 
+	val notificationParser by lazy { NotificationParser.getInstance(this) }
 	val carController = NotificationUpdaterControllerIntent(this)
 	var carNotificationReceiver = CarNotificationControllerIntent.Receiver(CarNotificationControllerListener(this))
 	val interactionListener = NotificationInteractionListener(carNotificationReceiver, carController)
@@ -56,12 +53,9 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		Log.i(TAG, "Registering CarNotificationInteraction listeners")
 		carNotificationReceiver.register(this, broadcastReceiver)
 		this.registerReceiver(broadcastReceiver, IntentFilter(INTENT_REQUEST_DATA))
-
-		ParseNotification.notificationManager = getSystemService(NotificationManager::class.java)
 	}
 
 	override fun onDestroy() {
-		ParseNotification.notificationManager = null
 		super.onDestroy()
 		try {
 			this.unregisterReceiver(broadcastReceiver)
@@ -100,7 +94,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		}
 		updateNotificationList()
 
-		val shouldPopup = shouldPopupNotification(sbn, ranking)
+		val shouldPopup = notificationParser.shouldPopupNotification(sbn, ranking)
 		if (sbn != null && shouldPopup) {
 			carController.onNewNotification(sbn.key)
 		}
@@ -112,9 +106,9 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		if (!IDriveConnectionListener.isConnected) return
 		try {
 			val current = this.activeNotifications.filter {
-				shouldShowNotification(it)
+				notificationParser.shouldShowNotification(it)
 			}.map {
-				summarizeNotification(it)
+				notificationParser.summarizeNotification(it)
 			}
 			NotificationsState.replaceNotifications(current)
 		} catch (e: SecurityException) {

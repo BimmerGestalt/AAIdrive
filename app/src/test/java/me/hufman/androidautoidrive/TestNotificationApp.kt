@@ -186,7 +186,7 @@ class TestNotificationApp {
 	@Test
 	fun testSummary() {
 		val notification = createNotification("Ticker Text", "Title", "Text \uD83D\uDE3B\nTwo\n", "Summary", true)
-		val notificationObject = ParseNotification.summarizeNotification(notification)
+		val notificationObject = NotificationParser(mock()).summarizeNotification(notification)
 		assertEquals("testKey", notificationObject.key)
 		assertEquals("me.hufman.androidautoidrive", notificationObject.packageName)
 		assertEquals("Title", notificationObject.title)
@@ -202,13 +202,13 @@ class TestNotificationApp {
 		whenever(notification.notification.extras.getParcelable<Bitmap>(eq(Notification.EXTRA_PICTURE))) doReturn mock<Bitmap>()
 		whenever(notification.notification.extras.getParcelable<Icon>(eq(NotificationCompat.EXTRA_LARGE_ICON))) doReturn largeIcon
 		whenever(notification.notification.extras.getParcelable<Icon>(eq(NotificationCompat.EXTRA_LARGE_ICON_BIG))) doReturn largeIcon
-		val notificationImageObject = ParseNotification.summarizeNotification(notification)
+		val notificationImageObject = NotificationParser(mock()).summarizeNotification(notification)
 		assertNotNull(notificationImageObject.picture)
 		assertEquals(largeIcon, notificationImageObject.icon)
 
 		// make sure the dump method doesn't crash
-		ParseNotification.dumpNotification("Title", notification, null)
-		ParseNotification.dumpMessage("Title", notification.notification.extras)
+		NotificationParser.dumpNotification("Title", notification, null)
+		NotificationParser.dumpMessage("Title", notification.notification.extras)
 	}
 
 	@Test
@@ -234,7 +234,7 @@ class TestNotificationApp {
 				message, message2, message3
 		)
 
-		val notificationObject = ParseNotification.summarizeNotification(notification)
+		val notificationObject = NotificationParser(mock()).summarizeNotification(notification)
 		assertEquals("Sender: Message\nSender: Message2\nSender: Message3", notificationObject.text)
 		assertNotNull(notificationObject.pictureUri)
 	}
@@ -242,7 +242,7 @@ class TestNotificationApp {
 	@Test
 	fun testSummaryEmptyText() {
 		val notification = createNotification("Ticker Text", "Title", null, "Summary", true)
-		val notificationObject = ParseNotification.summarizeNotification(notification)
+		val notificationObject = NotificationParser(mock()).summarizeNotification(notification)
 		assertEquals("testKey", notificationObject.key)
 		assertEquals("me.hufman.androidautoidrive", notificationObject.packageName)
 		assertEquals("Title", notificationObject.title)
@@ -252,27 +252,27 @@ class TestNotificationApp {
 	@Test
 	fun testShouldShow() {
 		val notification = createNotification("Ticker Text", "Title", "Text", "Summary", true)
-		assertTrue(ParseNotification.shouldShowNotification(notification))
-		assertTrue(ParseNotification.shouldPopupNotification(notification, null))
+		assertTrue(NotificationParser(mock()).shouldShowNotification(notification))
+		assertTrue(NotificationParser(mock()).shouldPopupNotification(notification, null))
 
 		val nullTitle = createNotification("Ticker Text", null, null, "Summary", true)
-		assertFalse(ParseNotification.shouldShowNotification(nullTitle))
-		assertTrue(ParseNotification.shouldPopupNotification(nullTitle, null))
+		assertFalse(NotificationParser(mock()).shouldShowNotification(nullTitle))
+		assertTrue(NotificationParser(mock()).shouldPopupNotification(nullTitle, null))
 
 		val musicApp = createNotification("Ticker Text", "Title", "Text", "Summary", true)
 		whenever(musicApp.notification.extras.getString(eq(Notification.EXTRA_TEMPLATE))) doReturn "android.app.Notification\$MediaStyle"
-		assertTrue(ParseNotification.shouldShowNotification(musicApp))
-		assertFalse(ParseNotification.shouldPopupNotification(musicApp, null))
+		assertTrue(NotificationParser(mock()).shouldShowNotification(musicApp))
+		assertFalse(NotificationParser(mock()).shouldPopupNotification(musicApp, null))
 
 		val groupNotification = createNotification("Ticker Text", "Title", "Text", "Summary", true)
 		groupNotification.notification.flags = FLAG_GROUP_SUMMARY
 		whenever(groupNotification.notification.group) doReturn "Yes"
-		assertFalse(ParseNotification.shouldShowNotification(groupNotification))
-		assertFalse(ParseNotification.shouldPopupNotification(groupNotification, null))
+		assertFalse(NotificationParser(mock()).shouldShowNotification(groupNotification))
+		assertFalse(NotificationParser(mock()).shouldPopupNotification(groupNotification, null))
 
 		val spotifyNotification = createNotification("Ticker", "Spotify", "AndroidAutoIdrive is connecting", "", true, "com.spotify.music")
-		assertTrue(ParseNotification.shouldShowNotification(spotifyNotification))
-		assertFalse(ParseNotification.shouldPopupNotification(spotifyNotification, null))
+		assertTrue(NotificationParser(mock()).shouldShowNotification(spotifyNotification))
+		assertFalse(NotificationParser(mock()).shouldPopupNotification(spotifyNotification, null))
 
 		// low priority notification handling
 		val highPriorityRanking = mock<NotificationListenerService.Ranking> {
@@ -280,28 +280,28 @@ class TestNotificationApp {
 			on { isAmbient } doReturn false
 			on { matchesInterruptionFilter() } doReturn true
 		}
-		assertTrue(ParseNotification.shouldPopupNotification(notification, highPriorityRanking))
+		assertTrue(NotificationParser(mock()).shouldPopupNotification(notification, highPriorityRanking))
 
 		val lowPriorityRanking = mock<NotificationListenerService.Ranking> {
 			on { importance } doReturn IMPORTANCE_LOW
 			on { isAmbient } doReturn false
 			on { matchesInterruptionFilter() } doReturn true
 		}
-		assertFalse(ParseNotification.shouldPopupNotification(notification, lowPriorityRanking))
+		assertFalse(NotificationParser(mock()).shouldPopupNotification(notification, lowPriorityRanking))
 
 		val dndRanking = mock<NotificationListenerService.Ranking> {
 			on { importance } doReturn IMPORTANCE_HIGH
 			on { isAmbient } doReturn false
 			on { matchesInterruptionFilter() } doReturn false
 		}
-		assertFalse(ParseNotification.shouldPopupNotification(notification, dndRanking))
+		assertFalse(NotificationParser(mock()).shouldPopupNotification(notification, dndRanking))
 
 		val ambientRanking = mock<NotificationListenerService.Ranking> {
 			on { importance } doReturn IMPORTANCE_HIGH
 			on { isAmbient } doReturn true
 			on { matchesInterruptionFilter() } doReturn true
 		}
-		assertFalse(ParseNotification.shouldPopupNotification(notification, ambientRanking))
+		assertFalse(NotificationParser(mock()).shouldPopupNotification(notification, ambientRanking))
 	}
 
 	@Test
@@ -309,7 +309,7 @@ class TestNotificationApp {
 		val history = PopupHistory()
 
 		// show new notifications
-		val notification = ParseNotification.summarizeNotification(createNotification("Ticker Text", "Title", "Text", "Summary", true))
+		val notification = NotificationParser(mock()).summarizeNotification(createNotification("Ticker Text", "Title", "Text", "Summary", true))
 		assertFalse(history.contains(notification))
 
 		// don't show the same notification twice
@@ -318,12 +318,12 @@ class TestNotificationApp {
 		assertEquals(1, history.poppedNotifications.size)
 
 		// identical notifications should be coalesced in the history
-		val duplicate = ParseNotification.summarizeNotification(createNotification("Ticker Text", "Title", "Text", "Summary", true))
+		val duplicate = NotificationParser(mock()).summarizeNotification(createNotification("Ticker Text", "Title", "Text", "Summary", true))
 		history.add(duplicate)
 		assertEquals(1, history.poppedNotifications.size)
 
 		// updated notification should still be shown
-		val updated = ParseNotification.summarizeNotification(createNotification("Ticker Text", "Title", "Text\nLine2", "Summary", true))
+		val updated = NotificationParser(mock()).summarizeNotification(createNotification("Ticker Text", "Title", "Text\nLine2", "Summary", true))
 		assertFalse(history.contains(updated))
 		history.add(updated)
 		assertEquals(2, history.poppedNotifications.size)
@@ -331,7 +331,7 @@ class TestNotificationApp {
 		// only should have 15 history entries
 		(0..20).forEach { i ->
 			val spam = createNotification("Ticker Text", "Title $i", "Text $i", "Summary", true)
-			history.add(ParseNotification.summarizeNotification(spam))
+			history.add(NotificationParser(mock()).summarizeNotification(spam))
 		}
 		assertEquals(15, history.poppedNotifications.size)
 
