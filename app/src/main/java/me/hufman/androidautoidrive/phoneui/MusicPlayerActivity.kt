@@ -69,9 +69,7 @@ class MusicPlayerActivity: AppCompatActivity() {
 			override fun onPageSelected(position: Int) {
 				update(position)
 			}
-			override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-				update(position)
-			}
+			override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 			override fun onPageScrollStateChanged(state: Int) {}
 		})
 
