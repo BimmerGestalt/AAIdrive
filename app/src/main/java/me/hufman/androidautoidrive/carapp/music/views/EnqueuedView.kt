@@ -105,7 +105,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			listComponent.setEnabled(true)
 			listComponent.setSelectable(true)
 			songsList.addAll(songs)
-			showList()
+			showList(0)
 			listComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
 				showList(startIndex, numRows)
 
