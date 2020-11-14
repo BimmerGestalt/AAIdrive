@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.media.RingtoneManager
 import android.net.Uri
@@ -16,9 +17,11 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat.*
 import android.util.Log
+import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.PhoneAppResourcesAndroid
 import me.hufman.androidautoidrive.UnicodeCleaner
 
-class NotificationParser(val notificationManager: NotificationManager) {
+class NotificationParser(val notificationManager: NotificationManager, val phoneAppResources: PhoneAppResources) {
 	/**
 	 * Any package names that should not trigger popups
 	 * Spotify, for example, shows a notification that another app is controlling it
@@ -30,7 +33,8 @@ class NotificationParser(val notificationManager: NotificationManager) {
 	companion object {
 		fun getInstance(context: Context): NotificationParser {
 			val notificationManager = context.getSystemService(NotificationManager::class.java)
-			return NotificationParser(notificationManager)
+			val phoneAppResources = PhoneAppResourcesAndroid(context)
+			return NotificationParser(notificationManager, phoneAppResources)
 		}
 
 		fun dumpNotification(title: String, sbn: StatusBarNotification, ranking: NotificationListenerService.Ranking?) {
@@ -63,8 +67,8 @@ class NotificationParser(val notificationManager: NotificationManager) {
 		var text:String? = null
 		var summary:String? = null
 		val extras = sbn.notification.extras
-		var icon = sbn.notification.smallIcon
-		var picture: Bitmap? = null
+		var icon = phoneAppResources.getIconDrawable(sbn.notification.smallIcon)
+		var picture: Drawable? = null
 		var pictureUri: String? = null
 
 		// get the main title and text
@@ -81,21 +85,21 @@ class NotificationParser(val notificationManager: NotificationManager) {
 		extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON)?.let {
 			// might have a user avatar, which might be an icon or a bitmap
 			when (it) {
-				is Icon -> icon = it
-				is Bitmap -> icon = Icon.createWithBitmap(it)
+				is Icon -> icon = phoneAppResources.getIconDrawable(it)
+				is Bitmap -> icon = phoneAppResources.getBitmapDrawable(it)
 			}
 		}
 		extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON_BIG)?.let {
 			// might have a user avatar, which might be an icon or a bitmap
 			when (it) {
-				is Icon -> icon = it
-				is Bitmap -> icon = Icon.createWithBitmap(it)
+				is Icon -> icon = phoneAppResources.getIconDrawable(it)
+				is Bitmap -> icon = phoneAppResources.getBitmapDrawable(it)
 			}
 		}
 
 		// maybe a picture too
 		extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_PICTURE)?.let {
-			if (it is Bitmap) picture = it
+			if (it is Bitmap) picture = phoneAppResources.getBitmapDrawable(it)
 		}
 
 		// some extra handling for special notifications
