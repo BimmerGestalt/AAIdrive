@@ -239,6 +239,10 @@ task extractRHMI(type: Copy) {
 }
 
 // Also the unit tests rely on some files, extract those too
+def RHMIClassicSourcesTest = [
+        // these files are only in the Classic app
+        "news/rhmi/ui_description.xml": "ui_description_news.xml",
+]
 def RHMISourcesTest = [
         "basecore/rhmi/multimedia/id5/v2/ui_description.xml": "ui_description_multimedia_v2.xml",
         "basecore/rhmi/multimedia/id5/v3/ui_description.xml": "ui_description_multimedia_v3.xml",
@@ -250,7 +254,9 @@ task extractRHMITest(type: Copy) {
 
     def destRoot = "src/test/resources"
     def connectedFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*\.apk/)
+    def connectedClassicFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*\.apk/)
     connectedFound.removeAll {it.toLowerCase().contains("classic")}
+    connectedClassicFound.retainAll {it.toLowerCase().contains("classic")}
 
     def missing = RHMISourcesTest.values().findAll {
         !file("$destRoot/$it").exists()
@@ -258,6 +264,12 @@ task extractRHMITest(type: Copy) {
     if (!missing.isEmpty()) {
         if (connectedFound.isEmpty()) {
             throw new StopExecutionException("Could not locate Connected APK to extract test resources from")
+        }
+        RHMIClassicSourcesTest.each { sourceFile ->
+            from({zipTree(connectedClassicFound[0])}) {
+                include "assets/carapplications/${sourceFile.key}"
+                eachFile { it.relativePath = new RelativePath(true, sourceFile.value)}
+            }
         }
         RHMISourcesTest.each { sourceFile ->
             from({zipTree(connectedFound[0])}) {

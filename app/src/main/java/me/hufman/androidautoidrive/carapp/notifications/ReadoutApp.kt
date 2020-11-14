@@ -55,8 +55,10 @@ class ReadoutApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppRes
 		var readoutController: ReadoutController? = null
 		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
 			val propertyData = loadJSON(propertyValue) ?: return
-			val ttsState = propertyData.getJSONObject("TTSState")
-			readoutController?.onTTSEvent(ttsState.toMap())
+			if (propertyData.has("TTSState")) {
+				val ttsState = propertyData.getJSONObject("TTSState")
+				readoutController?.onTTSEvent(ttsState.toMap())
+			}
 		}
 	}
 
