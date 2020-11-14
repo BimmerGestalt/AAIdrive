@@ -32,7 +32,7 @@ after_success:
 - "echo Found the following artifacts:; find app/build/outputs"
 - "echo Hashing the artifacts for traceability:; find app/build/outputs -name '*.apk' -exec sha1sum '{}' +"
 - "echo Verifying sha1sum files:; find app/build/outputs -name '*.apk.sha1' -execdir cat '{}' +; find app/build/outputs -name '*.apk.sha1' -execdir sha1sum --check '{}' +"
-- 'pushd app/build/outputs > /dev/null && mkdir -p dist/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER} && cp -r apk/* dist/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER} && cp apk/nomapNonalytics/release/*.apk dist/androidautoidrive-latest-"$TRAVIS_BRANCH"-nomap-nonalytics-release.apk && echo Prepared the following artifacts: && find dist; popd > /dev/null'
+- 'pushd app/build/outputs > /dev/null && mkdir -p dist/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER} && cp -r apk/* dist/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER} && cp apk/nomapNonalytics/release/*.apk dist/androidautoidrive-latest-"$TRAVIS_BRANCH"-nomap-nonalytics-release.apk && cp apk/nomapSentry/release/*.apk dist/androidautoidrive-latest-"$TRAVIS_BRANCH"-nomap-sentry-release.apk && echo Prepared the following artifacts: && find dist; popd > /dev/null'
 
 addons:
   artifacts:
