@@ -1,9 +1,6 @@
 package me.hufman.androidautoidrive.connections
 
-import android.bluetooth.BluetoothA2dp
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothProfile
+import android.bluetooth.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -113,7 +110,8 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 
 	fun register() {
 		Log.i(TAG, "Starting to watch for Bluetooth connection")
-		BluetoothAdapter.getDefaultAdapter()?.apply {
+		val bluetoothManager = context.getSystemService(BluetoothManager::class.java)
+		bluetoothManager.adapter?.apply {
 			this.getProfileProxy(context, hfListener, BluetoothProfile.HEADSET)
 			this.getProfileProxy(context, a2dpListener, BluetoothProfile.A2DP)
 		}
@@ -134,7 +132,8 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 	fun unregister() {
 		context.unregisterReceiver(bluetoothListener)
 		context.unregisterReceiver(uuidListener)
-		BluetoothAdapter.getDefaultAdapter()?.apply {
+		val bluetoothManager = context.getSystemService(BluetoothManager::class.java)
+		bluetoothManager.adapter?.apply {
 			val hfProfile = hfListener.profile
 			if (hfProfile != null) {
 				this.closeProfileProxy(BluetoothProfile.HEADSET, hfProfile)
