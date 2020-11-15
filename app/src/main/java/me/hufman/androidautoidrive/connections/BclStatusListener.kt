@@ -1,15 +1,14 @@
 package me.hufman.androidautoidrive.connections
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
 import android.os.SystemClock
 import android.text.format.DateUtils
+import me.hufman.androidautoidrive.BroadcastReceiver
 import java.lang.StringBuilder
 import java.text.NumberFormat
 
-class BclStatusListener(val context: Context, val callback: () -> Unit = {}): BroadcastReceiver() {
+class BclStatusListener(val context: Context, val callback: () -> Unit = {}) {
 	companion object {
 		const val BCL_REPORT = "com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_INFO"
 		const val BCL_TRANSPORT = "com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_TRANSPORT_SWITCH"
@@ -40,17 +39,14 @@ class BclStatusListener(val context: Context, val callback: () -> Unit = {}): Br
 		get() = SystemClock.uptimeMillis() - stateUpdate
 
 	fun subscribe() {
-		context.registerReceiver(this, IntentFilter(BCL_REPORT))
-		context.registerReceiver(this, IntentFilter(BCL_TRANSPORT))
+		context.registerReceiver(receiver, IntentFilter(BCL_REPORT))
+		context.registerReceiver(receiver, IntentFilter(BCL_TRANSPORT))
 	}
 	fun unsubscribe() {
-		context.unregisterReceiver(this)
+		context.unregisterReceiver(receiver)
 	}
 
-	override fun onReceive(context: Context?, intent: Intent?) {
-		context ?: return
-		intent ?: return
-
+	val receiver = BroadcastReceiver { _, intent ->
 		if (intent.action == BCL_REPORT) {
 			lastUpdate = SystemClock.uptimeMillis()
 			initTimestamp = intent.getLongExtra("EXTRA_START_TIMESTAMP", -1)

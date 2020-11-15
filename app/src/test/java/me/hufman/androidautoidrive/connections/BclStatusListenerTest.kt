@@ -5,11 +5,22 @@ import android.content.Context
 import android.content.Intent
 import android.os.SystemClock
 import com.nhaarman.mockito_kotlin.*
+import me.hufman.androidautoidrive.mockBroadcastReceiverFactory
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 
 class BclStatusListenerTest {
 	val context = mock<Context>()
+
+	@Before
+	fun setUp() {
+		mockBroadcastReceiverFactory = { body ->
+			mock {
+				on { onReceive(any(), any()) } doAnswer { body(it.arguments[0] as Context, it.arguments[1] as Intent) }
+			}
+		}
+	}
 
 	@Test
 	fun testBclListener() {

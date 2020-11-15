@@ -1,14 +1,14 @@
 package me.hufman.androidautoidrive.connections
 
 import android.bluetooth.*
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+import me.hufman.androidautoidrive.BroadcastReceiver
 import java.util.*
 
-fun BluetoothDevice.isCar(): Boolean {
+fun BluetoothDevice?.isCar(): Boolean {
+	this ?: return false
 	return this.name.startsWith("BMW") || this.name.startsWith("MINI")
 }
 
@@ -29,7 +29,7 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 
 	val isSPPAvailable
 		get() = (a2dpListener.profile?.connectedDevices?.filter { it.isCar() } ?: listOf()).any {
-			uuidListener.isSPPAvailable(it)
+			isSPPAvailable(it)
 		}
 
 	val isBTConnected
@@ -54,57 +54,54 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			Log.d(TAG, "$profileName is loaded")
 			val cars = profile?.connectedDevices?.filter { it.isCar() } ?: listOf()
 			cars.forEach {
-				uuidListener.discover(it)
+				discoverSdp(it)
 			}
 			callback()
 		}
 	}
 
 	// listeners of any updates
-	private val bluetoothListener = object: BroadcastReceiver() {
-		override fun onReceive(p0: Context?, intent: Intent?) {
-			if (intent?.action == BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED &&
-					intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1) == BluetoothProfile.STATE_CONNECTED) {
-				val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-				uuidListener.discover(device)
-			}
-			callback()
+	private val bluetoothListener = BroadcastReceiver { _, intent ->
+		if (intent.action == BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED &&
+				intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1) == BluetoothProfile.STATE_CONNECTED) {
+			val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+			discoverSdp(device)
 		}
+		callback()
 	}
 
 	/**
 	 * Listen for any SDP updates, to watch for the SPP device (Bluetooth BCL connection) showing up
 	 */
-	private val uuidListener = object: BroadcastReceiver() {
-		fun discover(device: BluetoothDevice) {
-			val successfulSdp = device.fetchUuidsWithSdp()
-			Log.d(TAG, "Triggering a discovery: $successfulSdp")
-		}
-
-		fun isSPPAvailable(device: BluetoothDevice): Boolean {
-			return device.uuids.any {
-				(it)?.uuid == UUID_SPP
-			}
-		}
-
-		override fun onReceive(p0: Context?, intent: Intent?) {
-			Log.d(TAG, "Received notification of BT discovery: ${intent?.action}")
-			if (intent?.action == BluetoothAdapter.ACTION_DISCOVERY_FINISHED) {
+	private val uuidListener = BroadcastReceiver { _, intent ->
+		Log.d(TAG, "Received notification of BT discovery: ${intent.action}")
+		if (intent.action == BluetoothAdapter.ACTION_DISCOVERY_FINISHED) {
 //				a2dpListener.profile?.connectedDevices?.filter { it.isCar() }?.forEach {
 //					discover(it)
 //				}
-			}
-			if (intent?.action == BluetoothDevice.ACTION_UUID) {
-				val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
-				Log.d(TAG, "Found BT endpoints on ${device.name}")
-				if (device.isCar()) {
-					val uuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID) ?: return
-					uuids.forEach {
-						Log.d(TAG, "  - $it")
-					}
-					callback()
+		}
+		if (intent.action == BluetoothDevice.ACTION_UUID) {
+			val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+			Log.d(TAG, "Found BT endpoints on ${device?.name}")
+			if (device?.isCar() == true) {
+				val uuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID) ?: emptyArray()
+				uuids.forEach {
+					Log.d(TAG, "  - $it")
 				}
+				callback()
 			}
+		}
+	}
+
+	/** Starts an SDP discovery, the uuidListener will be notified when complete */
+	private fun discoverSdp(device: BluetoothDevice) {
+		val successfulSdp = device.fetchUuidsWithSdp()
+		Log.d(TAG, "Triggering a discovery: $successfulSdp")
+	}
+
+	private fun isSPPAvailable(device: BluetoothDevice): Boolean {
+		return device.uuids.any {
+			(it)?.uuid == UUID_SPP
 		}
 	}
 

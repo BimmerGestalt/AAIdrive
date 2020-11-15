@@ -1,6 +1,8 @@
 package me.hufman.androidautoidrive
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -280,4 +282,18 @@ fun String.truncate(length: Int, suffix: String = "..."): String {
 		return this.substring(0, length - suffix.length) + suffix
 	}
 	return this
+}
+
+/******* Machinations to mock out BroadcastReceivers *******/
+/** Set this factory to a function to return mock BroadcastReceivers */
+var mockBroadcastReceiverFactory: ((body: (context: Context, intent: Intent) -> Unit) -> BroadcastReceiver)? = null
+/** Helper function to create BroadcastReceivers, which supports inserting mock receivers */
+fun BroadcastReceiver(body: (context: Context, intent: Intent) -> Unit): BroadcastReceiver {
+	return mockBroadcastReceiverFactory?.invoke(body) ?: object: BroadcastReceiver() {
+		override fun onReceive(p0: Context?, p1: Intent?) {
+			p0 ?: return
+			p1 ?: return
+			body(p0, p1)
+		}
+	}
 }
