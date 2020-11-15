@@ -127,6 +127,8 @@ Implemented Features
         - [Virgin Radio Italy](https://play.google.com/store/apps/details?id=it.froggy.android.virginradio)
       - Streaming Services
         - [Apple Music](https://play.google.com/store/apps/details?id=com.apple.android.music)
+        - [Gaana Music](https://play.google.com/store/apps/details?id=com.gaana)
+        - [JioSaavn](https://play.google.com/store/apps/details?id=com.jio.media.jiobeats)
         - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android)
         - [Spotify](https://play.google.com/store/apps/details?id=com.spotify.music)
         - [Tidal](https://play.google.com/store/apps/details?id=com.aspiro.tidal)

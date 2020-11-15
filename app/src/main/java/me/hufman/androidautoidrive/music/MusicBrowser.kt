@@ -100,6 +100,8 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 			"com.france24.androidapp" -> "france_media_monde"       // France 24 playlists?
 			"com.rhapsody.napster" -> "ROOT"    // napster
 			"net.faz.FAZ" -> "media_root_id"    // Faz, but it returns an empty list anyways
+			"com.jio.media.jiobeats" -> "__ROOT__"      // JioSaavn
+			"com.gaana" -> "_parent_"   // Gaana
 			else -> return when(musicAppInfo.className) {   // some apps have a shared service library
 				"com.itmwpb.vanilla.radioapp.player.MusicService" -> "/"    // OneCMS (HOT97 Official)
 				else -> mediaBrowser.root
