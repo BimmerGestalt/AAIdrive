@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive
 import org.junit.Assert.*
 import org.junit.Test
 
-class TestChassisCode {
+class ChassisCodeTest {
 	@Test
 	fun testChassisCode() {
 		assertEquals(null, ChassisCode.fromCode("unknown"))

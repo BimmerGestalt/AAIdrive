@@ -1,10 +1,11 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.notifications
 
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import de.bmw.idrive.BMWRemoting
+import me.hufman.androidautoidrive.MockBMWRemotingServer
 import me.hufman.androidautoidrive.carapp.ReadoutState
 import me.hufman.androidautoidrive.carapp.notifications.ReadoutApp
 import me.hufman.idriveconnectionkit.IDriveConnection
@@ -15,7 +16,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import java.io.ByteArrayInputStream
 
-class TestReadoutApp {
+class ReadoutAppTest {
 
 	val securityAccess = mock<SecurityAccess> {
 		on { signChallenge(any(), any() )} doReturn ByteArray(512)

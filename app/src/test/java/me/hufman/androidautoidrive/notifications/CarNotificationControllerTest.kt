@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.notifications
 
 import android.content.Context
 import android.content.Intent
@@ -9,7 +9,7 @@ import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.notifications.NotificationUpdaterController
 import org.junit.Test
 
-class TestNotificationController  {
+class CarNotificationControllerTest  {
 	val sentBroadcast = argumentCaptor<Intent>()
 	val context: Context = mock {
 		on { packageName } doReturn "me.hufman.androidautoidrive"

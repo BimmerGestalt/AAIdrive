@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.notifications
 
 import android.app.Notification
 import android.app.Notification.FLAG_GROUP_SUMMARY
@@ -18,10 +18,10 @@ import android.widget.TextView
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
+import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.ReadoutController
 import me.hufman.androidautoidrive.carapp.notifications.*
 import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
-import me.hufman.androidautoidrive.notifications.*
 
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
@@ -41,7 +41,7 @@ import java.io.ByteArrayInputStream
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-class TestNotificationApp {
+class NotificationAppTest {
 
 	val securityAccess = mock<SecurityAccess> {
 		on { signChallenge(any(), any() )} doReturn ByteArray(512)

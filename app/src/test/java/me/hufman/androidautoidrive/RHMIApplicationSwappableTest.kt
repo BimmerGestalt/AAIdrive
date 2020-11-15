@@ -9,7 +9,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-class TestRHMIApplicationSwappable {
+class RHMIApplicationSwappableTest {
 	/** No models are loaded, so no memoizing happens, but it shouldn't crash */
 	@Test
 	fun testPassthrough() {

@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.music
 
 import android.os.Handler
 import com.nhaarman.mockito_kotlin.*
@@ -7,7 +7,7 @@ import me.hufman.androidautoidrive.music.PlaybackPosition
 import me.hufman.androidautoidrive.music.SeekingController
 import org.junit.Test
 
-class TestMusicSeek {
+class SeekTest {
 	@Test
 	fun testHoldSeekForward() {
 		val handler = mock<Handler>()

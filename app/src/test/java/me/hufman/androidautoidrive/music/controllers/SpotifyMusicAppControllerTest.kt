@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.music.controllers
 
 import android.graphics.Bitmap
 import com.nhaarman.mockito_kotlin.*
@@ -14,13 +14,12 @@ import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.RepeatMode
-import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
 
-class TestSpotifyMusicAppController {
+class SpotifyMusicAppControllerTest {
 	val contentCallback = argumentCaptor<CallResult.ResultCallback<ListItems>>()
 	val imagesCallback = argumentCaptor<CallResult.ResultCallback<Bitmap>>()
 	val libraryCallback = argumentCaptor<CallResult.ResultCallback<LibraryState>>()

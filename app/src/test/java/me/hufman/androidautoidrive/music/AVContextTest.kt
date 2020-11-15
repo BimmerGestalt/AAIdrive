@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.music
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
@@ -8,13 +8,15 @@ import android.graphics.drawable.Drawable
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
+import me.hufman.androidautoidrive.GraphicsHelpers
+import me.hufman.androidautoidrive.MockBMWRemotingServer
+import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.ConcreteAMAppInfo
 import me.hufman.androidautoidrive.carapp.AMAppList
 import me.hufman.androidautoidrive.carapp.AMCategory
 import me.hufman.androidautoidrive.carapp.music.MusicApp
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDsMultimedia
-import me.hufman.androidautoidrive.music.*
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
@@ -23,7 +25,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.ByteArrayInputStream
 
-class TestMusicAVContext {
+class AVContextTest {
 	val securityAccess = mock<SecurityAccess> {
 		on { signChallenge(any(), any() )} doReturn ByteArray(512)
 	}
@@ -99,7 +101,7 @@ class TestMusicAVContext {
 		// and it should start playing that app
 		verify(musicController).connectAppManually(musicAppInfo)
 		// it should trigger focus to the PlaybackView
-		assertEquals(mapOf(0.toByte() to TestMusicApp.IDs.PLAYBACK_STATE), mockServer.triggeredEvents[TestMusicApp.IDs.FOCUS_EVENT])
+		assertEquals(mapOf(0.toByte() to MusicAppTest.IDs.PLAYBACK_STATE), mockServer.triggeredEvents[MusicAppTest.IDs.FOCUS_EVENT])
 
 		// it should also redraw the am icon
 		assertEquals(2, mockServer.amApps.size)

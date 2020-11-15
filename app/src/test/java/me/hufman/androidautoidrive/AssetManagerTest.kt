@@ -8,7 +8,7 @@ import org.junit.Test
 import java.io.FileNotFoundException
 import java.io.InputStream
 
-class TestAssets {
+class AssetManagerTest {
 	val assets = mock<AssetManager> {
 		on { open(any()) } doReturn mock<InputStream>()
 	}

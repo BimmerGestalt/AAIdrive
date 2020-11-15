@@ -1,23 +1,22 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.music.controllers
 
 import com.nhaarman.mockito_kotlin.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.RepeatMode
 import me.hufman.androidautoidrive.music.QueueMetadata
-import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
-import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import org.junit.Assert.*
 import org.junit.Test
 import java.lang.UnsupportedOperationException
 import java.util.*
 
 
-class TestCombinedMusicAppController {
+class CombinedMusicAppControllerTest {
 
 	val leftController = mock<MusicAppController> {
 		on { isConnected() } doReturn true

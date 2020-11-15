@@ -7,7 +7,7 @@ import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import org.junit.Test
 import java.io.ByteArrayInputStream
 
-class TestCarInformationDiscovery {
+class CarInformationDiscoveryTest {
 	val securityAccess = mock<SecurityAccess> {
 		on { signChallenge(any(), any() )} doReturn ByteArray(512)
 	}
