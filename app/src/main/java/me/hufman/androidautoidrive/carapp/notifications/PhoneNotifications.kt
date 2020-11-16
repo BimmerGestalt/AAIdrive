@@ -71,7 +71,7 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 
 		// figure out which views to use
 		viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
-		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings, readoutInteractions)
+		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, graphicsHelpers, notificationSettings, readoutInteractions)
 		viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller, readoutInteractions)
 
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first{

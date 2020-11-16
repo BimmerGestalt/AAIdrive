@@ -14,7 +14,7 @@ import me.hufman.androidautoidrive.carapp.notifications.TAG
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*
 
-class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val settings: NotificationSettings, val readoutInteractions: ReadoutInteractions) {
+class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHelpers, val settings: NotificationSettings, val readoutInteractions: ReadoutInteractions) {
 	companion object {
 		val INTERACTION_DEBOUNCE_MS = 2000              // how long to wait after lastInteractionTime to update the list
 		val SKIPTHROUGH_THRESHOLD = 2000                // how long after an entrybutton push to allow skipping through to a current notification
@@ -43,7 +43,7 @@ class NotificationListView(val state: RHMIState, val phoneAppResources: PhoneApp
 	val shownNotifications = Collections.synchronizedList(ArrayList<CarNotification>())   // which notifications are showing
 	val notificationListData = object: RHMIListAdapter<CarNotification>(3, shownNotifications) {
 		override fun convertRow(index: Int, item: CarNotification): Array<Any> {
-			val icon = graphicsHelpers.compress(phoneAppResources.getIconDrawable(item.icon), 48, 48)
+			val icon = graphicsHelpers.compress(item.icon, 48, 48)
 			val text = "${item.title}\n${item.text.trim().split(Regex("\n")).lastOrNull() ?: ""}"
 			return arrayOf(icon, "", text)
 		}
