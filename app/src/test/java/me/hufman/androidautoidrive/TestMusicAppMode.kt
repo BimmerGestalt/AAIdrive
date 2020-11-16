@@ -130,26 +130,6 @@ class TestMusicAppMode {
 		IDriveConnectionListener.reset()
 	}
 
-	@Test
-	fun testWidescreen() {
-		val settings = mock<MutableAppSettings>()
-		run {
-			val narrowCapabilities = mapOf("hmi.display-width" to  "720")
-			val narrowMode = MusicAppMode(narrowCapabilities, settings, null, null, null)
-			assertFalse(narrowMode.supportsWidescreen())
-		}
-		run {
-			val wideCapabilities = mapOf("hmi.display-width" to  "1280")
-			val wideMode = MusicAppMode(wideCapabilities, settings, null, null, null)
-			assertTrue(wideMode.supportsWidescreen())
-		}
-		run {
-			val ultrawideCapabilities = mapOf("hmi.display-width" to  "1920")
-			val ultrawideMode = MusicAppMode(ultrawideCapabilities, settings, null, null, null)
-			assertTrue(ultrawideMode.supportsWidescreen())
-		}
-	}
-
 	@After
 	fun tearDown() {
 		IDriveConnectionListener.reset()
