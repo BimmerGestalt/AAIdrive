@@ -5,7 +5,7 @@ import org.junit.Before
 import org.junit.Test
 
 
-class TestNotificationEmoji {
+class EmojiCleanerTest {
 	@Before
 	fun setup() {
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDC08", listOf("cat2"), "cat")

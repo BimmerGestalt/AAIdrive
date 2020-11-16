@@ -1,19 +1,21 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.notifications
 
 import com.nhaarman.mockito_kotlin.*
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.carapp.notifications.NotificationSettings
 import me.hufman.androidautoidrive.connections.BtStatus
 import org.junit.Assert.*
 import org.junit.Test
 
-class TestNotificationSettings {
+class NotificationSettingsTest {
 
 	val btStatus = mock<BtStatus> {
 		on { isA2dpConnected } doReturn true
 	}
 	val appSettings = mock<MutableAppSettings> {
 		val captor = argumentCaptor<AppSettings.KEYS>()
-		on { get(captor.capture()) } doAnswer {AppSettings[captor.lastValue]}
+		on { get(captor.capture()) } doAnswer { AppSettings[captor.lastValue]}
 	}
 
 	@Test

@@ -202,7 +202,10 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 							queueItems = queueItems.drop(1)
 						}
 
-						buildQueueMetadata()
+						// build a basic QueueMetadata while waiting for cover art to load
+						queueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, queueItems)
+						loadQueueCoverart()
+
 						callback?.invoke(this)
 					}
 				}
@@ -233,7 +236,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	 * Creates the QueueMetadata for the current queue containing the title, subtitle, queue songs,
 	 * and queue cover art.
 	 */
-	private fun buildQueueMetadata() {
+	private fun loadQueueCoverart() {
 		val recentlyPlayedUri = "com.spotify.recently-played"
 		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
 		remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->

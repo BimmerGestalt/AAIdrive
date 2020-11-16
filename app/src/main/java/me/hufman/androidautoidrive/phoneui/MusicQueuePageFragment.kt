@@ -52,6 +52,7 @@ class MusicQueuePageFragment: Fragment() {
 
 			(this.context as Activity).listQueue.adapter?.notifyDataSetChanged()
 		}
+		redrawQueueUI()
 	}
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -81,6 +82,13 @@ class MusicQueuePageFragment: Fragment() {
 		}
 
 		txtQueueEmpty.text = getString(R.string.MUSIC_QUEUE_EMPTY)
+	}
+
+	override fun onDestroyView() {
+		super.onDestroyView()
+		if (isVisible) {
+			musicController.listener = null
+		}
 	}
 
 	private fun redrawQueueUI() {

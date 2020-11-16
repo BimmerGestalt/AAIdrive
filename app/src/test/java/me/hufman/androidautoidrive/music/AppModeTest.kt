@@ -1,15 +1,17 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.music
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Test
 
-class TestMusicAppMode {
+class AppModeTest {
 	@Test
 	fun testMusicAppManual() {
 		// Allow the user to force enable the context

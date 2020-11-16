@@ -4,7 +4,7 @@ import android.os.Handler
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Test
 
-class TestDeferredUpdate {
+class DeferredUpdateTest {
 	val handler = mock<Handler>()
 
 	@Test

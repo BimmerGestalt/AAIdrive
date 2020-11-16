@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.music
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -8,12 +8,12 @@ import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
 import kotlinx.coroutines.*
+import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.music.*
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeAudioState
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeToolbarState
 import me.hufman.androidautoidrive.carapp.music.views.*
-import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
@@ -28,7 +28,7 @@ import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 import java.util.*
 
-class TestMusicApp {
+class MusicAppTest {
 	object IDs {
 		const val FOCUS_EVENT = 6
 		const val ENTRYBUTTON_ACTION = 382

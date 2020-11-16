@@ -19,7 +19,7 @@ import org.mockito.ArgumentCaptor
 import org.awaitility.Awaitility.await
 import java.io.ByteArrayInputStream
 
-class TestMapsApp {
+class MapAppTest {
 	val securityAccess = mock<SecurityAccess> {
 		on { signChallenge(any(), any() )} doReturn ByteArray(512)
 	}

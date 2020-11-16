@@ -28,9 +28,10 @@ Getting Started
 
 This app requires that the BMW or Mini Connected app for your car is installed and can successfully add Connected and Calendar entries to your car's Connected Apps menu.
 
-Download the APK from the [Releases page](https://github.com/hufman/AndroidAutoIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. After starting, the app should detect the Connected app and start waiting for the car connection.
+Download the APK of the latest stable release from the [Releases page](https://github.com/hufman/AndroidAutoIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. After starting, the app should detect the Connected app and start waiting for the car connection.
 
-If you'd like to try out the latest build, [download it here](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-nonalytics-release.apk)!
+Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-sentry-release.apk) to automatically report crashes.
+The [nonalytics](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-nonalytics-release.apk) build is available too.
 
 Check out the [FAQ](https://hufman.github.io/AndroidAutoIdrive/faq.html) if you run into problems.
 
@@ -126,6 +127,8 @@ Implemented Features
         - [Virgin Radio Italy](https://play.google.com/store/apps/details?id=it.froggy.android.virginradio)
       - Streaming Services
         - [Apple Music](https://play.google.com/store/apps/details?id=com.apple.android.music)
+        - [Gaana Music](https://play.google.com/store/apps/details?id=com.gaana)
+        - [JioSaavn](https://play.google.com/store/apps/details?id=com.jio.media.jiobeats)
         - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android)
         - [Spotify](https://play.google.com/store/apps/details?id=com.spotify.music)
         - [Tidal](https://play.google.com/store/apps/details?id=com.aspiro.tidal)

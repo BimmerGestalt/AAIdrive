@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.music.controllers
 
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -12,7 +12,7 @@ import org.junit.Before
 import org.junit.Test
 
 
-class TestGenericMusicAppController {
+class GenericMusicAppControllerTest {
 	val mediaTransportControls = mock<MediaControllerCompat.TransportControls>()
 	val mediaController = mock<MediaControllerCompat> {
 		on { transportControls } doReturn mediaTransportControls

@@ -14,7 +14,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import java.io.ByteArrayInputStream
 
-class TestAssistantApp {
+class AssistantAppTest {
 	val assistantController = mock<AssistantController>()
 
 	val securityAccess = mock<SecurityAccess> {

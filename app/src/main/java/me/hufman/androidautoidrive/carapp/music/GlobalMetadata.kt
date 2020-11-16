@@ -38,6 +38,12 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 		instrumentCluster.getSetTrackAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { onClick(it) }
 	}
 
+	fun forgetDisplayedInfo() {
+		displayedApp = null
+		displayedSong = null
+		displayedQueue = null
+	}
+
 	fun redraw() {
 		val app = controller.currentAppInfo
 		if (app != null && app != displayedApp) {

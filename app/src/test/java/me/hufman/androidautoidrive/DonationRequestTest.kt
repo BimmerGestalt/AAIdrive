@@ -5,7 +5,7 @@ import me.hufman.androidautoidrive.phoneui.DayCounter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class TestDonationRequest {
+class DonationRequestTest {
 	class DayIncremented {
 		var days = 0
 		fun onDayIncremented() {

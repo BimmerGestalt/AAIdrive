@@ -13,7 +13,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
-class TestNavTrigger {
+class NavTriggerTest {
 	lateinit var addressSearcher: AddressSearcher
 	lateinit var parser: NavigationParser
 

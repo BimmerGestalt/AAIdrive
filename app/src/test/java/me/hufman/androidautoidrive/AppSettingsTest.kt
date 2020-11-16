@@ -4,7 +4,7 @@ import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*
 import org.junit.Test
 
-class TestAppSettings {
+class AppSettingsTest {
 	@Test
 	fun testListSettings() {
 		val settings = mock<MutableAppSettings> {

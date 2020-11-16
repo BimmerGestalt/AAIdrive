@@ -14,7 +14,7 @@ import org.junit.Before
 import org.junit.Test
 import java.util.*
 
-class TestFullImageView {
+class FullImageViewTest {
 	private lateinit var fullImageState: RHMIState
 	private lateinit var carApp: RHMIApplicationConcrete
 
