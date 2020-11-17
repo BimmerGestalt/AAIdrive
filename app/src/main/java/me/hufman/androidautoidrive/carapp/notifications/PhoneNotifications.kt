@@ -179,11 +179,13 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 		override fun am_onAppEvent(handle: Int?, ident: String?, appId: String?, event: BMWRemoting.AMEvent?) {
 			synced()
 			try {
+				viewList.entryButtonTimestamp = System.currentTimeMillis()
 				focusEvent.triggerEvent(mapOf(0.toByte() to viewList.state.id))
 			} catch (e: BMWRemoting.ServiceException) {
 				Log.i(TAG, "Failed to trigger focus event for AM icon, recreating RHMI and trying again")
 				try {
 					recreateRhmiApp()
+					viewList.entryButtonTimestamp = System.currentTimeMillis()
 					focusEvent.triggerEvent(mapOf(0.toByte() to viewList.state.id))
 				} catch (e: BMWRemoting.ServiceException) {
 					Log.w(TAG, "Failed to trigger focus event for AM icon: $e")
