@@ -120,16 +120,22 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 
 		notificationListView.setVisible(true)
 		notificationListView.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id, "55,0,*")
-		notificationListView.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
-			val notification = shownNotifications.getOrNull(index)
-			detailsView.selectedNotification = notification
-			if (notification != null) {
-				// set the list to go into the details state
-				notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = detailsView.state.id
-			} else {
-				notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
+		notificationListView.setProperty(RHMIProperty.PropertyId.BOOKMARKABLE, true)
+		notificationListView.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIActionListCallback {
+			override fun onAction(index: Int, invokedBy: Int?) {
+				if (invokedBy != 2) {       // don't change the notification
+					val notification = shownNotifications.getOrNull(index)
+					detailsView.selectedNotification = notification
+				}
+				if (detailsView.selectedNotification != null) {
+					// set the list to go into the details state
+					notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = detailsView.state.id
+				} else {
+					notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
+				}
 			}
 		}
+
 		notificationListView.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {
 			if (it != lastInteractionIndex) {
 				lastInteractionIndex = it

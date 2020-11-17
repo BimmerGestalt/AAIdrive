@@ -58,7 +58,6 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 					readoutInteractions.triggerDisplayReadout(selectedNotification)
 				}
 			} else {
-				selectedNotification = null
 				hide()
 			}
 		}
