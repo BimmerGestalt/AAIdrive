@@ -998,4 +998,53 @@ class NotificationAppTest {
 		// it should trigger a transition to the main list
 		assertEquals(app.viewList.state.id, mockServer.triggeredEvents[5]?.get(0))
 	}
+
+	@Test
+	fun testHideNotificationView() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+
+		NotificationsState.notifications.clear()
+		val notification = createNotificationObject("Title", "Text", false)
+		NotificationsState.notifications.add(notification)
+		app.viewDetails.selectedNotification = notification
+
+		// show the viewDetails
+		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(1, "unused", 20, 1, mapOf(4.toByte() to true))
+
+		// verify that it shows the notification
+		run {
+			val appTitleList = mockServer.data[519] as BMWRemoting.RHMIDataTable
+			val titleList = mockServer.data[520] as BMWRemoting.RHMIDataTable
+			val bodyList = mockServer.data[521] as BMWRemoting.RHMIDataTable
+			assertEquals(1, appTitleList.numRows)
+			assertEquals(3, appTitleList.numColumns)
+			assertEquals("Test AppName", appTitleList.data[0][2])
+			assertEquals(1, titleList.numRows)
+			assertEquals(2, titleList.numColumns)
+			assertEquals("", titleList.data[0][0])
+			assertEquals("Title", titleList.data[0][1])
+			assertEquals(1, bodyList.numRows)
+			assertEquals(1, bodyList.numColumns)
+			assertEquals("Text", bodyList.data[0][0])
+		}
+
+		// hide the viewDetails
+		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(1, "unused", 20, 1, mapOf(4.toByte() to false))
+
+		// verify that it shows the notification
+		run {
+			val appTitleList = mockServer.data[519] as BMWRemoting.RHMIDataTable
+			val titleList = mockServer.data[520] as BMWRemoting.RHMIDataTable
+			val bodyList = mockServer.data[521] as BMWRemoting.RHMIDataTable
+			assertEquals(0, appTitleList.numRows)
+			assertEquals(1, appTitleList.numColumns)
+			assertEquals(0, titleList.numRows)
+			assertEquals(1, titleList.numColumns)
+			assertEquals(0, bodyList.numRows)
+			assertEquals(1, bodyList.numColumns)
+			assertEquals(false, mockServer.properties[120]?.get(RHMIProperty.PropertyId.VISIBLE.id))
+		}
+	}
 }
