@@ -289,7 +289,7 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 			val alreadyShown = readHistory.contains(sbn)
 			readHistory.add(sbn)
 			if (!alreadyShown) {
-				viewList.showStatusBarIcon()
+				viewList.showNotification(sbn)
 
 				if (notificationSettings.shouldPopup(passengerSeated)) {
 					if (!sbn.equalsKey(viewDetails.selectedNotification)) {
