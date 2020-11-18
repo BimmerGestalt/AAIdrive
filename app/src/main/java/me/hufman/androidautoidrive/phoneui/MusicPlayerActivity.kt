@@ -24,7 +24,6 @@ class MusicPlayerActivity: AppCompatActivity() {
 	}
 
 	var musicApp: MusicAppInfo? = null
-	var musicController: MusicController? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -40,7 +39,6 @@ class MusicPlayerActivity: AppCompatActivity() {
 		val viewModel = ViewModelProviders.of(this).get(MusicActivityModel::class.java)
 		viewModel.musicController = viewModel.musicController ?: MusicController(applicationContext, Handler(this.mainLooper))
 		viewModel.musicController?.connectAppManually(musicApp)
-		musicController = viewModel.musicController
 
 		// load the icons
 		val appAssets = CarAppAssetManager(this, "multimedia")
@@ -74,11 +72,6 @@ class MusicPlayerActivity: AppCompatActivity() {
 		})
 
 		tabMusicPlayer.setupWithViewPager(pgrMusicPlayer)
-	}
-
-	override fun onDestroy() {
-		super.onDestroy()
-		musicController?.disconnectApp(pause=false)
 	}
 
 	fun pushBrowse(directory: MusicMetadata?) {
