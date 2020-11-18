@@ -149,7 +149,9 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		title = title?.let { UnicodeCleaner.clean(it) }
 		text = text?.let { UnicodeCleaner.clean(it) }
 
-		val actions = sbn.notification.actions?.map { CarNotification.Action.parse(it) } ?: emptyList()
+		val actions = sbn.notification.actions
+				?.filter {it.title?.isNotBlank() == true}
+				?.map { CarNotification.Action.parse(it) } ?: emptyList()
 
 		val soundUri = getNotificationSound(sbn.notification)
 
@@ -198,7 +200,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 			.filter { it.isNotEmpty() }
 			.toList()
 		val actions = customView.collectChildren().filterIsInstance<TextView>()
-			.filter { it.isClickable }
+			.filter { it.isClickable && it.text?.isNotBlank() == true }
 			.map { CarNotification.Action(it.text.toString(), false, emptyList()) }
 			.take(5).toList()
 

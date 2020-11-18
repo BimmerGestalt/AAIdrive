@@ -177,9 +177,13 @@ class NotificationAppTest {
 			on { getCharSequence(eq(Notification.EXTRA_SUMMARY_TEXT)) } doReturn summary
 		}
 		phoneNotification.sound = mock()
-		phoneNotification.actions = arrayOf(mock {})
+		phoneNotification.actions = arrayOf(mock(), mock(), mock())
 		phoneNotification.actions[0].title = "Custom Action"
 		phoneNotification.actions[0].actionIntent = mock()
+		phoneNotification.actions[1].title = "      "       // don't include empty titles
+		phoneNotification.actions[1].actionIntent = mock()
+		phoneNotification.actions[2].title = null           // don't include null titles
+		phoneNotification.actions[2].actionIntent = mock()
 
 		return mock {
 			on { key } doReturn "testKey"
