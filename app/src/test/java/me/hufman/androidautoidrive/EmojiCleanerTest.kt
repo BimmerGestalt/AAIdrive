@@ -43,4 +43,31 @@ class EmojiCleanerTest {
 			assertEquals(correct, UnicodeCleaner.clean(source))
 		}
 	}
+
+	/** Verifies that emoji can get encoded */
+	@Test
+	fun testEmojiEncoding() {
+		run {
+			val source = "I :cat2:!"
+			val correct = "I \ud83d\udc08!"
+			assertEquals(correct, UnicodeCleaner.encode(source))
+		}
+	}
+
+	/** Test out the searching */
+	@Test
+	fun testEmojiSearching() {
+		val corpus = listOf(
+				UnicodeCleaner._buildPlaceholderEmoji("\uD83D\uDC08", listOf("cat2"), "cat2"),
+				UnicodeCleaner._buildPlaceholderEmoji("\uD83D\uDE3B", listOf("heart_eyes_cat"), "heart_eyes_cat"),
+				UnicodeCleaner._buildPlaceholderEmoji("\uD83D\uDC4D", listOf("+1", "thumbsup", "thumbs-up"), "Thumbs Up Sign")
+		)
+
+		assertEquals(emptyList<String>(), UnicodeCleaner.searchEmoji(corpus, ""))
+		assertEquals(listOf(corpus[0], corpus[1]), UnicodeCleaner.searchEmoji(corpus, "CA"))
+		assertEquals(listOf(corpus[1]), UnicodeCleaner.searchEmoji(corpus, "H"))
+		assertEquals(listOf(corpus[2]), UnicodeCleaner.searchEmoji(corpus, "+"))
+		assertEquals(listOf(corpus[2]), UnicodeCleaner.searchEmoji(corpus, "t"))
+		assertEquals(listOf(corpus[2]), UnicodeCleaner.searchEmoji(corpus, "u"))
+	}
 }

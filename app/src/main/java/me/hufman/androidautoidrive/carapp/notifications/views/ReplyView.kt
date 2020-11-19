@@ -13,7 +13,7 @@ class ReplyView(listStateId: Int, inputState: RHMIState, val replyController: Re
 		if (input == "") {
 			sendSuggestions(replyController.getSuggestions(input))
 		} else {
-			sendSuggestions(listOf(input))
+			sendSuggestions(listOf(input) + replyController.getSuggestions(input))
 		}
 	}
 
