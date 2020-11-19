@@ -96,11 +96,8 @@ class MusicPlayerActivity: AppCompatActivity() {
 			}
 		}
 		if (pgrMusicPlayer.currentItem == 2) {
-			val container = (pgrMusicPlayer.adapter as MusicPlayerPagerAdapter).getItem(2) as MusicQueueFragment
-			val popped = container.onBackPressed()
-			if (!popped) {
-				pgrMusicPlayer.currentItem = 0
-			}
+			// go back to the main playback page
+			pgrMusicPlayer.currentItem = 0
 		}
 	}
 }
@@ -109,7 +106,7 @@ class MusicPlayerPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm
 	val tabs = LinkedHashMap<String, Fragment>(3).apply {
 		this["Now Playing"] = MusicNowPlayingFragment()
 		this["Browse"] = MusicBrowseFragment.newInstance(MusicBrowsePageFragment.newInstance(null))
-		this["Queue"] = MusicQueueFragment.newInstance(MusicQueuePageFragment.newInstance())
+		this["Queue"] = MusicQueueFragment()
 	}
 
 	fun updateNowPlaying() {
@@ -121,7 +118,7 @@ class MusicPlayerPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm
 	}
 
 	fun updateQueue() {
-		((tabs["Queue"] as MusicQueueFragment).fragment as MusicQueuePageFragment).onActive()
+		(tabs["Queue"] as MusicQueueFragment).onActive()
 	}
 
 	override fun getCount(): Int {
