@@ -70,4 +70,48 @@ class EmojiCleanerTest {
 		assertEquals(listOf(corpus[2]), UnicodeCleaner.searchEmoji(corpus, "t"))
 		assertEquals(listOf(corpus[2]), UnicodeCleaner.searchEmoji(corpus, "u"))
 	}
+
+	/** Test BiDi Isolate Cleaning */
+	@Test
+	fun testBidiIsolate() {
+		run {
+			// the car doesn't seem to support Isolates
+			val orig = "\u2068+123456789\u2069: Good evening mister."
+			val correct = "+123456789: Good evening mister."
+			assertEquals(correct, UnicodeCleaner.clean(orig))
+
+			val ending = "\u2068+123456789\u2069: Good evening mister\u2068.\u2069"
+			val correctEnd = "+123456789: Good evening mister."
+			assertEquals(correctEnd, UnicodeCleaner.clean(ending))
+		}
+
+		run {
+			// add any explicit embeds to retain the original order
+			val orig = "\u2068ltr\u2069: Good evening mister."
+			val correct = "\u202Altr\u202C: Good evening mister."
+			assertEquals(correct, UnicodeCleaner.clean(orig))
+
+			val origR = "\u2068ء\u2069: Good evening mister."
+			val correctR = "\u202Bء\u202C: Good evening mister."
+			assertEquals(correctR, UnicodeCleaner.clean(origR))
+		}
+
+		run {
+			// convert directional isolates to embeds
+			val orig = "\u2066ltr\u2069: Good evening mister."
+			val correct = "\u202Altr\u202C: Good evening mister."
+			assertEquals(correct, UnicodeCleaner.clean(orig))
+
+			val origR = "\u2067rtl\u2069: Good evening mister."
+			val correctR = "\u202Brtl\u202C: Good evening mister."
+			assertEquals(correctR, UnicodeCleaner.clean(origR))
+		}
+
+		run {
+			// retain any Explicit Overrides
+			val origOrder = "\u2068\u202D+123456789\u202C\u2069: Good evening mister."
+			val correctOrder = "\u202D+123456789\u202C: Good evening mister."
+			assertEquals(correctOrder, UnicodeCleaner.clean(origOrder))
+		}
+	}
 }

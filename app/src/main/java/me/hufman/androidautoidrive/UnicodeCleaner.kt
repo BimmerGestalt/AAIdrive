@@ -22,9 +22,65 @@ object UnicodeCleaner {
 		return EmojiParser.parseToUnicode(input)
 	}
 
+	/** Finds the first strong directionality class from this input */
+	fun getStrongDirectionality(input: String): Byte? {
+		return input.asSequence().map {
+			Character.getDirectionality(it)
+		}.map {
+			when (it) {
+				// ignore the embedding/override markers, but coalesce RTL Arabic to a strong RTL
+				Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC -> Character.DIRECTIONALITY_RIGHT_TO_LEFT
+				else -> it
+			}
+		}.firstOrNull {
+			it == Character.DIRECTIONALITY_LEFT_TO_RIGHT ||
+			it == Character.DIRECTIONALITY_RIGHT_TO_LEFT
+		}
+	}
+
+	fun cleanBidiIsolates(input: String): String {
+		val LRE = '\u202A'      // LTR embed
+		val RLE = '\u202B'      // RTL embed
+		val PDF = '\u202C'      // end embed
+		val LRI = '\u2066'      // LTR isolate
+		val RLI = '\u2067'      // RTL isolate
+		val FSI = '\u2068'      // auto-ordered isolate
+		val PDI = '\u2069'      // end isolate
+		val ISOLATES = charArrayOf(LRI, RLI, FSI)
+		var cleaned = input
+
+		// clean out isolate symbols
+		var lastIsolatePos = cleaned.lastIndexOfAny(ISOLATES)
+		while (lastIsolatePos >= 0) {
+			val isolatePop = cleaned.indexOf(PDI, lastIsolatePos)
+			if (lastIsolatePos < cleaned.length && isolatePop > lastIsolatePos) {
+				val isolate = cleaned[lastIsolatePos]
+				val before = cleaned.substring(0, lastIsolatePos)
+				val subsection = cleaned.substring(lastIsolatePos + 1, isolatePop)
+				val after = cleaned.substring(isolatePop + 1)
+				val directionality by lazy { getStrongDirectionality(subsection) }
+				val newEmbed = if (isolate == LRI) {
+					"$LRE$subsection$PDF"
+				} else if (isolate == RLI) {
+					"$RLE$subsection$PDF"
+				} else if (directionality == Character.DIRECTIONALITY_LEFT_TO_RIGHT) {
+					"$LRE$subsection$PDF"
+				} else if (directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT) {
+					"$RLE$subsection$PDF"
+				} else {
+					subsection      // just a bare string
+				}
+				cleaned = before + newEmbed + after
+			}
+			lastIsolatePos = cleaned.lastIndexOfAny(ISOLATES)
+		}
+		return cleaned
+	}
+
 	/** Replaces any supported unicode from this string to the shortname tag */
 	fun clean(input: String): String {
-		return EmojiParser.parseToAliases(input, EmojiParser.FitzpatrickAction.REMOVE)
+		val bidiCleaned = cleanBidiIsolates(input)
+		return EmojiParser.parseToAliases(bidiCleaned, EmojiParser.FitzpatrickAction.REMOVE)
 	}
 
 	/** Builds a simple Emoji object */
