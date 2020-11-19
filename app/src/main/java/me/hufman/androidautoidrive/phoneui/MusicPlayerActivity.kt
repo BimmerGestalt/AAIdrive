@@ -24,7 +24,6 @@ class MusicPlayerActivity: AppCompatActivity() {
 	}
 
 	var musicApp: MusicAppInfo? = null
-	var musicController: MusicController? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -40,7 +39,6 @@ class MusicPlayerActivity: AppCompatActivity() {
 		val viewModel = ViewModelProviders.of(this).get(MusicActivityModel::class.java)
 		viewModel.musicController = viewModel.musicController ?: MusicController(applicationContext, Handler(this.mainLooper))
 		viewModel.musicController?.connectAppManually(musicApp)
-		musicController = viewModel.musicController
 
 		// load the icons
 		val appAssets = CarAppAssetManager(this, "multimedia")
@@ -76,11 +74,6 @@ class MusicPlayerActivity: AppCompatActivity() {
 		tabMusicPlayer.setupWithViewPager(pgrMusicPlayer)
 	}
 
-	override fun onDestroy() {
-		super.onDestroy()
-		musicController?.disconnectApp(pause=false)
-	}
-
 	fun pushBrowse(directory: MusicMetadata?) {
 		val container = (pgrMusicPlayer.adapter as MusicPlayerPagerAdapter).getItem(1) as MusicBrowseFragment
 		container.replaceFragment(MusicBrowsePageFragment.newInstance(directory), true)
@@ -103,11 +96,8 @@ class MusicPlayerActivity: AppCompatActivity() {
 			}
 		}
 		if (pgrMusicPlayer.currentItem == 2) {
-			val container = (pgrMusicPlayer.adapter as MusicPlayerPagerAdapter).getItem(2) as MusicQueueFragment
-			val popped = container.onBackPressed()
-			if (!popped) {
-				pgrMusicPlayer.currentItem = 0
-			}
+			// go back to the main playback page
+			pgrMusicPlayer.currentItem = 0
 		}
 	}
 }
@@ -116,7 +106,7 @@ class MusicPlayerPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm
 	val tabs = LinkedHashMap<String, Fragment>(3).apply {
 		this["Now Playing"] = MusicNowPlayingFragment()
 		this["Browse"] = MusicBrowseFragment.newInstance(MusicBrowsePageFragment.newInstance(null))
-		this["Queue"] = MusicQueueFragment.newInstance(MusicQueuePageFragment.newInstance())
+		this["Queue"] = MusicQueueFragment()
 	}
 
 	fun updateNowPlaying() {
@@ -128,7 +118,7 @@ class MusicPlayerPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm
 	}
 
 	fun updateQueue() {
-		((tabs["Queue"] as MusicQueueFragment).fragment as MusicQueuePageFragment).onActive()
+		(tabs["Queue"] as MusicQueueFragment).onActive()
 	}
 
 	override fun getCount(): Int {
