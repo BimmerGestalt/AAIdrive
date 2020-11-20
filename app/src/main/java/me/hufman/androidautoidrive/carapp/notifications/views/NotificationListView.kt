@@ -86,10 +86,11 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 		state.focusCallback = FocusCallback { focused ->
 			visible = focused
 			if (focused) {
+				val didEntryButton = timeSinceEntryButton < SKIPTHROUGH_THRESHOLD
 				val focusEvent = state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
 				val skipThroughNotification = readoutInteractions.currentNotification ?:
 						if (timeSinceNotificationArrival < ARRIVAL_THRESHOLD) mostInterestingNotification else null
-				if (timeSinceEntryButton < SKIPTHROUGH_THRESHOLD && skipThroughNotification != null) {
+				if (didEntryButton && skipThroughNotification != null) {
 					detailsView.selectedNotification = skipThroughNotification
 					// don't try to skip through to a new notification again
 					notificationArrivalTimestamp = 0L
@@ -110,9 +111,10 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 
 				// if a notification is speaking, pre-select it
 				// otherwise pre-select the most recent notification that showed up or was selected
+				// and only if the user is freshly arriving, not backing out of a deeper view
 				val preselectedNotification = readoutInteractions.currentNotification ?: mostInterestingNotification
 				val index = shownNotifications.indexOf(preselectedNotification)
-				if (index >= 0) {
+				if (didEntryButton && index >= 0) {
 					focusEvent.triggerEvent(mapOf(0 to notificationListView.id, 41 to index))
 				}
 
