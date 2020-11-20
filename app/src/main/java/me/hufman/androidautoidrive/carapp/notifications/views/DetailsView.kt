@@ -128,12 +128,12 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 	}
 
 	fun show() {
-		redraw()
-
 		// set the focus to the first button
 		state as RHMIState.ToolbarState
 		val buttons = ArrayList(state.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
 		state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to buttons[0].id))
+
+		redraw()
 	}
 
 	fun redraw() {
