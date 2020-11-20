@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.carapp.music
 
+import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.MusicAction
@@ -118,8 +119,6 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 	}
 
 	private fun showQueue(queue: List<MusicMetadata>, currentSong: MusicMetadata?) {
-		instrumentCluster.getUseCaseModel()?.asRaDataModel()?.value = "EntICPlaylist"
-
 		val adapter = object: RHMIListAdapter<MusicMetadata>(7, queue) {
 			override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
 				val selected = item.queueId == currentSong?.queueId
@@ -135,7 +134,12 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 			}
 		}
 
-		instrumentCluster.getPlaylistModel()?.asRaListModel()?.setValue(adapter, 0, adapter.height, adapter.height)
+		try {
+			instrumentCluster.getUseCaseModel()?.asRaDataModel()?.value = "EntICPlaylist"
+			instrumentCluster.getPlaylistModel()?.asRaListModel()?.setValue(adapter, 0, adapter.height, adapter.height)
+		} catch (e: BMWRemoting.ServiceException) {
+			// This playlist model call has been observed to crash, for some reason
+		}
 	}
 
 	private fun onClick(index: Int) {
