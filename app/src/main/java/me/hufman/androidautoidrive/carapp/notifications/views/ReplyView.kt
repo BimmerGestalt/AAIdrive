@@ -6,6 +6,8 @@ import me.hufman.androidautoidrive.carapp.notifications.ReplyController
 import me.hufman.idriveconnectionkit.rhmi.RHMIState
 
 class ReplyView(listStateId: Int, inputState: RHMIState, val replyController: ReplyController): InputState<CharSequence>(inputState) {
+	// only send once
+	var sent = false
 	init {
 		inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listStateId
 	}
@@ -18,10 +20,12 @@ class ReplyView(listStateId: Int, inputState: RHMIState, val replyController: Re
 	}
 
 	override fun onSelect(item: CharSequence, index: Int) {
-		if (item.isNotEmpty()) {
-			replyController.sendReply(item.toString())
+		if (!sent) {
+			if (item.isNotEmpty()) {
+				replyController.sendReply(item.toString())
+			}
+			sent = true
 		}
-		onInput("delall")
 	}
 
 	override fun convertRow(row: CharSequence): String {
