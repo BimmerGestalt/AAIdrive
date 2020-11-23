@@ -111,7 +111,7 @@
     <string name="MUSIC_TURN_SHUFFLE_ON">Odtwarzanie losowe włączone</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Odtwarzanie losowe wyłączone</string>
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Powtarzaj wszystkie</string>
-    <string name="MUSIC_TURN_REPEAT_ONE_ON">Powtarzaj pojedynczo </string>
+    <string name="MUSIC_TURN_REPEAT_ONE_ON">Powtarzaj pojedynczo</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Wyłącz powtarzanie</string>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Usuń z kolekcji</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Radio</string>
