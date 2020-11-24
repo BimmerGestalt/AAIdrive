@@ -1,7 +1,7 @@
 package me.hufman.androidautoidrive
 
 import android.content.Context
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import io.wax911.emojify.EmojiManager
 import io.wax911.emojify.model.Emoji
 import io.wax911.emojify.parser.EmojiParser

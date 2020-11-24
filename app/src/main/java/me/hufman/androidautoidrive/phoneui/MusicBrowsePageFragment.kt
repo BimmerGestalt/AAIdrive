@@ -1,29 +1,26 @@
 package me.hufman.androidautoidrive.phoneui
 
-import android.app.Activity
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlin.coroutines.CoroutineContext
 import kotlinx.android.synthetic.main.music_browsepage.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
-import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.Utils
 import me.hufman.androidautoidrive.getThemeColor
-import kotlin.coroutines.CoroutineContext
 
 class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 	override val coroutineContext: CoroutineContext
@@ -47,24 +44,18 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 	var loaderJob: Job? = null
 	val contents = ArrayList<MusicMetadata>()
 
-	fun onActive() {
-		musicController.listener = Runnable {
-			(this.context as Activity).listBrowse.adapter?.notifyDataSetChanged()
-		}
-	}
-
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.music_browsepage, container, false)
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		val viewModel = ViewModelProviders.of(requireActivity()).get(MusicActivityModel::class.java)
+		val viewModel = ViewModelProvider(requireActivity()).get(MusicActivityModel::class.java)
 		val musicController = viewModel.musicController ?: return
 		this.musicController = musicController
 
 		listBrowse.setHasFixedSize(true)
 		listBrowse.layoutManager = LinearLayoutManager(this.context)
-		listBrowse.adapter = BrowseAdapter(this.context!!, viewModel.icons, contents) { mediaEntry ->
+		listBrowse.adapter = BrowseAdapter(this.requireContext(), viewModel.icons, contents) { mediaEntry ->
 			if (mediaEntry != null) {
 				if (mediaEntry.browseable) {
 					(activity as MusicPlayerActivity).pushBrowse(mediaEntry)

@@ -8,8 +8,8 @@ import android.hardware.display.VirtualDisplay
 import android.media.ImageReader
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.content.ContextCompat
 import android.util.Log
+import androidx.core.content.ContextCompat
 import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 

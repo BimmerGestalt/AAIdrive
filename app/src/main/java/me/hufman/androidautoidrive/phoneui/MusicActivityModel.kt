@@ -1,10 +1,10 @@
 package me.hufman.androidautoidrive.phoneui
 
-import android.arch.lifecycle.ViewModel
 import android.graphics.Bitmap
+import androidx.lifecycle.ViewModel
 import me.hufman.androidautoidrive.music.MusicController
 
-class MusicActivityModel(): ViewModel() {
+class MusicActivityModel: ViewModel() {
 	var musicController: MusicController? = null
 	val icons = HashMap<String, Bitmap>()
 
