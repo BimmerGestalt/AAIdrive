@@ -133,6 +133,14 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Attiva modalità Repeat sempre</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Attiva modalità Repeat singola</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Disattiva Repeat</string>
+    <plurals name="MUSIC_ACTION_SEEK_BACK">
+        <item quantity="one">Riavvolgi %s secondo</item>
+        <item quantity="other">Riavvolgi %s secondi</item>
+    </plurals>
+    <plurals name="MUSIC_ACTION_SEEK_FORWARD">
+        <item quantity="one">Avanza %s secondo</item>
+        <item quantity="other">Avanza %s secondi</item>
+    </plurals>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Non mi piace</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Attiva la radio dal brano</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>
