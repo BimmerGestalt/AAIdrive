@@ -23,8 +23,8 @@
     <string name="notification_popups">Popup di notifica</string>
     <string name="notification_popups_passenger">Popup con passeggero</string>
     <string name="notification_sound">Esegui suono di notifica</string>
-    <string name="notification_readout">Leggi\Pronuncia le notifiche quando aperte</string>
-    <string name="notification_readout_popup">Leggi\Pronuncia le nuove notifiche</string>
+    <string name="notification_readout">Lettura vocale notifiche quando aperte</string>
+    <string name="notification_readout_popup">Lettura vocale delle nuove notifiche</string>
     <string name="notification_readout_popup_passenger">... con un passeggero</string>
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
@@ -133,6 +133,14 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Attiva modalità Repeat sempre</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Attiva modalità Repeat singola</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Disattiva Repeat</string>
+    <plurals name="MUSIC_ACTION_SEEK_BACK">
+        <item quantity="one">Riavvolgi %s secondo</item>
+        <item quantity="other">Riavvolgi %s secondi</item>
+    </plurals>
+    <plurals name="MUSIC_ACTION_SEEK_FORWARD">
+        <item quantity="one">Avanza %s secondo</item>
+        <item quantity="other">Avanza %s secondi</item>
+    </plurals>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Non mi piace</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Attiva la radio dal brano</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>
