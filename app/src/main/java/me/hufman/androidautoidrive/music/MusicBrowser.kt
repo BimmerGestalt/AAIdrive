@@ -129,7 +129,7 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 				callback = object : MediaBrowserCompat.SubscriptionCallback() {
 					override fun onError(parentId: String) {
 						mediaBrowser.unsubscribe(browsePath, callback!!)
-						deferred.complete(LinkedList())
+						deferred.complete(emptyList())
 					}
 
 					override fun onChildrenLoaded(parentId: String, children: MutableList<MediaBrowserCompat.MediaItem>) {

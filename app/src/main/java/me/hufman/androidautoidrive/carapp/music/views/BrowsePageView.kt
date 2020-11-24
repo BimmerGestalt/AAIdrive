@@ -172,14 +172,15 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 									songIcon
 								}
 
-						val cleanedTitle = UnicodeCleaner.clean(item.title ?: "").truncate(ROW_LINE_MAX_LENGTH)
-
+						val cleanedTitle = UnicodeCleaner.clean(item.title ?: "")
 						// if there is no subtitle then don't display it
 						val displayString = if (item.subtitle.isNullOrBlank()) {
-							cleanedTitle
+							// add a newline to enable line wrapping to a second line, if needed
+							"$cleanedTitle\n"
 						} else {
+							// need to truncate the first line so it doesn't wrap
 							val cleanedSubtitle = UnicodeCleaner.clean(item.subtitle)
-							"${cleanedTitle}\n${cleanedSubtitle}"
+							"${cleanedTitle.truncate(ROW_LINE_MAX_LENGTH)}\n${cleanedSubtitle}"
 						}
 
 						return arrayOf(
