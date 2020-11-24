@@ -23,8 +23,8 @@
     <string name="notification_popups">Popup di notifica</string>
     <string name="notification_popups_passenger">Popup con passeggero</string>
     <string name="notification_sound">Esegui suono di notifica</string>
-    <string name="notification_readout">Leggi\Pronuncia le notifiche quando aperte</string>
-    <string name="notification_readout_popup">Leggi\Pronuncia le nuove notifiche</string>
+    <string name="notification_readout">Lettura vocale notifiche quando aperte</string>
+    <string name="notification_readout_popup">Lettura vocale delle nuove notifiche</string>
     <string name="notification_readout_popup_passenger">... con un passeggero</string>
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
