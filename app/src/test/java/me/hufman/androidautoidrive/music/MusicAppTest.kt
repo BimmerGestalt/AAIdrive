@@ -1725,7 +1725,7 @@ class MusicAppTest {
 		await().untilAsserted {
 			assertEquals(1, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
-		assertEquals(0, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // should not show Filter
+		assertEquals(1, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // shows Filter while loading
 
 		// then finish loading
 		browseResults.complete(listOf (
@@ -1785,7 +1785,7 @@ class MusicAppTest {
 		await().untilAsserted {
 			assertEquals(1, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
-		assertEquals(0, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // should not show Filter or Search
+		assertEquals(1, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // should not show Search
 
 		// now pretend that the app IS searchable
 		whenever(musicController.currentAppInfo).doReturn(
@@ -1796,8 +1796,8 @@ class MusicAppTest {
 		await().untilAsserted {
 			assertEquals(1, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
-		assertEquals(1, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // should not show Filter or Search
-		assertArrayEquals(arrayOf(arrayOf("", "", "Search")), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data)
+		assertEquals(2, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // should show search and filter
+		assertArrayEquals(arrayOf(arrayOf("", "", "Search"), arrayOf("", "", "Filter")), (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data)
 
 		// then finish loading browse
 		browseResults.complete(listOf (
@@ -1915,7 +1915,7 @@ class MusicAppTest {
 		await().untilAsserted {
 			assertEquals(1, (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
 		}
-		assertEquals(0, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // should not show Filter or Search
+		assertEquals(1, (mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).totalRows)    // should not show Filter
 
 		// now pretend that the app IS searchable
 		whenever(musicController.isSupportedAction(MusicAction.PLAY_FROM_SEARCH)) doReturn true

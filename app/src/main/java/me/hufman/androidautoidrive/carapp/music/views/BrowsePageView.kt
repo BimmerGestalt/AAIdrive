@@ -247,7 +247,8 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 				// we have previously browsed somewhere if locationStack.size > 1
 				actions.add(BrowseAction.JUMPBACK)
 			}
-			if (musicList.isNotEmpty()) {
+			if (currentListModel != emptyList) {
+				// show Filter entry while loading, until we know the list is empty
 				actions.add(BrowseAction.FILTER)
 			}
 			actionsListComponent.getModel()?.setValue(actionsListModel, 0, actionsListModel.height, actionsListModel.height)
