@@ -1113,8 +1113,8 @@ class MusicAppTest {
 		)) }
 		globalState.redraw()
 		val missingList = mockServer.data[IDs.IC_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable
-		assertArrayEquals(arrayOf("Song 3", "Song 6"), missingList.data.map {it[1]}.toTypedArray())
-		assertArrayEquals(arrayOf(0, 0), missingList.data.map {it[5]}.toTypedArray())
+		assertArrayEquals(arrayOf("< Back", "Title", "Next >"), missingList.data.map {it[1]}.toTypedArray())
+		assertArrayEquals(arrayOf(0, 1, 0), missingList.data.map {it[5]}.toTypedArray())
 	}
 
 	@Test
