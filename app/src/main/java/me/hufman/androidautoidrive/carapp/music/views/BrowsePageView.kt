@@ -229,7 +229,9 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 	 * Playable entries before this single folder are ignored, because they are usually "Play All" entries or something
 	 */
 	private fun isSingleFolder(musicList: List<MusicMetadata>): Boolean {
-		return musicList.indexOfFirst { it.browseable } == musicList.size - 1
+		return musicList.isNotEmpty()
+				&& musicList.size <= 5       // only ignore 4 playable items
+				&& musicList.indexOfFirst { it.browseable } == musicList.size - 1   // last entry is the only folder
 	}
 
 	private fun showActionsList() {
