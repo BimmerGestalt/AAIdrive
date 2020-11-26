@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:layout_marginEnd="@dimen/default_margin"
+    android:layout_marginStart="@dimen/default_margin"
+    android:layout_marginTop="@dimen/default_margin">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/lbl_settingspage" />
+
+    <View style="@style/Divider"
+        android:layout_marginBottom="10dp"/>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/swAdvancedSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/lbl_advanced_settings"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:id="@+id/paneAdvancedSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp">
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/paneMusicAdvancedSettings"
+            android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicAdvancedSettingsFragment"/>
+    </LinearLayout>
+</LinearLayout>

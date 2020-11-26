@@ -100,7 +100,9 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
-
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 // What files to extract from the source APK files
@@ -363,6 +365,9 @@ dependencies {
     implementation "com.google.code.gson:gson:2.8.6"
     implementation "com.google.openlocationcode:openlocationcode:1.0.4"
     implementation "ar.com.hjg:pngj:2.1.0"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$androidx_navigation_version"
+    implementation "androidx.navigation:navigation-fragment-ktx:$androidx_navigation_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$androidx_navigation_version"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
@@ -391,4 +396,3 @@ dependencies {
     sentryImplementation 'io.sentry:sentry-android:1.7.16'
     sentryImplementation 'org.slf4j:slf4j-nop:1.7.25'
 }
-

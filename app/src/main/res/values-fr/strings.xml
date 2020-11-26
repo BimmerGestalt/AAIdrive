@@ -41,6 +41,7 @@
     <string name="btn_configure">Configurer …</string>
     <string name="connectionStatusMissingConnectedApp">Applications Connected ou Connected Classic non trouvées</string>
     <string name="connectionStatusWaiting">En Attente de Connection</string>
+    <string name="connectionStatusConnected">Connecté à votre %s</string>
     <string name="nowplaying_notconnected">&lt;Non Connecté&gt;</string>
     <string name="nowplaying_unknown">&lt;Inconnu&gt;</string>
     <string name="txt_setup_bmw_ready">L\'app est prête à être connectée à une BMW</string>

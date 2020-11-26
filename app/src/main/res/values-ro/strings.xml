@@ -40,6 +40,7 @@
     <string name="btn_configure">Configurare …</string>
     <string name="connectionStatusMissingConnectedApp">Nu am găsit aplicația Connected sau Connected Classic</string>
     <string name="connectionStatusWaiting">Aștept conectarea la masină</string>
+    <string name="connectionStatusConnected">Conectat la %s</string>
     <string name="nowplaying_notconnected">&lt;Neconectat&gt;</string>
     <string name="nowplaying_unknown">&lt;Necunoscut&gt;</string>
     <string name="txt_setup_bmw_ready">Aplicația este gata să se conecteze la un BMW</string>

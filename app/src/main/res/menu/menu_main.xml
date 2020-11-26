@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <group android:id="@+id/menugroup_over">
+        <item
+            android:id="@+id/nav_overview"
+            android:icon="@drawable/ic_home_feather"
+            android:title="@string/menu_overview" />
+
+        <item
+            android:id="@+id/nav_connection"
+            android:icon="@drawable/ic_radio_feather"
+            android:title="@string/menu_connection" />
+    </group>
+    <group android:id="@+id/menugroup_apps">
+        <item
+            android:id="@+id/nav_assistants"
+            android:icon="@drawable/ic_mic_feather"
+            android:title="@string/menu_assistants" />
+
+        <item
+            android:id="@+id/nav_maps"
+            android:icon="@drawable/ic_map_feather"
+            android:title="@string/menu_maps" />
+
+        <item
+            android:id="@+id/nav_music"
+            android:icon="@drawable/ic_music_feather"
+            android:title="@string/menu_music" />
+
+        <!--
+        <item
+            android:id="@+id/nav_navigation"
+            android:icon="@drawable/ic_navigation_feather"
+            android:title="@string/menu_navigation" />
+            -->
+
+        <item
+            android:id="@+id/nav_notifications"
+            android:icon="@drawable/ic_bell_feather"
+            android:title="@string/menu_notifications" />
+    </group>
+    <group android:id="@+id/menugroup_support">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_feather"
+            android:title="@string/menu_settings" />
+        <item
+            android:id="@+id/nav_support"
+            android:icon="@drawable/ic_heart_feather"
+            android:title="@string/menu_support"/>
+    </group>
+</menu>

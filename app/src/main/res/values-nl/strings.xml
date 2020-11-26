@@ -41,6 +41,7 @@
     <string name="btn_configure">Configureren …</string>
     <string name="connectionStatusMissingConnectedApp">Connected of Connected Classic app niet gevonden</string>
     <string name="connectionStatusWaiting">Wacht op verbinding</string>
+    <string name="connectionStatusConnected">Verbonden met uw %s</string>
     <string name="nowplaying_notconnected">&lt;Niet verdbonden&gt;</string>
     <string name="nowplaying_unknown">&lt;Onbekend&gt;</string>
     <string name="txt_setup_bmw_ready">De app is klaar om verbinding te maken met uw BMW</string>

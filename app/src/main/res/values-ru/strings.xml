@@ -40,6 +40,7 @@
     <string name="btn_configure">Настроить …</string>
     <string name="connectionStatusMissingConnectedApp">Не найдено приложения Connected или Connected Classic</string>
     <string name="connectionStatusWaiting">Ожидание подключения к машине</string>
+    <string name="connectionStatusConnected">Подключен к %s</string>
     <string name="nowplaying_notconnected">&lt;Не подключено&gt;</string>
     <string name="nowplaying_unknown">&lt;Неизвестный исполнитель&gt;</string>
     <string name="txt_setup_bmw_ready">Приложение готово для подключения к BMW</string>

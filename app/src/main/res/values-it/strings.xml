@@ -56,6 +56,7 @@
     <string name="lbl_error">Errore</string>
     <string name="connectionStatusMissingConnectedApp">Non trovo l\'app Connected o Connected Classic</string>
     <string name="connectionStatusWaiting">In attesa della connessione con l\'auto</string>
+    <string name="connectionStatusConnected">Connesso a %s</string>
     <string name="nowplaying_notconnected">&lt;Non connessa&gt;</string>
     <string name="nowplaying_unknown">&lt;Sconosciuto&gt;</string>
     <string name="txt_setup_bmw_ready">L\'app è pronta a connettersi con una BMW</string>
