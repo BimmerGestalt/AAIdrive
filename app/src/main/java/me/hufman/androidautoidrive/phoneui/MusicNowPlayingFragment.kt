@@ -1,13 +1,13 @@
 package me.hufman.androidautoidrive.phoneui
 
-import android.arch.lifecycle.ViewModelProviders
 import android.graphics.*
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.music_nowplaying.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.Utils
@@ -35,7 +35,7 @@ class MusicNowPlayingFragment: Fragment() {
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		val viewModel = ViewModelProviders.of(requireActivity()).get(MusicActivityModel::class.java)
+		val viewModel = ViewModelProvider(requireActivity()).get(MusicActivityModel::class.java)
 		val musicController = viewModel.musicController ?: return
 		this.musicController = musicController
 

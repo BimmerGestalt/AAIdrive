@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive.carapp.notifications
 
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import me.hufman.androidautoidrive.notifications.CarNotification
 import java.util.*
 import kotlin.collections.LinkedHashMap

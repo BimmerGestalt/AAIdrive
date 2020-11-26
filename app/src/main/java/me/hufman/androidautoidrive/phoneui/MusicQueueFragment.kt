@@ -1,7 +1,6 @@
 package me.hufman.androidautoidrive.phoneui
 
 import android.app.Activity
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Animatable2
@@ -9,21 +8,22 @@ import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlin.collections.ArrayList
 import kotlinx.android.synthetic.main.music_queuepage.*
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.QueueMetadata
-import kotlin.collections.ArrayList
 
 class MusicQueueFragment: Fragment() {
 	lateinit var musicController: MusicController
@@ -50,7 +50,7 @@ class MusicQueueFragment: Fragment() {
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		val viewModel = ViewModelProviders.of(requireActivity()).get(MusicActivityModel::class.java)
+		val viewModel = ViewModelProvider(requireActivity()).get(MusicActivityModel::class.java)
 		val musicController = viewModel.musicController ?: return
 		this.musicController = musicController
 		placeholderCoverArt = viewModel.icons[MusicNowPlayingFragment.PLACEHOLDER_ID]!!
