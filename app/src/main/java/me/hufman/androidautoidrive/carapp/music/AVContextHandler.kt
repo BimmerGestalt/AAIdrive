@@ -26,7 +26,7 @@ class AVContextHandler(val carConnection: BMWRemotingServer, val controller: Mus
 		val instanceId = IDriveConnectionListener.instanceId
 		if (instanceId == null) {
 			Log.w(TAG, "instanceId is null! skipping av handle creation for now")
-		} else {
+		} else if (musicAppMode.shouldRequestAudioContext()) {
 			Log.d(TAG, "instanceId == ${IDriveConnectionListener.instanceId}")
 			synchronized(carConnection) {
 				avHandle = carConnection.av_create(instanceId, MY_IDENT)
