@@ -14,15 +14,15 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.support.annotation.RequiresApi
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat.*
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RemoteViews
 import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat.*
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.PhoneAppResourcesAndroid
 import me.hufman.androidautoidrive.UnicodeCleaner
@@ -149,7 +149,9 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		title = title?.let { UnicodeCleaner.clean(it) }
 		text = text?.let { UnicodeCleaner.clean(it) }
 
-		val actions = sbn.notification.actions?.map { CarNotification.Action.parse(it) } ?: emptyList()
+		val actions = sbn.notification.actions
+				?.filter {it.title?.isNotBlank() == true}
+				?.map { CarNotification.Action.parse(it) } ?: emptyList()
 
 		val soundUri = getNotificationSound(sbn.notification)
 
@@ -198,7 +200,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 			.filter { it.isNotEmpty() }
 			.toList()
 		val actions = customView.collectChildren().filterIsInstance<TextView>()
-			.filter { it.isClickable }
+			.filter { it.isClickable && it.text?.isNotBlank() == true }
 			.map { CarNotification.Action(it.text.toString(), false, emptyList()) }
 			.take(5).toList()
 

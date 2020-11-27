@@ -133,7 +133,7 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 		} catch (e: IllegalArgumentException) {
 			return null
 		}
-		if (olc.isShort && reference != null) {
+		if (olc.isShort && reference.isNotBlank()) {
 			val referenceName = reference.replace('+', ' ').trim()
 			val result = addressSearcher.search(referenceName) ?: return null
 			olc = olc.recover(result.latitude, result.longitude)

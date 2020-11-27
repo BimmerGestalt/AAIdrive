@@ -16,8 +16,9 @@ import java.util.*
 
 class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHelpers, val settings: NotificationSettings, val readoutInteractions: ReadoutInteractions) {
 	companion object {
-		val INTERACTION_DEBOUNCE_MS = 2000              // how long to wait after lastInteractionTime to update the list
-		val SKIPTHROUGH_THRESHOLD = 2000                // how long after an entrybutton push to allow skipping through to a current notification
+		const val INTERACTION_DEBOUNCE_MS = 2000              // how long to wait after lastInteractionTime to update the list
+		const val SKIPTHROUGH_THRESHOLD = 2000                // how long after an entrybutton push to allow skipping through to a current notification
+		const val ARRIVAL_THRESHOLD = 8000                    // how long after a new notification should it skip through
 
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.PlainState &&
@@ -39,6 +40,11 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 
 	var deferredUpdate: DeferredUpdate? = null  // wrapper object to help debounce user inputs
 	var lastInteractionIndex: Int = -1       // what index the user last selected
+
+	var notificationArrivalTimestamp = 0L
+	val timeSinceNotificationArrival: Long
+		get() = System.currentTimeMillis() - notificationArrivalTimestamp
+	var mostInterestingNotification: CarNotification? = null        // most recently arrived or selected notification
 
 	val shownNotifications = Collections.synchronizedList(ArrayList<CarNotification>())   // which notifications are showing
 	val notificationListData = object: RHMIListAdapter<CarNotification>(3, shownNotifications) {
@@ -80,10 +86,14 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 		state.focusCallback = FocusCallback { focused ->
 			visible = focused
 			if (focused) {
+				val didEntryButton = timeSinceEntryButton < SKIPTHROUGH_THRESHOLD
 				val focusEvent = state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
-				if (timeSinceEntryButton < SKIPTHROUGH_THRESHOLD &&
-						readoutInteractions.currentNotification != null) {
-					detailsView.selectedNotification = readoutInteractions.currentNotification
+				val skipThroughNotification = readoutInteractions.currentNotification ?:
+						if (timeSinceNotificationArrival < ARRIVAL_THRESHOLD) mostInterestingNotification else null
+				if (didEntryButton && skipThroughNotification != null) {
+					detailsView.selectedNotification = skipThroughNotification
+					// don't try to skip through to a new notification again
+					notificationArrivalTimestamp = 0L
 					try {
 						focusEvent.triggerEvent(mapOf(0 to detailsView.state.id))   // skip through to details view
 						// done processing here, don't continue on to redrawing
@@ -100,8 +110,11 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 				redrawNotificationList()
 
 				// if a notification is speaking, pre-select it
-				val index = shownNotifications.indexOf(readoutInteractions.currentNotification)
-				if (index >= 0) {
+				// otherwise pre-select the most recent notification that showed up or was selected
+				// and only if the user is freshly arriving, not backing out of a deeper view
+				val preselectedNotification = readoutInteractions.currentNotification ?: mostInterestingNotification
+				val index = shownNotifications.indexOf(preselectedNotification)
+				if (didEntryButton && index >= 0) {
 					focusEvent.triggerEvent(mapOf(0 to notificationListView.id, 41 to index))
 				}
 
@@ -120,16 +133,25 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 
 		notificationListView.setVisible(true)
 		notificationListView.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id, "55,0,*")
-		notificationListView.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
-			val notification = shownNotifications.getOrNull(index)
-			detailsView.selectedNotification = notification
-			if (notification != null) {
-				// set the list to go into the details state
-				notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = detailsView.state.id
-			} else {
-				notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
+		notificationListView.setProperty(RHMIProperty.PropertyId.BOOKMARKABLE, true)
+		notificationListView.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIActionListCallback {
+			override fun onAction(index: Int, invokedBy: Int?) {
+				if (invokedBy != 2) {       // don't change the notification
+					val notification = shownNotifications.getOrNull(index)
+					detailsView.selectedNotification = notification
+				}
+				if (detailsView.selectedNotification != null) {
+					// save this notification for future pre-selections
+					mostInterestingNotification = detailsView.selectedNotification
+
+					// set the list to go into the details state
+					notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = detailsView.state.id
+				} else {
+					notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
+				}
 			}
 		}
+
 		notificationListView.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {
 			if (it != lastInteractionIndex) {
 				lastInteractionIndex = it
@@ -206,6 +228,12 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 
 	fun redrawSettingsList() {
 		settingsListView.getModel()?.value = menuSettingsListData
+	}
+
+	fun showNotification(sbn: CarNotification) {
+		mostInterestingNotification = sbn
+		notificationArrivalTimestamp = System.currentTimeMillis()
+		showStatusBarIcon()
 	}
 
 	fun showStatusBarIcon() {

@@ -5,19 +5,19 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.support.annotation.AttrRes
-import android.support.annotation.ColorInt
 import android.util.TypedValue
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 import ar.com.hjg.pngj.*
 import ar.com.hjg.pngj.chunks.PngChunkPLTE
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.util.zip.ZipInputStream
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.withTimeout
 import org.json.JSONException
 import org.json.JSONObject
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
-import java.util.zip.ZipInputStream
 
 object Utils {
 	val FILTER_NEGATIVE by lazy {

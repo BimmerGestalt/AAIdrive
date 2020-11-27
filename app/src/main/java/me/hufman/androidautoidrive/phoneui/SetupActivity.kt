@@ -9,10 +9,10 @@ import android.os.Bundle
 import android.os.Looper
 import android.os.SystemClock
 import android.provider.Settings
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_setup.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BuildConfig

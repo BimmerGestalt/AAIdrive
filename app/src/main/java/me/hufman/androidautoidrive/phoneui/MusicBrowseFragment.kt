@@ -1,11 +1,14 @@
 package me.hufman.androidautoidrive.phoneui
 
+import android.app.Activity
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
+import kotlinx.android.synthetic.main.music_browsepage.*
 import me.hufman.androidautoidrive.R
 
 class MusicBrowseFragment: Fragment() {
@@ -32,6 +35,13 @@ class MusicBrowseFragment: Fragment() {
 		return view
 	}
 
+	fun onActive() {
+		val viewModel = ViewModelProvider(requireActivity()).get(MusicActivityModel::class.java)
+		viewModel.musicController?.listener = kotlinx.coroutines.Runnable {
+			(this.context as Activity).listBrowse.adapter?.notifyDataSetChanged()
+		}
+	}
+
 	fun replaceFragment(fragment: Fragment, addToBackstack: Boolean = true) {
 		val fragmentManager = fm ?: return
 
@@ -46,7 +56,7 @@ class MusicBrowseFragment: Fragment() {
 
 	fun onBackPressed(): Boolean {
 		val fragmentManager = fm ?: return false
-		if (userVisibleHint && fragmentManager.backStackEntryCount > 0) {
+		if (isVisible && fragmentManager.backStackEntryCount > 0) {
 			fragmentManager.popBackStack()
 			return true
 		}

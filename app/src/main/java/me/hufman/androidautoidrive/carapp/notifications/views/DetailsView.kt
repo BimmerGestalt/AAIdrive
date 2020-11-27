@@ -58,7 +58,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 					readoutInteractions.triggerDisplayReadout(selectedNotification)
 				}
 			} else {
-				selectedNotification = null
+				hide()
 			}
 		}
 
@@ -74,6 +74,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id, "55,0,*")
 		}
 		titleWidget.apply {
+			// the title and any side icon
 			setVisible(true)
 			setEnabled(true)
 			setSelectable(true)
@@ -118,13 +119,21 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		state.setProperty(RHMIProperty.PropertyId.SPEEDLOCK, false)
 	}
 
-	fun show() {
-		redraw()
+	fun hide() {
+		val emptyList = RHMIModel.RaListModel.RHMIListConcrete(1)
+		iconWidget.getModel()?.setValue(emptyList, 0, 0, 0)
+		titleWidget.getModel()?.setValue(emptyList, 0, 0, 0)
+		listWidget.getModel()?.setValue(emptyList, 0, 0, 0)
+		imageWidget.setVisible(false)
+	}
 
+	fun show() {
 		// set the focus to the first button
 		state as RHMIState.ToolbarState
-		var buttons = ArrayList(state.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
+		val buttons = ArrayList(state.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
 		state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to buttons[0].id))
+
+		redraw()
 	}
 
 	fun redraw() {

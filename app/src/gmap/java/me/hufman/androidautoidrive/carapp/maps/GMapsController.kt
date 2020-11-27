@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import android.hardware.display.VirtualDisplay
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.util.Log
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest

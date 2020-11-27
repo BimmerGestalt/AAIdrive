@@ -165,6 +165,11 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 			// add checkmark to new song
 			showList(playingIndex, 1)
+
+			// move the selection if the previous song was selected
+			if (oldPlayingIndex == selectedIndex) {
+				setSelectionToCurrentSong(playingIndex)
+			}
 		}
 
 		// redraw all currently visible rows if one of them has a cover art that was retrieved

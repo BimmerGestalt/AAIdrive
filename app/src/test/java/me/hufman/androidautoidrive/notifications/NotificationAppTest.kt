@@ -10,11 +10,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat.IMPORTANCE_LOW
-import android.support.v4.app.NotificationManagerCompat.IMPORTANCE_HIGH
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat.IMPORTANCE_LOW
+import androidx.core.app.NotificationManagerCompat.IMPORTANCE_HIGH
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
@@ -141,6 +141,7 @@ class NotificationAppTest {
 			assertTrue(visibleWidgets[0] is RHMIComponent.List)
 			assertNotNull(visibleWidgets[0].asList()?.getAction()?.asCombinedAction()?.raAction?.rhmiActionCallback)
 			assertNotNull(visibleWidgets[0].asList()?.getAction()?.asRAAction()?.rhmiActionCallback)
+			assertEquals(true, mockServer.properties[visibleWidgets[0].id]?.get(RHMIProperty.PropertyId.BOOKMARKABLE.id))
 			assertTrue(visibleWidgets[1] is RHMIComponent.Label)
 			assertEquals(true, mockServer.properties[visibleWidgets[1].id]?.get(RHMIProperty.PropertyId.VISIBLE.id) as Boolean)
 			assertEquals(false, mockServer.properties[visibleWidgets[1].id]?.get(RHMIProperty.PropertyId.SELECTABLE.id) as Boolean)
@@ -176,9 +177,13 @@ class NotificationAppTest {
 			on { getCharSequence(eq(Notification.EXTRA_SUMMARY_TEXT)) } doReturn summary
 		}
 		phoneNotification.sound = mock()
-		phoneNotification.actions = arrayOf(mock {})
+		phoneNotification.actions = arrayOf(mock(), mock(), mock())
 		phoneNotification.actions[0].title = "Custom Action"
 		phoneNotification.actions[0].actionIntent = mock()
+		phoneNotification.actions[1].title = "      "       // don't include empty titles
+		phoneNotification.actions[1].actionIntent = mock()
+		phoneNotification.actions[2].title = null           // don't include null titles
+		phoneNotification.actions[2].actionIntent = mock()
 
 		return mock {
 			on { key } doReturn "testKey"
@@ -711,7 +716,6 @@ class NotificationAppTest {
 
 		// verify that it redraws the list
 		val notificationsList = mockServer.data[386] as BMWRemoting.RHMIDataTable
-		assertNotNull(notificationsList)
 		assertEquals(2, notificationsList.numRows)
 
 		// user clicks a list entry
@@ -807,6 +811,60 @@ class NotificationAppTest {
 	}
 
 	@Test
+	fun testBookmarkNotificationMenu() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+		val callbacks = IDriveConnection.mockRemotingClient as BMWRemotingClient
+
+		val notification = createNotificationObject("Title", "Text", false)
+		val notification2 = createNotificationObject("Title2", "Title2: Text2\nTest3", true)
+		NotificationsState.replaceNotifications(listOf(notification2))
+
+		// pretend that the car shows this menu, to generate the list
+		app.viewList.state.focusCallback?.onFocus(true)
+
+		val notificationsList = mockServer.data[386] as BMWRemoting.RHMIDataTable
+		assertEquals(1, notificationsList.numRows)
+
+		// click one of them
+		callbacks.rhmi_onActionEvent(1, "Dont care", 161, mapOf(1.toByte() to 0))
+		assertEquals(app.viewDetails.state.id, mockServer.data[163])
+		assertEquals(notification2, app.viewDetails.selectedNotification)
+
+		// shows the details view
+		callbacks.rhmi_onHmiEvent(1, "unused", app.viewList.state.id, 1, mapOf(4.toByte() to false))
+		callbacks.rhmi_onHmiEvent(1, "unused", app.viewDetails.state.id, 1, mapOf(4.toByte() to true))
+
+		val titleList = mockServer.data[520] as BMWRemoting.RHMIDataTable
+		assertEquals("Title2", titleList.data[0][1])
+
+		// user leaves
+		callbacks.rhmi_onHmiEvent(1, "unused", app.viewDetails.state.id, 1, mapOf(4.toByte() to false))
+
+		// clears the display
+		val emptyTitleList = mockServer.data[520] as BMWRemoting.RHMIDataTable
+		assertEquals(0, emptyTitleList.totalRows)
+
+		// new notifications have shown up
+		NotificationsState.replaceNotifications(listOf(notification, notification2))
+
+		// user clicks bookmark into the list
+		callbacks.rhmi_onHmiEvent(1, "unused", app.viewList.state.id, 1, mapOf(4.toByte() to true))
+		callbacks.rhmi_onActionEvent(1, "Dont care", 161, mapOf(1.toByte() to 0, 43.toByte() to 2))
+
+		// it technically clicked the 0th item, but don't change the selectedNotification
+		assertEquals(notification2, app.viewDetails.selectedNotification)
+
+		// show the details view
+		callbacks.rhmi_onHmiEvent(1, "unused", app.viewList.state.id, 1, mapOf(4.toByte() to false))
+		callbacks.rhmi_onHmiEvent(1, "unused", app.viewDetails.state.id, 1, mapOf(4.toByte() to true))
+
+		val newTitleList = mockServer.data[520] as BMWRemoting.RHMIDataTable
+		assertEquals("Title2", newTitleList.data[0][1])
+	}
+
+	@Test
 	fun testViewSidePicture() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
@@ -881,14 +939,28 @@ class NotificationAppTest {
 		assertEquals(listOf("Yes", "No"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
 		verify(carNotificationController).reply(notification.key, notification.actions[0].name.toString(), "No")
+		reset(carNotificationController)
+
+		// the user goes back and accidentally clicks to send again, but it shouldn't send again
+		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
+		verify(carNotificationController, never()).reply(any(), any(), any())
 
 		// show the user's input
+		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(emptyMap<Int, Any>())
 		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "Spoken text"))
 		assertEquals(listOf("Spoken text"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		verify(carNotificationController).reply(notification.key, notification.actions[0].name.toString(), "Spoken text")
 
+		// Add a colon, should show emoji suggestions
+		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(emptyMap<Int, Any>())
+		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "Spoken text :hea"))
+		assertEquals(listOf("Spoken text :hea", "Spoken text :heart_eyes_cat:"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
+		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
+		verify(carNotificationController).reply(notification.key, notification.actions[0].name.toString(), "Spoken text \uD83D\uDE3B")
+
 		// erase, should show the suggestions again
+		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(emptyMap<Int, Any>())
 		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "delall"))
 		assertEquals(listOf("Yes", "No"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
@@ -997,5 +1069,54 @@ class NotificationAppTest {
 		}
 		// it should trigger a transition to the main list
 		assertEquals(app.viewList.state.id, mockServer.triggeredEvents[5]?.get(0))
+	}
+
+	@Test
+	fun testHideNotificationView() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+
+		NotificationsState.notifications.clear()
+		val notification = createNotificationObject("Title", "Text", false)
+		NotificationsState.notifications.add(notification)
+		app.viewDetails.selectedNotification = notification
+
+		// show the viewDetails
+		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(1, "unused", 20, 1, mapOf(4.toByte() to true))
+
+		// verify that it shows the notification
+		run {
+			val appTitleList = mockServer.data[519] as BMWRemoting.RHMIDataTable
+			val titleList = mockServer.data[520] as BMWRemoting.RHMIDataTable
+			val bodyList = mockServer.data[521] as BMWRemoting.RHMIDataTable
+			assertEquals(1, appTitleList.numRows)
+			assertEquals(3, appTitleList.numColumns)
+			assertEquals("Test AppName", appTitleList.data[0][2])
+			assertEquals(1, titleList.numRows)
+			assertEquals(2, titleList.numColumns)
+			assertEquals("", titleList.data[0][0])
+			assertEquals("Title", titleList.data[0][1])
+			assertEquals(1, bodyList.numRows)
+			assertEquals(1, bodyList.numColumns)
+			assertEquals("Text", bodyList.data[0][0])
+		}
+
+		// hide the viewDetails
+		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(1, "unused", 20, 1, mapOf(4.toByte() to false))
+
+		// verify that it shows the notification
+		run {
+			val appTitleList = mockServer.data[519] as BMWRemoting.RHMIDataTable
+			val titleList = mockServer.data[520] as BMWRemoting.RHMIDataTable
+			val bodyList = mockServer.data[521] as BMWRemoting.RHMIDataTable
+			assertEquals(0, appTitleList.numRows)
+			assertEquals(1, appTitleList.numColumns)
+			assertEquals(0, titleList.numRows)
+			assertEquals(1, titleList.numColumns)
+			assertEquals(0, bodyList.numRows)
+			assertEquals(1, bodyList.numColumns)
+			assertEquals(false, mockServer.properties[120]?.get(RHMIProperty.PropertyId.VISIBLE.id))
+		}
 	}
 }

@@ -11,11 +11,21 @@
     <string name="notification_description_bmw">Connesso a BMW</string>
     <string name="notification_description_mini">Connesso a Mini</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <string name="navigation_listener_bmw">Navigazione BMW</string>
+    <string name="navigation_listener_mini">Navigazione MINI</string>
     <!-- Labels on the navigation trigger activity -->
+    <string name="lbl_navigation_listener_searching">Ricerca della destinazione</string>
+    <string name="lbl_navigation_listener_parsefailure">Impossibile trovare la destinazione</string>
+    <string name="lbl_navigation_listener_pending">Avvio della navigazione</string>
+    <string name="lbl_navigation_listener_success">Completato</string>
     <string name="spawn_test_notification">Notifica di prova</string>
     <string name="message_notifications">Notifica messaggi</string>
     <string name="notification_popups">Popup di notifica</string>
     <string name="notification_popups_passenger">Popup con passeggero</string>
+    <string name="notification_sound">Esegui suono di notifica</string>
+    <string name="notification_readout">Lettura vocale notifiche quando aperte</string>
+    <string name="notification_readout_popup">Lettura vocale delle nuove notifiche</string>
+    <string name="notification_readout_popup_passenger">... con un passeggero</string>
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
     <string name="enable_google_maps">Abilita Google Maps</string>
@@ -31,11 +41,14 @@
     <string name="musicAppUnavailable">Non disponibile</string>
     <string name="musicAppHidden">Nascosta</string>
     <string name="enable_audio_context">Forza il focus sull\'audio</string>
+    <string name="enable_spotify_layout">Mostra sempre come Spotify in IDrive5+</string>
     <string name="lbl_grant_sessions">Controllo sulle app di musica attive:</string>
     <string name="lbl_grant">Concedi</string>
     <string name="musicAppNotes_unauthorizedSpotify">Clicca qui per autorizzare l\'accesso a Spotify</string>
     <string name="musicAppNotes_oldSpotify">Esegui il downgrade di Spotify per la funzionalità completa (Ricerca)</string>
     <string name="musicAppNotes_oldSpotifyInstructions">Quest\'app può garantire il controllo completo di Spotify solo fino alla versione 8.4.96.953, per la funzionalità di ricerca ad esempio. Per il controllo completo scarica una versione precedente da APKPure o simili.</string>
+    <string name="musicAppNotes_spotify_apiNotFound">Prego installare il client ufficiale di Spotify</string>
+    <string name="musicAppNotes_spotify_apiUnavailable">Prego verificare la connessione e disabilitare qualsiasi blocco pubblicità</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancella</string>
     <string name="btn_configure">Configura…</string>
@@ -89,6 +102,11 @@
     <string name="NOTIFICATION_OPTIONS">Opzioni</string>
     <string name="NOTIFICATION_POPUPS">Popup notiifiche</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">Popup con passeggero</string>
+    <string name="NOTIFICATION_SOUND">Esegui suono di notifica</string>
+    <string name="NOTIFICATION_READOUT">Leggi\Pronuncia le notifiche quando aperte</string>
+    <string name="NOTIFICATION_READOUT_POPUP">Leggi\Pronuncia le nuove notifiche</string>
+    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> ... con un passeggero</string>
+    <string name="READOUT_DESCRIPTION">Questa app è utilizzata per scopi di lettura</string>
     <string name="MAP_ACTION_VIEWMAP">Visualizza la mappa fullscreen</string>
     <string name="MAP_ACTION_SEARCH">Cerca un luogo</string>
     <string name="MAP_ACTION_CLEARNAV">Cancella la navigazione</string>
@@ -108,11 +126,21 @@
     <string name="MUSIC_QUEUE_EMPTY">&lt;La coda è vuota&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Precedente</string>
     <string name="MUSIC_SKIP_NEXT">Successivo</string>
+    <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Esecuzione casuale non disponibile</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Attiva modalità Shuffle</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Disattiva modalità Shuffle</string>
+    <string name="MUSIC_TURN_REPEAT_UNAVAILABLE">Esecuzione ripetuta non disponibile</string>
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Attiva modalità Repeat sempre</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Attiva modalità Repeat singola</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Disattiva Repeat</string>
+    <plurals name="MUSIC_ACTION_SEEK_BACK">
+        <item quantity="one">Riavvolgi %s secondo</item>
+        <item quantity="other">Riavvolgi %s secondi</item>
+    </plurals>
+    <plurals name="MUSIC_ACTION_SEEK_FORWARD">
+        <item quantity="one">Avanza %s secondo</item>
+        <item quantity="other">Avanza %s secondi</item>
+    </plurals>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Non mi piace</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Attiva la radio dal brano</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Like</string>

@@ -89,6 +89,7 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 	var visibleRows: List<MusicMetadata> = emptyList()
 	var visibleRowsOriginalMusicMetadata: List<MusicMetadata> = emptyList()
 	var selectedIndex: Int = 0
+	var hasSelectionChanged = false
 
 	init {
 		folderNameLabel = state.componentsList.filterIsInstance<RHMIComponent.Label>().first()
@@ -109,18 +110,19 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 	}
 
 	fun show() {
+		// enable focus setting until the user scrolls
+		hasSelectionChanged = false
+
 		// show the name of the directory
-		folderNameLabel.getModel()?.asRaDataModel()?.value = when(shortcutSteps) {
+		folderNameLabel.getModel()?.asRaDataModel()?.value = when (shortcutSteps) {
 			0 -> folder?.title ?: browsePageModel.musicAppInfo?.name ?: ""
 			1 -> "${browsePageModel.folder?.title ?: ""} / ${folder?.title ?: ""}"
 			else -> "${browsePageModel.folder?.title ?: ""} /../ ${folder?.title ?: ""}"
 		}
 
-		showActionsList()
-
 		// update the list whenever the car requests some more data
 		musicListComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
-			Log.i(TAG, "Car requested more data, $startIndex:${startIndex+numRows}")
+			Log.i(TAG, "Car requested more data, $startIndex:${startIndex + numRows}")
 			showList(startIndex, numRows)
 
 			val endIndex = if (startIndex + numRows >= musicList.size) musicList.size - 1 else startIndex + numRows
@@ -128,27 +130,36 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 			visibleRowsOriginalMusicMetadata = visibleRows.map { MusicMetadata.copy(it) }
 		}
 
+		showActionsList()
+
+		// show this page's previous list, if we are backing out to it and have wrapped the pages around
+		val index = max(0, musicList.indexOf(previouslySelected))   // redraw the checkmark item
+		showList(index, 1)
+		setFocusToPreviouslySelected()
+
+		// load the contents of this page
+		load()
+	}
+
+	fun load() {
 		// start loading data
 		loaderJob?.cancel()
 		loaderJob = launch(Dispatchers.IO) {
 			if (this@BrowsePageView.musicList.isEmpty()) {
-				musicListComponent.setEnabled(false)
 				currentListModel = loadingList
 				showList()
 			}
 			val musicListDeferred = browsePageModel.browseAsync(folder)
 			val musicList = musicListDeferred.awaitPending(LOADING_TIMEOUT) {
 				Log.d(TAG, "Browsing ${folder?.mediaId} timed out, retrying")
-				show()
+				load()
 				delay(100)
 				return@launch
 			}
-			this@BrowsePageView.musicList.clear()
-			this@BrowsePageView.musicList.addAll(musicList)
+			this@BrowsePageView.musicList = ArrayList(musicList)
 			Log.d(TAG, "Browsing ${folder?.mediaId} resulted in ${musicList.count()} items")
 
 			if (musicList.isEmpty()) {
-				musicListComponent.setEnabled(false)
 				currentListModel = emptyList
 				showList()
 			} else if (isSingleFolder(musicList)) {
@@ -172,14 +183,15 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 									songIcon
 								}
 
-						val cleanedTitle = UnicodeCleaner.clean(item.title ?: "").truncate(ROW_LINE_MAX_LENGTH)
-
+						val cleanedTitle = UnicodeCleaner.clean(item.title ?: "")
 						// if there is no subtitle then don't display it
 						val displayString = if (item.subtitle.isNullOrBlank()) {
-							cleanedTitle
+							// add a newline to enable line wrapping to a second line, if needed
+							"$cleanedTitle\n"
 						} else {
+							// need to truncate the first line so it doesn't wrap
 							val cleanedSubtitle = UnicodeCleaner.clean(item.subtitle)
-							"${cleanedTitle}\n${cleanedSubtitle}"
+							"${cleanedTitle.truncate(ROW_LINE_MAX_LENGTH)}\n${cleanedSubtitle}"
 						}
 
 						return arrayOf(
@@ -190,21 +202,10 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 						)
 					}
 				}
-				musicListComponent.setEnabled(true)
-				showList()
-				val previouslySelected = this@BrowsePageView.previouslySelected
-				if (previouslySelected != null) {
-					val index = musicList.indexOf(previouslySelected)
-					if (index >= 0) {
-						state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
-								mapOf(0.toByte() to musicListComponent.id, 41.toByte() to index)
-						)
-					}
-				} else {
-					state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
-							mapOf(0.toByte() to musicListComponent.id, 41.toByte() to 0)
-					)
-				}
+				// set the list's height but don't render any items yet
+				// to rely on the car to request the specific items to view
+				showList(0, 0)
+				setFocusToPreviouslySelected()
 
 				// having the song list loaded may change the available actions
 				showActionsList()
@@ -228,7 +229,9 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 	 * Playable entries before this single folder are ignored, because they are usually "Play All" entries or something
 	 */
 	private fun isSingleFolder(musicList: List<MusicMetadata>): Boolean {
-		return musicList.indexOfFirst { it.browseable } == musicList.size - 1
+		return musicList.isNotEmpty()
+				&& musicList.size <= 5       // only ignore 4 playable items
+				&& musicList.indexOfFirst { it.browseable } == musicList.size - 1   // last entry is the only folder
 	}
 
 	private fun showActionsList() {
@@ -244,7 +247,8 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 				// we have previously browsed somewhere if locationStack.size > 1
 				actions.add(BrowseAction.JUMPBACK)
 			}
-			if (musicList.isNotEmpty()) {
+			if (currentListModel != emptyList) {
+				// show Filter entry while loading, until we know the list is empty
 				actions.add(BrowseAction.FILTER)
 			}
 			actionsListComponent.getModel()?.setValue(actionsListModel, 0, actionsListModel.height, actionsListModel.height)
@@ -252,9 +256,38 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 	}
 
 	/**
+	 * Sets the list selection to any previous selection
+	 * but only if the user hasn't scrolled yet
+	 * and if we aren't still loading
+	 */
+	private fun setFocusToPreviouslySelected() {
+		if (hasSelectionChanged) return     // user has changed selection
+		if (currentListModel == loadingList || currentListModel == emptyList) return    // not a valid music list
+		val previouslySelected = previouslySelected
+		if (previouslySelected != null) {
+			var index = musicList.indexOf(previouslySelected)
+			if (index < 0) {
+				// the exact item doesn't exist in the list, which is strange
+				// but these lists are typically alphabetical, so find a close match
+				index = musicList.indexOfFirst { (previouslySelected.title ?: "") <= (it.title ?: "") }
+			}
+			if (index >= 0) {
+				state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
+						mapOf(0.toByte() to musicListComponent.id, 41.toByte() to index)
+				)
+			}
+		} else {
+			state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
+					mapOf(0.toByte() to musicListComponent.id, 41.toByte() to 0)
+			)
+		}
+	}
+
+	/**
 	 * Shows the list component content from the start index for the specified number of rows.
 	 */
 	private fun showList(startIndex: Int = 0, numRows: Int = 20) {
+		musicListComponent.setEnabled(currentListModel != loadingList && currentListModel != emptyList)
 		if (startIndex >= 0) {
 			musicListComponent.getModel()?.setValue(currentListModel, startIndex, numRows, currentListModel.height)
 		}
@@ -392,6 +425,10 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 	 * On select action callback. This is called every time the user scrolls in the browse list component.
 	 */
 	private fun onSelectAction(index: Int) {
+		if (index != 0) {
+			// ignore index 0, because the car places us there after an empty list
+			hasSelectionChanged = true
+		}
 		selectedIndex = index
 	}
 }

@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive.notifications
 
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import java.util.*
 
 object NotificationsState {
