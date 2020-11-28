@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
@@ -30,11 +31,14 @@ import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
 import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
 import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
 import me.hufman.idriveconnectionkit.rhmi.RHMIState
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
 import java.io.ByteArrayInputStream
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -81,12 +85,29 @@ class NotificationAppTest {
 		on { shouldReadoutNotificationPopup(any()) } doReturn true
 	}
 
+	/* A helper to set a constant value
+	* From https://proandroiddev.com/build-version-in-unit-testing-4e963940dae7
+	* */
+	fun setFinalStatic(field: Field, newValue: Any) {
+		field.setAccessible(true)
+
+		val modifiersField = Field::class.java.getDeclaredField("modifiers")
+		modifiersField.setAccessible(true)
+		modifiersField.setInt(field, field.getModifiers() and Modifier.FINAL.inv())
+
+		field.set(null, newValue)
+	}
 
 	@Before
 	fun setUp() {
 		NotificationsState.notifications.clear()
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDC08", listOf("cat2"), "cat")
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDE3B", listOf("heart_eyes_cat"), "heart_eyes_cat")
+	}
+
+	@After
+	fun tearDown() {
+		setFinalStatic(Build.VERSION::class.java.getField("SDK_INT"), 0)
 	}
 
 	@Test
@@ -239,10 +260,10 @@ class NotificationAppTest {
 			on { getCharSequence(eq("sender")) } doReturn "Sender"
 			on { getCharSequence(eq("text")) } doReturn "Message2"
 		}
-		val icon = mock<Icon>()
-		val iconDrawable = mock<Drawable>()
+		val personIcon = mock<Icon>()
+		val personIconDrawable = mock<Drawable>(name = "personIconDrawable")
 		val person = mock<Person> {
-			on { getIcon() } doReturn icon
+			on { getIcon() } doReturn personIcon
 		}
 		val message3 = mock<Bundle> {
 			on { getCharSequence(eq("sender")) } doReturn "Sender"
@@ -251,6 +272,7 @@ class NotificationAppTest {
 			on { getCharSequence(eq("type")) } doReturn "image/"
 			on { getParcelable<Uri>(eq("uri")) } doReturn mock<Uri>()
 		}
+
 		val notification = createNotification("Ticker Text", "Title", "Text", "Summary", true)
 		whenever(notification.notification.extras.getString(eq(Notification.EXTRA_TEMPLATE))) doReturn "android.app.Notification\$MessagingStyle"
 		whenever(notification.notification.extras.getParcelableArray(eq(Notification.EXTRA_HISTORIC_MESSAGES))) doAnswer { null }
@@ -258,11 +280,27 @@ class NotificationAppTest {
 				message, message2, message3
 		)
 
-		whenever(phoneAppResources.getIconDrawable(eq(icon))) doReturn iconDrawable
-		val notificationObject = NotificationParser(mock(), phoneAppResources, mock()).summarizeNotification(notification)
-		assertEquals("Sender: Message\nSender: Message2\nSender: Message3", notificationObject.text)
-		assertNotNull(notificationObject.pictureUri)
-		assertEquals(iconDrawable, notificationObject.icon)
+		val smallIconDrawable = mock<Drawable>(name = "smallIconDrawable")
+		val largeIconDrawable = mock<Drawable>(name = "largeIconDrawable")
+
+		whenever(phoneAppResources.getIconDrawable(eq(personIcon))) doReturn personIconDrawable
+		whenever(phoneAppResources.getIconDrawable(eq(notification.notification.smallIcon))) doReturn smallIconDrawable
+		whenever(phoneAppResources.getIconDrawable(eq(notification.notification.getLargeIcon()))) doReturn largeIconDrawable
+
+		run {       // API 26
+			setFinalStatic(Build.VERSION::class.java.getField("SDK_INT"), 26)
+			val notificationObject = NotificationParser(mock(), phoneAppResources, mock()).summarizeNotification(notification)
+			assertEquals("Sender: Message\nSender: Message2\nSender: Message3", notificationObject.text)
+			assertNotNull(notificationObject.pictureUri)
+			assertEquals(smallIconDrawable, notificationObject.icon)     // don't load person icons from api < 28
+		}
+		run {       // API 28
+			setFinalStatic(Build.VERSION::class.java.getField("SDK_INT"), 28)
+			val notificationObject = NotificationParser(mock(), phoneAppResources, mock()).summarizeNotification(notification)
+			assertEquals("Sender: Message\nSender: Message2\nSender: Message3", notificationObject.text)
+			assertNotNull(notificationObject.pictureUri)
+			assertEquals(personIconDrawable, notificationObject.icon)
+		}
 	}
 
 	@Test
@@ -321,6 +359,7 @@ class NotificationAppTest {
 		assertFalse(NotificationParser(mock(), phoneAppResources, mock()).shouldPopupNotification(spotifyNotification, null))
 
 		// low priority notification handling
+		setFinalStatic(Build.VERSION::class.java.getField("SDK_INT"), 26)
 		val highPriorityRanking = mock<NotificationListenerService.Ranking> {
 			on { importance } doReturn IMPORTANCE_HIGH
 			on { isAmbient } doReturn false

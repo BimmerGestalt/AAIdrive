@@ -171,8 +171,10 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		val text = recentMessages.joinToString("\n") {
 			"${it.getCharSequence("sender")}: ${it.getCharSequence("text")}"
 		}
-		val person = recentMessages.lastOrNull()?.getParcelable("sender_person") as? Person // last message person
-				?: extras.getParcelable(Notification.EXTRA_MESSAGING_PERSON) as? Person     // conversation person
+		val person = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {   // person objects only exist in >= Pie
+			recentMessages.lastOrNull()?.getParcelable("sender_person") as? Person // last message person
+			?: extras.getParcelable(Notification.EXTRA_MESSAGING_PERSON) as? Person
+		} else null
 		val pictureUri = recentMessages.filter {
 			it.getCharSequence("type")?.startsWith("image/") == true
 		}.map {
