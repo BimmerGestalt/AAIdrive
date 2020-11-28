@@ -9,6 +9,7 @@ import me.hufman.androidautoidrive.carapp.assistant.AssistantAppInfo
 import me.hufman.androidautoidrive.carapp.assistant.AssistantController
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
+import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import org.junit.Assert.*
 import org.junit.Test
@@ -17,6 +18,7 @@ import java.io.ByteArrayInputStream
 class AssistantAppTest {
 	val assistantController = mock<AssistantController>()
 
+	val iDriveConnectionStatus = mock<IDriveConnectionStatus>()
 	val securityAccess = mock<SecurityAccess> {
 		on { signChallenge(any(), any() )} doReturn ByteArray(512)
 	}
@@ -44,7 +46,7 @@ class AssistantAppTest {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 
-		val app = AssistantApp(securityAccess, carAppResources, assistantController, graphicsHelpers)
+		val app = AssistantApp(iDriveConnectionStatus, securityAccess, carAppResources, assistantController, graphicsHelpers)
 		app.onCreate()
 
 		// verify the right icons were added
@@ -68,7 +70,7 @@ class AssistantAppTest {
 		val assistant = AssistantAppInfo("Test App", mock(), "me.test.app")
 		whenever(assistantController.getAssistants()) doReturn setOf(assistant)
 
-		val app = AssistantApp(securityAccess, carAppResources, assistantController, graphicsHelpers)
+		val app = AssistantApp(iDriveConnectionStatus, securityAccess, carAppResources, assistantController, graphicsHelpers)
 		app.onCreate()
 
 		assertEquals(1, mockServer.amApps.size)

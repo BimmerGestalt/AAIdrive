@@ -14,9 +14,10 @@ import me.hufman.androidautoidrive.carapp.music.MusicImageIDsSpotify
 import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicController
+import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 
-class MusicService(val context: Context, val securityAccess: SecurityAccess, val musicAppMode: MusicAppMode) {
+class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val musicAppMode: MusicAppMode) {
 	var threadMusic: CarThread? = null
 	var carappMusic: MusicApp? = null
 	var navigationTriggerReceiver: NavigationTriggerReceiver? = null
@@ -48,7 +49,7 @@ class MusicService(val context: Context, val securityAccess: SecurityAccess, val
 					var carappMusic: MusicApp? = null
 					if (musicAppMode.shouldId5Playback()) {
 						try {
-							carappMusic = MusicApp(securityAccess,
+							carappMusic = MusicApp(iDriveConnectionStatus, securityAccess,
 									CarAppAssetManager(context, "spotify"),
 									MusicImageIDsSpotify,
 									PhoneAppResourcesAndroid(context),
@@ -61,7 +62,7 @@ class MusicService(val context: Context, val securityAccess: SecurityAccess, val
 						}
 					}
 					if (carappMusic == null) {
-						carappMusic = MusicApp(securityAccess,
+						carappMusic = MusicApp(iDriveConnectionStatus, securityAccess,
 								CarAppAssetManager(context, "multimedia"),
 								MusicImageIDsMultimedia,
 								PhoneAppResourcesAndroid(context),

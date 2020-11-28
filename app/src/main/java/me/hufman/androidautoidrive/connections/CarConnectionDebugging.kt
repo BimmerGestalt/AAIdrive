@@ -1,7 +1,7 @@
 package me.hufman.androidautoidrive.connections
 
 import android.content.Context
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 
 /**
@@ -15,7 +15,7 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 	}
 
 	val securityAccess = SecurityAccess.getInstance(context)
-	val idriveListener = IDriveConnectionListener()
+	val idriveListener = IDriveConnectionObserver()
 
 	val isConnectedInstalled
 		get() = securityAccess.installedSecurityServices.isNotEmpty()

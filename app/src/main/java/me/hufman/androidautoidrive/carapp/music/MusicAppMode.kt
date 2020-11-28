@@ -3,7 +3,8 @@ package me.hufman.androidautoidrive.carapp.music
 import android.content.Context
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
+import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
 import java.lang.Exception
 
 /**
@@ -13,7 +14,7 @@ import java.lang.Exception
  *     Bluetooth app connection (the Connected app uses a distinct TCP port for each transport)
  *     USB app connection if the phone has AOAv2 audio support (generally, running an OS earlier than Oreo)
  */
-class MusicAppMode(val capabilities: Map<String, String?>, val appSettings: MutableAppSettings,
+class MusicAppMode(val iDriveConnectionStatus: IDriveConnectionStatus, val capabilities: Map<String, String?>, val appSettings: MutableAppSettings,
                    val iHeartRadioVersion: String?, val pandoraVersion: String?, val spotifyVersion: String?) {
 	companion object {
 		fun build(capabilities: Map<String, String?>, context: Context): MusicAppMode {
@@ -30,7 +31,7 @@ class MusicAppMode(val capabilities: Map<String, String?>, val appSettings: Muta
 			val spotifyVersion = try {
 				context.packageManager.getPackageInfo("com.spotify.music", 0).versionName
 			} catch (e: Exception) { null }
-			return MusicAppMode(capabilities, MutableAppSettings(context), iHeartRadioVersion, pandoraVersion, spotifyVersion)
+			return MusicAppMode(IDriveConnectionObserver(), capabilities, MutableAppSettings(context), iHeartRadioVersion, pandoraVersion, spotifyVersion)
 		}
 	}
 
@@ -52,10 +53,17 @@ class MusicAppMode(val capabilities: Map<String, String?>, val appSettings: Muta
 				}
 			}
 		}
+		fun toPort(): Int {
+			return when (this) {
+				USB -> 4004
+				BT -> 4007
+				ETH -> 4008
+			}
+		}
 	}
 
 	fun isBTConnection(): Boolean {
-		return TRANSPORT_PORTS.fromPort(IDriveConnectionListener.port) == TRANSPORT_PORTS.BT
+		return TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port) == TRANSPORT_PORTS.BT
 	}
 	fun supportsUsbAudio(): Boolean {
 		return appSettings[AppSettings.KEYS.AUDIO_SUPPORTS_USB].toBoolean()
