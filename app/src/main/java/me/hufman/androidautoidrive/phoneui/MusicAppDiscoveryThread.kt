@@ -6,7 +6,7 @@ import android.os.HandlerThread
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 
 
-class AppDiscoveryThread(val context: Context, val callback: (MusicAppDiscovery) -> Unit): HandlerThread("MusicAppDiscovery UI") {
+class MusicAppDiscoveryThread(val context: Context, val callback: (MusicAppDiscovery) -> Unit): HandlerThread("MusicAppDiscovery UI") {
 	private var handler: Handler? = null
 	var discovery: MusicAppDiscovery? = null
 		private set

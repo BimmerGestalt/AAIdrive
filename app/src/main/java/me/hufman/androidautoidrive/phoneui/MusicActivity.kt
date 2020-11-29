@@ -35,7 +35,7 @@ class MusicActivity : AppCompatActivity() {
 	val handler = Handler()
 
 	val displayedApps = ArrayList<MusicAppInfo>()
-	val appDiscoveryThread = AppDiscoveryThread(this) { appDiscovery ->
+	val appDiscoveryThread = MusicAppDiscoveryThread(this) { appDiscovery ->
 		handler.post {
 			displayedApps.clear()
 			displayedApps.addAll(appDiscovery.combinedApps)
@@ -123,7 +123,7 @@ class MusicActivity : AppCompatActivity() {
 	}
 }
 
-class MusicAppListAdapter(val context: Context, val handler: Handler, val supportFragmentManager: FragmentManager, val contents: ArrayList<MusicAppInfo>, val appDiscoveryThread: AppDiscoveryThread, val hiddenApps: Set<String>): RecyclerView.Adapter<MusicAppListAdapter.ViewHolder>() {
+class MusicAppListAdapter(val context: Context, val handler: Handler, val supportFragmentManager: FragmentManager, val contents: ArrayList<MusicAppInfo>, val musicAppDiscoveryThread: MusicAppDiscoveryThread, val hiddenApps: Set<String>): RecyclerView.Adapter<MusicAppListAdapter.ViewHolder>() {
 
 	// animations for the music session
 	val animationLoopCallback = object: Animatable2.AnimationCallback() {
@@ -181,7 +181,7 @@ class MusicAppListAdapter(val context: Context, val handler: Handler, val suppor
 				imgMusicAppIcon.setImageDrawable(icon)
 				txtMusicAppName.text = appInfo.name
 
-				if (appInfo.packageName == appDiscoveryThread.discovery?.musicSessions?.getPlayingApp()?.packageName) {
+				if (appInfo.packageName == musicAppDiscoveryThread.discovery?.musicSessions?.getPlayingApp()?.packageName) {
 					imgNowPlaying.setImageDrawable(equalizerAnimated)
 					equalizerAnimated.start()
 					imgNowPlaying.visibility = View.VISIBLE

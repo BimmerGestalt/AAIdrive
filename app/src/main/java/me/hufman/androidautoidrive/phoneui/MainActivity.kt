@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 	val redrawListener = RedrawListener()
 	val redrawTask = RedrawTask()
 	val displayedMusicApps = ArrayList<MusicAppInfo>()
-	val appDiscoveryThread = AppDiscoveryThread(this) { appDiscovery ->
+	val appDiscoveryThread = MusicAppDiscoveryThread(this) { appDiscovery ->
 		handler.post {
 			displayedMusicApps.clear()
 			displayedMusicApps.addAll(appDiscovery.validApps)
