@@ -25,7 +25,7 @@ class MusicActivity : AppCompatActivity() {
 	val appDiscoveryThread = MusicAppDiscoveryThread(this) { appDiscovery ->
 		handler.post {
 			displayedApps.clear()
-			displayedApps.addAll(appDiscovery.combinedApps)
+			displayedApps.addAll(appDiscovery.allApps)
 			listMusicApps.adapter?.notifyDataSetChanged() // redraw the app list
 		}
 	}
@@ -51,7 +51,7 @@ class MusicActivity : AppCompatActivity() {
 
 		listMusicApps.setHasFixedSize(true)
 		listMusicApps.layoutManager = LinearLayoutManager(this)
-		listMusicApps.adapter = MusicAppListAdapter(this, handler, supportFragmentManager, displayedApps, appDiscoveryThread, hiddenApps)
+		listMusicApps.adapter = MusicAppListAdapter(this, handler, supportFragmentManager, displayedApps, appDiscoveryThread)
 
 		listMusicAppsRefresh.setOnRefreshListener {
 			appDiscoveryThread.forceDiscovery()
@@ -74,7 +74,6 @@ class MusicActivity : AppCompatActivity() {
 					} else {
 						hiddenApps.add(musicAppInfo.packageName)
 					}
-					listMusicApps.adapter?.notifyItemChanged(view.adapterPosition)
 				}
 			}
 		}

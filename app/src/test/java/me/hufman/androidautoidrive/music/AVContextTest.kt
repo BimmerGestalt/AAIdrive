@@ -283,7 +283,6 @@ class AVContextTest {
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
 		val musicAppInfo = MusicAppInfo("Test", mock(), "example.test", null)
-		whenever(musicAppDiscovery.connectableApps) doAnswer {listOf(musicAppInfo)}
 		whenever(musicAppDiscovery.validApps) doAnswer {listOf(musicAppInfo)}
 
 		// set the previously-remembered app

@@ -22,7 +22,7 @@ import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.phoneui.*
 
-class MusicAppListAdapter(val context: Context, val handler: Handler, val supportFragmentManager: FragmentManager, val contents: ArrayList<MusicAppInfo>, val musicAppDiscoveryThread: MusicAppDiscoveryThread, val hiddenApps: Set<String>): RecyclerView.Adapter<MusicAppListAdapter.ViewHolder>() {
+class MusicAppListAdapter(val context: Context, val handler: Handler, val supportFragmentManager: FragmentManager, val contents: ArrayList<MusicAppInfo>, val musicAppDiscoveryThread: MusicAppDiscoveryThread): RecyclerView.Adapter<MusicAppListAdapter.ViewHolder>() {
 
 	// animations for the music session
 	val animationLoopCallback = object: Animatable2.AnimationCallback() {
@@ -66,7 +66,7 @@ class MusicAppListAdapter(val context: Context, val handler: Handler, val suppor
 				val icon = appInfo.icon
 				icon.mutate()
 
-				if (hiddenApps.contains(appInfo.packageName)) {
+				if (appInfo.hidden) {
 					imgMusicAppIcon.alpha = 0.4f
 					icon.colorFilter = grayscaleColorFilter
 					txtMusicAppName.setTextColor(txtMusicAppName.textColors.withAlpha(128))
@@ -99,7 +99,7 @@ class MusicAppListAdapter(val context: Context, val handler: Handler, val suppor
 						if (appInfo.browseable) context.getString(R.string.musicAppBrowseable) else null,
 						if (appInfo.searchable || appInfo.playsearchable) context.getString(R.string.musicAppSearchable) else null,
 						if (appInfo.controllable || appInfo.connectable) null else context.getString(R.string.musicAppUnavailable),
-						if (hiddenApps.contains(appInfo.packageName)) context.getString(R.string.musicAppHidden) else null
+						if (appInfo.hidden) context.getString(R.string.musicAppHidden) else null
 				).joinToString(", ")
 				txtMusicAppFeatures.text = features
 				paneMusicAppFeatures.setOnClickListener {
