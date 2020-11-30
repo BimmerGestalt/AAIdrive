@@ -19,13 +19,14 @@ import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDsMultimedia
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.ByteArrayInputStream
 
 class AVContextTest {
+	val iDriveConnectionStatus = mock<IDriveConnectionStatus>()
 	val securityAccess = mock<SecurityAccess> {
 		on { signChallenge(any(), any() )} doReturn ByteArray(512)
 	}
@@ -81,7 +82,7 @@ class AVContextTest {
 		val mode = mock<MusicAppMode> {
 			on { shouldRequestAudioContext() } doReturn false
 		}
-		val app = MusicApp(securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mode)
+		val app = MusicApp(iDriveConnectionStatus, securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mode)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
 		// post a new application
@@ -186,7 +187,7 @@ class AVContextTest {
 		val mode = mock<MusicAppMode> {
 			on { shouldRequestAudioContext() } doReturn true
 		}
-		val app = MusicApp(securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mode)
+		val app = MusicApp(iDriveConnectionStatus, securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mode)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
 		// post a new application
@@ -199,14 +200,10 @@ class AVContextTest {
 		// without an InstanceID, won't try to create an AvContext
 		assertEquals(0, mockServer.avConnections.size)
 		// now set the instanceId
-		IDriveConnectionListener.setConnection("", "localhost", 4008, 9)
+		whenever(iDriveConnectionStatus.instanceId) doReturn 9
 		musicAppListener.lastValue.run()
 		// the context was created
 		assertEquals(1, mockServer.avConnections.size)
-		// reset for subsequent tests
-		IDriveConnectionListener.reset()
-		IDriveConnectionListener.setConnection("", "localhost", 4008, null)
-		IDriveConnectionListener.reset()
 
 		// user clicks the icon
 		mockClient.am_onAppEvent(1, "1", mockServer.amApps[0], BMWRemoting.AMEvent.AM_APP_START)
@@ -252,7 +249,7 @@ class AVContextTest {
 		val mode = mock<MusicAppMode> {
 			on { shouldRequestAudioContext() } doReturn false
 		}
-		val app = MusicApp(securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mode)
+		val app = MusicApp(iDriveConnectionStatus, securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mode)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
 		// now click AV buttons
@@ -282,11 +279,10 @@ class AVContextTest {
 		val mode = mock<MusicAppMode> {
 			on { shouldRequestAudioContext() } doReturn false
 		}
-		val app = MusicApp(securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mode)
+		val app = MusicApp(iDriveConnectionStatus, securityAccess, carAppResources, MusicImageIDsMultimedia, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mode)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 
 		val musicAppInfo = MusicAppInfo("Test", mock(), "example.test", null)
-		whenever(musicAppDiscovery.connectableApps) doAnswer {listOf(musicAppInfo)}
 		whenever(musicAppDiscovery.validApps) doAnswer {listOf(musicAppInfo)}
 
 		// set the previously-remembered app

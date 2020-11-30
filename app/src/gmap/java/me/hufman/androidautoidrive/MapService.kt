@@ -11,9 +11,10 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.content.ContextCompat
 import me.hufman.androidautoidrive.carapp.maps.*
+import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 
-class MapService(val context: Context, val securityAccess: SecurityAccess) {
+class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess) {
 	var threadGMaps: CarThread? = null
 	var mapApp: MapApp? = null
 	var mapScreenCapture: VirtualDisplayScreenCapture? = null
@@ -50,7 +51,7 @@ class MapService(val context: Context, val securityAccess: SecurityAccess) {
 						mapListener.onCreate()
 						this.mapListener = mapListener
 
-						mapApp = MapApp(securityAccess,
+						mapApp = MapApp(iDriveConnectionStatus, securityAccess,
 								CarAppAssetManager(context, "smartthings"),
 								MapInteractionControllerIntent(context), mapScreenCapture)
 						val handler = threadGMaps?.handler

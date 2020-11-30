@@ -31,26 +31,26 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 	val hiddenApps = ListSetting(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS)
 
 	private val browseApps: MutableList<MusicAppInfo> = LinkedList()
-	val combinedApps: MutableList<MusicAppInfo> = Collections.synchronizedList(LinkedList())
+	private val combinedApps: MutableList<MusicAppInfo> = Collections.synchronizedList(LinkedList())
+
+	// all detected apps
+	val allApps: List<MusicAppInfo>
+		get() {
+			return synchronized(combinedApps) {
+				combinedApps.map { it.apply {
+					hidden = hiddenApps.contains(packageName)       // update the hidden flag
+				} }
+			}
+		}
 	// which apps should show up as currently controllable
 	// shows all MediaBrowserService and MediaSession apps, unless they are hidden by user
 	// also always shows the currently-playing app
 	val validApps: List<MusicAppInfo>
 		get() {
-			val clone = synchronized(combinedApps) {
-				combinedApps.map { it }
-			}
-			return clone.filter {
-				(it.connectable && !hiddenApps.contains(it.packageName)) ||
-				(it.controllable && !hiddenApps.contains(it.packageName)) ||
+			return allApps.filter {
+				(!it.hidden && (it.connectable || it.controllable)) ||
 				musicSessions.getPlayingApp()?.packageName == it.packageName
 			}
-		}
-	// which apps should show up in the car's Media menu
-	// these app entries can't be removed once they are created
-	val connectableApps: List<MusicAppInfo>
-		get() = combinedApps.filter {
-			it.connectable && !hiddenApps.contains(it.packageName)
 		}
 
 	private val activeConnections = HashMap<MusicAppInfo, CombinedMusicAppController>()

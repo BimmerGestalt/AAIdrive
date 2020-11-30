@@ -18,7 +18,7 @@ import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.notifications.NotificationParser.Companion.dumpNotification
 import me.hufman.androidautoidrive.phoneui.UIState
 import me.hufman.androidautoidrive.phoneui.MainActivity
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
 
 fun Notification.isGroupSummary(): Boolean {
 	val FLAG_GROUP_SUMMARY = 0x00000200     // hard-coded to work on old SDK
@@ -32,6 +32,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		const val INTENT_REQUEST_DATA = "me.hufman.androidaudoidrive.PhoneNotificationUpdate.REQUEST_DATA"
 	}
 
+	val iDriveConnectionObserver = IDriveConnectionObserver()
 	val notificationParser by lazy { NotificationParser.getInstance(this) }
 	val carController = NotificationUpdaterControllerIntent(this)
 	var carNotificationReceiver = CarNotificationControllerIntent.Receiver(CarNotificationControllerListener(this))
@@ -84,7 +85,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	}
 
 	override fun onNotificationPosted(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
-		if (!IDriveConnectionListener.isConnected) return
+		if (!iDriveConnectionObserver.isConnected) return
 		val ranking = if (sbn != null && rankingMap != null) {
 			rankingMap.getRanking(sbn.key, this.ranking)
 			ranking
@@ -104,7 +105,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	}
 
 	fun updateNotificationList() {
-		if (!IDriveConnectionListener.isConnected) return
+		if (!iDriveConnectionObserver.isConnected) return
 		try {
 			val current = this.activeNotifications.filter {
 				notificationParser.shouldShowNotification(it)

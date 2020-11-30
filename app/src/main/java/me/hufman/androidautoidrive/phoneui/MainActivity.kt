@@ -27,7 +27,7 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.assistant.AssistantAppInfo
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.music.MusicAppInfo
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 
 class MainActivity : AppCompatActivity() {
@@ -44,10 +44,11 @@ class MainActivity : AppCompatActivity() {
 		const val NOTIFICATION_CHANNEL_NAME = "Test Notification"
 	}
 	val handler = Handler()
+	val idriveConnectionObserver = IDriveConnectionObserver()
 	val redrawListener = RedrawListener()
 	val redrawTask = RedrawTask()
 	val displayedMusicApps = ArrayList<MusicAppInfo>()
-	val appDiscoveryThread = AppDiscoveryThread(this) { appDiscovery ->
+	val appDiscoveryThread = MusicAppDiscoveryThread(this) { appDiscovery ->
 		handler.post {
 			displayedMusicApps.clear()
 			displayedMusicApps.addAll(appDiscovery.validApps)
@@ -67,6 +68,7 @@ class MainActivity : AppCompatActivity() {
 
 		setContentView(R.layout.activity_main)
 
+		idriveConnectionObserver.callback = { runOnUiThread { redraw() } }
 		swMessageNotifications.setOnCheckedChangeListener { buttonView, isChecked ->
 			if (buttonView != null) onChangedSwitchNotifications(buttonView, isChecked)
 			redraw()
@@ -285,7 +287,7 @@ class MainActivity : AppCompatActivity() {
 		if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && !SecurityAccess.getInstance(this).isConnected()) {
 			txtConnectionStatus.text = resources.getString(R.string.connectionStatusMissingConnectedApp)
 			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionError, null))
-		} else if (!IDriveConnectionListener.isConnected) {
+		} else if (!idriveConnectionObserver.isConnected) {
 			txtConnectionStatus.text = resources.getString(R.string.connectionStatusWaiting)
 			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionWaiting, null))
 		} else {
@@ -293,7 +295,7 @@ class MainActivity : AppCompatActivity() {
 			txtConnectionStatus.text = if (chassisCode != null) {
 				resources.getString(R.string.notification_description_chassiscode, chassisCode.toString())
 			} else {
-				when (IDriveConnectionListener.brand?.toLowerCase()) {
+				when (idriveConnectionObserver.brand?.toLowerCase()) {
 					"bmw" -> resources.getString(R.string.notification_description_bmw)
 					"mini" -> resources.getString(R.string.notification_description_mini)
 					else -> resources.getString(R.string.notification_description)
