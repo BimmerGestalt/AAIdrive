@@ -116,6 +116,7 @@ Implemented Features
         - [NYTimes](https://play.google.com/store/apps/details?id=com.nytimes.android)
         - [R101](https://play.google.com/store/apps/details?id=it.r101)
         - [Radio 105](https://play.google.com/store/apps/details?id=it.froggy.android.radio105)
+        - [Radio Bob](https://play.google.com/store/apps/details?id=de.radiobob.radio)
         - [Radio FM](https://play.google.com/store/apps/details?id=com.radio.fmradio)
         - [Radio Monte Carlo](https://play.google.com/store/apps/details?id=it.froggy.android.rmc)
         - [RTL 102.5](https://play.google.com/store/apps/details?id=com.rtl.rtlapp)

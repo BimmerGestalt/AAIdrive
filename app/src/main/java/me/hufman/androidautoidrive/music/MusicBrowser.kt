@@ -104,6 +104,7 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 			"com.gaana" -> "_parent_"   // Gaana
 			else -> return when(musicAppInfo.className) {   // some apps have a shared service library
 				"com.itmwpb.vanilla.radioapp.player.MusicService" -> "/"    // OneCMS (HOT97 Official)
+				"com.example.android.uamp.media.MusicService" -> "/"        // UAMP Example player (Radio Bob)
 				else -> mediaBrowser.root
 			}
 		}
