@@ -22,6 +22,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
+        <activity android:name=".music.spotify.authentication.AuthorizationActivity" />
+
         <activity android:name=".phoneui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

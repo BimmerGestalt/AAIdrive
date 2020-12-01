@@ -13,10 +13,12 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.Utils
 import me.hufman.androidautoidrive.getThemeColor
 import me.hufman.androidautoidrive.music.MusicController
+import me.hufman.androidautoidrive.music.SpotifyWebApi
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 
 class MusicNowPlayingFragment: Fragment() {
 	companion object {
+		const val TAG = "MusicNowPlayingFragment"
 		const val ARTIST_ID = "150.png"
 		const val ALBUM_ID = "148.png"
 		const val SONG_ID = "152.png"
@@ -25,6 +27,7 @@ class MusicNowPlayingFragment: Fragment() {
 
 	lateinit var musicController: MusicController
 	lateinit var placeholderCoverArt: Bitmap
+	lateinit var spotifyWebApi: SpotifyWebApi
 
 	fun onActive() {
 		musicController.listener = Runnable { redraw() }
@@ -38,6 +41,7 @@ class MusicNowPlayingFragment: Fragment() {
 		val viewModel = ViewModelProviders.of(requireActivity()).get(MusicActivityModel::class.java)
 		val musicController = viewModel.musicController ?: return
 		this.musicController = musicController
+		this.spotifyWebApi = SpotifyWebApi.getInstance(context!!)
 
 		imgArtist.setImageBitmap(viewModel.icons[ARTIST_ID])
 		imgAlbum.setImageBitmap(viewModel.icons[ALBUM_ID])
@@ -80,6 +84,7 @@ class MusicNowPlayingFragment: Fragment() {
 
 	fun redraw() {
 		if (!isVisible) return
+
 		val metadata = musicController.getMetadata()
 		if (metadata?.coverArt != null) {
 			imgCoverArt.setImageBitmap(metadata.coverArt)
@@ -99,15 +104,19 @@ class MusicNowPlayingFragment: Fragment() {
 		seekProgress.progress = (position.getPosition() / 1000).toInt()
 		seekProgress.max = (position.maximumPosition / 1000).toInt()
 
-		// show any spotify errors
+		// show any spotify app remote errors
 		val fragmentManager = activity?.supportFragmentManager
 		val spotifyError = musicController.connectors.filterIsInstance<SpotifyAppController.Connector>().firstOrNull()?.lastError
-		if (fragmentManager != null && spotifyError != null) {
+
+		val isWebApiAuthorized = spotifyWebApi.isAuthorized()
+
+		if (fragmentManager != null && (spotifyError != null || (SpotifyWebApi.isUsingSpotify && !isWebApiAuthorized))) {
 			imgError.visible = true
 			imgError.setOnClickListener {
 				val arguments = Bundle().apply {
 					putString(SpotifyApiErrorDialog.EXTRA_CLASSNAME, spotifyError?.javaClass?.simpleName)
 					putString(SpotifyApiErrorDialog.EXTRA_MESSAGE, spotifyError?.message)
+					putBoolean(SpotifyApiErrorDialog.EXTRA_WEB_API_AUTHORIZED, isWebApiAuthorized)
 				}
 				SpotifyApiErrorDialog().apply {
 					setArguments(arguments)

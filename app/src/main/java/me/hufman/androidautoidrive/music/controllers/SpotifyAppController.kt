@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.util.Log
 import android.util.LruCache
+import android.widget.Toast
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
@@ -17,18 +18,24 @@ import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
-import java.lang.Exception
 import java.util.*
 
-class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): MusicAppController {
+//todo: remove context val declaration after removing Toast debug
+class SpotifyAppController(val context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController {
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
-		
-		fun hasSupport(context: Context): Boolean {
-			val CLIENT_ID = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+		const val CHANNEL_ID = "androidAutoIDriveChannel"
+		const val NOTIFICATION_REQ_ID = 56
+
+		fun getClientId(context: Context): String {
+			return context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
 					.metaData.getString("com.spotify.music.API_KEY", "unavailable")
-			return CLIENT_ID != "unavailable" && CLIENT_ID != ""
+		}
+
+		fun hasSupport(context: Context): Boolean {
+			val clientId = getClientId(context)
+			return clientId != "unavailable" && clientId != ""
 		}
 
 		fun MusicMetadata.Companion.fromSpotify(track: Track, coverArt: Bitmap? = null): MusicMetadata {
@@ -37,19 +44,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 					title = track.name, album = track.album.name, artist = track.artist.name, coverArt = coverArt)
 		}
 
-		fun MusicMetadata.Companion.fromSpotifyQueueListItem(listItem: ListItem): MusicMetadata {
-			return MusicMetadata(mediaId = listItem.uri, queueId = listItem.uri.hashCode().toLong(),
-					title = listItem.title, artist = listItem.subtitle,
-					playable = listItem.playable, browseable = listItem.hasChildren,
-					coverArtUri = listItem.imageUri?.raw)
-		}
-
-		fun MusicMetadata.Companion.fromSpotify(listItem: ListItem, coverArt: Bitmap? = null): MusicMetadata {
-			// browse result
-			return MusicMetadata(mediaId = listItem.uri, queueId = listItem.uri.hashCode().toLong(),
-					title = listItem.title, subtitle = listItem.subtitle,
-					playable = listItem.playable, browseable = listItem.hasChildren, coverArt = coverArt)
-		}
 		fun MusicMetadata.toListItem(): ListItem {
 			return ListItem(this.mediaId, this.mediaId, null, this.title, this.subtitle,
 					this.playable, this.browseable)
@@ -71,10 +65,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			}
 
 			Log.w(TAG, "Attempting to connect to Spotify Remote")
-
-			val CLIENT_ID = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-					.metaData.getString("com.spotify.music.API_KEY", "unavailable")
-			val params = ConnectionParams.Builder(CLIENT_ID)
+			val params = ConnectionParams.Builder(getClientId(context))
 					.setRedirectUri(REDIRECT_URI)
 					.showAuthView(true)
 					.build()
@@ -97,7 +88,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 				override fun onConnected(remote: SpotifyAppRemote?) {
 					if (remote != null) {
 						Log.i(TAG, "Successfully connected to Spotify Remote")
-						pendingController.value = SpotifyAppController(context, remote)
+						pendingController.value = SpotifyAppController(context, remote, SpotifyWebApi.getInstance(context))
 
 						// if app discovery says we aren't able to connect, discover again
 						if (!appInfo.connectable) {
@@ -240,7 +231,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			val item = recentlyPlayed?.items?.get(0)
 			if (item != null) {
 				remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
-					queueMetadata = QueueMetadata(item.title,item.subtitle,queueItems,coverArt)
+					queueMetadata = QueueMetadata(item.title, item.subtitle, queueItems, coverArt)
 				}
 			}
 		}
@@ -296,6 +287,11 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 
 	override fun skipToNext() {
 		remote.playerApi.skipNext()
+
+		//TEST
+		val userId = webApi.getUserId()
+		Toast.makeText(context, userId, Toast.LENGTH_SHORT).show()
+		//END TEST
 	}
 
 	override fun seekTo(newPos: Long) {
@@ -425,7 +421,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		return when(playerOptions?.repeatMode) {
 			Repeat.ALL -> RepeatMode.ALL
 			Repeat.ONE -> RepeatMode.ONE
-			Repeat.OFF -> RepeatMode.OFF
 			else -> RepeatMode.OFF
 		}
 	}
@@ -480,6 +475,8 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 		} catch (e: Exception) {
 			Log.w(TAG, "Exception while disconnecting from Spotify: $e")
 		}
+
+		webApi.disconnect()
 	}
 
 	override fun toString(): String {
