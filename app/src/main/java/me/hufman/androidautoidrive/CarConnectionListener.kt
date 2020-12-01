@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.util.Log
 import me.hufman.androidautoidrive.phoneui.MainActivity
 import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
@@ -31,5 +32,13 @@ class CarConnectionListener: BroadcastReceiver() {
 		}
 
 		context.sendBroadcast(Intent(MainActivity.INTENT_REDRAW))
+	}
+
+	fun register(context: Context) {
+		context.registerReceiver(this, IntentFilter(IDriveConnectionReceiver.INTENT_ATTACHED))
+		context.registerReceiver(this, IntentFilter(IDriveConnectionReceiver.INTENT_DETACHED))
+	}
+	fun unregister(context: Context) {
+		context.unregisterReceiver(this)
 	}
 }
