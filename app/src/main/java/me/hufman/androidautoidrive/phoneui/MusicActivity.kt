@@ -29,7 +29,7 @@ class MusicActivity : AppCompatActivity() {
 			listMusicApps.adapter?.notifyDataSetChanged() // redraw the app list
 		}
 	}
-	val appSettings by lazy { MutableAppSettings(this, handler) }
+	val appSettings by lazy { MutableAppSettingsReceiver(this) }
 	val hiddenApps by lazy { ListSetting(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS) }
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,10 +37,10 @@ class MusicActivity : AppCompatActivity() {
 		setContentView(R.layout.activity_music)
 
 		swAudioContext.setOnCheckedChangeListener { buttonView, isChecked ->
-			AppSettings.saveSetting(this, AppSettings.KEYS.AUDIO_FORCE_CONTEXT, isChecked.toString())
+			appSettings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT] = isChecked.toString()
 		}
 		swSpotifyLayout.setOnCheckedChangeListener { button, isChecked ->
-			AppSettings.saveSetting(this, AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT, isChecked.toString())
+			appSettings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT] = isChecked.toString()
 		}
 		btnGrantSessions.setOnClickListener {
 			promptNotificationPermission()
@@ -91,11 +91,11 @@ class MusicActivity : AppCompatActivity() {
 	}
 
 	fun redraw() {
-		val showAdvancedSettings = AppSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
+		val showAdvancedSettings = appSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
 		swAudioContext.visible = showAdvancedSettings || BuildConfig.MANUAL_AUDIO_CONTEXT
-		swAudioContext.isChecked = AppSettings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT].toBoolean()
+		swAudioContext.isChecked = appSettings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT].toBoolean()
 		swSpotifyLayout.visible = showAdvancedSettings
-		swSpotifyLayout.isChecked = AppSettings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT].toBoolean()
+		swSpotifyLayout.isChecked = appSettings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT].toBoolean()
 		paneGrantSessions.visibility = if (hasNotificationPermission()) View.GONE else View.VISIBLE
 		appDiscoveryThread.discovery()
 	}

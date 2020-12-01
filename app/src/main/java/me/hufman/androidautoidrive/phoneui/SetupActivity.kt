@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_setup.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BuildConfig
+import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.connections.BclStatusListener
 import me.hufman.androidautoidrive.connections.CarConnectionDebugging
@@ -31,6 +32,7 @@ class SetupActivity : AppCompatActivity() {
 		}
 	}
 
+	val appSettings by lazy { MutableAppSettingsReceiver(this) }
 	val connectionDebugging by lazy {
 		CarConnectionDebugging(this) { redraw() }
 	}
@@ -61,7 +63,7 @@ class SetupActivity : AppCompatActivity() {
 		btnInstallMiniClassic.setOnClickListener { installConnectedClassic("mini") }
 
 		swAdvancedSettings.setOnClickListener {
-			AppSettings.saveSetting(this, AppSettings.KEYS.SHOW_ADVANCED_SETTINGS, swAdvancedSettings.isChecked.toString())
+			appSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS] = swAdvancedSettings.isChecked.toString()
 			redraw()
 		}
 
@@ -172,7 +174,7 @@ class SetupActivity : AppCompatActivity() {
 		val buildTime = SimpleDateFormat.getDateTimeInstance().format(Date(BuildConfig.BUILD_TIME))
 		txtBuildInfo.text = getString(R.string.txt_build_info, BuildConfig.VERSION_NAME, buildTime)
 
-		val showAdvancedSettings = AppSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
+		val showAdvancedSettings = appSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
 		swAdvancedSettings.isChecked = showAdvancedSettings
 		paneAdvancedInfo.visible = showAdvancedSettings
 

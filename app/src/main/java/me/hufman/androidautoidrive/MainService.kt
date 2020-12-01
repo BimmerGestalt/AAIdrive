@@ -289,7 +289,7 @@ class MainService: Service() {
 						if (handler == null) {
 							Log.e(TAG, "CarThread Handler is null?")
 						}
-						val notificationSettings = NotificationSettings(carCapabilities, BtStatus(this) {}, MutableAppSettings(this, handler))
+						val notificationSettings = NotificationSettings(carCapabilities, BtStatus(this) {}, MutableAppSettingsReceiver(this, handler))
 						notificationSettings.btStatus.register()
 						carappNotifications = PhoneNotifications(iDriveConnectionReceiver, securityAccess,
 								CarAppAssetManager(this, "basecoreOnlineServices"),

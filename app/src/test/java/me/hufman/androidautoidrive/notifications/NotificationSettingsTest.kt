@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive.notifications
 
 import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.MutableAppSettings
+import me.hufman.androidautoidrive.MockAppSettings
 import me.hufman.androidautoidrive.carapp.notifications.NotificationSettings
 import me.hufman.androidautoidrive.connections.BtStatus
 import org.junit.Assert.*
@@ -13,10 +13,7 @@ class NotificationSettingsTest {
 	val btStatus = mock<BtStatus> {
 		on { isA2dpConnected } doReturn true
 	}
-	val appSettings = mock<MutableAppSettings> {
-		val captor = argumentCaptor<AppSettings.KEYS>()
-		on { get(captor.capture()) } doAnswer { AppSettings[captor.lastValue]}
-	}
+	val appSettings = MockAppSettings()
 
 	@Test
 	fun testCapabilities() {
@@ -51,12 +48,12 @@ class NotificationSettingsTest {
 
 	@Test
 	fun testSettings() {
-		whenever(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP]) doReturn "true"
-		whenever(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER]) doReturn "false"
-		whenever(appSettings[AppSettings.KEYS.NOTIFICATIONS_SOUND]) doReturn "true"
-		whenever(appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT]) doReturn "true"
-		whenever(appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP]) doReturn "true"
-		whenever(appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER]) doReturn "false"
+		appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP] = "true"
+		appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER] = "false"
+		appSettings[AppSettings.KEYS.NOTIFICATIONS_SOUND] = "true"
+		appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT] = "true"
+		appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP] = "true"
+		appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER] = "false"
 		val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++", "tts" to "true"), btStatus, appSettings)
 		assertTrue(settings.shouldPopup(false))
 		assertFalse(settings.shouldPopup(true))
@@ -69,22 +66,20 @@ class NotificationSettingsTest {
 	@Test
 	fun testCallback() {
 		var callbackRan = false
-		val appSettingsCallback = argumentCaptor<() -> Unit>()
 
 		val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++", "tts" to "true"), btStatus, appSettings)
 		settings.callback = { callbackRan = true }
-		verify(appSettings).callback = appSettingsCallback.capture()
-		appSettingsCallback.lastValue()
+		appSettings.callback?.invoke()
 		assertTrue(callbackRan)
 	}
 
 	@Test
 	fun testToggle() {
 		val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++", "tts" to "true"), btStatus, appSettings)
+		assertEquals("false", appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER])
 		assertFalse(settings.isChecked(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER))
-		verify(appSettings).get(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER)
 
 		settings.toggleSetting(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER)
-		verify(appSettings)[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER] = "true"
+		assertEquals("true", appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER])
 	}
 }

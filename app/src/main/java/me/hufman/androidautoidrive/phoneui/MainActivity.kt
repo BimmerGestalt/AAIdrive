@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
 		const val NOTIFICATION_CHANNEL_NAME = "Test Notification"
 	}
 	val handler = Handler()
+	val appSettings by lazy { MutableAppSettingsReceiver(this) }
 	val idriveConnectionObserver = IDriveConnectionObserver()
 	val redrawListener = RedrawListener()
 	val redrawTask = RedrawTask()
@@ -88,12 +89,11 @@ class MainActivity : AppCompatActivity() {
 			override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 				val value = parent?.getItemAtPosition(position) ?: return
 				Log.i(TAG, "Setting gmaps style to $value")
-				AppSettings.saveSetting(this@MainActivity, AppSettings.KEYS.GMAPS_STYLE, value.toString().toLowerCase().replace(' ', '_'))
-				sendBroadcast(Intent(INTENT_GMAP_RELOAD_SETTINGS))
+				appSettings[AppSettings.KEYS.GMAPS_STYLE] = value.toString().toLowerCase().replace(' ', '_')
 			}
 		}
 		swGmapWidescreen.setOnCheckedChangeListener { buttonView, isChecked ->
-			AppSettings.saveSetting(this, AppSettings.KEYS.MAP_WIDESCREEN, isChecked.toString())
+			appSettings[AppSettings.KEYS.MAP_WIDESCREEN] = isChecked.toString()
 		}
 
 		btnConfigureMusic.setOnClickListener {
@@ -193,7 +193,7 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	fun onChangedSwitchNotifications(buttonView: CompoundButton, isChecked: Boolean) {
-		AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS, isChecked.toString())
+		appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS] = isChecked.toString()
 		if (isChecked) {
 			// make sure we have permissions to read the notifications
 			val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
@@ -216,7 +216,7 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	fun onChangedSwitchGMaps(buttonView: CompoundButton, isChecked: Boolean) {
-		AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_GMAPS, isChecked.toString())
+		appSettings[AppSettings.KEYS.ENABLED_GMAPS] = isChecked.toString()
 		if (isChecked) {
 			// make sure we have permissions to show current location
 			if (!hasLocationPermission()) {
@@ -266,22 +266,22 @@ class MainActivity : AppCompatActivity() {
 		// wait a bit to make sure the Notification Listener actually is running
 		// sometimes when restarting, the listener takes a bit to start up
 		if (ageOfActivity > NOTIFICATION_SERVICE_TIMEOUT && !hasNotificationPermission()) {
-			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_NOTIFICATIONS, "false")
+			appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS] = "false"
 		}
 		// reset the GMaps setting if we don't have permission
 		if (!hasLocationPermission()) {
-			AppSettings.saveSetting(this, AppSettings.KEYS.ENABLED_GMAPS, "false")
+			appSettings[AppSettings.KEYS.ENABLED_GMAPS] = "false"
 		}
 
-		swMessageNotifications.isChecked = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
-		paneNotifications.visible = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
-		swGMaps.isChecked = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
-		paneGMaps.visible = AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
-		swGmapWidescreen.isChecked = AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()
+		swMessageNotifications.isChecked = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
+		paneNotifications.visible = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
+		swGMaps.isChecked = appSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
+		paneGMaps.visible = appSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
+		swGmapWidescreen.isChecked = appSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()
 
 		val gmapStylePosition = resources.getStringArray(R.array.gmaps_styles).map { title ->
 			title.toLowerCase().replace(' ', '_')
-		}.indexOf(AppSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase())
+		}.indexOf(appSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase())
 		swGmapSyle.setSelection(max(0, gmapStylePosition))
 
 		if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && !SecurityAccess.getInstance(this).isConnected()) {

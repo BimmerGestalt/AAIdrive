@@ -27,7 +27,7 @@ import kotlin.math.min
 
 const val TAG = "MapView"
 
-class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val interaction: MapInteractionController, val map: VirtualDisplayScreenCapture) {
+class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val appSettings: AppSettings, val interaction: MapInteractionController, val map: VirtualDisplayScreenCapture) {
 	companion object {
 		val MAX_WIDTH = 1000
 		val MAX_HEIGHT = 400
@@ -47,7 +47,7 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 
 	val rhmiWidth: Int
 	val mapWidth: Int
-		get() = min(rhmiWidth - 280, if (AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()) 1000 else 700)
+		get() = min(rhmiWidth - 280, if (appSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()) 1000 else 700)
 	val mapHeight = 400
 
 	// map state

@@ -7,10 +7,7 @@ import android.util.Log
 import androidx.media.MediaBrowserServiceCompat
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.asCoroutineDispatcher
-import me.hufman.androidautoidrive.Analytics
-import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.ListSetting
-import me.hufman.androidautoidrive.MutableAppSettings
+import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import org.json.JSONArray
@@ -27,7 +24,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 
 	val TAG = "MusicAppDiscovery"
 
-	val appSettings = MutableAppSettings(context, handler)
+	val appSettings = MutableAppSettingsReceiver(context, handler)
 	val hiddenApps = ListSetting(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS)
 
 	private val browseApps: MutableList<MusicAppInfo> = LinkedList()

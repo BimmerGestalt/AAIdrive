@@ -631,10 +631,7 @@ class NotificationAppTest {
 		val rhmiApp = RHMIApplicationConcrete()
 		rhmiApp.loadFromXML(carAppResources.getUiDescription()!!.readBytes())
 		val state = rhmiApp.states[8]!!
-		val appSettings = mock<MutableAppSettings> {
-			val captor = argumentCaptor<AppSettings.KEYS>()
-			on { get(captor.capture()) } doAnswer { AppSettings[captor.lastValue] }
-		}
+		val appSettings = MockAppSettings()
 
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++", "tts" to "true"), mock(), appSettings)

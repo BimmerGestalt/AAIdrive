@@ -32,6 +32,7 @@ class MapAppTest {
 		on { getTextsDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 	}
 
+	val appSettings = MockAppSettings()
 	val mockImageReader = mock<ImageReader> {
 		on { width } doReturn 1000
 		on { height } doReturn 500
@@ -41,10 +42,6 @@ class MapAppTest {
 	}
 	val mockMap = mock<VirtualDisplayScreenCapture> {
 		on { compressBitmap(any()) } doReturn ByteArray(4)
-	}
-
-	init {
-		AppSettings.loadDefaultSettings()
 	}
 
 	fun setUp() {
@@ -57,7 +54,7 @@ class MapAppTest {
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mockController, mockMap)
+		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, appSettings, mockController, mockMap)
 		assertEquals(9, app.menuView.state.id)
 		assertEquals(19, app.fullImageView.state.id)
 		assertEquals(132, app.fullImageView.imageComponent.id)
@@ -73,7 +70,7 @@ class MapAppTest {
 	fun testMenuMap() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mockController, mockMap)
+		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, appSettings, mockController, mockMap)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 		val mockHandlerRunnable = ArgumentCaptor.forClass(Runnable::class.java)
 		val mockHandler = mock<Handler>()
@@ -115,7 +112,7 @@ class MapAppTest {
 	fun testMapShow() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mockController, mockMap)
+		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, appSettings, mockController, mockMap)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 		val mockHandlerRunnable = ArgumentCaptor.forClass(Runnable::class.java)
 		val mockHandler = mock<Handler>()

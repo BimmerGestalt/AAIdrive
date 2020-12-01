@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive.carapp.music
 
 import android.content.Context
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.MutableAppSettings
+import me.hufman.androidautoidrive.AppSettingsViewer
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
 import java.lang.Exception
@@ -14,7 +14,7 @@ import java.lang.Exception
  *     Bluetooth app connection (the Connected app uses a distinct TCP port for each transport)
  *     USB app connection if the phone has AOAv2 audio support (generally, running an OS earlier than Oreo)
  */
-class MusicAppMode(val iDriveConnectionStatus: IDriveConnectionStatus, val capabilities: Map<String, String?>, val appSettings: MutableAppSettings,
+class MusicAppMode(val iDriveConnectionStatus: IDriveConnectionStatus, val capabilities: Map<String, String?>, val appSettings: AppSettings,
                    val iHeartRadioVersion: String?, val pandoraVersion: String?, val spotifyVersion: String?) {
 	companion object {
 		fun build(capabilities: Map<String, String?>, context: Context): MusicAppMode {
@@ -31,7 +31,7 @@ class MusicAppMode(val iDriveConnectionStatus: IDriveConnectionStatus, val capab
 			val spotifyVersion = try {
 				context.packageManager.getPackageInfo("com.spotify.music", 0).versionName
 			} catch (e: Exception) { null }
-			return MusicAppMode(IDriveConnectionObserver(), capabilities, MutableAppSettings(context), iHeartRadioVersion, pandoraVersion, spotifyVersion)
+			return MusicAppMode(IDriveConnectionObserver(), capabilities, AppSettingsViewer(), iHeartRadioVersion, pandoraVersion, spotifyVersion)
 		}
 	}
 

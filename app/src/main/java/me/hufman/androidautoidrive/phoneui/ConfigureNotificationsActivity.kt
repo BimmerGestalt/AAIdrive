@@ -16,12 +16,12 @@ import androidx.core.content.ContextCompat
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_notifications.*
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.MutableAppSettings
+import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
 
 class ConfigureNotificationsActivity: AppCompatActivity() {
 
-	val appSettings = MutableAppSettings(this)
+	val appSettings = MutableAppSettingsReceiver(this)
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)

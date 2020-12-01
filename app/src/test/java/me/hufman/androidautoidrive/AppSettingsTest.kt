@@ -1,15 +1,12 @@
 package me.hufman.androidautoidrive
 
-import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*
 import org.junit.Test
 
 class AppSettingsTest {
 	@Test
 	fun testListSettings() {
-		val settings = mock<MutableAppSettings> {
-			on { get(any()) } doReturn "a,b"
-		}
+		val settings = MockAppSettings(AppSettings.KEYS.HIDDEN_MUSIC_APPS to "a,b")
 		val listSettings = ListSetting(settings, AppSettings.KEYS.HIDDEN_MUSIC_APPS)
 
 		// tests the mass set functionality
@@ -17,8 +14,9 @@ class AppSettingsTest {
 		assertEquals(expected, listSettings.getAll())
 
 		listSettings.setAll(setOf("1", "2"))
-		verify(settings)[any()] = eq("1,2")
+		assertEquals("1,2", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
+		listSettings.setAll(setOf("a", "b"))
 		val foundItems = mutableSetOf<String>()
 		listSettings.withSet {
 			foundItems.addAll(this)
@@ -37,21 +35,23 @@ class AppSettingsTest {
 
 		// mutable set functionality
 		listSettings.add("c")
-		verify(settings, atLeastOnce())[any()] = eq("a,b,c")
+		assertEquals("a,b,c", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
 		listSettings.addAll(setOf("c", "d"))
-		verify(settings, atLeastOnce())[any()] = eq("a,b,c,d")
+		assertEquals("a,b,c,d", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
 		listSettings.clear()
-		verify(settings, atLeastOnce())[any()] = eq("")
+		assertEquals("", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
+		settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS] = "a,b"
 		listSettings.remove("b")
-		verify(settings, atLeastOnce())[any()] = eq("a")
+		assertEquals("a", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
 		listSettings.removeAll(setOf("a", "b"))
-		verify(settings, atLeastOnce())[any()] = eq("")
+		assertEquals("", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
+		settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS] = "a,b"
 		listSettings.retainAll(setOf("a", "c"))
-		verify(settings, atLeastOnce())[any()] = eq("a")
+		assertEquals("a", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 	}
 }

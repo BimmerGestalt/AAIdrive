@@ -73,7 +73,7 @@ class InstrumentedTestGMaps {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 		val imageCapture = VirtualDisplayScreenCapture.build()
 		val virtualDisplay = createVirtualDisplay(getContext(), imageCapture.imageCapture)
-		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay)
+		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay, MutableAppSettingsReceiver(appContext))
 		mapController.searchLocations("test", LatLngBounds(LatLng(37.333, -122.416), LatLng(37.783, -121.9)))
 		await().untilAsserted { verify(mockResultsReceiver).onSearchResults(anyArray()) }
 
@@ -88,7 +88,7 @@ class InstrumentedTestGMaps {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 		val imageCapture = VirtualDisplayScreenCapture.build()
 		val virtualDisplay = createVirtualDisplay(getContext(), imageCapture.imageCapture)
-		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay)
+		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay, MutableAppSettingsReceiver(appContext))
 		runOnUiThread {
 			mapController.showMap()
 		}
