@@ -6,11 +6,11 @@ import android.graphics.Color
 import android.media.ImageReader
 import android.os.Bundle
 import android.os.Looper
-import android.support.test.InstrumentationRegistry
-import android.support.test.runner.AndroidJUnit4
 import android.view.Display
 import android.view.WindowManager
 import android.widget.ImageView
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
@@ -30,7 +30,7 @@ class InstrumentedTestVirtualDisplay {
 	fun testLifecycle() {
 		/** Test that the VirtualDisplay can get created and destroyed */
 		// Context of the app under test.
-		val appContext = InstrumentationRegistry.getTargetContext()
+		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 		Looper.prepare()
 		val testCapture = VirtualDisplayScreenCapture.build()
 		val virtualDisplay = createVirtualDisplay(appContext, testCapture.imageCapture)

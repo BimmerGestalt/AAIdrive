@@ -367,7 +367,7 @@ dependencies {
     testImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     testImplementation 'org.awaitility:awaitility-scala:3.1.5'
     testImplementation 'org.json:json:20180813'
-    androidTestImplementation "org.mockito:mockito-android:2.18.3"
+    androidTestImplementation "org.mockito:mockito-android:2.28.2"
     androidTestImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
     implementation project(path: ':IDriveConnectKitAndroid')
