@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlin.coroutines.CoroutineContext
 import kotlinx.android.synthetic.main.music_browsepage.*
 import kotlinx.coroutines.*
@@ -71,7 +72,7 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 		listBrowseRefresh.setOnRefreshListener {
 			browseDirectory(arguments?.getString(ARG_MEDIA_ID))
 			Handler(this.context?.mainLooper).postDelayed({
-				listBrowseRefresh.isRefreshing = false
+				this.view?.findViewById<SwipeRefreshLayout>(R.id.listBrowseRefresh)?.isRefreshing = false
 			}, 1000)
 		}
 

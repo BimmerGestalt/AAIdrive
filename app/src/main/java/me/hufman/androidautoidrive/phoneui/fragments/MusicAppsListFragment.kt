@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.android.synthetic.main.fragment_music_applist.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.ListSetting
@@ -27,7 +28,7 @@ class MusicAppsListFragment: Fragment() {
 			handler.post {
 				displayedApps.clear()
 				displayedApps.addAll(appDiscovery.allApps)
-				listMusicApps.adapter?.notifyDataSetChanged() // redraw the app list
+				view?.findViewById<RecyclerView>(R.id.listMusicApps)?.adapter?.notifyDataSetChanged() // redraw the app list
 			}
 		}
 	}
@@ -49,7 +50,7 @@ class MusicAppsListFragment: Fragment() {
 		listMusicAppsRefresh.setOnRefreshListener {
 			appDiscoveryThread.forceDiscovery()
 			handler.postDelayed({
-				listMusicAppsRefresh.isRefreshing = false
+				this.view?.findViewById<SwipeRefreshLayout>(R.id.listMusicAppsRefresh)?.isRefreshing = false
 			}, 2000)
 		}
 

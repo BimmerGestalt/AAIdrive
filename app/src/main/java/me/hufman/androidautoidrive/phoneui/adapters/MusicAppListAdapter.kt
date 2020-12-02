@@ -28,7 +28,7 @@ class MusicAppListAdapter(val context: Context, val handler: Handler, val suppor
 	// animations for the music session
 	val animationLoopCallback = object: Animatable2.AnimationCallback() {
 		override fun onAnimationEnd(drawable: Drawable?) {
-			handler.post { (drawable as AnimatedVectorDrawable).start() }
+			handler.post { (drawable as? AnimatedVectorDrawable)?.start() }
 		}
 	}
 	val equalizerStatic = context.getDrawable(R.drawable.ic_equalizer_black_24dp)

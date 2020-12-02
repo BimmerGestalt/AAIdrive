@@ -18,6 +18,7 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.phoneui.MusicAppDiscoveryThread
 import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
+import me.hufman.androidautoidrive.phoneui.NestedGridView
 import me.hufman.androidautoidrive.phoneui.UIState
 
 class MusicAppsGridFragment: Fragment() {
@@ -28,7 +29,7 @@ class MusicAppsGridFragment: Fragment() {
 			handler.post {
 				displayedMusicApps.clear()
 				displayedMusicApps.addAll(appDiscovery.validApps)
-				listMusicApps.invalidateViews() // redraw the app list
+				view?.findViewById<NestedGridView>(R.id.listMusicApps)?.invalidateViews() // redraw the app list
 			}
 		}
 	}
@@ -52,7 +53,7 @@ class MusicAppsGridFragment: Fragment() {
 		listMusicApps.adapter = object : ArrayAdapter<MusicAppInfo>(requireContext(), R.layout.musicapp_listitem, displayedMusicApps) {
 			val animationLoopCallback = object : Animatable2.AnimationCallback() {
 				override fun onAnimationEnd(drawable: Drawable?) {
-					handler.post { (drawable as AnimatedVectorDrawable).start() }
+					handler.post { (drawable as? AnimatedVectorDrawable)?.start() }
 				}
 			}
 			val equalizerStatic = resources.getDrawable(R.drawable.ic_equalizer_black_24dp, null)
