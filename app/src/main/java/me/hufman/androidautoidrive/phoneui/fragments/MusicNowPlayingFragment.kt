@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.phoneui
+package me.hufman.androidautoidrive.phoneui.fragments
 
 import android.graphics.*
 import android.os.Bundle
@@ -14,6 +14,8 @@ import me.hufman.androidautoidrive.Utils
 import me.hufman.androidautoidrive.getThemeColor
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
+import me.hufman.androidautoidrive.phoneui.MusicActivityModel
+import me.hufman.androidautoidrive.phoneui.visible
 
 class MusicNowPlayingFragment: Fragment() {
 	companion object {

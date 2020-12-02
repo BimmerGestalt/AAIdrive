@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.phoneui
+package me.hufman.androidautoidrive.phoneui.fragments
 
 import android.app.Activity
 import android.os.Bundle
@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.music_browsepage.*
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.phoneui.MusicActivityModel
 
 class MusicBrowseFragment: Fragment() {
 	var fragment: Fragment? = null

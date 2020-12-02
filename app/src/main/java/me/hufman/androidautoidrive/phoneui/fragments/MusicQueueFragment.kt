@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.phoneui
+package me.hufman.androidautoidrive.phoneui.fragments
 
 import android.app.Activity
 import android.content.Context
@@ -24,6 +24,8 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.QueueMetadata
+import me.hufman.androidautoidrive.phoneui.MusicActivityModel
+import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
 
 class MusicQueueFragment: Fragment() {
 	lateinit var musicController: MusicController

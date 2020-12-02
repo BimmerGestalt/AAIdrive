@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.phoneui
+package me.hufman.androidautoidrive.phoneui.fragments
 
 import android.app.AlertDialog
 import android.app.Dialog

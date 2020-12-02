@@ -16,6 +16,10 @@ import me.hufman.androidautoidrive.Utils
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.phoneui.fragments.MusicBrowseFragment
+import me.hufman.androidautoidrive.phoneui.fragments.MusicBrowsePageFragment
+import me.hufman.androidautoidrive.phoneui.fragments.MusicNowPlayingFragment
+import me.hufman.androidautoidrive.phoneui.fragments.MusicQueueFragment
 
 class MusicPlayerActivity: AppCompatActivity() {
 
