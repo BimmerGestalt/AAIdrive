@@ -6,6 +6,7 @@ import android.util.Log
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
+import net.openid.appauth.TokenResponse
 import org.json.JSONException
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicReference
@@ -19,7 +20,7 @@ class SpotifyAuthStateManager private constructor(context: Context) {
 	companion object {
 		private val INSTANCE_REF: AtomicReference<WeakReference<SpotifyAuthStateManager?>> = AtomicReference<WeakReference<SpotifyAuthStateManager?>>(WeakReference(null))
 		private const val TAG = "AuthStateManager"
-		private const val STORE_NAME = "AuthState"
+		const val STORE_NAME = "AuthState"
 		private const val KEY_STATE = "state"
 
 		fun getInstance(context: Context): SpotifyAuthStateManager {
@@ -70,6 +71,18 @@ class SpotifyAuthStateManager private constructor(context: Context) {
 	fun updateAfterAuthorization(response: AuthorizationResponse?, ex: AuthorizationException?): AuthState? {
 		currentState.update(response, ex)
 		return replaceState(currentState)
+	}
+
+	/**
+	 * Updates the [AuthState] from the token response, replacing the old AuthState in the shared preferences file with the new one.
+	 */
+	fun updateAfterTokenResponse(response: TokenResponse?, ex: AuthorizationException?): AuthState? {
+		currentState.update(response, ex)
+		return replaceState(currentState)
+	}
+
+	fun isAuthorized(): Boolean {
+		return currentState.isAuthorized
 	}
 
 	/**

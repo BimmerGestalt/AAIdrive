@@ -2,7 +2,6 @@ package me.hufman.androidautoidrive.music.spotify.authentication
 
 import android.app.Activity
 import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -12,6 +11,7 @@ import android.util.Log
 import com.adamratzman.spotify.SpotifyScope
 import com.adamratzman.spotify.getSpotifyPkceCodeChallenge
 import kotlinx.coroutines.runBlocking
+import me.hufman.androidautoidrive.music.SpotifyWebApi
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import net.openid.appauth.*
 import net.openid.appauth.browser.BrowserWhitelist
@@ -32,10 +32,6 @@ class AuthorizationActivity: Activity() {
 
 		const val REQUEST_CODE_SPOTIFY_LOGIN = 2356
 
-		private const val PREFS_ACCESS_CODE_NAME = "SpotifyAccessCode"
-		private const val PREFS_ACCESS_CODE_KEY = "AccessCodeKey"
-		const val INVALID_ACCESS_TOKEN = "INVALID"
-
 		const val EXTRA_AUTHORIZATION_RESULT = "authorizationResult"
 		const val AUTHORIZATION_CANCELED = 1
 		const val AUTHORIZATION_SUCCESS = 0
@@ -46,18 +42,7 @@ class AuthorizationActivity: Activity() {
 
 		private fun generateCodeVerifierString(): String {
 			val charPool = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-			return (1..45).map { Random.nextInt(0, charPool.size) }.map { charPool::get }.joinToString("")
-		}
-
-		fun writeAccessTokenToPrefs(context: Context, accessToken: String?) {
-			val prefs = context.getSharedPreferences(PREFS_ACCESS_CODE_NAME, Context.MODE_PRIVATE)
-			val editor = prefs.edit()
-			editor.putString(PREFS_ACCESS_CODE_KEY, accessToken).apply()
-			check(editor.commit()) { "Failed to write state to shared prefs" }
-		}
-
-		fun readAccessTokenFromPrefs(context: Context): String? {
-			return context.getSharedPreferences(PREFS_ACCESS_CODE_NAME, Context.MODE_PRIVATE).getString(PREFS_ACCESS_CODE_KEY, INVALID_ACCESS_TOKEN)
+			return (1..45).map { charPool[Random.nextInt(0, charPool.size)] }.joinToString("")
 		}
 	}
 
@@ -179,7 +164,7 @@ class AuthorizationActivity: Activity() {
 				when {
 					response?.authorizationCode != null -> {
 						authStateManager.updateAfterAuthorization(response, ex)
-						writeAccessTokenToPrefs(this, response.accessToken)
+						//SpotifyWebApi.writeAccessTokenToPrefs(this, response.authorizationCode)
 						onAuthorizationSucceed()
 					}
 					ex != null -> {
@@ -234,6 +219,7 @@ class AuthorizationActivity: Activity() {
 	private fun onAuthorizationSucceed() {
 		Log.d(TAG, "Authorization process completed successfully. AuthState updated")
 		clearNotAuthorizedNotification()
+		SpotifyWebApi.getInstance(this).initializeWebApi()
 
 		finishActivityWithResult(AUTHORIZATION_SUCCESS)
 	}
