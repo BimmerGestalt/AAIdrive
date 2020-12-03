@@ -13,8 +13,9 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.concurrent.locks.ReentrantLock
 
 /**
- * Spotify persistence manager for an [AuthState] instance for the Spotify Web API that stores the instance in a shared preferences file, and provides thread-safe access and
- * mutation.
+ * Spotify persistence manager for an [AuthState] instance for the Spotify Web API that stores the
+ * instance in a shared preferences file, and provides thread-safe access and mutation. This class is
+ * a singleton.
  */
 class SpotifyAuthStateManager private constructor(context: Context) {
 	companion object {
@@ -66,7 +67,8 @@ class SpotifyAuthStateManager private constructor(context: Context) {
 	}
 
 	/**
-	 * Updates the [AuthState] from the authorization response, replacing the old AuthState in the shared preferences file with the new one.
+	 * Updates the [AuthState] from the authorization response, replacing the old AuthState in the
+	 * shared preferences file with the new one.
 	 */
 	fun updateAfterAuthorization(response: AuthorizationResponse?, ex: AuthorizationException?): AuthState? {
 		currentState.update(response, ex)
@@ -74,15 +76,12 @@ class SpotifyAuthStateManager private constructor(context: Context) {
 	}
 
 	/**
-	 * Updates the [AuthState] from the token response, replacing the old AuthState in the shared preferences file with the new one.
+	 * Updates the [AuthState] from the token response, replacing the old AuthState in the shared
+	 * preferences file with the new one.
 	 */
 	fun updateAfterTokenResponse(response: TokenResponse?, ex: AuthorizationException?): AuthState? {
 		currentState.update(response, ex)
 		return replaceState(currentState)
-	}
-
-	fun isAuthorized(): Boolean {
-		return currentState.isAuthorized
 	}
 
 	/**

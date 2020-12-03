@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.util.Log
@@ -18,38 +17,29 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.authentication.AuthorizationActivity
 import me.hufman.androidautoidrive.music.spotify.authentication.SpotifyAuthStateManager
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.GrantTypeValues
-import net.openid.appauth.TokenRequest
-import net.openid.appauth.TokenResponse
+import net.openid.appauth.*
 
-class SpotifyWebApi private constructor(val context: Context): SharedPreferences.OnSharedPreferenceChangeListener {
+/**
+ * Handles the logic around the Spotify Web API. This class is a singleton to prevent issues of having
+ * multiple [SpotifyClientAPI]s.
+ */
+class SpotifyWebApi private constructor(val context: Context) {
 	companion object {
 		const val TAG = "SpotifyWebApi"
 
-//		private const val PREFS_ACCESS_CODE_STORE_NAME = "SpotifyAccessCode"
-//		private const val PREFS_ACCESS_CODE_KEY = "AccessCodeKey"
-
 		var isUsingSpotify = false
-
 		var webApiInstance: SpotifyWebApi? = null
+
+		/**
+		 * Retrieves the current [SpotifyWebApi] instance, creating one if it there are no instances
+		 * currently running.
+		 */
 		fun getInstance(context: Context): SpotifyWebApi {
 			if (webApiInstance == null) {
 				webApiInstance = SpotifyWebApi(context)
 			}
 			return webApiInstance as SpotifyWebApi
 		}
-
-//		fun writeAccessTokenToPrefs(context: Context, accessToken: String?) {
-//			val prefs = context.getSharedPreferences(PREFS_ACCESS_CODE_STORE_NAME, Context.MODE_PRIVATE)
-//			val editor = prefs.edit()
-//			editor.putString(PREFS_ACCESS_CODE_KEY, accessToken).apply()
-//			check(editor.commit()) { "Failed to write state to shared prefs" }
-//		}
-
-//		fun readAccessTokenFromPrefs(context: Context): String? {
-//			return context.getSharedPreferences(PREFS_ACCESS_CODE_STORE_NAME, Context.MODE_PRIVATE).getString(PREFS_ACCESS_CODE_KEY, null)
-//		}
 	}
 
 	// will be null if the user is not authenticated
@@ -58,7 +48,6 @@ class SpotifyWebApi private constructor(val context: Context): SharedPreferences
 	private val authStateManager: SpotifyAuthStateManager
 
 	init {
-		//context.getSharedPreferences(PREFS_ACCESS_CODE_STORE_NAME, Context.MODE_PRIVATE)?.registerOnSharedPreferenceChangeListener(this)
 		isUsingSpotify = true
 		authStateManager = SpotifyAuthStateManager.getInstance(context)
 		initializeWebApi()
@@ -68,6 +57,9 @@ class SpotifyWebApi private constructor(val context: Context): SharedPreferences
 		return webApi?.userId
 	}
 
+	/**
+	 * Initializes the [SpotifyClientAPI] instance and updates the [AuthState] with the token used.
+	 */
 	fun initializeWebApi() {
 		webApi = createWebApiClient()
 		if (webApi != null) {
@@ -75,6 +67,18 @@ class SpotifyWebApi private constructor(val context: Context): SharedPreferences
 		}
 	}
 
+	/**
+	 * Returns if the current [AuthState] is authorized.
+	 */
+	fun isAuthorized(): Boolean {
+		return authStateManager.currentState.isAuthorized
+	}
+
+	/**
+	 * Creates the Web API client using the PKCE authentication flow. If the [SpotifyClientAPI] creation
+	 * and validation process encounters a authentication failure, a null instance is returned and the
+	 * [AuthState] updated with the exception.
+	 */
 	private fun createWebApiClient(): SpotifyClientAPI? {
 		val clientId = SpotifyAppController.getClientId(context)
 		val spotifyApiOptionsBuilder = SpotifyApiOptionsBuilder(
@@ -106,7 +110,6 @@ class SpotifyWebApi private constructor(val context: Context): SharedPreferences
 				null
 			}
 		} else {
-			//val authorizationCode = readAccessTokenFromPrefs(context)
 			val authorizationCode = authStateManager.currentState.lastAuthorizationResponse?.authorizationCode
 			if (authorizationCode == null) {
 				Log.e(SpotifyAppController.TAG, "Failed to create the Web API with an authorization code. Authorization code is invalid or not found")
@@ -123,8 +126,7 @@ class SpotifyWebApi private constructor(val context: Context): SharedPreferences
 						spotifyApiOptionsBuilder)
 				apiBuilder.build()
 			} catch (e: SpotifyException.AuthenticationException) {
-				updateAuthStateWithDeletedAuthorizationCode()
-				//writeAccessTokenToPrefs(context, null)
+				updateAuthStateWithAuthorizationCodeException()
 				Log.e(SpotifyAppController.TAG, "Failed to create the web API with an authorization code. Authorization failed with the error: ${e.message}")
 				createNotAuthorizedNotification()
 				null
@@ -132,11 +134,17 @@ class SpotifyWebApi private constructor(val context: Context): SharedPreferences
 		}
 	}
 
-	private fun updateAuthStateWithDeletedAuthorizationCode() {
+	/**
+	 * Updates the [AuthState] last authorization code response with an [AuthorizationException].
+	 */
+	private fun updateAuthStateWithAuthorizationCodeException() {
 		val authorizationException = AuthorizationException(-1, -1, "Authorization Code Invalid", "Authorization code invalid", null, null)
 		authStateManager.updateAfterAuthorization(null, authorizationException)
 	}
 
+	/**
+	 * Updates the [AuthState] with the [Token] information provided.
+	 */
 	private fun updateAuthStateWithAccessToken(token: Token) {
 		val tokenRequest = TokenRequest.Builder(authStateManager.currentState.authorizationServiceConfiguration!!, SpotifyAppController.getClientId(context))
 				.setRefreshToken(token.refreshToken)
@@ -172,20 +180,12 @@ class SpotifyWebApi private constructor(val context: Context): SharedPreferences
 		notificationManager.notify(SpotifyAppController.NOTIFICATION_REQ_ID, notification)
 	}
 
-
-
+	/**
+	 * Disconnect process for shutting down the [SpotifyClientAPI].
+	 */
 	fun disconnect() {
 		Log.d(TAG, "Disconnecting Web API")
-		//context.getSharedPreferences(PREFS_ACCESS_CODE_STORE_NAME, Context.MODE_PRIVATE)?.unregisterOnSharedPreferenceChangeListener(this)
 		webApi?.shutdown()
 		isUsingSpotify = false
-	}
-
-	override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-//		if (sharedPreferences?.getString(key, null) != null) {
-//			//Log.d(TAG, "SharedPreferences file updated ")
-//			Toast.makeText(context, "SHARED PREFS: " + sharedPreferences.getString(key, null), Toast.LENGTH_SHORT).show()
-//			//createWebApi()
-//		}
 	}
 }

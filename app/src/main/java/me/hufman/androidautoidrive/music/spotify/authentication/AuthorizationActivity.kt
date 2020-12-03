@@ -22,8 +22,8 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.random.Random
 
 /**
- * Authorization activity class that is used to perform the authorization and then process the
- * result, updating the [AuthState]. The activity will be closed once the process has either been
+ * Authorization activity class that is used to perform the authorization and update the [AuthState]
+ * with the authorization code. The activity will be closed once the process has either been
  * cancelled, refused, or succeeds.
  */
 class AuthorizationActivity: Activity() {
@@ -40,6 +40,10 @@ class AuthorizationActivity: Activity() {
 
 		val CODE_VERIFIER = generateCodeVerifierString()
 
+		/**
+		 * Generates a 45 character random alpha numeric string to be used for the code verifier in
+		 * the PKCE authentication flow.
+		 */
 		private fun generateCodeVerifierString(): String {
 			val charPool = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 			return (1..45).map { charPool[Random.nextInt(0, charPool.size)] }.joinToString("")
@@ -56,6 +60,7 @@ class AuthorizationActivity: Activity() {
 	 * Performs the authorization request
 	 */
 	private fun doAuth() {
+		Log.d(TAG, "Authorization started")
 		try {
 			authIntentLatch.await()
 		} catch (ex: InterruptedException) {
@@ -94,36 +99,21 @@ class AuthorizationActivity: Activity() {
 		authRequest.set(authRequestBuilder.build())
 	}
 
-	/**
-	 * Initializes the authorization service configuration if necessary from the local
-	 * static values
-	 */
 	private fun initializeAppAuth() {
 		Log.d(TAG, "Initializing AppAuth")
 		recreateAuthorizationService()
-		if (authStateManager.currentState.authorizationServiceConfiguration != null) {
-			// configuration is already created, skip to client initialization
-			Log.d(TAG, "auth config already established")
-			initializeClient()
-			return
-		}
-		val authEndpointUri = Uri.parse("https://accounts.spotify.com/authorize")
-		val tokenEndpointUri = Uri.parse("https://accounts.spotify.com/api/token")
-		val config = AuthorizationServiceConfiguration(authEndpointUri, tokenEndpointUri)
-		authStateManager.replaceState(AuthState(config))
-		initializeClient()
-	}
 
-	private fun initializeClient() {
+		if (authStateManager.currentState.authorizationServiceConfiguration == null) {
+			val authEndpointUri = Uri.parse("https://accounts.spotify.com/authorize")
+			val tokenEndpointUri = Uri.parse("https://accounts.spotify.com/api/token")
+			val config = AuthorizationServiceConfiguration(authEndpointUri, tokenEndpointUri)
+			authStateManager.replaceState(AuthState(config))
+		}
+
 		runBlocking {
 			createAuthRequest()
 			warmUpBrowser()
 		}
-	}
-
-	private fun startAuth() {
-		onAuthorizationStarted()
-		doAuth()
 	}
 
 	private fun recreateAuthorizationService() {
@@ -164,7 +154,6 @@ class AuthorizationActivity: Activity() {
 				when {
 					response?.authorizationCode != null -> {
 						authStateManager.updateAfterAuthorization(response, ex)
-						//SpotifyWebApi.writeAccessTokenToPrefs(this, response.authorizationCode)
 						onAuthorizationSucceed()
 					}
 					ex != null -> {
@@ -182,7 +171,7 @@ class AuthorizationActivity: Activity() {
 		super.onCreate(savedInstanceState)
 		authStateManager = SpotifyAuthStateManager.getInstance(this)
 		initializeAppAuth()
-		startAuth()
+		doAuth()
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -197,25 +186,35 @@ class AuthorizationActivity: Activity() {
 		}
 	}
 
-	private fun onAuthorizationStarted() {
-		Log.d(TAG, "Authorization started")
-	}
-
+	/**
+	 * Authorized cancelled workflow. This is called if the authorization process activity was cancelled.
+	 */
 	private fun onAuthorizationCancelled() {
 		Log.d(TAG, "Authorization cancelled")
 		finishActivityWithResult(AUTHORIZATION_CANCELED)
 	}
 
+	/**
+	 * Authorized failed workflow. This is called if the authorization process failed.
+	 */
 	private fun onAuthorizationFailed() {
 		Log.d(TAG, "Authorization failed. No authorization state retained - reauthorization required")
 		finishActivityWithResult(AUTHORIZATION_FAILED)
 	}
 
+	/**
+	 * Authorized refused workflow. This is called if the authorization request was refused by the Spotify
+	 * authentication server.
+	 */
 	private fun onAuthorizationRefused(error: String?) {
 		Log.d(TAG, "Authorization refused with the error: $error")
 		finishActivityWithResult(AUTHORIZATION_REFUSED)
 	}
 
+	/**
+	 * Authorization success workflow. The [SpotifyWebApi] web API client instance will be initialized
+	 * with the authorized code obtained.
+	 */
 	private fun onAuthorizationSucceed() {
 		Log.d(TAG, "Authorization process completed successfully. AuthState updated")
 		clearNotAuthorizedNotification()
@@ -224,6 +223,9 @@ class AuthorizationActivity: Activity() {
 		finishActivityWithResult(AUTHORIZATION_SUCCESS)
 	}
 
+	/**
+	 * Finishes the activity with the specified result constant.
+	 */
 	private fun finishActivityWithResult(authorizationResult: Int) {
 		val returnIntent = Intent()
 		returnIntent.putExtra(EXTRA_AUTHORIZATION_RESULT, authorizationResult)
