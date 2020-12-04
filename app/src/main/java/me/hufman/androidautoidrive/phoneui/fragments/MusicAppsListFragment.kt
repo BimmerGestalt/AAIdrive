@@ -28,7 +28,12 @@ class MusicAppsListFragment: Fragment() {
 			handler.post {
 				displayedApps.clear()
 				displayedApps.addAll(appDiscovery.allApps)
-				view?.findViewById<RecyclerView>(R.id.listMusicApps)?.adapter?.notifyDataSetChanged() // redraw the app list
+
+				val listView = view?.findViewById<RecyclerView>(R.id.listMusicApps)
+				if (listView != null && listView.adapter == null) {
+					listView.adapter = MusicAppListAdapter(requireActivity(), handler, requireActivity().supportFragmentManager, displayedApps, appDiscovery.musicSessions)
+				}
+				listView?.adapter?.notifyDataSetChanged() // redraw the app list
 			}
 		}
 	}
@@ -45,7 +50,6 @@ class MusicAppsListFragment: Fragment() {
 
 		listMusicApps.setHasFixedSize(true)
 		listMusicApps.layoutManager = LinearLayoutManager(requireActivity())
-		listMusicApps.adapter = MusicAppListAdapter(requireActivity(), handler, requireActivity().supportFragmentManager, displayedApps, appDiscoveryThread)
 
 		listMusicAppsRefresh.setOnRefreshListener {
 			appDiscoveryThread.forceDiscovery()

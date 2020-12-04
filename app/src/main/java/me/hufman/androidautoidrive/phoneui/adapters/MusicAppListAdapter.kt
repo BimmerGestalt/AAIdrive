@@ -19,11 +19,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
+import me.hufman.androidautoidrive.music.MusicSessions
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.androidautoidrive.phoneui.fragments.SpotifyDowngradeDialog
 
-class MusicAppListAdapter(val context: Context, val handler: Handler, val supportFragmentManager: FragmentManager, val contents: ArrayList<MusicAppInfo>, val musicAppDiscoveryThread: MusicAppDiscoveryThread): RecyclerView.Adapter<MusicAppListAdapter.ViewHolder>() {
+class MusicAppListAdapter(val context: Context, val handler: Handler, val supportFragmentManager: FragmentManager, val contents: ArrayList<MusicAppInfo>, val musicSessions: MusicSessions): RecyclerView.Adapter<MusicAppListAdapter.ViewHolder>() {
 
 	// animations for the music session
 	val animationLoopCallback = object: Animatable2.AnimationCallback() {
@@ -81,7 +82,7 @@ class MusicAppListAdapter(val context: Context, val handler: Handler, val suppor
 				imgMusicAppIcon.setImageDrawable(icon)
 				txtMusicAppName.text = appInfo.name
 
-				if (appInfo.packageName == musicAppDiscoveryThread.discovery?.musicSessions?.getPlayingApp()?.packageName) {
+				if (appInfo.packageName == musicSessions?.getPlayingApp()?.packageName) {
 					imgNowPlaying.setImageDrawable(equalizerAnimated)
 					equalizerAnimated.start()
 					imgNowPlaying.visibility = View.VISIBLE
