@@ -9,12 +9,12 @@ import me.hufman.androidautoidrive.loadJSON
 import me.hufman.androidautoidrive.toMap
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.lang.RuntimeException
 
-class ReadoutApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppResources) {
+class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources) {
 	val carConnection: BMWRemotingServer
 	val carApp: RHMIApplication
 	val infoState: RHMIState.PlainState
@@ -22,8 +22,8 @@ class ReadoutApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppRes
 
 	init {
 		val listener = ReadoutAppListener()
-		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, listener)
-		val readoutCert = carAppAssets.getAppCertificate(IDriveConnectionListener.brand ?: "")?.readBytes() as ByteArray
+		carConnection = IDriveConnection.getEtchConnection(iDriveConnectionStatus.host ?: "127.0.0.1", iDriveConnectionStatus.port ?: 8003, listener)
+		val readoutCert = carAppAssets.getAppCertificate(iDriveConnectionStatus.brand ?: "")?.readBytes() as ByteArray
 		val sas_challenge = carConnection.sas_certificate(readoutCert)
 		val sas_login = securityAccess.signChallenge(challenge=sas_challenge)
 		carConnection.sas_login(sas_login)
@@ -55,8 +55,10 @@ class ReadoutApp(val securityAccess: SecurityAccess, val carAppAssets: CarAppRes
 		var readoutController: ReadoutController? = null
 		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
 			val propertyData = loadJSON(propertyValue) ?: return
-			val ttsState = propertyData.getJSONObject("TTSState")
-			readoutController?.onTTSEvent(ttsState.toMap())
+			if (propertyData.has("TTSState")) {
+				val ttsState = propertyData.getJSONObject("TTSState")
+				readoutController?.onTTSEvent(ttsState.toMap())
+			}
 		}
 	}
 

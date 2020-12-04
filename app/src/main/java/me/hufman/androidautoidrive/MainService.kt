@@ -23,7 +23,7 @@ import me.hufman.androidautoidrive.notifications.AudioPlayer
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import org.json.JSONObject
 import java.lang.IllegalArgumentException
@@ -42,7 +42,7 @@ class MainService: Service() {
 	var foregroundNotification: Notification? = null
 
 	val securityAccess = SecurityAccess.getInstance(this)
-	val idriveConnectionListener = IDriveConnectionListener()   // start listening to car connection, if the AndroidManifest listener didn't start
+	val iDriveConnectionReceiver = IDriveConnectionReceiver()   // start listening to car connection, if the AndroidManifest listener didn't start
 	val carProberThread by lazy {
 		CarProber(securityAccess,
 			CarAppAssetManager(this, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
@@ -60,7 +60,7 @@ class MainService: Service() {
 	var carappNotifications: PhoneNotifications? = null
 	var carappReadout: ReadoutApp? = null
 
-	var mapService = MapService(this, securityAccess)
+	var mapService = MapService(this, iDriveConnectionReceiver, securityAccess)
 
 	var musicService: MusicService? = null
 
@@ -91,7 +91,7 @@ class MainService: Service() {
 		handleActionStop()
 		// one time things
 		try {
-			idriveConnectionListener.unsubscribe(this)
+			iDriveConnectionReceiver.unsubscribe(this)
 		} catch (e: IllegalArgumentException) {
 			// never started?
 		}
@@ -109,7 +109,7 @@ class MainService: Service() {
 		securityAccess.listener = Runnable {
 			combinedCallback()
 		}
-		IDriveConnectionListener.callback = Runnable {
+		iDriveConnectionReceiver.callback = {
 			combinedCallback()
 		}
 		// try connecting to the security service
@@ -119,7 +119,7 @@ class MainService: Service() {
 		securityServiceThread.connect()
 		// start up car connection listener
 		announceCarAPI()
-		idriveConnectionListener.subscribe(this)
+		iDriveConnectionReceiver.subscribe(this)
 		if (!carProberThread.isAlive) {
 			carProberThread.start()
 		} else {
@@ -184,7 +184,7 @@ class MainService: Service() {
 
 	fun combinedCallback() {
 		synchronized(MainService::class.java) {
-			if (IDriveConnectionListener.isConnected && securityAccess.isConnected()) {
+			if (iDriveConnectionReceiver.isConnected && securityAccess.isConnected()) {
 				var startAny = false
 
 				AppSettings.loadSettings(this)
@@ -207,7 +207,7 @@ class MainService: Service() {
 
 				// check if we are idle and should shut down
 				if (startAny ){
-					startServiceNotification(IDriveConnectionListener.brand, ChassisCode.fromCode(carCapabilities["vehicle.type"] ?: "Unknown"))
+					startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carCapabilities["vehicle.type"] ?: "Unknown"))
 				} else {
 					Log.i(TAG, "No apps are enabled, skipping the service start")
 					stopServiceNotification()
@@ -217,7 +217,7 @@ class MainService: Service() {
 				// show a donation popup, if it's time
 				DonationRequest(this).countUsage()
 			} else {
-				Log.d(TAG, "Not fully connected: IDrive:${IDriveConnectionListener.isConnected} SecurityService:${securityAccess.isConnected()}")
+				Log.d(TAG, "Not fully connected: IDrive:${iDriveConnectionReceiver.isConnected} SecurityService:${securityAccess.isConnected()}")
 
 				stopCarApps()
 			}
@@ -233,7 +233,7 @@ class MainService: Service() {
 				threadCapabilities = CarThread("Capabilities") {
 					Log.i(TAG, "Starting to discover car capabilities")
 
-					carappCapabilities = CarInformationDiscovery(securityAccess,
+					carappCapabilities = CarInformationDiscovery(iDriveConnectionReceiver, securityAccess,
 							CarAppAssetManager(this, "smartthings"),
 							object: CarInformationDiscoveryListener {
 						override fun onCapabilities(capabilities: Map<String, String?>) {
@@ -244,7 +244,7 @@ class MainService: Service() {
 							SetupActivity.redraw(this@MainService)
 							// update the notification
 							carCapabilities = capabilities
-							startServiceNotification(IDriveConnectionListener.brand, ChassisCode.fromCode(carCapabilities["vehicle.type"] ?: "Unknown"))
+							startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carCapabilities["vehicle.type"] ?: "Unknown"))
 
 							// now that we have capabilities, start up the music app
 							startMusic()
@@ -289,9 +289,9 @@ class MainService: Service() {
 						if (handler == null) {
 							Log.e(TAG, "CarThread Handler is null?")
 						}
-						val notificationSettings = NotificationSettings(carCapabilities, BtStatus(this) {}, MutableAppSettings(this, handler))
+						val notificationSettings = NotificationSettings(carCapabilities, BtStatus(this) {}, MutableAppSettingsReceiver(this, handler))
 						notificationSettings.btStatus.register()
-						carappNotifications = PhoneNotifications(securityAccess,
+						carappNotifications = PhoneNotifications(iDriveConnectionReceiver, securityAccess,
 								CarAppAssetManager(this, "basecoreOnlineServices"),
 								PhoneAppResourcesAndroid(this),
 								GraphicsHelpersAndroid(),
@@ -305,7 +305,7 @@ class MainService: Service() {
 						sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
 
 						// start up the readout app
-						val carappReadout = ReadoutApp(securityAccess,
+						val carappReadout = ReadoutApp(iDriveConnectionReceiver, securityAccess,
 								CarAppAssetManager(this, "news"))
 						carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
 						this.carappReadout = carappReadout
@@ -343,7 +343,8 @@ class MainService: Service() {
 
 	fun startMusic(): Boolean {
 		if (carCapabilities.isNotEmpty() && musicService == null) {
-			musicService = MusicService(this, securityAccess, MusicAppMode.build(carCapabilities, this))
+			musicService = MusicService(this, iDriveConnectionReceiver, securityAccess,
+					MusicAppMode.build(carCapabilities, this))
 			musicService?.start()
 		}
 		return true
@@ -359,7 +360,7 @@ class MainService: Service() {
 				threadAssistant = CarThread("Assistant") {
 					Log.i(TAG, "Starting to discover car capabilities")
 
-					carappAssistant = AssistantApp(securityAccess,
+					carappAssistant = AssistantApp(iDriveConnectionReceiver, securityAccess,
 							CarAppAssetManager(this, "basecoreOnlineServices"),
 							AssistantControllerAndroid(this, PhoneAppResourcesAndroid(this)),
 							GraphicsHelpersAndroid())
@@ -380,12 +381,12 @@ class MainService: Service() {
 
 	fun startNavigationListener() {
 		if (carCapabilities["navi"] == "true") {
-			if (IDriveConnectionListener.brand?.toLowerCase() == "bmw") {
+			if (iDriveConnectionReceiver.brand?.toLowerCase() == "bmw") {
 				packageManager.setComponentEnabledSetting(
 						ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityBMW"),
 						PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
 				)
-			} else if (IDriveConnectionListener.brand?.toLowerCase() == "mini") {
+			} else if (iDriveConnectionReceiver.brand?.toLowerCase() == "mini") {
 				packageManager.setComponentEnabledSetting(
 						ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityMINI"),
 						PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP

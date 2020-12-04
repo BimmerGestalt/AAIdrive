@@ -923,7 +923,8 @@
         </activity>
         <activity android:name=".phoneui.MusicActivity">
         </activity>
-        <activity android:name=".phoneui.MusicPlayerActivity">
+        <activity android:name=".phoneui.MusicPlayerActivity"
+            android:screenOrientation="portrait">
         </activity>
         <activity android:name=".phoneui.ConfigureNotificationsActivity"
             android:label="@string/message_notifications">
@@ -947,7 +948,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".phoneui.ConfigureNotificationsActivity$CustomActionListener" />
+        <receiver android:name=".phoneui.fragments.NotificationPageFragment$CustomActionListener" />
 
         <service android:name=".notifications.NotificationListenerServiceImpl"
             android:label="@string/app_name"

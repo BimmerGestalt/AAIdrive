@@ -10,6 +10,7 @@ import java.util.*
 data class MusicAppInfo(override val name: String, override val icon: Drawable,
                         override val packageName: String, val className: String?): AMAppInfo {
 	var probed = false
+	var hidden = false          // whether to show this app in the car, applied by MusicAppDiscovery settings
 	var connectable = false     // whether MediaBrowser can connect
 	var controllable = false    // whether MediaSession can control it
 	var browseable = false      // whether any media items were discovered
@@ -103,11 +104,12 @@ data class MusicAppInfo(override val name: String, override val icon: Drawable,
 		)
 	}
 
-	fun clone(probed: Boolean? = null, connectable: Boolean? = null, controllable: Boolean? = null,
+	fun clone(probed: Boolean? = null, hidden: Boolean? = null, connectable: Boolean? = null, controllable: Boolean? = null,
 	          browseable: Boolean? = null, searchable: Boolean? = null, playsearchable: Boolean? = null,
 	          forcedCategory: AMCategory? = null, weightAdjustment: Int? = null): MusicAppInfo {
 		return MusicAppInfo(name, icon, packageName, className).also {
 			it.probed = probed ?: this.probed
+			it.hidden = hidden ?: this.hidden
 			it.connectable = connectable ?: this.connectable
 			it.controllable = controllable ?: this.controllable
 			it.browseable = browseable ?: this.browseable

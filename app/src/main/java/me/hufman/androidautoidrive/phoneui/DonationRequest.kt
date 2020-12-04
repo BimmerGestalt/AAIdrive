@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
+import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
 import java.text.SimpleDateFormat
 import java.util.*
@@ -55,7 +56,7 @@ class DonationRequest(val context: Context) {
 		const val NOTIFICATION_CHANNEL_NAME = "Donation Request"
 	}
 
-	private val dayCounter = DayCounter(MutableAppSettings(context)) {
+	private val dayCounter = DayCounter(MutableAppSettingsReceiver(context)) {
 		onDayIncremented()
 	}
 

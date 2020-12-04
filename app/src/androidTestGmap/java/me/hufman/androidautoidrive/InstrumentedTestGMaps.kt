@@ -2,9 +2,9 @@ package me.hufman.androidautoidrive
 
 import android.content.Context
 import android.content.IntentFilter
-import android.support.test.InstrumentationRegistry
-import android.support.test.internal.runner.junit4.statement.UiThreadStatement.runOnUiThread
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.internal.runner.junit4.statement.UiThreadStatement.runOnUiThread
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.nhaarman.mockito_kotlin.any
@@ -30,7 +30,7 @@ class InstrumentedTestGMaps {
 	}
 
 	fun getContext(): Context {
-		return InstrumentationRegistry.getTargetContext()
+		return InstrumentationRegistry.getInstrumentation().targetContext
 	}
 	@Before
 	fun setUp() {
@@ -39,7 +39,7 @@ class InstrumentedTestGMaps {
 
 	@Test
 	fun queryFromCar() {
-		val appContext = InstrumentationRegistry.getTargetContext()
+		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 		val listener = MapsInteractionControllerListener(appContext, interactionReceiver)
 		listener.onCreate()
 		MapInteractionControllerIntent(appContext).searchLocations("test")
@@ -51,7 +51,7 @@ class InstrumentedTestGMaps {
 
 	@Test
 	fun queryResultsToCar() {
-		val appContext = InstrumentationRegistry.getTargetContext()
+		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 		val listener = MapResultsReceiver(mockResultsReceiver)
 		appContext.registerReceiver(listener, IntentFilter(INTENT_MAP_RESULTS))
 		appContext.registerReceiver(listener, IntentFilter(INTENT_MAP_RESULT))
@@ -70,10 +70,10 @@ class InstrumentedTestGMaps {
 
 	@Test
 	fun testMapSearch() {
-		val appContext = InstrumentationRegistry.getTargetContext()
+		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 		val imageCapture = VirtualDisplayScreenCapture.build()
 		val virtualDisplay = createVirtualDisplay(getContext(), imageCapture.imageCapture)
-		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay)
+		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay, MutableAppSettingsReceiver(appContext))
 		mapController.searchLocations("test", LatLngBounds(LatLng(37.333, -122.416), LatLng(37.783, -121.9)))
 		await().untilAsserted { verify(mockResultsReceiver).onSearchResults(anyArray()) }
 
@@ -85,10 +85,10 @@ class InstrumentedTestGMaps {
 
 	@Test
 	fun testNavigation() {
-		val appContext = InstrumentationRegistry.getTargetContext()
+		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 		val imageCapture = VirtualDisplayScreenCapture.build()
 		val virtualDisplay = createVirtualDisplay(getContext(), imageCapture.imageCapture)
-		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay)
+		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay, MutableAppSettingsReceiver(appContext))
 		runOnUiThread {
 			mapController.showMap()
 		}

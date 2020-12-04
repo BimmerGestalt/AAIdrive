@@ -1,113 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginEnd="24dp"
+    android:layout_marginStart="24dp"
+    android:layout_marginTop="24dp"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="me.hufman.androidautoidrive.phoneui.ConfigureNotificationsActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:animateLayoutChanges="true">
+    <androidx.fragment.app.FragmentContainerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/fragment_notificationpage"
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.NotificationPageFragment"/>
 
-        <Switch
-            android:id="@+id/swNotificationPopup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="@string/notification_popups" />
-
-        <LinearLayout
-            android:id="@+id/paneNotificationPopup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="24dp">
-
-            <TextView
-                android:id="@+id/txtPopupVersion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/lbl_popupVersion" />
-            <Switch
-                android:id="@+id/swNotificationPopupPassenger"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="@string/notification_popups_passenger" />
-        </LinearLayout>
-
-        <Switch
-            android:id="@+id/swNotificationSound"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="@string/notification_sound" />
-
-        <Switch
-            android:id="@+id/swNotificationReadout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="@string/notification_readout" />
-        <Switch
-            android:id="@+id/swNotificationReadoutPopup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="@string/notification_readout_popup" />
-        <LinearLayout
-            android:id="@+id/paneNotificationReadout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="24dp">
-
-            <Switch
-                android:id="@+id/swNotificationReadoutPopupPassenger"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="@string/notification_readout_popup_passenger" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/btnTestNotification"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
-            android:text="@string/spawn_test_notification" />
-
-        <LinearLayout
-            android:id="@+id/paneSMSPermission"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txtSMSPermission"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/lbl_smsPermission"
-                android:layout_marginBottom="4dp" />
-
-            <Button
-                android:id="@+id/btnGrantSMS"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lbl_grant" />
-        </LinearLayout>
-
-    </LinearLayout>
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

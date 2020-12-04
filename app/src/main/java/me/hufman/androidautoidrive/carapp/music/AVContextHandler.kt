@@ -6,9 +6,9 @@ import de.bmw.idrive.BMWRemotingServer
 import me.hufman.androidautoidrive.GraphicsHelpers
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 
-class AVContextHandler(val carConnection: BMWRemotingServer, val controller: MusicController, val graphicsHelpers: GraphicsHelpers, val musicAppMode: MusicAppMode) {
+class AVContextHandler(val iDriveConnectionStatus: IDriveConnectionStatus, val carConnection: BMWRemotingServer, val controller: MusicController, val graphicsHelpers: GraphicsHelpers, val musicAppMode: MusicAppMode) {
 	val MY_IDENT = "me.hufman.androidautoidrive.music"  // AM and AV ident string
 	val TAG = "AVContextHandler"
 	var avHandle: Int? = null
@@ -23,11 +23,11 @@ class AVContextHandler(val carConnection: BMWRemotingServer, val controller: Mus
 			// already done
 			return
 		}
-		val instanceId = IDriveConnectionListener.instanceId
-		if (instanceId == null) {
+		val instanceId = iDriveConnectionStatus.instanceId ?: 0
+		if (instanceId <= 0) {
 			Log.w(TAG, "instanceId is null! skipping av handle creation for now")
-		} else {
-			Log.d(TAG, "instanceId == ${IDriveConnectionListener.instanceId}")
+		} else if (musicAppMode.shouldRequestAudioContext()) {
+			Log.d(TAG, "instanceId == ${iDriveConnectionStatus.instanceId}")
 			synchronized(carConnection) {
 				avHandle = carConnection.av_create(instanceId, MY_IDENT)
 			}

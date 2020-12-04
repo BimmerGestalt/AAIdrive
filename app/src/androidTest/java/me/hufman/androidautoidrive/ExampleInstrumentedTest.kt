@@ -1,8 +1,8 @@
 package me.hufman.androidautoidrive
 
-import android.support.test.InstrumentationRegistry
-import android.support.test.runner.AndroidJUnit4
 import android.util.Log
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import me.hufman.idriveconnectionkit.android.CertMangling
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import org.awaitility.Awaitility.await
@@ -21,7 +21,7 @@ class ExampleInstrumentedTest {
     @Test
     fun useAppContext() {
         // Context of the app under test.
-        val appContext = InstrumentationRegistry.getTargetContext()
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         val securityAccess = SecurityAccess(appContext)
 
         val assets = CarAppAssetManager(appContext, "basecoreOnlineServices")

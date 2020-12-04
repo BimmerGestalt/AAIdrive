@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
+
+    <Switch
+        android:id="@+id/swNotificationPopup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/notification_popups" />
+
+    <LinearLayout
+        android:id="@+id/paneNotificationPopup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="24dp">
+
+        <TextView
+            android:id="@+id/txtPopupVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lbl_popupVersion" />
+        <Switch
+            android:id="@+id/swNotificationPopupPassenger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@string/notification_popups_passenger" />
+    </LinearLayout>
+
+    <Switch
+        android:id="@+id/swNotificationSound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/notification_sound" />
+
+    <Switch
+        android:id="@+id/swNotificationReadout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/notification_readout" />
+    <Switch
+        android:id="@+id/swNotificationReadoutPopup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/notification_readout_popup" />
+    <LinearLayout
+        android:id="@+id/paneNotificationReadout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="24dp">
+
+        <Switch
+            android:id="@+id/swNotificationReadoutPopupPassenger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@string/notification_readout_popup_passenger" />
+    </LinearLayout>
+
+</LinearLayout>

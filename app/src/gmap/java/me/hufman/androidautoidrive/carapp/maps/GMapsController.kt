@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import android.hardware.display.VirtualDisplay
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.util.Log
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -25,12 +25,13 @@ import com.google.maps.GeoApiContext
 import com.google.maps.PendingResult
 import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
+import me.hufman.androidautoidrive.AppSettingsObserver
 import me.hufman.androidautoidrive.R
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
 
-class GMapsController(private val context: Context, private val resultsController: MapResultsController, private val virtualDisplay: VirtualDisplay): MapInteractionController {
+class GMapsController(private val context: Context, private val resultsController: MapResultsController, private val virtualDisplay: VirtualDisplay, val appSettings: AppSettingsObserver): MapInteractionController {
 	val TAG = "GMapsController"
 	var handler = Handler(context.mainLooper)
 	var projection: GMapsProjection? = null
@@ -88,7 +89,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 
 		if (projection == null) {
 			Log.i(TAG, "First showing of the map")
-			val projection = GMapsProjection(context, virtualDisplay.display)
+			val projection = GMapsProjection(context, virtualDisplay.display, appSettings)
 			this.projection = projection
 			projection.mapListener = Runnable {
 				// when getMapAsync finishes

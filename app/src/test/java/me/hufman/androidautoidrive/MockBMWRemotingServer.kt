@@ -20,6 +20,7 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 	val avConnections = HashMap<Int, String>()
 	var avCurrentContext = -1
 	var avCurrentState = BMWRemoting.AVPlayerState.AV_PLAYERSTATE_STOP
+	val cdsSubscriptions = HashSet<String>()
 
 	val capabilities = mutableMapOf(
 		"hmi.display-width" to "1280",
@@ -93,7 +94,7 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 	}
 
 	override fun cds_addPropertyChangedEventHandler(handle: Int?, propertyName: String?, ident: String?, intervalLimit: Int?) {
-
+		cdsSubscriptions.add(propertyName ?: "")
 	}
 
 	override fun cds_getPropertyAsync(handle: Int?, ident: String?, propertyName: String?) {

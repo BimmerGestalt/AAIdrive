@@ -1,7 +1,8 @@
 package me.hufman.androidautoidrive.connections
 
 import android.content.Context
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import android.os.SystemClock
+import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 
 /**
@@ -12,10 +13,11 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 		const val TAG = "CarDebugging"
 		const val SESSION_INIT_TIMEOUT = 1000
 		const val BCL_REPORT_TIMEOUT = 1000
+		const val BCL_REDRAW_DEBOUNCE = 100
 	}
 
 	val securityAccess = SecurityAccess.getInstance(context)
-	val idriveListener = IDriveConnectionListener()
+	val idriveListener = IDriveConnectionObserver()
 
 	val isConnectedInstalled
 		get() = securityAccess.installedSecurityServices.isNotEmpty()
@@ -35,10 +37,15 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 
 	private val btStatus = BtStatus(context) { callback() }
 	private val usbStatus = UsbStatus(context) { callback() }
+
+	private var bclNextRedraw: Long = 0
 	private val bclListener = BclStatusListener(context) {
 		// need to watch for if we are stuck in SESSION_INIT_BYTES_SEND
 		// which indicates whether BT Apps is enabled in the car
-		// we don't need to do a redraw here, because SetupActivity is doing it itself
+		if (bclNextRedraw < SystemClock.uptimeMillis()) {
+			callback()
+			bclNextRedraw = SystemClock.uptimeMillis() + BCL_REDRAW_DEBOUNCE
+		}
 	}
 
 	// the summarized status
@@ -74,12 +81,14 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 		get() = bclListener.transport
 
 	fun register() {
+		idriveListener.callback = { callback() }
 		btStatus.register()
 		usbStatus.register()
 		bclListener.subscribe()
 	}
 
 	fun unregister() {
+		idriveListener.callback = {}
 		btStatus.unregister()
 		usbStatus.unregister()
 		bclListener.unsubscribe()

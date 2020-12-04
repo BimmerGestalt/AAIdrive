@@ -10,6 +10,7 @@ import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
+import me.hufman.androidautoidrive.carapp.RHMIApplicationSwappable
 import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
 import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
@@ -19,7 +20,7 @@ import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
 import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.lang.RuntimeException
@@ -27,13 +28,15 @@ import java.util.*
 
 const val TAG = "PhoneNotifications"
 
-class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val audioPlayer: AudioPlayer, val notificationSettings: NotificationSettings) {
+class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val audioPlayer: AudioPlayer, val notificationSettings: NotificationSettings) {
 	val notificationListener = PhoneNotificationListener(this)
 	val notificationReceiver = NotificationUpdaterControllerIntent.Receiver(notificationListener)
 	var notificationBroadcastReceiver: BroadcastReceiver? = null
 	var readoutInteractions: ReadoutInteractions
 	val carappListener = CarAppListener()
+	var rhmiHandle: Int = -1
 	val carConnection: BMWRemotingServer
+	val carAppSwappable: RHMIApplicationSwappable
 	val carApp: RHMIApplicationSynchronized
 	val amHandle: Int
 	val focusEvent: RHMIEvent.FocusEvent
@@ -46,80 +49,103 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 	var passengerSeated = false             // whether a passenger is seated
 
 	init {
-		carConnection = IDriveConnection.getEtchConnection(IDriveConnectionListener.host ?: "127.0.0.1", IDriveConnectionListener.port ?: 8003, carappListener)
-		val appCert = carAppAssets.getAppCertificate(IDriveConnectionListener.brand ?: "")?.readBytes() as ByteArray
+		carConnection = IDriveConnection.getEtchConnection(iDriveConnectionStatus.host ?: "127.0.0.1", iDriveConnectionStatus.port ?: 8003, carappListener)
+		val appCert = carAppAssets.getAppCertificate(iDriveConnectionStatus.brand ?: "")?.readBytes() as ByteArray
 		val sas_challenge = carConnection.sas_certificate(appCert)
 		val sas_login = securityAccess.signChallenge(challenge=sas_challenge)
 		carConnection.sas_login(sas_login)
 		carappListener.server = carConnection
 
-		// create the app in the car
-		val rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive", "me.hufman"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB(IDriveConnectionListener.brand ?: "common"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
-		carConnection.rhmi_initialize(rhmiHandle)
-
 		readoutInteractions = ReadoutInteractions(notificationSettings)
 
 		// set up the app in the car
-		carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)), carConnection)
-		carappListener.app = carApp
-		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
+		// synchronized to ensure that events happen after we are done
+		synchronized(carConnection) {
+			carAppSwappable = RHMIApplicationSwappable(createRhmiApp())
+			carApp = RHMIApplicationSynchronized(carAppSwappable, carConnection)
+			carappListener.app = carApp
+			carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
-		val unclaimedStates = LinkedList(carApp.states.values)
+			val unclaimedStates = LinkedList(carApp.states.values)
 
-		// figure out which views to use
-		viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
-		viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings, readoutInteractions)
-		viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller, readoutInteractions)
+			// figure out which views to use
+			viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
+			viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, graphicsHelpers, notificationSettings, readoutInteractions)
+			viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller, readoutInteractions)
 
-		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first{
-			it.componentsList.filterIsInstance<RHMIComponent.Input>().isNotEmpty()
-		}
+			stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first {
+				it.componentsList.filterIsInstance<RHMIComponent.Input>().isNotEmpty()
+			}
 
-		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
-			it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = viewList.state.id
-			it.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-				viewList.entryButtonTimestamp = System.currentTimeMillis()
+			carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
+				it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = viewList.state.id
+				it.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+					viewList.entryButtonTimestamp = System.currentTimeMillis()
+				}
+			}
+
+			// set up the AM icon in the "Addressbook"/Communications section
+			amHandle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
+			carConnection.am_addAppEventHandler(amHandle, "me.hufman.androidautoidrive.notifications")
+			focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
+			createAmApp()
+
+			// set up the list
+			viewList.initWidgets(viewDetails)
+
+			// set up the popup
+			viewPopup.initWidgets()
+
+			// set up the details view
+			viewDetails.initWidgets(viewList, stateInput)
+
+			// subscribe to CDS for passenger seat info
+			val cdsHandle = carConnection.cds_create()
+			val interestingProperties = mapOf("76" to "sensors.seatOccupiedPassenger",
+					"37" to "driving.gear",
+					"40" to "driving.parkingBrake")
+			interestingProperties.entries.forEach {
+				val ident = it.key
+				val name = it.value
+				carConnection.cds_addPropertyChangedEventHandler(cdsHandle, name, ident, 5000)
+				carConnection.cds_getPropertyAsync(cdsHandle, ident, name)
 			}
 		}
+	}
 
-		// set up the AM icon in the "Calendar"/Communications section
-		amHandle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
-		carConnection.am_addAppEventHandler(amHandle, "me.hufman.androidautoidrive.notifications")
-		focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
-		createAmApp()
-
-		// set up the list
-		viewList.initWidgets(viewDetails)
-
-		// set up the popup
-		viewPopup.initWidgets()
-
-		// set up the details view
-		viewDetails.initWidgets(viewList, stateInput)
-
-		// subscribe to CDS for passenger seat info
-		val cdsHandle = carConnection.cds_create()
-		val interestingProperties = mapOf("76" to "sensors.seatOccupiedPassenger",
-				"37" to "driving.gear",
-				"40" to "driving.parkingBrake")
-		interestingProperties.entries.forEach {
-			val ident = it.key
-			val name = it.value
-			carConnection.cds_addPropertyChangedEventHandler(cdsHandle, name, ident, 5000)
-			carConnection.cds_getPropertyAsync(cdsHandle, ident, name)
-		}
+	/** creates the app in the car */
+	fun createRhmiApp(): RHMIApplication {
+		// load the resources
+		rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive", "me.hufman"))
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB(iDriveConnectionStatus.brand ?: "common"))
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(iDriveConnectionStatus.brand ?: "common"))
+		carConnection.rhmi_initialize(rhmiHandle)
 
 		// register for events from the car
 		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1)
 		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1, -1)
+
+		return RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle))
+	}
+
+	/** Recreates the RHMI app in the car */
+	fun recreateRhmiApp() {
+		synchronized(carConnection) {
+			// pause events to the underlying connection
+			carAppSwappable.isConnected = false
+			// destroy the previous RHMI app
+			carConnection.rhmi_dispose(rhmiHandle)
+			// create a new one
+			carAppSwappable.app = createRhmiApp()
+			// reconnect, triggering a sync down to the new RHMI Etch app
+			carAppSwappable.isConnected = true
+		}
 	}
 
 	fun createAmApp() {
 		val name = L.NOTIFICATIONS_TITLE
-		val carAppImages = Utils.loadZipfile(carAppAssets.getImagesDB(IDriveConnectionListener.brand ?: "common"))
+		val carAppImages = Utils.loadZipfile(carAppAssets.getImagesDB(iDriveConnectionStatus.brand ?: "common"))
 
 		val amInfo = mutableMapOf<Int, Any>(
 				0 to 145,   // basecore version
@@ -144,17 +170,33 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 		var server: BMWRemotingServer? = null
 		var app: RHMIApplication? = null
 
+		fun synced() {
+			synchronized(server!!) {
+				// the RHMI was definitely initialized, we can continue
+			}
+		}
+
 		override fun am_onAppEvent(handle: Int?, ident: String?, appId: String?, event: BMWRemoting.AMEvent?) {
+			synced()
 			try {
+				viewList.entryButtonTimestamp = System.currentTimeMillis()
 				focusEvent.triggerEvent(mapOf(0.toByte() to viewList.state.id))
 			} catch (e: BMWRemoting.ServiceException) {
-				Log.w(TAG, "Failed to trigger focus event for AM icon: $e")
+				Log.i(TAG, "Failed to trigger focus event for AM icon, recreating RHMI and trying again")
+				try {
+					recreateRhmiApp()
+					viewList.entryButtonTimestamp = System.currentTimeMillis()
+					focusEvent.triggerEvent(mapOf(0.toByte() to viewList.state.id))
+				} catch (e: BMWRemoting.ServiceException) {
+					Log.w(TAG, "Failed to trigger focus event for AM icon: $e")
+				}
 			}
 			createAmApp()
 		}
 
 		override fun rhmi_onActionEvent(handle: Int?, ident: String?, actionId: Int?, args: MutableMap<*, *>?) {
 			Log.w(TAG, "Received rhmi_onActionEvent: handle=$handle ident=$ident actionId=$actionId")
+			synced()
 			try {
 				app?.actions?.get(actionId)?.asRAAction()?.rhmiActionCallback?.onActionEvent(args)
 				synchronized(server!!) {
@@ -176,6 +218,7 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 		override fun rhmi_onHmiEvent(handle: Int?, ident: String?, componentId: Int?, eventId: Int?, args: MutableMap<*, *>?) {
 			val msg = "Received rhmi_onHmiEvent: handle=$handle ident=$ident componentId=$componentId eventId=$eventId args=${args?.toString()}"
 			Log.w(TAG, msg)
+			synced()
 
 			val state = app?.states?.get(componentId)
 			state?.onHmiEvent(eventId, args)
@@ -186,6 +229,7 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 
 		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
 			val propertyData = loadJSON(propertyValue) ?: return
+			synced()
 
 			if (propertyName == "sensors.seatOccupiedPassenger") {
 				passengerSeated = propertyData.getInt("seatOccupiedPassenger") != 0
@@ -245,7 +289,7 @@ class PhoneNotifications(val securityAccess: SecurityAccess, val carAppAssets: C
 			val alreadyShown = readHistory.contains(sbn)
 			readHistory.add(sbn)
 			if (!alreadyShown) {
-				viewList.showStatusBarIcon()
+				viewList.showNotification(sbn)
 
 				if (notificationSettings.shouldPopup(passengerSeated)) {
 					if (!sbn.equalsKey(viewDetails.selectedNotification)) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -18,7 +18,6 @@
         app:layout_constraintVertical_bias="1.0">
 
         <LinearLayout
-            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
@@ -68,39 +67,12 @@
                     android:layout_marginTop="10dp"
                     android:text="@string/enable_google_maps" />
 
-                <LinearLayout
+                <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/paneGMaps"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
-                    android:orientation="vertical">
-                    <Switch
-                        android:id="@+id/swGmapWidescreen"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:text="@string/lbl_widescreen_map" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/txtGmapStyleLabel"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/gmapStyleLabel" />
-
-                        <Spinner
-                            android:id="@+id/swGmapSyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:entries="@array/gmaps_styles" />
-                    </LinearLayout>
-                </LinearLayout>
+                    android:name="me.hufman.androidautoidrive.phoneui.fragments.MapSettingsFragment"/>
             </LinearLayout>
 
             <LinearLayout
@@ -127,63 +99,32 @@
                     android:textSize="12sp" />
             </LinearLayout>
 
-            <me.hufman.androidautoidrive.phoneui.NestedGridView
-                android:id="@+id/listMusicApps"
-                android:layout_width="fill_parent"
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:paddingEnd="4dp"
-                android:columnWidth="50dp"
-                android:horizontalSpacing="8dp"
-                android:verticalSpacing="8dp"
-                android:gravity="center_horizontal"
-                android:clipChildren="true"
-                android:numColumns="auto_fit"
-                android:stretchMode="spacingWidth" />
+                android:id="@+id/fragmentMusicAppGrid"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicAppsGridFragment"/>
 
             <LinearLayout
                 android:id="@+id/paneAssistant"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                <TextView
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="4dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/lbl_assistant" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:text="@string/lbl_assistant" />
-
-                    <ImageButton
-                        android:id="@+id/btnAssistantHelp"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="?android:selectableItemBackground"
-                        android:src="@android:drawable/ic_menu_help"
-                        android:visibility="gone" />
-                </LinearLayout>
-
-                <me.hufman.androidautoidrive.phoneui.NestedListView
-                    android:id="@+id/listAssistantApps"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="40dp" />
-
-                <TextView
-                    android:id="@+id/txtEmptyAssistantApps"
+                <androidx.fragment.app.FragmentContainerView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="40dp"
-                    android:paddingEnd="40dp"
-                    android:text="@string/lbl_assistant_empty" />
+                    android:id="@+id/fragment_assistant_applist"
+                    android:name="me.hufman.androidautoidrive.phoneui.fragments.AssistantAppsListFragment"/>
+
             </LinearLayout>
         </LinearLayout>
 
@@ -213,4 +154,4 @@
             android:src="@android:drawable/ic_menu_help"
             android:background="?android:selectableItemBackground" />
     </LinearLayout>
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

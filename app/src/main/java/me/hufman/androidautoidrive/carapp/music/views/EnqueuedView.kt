@@ -105,7 +105,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			listComponent.setEnabled(true)
 			listComponent.setSelectable(true)
 			songsList.addAll(songs)
-			showList()
+			showList(0)
 			listComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
 				showList(startIndex, numRows)
 
@@ -143,6 +143,10 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 	}
 
+	fun forgetDisplayedInfo() {
+		queueMetadata = null
+	}
+
 	fun redraw() {
 		// need a full redraw if the queue is different or has been modified
 		if (musicController.getQueue() != queueMetadata) {
@@ -161,6 +165,11 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 			// add checkmark to new song
 			showList(playingIndex, 1)
+
+			// move the selection if the previous song was selected
+			if (oldPlayingIndex == selectedIndex) {
+				setSelectionToCurrentSong(playingIndex)
+			}
 		}
 
 		// redraw all currently visible rows if one of them has a cover art that was retrieved

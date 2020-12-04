@@ -4,7 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
 import java.lang.RuntimeException
 
 const val TAG = "CarThread"
@@ -14,6 +14,7 @@ const val TAG = "CarThread"
  */
 class CarThread(name: String, val runnable: () -> (Unit)): Thread(name) {
 	var handler: Handler? = null
+	val iDriveConnectionObserver = IDriveConnectionObserver()
 
 	init {
 		isDaemon = true
@@ -34,7 +35,7 @@ class CarThread(name: String, val runnable: () -> (Unit)): Thread(name) {
 			// phone was unplugged during an RPC command
 			Log.i(TAG, "Shutting down thread $name due to Etch TimeoutException")
 		} catch (e: BMWRemoting.ServiceException) {
-			if (!IDriveConnectionListener.isConnected) {
+			if (!iDriveConnectionObserver.isConnected) {
 				// the car is no longer connected
 				// so this is most likely a crash caused by the closed connection
 				Log.i(TAG, "Shutting down thread $name due to disconnection")

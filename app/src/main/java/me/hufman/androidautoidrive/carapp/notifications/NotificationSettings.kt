@@ -1,10 +1,10 @@
 package me.hufman.androidautoidrive.carapp.notifications
 
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.MutableAppSettings
+import me.hufman.androidautoidrive.MutableAppSettingsObserver
 import me.hufman.androidautoidrive.connections.BtStatus
 
-class NotificationSettings(val capabilities: Map<String, String?>, val btStatus: BtStatus, val appSettings: MutableAppSettings) {
+class NotificationSettings(val capabilities: Map<String, String?>, val btStatus: BtStatus, val appSettings: MutableAppSettingsObserver) {
 	var callback
 		get() = appSettings.callback
 		set(value) { appSettings.callback = value }

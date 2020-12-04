@@ -27,7 +27,7 @@ android {
         targetSdkVersion 28
         versionCode androidGitVersion.code()
         versionName androidGitVersion.name()
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         archivesBaseName = "androidautoidrive-${androidGitVersion.name()}"
         buildConfigField "long", "BUILD_TIME", System.currentTimeMillis() + "L"
 
@@ -242,6 +242,10 @@ task extractRHMI(type: Copy) {
 }
 
 // Also the unit tests rely on some files, extract those too
+def RHMIClassicSourcesTest = [
+        // these files are only in the Classic app
+        "news/rhmi/ui_description.xml": "ui_description_news.xml",
+]
 def RHMISourcesTest = [
         "basecore/rhmi/multimedia/id5/v2/ui_description.xml": "ui_description_multimedia_v2.xml",
         "basecore/rhmi/multimedia/id5/v3/ui_description.xml": "ui_description_multimedia_v3.xml",
@@ -253,7 +257,9 @@ task extractRHMITest(type: Copy) {
 
     def destRoot = "src/test/resources"
     def connectedFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*\.apk/)
+    def connectedClassicFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*\.apk/)
     connectedFound.removeAll {it.toLowerCase().contains("classic")}
+    connectedClassicFound.retainAll {it.toLowerCase().contains("classic")}
 
     def missing = RHMISourcesTest.values().findAll {
         !file("$destRoot/$it").exists()
@@ -261,6 +267,12 @@ task extractRHMITest(type: Copy) {
     if (!missing.isEmpty()) {
         if (connectedFound.isEmpty()) {
             throw new StopExecutionException("Could not locate Connected APK to extract test resources from")
+        }
+        RHMIClassicSourcesTest.each { sourceFile ->
+            from({zipTree(connectedClassicFound[0])}) {
+                include "assets/carapplications/${sourceFile.key}"
+                eachFile { it.relativePath = new RelativePath(true, sourceFile.value)}
+            }
         }
         RHMISourcesTest.each { sourceFile ->
             from({zipTree(connectedFound[0])}) {
@@ -335,14 +347,15 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.4'
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'android.arch.lifecycle:extensions:1.1.1'
-    implementation 'android.arch.lifecycle:viewmodel:1.1.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.2.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.github.wax911:android-emojify:1.5.3'
     implementation project(path: ':spotify-app-remote')
     implementation "com.google.code.gson:gson:2.8.6"
@@ -354,13 +367,13 @@ dependencies {
     implementation 'com.adamratzman:spotify-api-kotlin:3.2.14'
 
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    testImplementation "org.mockito:mockito-core:2.23.4"
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    testImplementation "org.mockito:mockito-core:2.28.2"
     testImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     testImplementation 'org.awaitility:awaitility-scala:3.1.5'
     testImplementation 'org.json:json:20180813'
-    androidTestImplementation "org.mockito:mockito-android:2.18.3"
+    androidTestImplementation "org.mockito:mockito-android:2.28.2"
     androidTestImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
     implementation project(path: ':IDriveConnectKitAndroid')
@@ -371,11 +384,9 @@ dependencies {
     androidTestImplementation "org.bouncycastle:bcmail-jdk16:1.46"
 
     implementation 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
-    gmapImplementation 'com.google.android.gms:play-services-maps:16.0.0'
-    gmapImplementation 'com.google.android.gms:play-services-location:16.0.0'
-    gmapImplementation 'com.google.android.libraries.places:places:1.1.0'
-    gmapImplementation 'com.android.support:cardview-v7:28.0.0'
-    gmapImplementation 'com.android.support:recyclerview-v7:28.0.0'
+    gmapImplementation 'com.google.android.gms:play-services-maps:17.0.0'
+    gmapImplementation 'com.google.android.gms:play-services-location:17.1.0'
+    gmapImplementation 'com.google.android.libraries.places:places:2.4.0'
     gmapImplementation 'com.google.maps:google-maps-services:0.1.20'
 
     sentryImplementation 'io.sentry:sentry-android:1.7.16'

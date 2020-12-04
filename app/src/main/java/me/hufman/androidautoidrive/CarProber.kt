@@ -7,7 +7,7 @@ import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CertMangling
-import me.hufman.idriveconnectionkit.android.IDriveConnectionListener
+import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import java.io.IOException
 import java.net.Socket
@@ -42,7 +42,7 @@ class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray, val 
 		if (!pingCar()) {
 			// car has disconnected
 			Log.i(TAG, "Previously-connected car has disconnected")
-			IDriveConnectionListener.reset()
+			IDriveConnectionStatus.reset()
 			schedule(5000)
 		}
 
@@ -55,7 +55,7 @@ class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray, val 
 	}
 
 	fun schedule(delay: Long) {
-		if (!IDriveConnectionListener.isConnected || carConnection == null) {
+		if (!IDriveConnectionStatus.isConnected || carConnection == null) {
 			handler?.removeCallbacks(ProberTask)
 			handler?.postDelayed(ProberTask, delay)
 		} else {
@@ -145,6 +145,6 @@ class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray, val 
 
 	private fun setConnectedState(port: Int, brand: String) {
 		Log.i(TAG, "Successfully detected $brand connection at port $port")
-		IDriveConnectionListener.setConnection(brand, "127.0.0.1", port)
+		IDriveConnectionStatus.setConnection(brand, "127.0.0.1", port)
 	}
 }
