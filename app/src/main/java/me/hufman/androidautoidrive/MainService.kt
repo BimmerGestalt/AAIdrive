@@ -41,6 +41,7 @@ class MainService: Service() {
 
 	var foregroundNotification: Notification? = null
 
+	val appSettings = MutableAppSettingsReceiver(this)
 	val securityAccess = SecurityAccess.getInstance(this)
 	val iDriveConnectionReceiver = IDriveConnectionReceiver()   // start listening to car connection, if the AndroidManifest listener didn't start
 	val carProberThread by lazy {
@@ -105,6 +106,10 @@ class MainService: Service() {
 	private fun handleActionStart() {
 		Log.i(TAG, "Starting up service")
 		createNotificationChannel()
+		// subscribe to configuration changes
+		appSettings.callback = {
+			combinedCallback()
+		}
 		// set up connection listeners
 		securityAccess.listener = Runnable {
 			combinedCallback()
@@ -278,7 +283,7 @@ class MainService: Service() {
 	}
 
 	fun startNotifications(): Boolean {
-		val enabled = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
+		val enabled = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
 				Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true
 		if (enabled) {
 			synchronized(this) {
@@ -423,6 +428,7 @@ class MainService: Service() {
 		Log.i(TAG, "Shutting down service")
 		synchronized(MainService::class.java) {
 			stopCarApps()
+			appSettings.callback = null
 			securityAccess.listener = Runnable {}
 			securityServiceThread.disconnect()
 		}

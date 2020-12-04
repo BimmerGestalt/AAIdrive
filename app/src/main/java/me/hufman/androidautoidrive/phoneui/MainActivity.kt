@@ -91,11 +91,7 @@ class MainActivity : AppCompatActivity() {
 			val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
 			if (ageOfActivity > SECURITY_SERVICE_TIMEOUT && (!hasNotificationPermission() || !UIState.notificationListenerConnected)) {
 				promptNotificationPermission()
-			} else {
-				startMainService()
 			}
-		} else {
-			startMainService()
 		}
 	}
 
@@ -113,11 +109,7 @@ class MainActivity : AppCompatActivity() {
 			// make sure we have permissions to show current location
 			if (!hasLocationPermission()) {
 				promptForLocation()
-			} else {
-				startMainService()
 			}
-		} else {
-			startMainService()
 		}
 	}
 
@@ -138,7 +130,7 @@ class MainActivity : AppCompatActivity() {
 		redraw()
 
 		// try starting the service, to try connecting to the car with current app settings
-		// for example, after we resume from enabling the notification
+		// changes to settings are picked up automatically by the service
 		startMainService()
 	}
 
