@@ -6,11 +6,13 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.spotify.authentication.AuthorizationActivity
+import me.hufman.androidautoidrive.phoneui.visible
 
 class SpotifyApiErrorDialog: DialogFragment() {
 	companion object {

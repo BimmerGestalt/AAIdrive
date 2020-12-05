@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.*
-import android.support.customtabs.CustomTabsIntent
+import androidx.browser.customtabs.CustomTabsIntent
 import android.util.Log
 import com.adamratzman.spotify.SpotifyScope
 import com.adamratzman.spotify.getSpotifyPkceCodeChallenge
