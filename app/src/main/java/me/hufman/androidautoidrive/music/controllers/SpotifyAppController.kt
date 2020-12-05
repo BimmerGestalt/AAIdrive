@@ -90,7 +90,11 @@ class SpotifyAppController(val context: Context, val remote: SpotifyAppRemote, v
 				override fun onConnected(remote: SpotifyAppRemote?) {
 					if (remote != null) {
 						Log.i(TAG, "Successfully connected to Spotify Remote")
-						pendingController.value = SpotifyAppController(context, remote, SpotifyWebApi.getInstance(context))
+
+						val spotifyWebApi = SpotifyWebApi.getInstance(context)
+						spotifyWebApi.isUsingSpotify = true
+
+						pendingController.value = SpotifyAppController(context, remote, spotifyWebApi)
 
 						// if app discovery says we aren't able to connect, discover again
 						if (!appInfo.connectable) {

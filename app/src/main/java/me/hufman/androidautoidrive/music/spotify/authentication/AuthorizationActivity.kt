@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.*
 import androidx.browser.customtabs.CustomTabsIntent
 import android.util.Log
+import android.widget.Toast
 import com.adamratzman.spotify.SpotifyScope
 import com.adamratzman.spotify.getSpotifyPkceCodeChallenge
 import kotlinx.coroutines.runBlocking
@@ -55,6 +56,9 @@ class AuthorizationActivity: Activity() {
 	private lateinit var authService: AuthorizationService
 	private var authIntentLatch = CountDownLatch(1)
 	private lateinit var authStateManager: SpotifyAuthStateManager
+	private val scopes = listOf(
+			SpotifyScope.USER_MODIFY_PLAYBACK_STATE.uri
+	)
 
 	/**
 	 * Performs the authorization request
@@ -86,7 +90,6 @@ class AuthorizationActivity: Activity() {
 		Log.d(TAG, "Creating auth request")
 		val codeChallenge = getSpotifyPkceCodeChallenge(CODE_VERIFIER)
 		val codeChallengeMethod = "S256"
-		val oAuthScopes = listOf(SpotifyScope.USER_MODIFY_PLAYBACK_STATE.uri)
 		val clientId = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
 				.metaData.getString("com.spotify.music.API_KEY", "unavailable")
 		val authRequestBuilder = AuthorizationRequest.Builder(
@@ -94,7 +97,7 @@ class AuthorizationActivity: Activity() {
 				clientId,
 				ResponseTypeValues.CODE,
 				Uri.parse(SpotifyAppController.REDIRECT_URI))
-				.setScopes(oAuthScopes)
+				.setScopes(scopes)
 				.setCodeVerifier(CODE_VERIFIER, codeChallenge, codeChallengeMethod)
 		authRequest.set(authRequestBuilder.build())
 	}
@@ -191,6 +194,7 @@ class AuthorizationActivity: Activity() {
 	 */
 	private fun onAuthorizationCancelled() {
 		Log.d(TAG, "Authorization cancelled")
+		Toast.makeText(this, "Authorization canceled", Toast.LENGTH_SHORT).show()
 		finishActivityWithResult(AUTHORIZATION_CANCELED)
 	}
 
@@ -199,6 +203,7 @@ class AuthorizationActivity: Activity() {
 	 */
 	private fun onAuthorizationFailed() {
 		Log.d(TAG, "Authorization failed. No authorization state retained - reauthorization required")
+		Toast.makeText(this, "Authorization failed", Toast.LENGTH_SHORT).show()
 		finishActivityWithResult(AUTHORIZATION_FAILED)
 	}
 
@@ -208,6 +213,7 @@ class AuthorizationActivity: Activity() {
 	 */
 	private fun onAuthorizationRefused(error: String?) {
 		Log.d(TAG, "Authorization refused with the error: $error")
+		Toast.makeText(this, "Authorization refused", Toast.LENGTH_SHORT).show()
 		finishActivityWithResult(AUTHORIZATION_REFUSED)
 	}
 
@@ -219,7 +225,7 @@ class AuthorizationActivity: Activity() {
 		Log.d(TAG, "Authorization process completed successfully. AuthState updated")
 		clearNotAuthorizedNotification()
 		SpotifyWebApi.getInstance(this).initializeWebApi()
-
+		Toast.makeText(this, "Authorized successful", Toast.LENGTH_SHORT).show()
 		finishActivityWithResult(AUTHORIZATION_SUCCESS)
 	}
 

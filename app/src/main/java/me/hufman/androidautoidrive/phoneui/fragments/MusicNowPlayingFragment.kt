@@ -106,13 +106,12 @@ class MusicNowPlayingFragment: Fragment() {
 		seekProgress.progress = (position.getPosition() / 1000).toInt()
 		seekProgress.max = (position.maximumPosition / 1000).toInt()
 
-		// show any spotify app remote errors
+		// show any Spotify errors
 		val fragmentManager = activity?.supportFragmentManager
 		val spotifyError = musicController.connectors.filterIsInstance<SpotifyAppController.Connector>().firstOrNull()?.lastError
-
 		val isWebApiAuthorized = spotifyWebApi.isAuthorized()
 
-		if (fragmentManager != null && (spotifyError != null || (SpotifyWebApi.isUsingSpotify && !isWebApiAuthorized))) {
+		if (fragmentManager != null && (spotifyError != null || (spotifyWebApi.isUsingSpotify && !isWebApiAuthorized))) {
 			imgError.visible = true
 			imgError.setOnClickListener {
 				val arguments = Bundle().apply {

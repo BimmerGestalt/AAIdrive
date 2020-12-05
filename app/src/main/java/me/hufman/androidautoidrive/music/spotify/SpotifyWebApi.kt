@@ -27,8 +27,7 @@ class SpotifyWebApi private constructor(val context: Context) {
 	companion object {
 		const val TAG = "SpotifyWebApi"
 
-		var isUsingSpotify = false
-		var webApiInstance: SpotifyWebApi? = null
+		private var webApiInstance: SpotifyWebApi? = null
 
 		/**
 		 * Retrieves the current [SpotifyWebApi] instance, creating one if it there are no instances
@@ -46,9 +45,10 @@ class SpotifyWebApi private constructor(val context: Context) {
 	private var webApi: SpotifyClientAPI? = null
 
 	private val authStateManager: SpotifyAuthStateManager
+	var isUsingSpotify: Boolean = false
 
 	init {
-		isUsingSpotify = true
+		Log.d(TAG, "Initializing for the first time")
 		authStateManager = SpotifyAuthStateManager.getInstance(context)
 		initializeWebApi()
 	}
