@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.music
+package me.hufman.androidautoidrive.music.spotify
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

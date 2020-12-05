@@ -18,6 +18,8 @@ import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
+import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
+import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import java.util.*
 
 //todo: remove context val declaration after removing Toast debug

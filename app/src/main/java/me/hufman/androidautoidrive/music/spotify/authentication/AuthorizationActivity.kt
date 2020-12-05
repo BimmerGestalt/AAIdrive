@@ -11,7 +11,7 @@ import android.util.Log
 import com.adamratzman.spotify.SpotifyScope
 import com.adamratzman.spotify.getSpotifyPkceCodeChallenge
 import kotlinx.coroutines.runBlocking
-import me.hufman.androidautoidrive.music.SpotifyWebApi
+import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import net.openid.appauth.*
 import net.openid.appauth.browser.BrowserWhitelist
