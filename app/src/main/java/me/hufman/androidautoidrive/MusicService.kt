@@ -37,7 +37,7 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 	fun start(): Boolean {
 
 		synchronized(this) {
-			if (threadMusic == null) {
+			if (threadMusic?.isAlive != true) {
 				threadMusic = CarThread("Music") {
 					// make sure bluetooth volume is set to max
 					btConnectionCallback.register()
@@ -111,15 +111,13 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 	fun stop() {
 		btConnectionCallback.unregister()
 
-		val handler = threadMusic?.handler
-		handler?.post {
+		threadMusic?.post {
 			navigationTriggerReceiver?.unregister(context)
 			carappMusic?.musicController?.disconnectApp(pause=false)
 			carappMusic?.musicAppDiscovery?.cancelDiscovery()
 			carappMusic = null
-
-			handler.looper?.quitSafely()
 		}
+		threadMusic?.quitSafely()
 		threadMusic = null
 	}
 

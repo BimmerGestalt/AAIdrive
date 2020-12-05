@@ -44,12 +44,7 @@ class MainService: Service() {
 	val appSettings = MutableAppSettingsReceiver(this)
 	val securityAccess = SecurityAccess.getInstance(this)
 	val iDriveConnectionReceiver = IDriveConnectionReceiver()   // start listening to car connection, if the AndroidManifest listener didn't start
-	val carProberThread by lazy {
-		CarProber(securityAccess,
-			CarAppAssetManager(this, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
-			CarAppAssetManager(this, "smartthings").getAppCertificateRaw("mini")!!.readBytes()
-		)
-	}
+	var carProberThread: CarProber? = null
 
 	val securityServiceThread = SecurityServiceThread(securityAccess)
 
@@ -96,7 +91,7 @@ class MainService: Service() {
 		} catch (e: IllegalArgumentException) {
 			// never started?
 		}
-		carProberThread.quitSafely()
+		carProberThread?.quitSafely()
 		super.onDestroy()
 	}
 
@@ -125,11 +120,7 @@ class MainService: Service() {
 		// start up car connection listener
 		announceCarAPI()
 		iDriveConnectionReceiver.subscribe(this)
-		if (!carProberThread.isAlive) {
-			carProberThread.start()
-		} else {
-			carProberThread.schedule(1000)
-		}
+		startCarProber()
 	}
 
 	private fun createNotificationChannel() {
@@ -156,6 +147,17 @@ class MainService: Service() {
 				appIcon = null
 		)
 		CarAPIDiscovery.announceApp(this, myApp)
+	}
+
+	private fun startCarProber() {
+		if (carProberThread?.isAlive != true) {
+			carProberThread = CarProber(securityAccess,
+				CarAppAssetManager(this, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
+				CarAppAssetManager(this, "smartthings").getAppCertificateRaw("mini")!!.readBytes()
+			).apply { start() }
+		} else {
+			carProberThread?.schedule(1000)
+		}
 	}
 
 	private fun startServiceNotification(brand: String?, chassisCode: ChassisCode?) {
@@ -278,7 +280,7 @@ class MainService: Service() {
 	fun stopCarCapabilities() {
 		carappCapabilities?.onDestroy()
 		carappCapabilities = null
-		threadCapabilities?.handler?.looper?.quitSafely()
+		threadCapabilities?.quitSafely()
 		threadCapabilities = null
 	}
 
@@ -287,7 +289,7 @@ class MainService: Service() {
 				Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true
 		if (enabled) {
 			synchronized(this) {
-				if (carCapabilities.isNotEmpty() && threadNotifications == null) {
+				if (carCapabilities.isNotEmpty() && threadNotifications?.isAlive != true) {
 					threadNotifications = CarThread("Notifications") {
 						Log.i(TAG, "Starting notifications app")
 						val handler = threadNotifications?.handler
@@ -309,11 +311,14 @@ class MainService: Service() {
 						// request an initial draw
 						sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
 
-						// start up the readout app
-						val carappReadout = ReadoutApp(iDriveConnectionReceiver, securityAccess,
-								CarAppAssetManager(this, "news"))
-						carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
-						this.carappReadout = carappReadout
+						handler?.post {
+							// start up the readout app
+							// using a handler to automatically handle shutting down during init
+							val carappReadout = ReadoutApp(iDriveConnectionReceiver, securityAccess,
+									CarAppAssetManager(this, "news"))
+							carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
+							this.carappReadout = carappReadout
+						}
 					}
 					threadNotifications?.start()
 				}
@@ -329,12 +334,16 @@ class MainService: Service() {
 	}
 
 	fun stopNotifications() {
-		carappReadout?.onDestroy()
-		carappReadout = null
 		carappNotifications?.notificationSettings?.btStatus?.unregister()
 		carappNotifications?.onDestroy(this)
 		carappNotifications = null
-		threadNotifications?.handler?.looper?.quitSafely()
+		carappReadout?.onDestroy()
+		carappReadout = null
+		// if we caught it during initialization, kill it again
+		threadNotifications?.post {
+			stopNotifications()
+		}
+		threadNotifications?.quitSafely()
 		threadNotifications = null
 	}
 
@@ -380,7 +389,7 @@ class MainService: Service() {
 	fun stopAssistant() {
 		carappAssistant?.onDestroy()
 		carappAssistant = null
-		threadAssistant?.handler?.looper?.quitSafely()
+		threadAssistant?.quitSafely()
 		threadAssistant = null
 	}
 
