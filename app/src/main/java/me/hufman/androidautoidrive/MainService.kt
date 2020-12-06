@@ -42,11 +42,11 @@ class MainService: Service() {
 	var foregroundNotification: Notification? = null
 
 	val appSettings = MutableAppSettingsReceiver(this)
-	val securityAccess = SecurityAccess.getInstance(this)
+	val securityAccess by lazy { SecurityAccess.getInstance(this) }
 	val iDriveConnectionReceiver = IDriveConnectionReceiver()   // start listening to car connection, if the AndroidManifest listener didn't start
 	var carProberThread: CarProber? = null
 
-	val securityServiceThread = SecurityServiceThread(securityAccess)
+	val securityServiceThread by lazy { SecurityServiceThread(securityAccess) }
 
 	var threadCapabilities: CarThread? = null
 	var carappCapabilities: CarInformationDiscovery? = null
@@ -56,7 +56,7 @@ class MainService: Service() {
 	var carappNotifications: PhoneNotifications? = null
 	var carappReadout: ReadoutApp? = null
 
-	var mapService = MapService(this, iDriveConnectionReceiver, securityAccess)
+	var mapService: MapService? = null
 
 	var musicService: MusicService? = null
 
@@ -106,7 +106,7 @@ class MainService: Service() {
 			combinedCallback()
 		}
 		// set up connection listeners
-		securityAccess.listener = Runnable {
+		securityAccess.callback = {
 			combinedCallback()
 		}
 		iDriveConnectionReceiver.callback = {
@@ -348,11 +348,15 @@ class MainService: Service() {
 	}
 
 	fun startMaps(): Boolean {
-		return mapService.start()
+		if (mapService == null) {
+			mapService = MapService(this, iDriveConnectionReceiver, securityAccess)
+		}
+		return mapService?.start() ?: false
 	}
 
 	fun stopMaps() {
-		mapService.stop()
+		mapService?.stop()
+		mapService = null
 	}
 
 	fun startMusic(): Boolean {
@@ -438,7 +442,6 @@ class MainService: Service() {
 		synchronized(MainService::class.java) {
 			stopCarApps()
 			appSettings.callback = null
-			securityAccess.listener = Runnable {}
 			securityServiceThread.disconnect()
 		}
 	}
