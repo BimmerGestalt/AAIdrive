@@ -9,14 +9,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_connection_status.*
+import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.connections.CarConnectionDebugging
-import me.hufman.androidautoidrive.phoneui.DebugStatus
 import me.hufman.androidautoidrive.phoneui.visible
 
 class ConnectionStatusFragment: Fragment() {
 	val connectionDebugging by lazy {
-		CarConnectionDebugging(requireContext()) { requireActivity().runOnUiThread { redraw() } }
+		CarConnectionDebugging(requireContext()) { activity?.runOnUiThread { redraw() } }
+	}
+	val carInformationObserver = CarInformationObserver {
+		activity?.runOnUiThread { redraw() }
 	}
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -125,7 +128,7 @@ class ConnectionStatusFragment: Fragment() {
 			getString(R.string.txt_setup_bcl_connected_transport, connectionDebugging.bclTransport)
 
 		paneCarConnected.visible = connectionDebugging.idriveListener.isConnected
-		val chassisCode = ChassisCode.fromCode(DebugStatus.carCapabilities["vehicle.type"] ?: "Unknown")
+		val chassisCode = ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown")
 		txtCarConnected.text = if (chassisCode != null) {
 			resources.getString(R.string.notification_description_chassiscode, chassisCode.toString())
 		} else {

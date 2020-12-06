@@ -48,9 +48,9 @@ class MainService: Service() {
 
 	val securityServiceThread by lazy { SecurityServiceThread(securityAccess) }
 
+	val carInformationObserver = CarInformationObserver()
 	var threadCapabilities: CarThread? = null
 	var carappCapabilities: CarInformationDiscovery? = null
-	var carCapabilities: Map<String, String?> = mapOf()
 
 	var threadNotifications: CarThread? = null
 	var carappNotifications: PhoneNotifications? = null
@@ -121,6 +121,10 @@ class MainService: Service() {
 		announceCarAPI()
 		iDriveConnectionReceiver.subscribe(this)
 		startCarProber()
+		// start some more services as the capabilities are known
+		carInformationObserver.callback = {
+			combinedCallback()
+		}
 	}
 
 	private fun createNotificationChannel() {
@@ -212,9 +216,12 @@ class MainService: Service() {
 				// start assistant
 				startAny = startAny or startAssistant()
 
+				// start navigation handler
+				startNavigationListener()
+
 				// check if we are idle and should shut down
 				if (startAny ){
-					startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carCapabilities["vehicle.type"] ?: "Unknown"))
+					startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
 				} else {
 					Log.i(TAG, "No apps are enabled, skipping the service start")
 					stopServiceNotification()
@@ -229,14 +236,12 @@ class MainService: Service() {
 				stopCarApps()
 			}
 		}
-		sendBroadcast(Intent(MainActivity.INTENT_REDRAW))   // tell the UI we are connected
 	}
 
 	fun startCarCapabilities() {
 		synchronized(this) {
 			if (threadCapabilities == null) {
 				// clear the capabilities to not start dependent services until it's ready
-				carCapabilities = emptyMap()
 				threadCapabilities = CarThread("Capabilities") {
 					Log.i(TAG, "Starting to discover car capabilities")
 
@@ -244,23 +249,12 @@ class MainService: Service() {
 							CarAppAssetManager(this, "smartthings"),
 							object: CarInformationDiscoveryListener {
 						override fun onCapabilities(capabilities: Map<String, String?>) {
-							synchronized(DebugStatus.carCapabilities) {
-								DebugStatus.carCapabilities.clear()
-								DebugStatus.carCapabilities.putAll(capabilities.mapValues { it.value ?: "null" })
-							}
-							SetupActivity.redraw(this@MainService)
+							// update the known capabilities
+							// which triggers a callback to start more service modules
+							carInformationObserver.capabilities = capabilities.mapValues { it.value ?: "" }
+
 							// update the notification
-							carCapabilities = capabilities
-							startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carCapabilities["vehicle.type"] ?: "Unknown"))
-
-							// now that we have capabilities, start up the music app
-							startMusic()
-
-							// also start Notifications
-							startNotifications()
-
-							// enable navigation listener, if supported
-							startNavigationListener()
+							startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
 						}
 
 						override fun onCdsProperty(propertyName: String, propertyValue: String, parsedValue: JSONObject?) {
@@ -289,14 +283,14 @@ class MainService: Service() {
 				Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true
 		if (enabled) {
 			synchronized(this) {
-				if (carCapabilities.isNotEmpty() && threadNotifications?.isAlive != true) {
+				if (carInformationObserver.capabilities.isNotEmpty() && threadNotifications?.isAlive != true) {
 					threadNotifications = CarThread("Notifications") {
 						Log.i(TAG, "Starting notifications app")
 						val handler = threadNotifications?.handler
 						if (handler == null) {
 							Log.e(TAG, "CarThread Handler is null?")
 						}
-						val notificationSettings = NotificationSettings(carCapabilities, BtStatus(this) {}, MutableAppSettingsReceiver(this, handler))
+						val notificationSettings = NotificationSettings(carInformationObserver.capabilities, BtStatus(this) {}, MutableAppSettingsReceiver(this, handler))
 						notificationSettings.btStatus.register()
 						carappNotifications = PhoneNotifications(iDriveConnectionReceiver, securityAccess,
 								CarAppAssetManager(this, "basecoreOnlineServices"),
@@ -360,9 +354,9 @@ class MainService: Service() {
 	}
 
 	fun startMusic(): Boolean {
-		if (carCapabilities.isNotEmpty() && musicService == null) {
+		if (carInformationObserver.capabilities.isNotEmpty() && musicService == null) {
 			musicService = MusicService(this, iDriveConnectionReceiver, securityAccess,
-					MusicAppMode.build(carCapabilities, this))
+					MusicAppMode.build(carInformationObserver.capabilities, this))
 			musicService?.start()
 		}
 		return true
@@ -398,7 +392,7 @@ class MainService: Service() {
 	}
 
 	fun startNavigationListener() {
-		if (carCapabilities["navi"] == "true") {
+		if (carInformationObserver.capabilities["navi"] == "true") {
 			if (iDriveConnectionReceiver.brand?.toLowerCase() == "bmw") {
 				packageManager.setComponentEnabledSetting(
 						ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityBMW"),

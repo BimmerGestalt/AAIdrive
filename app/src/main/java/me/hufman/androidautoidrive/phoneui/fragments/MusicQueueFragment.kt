@@ -94,18 +94,18 @@ class MusicQueueFragment: Fragment() {
 
 			listQueue.removeAllViews()
 			listQueue.adapter?.notifyDataSetChanged()
-		}
 
-		val coverArtImage = currentQueueMetadata?.coverArt
-		if (coverArtImage != null) {
-			queueCoverArt.setImageBitmap(coverArtImage)
-		}
-		else {
-			queueCoverArt.setImageBitmap(placeholderCoverArt)
-		}
+			val coverArtImage = currentQueueMetadata?.coverArt
+			if (coverArtImage != null) {
+				queueCoverArt.setImageBitmap(coverArtImage)
+			}
+			else {
+				queueCoverArt.setImageBitmap(placeholderCoverArt)
+			}
 
-		queueTitle.text = currentQueueMetadata?.title
-		queueSubtitle.text = currentQueueMetadata?.subtitle
+			queueTitle.text = currentQueueMetadata?.title
+			queueSubtitle.text = currentQueueMetadata?.subtitle
+		}
 	}
 
 	inner class QueueAdapter(val context: Context, val contents: ArrayList<MusicMetadata>, val clickListener: (MusicMetadata?) -> Unit): RecyclerView.Adapter<QueueAdapter.ViewHolder>() {

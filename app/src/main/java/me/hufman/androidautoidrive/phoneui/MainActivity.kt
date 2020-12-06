@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import java.lang.IllegalStateException
 import kotlinx.android.synthetic.main.activity_main.*
 import me.hufman.androidautoidrive.*
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
 	val handler = Handler()
 	val appSettings by lazy { MutableAppSettingsReceiver(this) }
 	val idriveConnectionObserver = IDriveConnectionObserver()
+	val carInformationObserver = CarInformationObserver()
 	val redrawListener = RedrawListener()
 	val redrawTask = RedrawTask()
 
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 		setContentView(R.layout.activity_main)
 
 		idriveConnectionObserver.callback = { runOnUiThread { redraw() } }
+		carInformationObserver.callback = { runOnUiThread { redraw() }}
 		swMessageNotifications.setOnCheckedChangeListener { buttonView, isChecked ->
 			if (buttonView != null) onChangedSwitchNotifications(buttonView, isChecked)
 			redraw()
@@ -135,6 +138,10 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	fun redraw() {
+		if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+			return
+		}
+
 		val ageOfActivity = System.currentTimeMillis() - whenActivityStarted
 
 		// reset the Notification setting to false if we don't have permission
@@ -160,7 +167,7 @@ class MainActivity : AppCompatActivity() {
 			txtConnectionStatus.text = resources.getString(R.string.connectionStatusWaiting)
 			txtConnectionStatus.setBackgroundColor(resources.getColor(R.color.connectionWaiting, null))
 		} else {
-			val chassisCode = ChassisCode.fromCode(DebugStatus.carCapabilities["vehicle.type"] ?: "Unknown")
+			val chassisCode = ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown")
 			txtConnectionStatus.text = if (chassisCode != null) {
 				resources.getString(R.string.notification_description_chassiscode, chassisCode.toString())
 			} else {

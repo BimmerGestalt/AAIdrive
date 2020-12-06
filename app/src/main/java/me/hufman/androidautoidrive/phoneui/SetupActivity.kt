@@ -11,10 +11,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_setup.*
-import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.BuildConfig
-import me.hufman.androidautoidrive.MutableAppSettingsReceiver
-import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.*
 import java.text.SimpleDateFormat
 import java.util.*
 

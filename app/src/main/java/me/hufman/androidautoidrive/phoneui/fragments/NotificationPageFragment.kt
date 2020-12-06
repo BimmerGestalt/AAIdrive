@@ -94,6 +94,11 @@ class NotificationPageFragment: Fragment() {
 		}
 	}
 
+	override fun onResume() {
+		super.onResume()
+		redraw()
+	}
+
 	fun hasSMSPermission(): Boolean {
 		return (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED)
 	}
