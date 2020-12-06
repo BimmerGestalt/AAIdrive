@@ -76,10 +76,10 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 
 	private fun showSong(song: MusicMetadata) {
 		// show in the sidebar
-		val trackModel = multimediaInfoEvent.getTextModel1()?.asRaDataModel()
-		val artistModel = multimediaInfoEvent.getTextModel2()?.asRaDataModel()
-		trackModel?.value = UnicodeCleaner.clean(song.title ?: "")
+		val artistModel = multimediaInfoEvent.getTextModel1()?.asRaDataModel()
+		val trackModel = multimediaInfoEvent.getTextModel2()?.asRaDataModel()
 		artistModel?.value = UnicodeCleaner.clean(song.artist ?: "")
+		trackModel?.value = UnicodeCleaner.clean(song.title ?: "")
 
 		// show in the IC
 		instrumentCluster.getTextModel()?.asRaDataModel()?.value = UnicodeCleaner.clean(song.title ?: "")
