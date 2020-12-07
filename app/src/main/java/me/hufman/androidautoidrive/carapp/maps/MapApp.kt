@@ -21,6 +21,7 @@ import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
+import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.min
@@ -147,7 +148,9 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 		frameUpdater.start(handler)
 	}
 	fun onDestroy(context: Context) {
-		context.unregisterReceiver(mapResultsUpdater)
+		try {
+			context.unregisterReceiver(mapResultsUpdater)
+		} catch (e: IllegalArgumentException) {}
 		try {
 			IDriveConnection.disconnectEtchConnection(carConnection)
 		} catch (e: java.lang.Exception) {}

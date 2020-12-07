@@ -16,22 +16,24 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 		const val BCL_REDRAW_DEBOUNCE = 100
 	}
 
-	val securityAccess = SecurityAccess.getInstance(context)
+	val securityAccess = SecurityAccess.getInstance(context).also {
+		it.callback = callback
+	}
 	val idriveListener = IDriveConnectionObserver()
 
 	val isConnectedInstalled
-		get() = securityAccess.installedSecurityServices.isNotEmpty()
+		get() = SecurityAccess.installedSecurityServices.isNotEmpty()
 
 	val isConnectedSecurityConnected
 		get() = securityAccess.isConnected()
 
 	val isBMWConnectedInstalled
-		get() = securityAccess.installedSecurityServices.any {
+		get() = SecurityAccess.installedSecurityServices.any {
 			it.name.startsWith("BMW")
 		}
 
 	val isMiniConnectedInstalled
-		get() = securityAccess.installedSecurityServices.any {
+		get() = SecurityAccess.installedSecurityServices.any {
 			it.name.startsWith("Mini")
 		}
 

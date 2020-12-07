@@ -44,8 +44,8 @@ class MusicAppTest {
 		const val MULTIMEDIA_EVENT = 576
 		const val STATUSBAR_EVENT = 577
 		const val GLOBAL_IMAGEID_MODEL = 565
-		const val GLOBAL_TRACK_MODEL = 569
-		const val GLOBAL_ARTIST_MODEL = 570
+		const val GLOBAL_ARTIST_MODEL = 569
+		const val GLOBAL_TRACK_MODEL = 570
 		const val GLOBAL_APP_MODEL = 571
 		const val IC_TRACK_MODEL = 539
 		const val IC_PLAYLIST_MODEL = 534

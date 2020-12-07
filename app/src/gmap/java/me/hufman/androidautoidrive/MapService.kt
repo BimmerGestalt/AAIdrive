@@ -38,7 +38,7 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 				ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
 				== PackageManager.PERMISSION_GRANTED) {
 			synchronized(this) {
-				if (threadGMaps == null) {
+				if (threadGMaps?.isAlive != true) {
 					threadGMaps = CarThread("GMaps") {
 						Log.i(MainService.TAG, "Starting GMaps")
 						val mapScreenCapture = VirtualDisplayScreenCapture.build()
@@ -51,13 +51,14 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 						mapListener.onCreate()
 						this.mapListener = mapListener
 
-						mapApp = MapApp(iDriveConnectionStatus, securityAccess,
+						val mapApp = MapApp(iDriveConnectionStatus, securityAccess,
 								CarAppAssetManager(context, "smartthings"),
 								AppSettingsViewer(),
 								MapInteractionControllerIntent(context), mapScreenCapture)
+						this.mapApp = mapApp
 						val handler = threadGMaps?.handler
 						if (handler != null) {
-							mapApp?.onCreate(context, handler)
+							mapApp.onCreate(context, handler)
 						}
 					}
 					threadGMaps?.start()
@@ -74,20 +75,23 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 	}
 
 	fun stop() {
-		threadGMaps?.handler?.post {
-			mapApp?.onDestroy(context)
-			mapListener?.onDestroy()
-			mapScreenCapture?.onDestroy()
-			virtualDisplay?.release()
-			threadGMaps?.handler?.looper?.quitSafely()
+		mapScreenCapture?.onDestroy()
+		virtualDisplay?.release()
+		// nothing to stop in mapController
+		mapListener?.onDestroy()
+		mapApp?.onDestroy(context)
 
-			mapApp = null
-			mapController = null
-			mapListener = null
-			mapScreenCapture = null
-			virtualDisplay = null
+		mapScreenCapture = null
+		virtualDisplay = null
+		mapController = null
+		mapListener = null
+		mapApp = null
+
+		// if we caught it during initialization, kill it again
+		threadGMaps?.post {
+			stop()
 		}
-
+		threadGMaps?.quitSafely()
 		threadGMaps = null
 	}
 }
