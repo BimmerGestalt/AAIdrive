@@ -11,10 +11,7 @@ import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.*
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.R
@@ -238,8 +235,10 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		// getting liked songs library through the Web API is slow, offloadng this work into a coroutine
 		launch {
 			queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
-			queueMetadata = QueueMetadata("Liked Songs", null, queueItems)
-			loadQueueCoverart()
+			if (queueItems.isNotEmpty()) {
+				queueMetadata = QueueMetadata("Liked Songs", null, queueItems)
+				loadQueueCoverart()
+			}
 			callback?.invoke(this@SpotifyAppController)
 		}
 	}
