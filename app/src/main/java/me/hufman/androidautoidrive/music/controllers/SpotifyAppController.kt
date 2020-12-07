@@ -7,12 +7,14 @@ import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.util.Log
 import android.util.LruCache
-import android.widget.Toast
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.*
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.R
@@ -21,9 +23,12 @@ import me.hufman.androidautoidrive.music.PlaybackPosition
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
-//todo: remove context val declaration after removing Toast debug
-class SpotifyAppController(val context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController {
+class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController, CoroutineScope {
+	override val coroutineContext: CoroutineContext
+		get() = Dispatchers.Main
+
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
@@ -143,6 +148,14 @@ class SpotifyAppController(val context: Context, val remote: SpotifyAppRemote, v
 	var queueMetadata: QueueMetadata? = null
 	val coverArtCache = LruCache<ImageUri, Bitmap>(50)
 
+	//TODO: if liked songs queue then use Web API to play specific song
+	//  - create a dummy playlist (if the sharedPreferences doesn't contain the playlistId) and
+	//  store playlistId to sharedPreferences, otherwise look for the preexisting one to use
+	//	- create QueueMetadata using WebAPI call to ensure that album art images are retrieved
+	//  - clear out the dummy playlist through replacing items with the "liked songs" songs
+	//  - start playing dummy playlist
+	//  - when playlistSubscription callback fires for the dummy playlist do not update QueueMetadata
+
 	init {
 		spotifySubscription.setEventCallback { playerState ->
 			Log.d(TAG, "Heard an update from Spotify")
@@ -189,7 +202,12 @@ class SpotifyAppController(val context: Context, val remote: SpotifyAppRemote, v
 			if (queueUri != uri) {
 				queueUri = uri
 				queueItems = emptyList()
-				if (uri != null) {
+
+				val isLikedSongsPlaylist = playerContext.type == "your_library" || playerContext.type == "your_library_tracks"
+				if (isLikedSongsPlaylist) {
+					createLikedSongsQueueMetadata()
+				}
+				if (uri != null && queueItems.isEmpty()) {
 					val listItem = ListItem(uri, uri, null, playerContext.title, playerContext.subtitle, false, true)
 					loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
 						queueItems = it
@@ -213,6 +231,20 @@ class SpotifyAppController(val context: Context, val remote: SpotifyAppRemote, v
 	}
 
 	/**
+	 * Creates the [QueueMetadata] for the "Liked Songs" playlist using the Web API. If the web API is
+	 * not authorized then a [QueueMetadata] with an empty song list will be created.
+	 */
+	fun createLikedSongsQueueMetadata() {
+		// getting liked songs library through the Web API is slow, offloadng this work into a coroutine
+		launch {
+			queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
+			queueMetadata = QueueMetadata("Liked Songs", null, queueItems)
+			loadQueueCoverart()
+			callback?.invoke(this@SpotifyAppController)
+		}
+	}
+
+	/**
 	 * Retrieves the cover art Bitmap for the provided ImageUri. If it is present in the coverArtCache
 	 * then the Bitmap is returned otherwise the imagesApi is called to asynchronously add the cover
 	 * art Bitmap to the cache and returns null in the meantime.
@@ -230,8 +262,7 @@ class SpotifyAppController(val context: Context, val remote: SpotifyAppRemote, v
 	}
 
 	/**
-	 * Creates the QueueMetadata for the current queue containing the title, subtitle, queue songs,
-	 * and queue cover art.
+	 * Creates a new instance of the [QueueMetadata] with the queue cover art loaded.
 	 */
 	private fun loadQueueCoverart() {
 		val recentlyPlayedUri = "com.spotify.recently-played"
@@ -296,11 +327,6 @@ class SpotifyAppController(val context: Context, val remote: SpotifyAppRemote, v
 
 	override fun skipToNext() {
 		remote.playerApi.skipNext()
-
-		//TEST
-		val userId = webApi.getUserId()
-		Toast.makeText(context, userId, Toast.LENGTH_SHORT).show()
-		//END TEST
 	}
 
 	override fun seekTo(newPos: Long) {

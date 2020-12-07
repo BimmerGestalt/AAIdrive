@@ -54,10 +54,6 @@ class SpotifyApiErrorDialog: DialogFragment() {
 						webApiMsgTextView.text = getString(R.string.txt_spotify_api_authorization_failed)
 					}
 
-					AuthorizationActivity.AUTHORIZATION_REFUSED -> {
-						webApiMsgTextView.text = getString(R.string.txt_spotify_api_authorization_refused)
-					}
-
 					AuthorizationActivity.AUTHORIZATION_SUCCESS -> {
 						webApiMsgTextView.text = getString(R.string.txt_spotify_api_authorization_success)
 						authorizeButton.visible = false

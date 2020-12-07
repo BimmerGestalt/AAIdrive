@@ -25,7 +25,7 @@ import kotlin.random.Random
 /**
  * Authorization activity class that is used to perform the authorization and update the [AuthState]
  * with the authorization code. The activity will be closed once the process has either been
- * cancelled, refused, or succeeds.
+ * cancelled, failed, or succeeds.
  */
 class AuthorizationActivity: Activity() {
 	companion object {
@@ -37,7 +37,6 @@ class AuthorizationActivity: Activity() {
 		const val AUTHORIZATION_CANCELED = 1
 		const val AUTHORIZATION_SUCCESS = 0
 		const val AUTHORIZATION_FAILED = -1
-		const val AUTHORIZATION_REFUSED = -2
 
 		val CODE_VERIFIER = generateCodeVerifierString()
 
@@ -57,7 +56,8 @@ class AuthorizationActivity: Activity() {
 	private var authIntentLatch = CountDownLatch(1)
 	private lateinit var authStateManager: SpotifyAuthStateManager
 	private val scopes = listOf(
-			SpotifyScope.USER_MODIFY_PLAYBACK_STATE.uri
+			SpotifyScope.USER_MODIFY_PLAYBACK_STATE.uri,
+			SpotifyScope.USER_LIBRARY_READ.uri
 	)
 
 	/**
@@ -149,21 +149,16 @@ class AuthorizationActivity: Activity() {
 			data?.let { intent ->
 				val response = AuthorizationResponse.fromIntent(intent)
 				val ex = AuthorizationException.fromIntent(intent)
-
-				if (response != null || ex != null) {
-					authStateManager.updateAfterAuthorization(response, ex)
-				}
-
 				when {
 					response?.authorizationCode != null -> {
-						authStateManager.updateAfterAuthorization(response, ex)
+						authStateManager.updateAuthorizationResponse(response, ex)
 						onAuthorizationSucceed()
 					}
 					ex != null -> {
-						onAuthorizationRefused("Authorization flow failed: " + ex.message)
+						onAuthorizationFailed("Authorization flow failed: " + ex.message)
 					}
 					else -> {
-						onAuthorizationFailed()
+						onAuthorizationFailed("No authorization state retained - reauthorization required")
 					}
 				}
 			}
@@ -201,20 +196,10 @@ class AuthorizationActivity: Activity() {
 	/**
 	 * Authorized failed workflow. This is called if the authorization process failed.
 	 */
-	private fun onAuthorizationFailed() {
-		Log.d(TAG, "Authorization failed. No authorization state retained - reauthorization required")
+	private fun onAuthorizationFailed(error: String?) {
+		Log.d(TAG, "Authorization failed with the error: $error")
 		Toast.makeText(this, "Authorization failed", Toast.LENGTH_SHORT).show()
 		finishActivityWithResult(AUTHORIZATION_FAILED)
-	}
-
-	/**
-	 * Authorized refused workflow. This is called if the authorization request was refused by the Spotify
-	 * authentication server.
-	 */
-	private fun onAuthorizationRefused(error: String?) {
-		Log.d(TAG, "Authorization refused with the error: $error")
-		Toast.makeText(this, "Authorization refused", Toast.LENGTH_SHORT).show()
-		finishActivityWithResult(AUTHORIZATION_REFUSED)
 	}
 
 	/**
@@ -225,7 +210,7 @@ class AuthorizationActivity: Activity() {
 		Log.d(TAG, "Authorization process completed successfully. AuthState updated")
 		clearNotAuthorizedNotification()
 		SpotifyWebApi.getInstance(this).initializeWebApi()
-		Toast.makeText(this, "Authorized successful", Toast.LENGTH_SHORT).show()
+		Toast.makeText(this, "Authorization successful", Toast.LENGTH_SHORT).show()
 		finishActivityWithResult(AUTHORIZATION_SUCCESS)
 	}
 

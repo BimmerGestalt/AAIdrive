@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.SpotifyApiOptionsBuilder
 import com.adamratzman.spotify.SpotifyClientAPI
@@ -53,8 +54,35 @@ class SpotifyWebApi private constructor(val context: Context) {
 		initializeWebApi()
 	}
 
-	fun getUserId(): String? {
-		return webApi?.userId
+	var getLikedSongsAttempted: Boolean = false
+	var spotifyAppControllerCaller: SpotifyAppController? = null
+
+	fun getLikedSongs(spotifyAppController: SpotifyAppController): List<SpotifyMusicMetadata>?  {
+		if (webApi == null) {
+			getLikedSongsAttempted = true
+			spotifyAppControllerCaller = spotifyAppController
+			return emptyList()
+		}
+		try {
+			val likedSongs = webApi?.library?.getSavedTracks()?.getAllItems()?.complete()
+			return likedSongs?.map {
+				val track = it?.track
+				val mediaId = track?.uri?.id
+				val artists = track?.artists?.map { it.name }?.joinToString(", ")
+				val album = track?.album
+				val coverArtIndex = album?.images?.indexOfFirst { it.height == 300 } ?: 0
+				val imageUrl = album?.images?.get(coverArtIndex)?.url
+				val coverArtCode = imageUrl?.substring(imageUrl.lastIndexOf("/")+1)
+				val coverArtUri = "spotify:image:$coverArtCode"
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, album?.name, track?.name)
+			}
+		} catch (e: SpotifyException.AuthenticationException) {
+			authStateManager.addAccessTokenAuthorizationException(e)
+			createNotAuthorizedNotification()
+		} catch (e: SpotifyException) {
+			Toast.makeText(context, "ERROR: ${e.message}", Toast.LENGTH_LONG).show()
+		}
+		return null
 	}
 
 	/**
@@ -64,6 +92,10 @@ class SpotifyWebApi private constructor(val context: Context) {
 		webApi = createWebApiClient()
 		if (webApi != null) {
 			updateAuthStateWithAccessToken(webApi!!.token)
+		}
+		if (getLikedSongsAttempted) {
+			spotifyAppControllerCaller?.createLikedSongsQueueMetadata()
+			getLikedSongsAttempted = false
 		}
 	}
 
@@ -84,17 +116,17 @@ class SpotifyWebApi private constructor(val context: Context) {
 		val spotifyApiOptionsBuilder = SpotifyApiOptionsBuilder(
 				retryWhenRateLimited = false,
 				onTokenRefresh = {
-					Log.d(TAG, "Token refreshed - updating AuthState")
+					Log.d(TAG, "Updating AuthState with refreshed token")
 					updateAuthStateWithAccessToken(it.token)
 				})
 		val currentState = authStateManager.currentState
 		val accessToken = currentState.accessToken
 		if (accessToken != null) {
 			return try {
-				val expiration = currentState.accessTokenExpirationTime
+				val expirationIn = currentState.accessTokenExpirationTime?.minus(System.currentTimeMillis())?.div(1000) ?: 0
 				val refreshToken = currentState.refreshToken
 				val scopes = currentState.scope
-				val token = Token(accessToken, "Bearer", expiration!!.toInt(), refreshToken, scopes)
+				val token = Token(accessToken, "Bearer", expirationIn.toInt(), refreshToken, scopes)
 				val apiBuilder = spotifyClientPkceApi(
 						clientId,
 						SpotifyAppController.REDIRECT_URI,
@@ -103,9 +135,8 @@ class SpotifyWebApi private constructor(val context: Context) {
 						spotifyApiOptionsBuilder)
 				apiBuilder.build()
 			} catch (e: SpotifyException.AuthenticationException) {
-				val authorizationException = AuthorizationException(-1, -1, "Authentication Error", "Authentication failed with the message: ${e.message}", null, null)
-				authStateManager.updateAfterTokenResponse(null, authorizationException)
 				Log.e(SpotifyAppController.TAG, "Failed to create the web API with an access token. Access token is invalid")
+				authStateManager.addAccessTokenAuthorizationException(e)
 				createNotAuthorizedNotification()
 				null
 			}
@@ -126,20 +157,12 @@ class SpotifyWebApi private constructor(val context: Context) {
 						spotifyApiOptionsBuilder)
 				apiBuilder.build()
 			} catch (e: SpotifyException.AuthenticationException) {
-				updateAuthStateWithAuthorizationCodeException()
+				authStateManager.addAuthorizationCodeAuthorizationException(e)
 				Log.e(SpotifyAppController.TAG, "Failed to create the web API with an authorization code. Authorization failed with the error: ${e.message}")
 				createNotAuthorizedNotification()
 				null
 			}
 		}
-	}
-
-	/**
-	 * Updates the [AuthState] last authorization code response with an [AuthorizationException].
-	 */
-	private fun updateAuthStateWithAuthorizationCodeException() {
-		val authorizationException = AuthorizationException(-1, -1, "Authorization Code Invalid", "Authorization code invalid", null, null)
-		authStateManager.updateAfterAuthorization(null, authorizationException)
 	}
 
 	/**
@@ -156,7 +179,7 @@ class SpotifyWebApi private constructor(val context: Context) {
 				.setAccessTokenExpirationTime(token.expiresAt)
 				.setScopes(token.scopes?.map { it.uri })
 				.build()
-		authStateManager.updateAfterTokenResponse(tokenResponse, null)
+		authStateManager.updateTokenResponse(tokenResponse, null)
 	}
 
 	/**

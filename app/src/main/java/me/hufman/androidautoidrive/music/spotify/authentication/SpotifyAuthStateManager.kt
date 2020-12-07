@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.music.spotify.authentication
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import com.adamratzman.spotify.SpotifyException
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
@@ -67,21 +68,37 @@ class SpotifyAuthStateManager private constructor(context: Context) {
 	}
 
 	/**
-	 * Updates the [AuthState] from the authorization response, replacing the old AuthState in the
-	 * shared preferences file with the new one.
+	 * Updates the [AuthState] with the authorization response and authorization exception, replacing
+	 * the old AuthState in the shared preferences file with the new one.
 	 */
-	fun updateAfterAuthorization(response: AuthorizationResponse?, ex: AuthorizationException?): AuthState? {
+	fun updateAuthorizationResponse(response: AuthorizationResponse?, ex: AuthorizationException?) {
 		currentState.update(response, ex)
-		return replaceState(currentState)
+		replaceState(currentState)
 	}
 
 	/**
-	 * Updates the [AuthState] from the token response, replacing the old AuthState in the shared
-	 * preferences file with the new one.
+	 * Updates the [AuthState] with the token response and authorization exception, replacing the old
+	 * AuthState in the shared preferences file with the new one.
 	 */
-	fun updateAfterTokenResponse(response: TokenResponse?, ex: AuthorizationException?): AuthState? {
+	fun updateTokenResponse(response: TokenResponse?, ex: AuthorizationException?) {
 		currentState.update(response, ex)
-		return replaceState(currentState)
+		replaceState(currentState)
+	}
+
+	/**
+	 * Updates the [AuthState] last token response with an [AuthorizationException].
+	 */
+	fun addAccessTokenAuthorizationException(e: SpotifyException.AuthenticationException) {
+		val authorizationException = AuthorizationException(AuthorizationException.TYPE_OAUTH_TOKEN_ERROR, -1, "Access Token Authentication Error", "Authentication failed with the message: ${e.message}", null, e)
+		updateTokenResponse(null, authorizationException)
+	}
+
+	/**
+	 * Updates the [AuthState] last authorization code response with an [AuthorizationException].
+	 */
+	fun addAuthorizationCodeAuthorizationException(e: SpotifyException.AuthenticationException) {
+		val authorizationException = AuthorizationException(AuthorizationException.TYPE_OAUTH_AUTHORIZATION_ERROR, -1, "Authorization Code Authentication Error", "Authentication failed with the message: ${e.message}", null, e)
+		updateAuthorizationResponse(null, authorizationException)
 	}
 
 	/**
