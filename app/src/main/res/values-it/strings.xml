@@ -25,6 +25,7 @@
     <string name="notification_sound">Esegui suono di notifica</string>
     <string name="notification_readout">Lettura vocale notifiche quando aperte</string>
     <string name="notification_readout_popup">Lettura vocale delle nuove notifiche</string>
+    <string name="notification_readout_popup_passenger">... con un passeggero</string>
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
     <string name="enable_google_maps">Abilita Google Maps</string>
@@ -51,6 +52,7 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancella</string>
     <string name="btn_configure">Configura…</string>
+    <string name="lbl_error">Errore</string>
     <string name="connectionStatusMissingConnectedApp">Non trovo l\'app Connected o Connected Classic</string>
     <string name="connectionStatusWaiting">In attesa della connessione con l\'auto</string>
     <string name="nowplaying_notconnected">&lt;Non connessa&gt;</string>
@@ -100,9 +102,11 @@
     <string name="NOTIFICATION_CLEAR_ACTION">Pulisci</string>
     <string name="NOTIFICATION_OPTIONS">Opzioni</string>
     <string name="NOTIFICATION_POPUPS">Popup notiifiche</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER"> ... con un passeggero</string>
     <string name="NOTIFICATION_SOUND">Esegui suono di notifica</string>
     <string name="NOTIFICATION_READOUT">Leggi\Pronuncia le notifiche quando aperte</string>
     <string name="NOTIFICATION_READOUT_POPUP">Leggi\Pronuncia le nuove notifiche</string>
+    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> ... con un passeggero</string>
     <string name="READOUT_DESCRIPTION">Questa app è utilizzata per scopi di lettura</string>
     <string name="MAP_ACTION_VIEWMAP">Visualizza la mappa fullscreen</string>
     <string name="MAP_ACTION_SEARCH">Cerca un luogo</string>
