@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import kotlinx.android.synthetic.main.activity_setup.*
 import me.hufman.androidautoidrive.*
 import java.text.SimpleDateFormat
@@ -57,6 +58,10 @@ class SetupActivity : AppCompatActivity() {
 	}
 
 	fun redraw() {
+		if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+			return
+		}
+
 		// only redraw on the main thread
 		if (!Looper.getMainLooper().isCurrentThread) {
 			sendBroadcast(Intent(INTENT_REDRAW))

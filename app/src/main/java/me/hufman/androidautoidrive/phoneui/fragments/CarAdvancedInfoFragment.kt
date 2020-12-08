@@ -50,6 +50,7 @@ class CarAdvancedInfoFragment: Fragment() {
 	}
 
 	fun redraw() {
+		if (!isVisible) return
 		txtBclReport.text = bclStatusListener.toString()
 		paneBclReport.visible = bclStatusListener.state != "UNKNOWN" && bclStatusListener.staleness < 30000
 
