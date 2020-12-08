@@ -23,6 +23,7 @@ import me.hufman.androidautoidrive.music.MusicSessions
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.androidautoidrive.phoneui.fragments.SpotifyDowngradeDialog
+import me.hufman.androidautoidrive.phoneui.visible
 
 class MusicAppListAdapter(val context: Context, val handler: Handler, val supportFragmentManager: FragmentManager, val contents: ArrayList<MusicAppInfo>, val musicSessions: MusicSessions): RecyclerView.Adapter<MusicAppListAdapter.ViewHolder>() {
 

@@ -6,9 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Looper
-import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_setup.*
 import me.hufman.androidautoidrive.*
@@ -72,7 +69,3 @@ class SetupActivity : AppCompatActivity() {
 		paneAdvancedInfo.visible = showAdvancedSettings
 	}
 }
-
-var View.visible: Boolean
-	get() { return this.visibility == VISIBLE }
-	set(value) {this.visibility = if (value) VISIBLE else GONE}

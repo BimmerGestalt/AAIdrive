@@ -21,7 +21,7 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.utils.Utils
-import me.hufman.androidautoidrive.utils.getThemeColor
+import me.hufman.androidautoidrive.phoneui.getThemeColor
 import me.hufman.androidautoidrive.phoneui.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
 

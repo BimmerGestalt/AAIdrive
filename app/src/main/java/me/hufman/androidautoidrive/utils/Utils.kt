@@ -250,17 +250,6 @@ suspend inline fun <T> Deferred<T>.awaitPending(timeout: Int, timeoutHandler: ()
 	return awaitPending(timeout.toLong(), timeoutHandler)
 }
 
-/** Resolve a Color Attribute to a color int */
-@ColorInt
-fun Context.getThemeColor(
-		@AttrRes attrColor: Int
-): Int {
-	val typedValue = TypedValue()
-	theme.resolveAttribute(attrColor, typedValue, true)
-	val colorRes = typedValue.resourceId
-	return resources.getColor(colorRes, theme)
-}
-
 fun loadJSON(str: String?): JSONObject? {
 	if (str == null) return null
 	try {
