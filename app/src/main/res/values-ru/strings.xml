@@ -66,7 +66,6 @@
     <string name="NOTIFICATIONS_EMPTY_LIST">Нет уведомлений</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Очистить </string>
     <string name="NOTIFICATION_POPUPS">Всплывающие уведомления</string>
-    <string name="NOTIFICATION_POPUPS_PASSENGER">Всплывающие уведомления с пассажиром</string>
     <string name="MAP_ACTION_VIEWMAP">Посмотреть полную карту</string>
     <string name="MAP_ACTION_SEARCH">Поиск места</string>
     <string name="MAP_ACTION_CLEARNAV">Удалить маршрут</string>
