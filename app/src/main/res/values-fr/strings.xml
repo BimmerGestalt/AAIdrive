@@ -88,7 +88,6 @@
     <string name="NOTIFICATION_CLEAR_ACTION">Supprimer</string>
     <string name="NOTIFICATION_OPTIONS">Options</string>
     <string name="NOTIFICATION_POPUPS">Popups de Notification</string>
-    <string name="NOTIFICATION_POPUPS_PASSENGER">Popups de Notification Passager</string>
     <string name="MAP_ACTION_VIEWMAP">Plein Ecran</string>
     <string name="MAP_ACTION_SEARCH">Rechercher un endroit</string>
     <string name="MAP_ACTION_CLEARNAV">Effacer Itinéraire</string>
