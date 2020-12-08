@@ -7,7 +7,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
-import me.hufman.androidautoidrive.dumpToString
+import me.hufman.androidautoidrive.utils.dumpToString
 
 private const val TAG = "MusicMetadata"
 open class MusicMetadata(val mediaId: String? = null,

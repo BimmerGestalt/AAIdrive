@@ -10,8 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.music_nowplaying.*
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.Utils
-import me.hufman.androidautoidrive.getThemeColor
+import me.hufman.androidautoidrive.utils.Utils
+import me.hufman.androidautoidrive.utils.getThemeColor
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.phoneui.MusicActivityModel

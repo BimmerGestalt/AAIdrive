@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.activity_musicplayer.*
 import me.hufman.androidautoidrive.CarAppAssetManager
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.Utils
+import me.hufman.androidautoidrive.utils.Utils
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata

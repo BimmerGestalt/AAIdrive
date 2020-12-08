@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive.carapp
 import android.graphics.drawable.Drawable
 import android.util.Log
 import de.bmw.idrive.BMWRemotingServer
-import me.hufman.androidautoidrive.GraphicsHelpers
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import kotlin.collections.HashMap
 import kotlin.math.min
 import kotlin.math.roundToInt

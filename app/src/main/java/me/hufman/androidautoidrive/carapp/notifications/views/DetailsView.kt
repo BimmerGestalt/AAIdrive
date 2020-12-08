@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive.carapp.notifications.views
 
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import me.hufman.androidautoidrive.GraphicsHelpers
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.notifications.*
 import me.hufman.androidautoidrive.notifications.CarNotification

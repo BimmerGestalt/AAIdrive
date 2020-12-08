@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.gmap.gmaps_projection.*
 import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.utils.TimeUtils
 
 class GMapsProjection(val parentContext: Context, display: Display, val appSettings: AppSettingsObserver): Presentation(parentContext, display) {
 	val TAG = "GMapsProjection"

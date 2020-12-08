@@ -14,6 +14,7 @@ import me.hufman.androidautoidrive.carapp.music.MusicImageIDsSpotify
 import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicController
+import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 

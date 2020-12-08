@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.utils
 
 import android.content.Context
 import android.graphics.*

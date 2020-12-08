@@ -7,6 +7,7 @@ import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
 import me.hufman.androidautoidrive.carapp.assistant.AssistantAppInfo
 import me.hufman.androidautoidrive.carapp.assistant.AssistantController
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
