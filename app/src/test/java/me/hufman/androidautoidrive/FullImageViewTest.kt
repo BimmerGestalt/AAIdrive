@@ -21,7 +21,7 @@ class FullImageViewTest {
 
 	@Before
 	fun setUp() {
-		val widgetStream = this.javaClass.classLoader.getResourceAsStream("ui_description_onlineservices_v2.xml")
+		val widgetStream = this.javaClass.classLoader!!.getResourceAsStream("ui_description_onlineservices_v2.xml")
 		this.carApp = RHMIApplicationConcrete()
 		this.carApp.loadFromXML(widgetStream?.readBytes() as ByteArray)
 		val unclaimedStates = LinkedList(carApp.states.values)

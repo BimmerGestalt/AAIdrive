@@ -27,7 +27,6 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 	init {
 		if (musicAppInfo.className == null) {
 			Log.i(TAG, "Skipping connection to ${musicAppInfo.name}, no className found")
-		} else {
 		}
 	}
 
@@ -45,11 +44,11 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 					var mediaBrowser: MediaBrowserCompat? = null
 					val callback = object: MediaBrowserCompat.ConnectionCallback() {
 						override fun onConnected() {
-							val mediaBrowser = mediaBrowser
-							val sessionToken = mediaBrowser?.sessionToken
+							val curMediaBrowser = mediaBrowser
+							val sessionToken = curMediaBrowser?.sessionToken
 							Log.i(TAG, "Successful MediaBrowser connection to ${appInfo.name}")
-							if (mediaBrowser != null && sessionToken != null) {
-								pendingController.value = GenericMusicAppController(context, MediaControllerCompat(context, sessionToken), MusicBrowser(handler, mediaBrowser, appInfo))
+							if (curMediaBrowser != null && sessionToken != null) {
+								pendingController.value = GenericMusicAppController(context, MediaControllerCompat(context, sessionToken), MusicBrowser(handler, curMediaBrowser, appInfo))
 							} else {
 								pendingController.value = null
 							}

@@ -22,12 +22,12 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val securityAccess = SecurityAccess(appContext)
+        val securityAccess = SecurityAccess.getInstance(appContext)
 
         val assets = CarAppAssetManager(appContext, "basecoreOnlineServices")
         val appCert = assets.getAppCertificateRaw("Mini")?.readBytes() as ByteArray
         Log.i("Test", String(appCert))
-        securityAccess.listener = Runnable {
+        securityAccess.callback = {
             if (securityAccess.isConnected()) {
                 val signedCert = CertMangling.mergeBMWCert(appCert, securityAccess.fetchBMWCerts(appContext.packageName))
                 val certs = CertMangling.loadCerts(signedCert)

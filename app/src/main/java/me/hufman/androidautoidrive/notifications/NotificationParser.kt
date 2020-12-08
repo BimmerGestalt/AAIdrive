@@ -80,7 +80,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		var picture: Drawable? = null
 		var pictureUri: String? = null
 
-		if (sbn.notification.bigContentView != null || sbn.notification.contentView != null) {
+		if (sbn.notification.getContentView() != null) {
 			val parsed = summarizedCustomNotification(sbn)
 			if (parsed != null) {
 				return parsed
@@ -189,7 +189,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		val extras = sbn.notification.extras
 		val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
 
-		val customViewTemplate = sbn.notification.bigContentView ?: sbn.notification.contentView ?: return null
+		val customViewTemplate = sbn.notification.getContentView() ?: return null
 		val customView = remoteViewInflater.invoke(customViewTemplate)
 		val images = customView.collectChildren().filterIsInstance<ImageView>().toList()
 		val drawable = images.sortedByDescending { it.width * it.height }
@@ -211,6 +211,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 				getNotificationSound(sbn.notification))
 	}
 
+	@Suppress("DEPRECATION")
 	fun getNotificationSound(notification: Notification): Uri {
 		val channelSoundUri = ifOreo { getChannelSound(notification) }
 		return notification.sound ?: channelSoundUri ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -219,7 +220,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 	@RequiresApi(Build.VERSION_CODES.O)
 	fun getChannelSound(notification: Notification): Uri? {
 		val channelId = notification.channelId
-		val channel = notificationManager?.getNotificationChannel(channelId)
+		val channel = notificationManager.getNotificationChannel(channelId)
 		return channel?.sound
 	}
 
@@ -248,7 +249,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 	fun shouldShowNotification(sbn: StatusBarNotification): Boolean {
 		return !sbn.notification.isGroupSummary() &&
 				sbn.notification.extras.getCharSequence(Notification.EXTRA_TITLE) != null &&
-				(sbn.isClearable || sbn.notification.actions?.isNotEmpty() == true || sbn.notification.contentView != null)
+				(sbn.isClearable || sbn.notification.actions?.isNotEmpty() == true || sbn.notification.getContentView() != null)
 	}
 }
 
@@ -274,4 +275,9 @@ fun View.collectChildren(matches: (View) -> Boolean = { true }): Sequence<View> 
 			emptySequence()
 		}
 	}
+}
+
+@Suppress("DEPRECATION")
+fun Notification.getContentView(): RemoteViews? {
+	return this.bigContentView ?: this.contentView
 }

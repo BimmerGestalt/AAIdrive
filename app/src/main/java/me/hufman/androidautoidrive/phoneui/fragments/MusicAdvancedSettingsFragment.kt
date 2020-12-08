@@ -20,10 +20,10 @@ class MusicAdvancedSettingsFragment: Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
-		swAudioContext.setOnCheckedChangeListener { buttonView, isChecked ->
+		swAudioContext.setOnCheckedChangeListener { _, isChecked ->
 			appSettings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT] = isChecked.toString()
 		}
-		swSpotifyLayout.setOnCheckedChangeListener { button, isChecked ->
+		swSpotifyLayout.setOnCheckedChangeListener { _, isChecked ->
 			appSettings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT] = isChecked.toString()
 		}
 		redraw()

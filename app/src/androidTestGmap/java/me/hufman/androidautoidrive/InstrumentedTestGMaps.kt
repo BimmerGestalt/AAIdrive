@@ -11,10 +11,10 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.anyArray
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
-import junit.framework.Assert.assertEquals
 import me.hufman.androidautoidrive.MapService.Companion.createVirtualDisplay
 import me.hufman.androidautoidrive.carapp.maps.*
 import org.awaitility.Awaitility.await
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

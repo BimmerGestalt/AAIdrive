@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import me.hufman.androidautoidrive.*
 import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,9 +30,6 @@ class MainActivity : AppCompatActivity() {
 		const val SECURITY_SERVICE_TIMEOUT = 1000
 		const val REDRAW_INTERVAL = 5000L
 		const val REQUEST_LOCATION = 4000
-
-		const val NOTIFICATION_CHANNEL_ID = "TestNotification"
-		const val NOTIFICATION_CHANNEL_NAME = "Test Notification"
 	}
 	val handler = Handler()
 	val appSettings by lazy { MutableAppSettingsReceiver(this) }
@@ -53,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 		idriveConnectionObserver.callback = { runOnUiThread { redraw() } }
 		carInformationObserver.callback = { runOnUiThread { redraw() }}
 		swMessageNotifications.setOnCheckedChangeListener { buttonView, isChecked ->
-			if (buttonView != null) onChangedSwitchNotifications(buttonView, isChecked)
+			if (buttonView != null) onChangedSwitchNotifications(isChecked)
 			redraw()
 		}
 		btnConfigureNotifications.setOnClickListener {
@@ -61,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 			startActivity(intent)
 		}
 		swGMaps.setOnCheckedChangeListener { buttonView, isChecked ->
-			if (buttonView != null) onChangedSwitchGMaps(buttonView, isChecked)
+			if (buttonView != null) onChangedSwitchGMaps(isChecked)
 			redraw()
 		}
 		btnConfigureMusic.setOnClickListener {
@@ -87,7 +85,7 @@ class MainActivity : AppCompatActivity() {
 		unregisterReceiver(redrawListener)
 	}
 
-	fun onChangedSwitchNotifications(buttonView: CompoundButton, isChecked: Boolean) {
+	fun onChangedSwitchNotifications(isChecked: Boolean) {
 		appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS] = isChecked.toString()
 		if (isChecked) {
 			// make sure we have permissions to read the notifications
@@ -106,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 		return UIState.notificationListenerConnected && NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
 	}
 
-	fun onChangedSwitchGMaps(buttonView: CompoundButton, isChecked: Boolean) {
+	fun onChangedSwitchGMaps(isChecked: Boolean) {
 		appSettings[AppSettings.KEYS.ENABLED_GMAPS] = isChecked.toString()
 		if (isChecked) {
 			// make sure we have permissions to show current location
@@ -171,7 +169,7 @@ class MainActivity : AppCompatActivity() {
 			txtConnectionStatus.text = if (chassisCode != null) {
 				resources.getString(R.string.notification_description_chassiscode, chassisCode.toString())
 			} else {
-				when (idriveConnectionObserver.brand?.toLowerCase()) {
+				when (idriveConnectionObserver.brand?.toLowerCase(Locale.ROOT)) {
 					"bmw" -> resources.getString(R.string.notification_description_bmw)
 					"mini" -> resources.getString(R.string.notification_description_mini)
 					else -> resources.getString(R.string.notification_description)

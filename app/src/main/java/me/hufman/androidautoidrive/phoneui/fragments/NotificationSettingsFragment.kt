@@ -22,24 +22,24 @@ class NotificationSettingsFragment: Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
-		swNotificationPopup.setOnCheckedChangeListener { buttonView, isChecked ->
+		swNotificationPopup.setOnCheckedChangeListener { _, isChecked ->
 			appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP] = isChecked.toString()
 			redraw()
 		}
-		swNotificationPopupPassenger.setOnCheckedChangeListener { buttonView, isChecked ->
+		swNotificationPopupPassenger.setOnCheckedChangeListener { _, isChecked ->
 			appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER] = isChecked.toString()
 		}
 		swNotificationSound.setOnCheckedChangeListener { _, isChecked ->
 			appSettings[AppSettings.KEYS.NOTIFICATIONS_SOUND] = isChecked.toString()
 		}
-		swNotificationReadout.setOnCheckedChangeListener { buttonView, isChecked ->
+		swNotificationReadout.setOnCheckedChangeListener { _, isChecked ->
 			appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT] = isChecked.toString()
 			redraw()
 		}
-		swNotificationReadoutPopup.setOnCheckedChangeListener { buttonView, isChecked ->
+		swNotificationReadoutPopup.setOnCheckedChangeListener { _, isChecked ->
 			appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP] = isChecked.toString()
 		}
-		swNotificationReadoutPopupPassenger.setOnCheckedChangeListener { buttonView, isChecked ->
+		swNotificationReadoutPopupPassenger.setOnCheckedChangeListener { _, isChecked ->
 			appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER] = isChecked.toString()
 		}
 	}

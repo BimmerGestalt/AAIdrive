@@ -108,8 +108,8 @@ class MusicNowPlayingFragment: Fragment() {
 			imgError.visible = true
 			imgError.setOnClickListener {
 				val arguments = Bundle().apply {
-					putString(SpotifyApiErrorDialog.EXTRA_CLASSNAME, spotifyError?.javaClass?.simpleName)
-					putString(SpotifyApiErrorDialog.EXTRA_MESSAGE, spotifyError?.message)
+					putString(SpotifyApiErrorDialog.EXTRA_CLASSNAME, spotifyError.javaClass.simpleName)
+					putString(SpotifyApiErrorDialog.EXTRA_MESSAGE, spotifyError.message)
 				}
 				SpotifyApiErrorDialog().apply {
 					setArguments(arguments)

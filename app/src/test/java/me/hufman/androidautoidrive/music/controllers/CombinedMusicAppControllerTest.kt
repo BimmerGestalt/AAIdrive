@@ -193,11 +193,11 @@ class CombinedMusicAppControllerTest {
 		leftObservable.value = leftController
 		rightObservable.value = rightController
 
-		val metadata = controller.getMetadata()
+		controller.getMetadata()
 		verify(leftController, times(1)).getMetadata()
 		verify(rightController, never()).getMetadata()
 
-		val playbackPosition = controller.getPlaybackPosition()
+		controller.getPlaybackPosition()
 		verify(leftController, times(1)).getPlaybackPosition()
 		verify(rightController, never()).getPlaybackPosition()
 

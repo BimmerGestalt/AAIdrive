@@ -60,7 +60,7 @@ class MockProjection(parentContext: Context, display: Display): Presentation(par
 		colors.add(Color.BLUE)
 		colors.add(Color.RED)
 
-		window.setType(WindowManager.LayoutParams.TYPE_PRIVATE_PRESENTATION)
+		window?.setType(WindowManager.LayoutParams.TYPE_PRIVATE_PRESENTATION)
 
 		view.setBackgroundColor(colors[colorIndex])
 		setContentView(view)

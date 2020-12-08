@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.notifications
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.RemoteInput
@@ -144,7 +145,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		override fun action(key: String, actionName: String) {
 			try {
 				val notification = listenerService.activeNotifications.find { it.key == key }
-				val customViewTemplate = notification?.notification?.bigContentView ?: notification?.notification?.contentView
+				val customViewTemplate = notification?.notification?.getContentView()
 				if (customViewTemplate != null) {
 					val customView = customViewTemplate.apply(listenerService, null)
 					customView.collectChildren().filterIsInstance<TextView>()
@@ -158,6 +159,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
 			}
 		}
+		@SuppressLint("WrongConstant")
 		override fun reply(key: String, actionName: String, reply: String) {
 			try {
 				val notification = listenerService.activeNotifications.find { it.key == key }

@@ -61,7 +61,7 @@ class AVContextHandler(val iDriveConnectionStatus: IDriveConnectionStatus, val c
 		}
 	}
 
-	fun av_connectionGranted(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
+	fun av_connectionGranted() {
 		Log.i(TAG, "Car declares current audio connection to us")
 		currentContext = true
 
@@ -87,7 +87,7 @@ class AVContextHandler(val iDriveConnectionStatus: IDriveConnectionStatus, val c
 		// helper function to help synchronize car accesses
 		synchronized(carConnection) {
 			if (handle != null) {
-				carConnection.av_playerStateChanged(handle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, playerState)
+				carConnection.av_playerStateChanged(handle, connectionType, playerState)
 			}
 		}
 	}
@@ -100,16 +100,16 @@ class AVContextHandler(val iDriveConnectionStatus: IDriveConnectionStatus, val c
 		}
 	}
 
-	fun av_connectionDeactivated(handle: Int?, connectionType: BMWRemoting.AVConnectionType?) {
+	fun av_connectionDeactivated() {
 		// the car is requesting the current app stop so that a different app can play
 		// either another app within our own app (which won't trigger connectionGranted)
-		// or another source entirely{
+		// or another source entirely
 		Log.i(TAG, "Deactivating app currently-connected ${controller.currentAppInfo?.name}")
 		controller.pause()
 		currentContext = false
 	}
 
-	fun av_multimediaButtonEvent(handle: Int?, event: BMWRemoting.AVButtonEvent?) {
+	fun av_multimediaButtonEvent(event: BMWRemoting.AVButtonEvent?) {
 		when (event) {
 			BMWRemoting.AVButtonEvent.AV_EVENT_SKIP_UP -> controller.skipToNext()
 			BMWRemoting.AVButtonEvent.AV_EVENT_SKIP_DOWN -> controller.skipToPrevious()

@@ -139,7 +139,7 @@ class MusicAppTest {
 	}
 	val carAppResources = mock<CarAppResources> {
 		on { getAppCertificate() } doReturn ByteArrayInputStream(ByteArray(0))
-		on { getUiDescription() } doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_multimedia_v2.xml") }
+		on { getUiDescription() } doAnswer { this.javaClass.classLoader!!.getResourceAsStream("ui_description_multimedia_v2.xml") }
 		on { getImagesDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 		on { getTextsDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 	}
@@ -228,7 +228,7 @@ class MusicAppTest {
 
 	@Test
 	fun testAppInitPlaybackViewID5() {
-		whenever(carAppResources.getUiDescription()).doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_multimedia_v3.xml") }
+		whenever(carAppResources.getUiDescription()).doAnswer { this.javaClass.classLoader!!.getResourceAsStream("ui_description_multimedia_v3.xml") }
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = MusicApp(iDriveConnectionStatus, securityAccess, carAppResources, MusicImageIDsSpotify, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
@@ -263,7 +263,7 @@ class MusicAppTest {
 
 	@Test
 	fun testPlaybackViewID5Interaction() {
-		whenever(carAppResources.getUiDescription()).doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_multimedia_v3.xml") }
+		whenever(carAppResources.getUiDescription()).doAnswer { this.javaClass.classLoader!!.getResourceAsStream("ui_description_multimedia_v3.xml") }
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = MusicApp(iDriveConnectionStatus, securityAccess, carAppResources, MusicImageIDsSpotify, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, mock())
@@ -449,7 +449,7 @@ class MusicAppTest {
 		val mockServer = MockBMWRemotingServer()
 		val app = RHMIApplicationEtch(mockServer, 1)
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
-		var state = app.states[IDs.PLAYBACK_STATE] as RHMIState.ToolbarState
+		val state = app.states[IDs.PLAYBACK_STATE] as RHMIState.ToolbarState
 		val playbackView = PlaybackView(state, musicController, mapOf("147.png" to "Placeholder".toByteArray()), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
 
 		whenever(musicController.getQueue()).doAnswer {null}
@@ -571,7 +571,7 @@ class MusicAppTest {
 	fun testRepeatButtonRedraw() {
 		// repeat button only available in iDrive 5+ audioHmiState
 		val app = RHMIApplicationConcrete()
-		app.loadFromXML(this.javaClass.classLoader.getResourceAsStream("ui_description_multimedia_v3.xml")?.readBytes() as ByteArray)
+		app.loadFromXML(this.javaClass.classLoader!!.getResourceAsStream("ui_description_multimedia_v3.xml")?.readBytes() as ByteArray)
 		val state = app.states[IDs.AUDIO_STATE] as RHMIState.AudioHmiState
 		val appSwitcherView = AppSwitcherView(app.states[IDs.APPLIST_ID5_STATE]!!, musicAppDiscovery, mock(), graphicsHelpers, MusicImageIDsSpotify)
 		val playbackView = PlaybackView(state, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsSpotify)
@@ -1290,6 +1290,7 @@ class MusicAppTest {
 		assertEquals(IDs.BROWSE3_STATE, subdir6.state.id)
 	}
 
+	@Suppress("DeferredResultUnused")
 	@Test
 	fun testBrowsePages() {
 		val mockServer = MockBMWRemotingServer()
@@ -1773,6 +1774,7 @@ class MusicAppTest {
 		assertArrayEquals(arrayOf(arrayOf("New song :cat2:")), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable).data)
 	}
 
+	@Suppress("DeferredResultUnused")
 	@Test
 	fun testSearch() {
 		val mockServer = MockBMWRemotingServer()
@@ -1854,6 +1856,7 @@ class MusicAppTest {
 		verify(musicController).playSong(MusicMetadata("testId4", title = "New song", browseable = false, playable = true))
 	}
 
+	@Suppress("DeferredResultUnused")
 	@Test
 	fun testSearchTimeout() {
 		val mockServer = MockBMWRemotingServer()
@@ -1903,6 +1906,7 @@ class MusicAppTest {
 		assertEquals(0, inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
 	}
 
+	@Suppress("DeferredResultUnused")
 	@Test
 	fun testPlayFromSearch() {
 		val mockServer = MockBMWRemotingServer()

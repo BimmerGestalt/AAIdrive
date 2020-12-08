@@ -27,7 +27,7 @@
     <string name="notification_sound">Play notification sound</string>
     <string name="notification_readout">Speak when viewing notifications</string>
     <string name="notification_readout_popup">Speak new notifications</string>
-    <string name="notification_readout_popup_passenger">... with a passenger</string>
+    <string name="notification_readout_popup_passenger">… with a passenger</string>
     <string name="lbl_popupVersion">Popups only work with IDrive4</string>
     <string name="lbl_smsPermission">Grant the SMS permission to view pictures from incoming SMS images in the car. The text itself is always visible.</string>
 
@@ -56,6 +56,7 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancel</string>
     <string name="btn_configure">Configure …</string>
+    <string name="lbl_error">Error</string>
 
     <string name="connectionStatusMissingConnectedApp">Can\'t find Connected or Connected Classic app</string>
     <string name="connectionStatusWaiting">Waiting for connection to car</string>
@@ -110,11 +111,11 @@
     <string name="NOTIFICATION_CLEAR_ACTION">Clear</string>
     <string name="NOTIFICATION_OPTIONS">Options</string>
     <string name="NOTIFICATION_POPUPS">Notification Popups</string>
-    <string name="NOTIFICATION_POPUPS_PASSENGER"> ... with a passenger</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER"> … with a passenger</string>
     <string name="NOTIFICATION_SOUND">Play notification sound</string>
     <string name="NOTIFICATION_READOUT">Speak when viewing notifications</string>
     <string name="NOTIFICATION_READOUT_POPUP">Speak new notifications</string>
-    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> ... with a passenger</string>
+    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … with a passenger</string>
     <string name="READOUT_DESCRIPTION">This app is used for readout purposes</string>
 
     <string name="MAP_ACTION_VIEWMAP">View Full Map</string>

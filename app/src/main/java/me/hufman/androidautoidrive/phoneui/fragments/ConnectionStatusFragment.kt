@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.phoneui.fragments
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.connections.CarConnectionDebugging
 import me.hufman.androidautoidrive.phoneui.visible
+import java.util.*
 
 class ConnectionStatusFragment: Fragment() {
 	val connectionDebugging by lazy {
@@ -36,7 +38,12 @@ class ConnectionStatusFragment: Fragment() {
 	}
 
 	val isUSA
-		get() = this.resources.configuration.locale.country == "US"
+		get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			this.resources.configuration.locales.get(0).country == "US"
+		} else {
+			@Suppress("DEPRECATION")
+			this.resources.configuration.locale.country == "US"
+		}
 
 	fun installConnected(brand: String = "bmw") {
 		val packageName = if (isUSA) "de.$brand.connected.na" else "de.$brand.connected"
@@ -133,7 +140,7 @@ class ConnectionStatusFragment: Fragment() {
 		txtCarConnected.text = if (chassisCode != null) {
 			resources.getString(R.string.notification_description_chassiscode, chassisCode.toString())
 		} else {
-			when (connectionDebugging.idriveListener.brand?.toLowerCase()) {
+			when (connectionDebugging.idriveListener.brand?.toLowerCase(Locale.ROOT)) {
 				"bmw" -> resources.getString(R.string.notification_description_bmw)
 				"mini" -> resources.getString(R.string.notification_description_mini)
 				else -> resources.getString(R.string.notification_description)

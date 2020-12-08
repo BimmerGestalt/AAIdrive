@@ -55,7 +55,7 @@ class NotificationAppTest {
 	}
 	val carAppResources = mock<CarAppResources> {
 		on { getAppCertificate() } doReturn ByteArrayInputStream(ByteArray(0))
-		on { getUiDescription() } doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_onlineservices_v1.xml") }
+		on { getUiDescription() } doAnswer { this.javaClass.classLoader!!.getResourceAsStream("ui_description_onlineservices_v1.xml") }
 		on { getImagesDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 		on { getTextsDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 	}
@@ -186,6 +186,7 @@ class NotificationAppTest {
 		}
 	}
 
+	@Suppress("DEPRECATION")
 	fun createNotification(tickerText:String, title:String?, text: String?, summary:String, clearable: Boolean=false, packageName: String="me.hufman.androidautoidrive"): StatusBarNotification {
 		val smallIconMock = mock<Icon>()
 		val largeIconMock = mock<Icon>()
@@ -316,6 +317,7 @@ class NotificationAppTest {
 		assertEquals("Summary", notificationObject.text)
 	}
 
+	@Suppress("DEPRECATION")
 	@Test
 	fun testSummaryCustomView() {
 		val phoneNotification = createNotification("Ticker Text", "Title", "Text", "Summary", false)

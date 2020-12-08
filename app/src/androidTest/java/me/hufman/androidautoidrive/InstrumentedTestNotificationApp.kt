@@ -45,11 +45,6 @@ class InstrumentedTestNotificationApp {
 		}
 		updateListener.register(appContext, updateReceiver, null)
 
-		// prepare a notification
-		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher).loadDrawable(appContext)
-		val notification = CarNotification(appContext.packageName, "test", icon, true, listOf(),
-				"Test", "Test Text", icon, null, null, null, null)
-
 		// send an update from the phone
 		val controller = NotificationUpdaterControllerIntent(appContext)
 		controller.onUpdatedList()

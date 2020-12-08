@@ -277,7 +277,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			val msg = "Received av_connectionGranted: handle=$handle connectionType=$connectionType"
 			Log.i(TAG, msg)
 			try {
-				avContext.av_connectionGranted(handle, connectionType)
+				avContext.av_connectionGranted()
 			} catch (e: Exception) {
 				Log.e(TAG, "Received exception while handling av_connectionGranted", e)
 			}
@@ -287,7 +287,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			val msg = "Received av_connectionDeactivated: handle=$handle connectionType=$connectionType"
 			Log.i(TAG, msg)
 			try {
-				avContext.av_connectionDeactivated(handle, connectionType)
+				avContext.av_connectionDeactivated()
 			} catch (e: Exception) {
 				Log.e(TAG, "Received exception while handling av_connectionDeactivated", e)
 			}
@@ -312,7 +312,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			val msg = "Received av_multimediaButtonEvent: handle=$handle event=$event"
 			Log.i(TAG, msg)
 			try {
-				avContext.av_multimediaButtonEvent(handle, event)
+				avContext.av_multimediaButtonEvent(event)
 			} catch (e: Exception) {
 				Log.e(TAG, "Received exception while handling av_multimediaButtonEvent", e)
 			}

@@ -12,6 +12,7 @@ import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.phoneui.MainActivity
+import java.util.*
 import kotlin.math.max
 
 class MapSettingsFragment: Fragment() {
@@ -31,10 +32,10 @@ class MapSettingsFragment: Fragment() {
 			override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 				val value = parent?.getItemAtPosition(position) ?: return
 				Log.i(MainActivity.TAG, "Setting gmaps style to $value")
-				appSettings[AppSettings.KEYS.GMAPS_STYLE] = value.toString().toLowerCase().replace(' ', '_')
+				appSettings[AppSettings.KEYS.GMAPS_STYLE] = value.toString().toLowerCase(Locale.ROOT).replace(' ', '_')
 			}
 		}
-		swGmapWidescreen.setOnCheckedChangeListener { buttonView, isChecked ->
+		swGmapWidescreen.setOnCheckedChangeListener { _, isChecked ->
 			appSettings[AppSettings.KEYS.MAP_WIDESCREEN] = isChecked.toString()
 		}
 	}
@@ -49,8 +50,8 @@ class MapSettingsFragment: Fragment() {
 		swGmapWidescreen.isChecked = appSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()
 
 		val gmapStylePosition = resources.getStringArray(R.array.gmaps_styles).map { title ->
-			title.toLowerCase().replace(' ', '_')
-		}.indexOf(appSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase())
+			title.toLowerCase(Locale.ROOT).replace(' ', '_')
+		}.indexOf(appSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase(Locale.ROOT))
 		swGmapSyle.setSelection(max(0, gmapStylePosition))
 	}
 }
