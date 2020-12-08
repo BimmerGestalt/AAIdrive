@@ -187,10 +187,12 @@ class MainService: Service() {
 			foregroundNotificationBuilder.setContentText(resources.getString(R.string.notification_description_chassiscode, chassisCode.toString()))
 		}
 
-		if (foregroundNotification == null) {
-			foregroundNotification = foregroundNotificationBuilder.build()
+		val foregroundNotification = foregroundNotificationBuilder.build()
+		if (this.foregroundNotification?.extras?.getCharSequence(Notification.EXTRA_TEXT) !=
+				foregroundNotification?.extras?.getCharSequence(Notification.EXTRA_TEXT)) {
 			startForeground(ONGOING_NOTIFICATION_ID, foregroundNotification)
 		}
+		this.foregroundNotification = foregroundNotification
 	}
 
 	fun combinedCallback() {
