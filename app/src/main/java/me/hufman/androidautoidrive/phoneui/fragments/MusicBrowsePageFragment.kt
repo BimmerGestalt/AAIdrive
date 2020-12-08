@@ -92,7 +92,7 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 			val contents = result.await()
 			this@MusicBrowsePageFragment.contents.clear()
 			this@MusicBrowsePageFragment.contents.addAll(contents)
-			if (isVisible) {
+			if (isResumed) {
 				if (contents.isEmpty()) {
 					txtEmpty.text = getString(R.string.MUSIC_BROWSE_EMPTY)
 				} else {

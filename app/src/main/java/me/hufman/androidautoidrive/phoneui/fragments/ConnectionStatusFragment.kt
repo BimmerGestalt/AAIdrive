@@ -85,7 +85,7 @@ class ConnectionStatusFragment: Fragment() {
 	}
 
 	fun redraw() {
-		if (!isVisible) return
+		if (!isResumed) return
 		val deviceName = Settings.Global.getString(requireContext().contentResolver, "device_name")
 
 		showEither(paneBMWMissing, paneBMWReady) {

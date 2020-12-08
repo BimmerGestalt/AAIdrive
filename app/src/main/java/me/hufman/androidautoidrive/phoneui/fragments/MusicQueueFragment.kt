@@ -85,7 +85,7 @@ class MusicQueueFragment: Fragment() {
 			contents.add(it)
 		}
 
-		if (isVisible) {
+		if (isResumed) {
 			if (contents.isEmpty()) {
 				txtQueueEmpty.text = getString(R.string.MUSIC_BROWSE_EMPTY)
 			} else {

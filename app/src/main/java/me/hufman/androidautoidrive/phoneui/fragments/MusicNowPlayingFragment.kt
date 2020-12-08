@@ -81,7 +81,7 @@ class MusicNowPlayingFragment: Fragment() {
 	}
 
 	fun redraw() {
-		if (!isVisible) return
+		if (!isResumed) return
 		val metadata = musicController.getMetadata()
 		if (metadata?.coverArt != null) {
 			imgCoverArt.setImageBitmap(metadata.coverArt)

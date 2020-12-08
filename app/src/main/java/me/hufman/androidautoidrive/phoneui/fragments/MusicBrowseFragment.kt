@@ -57,7 +57,7 @@ class MusicBrowseFragment: Fragment() {
 
 	fun onBackPressed(): Boolean {
 		val fragmentManager = fm ?: return false
-		if (isVisible && fragmentManager.backStackEntryCount > 0) {
+		if (isResumed && fragmentManager.backStackEntryCount > 0) {
 			fragmentManager.popBackStack()
 			return true
 		}
