@@ -46,9 +46,9 @@ android {
     if (isRunningOnTravis) {
         // configure keystore
         signingConfigs.release.storeFile = file("../keystore.jks")
-        signingConfigs.release.storePassword = System.getenv("keystore_password")
-        signingConfigs.release.keyAlias = System.getenv("keystore_alias")
-        signingConfigs.release.keyPassword = System.getenv("keystore_alias_password")
+        signingConfigs.release.storePassword = System.getenv("KEYSTORE_PASSWORD")
+        signingConfigs.release.keyAlias = System.getenv("KEYSTORE_ALIAS")
+        signingConfigs.release.keyPassword = System.getenv("KEYSTORE_ALIAS_PASSWORD")
     }
 
     buildTypes {
@@ -88,7 +88,7 @@ android {
             dimension "map"
             // load api keys from ~/.gradle/gradle.properties
             manifestPlaceholders = [spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey,
-                                    gmaps_api_key: AndroidAutoIdrive_GmapsApiKey]
+                                    gmaps_api_key: System.env.AndroidAutoIdrive_GmapsApiKey ? System.env.AndroidAutoIdrive_GmapsApiKey : AndroidAutoIdrive_GmapsApiKey]
         }
     }
     compileOptions {

@@ -1,0 +1,151 @@
+name: build  # used as the badge name
+
+on:
+  push:
+    branches: '*'
+  pull_request:
+    types: [synchronize]
+
+jobs:
+  unitTest:
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        map: [Nomap, Gmap]
+        analytics: [Nonalytics, Sentry]
+
+    steps:
+      - name: Checkout the project
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Download build dependencies
+        uses: ./.github/actions/download-externals-action
+      - name: Build the project
+        run: ./gradlew compileDebug
+      - name: Run unit tests
+        run: ./gradlew test${{ matrix.map }}${{ matrix.analytics }}DebugUnitTestCoverage
+      - name: Upload CodeCov report
+        uses: codecov/codecov-action@v1
+        with:
+          file: app/build/reports/jacoco/jacoco.xml
+          flags: unittests
+
+  instrumentedTest:
+    if: github.repository == 'hufman/AndroidAutoIdrive' && github.event_name == 'push'    # requires a secret, only run it locally
+    runs-on: macos-10.15
+    steps:
+      - name: Checkout the project
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Download build dependencies
+        uses: ./.github/actions/download-externals-action
+      - name: Run instrumented tests
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          AndroidAutoIdrive_GmapsApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_GMAPSAPIKEY }}
+        with:
+          api-level: 26
+          target: google_apis
+          script: adb install external/BMW_Connected_v3.1.1.3078_apkpure.com.apk && ./gradlew connectedGmapNonalyticsDebugAndroidTestCoverage
+      - name: Upload CodeCov report
+        uses: codecov/codecov-action@v1
+        with:
+          file: app/build/reports/jacoco/jacoco.xml
+          flags: instrumentedtests
+
+  package:
+    if: github.repository == 'hufman/AndroidAutoIdrive' && github.event_name == 'push'
+    needs: [unitTest, instrumentedTest]  # wait for the tests to succeed
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout the project
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Download build dependencies
+        uses: ./.github/actions/download-externals-action
+      - name: Extract signing key
+        run: "echo ${{ secrets.KEYSTORE_BASE64 }} | base64 -d > keystore.jks"
+      - name: Build production artifacts
+        run: ./gradlew assembleNomap
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+          KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
+          AndroidAutoIdrive_SpotifyApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_SPOTIFYAPIKEY }}
+          AndroidAutoIdrive_SentryDsn: ${{ secrets.ANDROIDAUTOIDRIVE_SENTRYDSN }}
+      - name: Upload APKs
+        uses: actions/upload-artifact@v2
+        with:
+          retention-days: 7
+          name: apk
+          path: |
+            app/build/outputs/apk/nomapNonalytics/release/*apk
+            app/build/outputs/apk/nomapNonalytics/release/*apk.sha1
+            app/build/outputs/apk/nomapSentry/release/*apk
+            app/build/outputs/apk/nomapSentry/release/*apk.sha1
+
+  upload_s3:
+    if: github.event_name == 'push'
+    needs: package
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Download project artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: apk
+      - name: Determing branch name
+        uses: nelonoel/branch-name@v1.0.1
+      - name: Stage upload directory
+        run: |
+          mkdir dist
+          cp nomapNonalytics/release/*apk dist/androidautoidrive-latest-${BRANCH_NAME}-nomap-nonalytics-release.apk
+          cp nomapSentry/release/*apk dist/androidautoidrive-latest-${BRANCH_NAME}-nomap-sentry-release.apk
+      - name: Upload to S3
+        uses: shallwefootball/s3-upload-action@v1.1.3
+        with:
+          source_dir: dist
+          destination_dir: hufman/AndroidAutoIdrive
+          aws_bucket: androidautoidrive
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  upload_release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: package
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Download project artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: apk
+      - name: Stage upload directory
+        run: |
+          mkdir dist
+          cp */release/*apk* dist/
+      - name: Upload to Github release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file_glob: true
+          file: dist/*
+          overwrite: true
