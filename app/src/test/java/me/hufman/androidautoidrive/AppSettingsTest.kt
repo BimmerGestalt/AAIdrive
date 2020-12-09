@@ -5,53 +5,53 @@ import org.junit.Test
 
 class AppSettingsTest {
 	@Test
-	fun testListSettings() {
+	fun testStoredSet() {
 		val settings = MockAppSettings(AppSettings.KEYS.HIDDEN_MUSIC_APPS to "a,b")
-		val listSettings = ListSetting(settings, AppSettings.KEYS.HIDDEN_MUSIC_APPS)
+		val storedSet = StoredSet(settings, AppSettings.KEYS.HIDDEN_MUSIC_APPS)
 
 		// tests the mass set functionality
 		val expected = setOf("a", "b")
-		assertEquals(expected, listSettings.getAll())
+		assertEquals(expected, storedSet.getAll())
 
-		listSettings.setAll(setOf("1", "2"))
+		storedSet.setAll(setOf("1", "2"))
 		assertEquals("1,2", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
-		listSettings.setAll(setOf("a", "b"))
+		storedSet.setAll(setOf("a", "b"))
 		val foundItems = mutableSetOf<String>()
-		listSettings.withSet {
+		storedSet.withSet {
 			foundItems.addAll(this)
 		}
 		assertEquals(expected, foundItems)
 
 		// set functionality
-		assertEquals("a,b", listSettings.iterator().asSequence().joinToString(","))
-		assertTrue(listSettings.contains("a"))
-		assertFalse(listSettings.contains("c"))
-		assertTrue(listSettings.containsAll(setOf("a")))
-		assertTrue(listSettings.containsAll(setOf("a", "b")))
-		assertFalse(listSettings.containsAll(setOf("a", "b", "c")))
-		assertEquals(2, listSettings.size)
-		assertFalse(listSettings.isEmpty())
+		assertEquals("a,b", storedSet.iterator().asSequence().joinToString(","))
+		assertTrue(storedSet.contains("a"))
+		assertFalse(storedSet.contains("c"))
+		assertTrue(storedSet.containsAll(setOf("a")))
+		assertTrue(storedSet.containsAll(setOf("a", "b")))
+		assertFalse(storedSet.containsAll(setOf("a", "b", "c")))
+		assertEquals(2, storedSet.size)
+		assertFalse(storedSet.isEmpty())
 
 		// mutable set functionality
-		listSettings.add("c")
+		storedSet.add("c")
 		assertEquals("a,b,c", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
-		listSettings.addAll(setOf("c", "d"))
+		storedSet.addAll(setOf("c", "d"))
 		assertEquals("a,b,c,d", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
-		listSettings.clear()
+		storedSet.clear()
 		assertEquals("", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
 		settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS] = "a,b"
-		listSettings.remove("b")
+		storedSet.remove("b")
 		assertEquals("a", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
-		listSettings.removeAll(setOf("a", "b"))
+		storedSet.removeAll(setOf("a", "b"))
 		assertEquals("", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
 		settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS] = "a,b"
-		listSettings.retainAll(setOf("a", "c"))
+		storedSet.retainAll(setOf("a", "c"))
 		assertEquals("a", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 	}
 }

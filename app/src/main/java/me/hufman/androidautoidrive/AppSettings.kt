@@ -174,7 +174,7 @@ class MutableAppSettingsReceiver(val context: Context, val handler: Handler? = n
 /**
  * A set that is backed by a comma-separated string in AppSettings
  */
-class ListSetting(val appSettings: MutableAppSettings, val key: AppSettings.KEYS): MutableSet<String> {
+class StoredSet(val appSettings: MutableAppSettings, val key: AppSettings.KEYS): MutableSet<String> {
 	fun getAll(): MutableSet<String> {
 		return appSettings[key].split(",").toMutableSet()
 	}
