@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Handler
+import org.json.JSONArray
 
 /**
  * This implements read-only access to a singleton of loaded settings
@@ -176,10 +177,23 @@ class MutableAppSettingsReceiver(val context: Context, val handler: Handler? = n
  */
 class StoredSet(val appSettings: MutableAppSettings, val key: AppSettings.KEYS): MutableSet<String> {
 	fun getAll(): MutableSet<String> {
-		return appSettings[key].split(",").toMutableSet()
+		val stringValue = appSettings[key]
+		 // prefer json but support comma-separated strings for legacy settings
+		return try {
+			if (stringValue.isNotEmpty() && stringValue[0] == '[') {
+				val parsedJson = JSONArray(stringValue)
+				HashSet<String>(parsedJson.length()).apply {
+					(0 until parsedJson.length()).forEach {
+						add(parsedJson.getString(it))
+					}
+				}
+			} else {
+				appSettings[key].split(",").toMutableSet()
+			}
+		} catch (e: Exception) { HashSet() }
 	}
 	fun setAll(values: Set<String>) {
-		val newSetting = values.joinToString(",")
+		val newSetting = JSONArray(values.sorted()).toString()
 		if (appSettings[key] != newSetting) {
 			appSettings[key] = newSetting
 		}

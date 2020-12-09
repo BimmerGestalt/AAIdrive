@@ -14,7 +14,7 @@ class AppSettingsTest {
 		assertEquals(expected, storedSet.getAll())
 
 		storedSet.setAll(setOf("1", "2"))
-		assertEquals("1,2", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
+		assertEquals("[\"1\",\"2\"]", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
 		storedSet.setAll(setOf("a", "b"))
 		val foundItems = mutableSetOf<String>()
@@ -35,23 +35,27 @@ class AppSettingsTest {
 
 		// mutable set functionality
 		storedSet.add("c")
-		assertEquals("a,b,c", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
+		assertEquals("[\"a\",\"b\",\"c\"]", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
+
 
 		storedSet.addAll(setOf("c", "d"))
-		assertEquals("a,b,c,d", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
+		assertEquals("[\"a\",\"b\",\"c\",\"d\"]", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
 		storedSet.clear()
-		assertEquals("", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
+		assertEquals("[]", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
 		settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS] = "a,b"
 		storedSet.remove("b")
-		assertEquals("a", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
+		assertEquals("[\"a\"]", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
 		storedSet.removeAll(setOf("a", "b"))
-		assertEquals("", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
+		assertEquals("[]", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 
 		settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS] = "a,b"
 		storedSet.retainAll(setOf("a", "c"))
-		assertEquals("a", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
+		assertEquals("[\"a\"]", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
+
+		storedSet.add("complex,th\"ings[yay]")
+		assertEquals("[\"a\",\"complex,th\\\"ings[yay]\"]", settings[AppSettings.KEYS.HIDDEN_MUSIC_APPS])
 	}
 }
