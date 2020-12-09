@@ -249,4 +249,142 @@ class StoredSet(val appSettings: MutableAppSettings, val key: AppSettings.KEYS):
 	override fun isEmpty(): Boolean = withSet {
 		isEmpty()
 	}
+
+	override fun equals(other: Any?): Boolean = withSet {
+		equals(other)
+	}
+
+	override fun hashCode(): Int = withSet {
+		hashCode()
+	}
+
+	override fun toString(): String = withSet {
+		toString()
+	}
+}
+
+class StoredList(val appSettings: MutableAppSettings, val key: AppSettings.KEYS): MutableList<String> {
+	fun getAll(): MutableList<String> {
+		return try {
+			val parsedJson = JSONArray(appSettings[key])
+			ArrayList<String>(parsedJson.length()).apply {
+				(0 until parsedJson.length()).forEach {
+					add(parsedJson.getString(it))
+				}
+			}
+		} catch (e: Exception) { ArrayList() }
+	}
+	fun setAll(values: List<String>) {
+		val newSetting = JSONArray(values).toString()
+		if (appSettings[key] != newSetting) {
+			appSettings[key] = newSetting
+		}
+	}
+	inline fun <K> withList(callback: MutableList<String>.() -> K): K {
+		val values = getAll()
+		val response = callback(values)
+		setAll(values)
+		return response
+	}
+
+	override val size: Int
+		get() = withList {
+			size
+		}
+
+	override fun contains(element: String): Boolean = withList {
+		contains(element)
+	}
+
+	override fun containsAll(elements: Collection<String>): Boolean = withList {
+		containsAll(elements)
+	}
+
+	override fun get(index: Int): String = withList {
+		get(index)
+	}
+
+	override fun indexOf(element: String): Int = withList {
+		indexOf(element)
+	}
+
+	override fun isEmpty(): Boolean = withList {
+		isEmpty()
+	}
+
+	// not actually a mutable iterator
+	override fun iterator(): MutableIterator<String> = withList {
+		iterator()
+	}
+
+	override fun lastIndexOf(element: String): Int = withList {
+		lastIndexOf(element)
+	}
+
+	override fun add(element: String): Boolean = withList {
+		add(element)
+	}
+
+	override fun add(index: Int, element: String) = withList {
+		add(index, element)
+	}
+
+	override fun addAll(index: Int, elements: Collection<String>): Boolean = withList {
+		addAll(index, elements)
+	}
+
+	override fun addAll(elements: Collection<String>): Boolean = withList {
+		addAll(elements)
+	}
+
+	override fun clear() = withList {
+		clear()
+	}
+
+	// not actually a mutable iterator
+	override fun listIterator(): MutableListIterator<String> = withList {
+		listIterator()
+	}
+
+	// not actually a mutable iterator
+	override fun listIterator(index: Int): MutableListIterator<String> = withList {
+		listIterator(index)
+	}
+
+	override fun remove(element: String): Boolean = withList {
+		remove(element)
+	}
+
+	override fun removeAll(elements: Collection<String>): Boolean = withList {
+		removeAll(elements)
+	}
+
+	override fun removeAt(index: Int): String = withList {
+		removeAt(index)
+	}
+
+	override fun retainAll(elements: Collection<String>): Boolean = withList {
+		retainAll(elements)
+	}
+
+	override fun set(index: Int, element: String): String = withList {
+		set(index, element)
+	}
+
+	// not actually a mutable sublist
+	override fun subList(fromIndex: Int, toIndex: Int): MutableList<String> = withList {
+		subList(fromIndex, toIndex)
+	}
+
+	override fun equals(other: Any?): Boolean = withList {
+		equals(other)
+	}
+
+	override fun hashCode(): Int = withList {
+		hashCode()
+	}
+
+	override fun toString(): String = withList {
+		toString()
+	}
 }
