@@ -14,12 +14,6 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 				val resources = context.packageManager.getResourcesForApplication(packageName)
 				resources.getDrawable(action.icon, null)
 			} catch (e: Exception) {
-				try {
-					Resources.getSystem().getDrawable(action.icon, null)
-				} catch (e: Exception) {
-					null
-				}
-			} catch (e: Exception) {
 				null
 			}
 			return formatCustomActionDisplay(
