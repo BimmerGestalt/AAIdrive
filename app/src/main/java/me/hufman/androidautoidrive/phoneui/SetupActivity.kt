@@ -58,7 +58,7 @@ class SetupActivity : AppCompatActivity() {
 	}
 
 	fun redraw() {
-		if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+		if (!lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
 			return
 		}
 

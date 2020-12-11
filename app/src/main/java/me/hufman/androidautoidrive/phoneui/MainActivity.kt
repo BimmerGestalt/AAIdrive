@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 		setContentView(R.layout.activity_main)
 
 		idriveConnectionObserver.callback = { runOnUiThread { redraw() } }
-		carInformationObserver.callback = { runOnUiThread { redraw() }}
+		carInformationObserver.callback = { runOnUiThread { redraw() } }
 		swMessageNotifications.setOnCheckedChangeListener { buttonView, isChecked ->
 			if (buttonView != null) onChangedSwitchNotifications(isChecked)
 			redraw()
@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	fun redraw() {
-		if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+		if (!lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
 			return
 		}
 
