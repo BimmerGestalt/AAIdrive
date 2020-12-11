@@ -112,6 +112,7 @@ class MapAppTest {
 
 	@Test
 	fun testMapShow() {
+		appSettings[AppSettings.KEYS.MAP_WIDESCREEN] = "false"
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mapAppMode, mockController, mockMap)
@@ -127,15 +128,15 @@ class MapAppTest {
 
 		// show the map screen
 		mockClient.rhmi_onHmiEvent(1, "", app.fullImageView.state.id, 1, mapOf(4.toByte() to true))
-		verify(mockMap).changeImageSize(700, 400)
+		verify(mockMap).changeImageSize(726, 480)
 		verify(mockController).showMap()
 
 		// Send the fullsize map
 		reset(mockMap)
 		whenever(mockMap.getFrame()).then {
 			mock<Bitmap> {
-				on { width } doReturn 700
-				on { height } doReturn 400
+				on { width } doReturn 726
+				on { height } doReturn 480
 			}
 		}.thenReturn(null)
 		whenever(mockMap.compressBitmap(any())).thenReturn(ByteArray(5))
