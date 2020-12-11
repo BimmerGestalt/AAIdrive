@@ -23,6 +23,7 @@ interface AppSettings {
 		NOTIFICATIONS_READOUT_POPUP_PASSENGER("Notifications_Readout_Popup_Passenger", "false", "New notifications are read aloud when a passenger is seated"),
 		ENABLED_GMAPS("Enabled_GMaps", "false", "Show Google Maps in the car"),
 		MAP_WIDESCREEN("Map_Widescreen", "false", "Show Map in widescreen"),
+		MAP_INVERT_SCROLL("Map_Invert_Scroll", "false", "Invert zoom direction"),
 		GMAPS_STYLE("GMaps_Style", "auto", "GMaps style"),
 		AUDIO_SUPPORTS_USB("Audio_Supports_USB", (Build.VERSION.SDK_INT < Build.VERSION_CODES.O).toString(), "The phone is old enough to support USB accessory audio"),
 		AUDIO_FORCE_CONTEXT("Audio_Force_Context", "false", "Force audio context"),

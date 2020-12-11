@@ -33,6 +33,7 @@
 
     <string name="enable_google_maps">Enable Google Maps</string>
     <string name="lbl_widescreen_map">Widescreen Map</string>
+    <string name="lbl_map_invert_zoom">Invert zoom direction</string>
     <string name="gmapStyleLabel">Map Style</string>
     <string name="lbl_music_apps">Music Apps</string>
     <string name="musicAppIcon">App Icon</string>

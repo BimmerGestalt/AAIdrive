@@ -32,7 +32,7 @@ class InstrumentedTestVirtualDisplay {
 		// Context of the app under test.
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 		Looper.prepare()
-		val testCapture = VirtualDisplayScreenCapture.build()
+		val testCapture = VirtualDisplayScreenCapture.build(1000, 400)
 		val virtualDisplay = createVirtualDisplay(appContext, testCapture.imageCapture)
 		val projection = MockProjection(appContext, virtualDisplay.display)
 		testCapture.registerImageListener(frameListener)

@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
+import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.carapp.notifications.NotificationSettings
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
@@ -343,8 +344,9 @@ class MainService: Service() {
 	}
 
 	fun startMaps(): Boolean {
-		if (mapService == null) {
-			mapService = MapService(this, iDriveConnectionReceiver, securityAccess)
+		if (carInformationObserver.capabilities.isNotEmpty() && mapService == null) {
+			mapService = MapService(this, iDriveConnectionReceiver, securityAccess,
+					MapAppMode(carInformationObserver.capabilities, AppSettingsViewer()))
 		}
 		return mapService?.start() ?: false
 	}

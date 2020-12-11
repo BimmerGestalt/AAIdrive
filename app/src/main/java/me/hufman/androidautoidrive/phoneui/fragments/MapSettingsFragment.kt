@@ -35,8 +35,11 @@ class MapSettingsFragment: Fragment() {
 				appSettings[AppSettings.KEYS.GMAPS_STYLE] = value.toString().toLowerCase(Locale.ROOT).replace(' ', '_')
 			}
 		}
-		swGmapWidescreen.setOnCheckedChangeListener { _, isChecked ->
+		swMapWidescreen.setOnCheckedChangeListener { _, isChecked ->
 			appSettings[AppSettings.KEYS.MAP_WIDESCREEN] = isChecked.toString()
+		}
+		swMapInvertZoom.setOnCheckedChangeListener { _, isChecked ->
+			appSettings[AppSettings.KEYS.MAP_INVERT_SCROLL] = isChecked.toString()
 		}
 	}
 
@@ -47,7 +50,8 @@ class MapSettingsFragment: Fragment() {
 	}
 
 	fun redraw() {
-		swGmapWidescreen.isChecked = appSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()
+		swMapWidescreen.isChecked = appSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()
+		swMapInvertZoom.isChecked = appSettings[AppSettings.KEYS.MAP_INVERT_SCROLL].toBoolean()
 
 		val gmapStylePosition = resources.getStringArray(R.array.gmaps_styles).map { title ->
 			title.toLowerCase(Locale.ROOT).replace(' ', '_')

@@ -5,11 +5,18 @@
     android:animateLayoutChanges="true">
 
     <Switch
-        android:id="@+id/swGmapWidescreen"
+        android:id="@+id/swMapWidescreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:text="@string/lbl_widescreen_map" />
+
+    <Switch
+        android:id="@+id/swMapInvertZoom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="@string/lbl_map_invert_zoom" />
 
     <LinearLayout
         android:layout_width="match_parent"
