@@ -60,11 +60,12 @@ jobs:
           api-level: 26
           target: google_apis
           script: adb install external/BMW_Connected_v3.1.1.3078_apkpure.com.apk && ./gradlew connectedGmapNonalyticsDebugAndroidTestCoverage
-      - name: Upload CodeCov report
-        uses: codecov/codecov-action@v1
-        with:
-          file: app/build/reports/jacoco/jacoco.xml
-          flags: instrumentedtests
+# can't run coverage for instrumentedTest, because it doesn't run during Pull Requests
+#      - name: Upload CodeCov report
+#        uses: codecov/codecov-action@v1
+#        with:
+#          file: app/build/reports/jacoco/jacoco.xml
+#          flags: instrumentedtests
 
   package:
     if: github.repository == 'hufman/AndroidAutoIdrive' && github.event_name == 'push'
