@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.connections
 import android.content.Context
 import android.os.SystemClock
 import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
+import me.hufman.idriveconnectionkit.android.security.KnownSecurityServices
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 
 /**
@@ -29,13 +30,18 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 
 	val isBMWConnectedInstalled
 		get() = SecurityAccess.installedSecurityServices.any {
-			it.name.startsWith("BMW")
+			it.name.startsWith("BMWC")
 		}
 
 	val isMiniConnectedInstalled
 		get() = SecurityAccess.installedSecurityServices.any {
-			it.name.startsWith("Mini")
+			it.name.startsWith("MiniC")
 		}
+
+	val isBMWMineInstalled
+		get() = SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.BMWMine)
+	val isMiniMineInstalled
+		get() = SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.MiniMine)
 
 	private val btStatus = BtStatus(context) { callback() }
 	private val usbStatus = UsbStatus(context) { callback() }

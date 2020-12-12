@@ -17,8 +17,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:paddingEnd="5dp"
                 android:src="@android:drawable/checkbox_off_background" />
             <TextView
@@ -38,8 +38,8 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:paddingEnd="5dp"
             android:src="@android:drawable/checkbox_on_background" />
         <TextView
@@ -62,8 +62,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:paddingEnd="5dp"
                 android:src="@android:drawable/checkbox_off_background" />
             <TextView
@@ -83,8 +83,8 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:paddingEnd="5dp"
             android:src="@android:drawable/checkbox_on_background" />
         <TextView
@@ -107,8 +107,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:paddingEnd="5dp"
                 android:src="@android:drawable/checkbox_off_background" />
             <TextView
@@ -128,8 +128,8 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:paddingEnd="5dp"
             android:src="@android:drawable/checkbox_on_background" />
         <TextView
@@ -152,8 +152,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:paddingEnd="5dp"
                 android:src="@android:drawable/checkbox_off_background" />
             <TextView
@@ -177,8 +177,8 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:paddingEnd="5dp"
                 android:src="@android:drawable/checkbox_off_background" />
             <TextView
@@ -210,8 +210,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:paddingEnd="5dp"
                 android:src="@android:drawable/checkbox_off_background" />
             <TextView
@@ -243,8 +243,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:paddingEnd="5dp"
                 android:src="@android:drawable/checkbox_on_background" />
             <TextView
@@ -268,8 +268,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:paddingEnd="5dp"
                 android:src="@android:drawable/checkbox_off_background" />
             <TextView
@@ -297,8 +297,8 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:paddingEnd="5dp"
             android:src="@android:drawable/checkbox_off_background" />
         <TextView
@@ -321,8 +321,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:paddingEnd="5dp"
                 android:src="@android:drawable/checkbox_off_background" />
             <TextView
@@ -350,8 +350,8 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:paddingEnd="5dp"
             android:src="@android:drawable/checkbox_on_background" />
         <TextView
@@ -371,8 +371,8 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:paddingEnd="5dp"
             android:src="@android:drawable/checkbox_on_background" />
         <TextView

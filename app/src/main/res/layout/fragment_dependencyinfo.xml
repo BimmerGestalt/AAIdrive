@@ -18,8 +18,8 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:paddingEnd="5dp"
                 android:src="@android:drawable/checkbox_off_background" />
             <TextView
@@ -44,8 +44,8 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:paddingEnd="5dp"
             android:src="@android:drawable/checkbox_on_background" />
         <TextView
@@ -53,6 +53,26 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/txt_setup_bmw_ready" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/paneBMWMineDetected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="15dp"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:paddingEnd="5dp"
+            android:src="@drawable/ic_error_outline_black_24dp" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/txt_setup_bmw_mine_detected" />
     </LinearLayout>
 
     <!-- MINI Connection -->
@@ -69,8 +89,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:paddingEnd="5dp"
                 android:src="@android:drawable/checkbox_off_background" />
             <TextView
@@ -95,8 +115,8 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:paddingEnd="5dp"
             android:src="@android:drawable/checkbox_on_background" />
         <TextView
@@ -104,6 +124,26 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/txt_setup_mini_ready" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/paneMiniMineDetected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="15dp"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:paddingEnd="5dp"
+            android:src="@drawable/ic_error_outline_black_24dp" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/txt_setup_mini_mine_detected" />
     </LinearLayout>
 
     <!-- Security Service -->
@@ -121,8 +161,8 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:paddingEnd="5dp"
                 android:src="@android:drawable/checkbox_off_background" />
             <TextView

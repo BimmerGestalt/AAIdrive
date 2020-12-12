@@ -73,14 +73,19 @@ class DependencyInfoFragment: Fragment() {
 	fun redraw() {
 		if (!isResumed) return
 
+		// BMW Connection
 		showEither(paneBMWMissing, paneBMWReady) {
 			connectionDebugging.isConnectedSecurityConnected && connectionDebugging.isBMWConnectedInstalled
 		}
 		btnInstallBMW.visible = !connectionDebugging.isBMWConnectedInstalled    // don't offer the button to install if it's already installed
+		paneBMWMineDetected.visible = connectionDebugging.isBMWMineInstalled
+
+		// Mini Connection
 		showEither(paneMiniMissing, paneMiniReady) {
 			connectionDebugging.isConnectedSecurityConnected && connectionDebugging.isMiniConnectedInstalled
 		}
 		btnInstallMini.visible = !connectionDebugging.isMiniConnectedInstalled    // don't offer the button to install if it's already installed
+		paneMiniMineDetected.visible = connectionDebugging.isMiniMineInstalled
 
 		// if the security service isn't working for some reason, prompt to install the Classic app
 		paneSecurityMissing.visible = !connectionDebugging.isConnectedSecurityConnected && connectionDebugging.isConnectedInstalled
