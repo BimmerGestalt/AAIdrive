@@ -52,6 +52,7 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancella</string>
     <string name="btn_configure">Configura…</string>
+    <string name="lbl_error">Errore</string>
     <string name="connectionStatusMissingConnectedApp">Non trovo l\'app Connected o Connected Classic</string>
     <string name="connectionStatusWaiting">In attesa della connessione con l\'auto</string>
     <string name="nowplaying_notconnected">&lt;Non connessa&gt;</string>
