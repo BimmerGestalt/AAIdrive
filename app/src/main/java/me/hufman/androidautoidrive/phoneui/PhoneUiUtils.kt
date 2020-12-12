@@ -21,3 +21,16 @@ fun Context.getThemeColor(
 var View.visible: Boolean
 	get() { return this.visibility == View.VISIBLE }
 	set(value) {this.visibility = if (value) View.VISIBLE else View.GONE }
+
+
+/** Toggle between two views depending on a boolean */
+fun showEither(falseView: View, trueView: View, determiner: () -> Boolean) {
+	showEither(falseView, trueView, {true}, determiner)
+}
+
+fun showEither(falseView: View, trueView: View, prereq: () -> Boolean, determiner: () -> Boolean) {
+	val prereqed = prereq()
+	val determination = determiner()
+	falseView.visible = prereqed && !determination
+	trueView.visible = prereqed && determination
+}
