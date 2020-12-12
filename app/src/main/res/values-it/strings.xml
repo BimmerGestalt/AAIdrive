@@ -30,6 +30,7 @@
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
     <string name="enable_google_maps">Abilita Google Maps</string>
     <string name="lbl_widescreen_map">Mappa a tutto schermo</string>
+    <string name="lbl_map_invert_zoom">Inverti direzione zoom</string>
     <string name="gmapStyleLabel">Stile della mappa</string>
     <string name="lbl_music_apps">App di musica</string>
     <string name="musicAppIcon">Icona dell\'app</string>
