@@ -144,14 +144,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	var queueMetadata: QueueMetadata? = null
 	val coverArtCache = LruCache<ImageUri, Bitmap>(50)
 
-	//TODO: if liked songs queue then use Web API to play specific song
-	//  - create a dummy playlist (if the sharedPreferences doesn't contain the playlistId) and
-	//  store playlistId to sharedPreferences, otherwise look for the preexisting one to use
-	//	- create QueueMetadata using WebAPI call to ensure that album art images are retrieved
-	//  - clear out the dummy playlist through replacing items with the "liked songs" songs
-	//  - start playing dummy playlist
-	//  - when playlistSubscription callback fires for the dummy playlist do not update QueueMetadata
-
 	init {
 		spotifySubscription.setEventCallback { playerState ->
 			Log.d(TAG, "Heard an update from Spotify")
