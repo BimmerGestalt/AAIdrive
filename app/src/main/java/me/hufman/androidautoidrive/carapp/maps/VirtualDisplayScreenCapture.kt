@@ -13,9 +13,9 @@ import java.io.ByteArrayOutputStream
  */
 class VirtualDisplayScreenCapture(val imageCapture: ImageReader, val bitmapConfig: Bitmap.Config, val compressFormat: Bitmap.CompressFormat, var compressQuality: Int = 65) {
 	companion object {
-		fun build(): VirtualDisplayScreenCapture {
+		fun build(width: Int, height: Int): VirtualDisplayScreenCapture {
 			return VirtualDisplayScreenCapture(
-					ImageReader.newInstance(MapApp.MAX_WIDTH, MapApp.MAX_HEIGHT, PixelFormat.RGBA_8888, 2)!!,
+					ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2)!!,
 					Bitmap.Config.ARGB_8888,
 					Bitmap.CompressFormat.JPEG)
 		}

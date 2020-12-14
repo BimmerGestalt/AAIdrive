@@ -44,4 +44,18 @@ class CarThread(name: String, val runnable: () -> (Unit)): Thread(name) {
 			}
 		}
 	}
+
+	fun post(block: () -> Unit) {
+		handler?.post(block)
+	}
+
+	fun quit() {
+		handler?.looper?.quit()
+		handler = null      // no longer useful
+	}
+
+	fun quitSafely() {
+		handler?.looper?.quitSafely()
+		handler = null      // no longer useful
+	}
 }

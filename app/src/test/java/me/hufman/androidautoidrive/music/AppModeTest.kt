@@ -2,9 +2,8 @@ package me.hufman.androidautoidrive.music
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.MutableAppSettings
+import me.hufman.androidautoidrive.MockAppSettings
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import org.junit.Assert.*
@@ -23,29 +22,23 @@ class AppModeTest {
 	@Test
 	fun testMusicAppManual() {
 		// Allow the user to force enable the context
-		val settings = mock<MutableAppSettings> {
-			on { get(AppSettings.KEYS.AUDIO_FORCE_CONTEXT) } doReturn "false"
-			on { get(AppSettings.KEYS.AUDIO_SUPPORTS_USB) } doReturn "false"
-		}
+		val settings = MockAppSettings(AppSettings.KEYS.AUDIO_FORCE_CONTEXT to "false", AppSettings.KEYS.AUDIO_SUPPORTS_USB to "false")
 		val mode = MusicAppMode(usbConnection, emptyMap(), settings, null, null, null)
 		assertFalse(mode.shouldRequestAudioContext())
 
-		whenever(settings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT]) doReturn "true"
+		settings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT] = "true"
 		assertTrue(mode.shouldRequestAudioContext())
 	}
 
 	@Test
 	fun testUSBSupport() {
 		// Test that the USB connection is handled properly
-		val settings = mock<MutableAppSettings> {
-			on { get(AppSettings.KEYS.AUDIO_FORCE_CONTEXT) } doReturn "false"
-			on { get(AppSettings.KEYS.AUDIO_SUPPORTS_USB) } doReturn "false"
-		}
+		val settings = MockAppSettings(AppSettings.KEYS.AUDIO_FORCE_CONTEXT to "false", AppSettings.KEYS.AUDIO_SUPPORTS_USB to "false")
 		val mode = MusicAppMode(usbConnection, emptyMap(), settings, null, null, null)
 		assertFalse(mode.shouldRequestAudioContext())
 
 		// the phone is old enough to support it over USB
-		whenever(settings[AppSettings.KEYS.AUDIO_SUPPORTS_USB]) doReturn "true"
+		settings[AppSettings.KEYS.AUDIO_SUPPORTS_USB] = "true"
 		assertTrue(mode.shouldRequestAudioContext())
 
 		// should work over BT too, even if the phone is old
@@ -56,17 +49,14 @@ class AppModeTest {
 	@Test
 	fun testBTSupport() {
 		// Verify that the BT connection is handled properly
-		val settings = mock<MutableAppSettings> {
-			on { get(AppSettings.KEYS.AUDIO_FORCE_CONTEXT) } doReturn "false"
-			on { get(AppSettings.KEYS.AUDIO_SUPPORTS_USB) } doReturn "false"
-		}
+		val settings = MockAppSettings(AppSettings.KEYS.AUDIO_FORCE_CONTEXT to "false", AppSettings.KEYS.AUDIO_SUPPORTS_USB to "false")
 		val mode = MusicAppMode(btConnection, emptyMap(), settings, null, null, null)
 		assertTrue(mode.shouldRequestAudioContext())
 	}
 
 	@Test
 	fun testId5() {
-		val settings = mock<MutableAppSettings>()
+		val settings = MockAppSettings()
 		// spotify not installed
 		run {
 			val noSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, null, null, null)
@@ -89,14 +79,13 @@ class AppModeTest {
 		}
 
 		// force spotify layout
-		whenever(settings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT]) doReturn "true"
+		settings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT] = "true"
 		run {
 			val forcedSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, null, null, null)
 			assertTrue(forcedSpotifyMode.shouldId5Playback())
 		}
 
 		// can't do it in id4
-		whenever(settings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT]) doReturn "true"
 		run {
 			val forcedSpotifyMode = MusicAppMode(btConnection, id4Capabilities, settings, null, null, "8.6.20")
 			assertFalse(forcedSpotifyMode.shouldId5Playback())
@@ -105,7 +94,7 @@ class AppModeTest {
 
 	@Test
 	fun testId5Radio() {
-		val settings = mock<MutableAppSettings>()
+		val settings = MockAppSettings()
 
 		// no radio app
 		run {

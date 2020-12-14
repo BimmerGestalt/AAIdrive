@@ -23,6 +23,7 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.ReadoutController
 import me.hufman.androidautoidrive.carapp.notifications.*
 import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
@@ -54,7 +55,7 @@ class NotificationAppTest {
 	}
 	val carAppResources = mock<CarAppResources> {
 		on { getAppCertificate() } doReturn ByteArrayInputStream(ByteArray(0))
-		on { getUiDescription() } doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_onlineservices_v1.xml") }
+		on { getUiDescription() } doAnswer { this.javaClass.classLoader!!.getResourceAsStream("ui_description_onlineservices_v1.xml") }
 		on { getImagesDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 		on { getTextsDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 	}
@@ -185,6 +186,7 @@ class NotificationAppTest {
 		}
 	}
 
+	@Suppress("DEPRECATION")
 	fun createNotification(tickerText:String, title:String?, text: String?, summary:String, clearable: Boolean=false, packageName: String="me.hufman.androidautoidrive"): StatusBarNotification {
 		val smallIconMock = mock<Icon>()
 		val largeIconMock = mock<Icon>()
@@ -315,6 +317,7 @@ class NotificationAppTest {
 		assertEquals("Summary", notificationObject.text)
 	}
 
+	@Suppress("DEPRECATION")
 	@Test
 	fun testSummaryCustomView() {
 		val phoneNotification = createNotification("Ticker Text", "Title", "Text", "Summary", false)
@@ -631,10 +634,7 @@ class NotificationAppTest {
 		val rhmiApp = RHMIApplicationConcrete()
 		rhmiApp.loadFromXML(carAppResources.getUiDescription()!!.readBytes())
 		val state = rhmiApp.states[8]!!
-		val appSettings = mock<MutableAppSettings> {
-			val captor = argumentCaptor<AppSettings.KEYS>()
-			on { get(captor.capture()) } doAnswer { AppSettings[captor.lastValue] }
-		}
+		val appSettings = MockAppSettings()
 
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++", "tts" to "true"), mock(), appSettings)

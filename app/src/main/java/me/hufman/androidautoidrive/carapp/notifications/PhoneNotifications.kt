@@ -16,6 +16,10 @@ import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
 import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
 import me.hufman.androidautoidrive.carapp.notifications.views.PopupView
 import me.hufman.androidautoidrive.notifications.*
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
+import me.hufman.androidautoidrive.utils.Utils
+import me.hufman.androidautoidrive.utils.loadJSON
+import me.hufman.androidautoidrive.utils.removeFirst
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
@@ -228,7 +232,8 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 		}
 
 		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
-			val propertyData = loadJSON(propertyValue) ?: return
+			val propertyData = loadJSON(propertyValue)
+					?: return
 			synced()
 
 			if (propertyName == "sensors.seatOccupiedPassenger") {

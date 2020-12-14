@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.phoneui
+package me.hufman.androidautoidrive.phoneui.fragments
 
 import android.graphics.*
 import android.os.Bundle
@@ -10,10 +10,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.music_nowplaying.*
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.Utils
-import me.hufman.androidautoidrive.getThemeColor
+import me.hufman.androidautoidrive.utils.Utils
+import me.hufman.androidautoidrive.phoneui.getThemeColor
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
+import me.hufman.androidautoidrive.phoneui.MusicActivityModel
+import me.hufman.androidautoidrive.phoneui.visible
 
 class MusicNowPlayingFragment: Fragment() {
 	companion object {
@@ -79,7 +81,7 @@ class MusicNowPlayingFragment: Fragment() {
 	}
 
 	fun redraw() {
-		if (!isVisible) return
+		if (!isResumed) return
 		val metadata = musicController.getMetadata()
 		if (metadata?.coverArt != null) {
 			imgCoverArt.setImageBitmap(metadata.coverArt)
@@ -106,8 +108,8 @@ class MusicNowPlayingFragment: Fragment() {
 			imgError.visible = true
 			imgError.setOnClickListener {
 				val arguments = Bundle().apply {
-					putString(SpotifyApiErrorDialog.EXTRA_CLASSNAME, spotifyError?.javaClass?.simpleName)
-					putString(SpotifyApiErrorDialog.EXTRA_MESSAGE, spotifyError?.message)
+					putString(SpotifyApiErrorDialog.EXTRA_CLASSNAME, spotifyError.javaClass.simpleName)
+					putString(SpotifyApiErrorDialog.EXTRA_MESSAGE, spotifyError.message)
 				}
 				SpotifyApiErrorDialog().apply {
 					setArguments(arguments)

@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.utils
 
 import android.content.Context
 import android.graphics.*
@@ -248,17 +248,6 @@ suspend inline fun <T> Deferred<T>.awaitPending(timeout: Long, timeoutHandler: (
 }
 suspend inline fun <T> Deferred<T>.awaitPending(timeout: Int, timeoutHandler: () -> Unit): T {
 	return awaitPending(timeout.toLong(), timeoutHandler)
-}
-
-/** Resolve a Color Attribute to a color int */
-@ColorInt
-fun Context.getThemeColor(
-		@AttrRes attrColor: Int
-): Int {
-	val typedValue = TypedValue()
-	theme.resolveAttribute(attrColor, typedValue, true)
-	val colorRes = typedValue.resourceId
-	return resources.getColor(colorRes, theme)
 }
 
 fun loadJSON(str: String?): JSONObject? {

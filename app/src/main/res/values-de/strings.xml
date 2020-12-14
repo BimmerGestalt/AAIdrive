@@ -25,7 +25,7 @@
     <string name="notification_sound">Benachrichtigungston abspielen</string>
     <string name="notification_readout">Benachrichtigungen beim Betrachten vorlesen</string>
     <string name="notification_readout_popup">Neue Benachrichtigungen vorlesen</string>
-    <string name="notification_readout_popup_passenger">... mit Beifahrer</string>
+    <string name="notification_readout_popup_passenger">… mit Beifahrer</string>
     <string name="lbl_popupVersion">PopUps funktionieren nur mit IDrive4</string>
     <string name="lbl_smsPermission">Erteile Zugriff für SMS-Nachrichten um Bilder von Nachrichten im Fahrzeug zu sehen. Text ist immer sichtbar.</string>
     <string name="enable_google_maps">Google Maps aktivieren</string>
@@ -105,7 +105,7 @@
     <string name="NOTIFICATION_SOUND">Benachrichtigungston abspielen</string>
     <string name="NOTIFICATION_READOUT">Benachrichtigungen beim Betrachten vorlesen</string>
     <string name="NOTIFICATION_READOUT_POPUP">Neue Benachrichtigungen vorlesen</string>
-    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> ... mit Beifahrer</string>
+    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … mit Beifahrer</string>
     <string name="READOUT_DESCRIPTION">Diese App wird zum Auslesen verwendet</string>
     <string name="MAP_ACTION_VIEWMAP">Volle Karte zeigen</string>
     <string name="MAP_ACTION_SEARCH">Ort suchen</string>

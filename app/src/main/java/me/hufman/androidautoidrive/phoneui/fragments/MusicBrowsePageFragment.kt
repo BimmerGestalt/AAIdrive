@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.phoneui
+package me.hufman.androidautoidrive.phoneui.fragments
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -13,14 +13,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlin.coroutines.CoroutineContext
 import kotlinx.android.synthetic.main.music_browsepage.*
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.androidautoidrive.Utils
-import me.hufman.androidautoidrive.getThemeColor
+import me.hufman.androidautoidrive.utils.Utils
+import me.hufman.androidautoidrive.phoneui.getThemeColor
+import me.hufman.androidautoidrive.phoneui.MusicActivityModel
+import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
 
 class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 	override val coroutineContext: CoroutineContext
@@ -69,7 +72,7 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 		listBrowseRefresh.setOnRefreshListener {
 			browseDirectory(arguments?.getString(ARG_MEDIA_ID))
 			Handler(this.context?.mainLooper).postDelayed({
-				listBrowseRefresh.isRefreshing = false
+				this.view?.findViewById<SwipeRefreshLayout>(R.id.listBrowseRefresh)?.isRefreshing = false
 			}, 1000)
 		}
 
@@ -89,7 +92,7 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 			val contents = result.await()
 			this@MusicBrowsePageFragment.contents.clear()
 			this@MusicBrowsePageFragment.contents.addAll(contents)
-			if (isVisible) {
+			if (isResumed) {
 				if (contents.isEmpty()) {
 					txtEmpty.text = getString(R.string.MUSIC_BROWSE_EMPTY)
 				} else {

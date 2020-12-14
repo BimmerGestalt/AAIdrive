@@ -49,6 +49,6 @@ class CarAPIAssetProvider : ContentProvider() {
 
 	private fun startService() {
 		Log.i(TAG, "Sensed the Connected app sniffing around, starting the service")
-		context.startService(Intent(context, MainService::class.java).setAction(MainService.ACTION_START))
+		context?.startService(Intent(context, MainService::class.java).setAction(MainService.ACTION_START))
 	}
 }

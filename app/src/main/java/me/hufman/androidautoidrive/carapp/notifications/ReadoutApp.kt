@@ -5,8 +5,8 @@ import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.androidautoidrive.carapp.ReadoutController
-import me.hufman.androidautoidrive.loadJSON
-import me.hufman.androidautoidrive.toMap
+import me.hufman.androidautoidrive.utils.loadJSON
+import me.hufman.androidautoidrive.utils.toMap
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
@@ -54,7 +54,8 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 	class ReadoutAppListener: BaseBMWRemotingClient() {
 		var readoutController: ReadoutController? = null
 		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
-			val propertyData = loadJSON(propertyValue) ?: return
+			val propertyData = loadJSON(propertyValue)
+					?: return
 			if (propertyData.has("TTSState")) {
 				val ttsState = propertyData.getJSONObject("TTSState")
 				readoutController?.onTTSEvent(ttsState.toMap())

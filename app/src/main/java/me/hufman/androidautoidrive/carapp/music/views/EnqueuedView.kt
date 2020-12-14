@@ -1,14 +1,14 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import de.bmw.idrive.BMWRemoting
-import me.hufman.androidautoidrive.GraphicsHelpers
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.QueueMetadata
-import me.hufman.androidautoidrive.truncate
+import me.hufman.androidautoidrive.utils.truncate
 import me.hufman.idriveconnectionkit.rhmi.*
 import kotlin.math.max
 

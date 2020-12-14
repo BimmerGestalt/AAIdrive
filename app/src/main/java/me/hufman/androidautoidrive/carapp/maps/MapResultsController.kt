@@ -47,10 +47,13 @@ class MapResultsReceiver(val controller: MapResultsController): BroadcastReceive
 	override fun onReceive(context: Context?, intent: Intent?) {
 		if (context?.packageName == null || intent?.`package` == null || context.packageName != intent.`package`) return
 		if (intent.action == INTENT_MAP_RESULTS) {
-			controller.onSearchResults(intent.getSerializableExtra(EXTRA_MAP_RESULTS) as? Array<MapResult> ?: return)
+			val results = intent.getSerializableExtra(EXTRA_MAP_RESULTS) as? Array<*>
+			val mapResults = results?.filterIsInstance<MapResult>()?.toTypedArray() ?: return
+			controller.onSearchResults(mapResults)
 		}
 		if (intent.action == INTENT_MAP_RESULT) {
-			controller.onPlaceResult(intent.getSerializableExtra(EXTRA_MAP_RESULT) as? MapResult ?: return)
+			val mapResult = intent.getSerializableExtra(EXTRA_MAP_RESULT) as? MapResult ?: return
+			controller.onPlaceResult(mapResult)
 		}
 	}
 }

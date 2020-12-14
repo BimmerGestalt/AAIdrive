@@ -1,6 +1,5 @@
 package me.hufman.androidautoidrive.phoneui
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,8 +7,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import androidx.core.app.NotificationCompat
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
+import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
 import java.text.SimpleDateFormat
 import java.util.*
@@ -55,7 +56,7 @@ class DonationRequest(val context: Context) {
 		const val NOTIFICATION_CHANNEL_NAME = "Donation Request"
 	}
 
-	private val dayCounter = DayCounter(MutableAppSettings(context)) {
+	private val dayCounter = DayCounter(MutableAppSettingsReceiver(context)) {
 		onDayIncremented()
 	}
 
@@ -84,16 +85,13 @@ class DonationRequest(val context: Context) {
 		createNotificationChannel()
 		val intent = Intent(Intent.ACTION_VIEW).
 				setData(Uri.parse(DONATION_URL))
-		val notificationBuilder = Notification.Builder(context)
+		val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
 				.setContentTitle(context.getText(R.string.donation_title))
 				.setContentText(context.getText(R.string.donation_text))
 				.setSmallIcon(R.drawable.ic_notify)
-				.setPriority(Notification.PRIORITY_LOW)
+				.setPriority(NotificationCompat.PRIORITY_LOW)
 				.setAutoCancel(true)
 				.setContentIntent(PendingIntent.getActivity(context, 50, intent, PendingIntent.FLAG_UPDATE_CURRENT))
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			notificationBuilder.setChannelId(NOTIFICATION_CHANNEL_ID)
-		}
 
 		val notificationManager = context.getSystemService(NotificationManager::class.java)
 		notificationManager.notify(50, notificationBuilder.build())

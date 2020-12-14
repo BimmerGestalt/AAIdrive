@@ -7,6 +7,7 @@ import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
 import me.hufman.androidautoidrive.carapp.assistant.AssistantAppInfo
 import me.hufman.androidautoidrive.carapp.assistant.AssistantController
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
@@ -24,7 +25,7 @@ class AssistantAppTest {
 	}
 	val carAppResources = mock<CarAppResources> {
 		on { getAppCertificate() } doReturn ByteArrayInputStream(ByteArray(0))
-		on { getUiDescription() } doAnswer { this.javaClass.classLoader.getResourceAsStream("ui_description_onlineservices_v2.xml") }
+		on { getUiDescription() } doAnswer { this.javaClass.classLoader!!.getResourceAsStream("ui_description_onlineservices_v2.xml") }
 		on { getImagesDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 		on { getTextsDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 	}

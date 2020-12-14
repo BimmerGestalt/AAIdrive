@@ -1,0 +1,7 @@
+name: "Download Build Dependencies"
+description: "Downloads external dependencies to build AndroidAutoIdrive"
+runs:
+  using: "composite"
+  steps:
+    - run: ${{ github.action_path }}/download.sh
+      shell: bash

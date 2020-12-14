@@ -7,13 +7,9 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
-import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.carapp.InputState
-import me.hufman.androidautoidrive.carapp.RHMIUtils
-import me.hufman.androidautoidrive.carapp.FullImageInteraction
-import me.hufman.androidautoidrive.carapp.FullImageView
+import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.maps.views.MenuView
-import me.hufman.androidautoidrive.removeFirst
+import me.hufman.androidautoidrive.utils.removeFirst
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
@@ -21,17 +17,14 @@ import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
+import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.min
 
 const val TAG = "MapView"
 
-class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val interaction: MapInteractionController, val map: VirtualDisplayScreenCapture) {
-	companion object {
-		val MAX_WIDTH = 1440
-		val MAX_HEIGHT = 540
-	}
+class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val mapAppMode: MapAppMode, val interaction: MapInteractionController, val map: VirtualDisplayScreenCapture) {
 
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
@@ -44,27 +37,6 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 	val fullImageView: FullImageView
 	val stateInput: RHMIState.PlainState
 	val stateInputState: InputState<MapResult>
-
-	val rhmiWidth: Int
-	val mapWidth: Int
-		//get() = min(rhmiWidth - 280, if (AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()) 1370 else 825)
-		get() = if (AppSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()) 1370 else 825 // first value with right sidebar off, second with on.
-	val mapHeight = 540
-
-	/*
-		Side panel on the left: 70px
-		800 x 480
-		1280 x 480 * (1210/730 x 480)
-		1440 x 540 * (1370/825 x 540)
-		1920 x 720
-		Side panel on the right open is 40% wide according to what I found.
-		Side panel on the right closed is 5px (omitted)
-
-		If possible:
-		- option to set map direction: driving direction, north
-		- option to set map in mode: Map, Hybrid + traffic, Satellite
-
-	 */
 
 	// map state
 	var frameUpdater = FrameUpdater(map, object: FrameModeListener {
@@ -95,24 +67,19 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 		Log.i(TAG, "Locating components to use")
 		val unclaimedStates = LinkedList(carApp.states.values)
 		menuView = MenuView(unclaimedStates.removeFirst { MenuView.fits(it) }, interaction, frameUpdater)
-		fullImageView = FullImageView(unclaimedStates.removeFirst { FullImageView.fits(it) }, "Map", object : FullImageInteraction {
+		fullImageView = FullImageView(unclaimedStates.removeFirst { FullImageView.fits(it) }, "Map", mapAppMode, object : FullImageInteraction {
 			override fun navigateUp() {
-				interaction.zoomOut(1)
-				// interaction.zoomIn(1) //check the other way round ?
-			}
-
-			override fun navigateDown() {
 				interaction.zoomIn(1)
-				//interaction.zoomOut(1)
 			}
-
+			override fun navigateDown() {
+				interaction.zoomOut(1)
+			}
 			override fun click() {
 			}
-
 			override fun getClickState(): RHMIState {
 				return menuView.state
 			}
-		}, frameUpdater, { mapWidth }, { mapHeight })
+		}, frameUpdater)
 
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first {
 			it.componentsList.filterIsInstance<RHMIComponent.Input>().filter { it.suggestAction > 0 }.isNotEmpty()
@@ -123,11 +90,6 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 			it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = menuView.state.id
 			Log.i(TAG, "Registering entry button ${it.id} model ${it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.id} to point to main state ${menuView.state.id}")
 		}
-
-		// get the car capabilities
-		val capabilities = carConnection.rhmi_getCapabilities("", 255)
-		rhmiWidth = (capabilities["hmi.display-width"] as? String?)?.toIntOrNull() ?: 720
-		Log.i(TAG, "Detected HMI width of $rhmiWidth")
 
 		// set up the components
 		Log.i(TAG, "Setting up component behaviors")
@@ -165,7 +127,9 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 		frameUpdater.start(handler)
 	}
 	fun onDestroy(context: Context) {
-		context.unregisterReceiver(mapResultsUpdater)
+		try {
+			context.unregisterReceiver(mapResultsUpdater)
+		} catch (e: IllegalArgumentException) {}
 		try {
 			IDriveConnection.disconnectEtchConnection(carConnection)
 		} catch (e: java.lang.Exception) {}

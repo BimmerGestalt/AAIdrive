@@ -946,7 +946,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".phoneui.ConfigureNotificationsActivity$CustomActionListener" />
+        <receiver android:name=".phoneui.fragments.NotificationPageFragment$CustomActionListener" />
 
         <service android:name=".notifications.NotificationListenerServiceImpl"
             android:label="@string/app_name"

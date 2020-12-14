@@ -2,16 +2,17 @@ package me.hufman.androidautoidrive
 
 import ChassisCode
 import android.app.*
-import android.app.Notification.PRIORITY_LOW
 import android.content.*
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
+import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.carapp.notifications.NotificationSettings
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
@@ -21,12 +22,14 @@ import me.hufman.androidautoidrive.carapp.notifications.ReadoutApp
 import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.notifications.AudioPlayer
 import me.hufman.androidautoidrive.phoneui.*
+import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
 import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import org.json.JSONObject
 import java.lang.IllegalArgumentException
+import java.util.*
 
 class MainService: Service() {
 	companion object {
@@ -41,26 +44,22 @@ class MainService: Service() {
 
 	var foregroundNotification: Notification? = null
 
-	val securityAccess = SecurityAccess.getInstance(this)
+	val appSettings = MutableAppSettingsReceiver(this)
+	val securityAccess by lazy { SecurityAccess.getInstance(this) }
 	val iDriveConnectionReceiver = IDriveConnectionReceiver()   // start listening to car connection, if the AndroidManifest listener didn't start
-	val carProberThread by lazy {
-		CarProber(securityAccess,
-			CarAppAssetManager(this, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
-			CarAppAssetManager(this, "smartthings").getAppCertificateRaw("mini")!!.readBytes()
-		)
-	}
+	var carProberThread: CarProber? = null
 
-	val securityServiceThread = SecurityServiceThread(securityAccess)
+	val securityServiceThread by lazy { SecurityServiceThread(securityAccess) }
 
+	val carInformationObserver = CarInformationObserver()
 	var threadCapabilities: CarThread? = null
 	var carappCapabilities: CarInformationDiscovery? = null
-	var carCapabilities: Map<String, String?> = mapOf()
 
 	var threadNotifications: CarThread? = null
 	var carappNotifications: PhoneNotifications? = null
 	var carappReadout: ReadoutApp? = null
 
-	var mapService = MapService(this, iDriveConnectionReceiver, securityAccess)
+	var mapService: MapService? = null
 
 	var musicService: MusicService? = null
 
@@ -84,7 +83,7 @@ class MainService: Service() {
 		} else if (action == ACTION_STOP) {
 			handleActionStop()
 		}
-		return Service.START_STICKY
+		return START_STICKY
 	}
 
 	override fun onDestroy() {
@@ -95,7 +94,7 @@ class MainService: Service() {
 		} catch (e: IllegalArgumentException) {
 			// never started?
 		}
-		carProberThread.quitSafely()
+		carProberThread?.quitSafely()
 		super.onDestroy()
 	}
 
@@ -105,8 +104,12 @@ class MainService: Service() {
 	private fun handleActionStart() {
 		Log.i(TAG, "Starting up service")
 		createNotificationChannel()
+		// subscribe to configuration changes
+		appSettings.callback = {
+			combinedCallback()
+		}
 		// set up connection listeners
-		securityAccess.listener = Runnable {
+		securityAccess.callback = {
 			combinedCallback()
 		}
 		iDriveConnectionReceiver.callback = {
@@ -120,10 +123,10 @@ class MainService: Service() {
 		// start up car connection listener
 		announceCarAPI()
 		iDriveConnectionReceiver.subscribe(this)
-		if (!carProberThread.isAlive) {
-			carProberThread.start()
-		} else {
-			carProberThread.schedule(1000)
+		startCarProber()
+		// start some more services as the capabilities are known
+		carInformationObserver.callback = {
+			combinedCallback()
 		}
 	}
 
@@ -153,33 +156,43 @@ class MainService: Service() {
 		CarAPIDiscovery.announceApp(this, myApp)
 	}
 
+	private fun startCarProber() {
+		if (carProberThread?.isAlive != true) {
+			carProberThread = CarProber(securityAccess,
+				CarAppAssetManager(this, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
+				CarAppAssetManager(this, "smartthings").getAppCertificateRaw("mini")!!.readBytes()
+			).apply { start() }
+		} else {
+			carProberThread?.schedule(1000)
+		}
+	}
+
 	private fun startServiceNotification(brand: String?, chassisCode: ChassisCode?) {
 		Log.i(TAG, "Creating foreground notification")
 		val notifyIntent = Intent(this, MainActivity::class.java).apply {
 			flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 		}
-		val foregroundNotificationBuilder = Notification.Builder(this)
+		val foregroundNotificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
 				.setOngoing(true)
 				.setContentTitle(getText(R.string.notification_title))
 				.setContentText(getText(R.string.notification_description))
 				.setSmallIcon(R.drawable.ic_notify)
-				.setPriority(PRIORITY_LOW)
+				.setPriority(NotificationCompat.PRIORITY_LOW)
 				.setContentIntent(PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT))
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			foregroundNotificationBuilder.setChannelId(NOTIFICATION_CHANNEL_ID)
-		}
 
-		if (brand?.toLowerCase() == "bmw") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_bmw))
-		if (brand?.toLowerCase() == "mini") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_mini))
+		if (brand?.toLowerCase(Locale.ROOT) == "bmw") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_bmw))
+		if (brand?.toLowerCase(Locale.ROOT) == "mini") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_mini))
 
 		if (chassisCode != null) {
 			foregroundNotificationBuilder.setContentText(resources.getString(R.string.notification_description_chassiscode, chassisCode.toString()))
 		}
 
-		if (foregroundNotification == null) {
-			foregroundNotification = foregroundNotificationBuilder.build()
+		val foregroundNotification = foregroundNotificationBuilder.build()
+		if (this.foregroundNotification?.extras?.getCharSequence(Notification.EXTRA_TEXT) !=
+				foregroundNotification?.extras?.getCharSequence(Notification.EXTRA_TEXT)) {
 			startForeground(ONGOING_NOTIFICATION_ID, foregroundNotification)
 		}
+		this.foregroundNotification = foregroundNotification
 	}
 
 	fun combinedCallback() {
@@ -205,9 +218,12 @@ class MainService: Service() {
 				// start assistant
 				startAny = startAny or startAssistant()
 
+				// start navigation handler
+				startNavigationListener()
+
 				// check if we are idle and should shut down
 				if (startAny ){
-					startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carCapabilities["vehicle.type"] ?: "Unknown"))
+					startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
 				} else {
 					Log.i(TAG, "No apps are enabled, skipping the service start")
 					stopServiceNotification()
@@ -222,14 +238,12 @@ class MainService: Service() {
 				stopCarApps()
 			}
 		}
-		sendBroadcast(Intent(MainActivity.INTENT_REDRAW))   // tell the UI we are connected
 	}
 
 	fun startCarCapabilities() {
 		synchronized(this) {
 			if (threadCapabilities == null) {
 				// clear the capabilities to not start dependent services until it's ready
-				carCapabilities = emptyMap()
 				threadCapabilities = CarThread("Capabilities") {
 					Log.i(TAG, "Starting to discover car capabilities")
 
@@ -237,23 +251,12 @@ class MainService: Service() {
 							CarAppAssetManager(this, "smartthings"),
 							object: CarInformationDiscoveryListener {
 						override fun onCapabilities(capabilities: Map<String, String?>) {
-							synchronized(DebugStatus.carCapabilities) {
-								DebugStatus.carCapabilities.clear()
-								DebugStatus.carCapabilities.putAll(capabilities.mapValues { it.value ?: "null" })
-							}
-							SetupActivity.redraw(this@MainService)
+							// update the known capabilities
+							// which triggers a callback to start more service modules
+							carInformationObserver.capabilities = capabilities.mapValues { it.value ?: "" }
+
 							// update the notification
-							carCapabilities = capabilities
-							startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carCapabilities["vehicle.type"] ?: "Unknown"))
-
-							// now that we have capabilities, start up the music app
-							startMusic()
-
-							// also start Notifications
-							startNotifications()
-
-							// enable navigation listener, if supported
-							startNavigationListener()
+							startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
 						}
 
 						override fun onCdsProperty(propertyName: String, propertyValue: String, parsedValue: JSONObject?) {
@@ -273,23 +276,23 @@ class MainService: Service() {
 	fun stopCarCapabilities() {
 		carappCapabilities?.onDestroy()
 		carappCapabilities = null
-		threadCapabilities?.handler?.looper?.quitSafely()
+		threadCapabilities?.quitSafely()
 		threadCapabilities = null
 	}
 
 	fun startNotifications(): Boolean {
-		val enabled = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
+		val enabled = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
 				Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true
 		if (enabled) {
 			synchronized(this) {
-				if (carCapabilities.isNotEmpty() && threadNotifications == null) {
+				if (carInformationObserver.capabilities.isNotEmpty() && threadNotifications?.isAlive != true) {
 					threadNotifications = CarThread("Notifications") {
 						Log.i(TAG, "Starting notifications app")
 						val handler = threadNotifications?.handler
 						if (handler == null) {
 							Log.e(TAG, "CarThread Handler is null?")
 						}
-						val notificationSettings = NotificationSettings(carCapabilities, BtStatus(this) {}, MutableAppSettings(this, handler))
+						val notificationSettings = NotificationSettings(carInformationObserver.capabilities, BtStatus(this) {}, MutableAppSettingsReceiver(this, handler))
 						notificationSettings.btStatus.register()
 						carappNotifications = PhoneNotifications(iDriveConnectionReceiver, securityAccess,
 								CarAppAssetManager(this, "basecoreOnlineServices"),
@@ -304,11 +307,14 @@ class MainService: Service() {
 						// request an initial draw
 						sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
 
-						// start up the readout app
-						val carappReadout = ReadoutApp(iDriveConnectionReceiver, securityAccess,
-								CarAppAssetManager(this, "news"))
-						carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
-						this.carappReadout = carappReadout
+						handler?.post {
+							// start up the readout app
+							// using a handler to automatically handle shutting down during init
+							val carappReadout = ReadoutApp(iDriveConnectionReceiver, securityAccess,
+									CarAppAssetManager(this, "news"))
+							carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
+							this.carappReadout = carappReadout
+						}
 					}
 					threadNotifications?.start()
 				}
@@ -324,27 +330,36 @@ class MainService: Service() {
 	}
 
 	fun stopNotifications() {
-		carappReadout?.onDestroy()
-		carappReadout = null
 		carappNotifications?.notificationSettings?.btStatus?.unregister()
 		carappNotifications?.onDestroy(this)
 		carappNotifications = null
-		threadNotifications?.handler?.looper?.quitSafely()
+		carappReadout?.onDestroy()
+		carappReadout = null
+		// if we caught it during initialization, kill it again
+		threadNotifications?.post {
+			stopNotifications()
+		}
+		threadNotifications?.quitSafely()
 		threadNotifications = null
 	}
 
 	fun startMaps(): Boolean {
-		return mapService.start()
+		if (carInformationObserver.capabilities.isNotEmpty() && mapService == null) {
+			mapService = MapService(this, iDriveConnectionReceiver, securityAccess,
+					MapAppMode(carInformationObserver.capabilities, AppSettingsViewer()))
+		}
+		return mapService?.start() ?: false
 	}
 
 	fun stopMaps() {
-		mapService.stop()
+		mapService?.stop()
+		mapService = null
 	}
 
 	fun startMusic(): Boolean {
-		if (carCapabilities.isNotEmpty() && musicService == null) {
+		if (carInformationObserver.capabilities.isNotEmpty() && musicService == null) {
 			musicService = MusicService(this, iDriveConnectionReceiver, securityAccess,
-					MusicAppMode.build(carCapabilities, this))
+					MusicAppMode.build(carInformationObserver.capabilities, this))
 			musicService?.start()
 		}
 		return true
@@ -375,18 +390,18 @@ class MainService: Service() {
 	fun stopAssistant() {
 		carappAssistant?.onDestroy()
 		carappAssistant = null
-		threadAssistant?.handler?.looper?.quitSafely()
+		threadAssistant?.quitSafely()
 		threadAssistant = null
 	}
 
 	fun startNavigationListener() {
-		if (carCapabilities["navi"] == "true") {
-			if (iDriveConnectionReceiver.brand?.toLowerCase() == "bmw") {
+		if (carInformationObserver.capabilities["navi"] == "true") {
+			if (iDriveConnectionReceiver.brand?.toLowerCase(Locale.ROOT) == "bmw") {
 				packageManager.setComponentEnabledSetting(
 						ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityBMW"),
 						PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
 				)
-			} else if (iDriveConnectionReceiver.brand?.toLowerCase() == "mini") {
+			} else if (iDriveConnectionReceiver.brand?.toLowerCase(Locale.ROOT) == "mini") {
 				packageManager.setComponentEnabledSetting(
 						ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityMINI"),
 						PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
@@ -423,7 +438,7 @@ class MainService: Service() {
 		Log.i(TAG, "Shutting down service")
 		synchronized(MainService::class.java) {
 			stopCarApps()
-			securityAccess.listener = Runnable {}
+			appSettings.callback = null
 			securityServiceThread.disconnect()
 		}
 	}

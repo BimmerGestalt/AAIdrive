@@ -38,7 +38,7 @@
     <string name="musicAppNotes_oldSpotifyInstructions">Ta aplikacja może zapewnić pełną kontrolę nad Spotify do wersji 8.4.96.953, taką jak przeglądanie list odtwarzania i wyszukiwanie. Aby uzyskać pełną kontrolę, pobierz starszą wersję z APKPure lub podobnej.</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Anuluj</string>
-    <string name="btn_configure">Konfiguruj ...</string>
+    <string name="btn_configure">Konfiguruj …</string>
     <string name="connectionStatusMissingConnectedApp">Nie moge znależć aplikacji Connected lub Connected Classic</string>
     <string name="connectionStatusWaiting">Oczekiwanie na połączenie z samochodem</string>
     <string name="nowplaying_notconnected">&lt;Nie połączony&gt;</string>
@@ -64,7 +64,7 @@
     <string name="txt_setup_enable_bcl_mode">Włącz usługę Aplikacje w samochodzie dla tego %s</string>
     <string name="txt_setup_bcl_disconnected">Połączenie w trybie Aplikacji nie jest gotowe:</string>
     <string name="txt_setup_enable_bclspp">Spróbuj przełączyć na Muzykę Bluetooth lub podłącz kabel USB</string>
-    <string name="txt_setup_bcl_connecting">Połączenie w trybie Aplikacji łączenie ...</string>
+    <string name="txt_setup_bcl_connecting">Połączenie w trybie Aplikacji łączenie …</string>
     <string name="txt_setup_bcl_connected">Połączenie w trybie Aplikacji działa</string>
     <string name="txt_setup_bcl_connected_transport">Połączenie w trybie Aplikacji przez %s</string>
     <string name="txt_build_info">Wersja: %1$s %2$s</string>

@@ -6,9 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.drawable.Icon
-import android.support.test.InstrumentationRegistry
-import android.support.test.runner.AndroidJUnit4
 import android.util.Log
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 
 import org.junit.Test
@@ -33,7 +33,7 @@ class InstrumentedTestNotificationApp {
 	fun testNotificationUpdate() {
 		/** Test that a new notification pokes the car */
 		// Context of the app under test.
-		val appContext = InstrumentationRegistry.getTargetContext()
+		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
 		// prepare to listen to updates from the phone
 		val mockListener = mock<PhoneNotifications.PhoneNotificationListener> {}
@@ -44,11 +44,6 @@ class InstrumentedTestNotificationApp {
 			}
 		}
 		updateListener.register(appContext, updateReceiver, null)
-
-		// prepare a notification
-		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)
-		val notification = CarNotification(appContext.packageName, "test", icon, true, listOf(),
-				"Test", "Test Text", null, null, null)
 
 		// send an update from the phone
 		val controller = NotificationUpdaterControllerIntent(appContext)
@@ -63,7 +58,7 @@ class InstrumentedTestNotificationApp {
 	fun testNotificationControl() {
 		/** Test that a car button press pokes the phone */
 		// Context of the app under test.
-		val appContext = InstrumentationRegistry.getTargetContext()
+		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
 		// prepare to listen to the interaction from the car
 		val mockListener = mock<NotificationListenerServiceImpl.CarNotificationControllerListener> { }
@@ -78,9 +73,9 @@ class InstrumentedTestNotificationApp {
 		appContext.registerReceiver(interactionReceiver, IntentFilter(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
 
 		// prepare a notification
-		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher)
+		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher).loadDrawable(appContext)
 		val notification = CarNotification(appContext.packageName, "test", icon, true, listOf(),
-				"Test", "Test Text", null, null, null)
+				"Test", "Test Text", icon, null, null, null, null)
 
 		val carController = CarNotificationControllerIntent(appContext)
 		// send an interaction from the car

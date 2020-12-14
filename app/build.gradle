@@ -46,9 +46,9 @@ android {
     if (isRunningOnTravis) {
         // configure keystore
         signingConfigs.release.storeFile = file("../keystore.jks")
-        signingConfigs.release.storePassword = System.getenv("keystore_password")
-        signingConfigs.release.keyAlias = System.getenv("keystore_alias")
-        signingConfigs.release.keyPassword = System.getenv("keystore_alias_password")
+        signingConfigs.release.storePassword = System.getenv("KEYSTORE_PASSWORD")
+        signingConfigs.release.keyAlias = System.getenv("KEYSTORE_ALIAS")
+        signingConfigs.release.keyPassword = System.getenv("KEYSTORE_ALIAS_PASSWORD")
     }
 
     buildTypes {
@@ -88,7 +88,7 @@ android {
             dimension "map"
             // load api keys from ~/.gradle/gradle.properties
             manifestPlaceholders = [spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey,
-                                    gmaps_api_key: AndroidAutoIdrive_GmapsApiKey]
+                                    gmaps_api_key: System.env.AndroidAutoIdrive_GmapsApiKey ? System.env.AndroidAutoIdrive_GmapsApiKey : AndroidAutoIdrive_GmapsApiKey]
         }
     }
     compileOptions {
@@ -363,11 +363,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    testImplementation "org.mockito:mockito-core:2.23.4"
+    testImplementation "org.mockito:mockito-core:2.28.2"
     testImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     testImplementation 'org.awaitility:awaitility-scala:3.1.5'
     testImplementation 'org.json:json:20180813'
-    androidTestImplementation "org.mockito:mockito-android:2.18.3"
+    androidTestImplementation "org.mockito:mockito-android:2.28.2"
     androidTestImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
     implementation project(path: ':IDriveConnectKitAndroid')

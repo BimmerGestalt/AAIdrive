@@ -2,10 +2,7 @@ package me.hufman.androidautoidrive.carapp.maps
 
 import android.Manifest
 import android.app.Presentation
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.core.content.ContextCompat
@@ -16,16 +13,13 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.gmap.gmaps_projection.*
-import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.INTENT_GMAP_RELOAD_SETTINGS
-import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.TimeUtils
+import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.utils.TimeUtils
 
-class GMapsProjection(val parentContext: Context, display: Display): Presentation(parentContext, display) {
+class GMapsProjection(val parentContext: Context, display: Display, val appSettings: AppSettingsObserver): Presentation(parentContext, display) {
 	val TAG = "GMapsProjection"
 	var map: GoogleMap? = null
 	var mapListener: Runnable? = null
-	val settingsListener = SettingsReload()
 	var currentStyleId: Int? = null
 	var location: LatLng? = null
 
@@ -58,9 +52,6 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 			mapListener?.run()
 
 		}
-
-		// watch for map settings
-		context.registerReceiver(settingsListener, IntentFilter(INTENT_GMAP_RELOAD_SETTINGS))
 	}
 
 	override fun onStart() {
@@ -69,10 +60,12 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 		gmapView.onStart()
 		gmapView.onResume()
 
+		// watch for map settings
+		appSettings.callback = {applySettings()}
 	}
 
 	fun applySettings() {
-		val style = AppSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase()
+		val style = appSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase()
 
 		val location = this.location
 		val mapstyleId = when(style) {
@@ -96,22 +89,12 @@ class GMapsProjection(val parentContext: Context, display: Display): Presentatio
 		gmapView.onPause()
 		gmapView.onStop()
 		gmapView.onDestroy()
-		context.unregisterReceiver(settingsListener)
+		appSettings.callback = null
 	}
 
 	override fun onSaveInstanceState(): Bundle {
 		val output = super.onSaveInstanceState()
 		gmapView.onSaveInstanceState(output)
 		return output
-	}
-
-
-	inner class SettingsReload: BroadcastReceiver() {
-		override fun onReceive(context: Context?, intent: Intent?) {
-			if (intent?.action == INTENT_GMAP_RELOAD_SETTINGS) {
-				// reload any settings that were changed in the UI
-				applySettings()
-			}
-		}
 	}
 }
