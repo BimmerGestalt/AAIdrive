@@ -11,7 +11,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.music.spotify.authentication.AuthorizationActivity
+import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
 import me.hufman.androidautoidrive.phoneui.visible
 
 class SpotifyApiErrorDialog: DialogFragment() {
@@ -43,18 +43,18 @@ class SpotifyApiErrorDialog: DialogFragment() {
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
-		if (requestCode == AuthorizationActivity.REQUEST_CODE_SPOTIFY_LOGIN) {
+		if (requestCode == SpotifyAuthorizationActivity.REQUEST_CODE_SPOTIFY_LOGIN) {
 			if (resultCode == Activity.RESULT_OK) {
-				when(data?.getIntExtra(AuthorizationActivity.EXTRA_AUTHORIZATION_RESULT, Int.MAX_VALUE)) {
-					AuthorizationActivity.AUTHORIZATION_CANCELED -> {
+				when(data?.getIntExtra(SpotifyAuthorizationActivity.EXTRA_AUTHORIZATION_RESULT, Int.MAX_VALUE)) {
+					SpotifyAuthorizationActivity.AUTHORIZATION_CANCELED -> {
 						webApiMsgTextView.text = getString(R.string.txt_spotify_api_authorization_canceled)
 					}
 
-					AuthorizationActivity.AUTHORIZATION_FAILED -> {
+					SpotifyAuthorizationActivity.AUTHORIZATION_FAILED -> {
 						webApiMsgTextView.text = getString(R.string.txt_spotify_api_authorization_failed)
 					}
 
-					AuthorizationActivity.AUTHORIZATION_SUCCESS -> {
+					SpotifyAuthorizationActivity.AUTHORIZATION_SUCCESS -> {
 						webApiMsgTextView.text = getString(R.string.txt_spotify_api_authorization_success)
 						authorizeButton.visible = false
 					}
@@ -112,7 +112,7 @@ class SpotifyApiErrorDialog: DialogFragment() {
 	 * entry point of the authorization process.
 	 */
 	private fun launchAuthorizationActivity() {
-		val intent = Intent(context, AuthorizationActivity::class.java)
-		startActivityForResult(intent, AuthorizationActivity.REQUEST_CODE_SPOTIFY_LOGIN)
+		val intent = Intent(context, SpotifyAuthorizationActivity::class.java)
+		startActivityForResult(intent, SpotifyAuthorizationActivity.REQUEST_CODE_SPOTIFY_LOGIN)
 	}
 }

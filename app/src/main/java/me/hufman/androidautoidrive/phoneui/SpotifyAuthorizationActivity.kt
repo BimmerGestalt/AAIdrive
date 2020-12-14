@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.music.spotify.authentication
+package me.hufman.androidautoidrive.phoneui
 
 import android.app.Activity
 import android.app.NotificationManager
@@ -14,6 +14,7 @@ import com.adamratzman.spotify.getSpotifyPkceCodeChallenge
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
+import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import net.openid.appauth.*
 import net.openid.appauth.browser.BrowserWhitelist
 import net.openid.appauth.browser.VersionedBrowserMatcher
@@ -23,11 +24,11 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.random.Random
 
 /**
- * Authorization activity class that is used to perform the authorization and update the [AuthState]
- * with the authorization code. The activity will be closed once the process has either been
+ * Activity that is used to perform the Spotify authorization process and update the [AuthState] with
+ * the resulting authorization code. The activity will be closed once the process has either been
  * cancelled, failed, or succeeds.
  */
-class AuthorizationActivity: Activity() {
+class SpotifyAuthorizationActivity: Activity() {
 	companion object {
 		const val TAG = "AuthorizationActivity"
 
@@ -93,7 +94,7 @@ class AuthorizationActivity: Activity() {
 		val clientId = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
 				.metaData.getString("com.spotify.music.API_KEY", "unavailable")
 		val authRequestBuilder = AuthorizationRequest.Builder(
-				authStateManager.currentState.authorizationServiceConfiguration!!,
+				authStateManager.getAuthorizationServiceConfiguration()!!,
 				clientId,
 				ResponseTypeValues.CODE,
 				Uri.parse(SpotifyAppController.REDIRECT_URI))
@@ -106,11 +107,11 @@ class AuthorizationActivity: Activity() {
 		Log.d(TAG, "Initializing AppAuth")
 		recreateAuthorizationService()
 
-		if (authStateManager.currentState.authorizationServiceConfiguration == null) {
+		if (authStateManager.getAuthorizationServiceConfiguration() == null) {
 			val authEndpointUri = Uri.parse("https://accounts.spotify.com/authorize")
 			val tokenEndpointUri = Uri.parse("https://accounts.spotify.com/api/token")
 			val config = AuthorizationServiceConfiguration(authEndpointUri, tokenEndpointUri)
-			authStateManager.replaceState(AuthState(config))
+			authStateManager.updateAuthState(AuthState(config))
 		}
 
 		runBlocking {
@@ -167,7 +168,7 @@ class AuthorizationActivity: Activity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		authStateManager = SpotifyAuthStateManager.getInstance(this)
+		authStateManager = SpotifyAuthStateManager(this)
 		initializeAppAuth()
 		doAuth()
 	}
@@ -229,6 +230,6 @@ class AuthorizationActivity: Activity() {
 	 */
 	private fun clearNotAuthorizedNotification() {
 		val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-		notificationManager.cancel(SpotifyAppController.NOTIFICATION_REQ_ID)
+		notificationManager.cancel(SpotifyWebApi.NOTIFICATION_REQ_ID)
 	}
 }

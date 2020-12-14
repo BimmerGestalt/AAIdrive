@@ -29,8 +29,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
-		const val CHANNEL_ID = "androidAutoIDriveChannel"
-		const val NOTIFICATION_REQ_ID = 56
 
 		fun getClientId(context: Context): String {
 			return context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
@@ -94,6 +92,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 						Log.i(TAG, "Successfully connected to Spotify Remote")
 
 						val spotifyWebApi = SpotifyWebApi.getInstance(context)
+						spotifyWebApi.initializeWebApi()
 						spotifyWebApi.isUsingSpotify = true
 
 						pendingController.value = SpotifyAppController(context, remote, spotifyWebApi)
