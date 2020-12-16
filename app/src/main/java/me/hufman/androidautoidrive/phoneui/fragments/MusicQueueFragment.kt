@@ -1,6 +1,5 @@
 package me.hufman.androidautoidrive.phoneui.fragments
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Animatable2
@@ -37,17 +36,6 @@ class MusicQueueFragment: Fragment() {
 
 	val handler = Handler()
 
-	fun onActive() {
-		musicController.listener = Runnable {
-			if(currentQueueMetadata?.title != musicController.getQueue()?.title || currentQueueMetadata?.songs?.size != musicController.getQueue()?.songs?.size) {
-				redrawQueueUI()
-			}
-
-			(this.context as Activity).listQueue.adapter?.notifyDataSetChanged()
-		}
-		redrawQueueUI()
-	}
-
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.music_queuepage, container, false)
 	}
@@ -75,6 +63,19 @@ class MusicQueueFragment: Fragment() {
 		}
 
 		txtQueueEmpty.text = getString(R.string.MUSIC_QUEUE_EMPTY)
+	}
+
+	override fun onResume() {
+		super.onResume()
+
+		musicController.listener = Runnable {
+			if(currentQueueMetadata?.title != musicController.getQueue()?.title || currentQueueMetadata?.songs?.size != musicController.getQueue()?.songs?.size) {
+				redrawQueueUI()
+			}
+
+			activity?.findViewById<RecyclerView>(R.id.listQueue)?.adapter?.notifyDataSetChanged()
+		}
+		redrawQueueUI()
 	}
 
 	private fun redrawQueueUI() {

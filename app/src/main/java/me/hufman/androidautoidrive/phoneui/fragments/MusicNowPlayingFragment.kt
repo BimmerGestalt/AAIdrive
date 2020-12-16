@@ -28,10 +28,6 @@ class MusicNowPlayingFragment: Fragment() {
 	lateinit var musicController: MusicController
 	lateinit var placeholderCoverArt: Bitmap
 
-	fun onActive() {
-		musicController.listener = Runnable { redraw() }
-	}
-
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.music_nowplaying, container, false)
 	}
@@ -77,6 +73,7 @@ class MusicNowPlayingFragment: Fragment() {
 
 	override fun onResume() {
 		super.onResume()
+		musicController.listener = Runnable { redraw() }
 		redraw()
 	}
 
