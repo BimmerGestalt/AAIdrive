@@ -257,7 +257,7 @@ class SpotifyAuthStateManagerTest {
 	}
 
 	@Test
-	fun testUpdateAuthState() {
+	fun testReplaceAuthState() {
 		val currentState: AuthState = mock()
 		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
 
@@ -272,10 +272,12 @@ class SpotifyAuthStateManagerTest {
 		spotifyAuthStateManager.replaceAuthState(authState)
 
 		verify(sharedPreferencesEditor).putString(SpotifyAuthStateManager.KEY_STATE, authStateSerializedString)
+
+		assertEquals(currentState, spotifyAuthStateManager.currentState)
 	}
 
 	@Test
-	fun testUpdateAuthState_JSONException() {
+	fun testReplaceAuthState_JSONException() {
 		val currentState: AuthState = mock()
 		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
 
