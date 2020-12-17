@@ -92,16 +92,25 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 			val contents = result.await()
 			this@MusicBrowsePageFragment.contents.clear()
 			this@MusicBrowsePageFragment.contents.addAll(contents)
-			if (isResumed) {
-				if (contents.isEmpty()) {
-					txtEmpty.text = getString(R.string.MUSIC_BROWSE_EMPTY)
-				} else {
-					txtEmpty.text = ""
-				}
+			redraw()
+		}
+	}
 
-				listBrowse.removeAllViews()
-				listBrowse.adapter?.notifyDataSetChanged()
+	override fun onResume() {
+		super.onResume()
+		redraw()
+	}
+
+	fun redraw() {
+		if (isResumed) {
+			if (contents.isEmpty()) {
+				txtEmpty.text = getString(R.string.MUSIC_BROWSE_EMPTY)
+			} else {
+				txtEmpty.text = ""
 			}
+
+			listBrowse.removeAllViews()
+			listBrowse.adapter?.notifyDataSetChanged()
 		}
 	}
 }

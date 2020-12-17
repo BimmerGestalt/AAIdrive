@@ -6,7 +6,6 @@ import android.os.Handler
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.activity_musicplayer.*
@@ -58,22 +57,6 @@ class MusicPlayerActivity: AppCompatActivity() {
 		pgrMusicPlayer.adapter = adapter
 		pgrMusicPlayer.offscreenPageLimit = 2
 
-		pgrMusicPlayer.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-			fun update(position: Int) {
-				when (position) {
-					0 -> adapter.updateNowPlaying()
-					1 -> adapter.updateBrowse()
-					2 -> adapter.updateQueue()
-				}
-			}
-
-			override fun onPageSelected(position: Int) {
-				update(position)
-			}
-			override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
-			override fun onPageScrollStateChanged(state: Int) {}
-		})
-
 		tabMusicPlayer.setupWithViewPager(pgrMusicPlayer)
 	}
 
@@ -110,18 +93,6 @@ class MusicPlayerPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm
 		this["Now Playing"] = MusicNowPlayingFragment()
 		this["Browse"] = MusicBrowseFragment.newInstance(MusicBrowsePageFragment.newInstance(null))
 		this["Queue"] = MusicQueueFragment()
-	}
-
-	fun updateNowPlaying() {
-		(tabs["Now Playing"] as MusicNowPlayingFragment).onActive()
-	}
-
-	fun updateBrowse() {
-		(tabs["Browse"] as MusicBrowseFragment).onActive()
-	}
-
-	fun updateQueue() {
-		(tabs["Queue"] as MusicQueueFragment).onActive()
 	}
 
 	override fun getCount(): Int {
