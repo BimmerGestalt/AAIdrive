@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Handler
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -59,7 +60,8 @@ class MusicActivityModel(val musicController: MusicController): ViewModel() {
 	private val _errorMessage = MutableLiveData<String?>()
 	val errorMessage = _errorMessage as LiveData<String?>
 
-	private fun update() {
+	@VisibleForTesting
+	fun update() {
 		_connected.value = musicController.isConnected()
 
 		val metadata = musicController.getMetadata()
@@ -72,17 +74,12 @@ class MusicActivityModel(val musicController: MusicController): ViewModel() {
 
 		val playbackPosition = musicController.getPlaybackPosition()
 		_isPaused.value = playbackPosition.playbackPaused
-		updatePlaybackPosition()
+		_playbackPosition.value = (playbackPosition.getPosition() / 1000).toInt()
+		_maxPosition.value = (playbackPosition.maximumPosition / 1000).toInt()
 
 		updateErrors()
 
 		_redrawListener.value = System.currentTimeMillis()
-	}
-
-	private fun updatePlaybackPosition() {
-		val playbackPosition = musicController.getPlaybackPosition()
-		_playbackPosition.value = (playbackPosition.getPosition() / 1000).toInt()
-		_maxPosition.value = (playbackPosition.maximumPosition / 1000).toInt()
 	}
 
 	private fun updateErrors() {
