@@ -22,10 +22,7 @@ import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
-class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController, CoroutineScope {
-	override val coroutineContext: CoroutineContext
-		get() = Dispatchers.Main
-
+class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController {
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
@@ -143,7 +140,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	var queueItems: List<MusicMetadata> = LinkedList()
 	var queueMetadata: QueueMetadata? = null
 	val coverArtCache = LruCache<ImageUri, Bitmap>(50)
-	var createQueueMetadataJob: Job? = null
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -197,13 +193,9 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 					createLikedSongsQueueMetadata()
 				} else {
 					webApi.clearGetLikedSongsAttemptedFlag()
-					if (createQueueMetadataJob?.isActive == true) {
-						createQueueMetadataJob?.cancel()
-					}
-					createQueueMetadataJob = null
 				}
 
-				if (uri != null && queueItems.isEmpty() && createQueueMetadataJob?.isActive != true) {
+				if (uri != null && queueItems.isEmpty()) {
 					val listItem = ListItem(uri, uri, null, playerContext.title, playerContext.subtitle, false, true)
 					loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
 						queueItems = it
@@ -231,15 +223,12 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	 * not authorized then a [QueueMetadata] with an empty song list will be created.
 	 */
 	fun createLikedSongsQueueMetadata() {
-		// getting liked songs library through the Web API is slow, offloadng this work into a coroutine
-		createQueueMetadataJob = launch {
-			queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
-			if (queueItems.isNotEmpty()) {
-				queueMetadata = QueueMetadata("Liked Songs", null, queueItems)
-				loadQueueCoverart()
-			}
-			callback?.invoke(this@SpotifyAppController)
+		queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
+		if (queueItems.isNotEmpty()) {
+			queueMetadata = QueueMetadata("Liked Songs", null, queueItems)
+			loadQueueCoverart()
 		}
+		callback?.invoke(this@SpotifyAppController)
 	}
 
 	/**
