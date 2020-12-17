@@ -143,6 +143,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	var queueItems: List<MusicMetadata> = LinkedList()
 	var queueMetadata: QueueMetadata? = null
 	val coverArtCache = LruCache<ImageUri, Bitmap>(50)
+	var createQueueMetadataJob: Job? = null
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -194,8 +195,15 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				val isLikedSongsPlaylist = playerContext.type == "your_library" || playerContext.type == "your_library_tracks"
 				if (isLikedSongsPlaylist) {
 					createLikedSongsQueueMetadata()
+				} else {
+					webApi.clearGetLikedSongsAttemptedFlag()
+					if (createQueueMetadataJob?.isActive == true) {
+						createQueueMetadataJob?.cancel()
+					}
+					createQueueMetadataJob = null
 				}
-				if (uri != null && queueItems.isEmpty()) {
+
+				if (uri != null && queueItems.isEmpty() && createQueueMetadataJob?.isActive != true) {
 					val listItem = ListItem(uri, uri, null, playerContext.title, playerContext.subtitle, false, true)
 					loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
 						queueItems = it
@@ -224,7 +232,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	 */
 	fun createLikedSongsQueueMetadata() {
 		// getting liked songs library through the Web API is slow, offloadng this work into a coroutine
-		launch {
+		createQueueMetadataJob = launch {
 			queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
 			if (queueItems.isNotEmpty()) {
 				queueMetadata = QueueMetadata("Liked Songs", null, queueItems)

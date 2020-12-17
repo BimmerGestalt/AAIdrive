@@ -10,6 +10,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
 import com.adamratzman.spotify.models.Token
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.AppSettingsViewer
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
@@ -44,15 +46,24 @@ class SpotifyWebApi private constructor(val context: Context) {
 	private var webApi: SpotifyClientAPI? = null
 
 	private val authStateManager: SpotifyAuthStateManager
+	private val appSettingsViewer: AppSettingsViewer
+	private var getLikedSongsAttempted: Boolean = false
+	private var spotifyAppControllerCaller: SpotifyAppController? = null
 	var isUsingSpotify: Boolean = false
 
 	init {
 		Log.d(TAG, "Initializing for the first time")
 		authStateManager = SpotifyAuthStateManager(context)
+		appSettingsViewer = AppSettingsViewer()
 	}
 
-	private var getLikedSongsAttempted: Boolean = false
-	private var spotifyAppControllerCaller: SpotifyAppController? = null
+	/**
+	 * Sets the Liked Songs flag to false and sets the [SpotifyAppController] caller to null.
+	 */
+	fun clearGetLikedSongsAttemptedFlag() {
+		getLikedSongsAttempted = false
+		spotifyAppControllerCaller = null
+	}
 
 	fun getLikedSongs(spotifyAppController: SpotifyAppController): List<SpotifyMusicMetadata>?  {
 		if (webApi == null) {
@@ -64,7 +75,7 @@ class SpotifyWebApi private constructor(val context: Context) {
 			val likedSongs = webApi?.library?.getSavedTracks(50)?.getAllItemsNotNull()?.complete()
 			return likedSongs?.map {
 				val track = it.track
-				val mediaId = track.uri.id
+				val mediaId = track.uri.uri
 				val artists = track.artists.map { it.name }.joinToString(", ")
 				val album = track.album
 				val coverArtIndex = album.images.indexOfFirst { it.height == 300 }
@@ -172,9 +183,13 @@ class SpotifyWebApi private constructor(val context: Context) {
 	}
 
 	/**
-	 * Creates and displays a notification stating that the web API needs to be authorized.
+	 * Creates and displays a notification stating that the web API needs to be authorized only if the
+	 * user has previously successfully authorized.
 	 */
 	private fun createNotAuthorizedNotification() {
+		if (appSettingsViewer[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION] == "false") {
+			return
+		}
 		val notifyIntent = Intent(context, SpotifyAuthorizationActivity::class.java)
 		notifyIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 		val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
@@ -198,6 +213,7 @@ class SpotifyWebApi private constructor(val context: Context) {
 		Log.d(TAG, "Disconnecting Web API")
 		webApi?.shutdown()
 		isUsingSpotify = false
+		clearGetLikedSongsAttemptedFlag()
 	}
 
 	/**
@@ -205,6 +221,9 @@ class SpotifyWebApi private constructor(val context: Context) {
 	 */
 	class SpotifyClientApiBuilderHelper {
 		companion object {
+			/**
+			 * Creates a [SpotifyClientApiBuilder] from an authorization code.
+			 */
 			fun createApiBuilderWithAuthorizationCode(clientId: String, authorizationCode: String, spotifyApiOptionsBuilder: SpotifyApiOptionsBuilder): SpotifyClientApiBuilder {
 				return spotifyClientPkceApi(
 						clientId,
@@ -214,6 +233,9 @@ class SpotifyWebApi private constructor(val context: Context) {
 						spotifyApiOptionsBuilder)
 			}
 
+			/**
+			 * Creates a [SpotifyClientApiBuilder] from an access token.
+			 */
 			fun createApiBuilderWithAccessToken(clientId: String, token: Token, spotifyApiOptionsBuilder: SpotifyApiOptionsBuilder): SpotifyClientApiBuilder {
 				return spotifyClientPkceApi(
 						clientId,

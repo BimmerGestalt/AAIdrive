@@ -123,7 +123,8 @@ class SpotifyAuthStateManager(context: Context) {
 	/**
 	 * Replaces the current [AuthState] with the provided [AuthState].
 	 */
-	fun updateAuthState(authState: AuthState) {
+	fun replaceAuthState(authState: AuthState) {
+		currentState = authState
 		writeState(authState)
 	}
 

@@ -12,6 +12,8 @@ import android.widget.Toast
 import com.adamratzman.spotify.SpotifyScope
 import com.adamratzman.spotify.getSpotifyPkceCodeChallenge
 import kotlinx.coroutines.runBlocking
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
@@ -56,6 +58,7 @@ class SpotifyAuthorizationActivity: Activity() {
 	private lateinit var authService: AuthorizationService
 	private var authIntentLatch = CountDownLatch(1)
 	private lateinit var authStateManager: SpotifyAuthStateManager
+	private lateinit var appSettingsReceiver: MutableAppSettingsReceiver
 	private val scopes = listOf(
 			SpotifyScope.USER_MODIFY_PLAYBACK_STATE.uri,
 			SpotifyScope.USER_LIBRARY_READ.uri
@@ -111,7 +114,7 @@ class SpotifyAuthorizationActivity: Activity() {
 			val authEndpointUri = Uri.parse("https://accounts.spotify.com/authorize")
 			val tokenEndpointUri = Uri.parse("https://accounts.spotify.com/api/token")
 			val config = AuthorizationServiceConfiguration(authEndpointUri, tokenEndpointUri)
-			authStateManager.updateAuthState(AuthState(config))
+			authStateManager.replaceAuthState(AuthState(config))
 		}
 
 		runBlocking {
@@ -169,6 +172,7 @@ class SpotifyAuthorizationActivity: Activity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		authStateManager = SpotifyAuthStateManager(this)
+		appSettingsReceiver = MutableAppSettingsReceiver(this)
 		initializeAppAuth()
 		doAuth()
 	}
@@ -210,6 +214,7 @@ class SpotifyAuthorizationActivity: Activity() {
 	private fun onAuthorizationSucceed() {
 		Log.d(TAG, "Authorization process completed successfully. AuthState updated")
 		clearNotAuthorizedNotification()
+		appSettingsReceiver[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION] = "true"
 		SpotifyWebApi.getInstance(this).initializeWebApi()
 		Toast.makeText(this, "Authorization successful", Toast.LENGTH_SHORT).show()
 		finishActivityWithResult(AUTHORIZATION_SUCCESS)

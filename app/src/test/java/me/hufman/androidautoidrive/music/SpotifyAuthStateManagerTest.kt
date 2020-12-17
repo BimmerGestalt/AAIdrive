@@ -269,7 +269,7 @@ class SpotifyAuthStateManagerTest {
 		val authState: AuthState = mock()
 		whenever(authState.jsonSerializeString()).thenReturn(authStateSerializedString)
 
-		spotifyAuthStateManager.updateAuthState(authState)
+		spotifyAuthStateManager.replaceAuthState(authState)
 
 		verify(sharedPreferencesEditor).putString(SpotifyAuthStateManager.KEY_STATE, authStateSerializedString)
 	}
@@ -287,7 +287,7 @@ class SpotifyAuthStateManagerTest {
 		val authState: AuthState = mock()
 		whenever(authState.jsonSerializeString()).thenReturn(authStateSerializedString)
 
-		spotifyAuthStateManager.updateAuthState(authState)
+		spotifyAuthStateManager.replaceAuthState(authState)
 
 		verify(sharedPreferencesEditor).putString(SpotifyAuthStateManager.KEY_STATE, authStateSerializedString)
 	}
