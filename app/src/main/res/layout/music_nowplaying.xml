@@ -37,6 +37,16 @@
                 android:scaleType="centerCrop" />
 
             <TextView
+                android:id="@+id/txtNotConnected"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:visibility="gone"
+                android:text="@string/nowplaying_notconnected"/>
+
+            <TextView
                 android:id="@+id/txtArtist"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

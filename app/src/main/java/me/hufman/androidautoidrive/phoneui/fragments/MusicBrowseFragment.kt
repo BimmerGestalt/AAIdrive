@@ -6,11 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.androidautoidrive.phoneui.MusicActivityModel
 
 class MusicBrowseFragment: Fragment() {
 	lateinit var musicController: MusicController
@@ -35,20 +32,6 @@ class MusicBrowseFragment: Fragment() {
 		}
 
 		return view
-	}
-
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		val viewModel = ViewModelProvider(requireActivity()).get(MusicActivityModel::class.java)
-		val musicController = viewModel.musicController ?: return
-		this.musicController = musicController
-	}
-
-	override fun onResume() {
-		super.onResume()
-
-		musicController.listener = Runnable {
-			activity?.findViewById<RecyclerView>(R.id.listBrowse)?.adapter?.notifyDataSetChanged()
-		}
 	}
 
 	fun replaceFragment(fragment: Fragment, addToBackstack: Boolean = true) {

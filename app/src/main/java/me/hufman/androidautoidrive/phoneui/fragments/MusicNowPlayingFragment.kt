@@ -7,24 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.music_nowplaying.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.utils.Utils
-import me.hufman.androidautoidrive.phoneui.getThemeColor
 import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
-import me.hufman.androidautoidrive.phoneui.MusicActivityModel
-import me.hufman.androidautoidrive.phoneui.visible
+import me.hufman.androidautoidrive.phoneui.*
+import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 
 class MusicNowPlayingFragment: Fragment() {
-	companion object {
-		const val ARTIST_ID = "150.png"
-		const val ALBUM_ID = "148.png"
-		const val SONG_ID = "152.png"
-		const val PLACEHOLDER_ID = "147.png"
-	}
-
+	lateinit var viewModel: MusicActivityModel
 	lateinit var musicController: MusicController
 	lateinit var placeholderCoverArt: Bitmap
 
@@ -33,18 +27,46 @@ class MusicNowPlayingFragment: Fragment() {
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		val viewModel = ViewModelProvider(requireActivity()).get(MusicActivityModel::class.java)
-		val musicController = viewModel.musicController ?: return
-		this.musicController = musicController
+		viewModel = ViewModelProvider(requireActivity()).get(MusicActivityModel::class.java)
+		musicController = viewModel.musicController
 
-		imgArtist.setImageBitmap(viewModel.icons[ARTIST_ID])
-		imgAlbum.setImageBitmap(viewModel.icons[ALBUM_ID])
-		imgSong.setImageBitmap(viewModel.icons[SONG_ID])
-		imgArtist.colorFilter = Utils.getIconMask(context!!.getThemeColor(android.R.attr.textColorSecondary))
-		imgAlbum.colorFilter = Utils.getIconMask(context!!.getThemeColor(android.R.attr.textColorSecondary))
-		imgSong.colorFilter = Utils.getIconMask(context!!.getThemeColor(android.R.attr.textColorSecondary))
-		placeholderCoverArt = viewModel.icons[PLACEHOLDER_ID]!!
+		// subscribe to ViewModel
+		viewModel.connected.observe(viewLifecycleOwner, Observer {
+			showEither(txtNotConnected, txtArtist) { it }
+		})
+		viewModel.artist.observe(viewLifecycleOwner, Observer {
+			txtArtist.text = it
+		})
+		viewModel.album.observe(viewLifecycleOwner, Observer {
+			txtAlbum.text = it
+		})
+		viewModel.title.observe(viewLifecycleOwner, Observer {
+			txtSong.text = it ?: getString(R.string.nowplaying_unknown)
+		})
+		viewModel.coverArt.observe(viewLifecycleOwner, Observer {
+			imgCoverArt.setImageBitmap(it ?: placeholderCoverArt)
+		})
 
+		viewModel.isPaused.observe(viewLifecycleOwner, Observer {
+			btnPlay.setImageResource(if (it == true) android.R.drawable.ic_media_play else android.R.drawable.ic_media_pause)
+		})
+
+		viewModel.playbackPosition.observe(viewLifecycleOwner, Observer {
+			seekProgress.progress = it
+		})
+		viewModel.maxPosition.observe(viewLifecycleOwner, Observer {
+			seekProgress.max = it
+		})
+
+		viewModel.errorTitle.observe(viewLifecycleOwner, Observer {
+			imgError.visible = it != null
+		})
+
+		// load the icons
+		val iconModel = ViewModelProvider(requireActivity()).get(MusicActivityIconsModel::class.java)
+		initializeIcons(iconModel)
+
+		// handlers
 		btnPrevious.setOnClickListener { musicController.skipToPrevious() }
 		btnPlay.setOnClickListener {
 			if (musicController.getPlaybackPosition().playbackPaused) {
@@ -54,7 +76,6 @@ class MusicNowPlayingFragment: Fragment() {
 			}
 		}
 		btnNext.setOnClickListener { musicController.skipToNext() }
-		musicController.listener = Runnable { redraw() }
 
 		seekProgress.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
 			override fun onProgressChanged(seekbar: SeekBar?, value: Int, fromUser: Boolean) {
@@ -67,55 +88,27 @@ class MusicNowPlayingFragment: Fragment() {
 			}
 			override fun onStopTrackingTouch(p0: SeekBar?) {
 			}
-
 		})
-	}
 
-	override fun onResume() {
-		super.onResume()
-		musicController.listener = Runnable { redraw() }
-		redraw()
-	}
-
-	fun redraw() {
-		if (!isResumed) return
-		val metadata = musicController.getMetadata()
-		if (metadata?.coverArt != null) {
-			imgCoverArt.setImageBitmap(metadata.coverArt)
-		} else {
-			imgCoverArt.setImageBitmap(placeholderCoverArt)
-		}
-		txtArtist.text = if (musicController.isConnected()) { metadata?.artist ?: "" } else { getString(R.string.nowplaying_notconnected) }
-		txtAlbum.text = metadata?.album
-		txtSong.text = metadata?.title ?: getString(R.string.nowplaying_unknown)
-
-		if (musicController.getPlaybackPosition().playbackPaused) {
-			btnPlay.setImageResource(android.R.drawable.ic_media_play)
-		} else {
-			btnPlay.setImageResource(android.R.drawable.ic_media_pause)
-		}
-		val position = musicController.getPlaybackPosition()
-		seekProgress.progress = (position.getPosition() / 1000).toInt()
-		seekProgress.max = (position.maximumPosition / 1000).toInt()
-
-		// show any spotify errors
-		val fragmentManager = activity?.supportFragmentManager
-		val spotifyError = musicController.connectors.filterIsInstance<SpotifyAppController.Connector>().firstOrNull()?.lastError
-		if (fragmentManager != null && spotifyError != null) {
-			imgError.visible = true
-			imgError.setOnClickListener {
-				val arguments = Bundle().apply {
-					putString(SpotifyApiErrorDialog.EXTRA_CLASSNAME, spotifyError.javaClass.simpleName)
-					putString(SpotifyApiErrorDialog.EXTRA_MESSAGE, spotifyError.message)
-				}
-				SpotifyApiErrorDialog().apply {
-					setArguments(arguments)
-					show(fragmentManager, "spotify_error")
-				}
+		imgError.setOnClickListener {
+			val arguments = Bundle().apply {
+				putString(SpotifyApiErrorDialog.EXTRA_CLASSNAME, viewModel.errorTitle.value)
+				putString(SpotifyApiErrorDialog.EXTRA_MESSAGE, viewModel.errorMessage.value)
 			}
-		} else {
-			imgError.visible = false
-			imgError.setOnClickListener(null)
+			SpotifyApiErrorDialog().apply {
+				setArguments(arguments)
+				show(requireActivity().supportFragmentManager, "spotify_error")
+			}
 		}
+	}
+
+	fun initializeIcons(iconsModel: MusicActivityIconsModel) {
+		imgArtist.setImageBitmap(iconsModel.artistIcon)
+		imgAlbum.setImageBitmap(iconsModel.albumIcon)
+		imgSong.setImageBitmap(iconsModel.songIcon)
+		imgArtist.colorFilter = Utils.getIconMask(context!!.getThemeColor(android.R.attr.textColorSecondary))
+		imgAlbum.colorFilter = Utils.getIconMask(context!!.getThemeColor(android.R.attr.textColorSecondary))
+		imgSong.colorFilter = Utils.getIconMask(context!!.getThemeColor(android.R.attr.textColorSecondary))
+		placeholderCoverArt = iconsModel.placeholderCoverArt
 	}
 }
