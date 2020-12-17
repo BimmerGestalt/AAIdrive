@@ -1,7 +1,5 @@
 package me.hufman.androidautoidrive.phoneui.fragments
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -12,7 +10,9 @@ import kotlinx.android.synthetic.main.fragment_connection_status.*
 import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.connections.CarConnectionDebugging
+import me.hufman.androidautoidrive.phoneui.showEither
 import me.hufman.androidautoidrive.phoneui.visible
+import java.util.*
 
 class ConnectionStatusFragment: Fragment() {
 	val connectionDebugging by lazy {
@@ -24,34 +24,6 @@ class ConnectionStatusFragment: Fragment() {
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.fragment_connection_status, container, false)
-	}
-
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-
-		btnInstallBMW.setOnClickListener { installConnected("bmw") }
-		btnInstallMini.setOnClickListener { installConnected("mini") }
-		btnInstallBMWClassic.setOnClickListener { installConnectedClassic("bmw") }
-		btnInstallMiniClassic.setOnClickListener { installConnectedClassic("mini") }
-	}
-
-	val isUSA
-		get() = this.resources.configuration.locale.country == "US"
-
-	fun installConnected(brand: String = "bmw") {
-		val packageName = if (isUSA) "de.$brand.connected.na" else "de.$brand.connected"
-		val intent = Intent(Intent.ACTION_VIEW).apply {
-			data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
-		}
-		startActivity(intent)
-	}
-
-	fun installConnectedClassic(brand: String = "bmw") {
-		val packageName = if (isUSA) "com.bmwgroup.connected.$brand.usa" else "com.bmwgroup.connected.$brand"
-		val intent = Intent(Intent.ACTION_VIEW).apply {
-			data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
-		}
-		startActivity(intent)
 	}
 
 	override fun onResume() {
@@ -66,36 +38,9 @@ class ConnectionStatusFragment: Fragment() {
 		super.onPause()
 	}
 
-	fun showEither(falseView: View, trueView: View, determiner: () -> Boolean) {
-		showEither(falseView, trueView, {true}, determiner)
-	}
-
-	fun showEither(falseView: View, trueView: View, prereq: () -> Boolean, determiner: () -> Boolean) {
-		val prereqed = prereq()
-		val determination = determiner()
-		falseView.visible = prereqed && !determination
-		trueView.visible = prereqed && determination
-	}
-
 	fun redraw() {
+		if (!isResumed) return
 		val deviceName = Settings.Global.getString(requireContext().contentResolver, "device_name")
-
-		showEither(paneBMWMissing, paneBMWReady) {
-			connectionDebugging.isConnectedSecurityConnected && connectionDebugging.isBMWConnectedInstalled
-		}
-		btnInstallBMW.visible = !connectionDebugging.isBMWConnectedInstalled    // don't offer the button to install if it's already installed
-		showEither(paneMiniMissing, paneMiniReady) {
-			connectionDebugging.isConnectedSecurityConnected && connectionDebugging.isMiniConnectedInstalled
-		}
-		btnInstallMini.visible = !connectionDebugging.isMiniConnectedInstalled    // don't offer the button to install if it's already installed
-
-		// if the security service isn't working for some reason, prompt to install the Classic app
-		paneSecurityMissing.visible = !connectionDebugging.isConnectedSecurityConnected && connectionDebugging.isConnectedInstalled
-		showEither(btnInstallMiniClassic, btnInstallBMWClassic) {
-			// if Mini Connected is installed, prompt to install BMW Connected Classic
-			// otherwise, prompt to install Mini Connected Classic (most users will be BMW)
-			connectionDebugging.isMiniConnectedInstalled
-		}
 
 		// Bluetooth connection status
 		showEither(paneBTDisconnected, paneBTConnected) { connectionDebugging.isBTConnected }
@@ -132,7 +77,7 @@ class ConnectionStatusFragment: Fragment() {
 		txtCarConnected.text = if (chassisCode != null) {
 			resources.getString(R.string.notification_description_chassiscode, chassisCode.toString())
 		} else {
-			when (connectionDebugging.idriveListener.brand?.toLowerCase()) {
+			when (connectionDebugging.idriveListener.brand?.toLowerCase(Locale.ROOT)) {
 				"bmw" -> resources.getString(R.string.notification_description_bmw)
 				"mini" -> resources.getString(R.string.notification_description_mini)
 				else -> resources.getString(R.string.notification_description)

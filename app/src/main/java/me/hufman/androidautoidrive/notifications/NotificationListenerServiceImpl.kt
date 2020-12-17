@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.notifications
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.RemoteInput
@@ -13,12 +14,13 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import android.widget.TextView
+import me.hufman.androidautoidrive.CarConnectionListener
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent.Companion.INTENT_INTERACTION
 import me.hufman.androidautoidrive.notifications.NotificationParser.Companion.dumpNotification
 import me.hufman.androidautoidrive.phoneui.UIState
 import me.hufman.androidautoidrive.phoneui.MainActivity
-import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
+import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
 
 fun Notification.isGroupSummary(): Boolean {
 	val FLAG_GROUP_SUMMARY = 0x00000200     // hard-coded to work on old SDK
@@ -32,7 +34,9 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		const val INTENT_REQUEST_DATA = "me.hufman.androidaudoidrive.PhoneNotificationUpdate.REQUEST_DATA"
 	}
 
-	val iDriveConnectionObserver = IDriveConnectionObserver()
+	val iDriveConnectionReceiver = IDriveConnectionReceiver()       // watches connection state
+	val carConnectionReceiver = CarConnectionListener()             // starts MainService
+
 	val notificationParser by lazy { NotificationParser.getInstance(this) }
 	val carController = NotificationUpdaterControllerIntent(this)
 	var carNotificationReceiver = CarNotificationControllerIntent.Receiver(CarNotificationControllerListener(this))
@@ -52,6 +56,14 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		// load the emoji dictionary
 		UnicodeCleaner.init(this)
 
+		// car connection status listeners
+		// since we are a background service running all the time,
+		// this is a handy way to listen to the car connection announcement
+		// especially with Connected Classic, which doesn't have CarAPI registration
+		iDriveConnectionReceiver.subscribe(this)
+		carConnectionReceiver.register(this)
+
+		// car app listeners
 		Log.i(TAG, "Registering CarNotificationInteraction listeners")
 		carNotificationReceiver.register(this, broadcastReceiver)
 		this.registerReceiver(broadcastReceiver, IntentFilter(INTENT_REQUEST_DATA))
@@ -61,6 +73,12 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		super.onDestroy()
 		try {
 			this.unregisterReceiver(broadcastReceiver)
+		} catch (e: Exception) {}
+		try {
+			iDriveConnectionReceiver.unsubscribe(this)
+		} catch (e: Exception) {}
+		try {
+			carConnectionReceiver.unregister(this)
 		} catch (e: Exception) {}
 	}
 
@@ -85,7 +103,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	}
 
 	override fun onNotificationPosted(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
-		if (!iDriveConnectionObserver.isConnected) return
+		if (!iDriveConnectionReceiver.isConnected) return
 		val ranking = if (sbn != null && rankingMap != null) {
 			rankingMap.getRanking(sbn.key, this.ranking)
 			ranking
@@ -105,7 +123,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	}
 
 	fun updateNotificationList() {
-		if (!iDriveConnectionObserver.isConnected) return
+		if (!iDriveConnectionReceiver.isConnected) return
 		try {
 			val current = this.activeNotifications.filter {
 				notificationParser.shouldShowNotification(it)
@@ -127,7 +145,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		override fun action(key: String, actionName: String) {
 			try {
 				val notification = listenerService.activeNotifications.find { it.key == key }
-				val customViewTemplate = notification?.notification?.bigContentView ?: notification?.notification?.contentView
+				val customViewTemplate = notification?.notification?.getContentView()
 				if (customViewTemplate != null) {
 					val customView = customViewTemplate.apply(listenerService, null)
 					customView.collectChildren().filterIsInstance<TextView>()
@@ -141,6 +159,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
 			}
 		}
+		@SuppressLint("WrongConstant")
 		override fun reply(key: String, actionName: String, reply: String) {
 			try {
 				val notification = listenerService.activeNotifications.find { it.key == key }

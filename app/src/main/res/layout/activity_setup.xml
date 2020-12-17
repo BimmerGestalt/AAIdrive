@@ -22,6 +22,12 @@
             <androidx.fragment.app.FragmentContainerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/fragment_dependencyinfo"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.DependencyInfoFragment"/>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/fragment_connection_status"
                 android:name="me.hufman.androidautoidrive.phoneui.fragments.ConnectionStatusFragment"/>
 

@@ -13,5 +13,5 @@ open class RHMIListAdapter<T>(width: Int, val realData: List<T>) : RHMIModel.RaL
 
 	override var height: Int
 		get() = realData.size
-		set(value) {}
+		set(_) {}
 }

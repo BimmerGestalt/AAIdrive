@@ -124,8 +124,8 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 		return parsePlusCode(matcher.groupValues[1])
 	}
 
-	private fun parsePlusCode(code: String): String? {
-		val parsed = PLUSCODE_SPLITTER.matchEntire(code) ?: return null
+	private fun parsePlusCode(plusCode: String): String? {
+		val parsed = PLUSCODE_SPLITTER.matchEntire(plusCode) ?: return null
 		val code = parsed.groupValues[1]
 		val reference = parsed.groupValues[3]
 		var olc = try {

@@ -12,7 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import me.hufman.androidautoidrive.ApplicationCallbacks
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.Utils
+import me.hufman.androidautoidrive.utils.Utils
 
 open class AssistantControllerAndroid(val context: Context, val phoneAppResources: PhoneAppResources): AssistantController {
 	companion object {

@@ -45,12 +45,12 @@ class AssistantAppsListFragment: Fragment() {
 					}
 					layout
 				} else {
-					layout.findViewById<TextView>(R.id.txtAssistantAppName).setText("Error")
+					layout.findViewById<TextView>(R.id.txtAssistantAppName).text = getText(R.string.lbl_error)
 					layout
 				}
 			}
 		}
-		listAssistantApps.setOnItemClickListener { adapterView, view, i, l ->
+		listAssistantApps.setOnItemClickListener { adapterView, _, i, _ ->
 			val appInfo = adapterView.adapter.getItem(i) as? AssistantAppInfo
 			if (appInfo != null) {
 				assistantController.triggerAssistant(appInfo)

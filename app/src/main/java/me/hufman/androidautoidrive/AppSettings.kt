@@ -7,6 +7,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Handler
+import androidx.lifecycle.MutableLiveData
+import java.lang.IllegalStateException
 
 /**
  * This implements read-only access to a singleton of loaded settings
@@ -23,6 +25,7 @@ interface AppSettings {
 		NOTIFICATIONS_READOUT_POPUP_PASSENGER("Notifications_Readout_Popup_Passenger", "false", "New notifications are read aloud when a passenger is seated"),
 		ENABLED_GMAPS("Enabled_GMaps", "false", "Show Google Maps in the car"),
 		MAP_WIDESCREEN("Map_Widescreen", "false", "Show Map in widescreen"),
+		MAP_INVERT_SCROLL("Map_Invert_Scroll", "false", "Invert zoom direction"),
 		GMAPS_STYLE("GMaps_Style", "auto", "GMaps style"),
 		AUDIO_SUPPORTS_USB("Audio_Supports_USB", (Build.VERSION.SDK_INT < Build.VERSION_CODES.O).toString(), "The phone is old enough to support USB accessory audio"),
 		AUDIO_FORCE_CONTEXT("Audio_Force_Context", "false", "Force audio context"),
@@ -166,10 +169,79 @@ class MutableAppSettingsReceiver(val context: Context, val handler: Handler? = n
 	}
 
 	override operator fun set(key: AppSettings.KEYS, value: String) {
-		AppSettings.saveSetting(context, key, value)
-
-		context.sendBroadcast(Intent(INTENT_SETTINGS_CHANGED))
+		val oldValue = this[key]
+		if (oldValue != value) {
+			AppSettings.saveSetting(context, key, value)
+			context.sendBroadcast(Intent(INTENT_SETTINGS_CHANGED))
+		}
 	}
+}
+
+abstract class LiveSetting<K>(val context: Context, val key: AppSettings.KEYS): MutableLiveData<K>() {
+	val appSettings = MutableAppSettingsReceiver(context, null /* specifically the main thread */)
+	init {
+		try {
+			super.setValue(getData())
+		} catch (e: IllegalStateException) {
+			super.postValue(getData())
+		}
+	}
+
+	// backing data access
+	abstract fun serialize(value: K): String
+	abstract fun deserialize(value: String): K
+
+	private fun getData(): K {
+		return deserialize(appSettings[key])
+	}
+	private fun setData(value: K) {
+		val newValue = serialize(value)
+		if (appSettings[key] != newValue) {
+			appSettings[key] = newValue
+		}
+	}
+
+	// LiveData interface
+	// set the LiveData internal data, to update any observers,
+	// and then trigger any other AppSettings listeners
+	// getValue just returns the internal data
+	override fun setValue(value: K) {
+		super.setValue(value)
+		setData(value)
+	}
+
+	override fun postValue(value: K) {
+		super.postValue(value)
+		setData(value)
+	}
+
+	override fun onActive() {
+		super.onActive()
+
+		// subscribe to AppSettings changes from other setters
+		// trigger any LiveData observers when the underlying data changes
+		appSettings.callback = {
+			setValue(getData())
+		}
+
+		// refresh the current LiveData state from the current data
+		setValue(getData())
+	}
+
+	override fun onInactive() {
+		super.onInactive()
+		// unsubscribe the callback
+		appSettings.callback = null
+	}
+}
+
+class StringLiveSetting(context: Context, key: AppSettings.KEYS): LiveSetting<String>(context, key) {
+	override fun serialize(value: String) = value
+	override fun deserialize(value: String) = value
+}
+class BooleanLiveSetting(context: Context, key: AppSettings.KEYS): LiveSetting<Boolean>(context, key) {
+	override fun serialize(value: Boolean) = value.toString()
+	override fun deserialize(value: String) = value.toBoolean()
 }
 
 /**

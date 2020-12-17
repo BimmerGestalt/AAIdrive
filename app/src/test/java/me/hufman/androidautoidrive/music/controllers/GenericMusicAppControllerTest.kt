@@ -1,5 +1,9 @@
 package me.hufman.androidautoidrive.music.controllers
 
+import android.content.Context
+import android.content.pm.PackageManager
+import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -13,6 +17,7 @@ import org.junit.Test
 
 
 class GenericMusicAppControllerTest {
+	val context = mock<Context>()
 	val mediaTransportControls = mock<MediaControllerCompat.TransportControls>()
 	val mediaController = mock<MediaControllerCompat> {
 		on { transportControls } doReturn mediaTransportControls
@@ -33,7 +38,7 @@ class GenericMusicAppControllerTest {
 
 	@Before
 	fun setup() {
-		controller = GenericMusicAppController(mock(), mediaController, musicBrowser)
+		controller = GenericMusicAppController(context, mediaController, musicBrowser)
 	}
 
 	@Test
@@ -85,9 +90,18 @@ class GenericMusicAppControllerTest {
 		val emptyActions = controller.getCustomActions()
 		assertEquals(0, emptyActions.size)
 
-		// a mock action, except the context for CustomAction.fromMediaCustomAction is hard to mock
-		/*
-		val playbackState = createPlaybackState(PlaybackStateCompat.STATE_PLAYING, 1000)
+		// parsing an official custom action
+		// prepare the context to return info from the app
+		val actionIcon = mock<Drawable>()
+		val resources = mock<Resources> {
+			on { getDrawable(any(), anyOrNull()) } doReturn actionIcon
+		}
+		val packageManager = mock<PackageManager> {
+			on { getResourcesForApplication(any<String>()) } doReturn resources
+		}
+		whenever(context.packageManager) doReturn packageManager
+
+		val playbackState = createPlaybackState(PlaybackStateCompat.STATE_PLAYING, 1000, 0)
 		whenever(playbackState.customActions) doAnswer {
 			listOf(mock {
 				on { action } doReturn "test"
@@ -95,11 +109,11 @@ class GenericMusicAppControllerTest {
 			})
 		}
 		whenever(mediaController.playbackState) doReturn playbackState
-		val expectedAction = CustomAction("com.musicapp", "test", "Name", null, null)
+		val expectedAction = CustomAction("com.musicapp", "test", "Name", actionIcon, null)
 		val parsedAction = controller.getCustomActions()
 		assertEquals(1, parsedAction.size)
 		assertEquals(expectedAction, parsedAction[0])
-		*/
+		assertEquals(expectedAction.icon, parsedAction[0].icon)
 	}
 
 	@Test

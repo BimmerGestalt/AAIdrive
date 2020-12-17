@@ -3,6 +3,10 @@
 apply plugin: 'jacoco'
 
 project.afterEvaluate {
+    // enable reporting for compiled classes
+//    tasks.withType(Test) {
+//        jacoco.includeNoLocationClasses = true
+//    }
     // create variant-specific ones
     android.applicationVariants.all { variant ->
         def testTaskName = "test${variant.name.capitalize()}UnitTest"
@@ -28,6 +32,33 @@ project.afterEvaluate {
                     "${project.projectDir}/src/${variant.name}/java"
             ]))
             executionData.setFrom(files("${project.buildDir}/jacoco/${testTaskName}.exec"))
+        }
+
+        def connectedTestTaskName = "connected${variant.name.capitalize()}AndroidTest"
+        tasks.create(name: "${connectedTestTaskName}Coverage", type: JacocoReport, dependsOn: "$connectedTestTaskName") {
+            group = "Reporting"
+            description = "Generate Jacoco coverage reports for the ${variant.name.capitalize()} build"
+
+            reports {
+                xml.enabled = true
+                xml.destination = file("$buildDir/reports/jacoco/jacoco.xml")   // have this in a common location for coveralls to find
+                html.enabled = true
+            }
+
+            def excludes = [
+                    '**/R.class',
+                    '**/R$*.class'
+            ]
+            def kotlinClasses = fileTree(dir: "$buildDir/tmp/kotlin-classes/${variant.name}", excludes: excludes)
+            classDirectories.setFrom(files([kotlinClasses]))
+
+            sourceDirectories.setFrom(files([
+                    "${project.projectDir}/src/main/java",
+                    "${project.projectDir}/src/${variant.name}/java"
+            ]))
+            executionData.setFrom(fileTree(project.buildDir) {
+                include "outputs/code_coverage/*/connected/*ec"
+            })
         }
     }
 }

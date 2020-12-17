@@ -25,11 +25,12 @@
     <string name="notification_sound">Benachrichtigungston abspielen</string>
     <string name="notification_readout">Benachrichtigungen beim Betrachten vorlesen</string>
     <string name="notification_readout_popup">Neue Benachrichtigungen vorlesen</string>
-    <string name="notification_readout_popup_passenger">... mit Beifahrer</string>
+    <string name="notification_readout_popup_passenger">… mit Beifahrer</string>
     <string name="lbl_popupVersion">PopUps funktionieren nur mit IDrive4</string>
     <string name="lbl_smsPermission">Erteile Zugriff für SMS-Nachrichten um Bilder von Nachrichten im Fahrzeug zu sehen. Text ist immer sichtbar.</string>
     <string name="enable_google_maps">Google Maps aktivieren</string>
     <string name="lbl_widescreen_map">Breitbild (Widescreen) Karte</string>
+    <string name="lbl_map_invert_zoom">Zoom-Richtung umkehren</string>
     <string name="gmapStyleLabel">Kartenstil</string>
     <string name="lbl_music_apps">Musik Apps</string>
     <string name="musicAppIcon">App Symbol</string>
@@ -52,6 +53,7 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Abbrechen</string>
     <string name="btn_configure">Konfigurieren …</string>
+    <string name="lbl_error">Fehler</string>
     <string name="connectionStatusMissingConnectedApp">Kann Connected oder Connected Classic App nicht finden</string>
     <string name="connectionStatusWaiting">Warte auf Verbindung mit Fahrzeug</string>
     <string name="nowplaying_notconnected">&lt;Nicht Verbunden&gt;</string>
@@ -60,6 +62,8 @@
     <string name="txt_setup_mini_ready">Diese App ist bereit für die Verbindung mit einem Mini</string>
     <string name="txt_setup_bmw_missing">Nicht bereit für die Verbindung mit einem BMW:</string>
     <string name="txt_setup_mini_missing">Nicht bereit für die Verbindung mit einem Mini:</string>
+    <string name="txt_setup_bmw_mine_detected">Die neue My BMW App ist installiert, was Probleme mit BMW Connected verursachen kann und nicht unterstützt wird</string>
+    <string name="txt_setup_mini_mine_detected">Die neue MINI-App ist installiert, was Probleme mit Mini Connected verursachen kann und nicht unterstützt wird</string>
     <string name="txt_setup_security_missing">Security Service ist nicht erreichbar:</string>
     <string name="txt_setup_bt_disconnected">Fahrzeug nicht mit Bluetooth verbunden</string>
     <string name="txt_setup_bt_connected">Fahrzeug mit Bluetooth verbunden</string>
@@ -105,7 +109,7 @@
     <string name="NOTIFICATION_SOUND">Benachrichtigungston abspielen</string>
     <string name="NOTIFICATION_READOUT">Benachrichtigungen beim Betrachten vorlesen</string>
     <string name="NOTIFICATION_READOUT_POPUP">Neue Benachrichtigungen vorlesen</string>
-    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> ... mit Beifahrer</string>
+    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … mit Beifahrer</string>
     <string name="READOUT_DESCRIPTION">Diese App wird zum Auslesen verwendet</string>
     <string name="MAP_ACTION_VIEWMAP">Volle Karte zeigen</string>
     <string name="MAP_ACTION_SEARCH">Ort suchen</string>

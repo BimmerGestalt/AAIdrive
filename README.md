@@ -1,8 +1,8 @@
 Android Auto for IDrive
 =======================
 
-[![Build Status](https://travis-ci.org/hufman/AndroidAutoIdrive.svg?branch=master)](https://travis-ci.org/hufman/AndroidAutoIdrive)
-[![Coverage Status](https://coveralls.io/repos/github/hufman/AndroidAutoIdrive/badge.svg?branch=master)](https://coveralls.io/github/hufman/AndroidAutoIdrive?branch=master)
+[![Build Status](https://img.shields.io/github/workflow/status/hufman/AndroidAutoIdrive/build.svg)](https://github.com/hufman/AndroidAutoIdrive/actions?query=workflow%3Abuild)
+[![Code Coverage](https://img.shields.io/codecov/c/gh/hufman/AndroidAutoIdrive/master.svg)](https://codecov.io/gh/hufman/AndroidAutoIdrive)
 [![Crowdin](https://badges.crowdin.net/androidautoidrive/localized.svg)](https://crowdin.com/project/androidautoidrive)
 [![Release Download](https://img.shields.io/github/release/hufman/AndroidAutoIdrive.svg)](https://github.com/hufman/AndroidAutoIdrive/releases/latest)
 [![Download Counter](https://img.shields.io/github/downloads/hufman/AndroidAutoIdrive/total.svg)](https://github.com/hufman/AndroidAutoIdrive/releases/latest)
@@ -10,28 +10,34 @@ Android Auto for IDrive
 [![Buy Me A Coffee](https://img.shields.io/badge/support-buymeacoffee-5f7fff)](https://www.buymeacoffee.com/q4JVoxz)
 ![MIT Licensed](https://img.shields.io/github/license/hufman/AndroidAutoIdrive)
 
-The BMW/Mini IDrive NBT does not offer native Android Auto integration, but does provide a very powerful Connected Apps convergence option with many exciting integration points into the car. This project is an effort to implement most of the features of Android Auto as unofficial BMW/Mini Connected Apps.
+The BMW/Mini IDrive NBT does not offer native Android Auto integration, but does provide a very powerful Connected Apps convergence option with tight integration points into the car. This project is an effort to implement most of the features of Android Auto as unofficial BMW/Mini Connected Apps.
 
-By relying on the Connected Apps technology, this app greatly extends the functionality of the car without needing any modifications. Any MY2014 or newer BMW or Mini equipped with NBT or NBT Evo and the "Navigation System Professional (S609A)" [option](https://www.mdecoder.com/) or "BMW Apps (6NR)" or "Mini Connected (SA6NM)" options should be compatible.
+By relying on the Connected Apps technology, this app greatly extends the functionality of the car without any modifications or hacks. Any MY2014 or newer BMW or Mini equipped with NBT or NBT Evo and the "BMW Apps (6NR)" feature, an active [BMW ConnectedDrive](https://www.bmwusa.com/explore/connecteddrive.html) subscription, or the "Mini Connected (SA6NM)" option should be compatible.
 
 [![App List](https://hufman.github.io/AndroidAutoIdrive/images/demo-applist.gif)<br />Gallery](https://hufman.github.io/AndroidAutoIdrive/gallery.html)
 
 Overview
 --------
 
-As part of the Connected Apps feature, when the phone connects over USB (or Bluetooth in 2017+ models), a tunnel is created to allow other apps on the phone to interact with the car. Over this connection, enabled phone apps can show a special interface in the car, while providing tight user integration due to actually running all logic on the phone.
+As part of the Connected Apps feature, when the phone connects to the car over USB (or Bluetooth in 2017+ models), enabled phone apps can show a special dashboard-optimized interface in the car.
 
-Android Auto for IDrive, combined with the safety benefits of the tactile IDrive controller, allows the user to interact with their incoming notifications and control their phone's music, while the phone is tucked out of reach.
+Android Auto for IDrive, combined with the safety benefits of the tactile IDrive controller, builds on this protocol to allow the user to interact with their incoming notifications and control their phone's music while the phone is safely tucked away.
 
 Getting Started
 ---------------
 
-This app requires that the BMW or Mini Connected app for your car is installed and can successfully add Connected and Calendar entries to your car's Connected Apps menu.
+This app requires that the BMW Connected or Mini Connected app for your car is installed and can successfully add the Connected and Calendar entries to your car's Connected Apps menu. The new My BMW app seems to interfere with BMW Connected and is not supported.
 
 Download the APK of the latest stable release from the [Releases page](https://github.com/hufman/AndroidAutoIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. After starting, the app should detect the Connected app and start waiting for the car connection.
 
 Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-sentry-release.apk) to automatically report crashes.
 The [nonalytics](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-nonalytics-release.apk) build is available too.
+Some of the new features include:
+  - Supports logging in as Spotify to set the global coverart in ID5+
+  - Adds Spotify browse and playlist coverart
+  - Reads out notifications
+  - Supports replying to notifications
+  - Starts car navigation to handle certain phone navigation buttons
 
 Check out the [FAQ](https://hufman.github.io/AndroidAutoIdrive/faq.html) if you run into problems.
 
@@ -187,12 +193,12 @@ Due to the unofficial reverse-engineered nature of this project, it has some lim
 Requirements
 ------------
 
-To communicate to the car, this project relies on the proxy connection that is created by the main Connected app on the phone. Both of the brand-specific Connected and the Connected Classic apps have been tested as compatible for this purpose, but the new Connected app is more reliable.
+To communicate to the car, this project relies on the proxy connection that is created by the main Connected app on the phone. Both of the brand-specific Connected and the Connected Classic apps have been tested as compatible for this purpose, but the new Connected app is more reliable. My BMW and the new MINI app are not compatible.
 
 Additionally, the car proposes a security challenge during the connection process, and this project asks the Security Service provided by the Connected apps for the correct response.
 The normal Connected app should be enough for this, but it might be necessary to also install the Connected Classic app to provide the Security Service.
-If this is needed, it is not recommended to install both the Connected and Connected Classic apps of the same brand, they will fight over the connection to the car and undefined results may happen.
-Instead, install the Connected Classic app of the other brand that is not intended to be used regularly, such as BMW Connected and Mini Connected Classic.
+If this is needed, it is not recommended to install both the Connected and Connected Classic apps of the same brand, they may fight over the connection to the car and undefined results may happen.
+Instead, install the Connected Classic app of the other brand that is not intended to be used regularly, for example using BMW Connected and Mini Connected Classic.
 
 Build Instructions
 ------------------

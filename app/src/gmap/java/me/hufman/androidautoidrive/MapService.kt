@@ -14,7 +14,7 @@ import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 
-class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess) {
+class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val mapAppMode: MapAppMode) {
 	var threadGMaps: CarThread? = null
 	var mapApp: MapApp? = null
 	var mapScreenCapture: VirtualDisplayScreenCapture? = null
@@ -41,9 +41,9 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 				if (threadGMaps?.isAlive != true) {
 					threadGMaps = CarThread("GMaps") {
 						Log.i(MainService.TAG, "Starting GMaps")
-						val mapScreenCapture = VirtualDisplayScreenCapture.build()
+						val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.maxWidth, mapAppMode.maxHeight)
 						this.mapScreenCapture = mapScreenCapture
-						val virtualDisplay = createVirtualDisplay(context, mapScreenCapture.imageCapture, 100)
+						val virtualDisplay = createVirtualDisplay(context, mapScreenCapture.imageCapture, 225)
 						this.virtualDisplay = virtualDisplay
 						val mapController = GMapsController(context, MapResultsSender(context), virtualDisplay, MutableAppSettingsReceiver(context, null /* specifically main thread */))
 						this.mapController = mapController
@@ -53,7 +53,7 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 
 						val mapApp = MapApp(iDriveConnectionStatus, securityAccess,
 								CarAppAssetManager(context, "smartthings"),
-								AppSettingsViewer(),
+								mapAppMode,
 								MapInteractionControllerIntent(context), mapScreenCapture)
 						this.mapApp = mapApp
 						val handler = threadGMaps?.handler

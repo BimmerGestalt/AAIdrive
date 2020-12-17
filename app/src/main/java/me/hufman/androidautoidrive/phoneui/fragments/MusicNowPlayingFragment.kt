@@ -10,8 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.music_nowplaying.*
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.Utils
-import me.hufman.androidautoidrive.getThemeColor
+import me.hufman.androidautoidrive.utils.Utils
+import me.hufman.androidautoidrive.phoneui.getThemeColor
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
@@ -30,10 +30,6 @@ class MusicNowPlayingFragment: Fragment() {
 	lateinit var musicController: MusicController
 	lateinit var placeholderCoverArt: Bitmap
 	lateinit var spotifyWebApi: SpotifyWebApi
-
-	fun onActive() {
-		musicController.listener = Runnable { redraw() }
-	}
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.music_nowplaying, container, false)
@@ -81,12 +77,12 @@ class MusicNowPlayingFragment: Fragment() {
 
 	override fun onResume() {
 		super.onResume()
+		musicController.listener = Runnable { redraw() }
 		redraw()
 	}
 
 	fun redraw() {
-		if (!isVisible) return
-
+		if (!isResumed) return
 		val metadata = musicController.getMetadata()
 		if (metadata?.coverArt != null) {
 			imgCoverArt.setImageBitmap(metadata.coverArt)

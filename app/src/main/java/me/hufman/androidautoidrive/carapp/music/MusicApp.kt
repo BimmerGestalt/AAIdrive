@@ -4,15 +4,15 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
-import me.hufman.androidautoidrive.GraphicsHelpers
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
-import me.hufman.androidautoidrive.Utils.loadZipfile
+import me.hufman.androidautoidrive.utils.Utils.loadZipfile
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.androidautoidrive.removeFirst
+import me.hufman.androidautoidrive.utils.removeFirst
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
@@ -277,7 +277,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			val msg = "Received av_connectionGranted: handle=$handle connectionType=$connectionType"
 			Log.i(TAG, msg)
 			try {
-				avContext.av_connectionGranted(handle, connectionType)
+				avContext.av_connectionGranted()
 			} catch (e: Exception) {
 				Log.e(TAG, "Received exception while handling av_connectionGranted", e)
 			}
@@ -287,7 +287,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			val msg = "Received av_connectionDeactivated: handle=$handle connectionType=$connectionType"
 			Log.i(TAG, msg)
 			try {
-				avContext.av_connectionDeactivated(handle, connectionType)
+				avContext.av_connectionDeactivated()
 			} catch (e: Exception) {
 				Log.e(TAG, "Received exception while handling av_connectionDeactivated", e)
 			}
@@ -312,7 +312,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			val msg = "Received av_multimediaButtonEvent: handle=$handle event=$event"
 			Log.i(TAG, msg)
 			try {
-				avContext.av_multimediaButtonEvent(handle, event)
+				avContext.av_multimediaButtonEvent(event)
 			} catch (e: Exception) {
 				Log.e(TAG, "Received exception while handling av_multimediaButtonEvent", e)
 			}

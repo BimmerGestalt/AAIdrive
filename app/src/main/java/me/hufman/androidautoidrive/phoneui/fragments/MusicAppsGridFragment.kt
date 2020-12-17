@@ -42,7 +42,7 @@ class MusicAppsGridFragment: Fragment() {
 		// build list of discovered music apps
 		appDiscoveryThread.start()
 
-		listMusicApps.setOnItemClickListener { adapterView, view, i, l ->
+		listMusicApps.setOnItemClickListener { adapterView, _, i, _ ->
 			val appInfo = adapterView.adapter.getItem(i) as? MusicAppInfo
 			if (appInfo != null) {
 				UIState.selectedMusicApp = appInfo
@@ -79,7 +79,7 @@ class MusicAppsGridFragment: Fragment() {
 					}
 					layout
 				} else {
-					layout.findViewById<TextView>(R.id.txtMusicAppName).setText("Error")
+					layout.findViewById<TextView>(R.id.txtMusicAppName).text = getText(R.string.lbl_error)
 					layout
 				}
 			}

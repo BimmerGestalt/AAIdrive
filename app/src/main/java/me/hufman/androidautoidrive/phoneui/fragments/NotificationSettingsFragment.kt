@@ -5,15 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_notification_settings.*
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.MutableAppSettingsReceiver
+import me.hufman.androidautoidrive.BooleanLiveSetting
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.phoneui.visible
 
 class NotificationSettingsFragment: Fragment() {
-
-	val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.fragment_notification_settings, container, false)
@@ -22,48 +21,25 @@ class NotificationSettingsFragment: Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
-		swNotificationPopup.setOnCheckedChangeListener { buttonView, isChecked ->
-			appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP] = isChecked.toString()
-			redraw()
+		val bindings = mapOf(
+				swNotificationPopup to AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP,
+				swNotificationPopupPassenger to AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER,
+				swNotificationSound to AppSettings.KEYS.NOTIFICATIONS_SOUND,
+				swNotificationReadout to AppSettings.KEYS.NOTIFICATIONS_READOUT,
+				swNotificationReadoutPopup to AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP,
+				swNotificationReadoutPopupPassenger to AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
+		)
+		bindings.forEach { pair ->
+			val switch = pair.key
+			val setting = BooleanLiveSetting(requireContext(), pair.value)
+			setting.observe(viewLifecycleOwner, Observer {
+				switch.isChecked = it
+				if (pair.value == AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP) paneNotificationPopup.visible = it
+				if (pair.value == AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP) paneNotificationReadout.visible = it
+			})
+			switch.setOnCheckedChangeListener { _, isChecked ->
+				setting.setValue(isChecked)
+			}
 		}
-		swNotificationPopupPassenger.setOnCheckedChangeListener { buttonView, isChecked ->
-			appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER] = isChecked.toString()
-		}
-		swNotificationSound.setOnCheckedChangeListener { _, isChecked ->
-			appSettings[AppSettings.KEYS.NOTIFICATIONS_SOUND] = isChecked.toString()
-		}
-		swNotificationReadout.setOnCheckedChangeListener { buttonView, isChecked ->
-			appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT] = isChecked.toString()
-			redraw()
-		}
-		swNotificationReadoutPopup.setOnCheckedChangeListener { buttonView, isChecked ->
-			appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP] = isChecked.toString()
-		}
-		swNotificationReadoutPopupPassenger.setOnCheckedChangeListener { buttonView, isChecked ->
-			appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER] = isChecked.toString()
-		}
-	}
-
-	override fun onResume() {
-		super.onResume()
-
-		redraw()
-		appSettings.callback = { redraw() }
-	}
-
-	override fun onPause() {
-		super.onPause()
-		appSettings.callback = null
-	}
-
-	fun redraw() {
-		swNotificationPopup.isChecked = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
-		paneNotificationPopup.visible = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean()
-		swNotificationPopupPassenger.isChecked = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean()
-		swNotificationSound.isChecked = appSettings[AppSettings.KEYS.NOTIFICATIONS_SOUND].toBoolean()
-		swNotificationReadout.isChecked = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT].toBoolean()
-		swNotificationReadoutPopup.isChecked = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP].toBoolean()
-		paneNotificationReadout.visible = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP].toBoolean()
-		swNotificationReadoutPopupPassenger.isChecked = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER].toBoolean()
 	}
 }

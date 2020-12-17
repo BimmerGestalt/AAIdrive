@@ -2,16 +2,17 @@ package me.hufman.androidautoidrive
 
 import ChassisCode
 import android.app.*
-import android.app.Notification.PRIORITY_LOW
 import android.content.*
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
+import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.carapp.notifications.NotificationSettings
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
@@ -21,12 +22,14 @@ import me.hufman.androidautoidrive.carapp.notifications.ReadoutApp
 import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.notifications.AudioPlayer
 import me.hufman.androidautoidrive.phoneui.*
+import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
 import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import org.json.JSONObject
 import java.lang.IllegalArgumentException
+import java.util.*
 
 class MainService: Service() {
 	companion object {
@@ -80,7 +83,7 @@ class MainService: Service() {
 		} else if (action == ACTION_STOP) {
 			handleActionStop()
 		}
-		return Service.START_STICKY
+		return START_STICKY
 	}
 
 	override fun onDestroy() {
@@ -169,28 +172,27 @@ class MainService: Service() {
 		val notifyIntent = Intent(this, MainActivity::class.java).apply {
 			flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 		}
-		val foregroundNotificationBuilder = Notification.Builder(this)
+		val foregroundNotificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
 				.setOngoing(true)
 				.setContentTitle(getText(R.string.notification_title))
 				.setContentText(getText(R.string.notification_description))
 				.setSmallIcon(R.drawable.ic_notify)
-				.setPriority(PRIORITY_LOW)
+				.setPriority(NotificationCompat.PRIORITY_LOW)
 				.setContentIntent(PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT))
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			foregroundNotificationBuilder.setChannelId(NOTIFICATION_CHANNEL_ID)
-		}
 
-		if (brand?.toLowerCase() == "bmw") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_bmw))
-		if (brand?.toLowerCase() == "mini") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_mini))
+		if (brand?.toLowerCase(Locale.ROOT) == "bmw") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_bmw))
+		if (brand?.toLowerCase(Locale.ROOT) == "mini") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_mini))
 
 		if (chassisCode != null) {
 			foregroundNotificationBuilder.setContentText(resources.getString(R.string.notification_description_chassiscode, chassisCode.toString()))
 		}
 
-		if (foregroundNotification == null) {
-			foregroundNotification = foregroundNotificationBuilder.build()
+		val foregroundNotification = foregroundNotificationBuilder.build()
+		if (this.foregroundNotification?.extras?.getCharSequence(Notification.EXTRA_TEXT) !=
+				foregroundNotification?.extras?.getCharSequence(Notification.EXTRA_TEXT)) {
 			startForeground(ONGOING_NOTIFICATION_ID, foregroundNotification)
 		}
+		this.foregroundNotification = foregroundNotification
 	}
 
 	fun combinedCallback() {
@@ -342,8 +344,9 @@ class MainService: Service() {
 	}
 
 	fun startMaps(): Boolean {
-		if (mapService == null) {
-			mapService = MapService(this, iDriveConnectionReceiver, securityAccess)
+		if (carInformationObserver.capabilities.isNotEmpty() && mapService == null) {
+			mapService = MapService(this, iDriveConnectionReceiver, securityAccess,
+					MapAppMode(carInformationObserver.capabilities, AppSettingsViewer()))
 		}
 		return mapService?.start() ?: false
 	}
@@ -393,12 +396,12 @@ class MainService: Service() {
 
 	fun startNavigationListener() {
 		if (carInformationObserver.capabilities["navi"] == "true") {
-			if (iDriveConnectionReceiver.brand?.toLowerCase() == "bmw") {
+			if (iDriveConnectionReceiver.brand?.toLowerCase(Locale.ROOT) == "bmw") {
 				packageManager.setComponentEnabledSetting(
 						ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityBMW"),
 						PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
 				)
-			} else if (iDriveConnectionReceiver.brand?.toLowerCase() == "mini") {
+			} else if (iDriveConnectionReceiver.brand?.toLowerCase(Locale.ROOT) == "mini") {
 				packageManager.setComponentEnabledSetting(
 						ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityMINI"),
 						PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP

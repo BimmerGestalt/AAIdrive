@@ -10,15 +10,9 @@ import java.lang.Exception
 open class CustomAction(val packageName: String, val action: String, val name: String, val icon: Drawable?, val extras: Bundle?) {
 	companion object {
 		fun fromMediaCustomAction(context: Context, packageName: String, action: PlaybackStateCompat.CustomAction): CustomAction {
-			val resources = context.packageManager.getResourcesForApplication(packageName)
 			val icon = try {
+				val resources = context.packageManager.getResourcesForApplication(packageName)
 				resources.getDrawable(action.icon, null)
-			} catch (e: Exception) {
-				try {
-					Resources.getSystem().getDrawable(action.icon, null)
-				} catch (e: Exception) {
-					null
-				}
 			} catch (e: Exception) {
 				null
 			}

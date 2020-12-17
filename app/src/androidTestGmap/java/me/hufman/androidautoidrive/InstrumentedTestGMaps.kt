@@ -11,10 +11,10 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.anyArray
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
-import junit.framework.Assert.assertEquals
 import me.hufman.androidautoidrive.MapService.Companion.createVirtualDisplay
 import me.hufman.androidautoidrive.carapp.maps.*
 import org.awaitility.Awaitility.await
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -71,7 +71,7 @@ class InstrumentedTestGMaps {
 	@Test
 	fun testMapSearch() {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-		val imageCapture = VirtualDisplayScreenCapture.build()
+		val imageCapture = VirtualDisplayScreenCapture.build(1000, 400)
 		val virtualDisplay = createVirtualDisplay(getContext(), imageCapture.imageCapture)
 		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay, MutableAppSettingsReceiver(appContext))
 		mapController.searchLocations("test", LatLngBounds(LatLng(37.333, -122.416), LatLng(37.783, -121.9)))
@@ -86,7 +86,7 @@ class InstrumentedTestGMaps {
 	@Test
 	fun testNavigation() {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-		val imageCapture = VirtualDisplayScreenCapture.build()
+		val imageCapture = VirtualDisplayScreenCapture.build(1000, 400)
 		val virtualDisplay = createVirtualDisplay(getContext(), imageCapture.imageCapture)
 		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay, MutableAppSettingsReceiver(appContext))
 		runOnUiThread {

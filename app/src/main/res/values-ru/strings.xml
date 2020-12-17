@@ -37,7 +37,7 @@
     <string name="musicAppNotes_oldSpotifyInstructions">Это приложение может обеспечить полный контроль над Spotify до версии 8.4.96.953. Для полного контроля загрузите старую версию.</string>
     <string name="lbl_ok">Ок</string>
     <string name="lbl_cancel">Отмена</string>
-    <string name="btn_configure">Настроить ...</string>
+    <string name="btn_configure">Настроить …</string>
     <string name="connectionStatusMissingConnectedApp">Не найдено приложения Connected или Connected Classic</string>
     <string name="connectionStatusWaiting">Ожидание подключения к машине</string>
     <string name="nowplaying_notconnected">&lt;Не подключено&gt;</string>

@@ -1,9 +1,9 @@
 package me.hufman.androidautoidrive.carapp
 
 import android.util.SparseArray
-import me.hufman.androidautoidrive.forEach
-import me.hufman.androidautoidrive.set
-import me.hufman.androidautoidrive.setDefault
+import me.hufman.androidautoidrive.utils.forEach
+import me.hufman.androidautoidrive.utils.set
+import me.hufman.androidautoidrive.utils.setDefault
 import me.hufman.idriveconnectionkit.rhmi.*
 
 /** An RHMIApplication wrapper that can change out its wrapped app

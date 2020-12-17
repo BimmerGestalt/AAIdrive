@@ -20,8 +20,8 @@ import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.androidautoidrive.Utils
-import me.hufman.androidautoidrive.getThemeColor
+import me.hufman.androidautoidrive.utils.Utils
+import me.hufman.androidautoidrive.phoneui.getThemeColor
 import me.hufman.androidautoidrive.phoneui.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
 
@@ -92,16 +92,25 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 			val contents = result.await()
 			this@MusicBrowsePageFragment.contents.clear()
 			this@MusicBrowsePageFragment.contents.addAll(contents)
-			if (isVisible) {
-				if (contents.isEmpty()) {
-					txtEmpty.text = getString(R.string.MUSIC_BROWSE_EMPTY)
-				} else {
-					txtEmpty.text = ""
-				}
+			redraw()
+		}
+	}
 
-				listBrowse.removeAllViews()
-				listBrowse.adapter?.notifyDataSetChanged()
+	override fun onResume() {
+		super.onResume()
+		redraw()
+	}
+
+	fun redraw() {
+		if (isResumed) {
+			if (contents.isEmpty()) {
+				txtEmpty.text = getString(R.string.MUSIC_BROWSE_EMPTY)
+			} else {
+				txtEmpty.text = ""
 			}
+
+			listBrowse.removeAllViews()
+			listBrowse.adapter?.notifyDataSetChanged()
 		}
 	}
 }

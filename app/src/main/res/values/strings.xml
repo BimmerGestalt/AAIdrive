@@ -27,12 +27,13 @@
     <string name="notification_sound">Play notification sound</string>
     <string name="notification_readout">Speak when viewing notifications</string>
     <string name="notification_readout_popup">Speak new notifications</string>
-    <string name="notification_readout_popup_passenger">... with a passenger</string>
+    <string name="notification_readout_popup_passenger">… with a passenger</string>
     <string name="lbl_popupVersion">Popups only work with IDrive4</string>
     <string name="lbl_smsPermission">Grant the SMS permission to view pictures from incoming SMS images in the car. The text itself is always visible.</string>
 
     <string name="enable_google_maps">Enable Google Maps</string>
     <string name="lbl_widescreen_map">Widescreen Map</string>
+    <string name="lbl_map_invert_zoom">Invert zoom direction</string>
     <string name="gmapStyleLabel">Map Style</string>
     <string name="lbl_music_apps">Music Apps</string>
     <string name="musicAppIcon">App Icon</string>
@@ -56,6 +57,7 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancel</string>
     <string name="btn_configure">Configure …</string>
+    <string name="lbl_error">Error</string>
 
     <string name="connectionStatusMissingConnectedApp">Can\'t find Connected or Connected Classic app</string>
     <string name="connectionStatusWaiting">Waiting for connection to car</string>
@@ -67,6 +69,8 @@
     <string name="txt_setup_mini_ready">The app is ready to connect to a Mini</string>
     <string name="txt_setup_bmw_missing">Not ready to connect to a BMW:</string>
     <string name="txt_setup_mini_missing">Not ready to connect to a Mini:</string>
+    <string name="txt_setup_bmw_mine_detected">The new My BMW app is installed, which might cause problems with BMW Connected and is not supported</string>
+    <string name="txt_setup_mini_mine_detected">The new MINI app is installed, which might cause problems with Mini Connected and is not supported</string>
     <string name="txt_setup_security_missing">Security Service is unreachable:</string>
     <string name="txt_setup_bt_disconnected">No car connected over Bluetooth</string>
     <string name="txt_setup_bt_connected">Car is connected over Bluetooth</string>
@@ -117,11 +121,11 @@
     <string name="NOTIFICATION_CLEAR_ACTION">Clear</string>
     <string name="NOTIFICATION_OPTIONS">Options</string>
     <string name="NOTIFICATION_POPUPS">Notification Popups</string>
-    <string name="NOTIFICATION_POPUPS_PASSENGER"> ... with a passenger</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER"> … with a passenger</string>
     <string name="NOTIFICATION_SOUND">Play notification sound</string>
     <string name="NOTIFICATION_READOUT">Speak when viewing notifications</string>
     <string name="NOTIFICATION_READOUT_POPUP">Speak new notifications</string>
-    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> ... with a passenger</string>
+    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … with a passenger</string>
     <string name="READOUT_DESCRIPTION">This app is used for readout purposes</string>
 
     <string name="MAP_ACTION_VIEWMAP">View Full Map</string>
