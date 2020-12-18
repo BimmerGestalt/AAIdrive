@@ -188,6 +188,13 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	fun pauseSync() = withController { controller -> // all calls are already in the handler thread, don't go async
 		controller.pause()
 	}
+	fun togglePlay() {
+		if (desiredPlayback) {    // currently trying to play
+			pause()
+		} else {
+			play()
+		}
+	}
 	fun skipToPrevious() = asyncControl { controller ->
 		controller.skipToPrevious()
 	}
