@@ -4,14 +4,14 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
 
-    <Switch
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/swMapWidescreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:text="@string/lbl_widescreen_map" />
 
-    <Switch
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/swMapInvertZoom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

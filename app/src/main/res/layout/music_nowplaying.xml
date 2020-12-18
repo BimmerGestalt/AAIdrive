@@ -60,7 +60,7 @@
                 android:layout_height="32dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_error_outline_black_24dp"
-                android:tint="?android:attr/textColorSecondary" />
+                app:tint="?android:attr/textColorSecondary" />
         </LinearLayout>
 
         <LinearLayout

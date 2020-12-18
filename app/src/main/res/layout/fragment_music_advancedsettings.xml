@@ -3,14 +3,14 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Switch
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/swAudioContext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/enable_audio_context"
         android:layout_marginBottom="8dp" />
 
-    <Switch
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/swSpotifyLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_connection_status.*
 import me.hufman.androidautoidrive.CarInformationObserver
+import me.hufman.androidautoidrive.ChassisCode
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.connections.CarConnectionDebugging
 import me.hufman.androidautoidrive.phoneui.showEither
