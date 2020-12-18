@@ -1,7 +1,6 @@
 package me.hufman.androidautoidrive.phoneui.fragments
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -10,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,9 +20,10 @@ import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
 import me.hufman.androidautoidrive.utils.Utils
 import me.hufman.androidautoidrive.phoneui.getThemeColor
-import me.hufman.androidautoidrive.phoneui.MusicActivityModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
 
 class MusicBrowsePageFragment: Fragment(), CoroutineScope {
@@ -31,8 +32,6 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 
 	companion object {
 		const val ARG_MEDIA_ID = "me.hufman.androidautoidrive.BROWSE_MEDIA_ID"
-		const val FOLDER_ID = "155.png"
-		const val SONG_ID = "152.png"
 
 		fun newInstance(mediaEntry: MusicMetadata?): MusicBrowsePageFragment {
 			val fragment = MusicBrowsePageFragment()
@@ -43,6 +42,7 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 		}
 	}
 
+	lateinit var iconsModel: MusicActivityIconsModel
 	lateinit var musicController: MusicController
 	var loaderJob: Job? = null
 	val contents = ArrayList<MusicMetadata>()
@@ -53,12 +53,18 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		val viewModel = ViewModelProvider(requireActivity()).get(MusicActivityModel::class.java)
-		val musicController = viewModel.musicController ?: return
-		this.musicController = musicController
+		musicController = viewModel.musicController
+
+		iconsModel = ViewModelProvider(requireActivity()).get(MusicActivityIconsModel::class.java)
+
+		// redraw to catch any updated coverart
+		viewModel.redrawListener.observe(viewLifecycleOwner, Observer {
+			listBrowse.adapter?.notifyDataSetChanged()
+		})
 
 		listBrowse.setHasFixedSize(true)
 		listBrowse.layoutManager = LinearLayoutManager(this.context)
-		listBrowse.adapter = BrowseAdapter(this.requireContext(), viewModel.icons, contents) { mediaEntry ->
+		listBrowse.adapter = BrowseAdapter(this.requireContext(), iconsModel, contents) { mediaEntry ->
 			if (mediaEntry != null) {
 				if (mediaEntry.browseable) {
 					(activity as MusicPlayerActivity).pushBrowse(mediaEntry)
@@ -115,7 +121,7 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 	}
 }
 
-class BrowseAdapter(val context: Context, val icons: Map<String, Bitmap>, val contents: ArrayList<MusicMetadata>, val clickListener: (MusicMetadata?) -> Unit): RecyclerView.Adapter<BrowseAdapter.ViewHolder>() {
+class BrowseAdapter(val context: Context, val iconsModel: MusicActivityIconsModel, val contents: ArrayList<MusicMetadata>, val clickListener: (MusicMetadata?) -> Unit): RecyclerView.Adapter<BrowseAdapter.ViewHolder>() {
 	inner class ViewHolder(val view: View): RecyclerView.ViewHolder(view), View.OnClickListener {
 		init {
 			view.setOnClickListener(this)
@@ -137,17 +143,17 @@ class BrowseAdapter(val context: Context, val icons: Map<String, Bitmap>, val co
 
 	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 		val item = contents.getOrNull(position) ?: return
-		holder.view.findViewById<TextView>(R.id.txtBrowseEntryTitle).setText(item.title)
-		holder.view.findViewById<TextView>(R.id.txtBrowseEntrySubtitle).setText(item.subtitle)
+		holder.view.findViewById<TextView>(R.id.txtBrowseEntryTitle).text = item.title
+		holder.view.findViewById<TextView>(R.id.txtBrowseEntrySubtitle).text = item.subtitle
 
 		holder.view.findViewById<ImageView>(R.id.imgBrowseType).colorFilter = Utils.getIconMask(context.getThemeColor(android.R.attr.textColorSecondary))
 
 		if(item.coverArt == null) {
 			holder.view.findViewById<ImageView>(R.id.imgBrowseType).setImageBitmap(
-					if (item.browseable)
-						icons[MusicBrowsePageFragment.FOLDER_ID]
-					else
-						icons[MusicBrowsePageFragment.SONG_ID]
+				if (item.browseable)
+					iconsModel.folderIcon
+				else
+					iconsModel.songIcon
 			)
 		} else {
 			holder.view.findViewById<ImageView>(R.id.imgBrowseType).setImageBitmap(item.coverArt)

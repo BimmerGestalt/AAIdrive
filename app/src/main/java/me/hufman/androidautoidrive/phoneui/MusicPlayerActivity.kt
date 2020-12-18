@@ -1,24 +1,21 @@
 package me.hufman.androidautoidrive.phoneui
 
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.os.Handler
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.activity_musicplayer.*
-import me.hufman.androidautoidrive.CarAppAssetManager
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.utils.Utils
 import me.hufman.androidautoidrive.music.MusicAppInfo
-import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.phoneui.fragments.MusicBrowseFragment
 import me.hufman.androidautoidrive.phoneui.fragments.MusicBrowsePageFragment
 import me.hufman.androidautoidrive.phoneui.fragments.MusicNowPlayingFragment
 import me.hufman.androidautoidrive.phoneui.fragments.MusicQueueFragment
+import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 
 class MusicPlayerActivity: AppCompatActivity() {
 
@@ -34,17 +31,9 @@ class MusicPlayerActivity: AppCompatActivity() {
 		val musicApp = UIState.selectedMusicApp ?: return
 		this.musicApp = musicApp
 
-		// load the viewmodel
-		val viewModel = ViewModelProvider(this).get(MusicActivityModel::class.java)
-		viewModel.musicController = viewModel.musicController ?: MusicController(applicationContext, Handler(this.mainLooper))
-		viewModel.musicController?.connectAppManually(musicApp)
-
-		// load the icons
-		val appAssets = CarAppAssetManager(this, "multimedia")
-		val images = Utils.loadZipfile(appAssets.getImagesDB("common"))
-		for (id in listOf("150.png", "148.png", "152.png", "147.png", "155.png")) {
-			viewModel.icons[id] = BitmapFactory.decodeByteArray(images[id], 0, images[id]?.size ?: 0)
-		}
+		// initialize the viewmodels
+		ViewModelProvider(this, MusicActivityModel.Factory(applicationContext, musicApp)).get(MusicActivityModel::class.java)
+		ViewModelProvider(this, MusicActivityIconsModel.Factory(this)).get(MusicActivityIconsModel::class.java)
 
 		setContentView(R.layout.activity_musicplayer)
 
