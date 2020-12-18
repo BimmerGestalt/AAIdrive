@@ -20,8 +20,12 @@ import me.hufman.androidautoidrive.music.PlaybackPosition
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
-class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController {
+class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController, CoroutineScope {
+	override val coroutineContext: CoroutineContext
+		get() = Dispatchers.Default
+
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
@@ -210,7 +214,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	 * not authorized then the the [QueueMetadata] is created from the app remote API.
 	 */
 	fun createLikedSongsQueueMetadata() {
-		createQueueMetadataJob = CoroutineScope(Dispatchers.Default).launch {
+		createQueueMetadataJob = launch {
 			queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
 			if (queueItems.isNotEmpty()) {
 				queueMetadata = QueueMetadata("Liked Songs", null, queueItems)
