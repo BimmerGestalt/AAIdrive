@@ -20,7 +20,6 @@ import me.hufman.androidautoidrive.music.PlaybackPosition
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import java.util.*
-import kotlin.coroutines.CoroutineContext
 
 class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController {
 	companion object {
@@ -140,6 +139,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	var queueItems: List<MusicMetadata> = LinkedList()
 	var queueMetadata: QueueMetadata? = null
 	val coverArtCache = LruCache<ImageUri, Bitmap>(50)
+	var createQueueMetadataJob: Job? = null
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -192,25 +192,12 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				if (isLikedSongsPlaylist) {
 					createLikedSongsQueueMetadata()
 				} else {
-					webApi.clearGetLikedSongsAttemptedFlag()
-				}
-
-				if (uri != null && queueItems.isEmpty()) {
-					val listItem = ListItem(uri, uri, null, playerContext.title, playerContext.subtitle, false, true)
-					loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
-						queueItems = it
-
-						// shuffle play button somehow gets returned with the rest of the tracks when loading an album
-						if (queueItems.isNotEmpty() && queueItems[0].artist == "" && queueItems[0].title == "Shuffle Play") {
-							queueItems = queueItems.drop(1)
-						}
-
-						// build a basic QueueMetadata while waiting for cover art to load
-						queueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, queueItems)
-						loadQueueCoverart()
-
-						callback?.invoke(this)
+					if (createQueueMetadataJob?.isActive == true) {
+						createQueueMetadataJob?.cancel()
 					}
+					createQueueMetadataJob = null
+					webApi.clearGetLikedSongsAttemptedFlag()
+					createQueueMetadata(playerContext)
 				}
 			}
 
@@ -220,15 +207,20 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 
 	/**
 	 * Creates the [QueueMetadata] for the "Liked Songs" playlist using the Web API. If the web API is
-	 * not authorized then a [QueueMetadata] with an empty song list will be created.
+	 * not authorized then the the [QueueMetadata] is created from the app remote API.
 	 */
 	fun createLikedSongsQueueMetadata() {
-		queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
-		if (queueItems.isNotEmpty()) {
-			queueMetadata = QueueMetadata("Liked Songs", null, queueItems)
-			loadQueueCoverart()
+		createQueueMetadataJob = CoroutineScope(Dispatchers.Default).launch {
+			queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
+			if (queueItems.isNotEmpty()) {
+				queueMetadata = QueueMetadata("Liked Songs", null, queueItems)
+				loadQueueCoverart()
+			} else {
+				createQueueMetadata(PlayerContext(queueUri, "Liked Songs", "", ""))
+			}
+
+			callback?.invoke(this@SpotifyAppController)
 		}
-		callback?.invoke(this@SpotifyAppController)
 	}
 
 	/**
@@ -246,6 +238,29 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			}
 		}
 		return null
+	}
+
+	/**
+	 * Creates the [QueueMetadata] for the current player context using the app remote API.
+	 */
+	private fun createQueueMetadata(playerContext: PlayerContext) {
+		if (queueUri != null && queueItems.isEmpty()) {
+			val listItem = ListItem(queueUri, queueUri, null, playerContext.title, playerContext.subtitle, false, true)
+			loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
+				queueItems = it
+
+				// shuffle play button somehow gets returned with the rest of the tracks when loading an album
+				if (queueItems.isNotEmpty() && queueItems[0].artist == "" && queueItems[0].title == "Shuffle Play") {
+					queueItems = queueItems.drop(1)
+				}
+
+				// build a basic QueueMetadata while waiting for cover art to load
+				queueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, queueItems)
+				loadQueueCoverart()
+
+				callback?.invoke(this)
+			}
+		}
 	}
 
 	/**
