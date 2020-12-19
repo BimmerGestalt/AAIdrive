@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data class="MusicAdvancedSettingsBinding">
+        <variable
+            name="settings"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.MusicAdvancedSettingsModel" />
+    </data>
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/swAudioContext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/enable_audio_context"
-        android:layout_marginBottom="8dp" />
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swAudioContext"
+            android:checked="@={settings.audioContext}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/enable_audio_context"
+            android:layout_marginBottom="8dp" />
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/swSpotifyLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/enable_spotify_layout"
-        android:layout_marginBottom="8dp" />
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swSpotifyLayout"
+            android:checked="@={settings.spotifyLayout}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/enable_spotify_layout"
+            android:layout_marginBottom="8dp" />
 
-</LinearLayout>
+    </LinearLayout>
+</layout>
