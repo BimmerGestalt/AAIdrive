@@ -22,14 +22,13 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 	}
 	val idriveListener = IDriveConnectionObserver()
 
-	val isConnectedInstalled
+	val isConnectedSecurityInstalled
 		get() = SecurityAccess.installedSecurityServices.isNotEmpty()
 
 	val isConnectedSecurityConnected
 		get() = securityAccess.isConnected()
 
-	val isBMWConnectedInstalled
-		get() = SecurityAccess.installedSecurityServices.any {
+	val isBMWConnectedInstalled = SecurityAccess.installedSecurityServices.any {
 			it.name.startsWith("BMWC")
 		}
 
