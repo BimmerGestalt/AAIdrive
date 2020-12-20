@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.phoneui.viewmodels
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.view.View
 import android.widget.*
@@ -62,4 +63,10 @@ fun setInverseBindingListener(spinner: Spinner, inverseBindingListener: InverseB
 @InverseBindingAdapter(attribute="selectedValue", event="selectedValueAttrChanged")
 fun getSelectedValue(spinner: Spinner): String {
 	return spinner.selectedItem.toString()
+}
+
+// Dynamic text
+@BindingAdapter("android:text")
+fun setText(view: TextView, value: Context.() -> String) {
+	view.text = view.context.run(value)
 }
