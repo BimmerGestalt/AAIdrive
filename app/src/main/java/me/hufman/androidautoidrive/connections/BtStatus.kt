@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+import java.lang.IllegalArgumentException
 import java.util.*
 
 fun BluetoothDevice.isCar(): Boolean {
@@ -38,9 +39,9 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 	val isBTConnected
 		get() = isHfConnected || isA2dpConnected
 
-	inner class ProfileListener(val profileId: Int): BluetoothProfile.ServiceListener {
+	inner class ProfileListener(profileId: Int): BluetoothProfile.ServiceListener {
 		var profile: BluetoothProfile? = null
-		val profileName = when(profileId) {
+		private val profileName = when(profileId) {
 			BluetoothProfile.HEADSET -> "hf"
 			BluetoothProfile.A2DP -> "a2dp"
 			else -> "Profile#$profileId"
@@ -92,11 +93,6 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 
 		override fun onReceive(p0: Context?, intent: Intent?) {
 			Log.d(TAG, "Received notification of BT discovery: ${intent?.action}")
-			if (intent?.action == BluetoothAdapter.ACTION_DISCOVERY_FINISHED) {
-//				a2dpListener.profile?.connectedDevices?.filter { it.isCar() }?.forEach {
-//					discover(it)
-//				}
-			}
 			if (intent?.action == BluetoothDevice.ACTION_UUID) {
 				val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
 				Log.d(TAG, "Found BT endpoints on ${device.name}")
@@ -132,8 +128,12 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 	}
 
 	fun unregister() {
-		context.unregisterReceiver(bluetoothListener)
-		context.unregisterReceiver(uuidListener)
+		try {
+			context.unregisterReceiver(bluetoothListener)
+		} catch (e: IllegalArgumentException) {}
+		try {
+			context.unregisterReceiver(uuidListener)
+		} catch (e: IllegalArgumentException) {}
 		BluetoothAdapter.getDefaultAdapter()?.apply {
 			val hfProfile = hfListener.profile
 			if (hfProfile != null) {
