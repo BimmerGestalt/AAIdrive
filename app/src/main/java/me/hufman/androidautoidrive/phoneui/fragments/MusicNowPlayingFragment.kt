@@ -95,9 +95,12 @@ class MusicNowPlayingFragment: Fragment() {
 				putString(SpotifyApiErrorDialog.EXTRA_CLASSNAME, viewModel.errorTitle.value)
 				putString(SpotifyApiErrorDialog.EXTRA_MESSAGE, viewModel.errorMessage.value)
 			}
-			SpotifyApiErrorDialog().apply {
-				setArguments(arguments)
-				show(requireActivity().supportFragmentManager, "spotify_error")
+			val fragmentManager = activity?.supportFragmentManager
+			if (fragmentManager != null) {
+				SpotifyApiErrorDialog().apply {
+					setArguments(arguments)
+					show(fragmentManager, "spotify_error")
+				}
 			}
 		}
 	}
