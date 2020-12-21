@@ -26,7 +26,7 @@
             android:orientation="vertical"
             android:animateLayoutChanges="true">
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swMessageNotifications"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
                 android:orientation="vertical"
                 android:animateLayoutChanges="true">
 
-                <Switch
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/swGMaps"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -22,7 +22,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:contentDescription="@string/musicAppNowPlaying"
-        android:tint="?android:attr/textColorSecondary"
+        app:tint="?android:attr/textColorSecondary"
         app:srcCompat="@drawable/ic_equalizer_black_24dp" />
 
 </RelativeLayout>
