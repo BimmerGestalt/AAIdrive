@@ -273,7 +273,7 @@ class SpotifyAuthStateManagerTest {
 
 		verify(sharedPreferencesEditor).putString(SpotifyAuthStateManager.KEY_STATE, authStateSerializedString)
 
-		assertEquals(currentState, spotifyAuthStateManager.currentState)
+		assertEquals(authState, spotifyAuthStateManager.currentState)
 	}
 
 	@Test
