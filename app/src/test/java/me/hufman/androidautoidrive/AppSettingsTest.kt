@@ -1,9 +1,76 @@
 package me.hufman.androidautoidrive
 
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
 
 class AppSettingsTest {
+	@Rule
+	@JvmField
+	val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+	@Test
+	fun testBooleanSettingRead() {
+		val context = mock<Context>()
+		val setting = BooleanLiveSetting(context, AppSettings.KEYS.ENABLED_NOTIFICATIONS)
+
+		// it can read the AppSettings
+		AppSettings.tempSetSetting(setting.key, "true")
+		assertEquals("$setting is true", true, setting.value)
+		AppSettings.tempSetSetting(setting.key, "false")
+		assertEquals("$setting is false" , false, setting.value)
+	}
+	@Test
+	fun testBooleanSettingWrite() {
+		val preferences = mock<SharedPreferences> {
+			on { edit() } doReturn mock<SharedPreferences.Editor>()
+		}
+		val context = mock<Context> {
+			on {getSharedPreferences(any(), any())} doReturn preferences
+		}
+		val setting = BooleanLiveSetting(context, AppSettings.KEYS.ENABLED_NOTIFICATIONS)
+
+		// it can write the AppSettings
+		AppSettings.tempSetSetting(setting.key, "false")
+		setting.setValue(true)
+		assertEquals("$setting is true", "true", AppSettings[setting.key])
+		setting.setValue(false)
+		assertEquals("$setting is true", "false", AppSettings[setting.key])
+	}
+
+	@Test
+	fun testStringSettingRead() {
+		val context = mock<Context>()
+		val setting = StringLiveSetting(context, AppSettings.KEYS.GMAPS_STYLE)
+
+		// it can read the AppSettings
+		AppSettings.tempSetSetting(setting.key, "night")
+		assertEquals("night", setting.value)
+		AppSettings.tempSetSetting(setting.key, "auto")
+		assertEquals("auto", setting.value)
+	}
+	@Test
+	fun testStringSettingWrite() {
+		val preferences = mock<SharedPreferences> {
+			on { edit() } doReturn mock<SharedPreferences.Editor>()
+		}
+		val context = mock<Context> {
+			on {getSharedPreferences(any(), any())} doReturn preferences
+		}
+		val setting = StringLiveSetting(context, AppSettings.KEYS.GMAPS_STYLE)
+
+		// it can write the AppSettings
+		AppSettings.tempSetSetting(setting.key, "auto")
+		setting.setValue("night")
+		assertEquals("night", AppSettings[setting.key])
+		setting.setValue("auto")
+		assertEquals("auto", AppSettings[setting.key])
+	}
+
 	@Test
 	fun testListSettings() {
 		val settings = MockAppSettings(AppSettings.KEYS.HIDDEN_MUSIC_APPS to "a,b")

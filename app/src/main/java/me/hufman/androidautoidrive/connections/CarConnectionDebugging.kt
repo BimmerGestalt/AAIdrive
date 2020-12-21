@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.connections
 
 import android.content.Context
 import android.os.SystemClock
+import android.provider.Settings
 import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
 import me.hufman.idriveconnectionkit.android.security.KnownSecurityServices
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
@@ -17,19 +18,20 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 		const val BCL_REDRAW_DEBOUNCE = 100
 	}
 
-	val securityAccess = SecurityAccess.getInstance(context).also {
+	val deviceName = Settings.Global.getString(context.contentResolver, "device_name")
+
+	private val securityAccess = SecurityAccess.getInstance(context).also {
 		it.callback = callback
 	}
-	val idriveListener = IDriveConnectionObserver()
+	private val idriveListener = IDriveConnectionObserver()
 
-	val isConnectedInstalled
+	val isConnectedSecurityInstalled
 		get() = SecurityAccess.installedSecurityServices.isNotEmpty()
 
 	val isConnectedSecurityConnected
 		get() = securityAccess.isConnected()
 
-	val isBMWConnectedInstalled
-		get() = SecurityAccess.installedSecurityServices.any {
+	val isBMWConnectedInstalled = SecurityAccess.installedSecurityServices.any {
 			it.name.startsWith("BMWC")
 		}
 
@@ -87,6 +89,9 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 
 	val bclTransport
 		get() = bclListener.transport
+
+	val carBrand
+		get() = idriveListener.brand
 
 	fun register() {
 		idriveListener.callback = { callback() }

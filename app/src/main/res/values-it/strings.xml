@@ -62,6 +62,8 @@
     <string name="txt_setup_mini_ready">L\'app è pronta a connettersi con una Mini</string>
     <string name="txt_setup_bmw_missing">Non pronta a connettersi con una BMW:</string>
     <string name="txt_setup_mini_missing">Non pronta a connettersi con una Mini:</string>
+    <string name="txt_setup_bmw_mine_detected">La nuova app My BMW è installata, può causare problemi con l\'app BMW Connected e non è supportata</string>
+    <string name="txt_setup_mini_mine_detected">La nuova app MINI è installata, può causare problemi con l\'app MINI Connected e non è supportata</string>
     <string name="txt_setup_security_missing">Il Security Service non è raggiungibile:</string>
     <string name="txt_setup_bt_disconnected">Non è presente un\'auto connessa via Bluetooth</string>
     <string name="txt_setup_bt_connected">L\'auto è connessa via Bluetooth</string>

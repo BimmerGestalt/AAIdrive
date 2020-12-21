@@ -1,6 +1,5 @@
 package me.hufman.androidautoidrive
 
-import ChassisCode
 import android.app.*
 import android.content.*
 import android.content.pm.PackageManager

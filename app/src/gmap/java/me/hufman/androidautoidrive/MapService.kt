@@ -22,17 +22,6 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 	var mapController: GMapsController? = null
 	var mapListener: MapsInteractionControllerListener? = null
 
-	companion object {
-		fun createVirtualDisplay(context: Context, imageCapture: ImageReader, dpi:Int = 100): VirtualDisplay {
-			val displayManager = context.getSystemService(DisplayManager::class.java)
-			return displayManager.createVirtualDisplay("IDriveGoogleMaps",
-					imageCapture.width, imageCapture.height, dpi,
-					imageCapture.surface, DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY,
-					null, Handler(Looper.getMainLooper()))
-		}
-
-	}
-
 	fun start(): Boolean {
 		if (AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean() &&
 				ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -43,7 +32,7 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 						Log.i(MainService.TAG, "Starting GMaps")
 						val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.maxWidth, mapAppMode.maxHeight)
 						this.mapScreenCapture = mapScreenCapture
-						val virtualDisplay = createVirtualDisplay(context, mapScreenCapture.imageCapture, 225) //100 dpi
+						val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(context, mapScreenCapture.imageCapture, 225) //100dpi
 						this.virtualDisplay = virtualDisplay
 						val mapController = GMapsController(context, MapResultsSender(context), virtualDisplay, MutableAppSettingsReceiver(context, null /* specifically main thread */))
 						this.mapController = mapController
