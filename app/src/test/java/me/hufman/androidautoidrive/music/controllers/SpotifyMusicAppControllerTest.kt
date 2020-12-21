@@ -9,9 +9,7 @@ import com.spotify.protocol.types.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.setMain
 import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
@@ -91,13 +89,13 @@ class SpotifyMusicAppControllerTest {
 
 	@Before
 	fun setup() {
-		Dispatchers.setMain(testDispatcher)
 		controller = SpotifyAppController(mock(), remote, webApi)
+		controller.defaultDispatcher = testDispatcher
+
 	}
 
 	@After
 	fun tearDown() {
-		Dispatchers.resetMain()
 		testDispatcher.cleanupTestCoroutines()
 	}
 
@@ -584,6 +582,7 @@ class SpotifyMusicAppControllerTest {
 
 		// load a queue
 		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "playlist"))
+		verify(webApi).clearGetLikedSongsAttemptedFlag()
 		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, queueTitle, queueSubtitle, false, true), 200, 0)
 		contentCallback.lastValue.onResult(ListItems(200, 0, 2, arrayOf(
 				ListItem("id", "uri", null, "Title", "Subtitle", true, false)

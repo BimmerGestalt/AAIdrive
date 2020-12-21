@@ -20,12 +20,8 @@ import me.hufman.androidautoidrive.music.PlaybackPosition
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import java.util.*
-import kotlin.coroutines.CoroutineContext
 
-class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController, CoroutineScope {
-	override val coroutineContext: CoroutineContext
-		get() = Dispatchers.Default
-
+class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController {
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
@@ -144,6 +140,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	var queueMetadata: QueueMetadata? = null
 	val coverArtCache = LruCache<ImageUri, Bitmap>(50)
 	var createQueueMetadataJob: Job? = null
+	var defaultDispatcher = Dispatchers.Default
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -214,16 +211,16 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	 * not authorized then the the [QueueMetadata] is created from the app remote API.
 	 */
 	fun createLikedSongsQueueMetadata() {
-		createQueueMetadataJob = launch {
+		createQueueMetadataJob = GlobalScope.launch(defaultDispatcher) {
 			queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
 			if (queueItems.isNotEmpty()) {
 				queueMetadata = QueueMetadata("Liked Songs", null, queueItems)
 				loadQueueCoverart()
-			} else {
-				createQueueMetadata(PlayerContext(queueUri, "Liked Songs", "", ""))
-			}
 
-			callback?.invoke(this@SpotifyAppController)
+				callback?.invoke(this@SpotifyAppController)
+			} else {
+				createQueueMetadata(PlayerContext(queueUri, "Liked Songs", null, null))
+			}
 		}
 	}
 
