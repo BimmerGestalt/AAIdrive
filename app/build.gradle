@@ -348,10 +348,6 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-//configurations.all {
-//    exclude group:"org.jetbrains.kotlinx", module: "kotlinx-coroutines-core-jvm"
-//}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
