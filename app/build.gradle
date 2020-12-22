@@ -348,9 +348,9 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-configurations.all {
-    exclude group:"org.jetbrains.kotlinx", module: "kotlinx-coroutines-core-jvm"
-}
+//configurations.all {
+//    exclude group:"org.jetbrains.kotlinx", module: "kotlinx-coroutines-core-jvm"
+//}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -391,7 +391,7 @@ dependencies {
     androidTestImplementation project(path: ':IDriveConnectKitAndroid')
     androidTestImplementation project(path: ':IDriveConnectKit')
     androidTestImplementation "org.bouncycastle:bcmail-jdk16:1.46"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutine_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
     testImplementation "org.powermock:powermock-core:2.0.9"
     testImplementation "org.powermock:powermock-api-mockito2:2.0.9"
     testImplementation "org.powermock:powermock-module-junit4:2.0.9"

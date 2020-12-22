@@ -30,7 +30,7 @@ class MusicActivityModelTest {
 		on { getMetadata() } doReturn metadata
 		on { getPlaybackPosition() } doReturn playbackPosition
 	}
-	val viewModel = MusicActivityModel(musicController)
+	val viewModel = MusicActivityModel(musicController, mock())
 
 	@Test
 	fun update() {
