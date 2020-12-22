@@ -1,144 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
-        android:id="@+id/layoutMetadata"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/layoutButtons"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/layoutButtons"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/imgCoverArt"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerInside"
-            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+    <data class="MusicNowPlayingBinding">
+        <variable
+            name="viewModel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel" />
+        <variable
+            name="iconsModel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel" />
+        <variable
+            name="controller"
+            type="me.hufman.androidautoidrive.music.MusicController" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/layoutMetadata"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/layoutButtons"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/layoutButtons"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/imgArtist"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:scaleType="centerCrop" />
+                android:id="@+id/imgCoverArt"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerInside"
+                tools:srcCompat="@tools:sample/backgrounds/scenic"
+                android:src="@{viewModel.coverArt ?? iconsModel.placeholderCoverArt}"/>
 
-            <TextView
-                android:id="@+id/txtArtist"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingEnd="16dp"
-                android:paddingStart="16dp" />
-
-            <ImageView
-                android:id="@+id/imgError"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_error_outline_black_24dp"
-                android:tint="?android:attr/textColorSecondary" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
-
-            <ImageView
-                android:id="@+id/imgAlbum"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:scaleType="centerCrop" />
-
-            <TextView
-                android:id="@+id/txtAlbum"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingEnd="0dp"
-                android:paddingStart="16dp" />
-        </LinearLayout>
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+                <ImageView
+                    android:id="@+id/imgArtist"
+                    android:src="@{iconsModel.artistIcon}"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:scaleType="centerCrop" />
 
-            <ImageView
-                android:id="@+id/imgSong"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:scaleType="centerCrop" />
+                <TextView
+                    android:id="@+id/txtNotConnected"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingEnd="16dp"
+                    android:paddingStart="16dp"
+                    android:visibility="@{!viewModel.connected}"
+                    android:text="@string/nowplaying_notconnected"/>
 
-            <TextView
-                android:id="@+id/txtSong"
+                <TextView
+                    android:id="@+id/txtArtist"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingEnd="16dp"
+                    android:paddingStart="16dp"
+                    android:visibility="@{viewModel.connected}"
+                    android:text="@{viewModel.artist}"/>
+
+                <ImageView
+                    android:id="@+id/imgError"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_error_outline_black_24dp"
+                    app:tint="?android:attr/textColorSecondary"
+                    android:visibility="@{viewModel.errorTitle != null}"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingEnd="0dp"
-                android:paddingStart="16dp" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <ImageView
+                    android:id="@+id/imgAlbum"
+                    android:src="@{iconsModel.albumIcon}"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:scaleType="centerCrop" />
+
+                <TextView
+                    android:id="@+id/txtAlbum"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="0dp"
+                    android:paddingStart="16dp"
+                    android:text="@{viewModel.album}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <ImageView
+                    android:id="@+id/imgSong"
+                    android:src="@{iconsModel.songIcon}"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:scaleType="centerCrop" />
+
+                <TextView
+                    android:id="@+id/txtSong"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="0dp"
+                    android:paddingStart="16dp"
+                    android:text="@{viewModel.title}"  />
+            </LinearLayout>
+
         </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layoutButtons"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layoutMetadata">
-
-        <SeekBar
-            android:id="@+id/seekProgress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/layoutButtons"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layoutMetadata">
 
-            <ImageButton
-                android:id="@+id/btnPrevious"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                app:srcCompat="@android:drawable/ic_media_previous" />
+            <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/seekProgress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onProgressChanged="@{(view, value, fromUser) -> fromUser ? controller.seekTo(value * 1000) : void}"
+                android:progress="@{viewModel.playbackPosition}"
+                android:max="@{viewModel.maxPosition}"/>
 
-            <ImageButton
-                android:id="@+id/btnPlay"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                app:srcCompat="@android:drawable/ic_media_play" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/btnNext"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                app:srcCompat="@android:drawable/ic_media_next" />
+                <ImageButton
+                    android:id="@+id/btnPrevious"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:onClick="@{() -> controller.skipToPrevious()}"
+                    app:srcCompat="@android:drawable/ic_media_previous" />
+
+                <ImageButton
+                    android:id="@+id/btnPlay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    app:srcCompat="@android:drawable/ic_media_play"
+                    android:onClick="@{() -> controller.togglePlay()}"
+                    android:src="@{viewModel.isPaused() ? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause}"/>
+
+                <ImageButton
+                    android:id="@+id/btnNext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:onClick="@{() -> controller.skipToNext()}"
+                    app:srcCompat="@android:drawable/ic_media_next" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

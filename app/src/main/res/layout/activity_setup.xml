@@ -52,7 +52,7 @@
                     android:textIsSelectable="true" />
             </LinearLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swAdvancedSettings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -205,6 +205,14 @@ abstract class LiveSetting<K>(val context: Context, val key: AppSettings.KEYS): 
 	// set the LiveData internal data, to update any observers,
 	// and then trigger any other AppSettings listeners
 	// getValue just returns the internal data
+	override fun getValue(): K? {
+		val backing = getData()
+		if (backing != super.getValue()) {
+			super.setValue(backing)
+		}
+		return backing
+	}
+
 	override fun setValue(value: K) {
 		super.setValue(value)
 		setData(value)

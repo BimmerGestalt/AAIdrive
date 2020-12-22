@@ -13,18 +13,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlin.collections.ArrayList
 import kotlinx.android.synthetic.main.music_queuepage.*
-import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.QueueMetadata
-import me.hufman.androidautoidrive.phoneui.MusicActivityModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
 
 class MusicQueueFragment: Fragment() {
@@ -42,9 +43,19 @@ class MusicQueueFragment: Fragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		val viewModel = ViewModelProvider(requireActivity()).get(MusicActivityModel::class.java)
-		val musicController = viewModel.musicController ?: return
-		this.musicController = musicController
-		placeholderCoverArt = viewModel.icons[MusicNowPlayingFragment.PLACEHOLDER_ID]!!
+		this.musicController = viewModel.musicController
+
+		val iconsModel = ViewModelProvider(requireActivity()).get(MusicActivityIconsModel::class.java)
+		placeholderCoverArt = iconsModel.placeholderCoverArt
+
+		// redraw to catch any updated coverart
+		viewModel.redrawListener.observe(viewLifecycleOwner, Observer {
+			listQueue.adapter?.notifyDataSetChanged()
+		})
+
+		viewModel.queueMetadata.observe(viewLifecycleOwner, Observer { metadata ->
+			redraw(metadata)
+		})
 
 		listQueue.setHasFixedSize(true)
 		listQueue.layoutManager = LinearLayoutManager(this.context)
@@ -54,9 +65,8 @@ class MusicQueueFragment: Fragment() {
 				(activity as MusicPlayerActivity).showNowPlaying()
 			}
 		}
-		redrawQueueUI()
+
 		listQueueRefresh.setOnRefreshListener {
-			redrawQueueUI()
 			Handler(this.context?.mainLooper).postDelayed({
 				this.view?.findViewById<SwipeRefreshLayout>(R.id.listQueueRefresh)?.isRefreshing = false
 			}, 1000)
@@ -65,47 +75,26 @@ class MusicQueueFragment: Fragment() {
 		txtQueueEmpty.text = getString(R.string.MUSIC_QUEUE_EMPTY)
 	}
 
-	override fun onResume() {
-		super.onResume()
+	fun redraw(metadata: QueueMetadata?) {
+		queueTitle.text = metadata?.title
+		queueSubtitle.text = metadata?.subtitle
+		queueCoverArt.setImageBitmap(metadata?.coverArt ?: placeholderCoverArt)
 
-		musicController.listener = Runnable {
-			if(currentQueueMetadata?.title != musicController.getQueue()?.title || currentQueueMetadata?.songs?.size != musicController.getQueue()?.songs?.size) {
-				redrawQueueUI()
-			}
+		// The MusicMetadata objects may have their coverart filled in later
+		// so we don't need to clear the list and readd them just to get new coverart
+		// so we can avoid work by not doing this cover if the list is the same
+		if (currentQueueMetadata?.title != metadata?.title || currentQueueMetadata?.songs?.size != metadata?.songs?.size) {
+			contents.clear()
+			contents.addAll(metadata?.songs ?: emptyList())
 
-			activity?.findViewById<RecyclerView>(R.id.listQueue)?.adapter?.notifyDataSetChanged()
-		}
-		redrawQueueUI()
-	}
-
-	private fun redrawQueueUI() {
-		currentQueueMetadata = musicController.getQueue()
-		val songs = currentQueueMetadata?.songs
-		contents.clear()
-		songs?.forEach {
-			contents.add(it)
-		}
-
-		if (isResumed) {
-			if (contents.isEmpty()) {
-				txtQueueEmpty.text = getString(R.string.MUSIC_BROWSE_EMPTY)
-			} else {
-				txtQueueEmpty.text = ""
-			}
-
-			listQueue.removeAllViews()
 			listQueue.adapter?.notifyDataSetChanged()
+			currentQueueMetadata = metadata
+		}
 
-			val coverArtImage = currentQueueMetadata?.coverArt
-			if (coverArtImage != null) {
-				queueCoverArt.setImageBitmap(coverArtImage)
-			}
-			else {
-				queueCoverArt.setImageBitmap(placeholderCoverArt)
-			}
-
-			queueTitle.text = currentQueueMetadata?.title
-			queueSubtitle.text = currentQueueMetadata?.subtitle
+		if (contents.isEmpty()) {
+			txtQueueEmpty.text = getString(R.string.MUSIC_BROWSE_EMPTY)
+		} else {
+			txtQueueEmpty.text = ""
 		}
 	}
 

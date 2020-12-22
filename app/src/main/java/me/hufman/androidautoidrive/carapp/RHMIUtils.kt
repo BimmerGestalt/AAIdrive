@@ -44,7 +44,7 @@ object RHMIUtils {
 			abs(nearToLocation.second - location.second) < 10 && // same height
 			nearToLocation.first < location.first    // first component left of second
 		}
-		return neighbors.minBy {
+		return neighbors.minByOrNull {
 			getComponentLocation(it, layout).first
 		}
 	}

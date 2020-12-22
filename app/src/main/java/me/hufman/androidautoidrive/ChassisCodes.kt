@@ -1,3 +1,7 @@
+package me.hufman.androidautoidrive
+
+import java.util.*
+
 enum class ChassisCode(val brand: String, val chassis: String) {
     // Mini codes | https://new.minimania.com/MINI_model_designations
     R50("MINI", "Cooper"),
@@ -114,8 +118,8 @@ enum class ChassisCode(val brand: String, val chassis: String) {
 
     companion object {
         fun fromCode(chassisCode: String): ChassisCode? {
-            val code = chassisCode.toUpperCase().replace(Regex("[^A-Z0-9]"), "_")
-            return ChassisCode.values().firstOrNull {
+            val code = chassisCode.toUpperCase(Locale.ROOT).replace(Regex("[^A-Z0-9]"), "_")
+            return values().firstOrNull {
                 it.name == code
             }
         }
