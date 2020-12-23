@@ -58,14 +58,38 @@ class SpotifyAuthorizationActivity: Activity() {
 
 	private val authRequest = AtomicReference<AuthorizationRequest>()
 	private val authIntent = AtomicReference<CustomTabsIntent>()
-	private lateinit var authService: AuthorizationService
 	private var authIntentLatch = CountDownLatch(1)
-	private lateinit var authStateManager: SpotifyAuthStateManager
-	private lateinit var appSettingsReceiver: MutableAppSettingsReceiver
 	private val scopes = listOf(
 			SpotifyScope.USER_MODIFY_PLAYBACK_STATE.uri,
-			SpotifyScope.USER_LIBRARY_READ.uri
-	)
+			SpotifyScope.USER_LIBRARY_READ.uri)
+	private val lazyAuthService = lazy {
+		createAuthorizationService()
+	}
+	private val authService: AuthorizationService by lazyAuthService
+	private val authStateManager: SpotifyAuthStateManager by lazy {
+		SpotifyAuthStateManager(this)
+	}
+	private val appSettingsReceiver: MutableAppSettingsReceiver by lazy {
+		MutableAppSettingsReceiver(this)
+	}
+
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		initializeAppAuth()
+		doAuth()
+	}
+
+	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+		super.onActivityResult(requestCode, resultCode, data)
+		processAuthorizationCode(requestCode, resultCode, data)
+	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+		if (lazyAuthService.isInitialized()) {
+			authService.dispose()
+		}
+	}
 
 	/**
 	 * Performs the authorization request
@@ -127,11 +151,10 @@ class SpotifyAuthorizationActivity: Activity() {
 	}
 
 	private fun recreateAuthorizationService() {
-		if (this::authService.isInitialized) {
+		if (lazyAuthService.isInitialized()) {
 			Log.d(TAG, "Discarding existing AuthService instance")
 			authService.dispose()
 		}
-		authService = createAuthorizationService()
 		authRequest.set(null)
 		authIntent.set(null)
 	}
@@ -169,26 +192,6 @@ class SpotifyAuthorizationActivity: Activity() {
 					}
 				}
 			}
-		}
-	}
-
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		authStateManager = SpotifyAuthStateManager(this)
-		appSettingsReceiver = MutableAppSettingsReceiver(this)
-		initializeAppAuth()
-		doAuth()
-	}
-
-	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-		super.onActivityResult(requestCode, resultCode, data)
-		processAuthorizationCode(requestCode, resultCode, data)
-	}
-
-	override fun onDestroy() {
-		super.onDestroy()
-		if (this::authService.isInitialized) {
-			authService.dispose()
 		}
 	}
 
