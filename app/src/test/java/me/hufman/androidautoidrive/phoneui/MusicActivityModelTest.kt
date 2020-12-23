@@ -10,6 +10,7 @@ import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.PlaybackPosition
 import me.hufman.androidautoidrive.music.QueueMetadata
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
+import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 import org.junit.Assert.*
 import org.junit.Rule
@@ -30,7 +31,8 @@ class MusicActivityModelTest {
 		on { getMetadata() } doReturn metadata
 		on { getPlaybackPosition() } doReturn playbackPosition
 	}
-	val viewModel = MusicActivityModel(musicController, mock())
+	val webApi = mock<SpotifyWebApi>()
+	val viewModel = MusicActivityModel(musicController, webApi)
 
 	@Test
 	fun update() {
@@ -65,5 +67,35 @@ class MusicActivityModelTest {
 
 		assertEquals("Exception", viewModel.errorTitle.value)
 		assertEquals("Test", viewModel.errorMessage.value)
+	}
+
+	@Test
+	fun apiAuthenticated() {
+		whenever(webApi.isUsingSpotify) doReturn false
+		whenever(webApi.isAuthorized()) doAnswer { true }
+
+		viewModel.update()
+
+		assertNull(viewModel.isWebApiAuthorized.value)
+	}
+
+	@Test
+	fun apiNotAuthenticated_NotUsingSpotify() {
+		whenever(webApi.isUsingSpotify) doReturn false
+		whenever(webApi.isAuthorized()) doAnswer { false }
+
+		viewModel.update()
+
+		assertNull(viewModel.isWebApiAuthorized.value)
+	}
+
+	@Test
+	fun apiNotAuthenticated_UsingSpotify() {
+		whenever(webApi.isUsingSpotify) doReturn true
+		whenever(webApi.isAuthorized()) doAnswer { false }
+
+		viewModel.update()
+
+		assertEquals(false, viewModel.isWebApiAuthorized.value)
 	}
 }
