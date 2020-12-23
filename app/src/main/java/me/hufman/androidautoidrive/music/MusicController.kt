@@ -189,10 +189,10 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		controller.pause()
 	}
 	fun togglePlay() {
-		if (desiredPlayback) {    // currently trying to play
-			pause()
-		} else {
+		if (getPlaybackPosition().playbackPaused) {
 			play()
+		} else {
+			pause()
 		}
 	}
 	fun skipToPrevious() = asyncControl { controller ->
