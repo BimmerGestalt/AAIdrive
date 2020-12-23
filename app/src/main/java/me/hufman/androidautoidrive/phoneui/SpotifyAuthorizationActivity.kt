@@ -43,6 +43,9 @@ class SpotifyAuthorizationActivity: Activity() {
 
 		val CODE_VERIFIER = generateCodeVerifierString()
 
+		private const val AUTHORIZATION_URI = "https://accounts.spotify.com/authorize"
+		private const val ACCESS_TOKEN_URI = "https://accounts.spotify.com/api/token"
+
 		/**
 		 * Generates a 45 character random alpha numeric string to be used for the code verifier in
 		 * the PKCE authentication flow.
@@ -111,8 +114,8 @@ class SpotifyAuthorizationActivity: Activity() {
 		recreateAuthorizationService()
 
 		if (authStateManager.getAuthorizationServiceConfiguration() == null) {
-			val authEndpointUri = Uri.parse("https://accounts.spotify.com/authorize")
-			val tokenEndpointUri = Uri.parse("https://accounts.spotify.com/api/token")
+			val authEndpointUri = Uri.parse(AUTHORIZATION_URI)
+			val tokenEndpointUri = Uri.parse(ACCESS_TOKEN_URI)
 			val config = AuthorizationServiceConfiguration(authEndpointUri, tokenEndpointUri)
 			authStateManager.replaceAuthState(AuthState(config))
 		}
