@@ -28,7 +28,7 @@ import kotlin.random.Random
 /**
  * Activity that is used to perform the Spotify authorization process and update the [AuthState] with
  * the resulting authorization code. The activity will be closed once the process has either been
- * cancelled, failed, or succeeds.
+ * canceled, failed, or succeeds.
  */
 class SpotifyAuthorizationActivity: Activity() {
 	companion object {
@@ -172,7 +172,7 @@ class SpotifyAuthorizationActivity: Activity() {
 	private fun processAuthorizationCode(requestCode: Int, resultCode: Int, data: Intent?) {
 		if (requestCode == REQUEST_CODE_SPOTIFY_LOGIN) {
 			if (resultCode == RESULT_CANCELED) {
-				onAuthorizationCancelled()
+				onAuthorizationCanceled()
 				return
 			}
 
@@ -196,10 +196,10 @@ class SpotifyAuthorizationActivity: Activity() {
 	}
 
 	/**
-	 * Authorized cancelled workflow. This is called if the authorization process activity was cancelled.
+	 * Authorized canceled workflow. This is called if the authorization process activity was canceled.
 	 */
-	private fun onAuthorizationCancelled() {
-		Log.d(TAG, "Authorization cancelled")
+	private fun onAuthorizationCanceled() {
+		Log.d(TAG, "Authorization canceled")
 		Toast.makeText(this, "Authorization canceled", Toast.LENGTH_SHORT).show()
 		finishActivityWithResult(AUTHORIZATION_CANCELED)
 	}
