@@ -628,7 +628,7 @@ class SpotifyMusicAppControllerTest {
 		assertEquals("album", metadata.album)
 		assertEquals(null, metadata.coverArt)
 		assertEquals(200, position.lastPosition)
-		assertEquals(false, position.playbackPaused)
+		assertEquals(false, position.isPaused)
 		assertFalse(controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS))
 		assertFalse(controller.isSupportedAction(MusicAction.SKIP_TO_NEXT))
 		assertFalse(controller.isSupportedAction(MusicAction.SEEK_TO))

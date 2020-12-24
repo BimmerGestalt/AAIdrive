@@ -173,7 +173,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		desiredPlayback = true
 		asyncControl { controller ->
 			// some apps interrupt the audio when already playing during play()
-			if (getPlaybackPosition().playbackPaused) {
+			if (getPlaybackPosition().isPaused) {
 				controller.play()
 			}
 		}
@@ -189,7 +189,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		controller.pause()
 	}
 	fun togglePlay() {
-		if (getPlaybackPosition().playbackPaused) {
+		if (getPlaybackPosition().isPaused) {
 			play()
 		} else {
 			pause()
@@ -289,7 +289,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	fun getPlaybackPosition(): PlaybackPosition {
 		return withController { controller ->
 			controller.getPlaybackPosition()
-		} ?: PlaybackPosition(true, 0, 0, 0)
+		} ?: PlaybackPosition(true, false, 0, 0, 0)
 	}
 
 	fun getCustomActions(): List<CustomAction> {
@@ -325,7 +325,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	}
 	fun scheduleRedrawProgress() {
 		val position = getPlaybackPosition()
-		if (position.playbackPaused) {
+		if (position.isPaused) {
 			handler.postDelayed(redrawProgressTask, 500)
 		} else {
 			// the time until the next second interval

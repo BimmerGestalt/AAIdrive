@@ -10,7 +10,6 @@ import android.support.v4.media.session.PlaybackStateCompat
 import com.nhaarman.mockito_kotlin.*
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.music.*
-import me.hufman.androidautoidrive.music.controllers.GenericMusicAppController
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -236,30 +235,37 @@ class GenericMusicAppControllerTest {
 	fun testPlaybackPosition() {
 		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_PAUSED, 1000, 0) }
 		val playbackPosition = controller.getPlaybackPosition()
-		assertTrue(playbackPosition.playbackPaused)
+		assertTrue(playbackPosition.isPaused)
+		assertFalse(playbackPosition.isBuffering)
 		assertEquals(1000, playbackPosition.lastPosition)
 
 		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_BUFFERING, 1000, 0) }
-		assertTrue(controller.getPlaybackPosition().playbackPaused)
+		assertTrue(controller.getPlaybackPosition().isPaused)
+		assertTrue(controller.getPlaybackPosition().isBuffering)
 
 		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_CONNECTING, 1000, 0) }
-		assertTrue(controller.getPlaybackPosition().playbackPaused)
+		assertTrue(controller.getPlaybackPosition().isPaused)
+		assertTrue(controller.getPlaybackPosition().isBuffering)
 
 		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_STOPPED, 1000, 0) }
-		assertTrue(controller.getPlaybackPosition().playbackPaused)
+		assertTrue(controller.getPlaybackPosition().isPaused)
+		assertFalse(controller.getPlaybackPosition().isBuffering)
 
 		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_NONE, 1000, 0) }
-		assertTrue(controller.getPlaybackPosition().playbackPaused)
+		assertTrue(controller.getPlaybackPosition().isPaused)
+		assertFalse(controller.getPlaybackPosition().isBuffering)
 
 		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_PLAYING, 1000, 0) }
-		assertFalse(controller.getPlaybackPosition().playbackPaused)
+		assertFalse(controller.getPlaybackPosition().isPaused)
+		assertFalse(controller.getPlaybackPosition().isBuffering)
 
 		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_PLAYING or PlaybackStateCompat.STATE_BUFFERING, 1000, 0) }
-		assertFalse(controller.getPlaybackPosition().playbackPaused)
+		assertFalse(controller.getPlaybackPosition().isPaused)
+		assertFalse(controller.getPlaybackPosition().isBuffering)
 
 		whenever(mediaController.playbackState) doReturn null as PlaybackStateCompat?
 		val defaultPlaybackPosition = controller.getPlaybackPosition()
-		assertTrue(defaultPlaybackPosition.playbackPaused)
+		assertTrue(defaultPlaybackPosition.isPaused)
 		assertEquals(0, defaultPlaybackPosition.lastPosition)
 		assertEquals(0, defaultPlaybackPosition.maximumPosition)
 	}

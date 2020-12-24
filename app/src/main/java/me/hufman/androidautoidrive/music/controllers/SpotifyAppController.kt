@@ -139,7 +139,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 	var playerOptions: PlayerOptions? = null
 	var currentTrack: MusicMetadata? = null
 	var currentSongCoverArtCache = LruCache<ImageUri, Bitmap>(4)
-	var position: PlaybackPosition = PlaybackPosition(true, 0, 0, -1)
+	var position: PlaybackPosition = PlaybackPosition(true, false, 0, 0, -1)
 	var currentTrackLibrary: Boolean? = null
 	var queueUri: String? = null
 	var queueItems: List<MusicMetadata> = LinkedList()
@@ -180,7 +180,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote): Musi
 			}
 
 			// update a progress bar
-			position = PlaybackPosition(playerState.isPaused, lastPosition = playerState.playbackPosition, maximumPosition = playerState.track.duration)
+			position = PlaybackPosition(playerState.isPaused, false, lastPosition = playerState.playbackPosition, maximumPosition = playerState.track.duration)
 
 			callback?.invoke(this)
 		}

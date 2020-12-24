@@ -73,7 +73,7 @@ class MusicActivityModel(val musicController: MusicController): ViewModel() {
 		_queueMetadata.value = musicController.getQueue()
 
 		val playbackPosition = musicController.getPlaybackPosition()
-		_isPaused.value = playbackPosition.playbackPaused
+		_isPaused.value = playbackPosition.isPaused
 		_playbackPosition.value = (playbackPosition.getPosition() / 1000).toInt()
 		_maxPosition.value = (playbackPosition.maximumPosition / 1000).toInt()
 

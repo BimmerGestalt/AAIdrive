@@ -206,7 +206,7 @@ class CombinedMusicAppController(val controllers: List<Observable<out MusicAppCo
 	override fun getPlaybackPosition(): PlaybackPosition {
 		return withController {
 			it.getPlaybackPosition()
-		} ?: PlaybackPosition(true, 0, 0, 0)
+		} ?: PlaybackPosition(true, false, 0, 0, 0)
 	}
 
 	override fun isSupportedAction(action: MusicAction): Boolean {
