@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -17,7 +18,7 @@ import me.hufman.androidautoidrive.phoneui.visible
 class SpotifyApiErrorDialog: DialogFragment() {
 	companion object {
 		const val TAG = "SpotifyApiErrorDialog"
-		const val EXTRA_CLASSNAME = "classname"
+		const val EXTRA_TITLE = "title"
 		const val EXTRA_MESSAGE = "message"
 		const val EXTRA_WEB_API_AUTHORIZED = "webApiAuthorized"
 	}
@@ -57,6 +58,9 @@ class SpotifyApiErrorDialog: DialogFragment() {
 					SpotifyAuthorizationActivity.AUTHORIZATION_SUCCESS -> {
 						webApiMsgTextView.text = getString(R.string.txt_spotify_api_authorization_success)
 						authorizeButton.visible = false
+
+						// close the dialog after 2 seconds automatically
+						Handler().postDelayed({ dismiss() }, 2000)
 					}
 
 					else -> {
@@ -71,18 +75,18 @@ class SpotifyApiErrorDialog: DialogFragment() {
 	 * Updates dialog components with the Spotify App Remote error message if one is present.
 	 */
 	private fun updateAppRemoteErrorComponents(view: View) {
-		val excClassname = arguments?.getString(EXTRA_CLASSNAME) ?: ""
+		val errorTitle = arguments?.getString(EXTRA_TITLE) ?: ""
 		val errorMessage = arguments?.getString(EXTRA_MESSAGE) ?: ""
-		val hint = when(excClassname) {
+		val hint = when(errorTitle) {
 			"CouldNotFindSpotifyApp" -> getString(R.string.musicAppNotes_spotify_apiNotFound)
 			"UserNotAuthorizedException" -> if (errorMessage.contains("AUTHENTICATION_SERVICE_UNAVAILABLE")) {
 				getString(R.string.musicAppNotes_spotify_apiUnavailable)
 			} else ""
 			else -> ""
 		}
-		val message = "$excClassname\n$errorMessage\n\n$hint"
+		val message = "$errorTitle\n$errorMessage\n\n$hint"
 		val appRemoteErrorTextView = view.findViewById<TextView>(R.id.txtAppRemoteError)
-		appRemoteErrorTextView?.text = if (excClassname.isNotBlank()) {
+		appRemoteErrorTextView?.text = if (errorTitle.isNotBlank()) {
 			message
 		} else {
 			""

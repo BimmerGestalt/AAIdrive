@@ -42,7 +42,7 @@ class MusicNowPlayingFragment: Fragment() {
 		// handlers
 		imgError.setOnClickListener {
 			val arguments = Bundle().apply {
-				putString(SpotifyApiErrorDialog.EXTRA_CLASSNAME, viewModel.errorTitle.value)
+				putString(SpotifyApiErrorDialog.EXTRA_TITLE, viewModel.errorTitle.value)
 				putString(SpotifyApiErrorDialog.EXTRA_MESSAGE, viewModel.errorMessage.value)
 				putBoolean(SpotifyApiErrorDialog.EXTRA_WEB_API_AUTHORIZED, viewModel.isWebApiAuthorized.value == true)
 			}
