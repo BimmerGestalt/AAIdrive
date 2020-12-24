@@ -14,6 +14,7 @@ import com.adamratzman.spotify.getSpotifyPkceCodeChallenge
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
+import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
@@ -200,7 +201,7 @@ class SpotifyAuthorizationActivity: Activity() {
 	 */
 	private fun onAuthorizationCanceled() {
 		Log.d(TAG, "Authorization canceled")
-		Toast.makeText(this, "Authorization canceled", Toast.LENGTH_SHORT).show()
+		Toast.makeText(this, getString(R.string.txt_spotify_api_authorization_canceled), Toast.LENGTH_SHORT).show()
 		finishActivityWithResult(AUTHORIZATION_CANCELED)
 	}
 
@@ -209,7 +210,7 @@ class SpotifyAuthorizationActivity: Activity() {
 	 */
 	private fun onAuthorizationFailed(error: String?) {
 		Log.d(TAG, "Authorization failed with the error: $error")
-		Toast.makeText(this, "Authorization failed", Toast.LENGTH_SHORT).show()
+		Toast.makeText(this, getString(R.string.txt_spotify_api_authorization_failed), Toast.LENGTH_SHORT).show()
 		finishActivityWithResult(AUTHORIZATION_FAILED)
 	}
 
@@ -222,7 +223,7 @@ class SpotifyAuthorizationActivity: Activity() {
 		clearNotAuthorizedNotification()
 		appSettingsReceiver[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION] = "true"
 		SpotifyWebApi.getInstance(this).initializeWebApi()
-		Toast.makeText(this, "Authorization successful", Toast.LENGTH_SHORT).show()
+		Toast.makeText(this, getString(R.string.txt_spotify_api_authorization_success), Toast.LENGTH_SHORT).show()
 		finishActivityWithResult(AUTHORIZATION_SUCCESS)
 	}
 
