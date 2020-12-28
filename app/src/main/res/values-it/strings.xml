@@ -18,6 +18,20 @@
     <string name="lbl_navigation_listener_parsefailure">Impossibile trovare la destinazione</string>
     <string name="lbl_navigation_listener_pending">Avvio della navigazione</string>
     <string name="lbl_navigation_listener_success">Completato</string>
+    <!-- Menu Titles -->
+    <string name="menu_overview">Panoramica</string>
+    <string name="menu_setup">Configurazione</string>
+    <string name="menu_connection">Connessione</string>
+    <string name="menu_music">Musica</string>
+    <string name="menu_notifications">Notifiche</string>
+    <string name="menu_assistants">Assistente</string>
+    <string name="menu_maps">Mappe</string>
+    <string name="menu_navigation">Navigazione</string>
+    <string name="menu_settings">Impostazioni</string>
+    <string name="menu_support">Supporto</string>
+    <string name="lbl_overviewpage">AndroidAutoIdrive integra alcune delle applicazioni musicali del tuo telefono e le notifiche del tuo telefono nella tua auto tramite il protocollo BMW Apps personalizzato</string>
+    <string name="lbl_connectionpage">La connessione delle app all\'auto dipende da alcuni fattori e qui ci sono alcuni suggerimenti per assicurarsi che stia funzionando bene</string>
+    <string name="lbl_notificationpage">Le tue notifiche in arrivo possono essere visualizzate e interagite dall\'auto</string>
     <string name="spawn_test_notification">Notifica di prova</string>
     <string name="message_notifications">Notifica messaggi</string>
     <string name="notification_popups">Popup di notifica</string>
@@ -28,10 +42,12 @@
     <string name="notification_readout_popup_passenger">… con un passeggero</string>
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
+    <string name="lbl_mapspage">Una schermata standard di Google Maps può essere visualizzata nell\'auto</string>
     <string name="enable_google_maps">Abilita Google Maps</string>
     <string name="lbl_widescreen_map">Mappa a tutto schermo</string>
     <string name="lbl_map_invert_zoom">Inverti direzione zoom</string>
     <string name="gmapStyleLabel">Stile della mappa</string>
+    <string name="lbl_musicpage">Le app musicali del tuo telefono sono selezionabili come sorgenti multimediali nell\'auto</string>
     <string name="lbl_music_apps">App di musica</string>
     <string name="musicAppIcon">Icona dell\'app</string>
     <string name="musicAppNowPlaying">In riproduzione</string>
@@ -50,6 +66,15 @@
     <string name="musicAppNotes_oldSpotifyInstructions">Quest\'app può garantire il controllo completo di Spotify solo fino alla versione 8.4.96.953, per la funzionalità di ricerca ad esempio. Per il controllo completo scarica una versione precedente da APKPure o simili.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Prego installare il client ufficiale di Spotify</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Prego verificare la connessione e disabilitare qualsiasi blocco pubblicità</string>
+    <string name="lbl_settingspage">Impostazioni avanzate, possono causare comportamenti imprevisti</string>
+    <string name="lbl_donations_volunteer">AndroidAutoIdrive è un progetto di volontari</string>
+    <string name="lbl_donations_request">Se ti piace questo progetto e lo trovi utile, considera di dare il tuo supporto donando:</string>
+    <string name="btn_donations">Effettua una donazione</string>
+    <string name="lbl_support_other_ways">Puoi anche supportare il progetto in altri modi:</string>
+    <string name="lbl_support_feedback">Dando un feedback</string>
+    <string name="lbl_support_issues">Segnalando problemi o bug</string>
+    <string name="lbl_support_share">Facendo passaparola</string>
+    <string name="lbl_support_thanks">Grazie per il tuo utilizzo di AndroidAutoIdrive!</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancella</string>
     <string name="btn_configure">Configura…</string>
@@ -57,8 +82,11 @@
     <string name="connectionStatusMissingConnectedApp">Non trovo l\'app Connected o Connected Classic</string>
     <string name="connectionStatusWaiting">In attesa della connessione con l\'auto</string>
     <string name="connectionStatusConnected">Connesso a %s</string>
+    <string name="lblChassisCode">Telaio</string>
+    <string name="lblHmiVersion">Tipo di IDrive</string>
     <string name="nowplaying_notconnected">&lt;Non connessa&gt;</string>
     <string name="nowplaying_unknown">&lt;Sconosciuto&gt;</string>
+    <!-- connection setup -->
     <string name="txt_setup_bmw_ready">L\'app è pronta a connettersi con una BMW</string>
     <string name="txt_setup_mini_ready">L\'app è pronta a connettersi con una Mini</string>
     <string name="txt_setup_bmw_missing">Non pronta a connettersi con una BMW:</string>
@@ -66,6 +94,12 @@
     <string name="txt_setup_bmw_mine_detected">La nuova app My BMW è installata, può causare problemi con l\'app BMW Connected e non è supportata</string>
     <string name="txt_setup_mini_mine_detected">La nuova app MINI è installata, può causare problemi con l\'app MINI Connected e non è supportata</string>
     <string name="txt_setup_security_missing">Il Security Service non è raggiungibile:</string>
+    <string name="btn_install">Installa</string>
+    <string name="btn_install_bmw">Installa BMW Connected</string>
+    <string name="btn_install_mini">Installa Mini Connected</string>
+    <string name="btn_install_bmwclassic">Installa BMW Connected Classic</string>
+    <string name="btn_install_miniclassic">Installa Mini Connected Classic</string>
+    <!-- connection status -->
     <string name="txt_setup_bt_disconnected">Non è presente un\'auto connessa via Bluetooth</string>
     <string name="txt_setup_bt_connected">L\'auto è connessa via Bluetooth</string>
     <string name="txt_setup_a2dp_disconnected">La musica Bluetooth non è connessa</string>
@@ -85,14 +119,24 @@
     <string name="txt_setup_bcl_connecting">La connessione Apps è in corso</string>
     <string name="txt_setup_bcl_connected">La connessione Apps è attiva</string>
     <string name="txt_setup_bcl_connected_transport">La connessione Apps è attiva via %s</string>
+    <!-- capabilities -->
+    <string name="lbl_capabilities_detected">Capacità dell\'auto rilevate:</string>
+    <string name="txt_capabilities_audiostate_yes">Global Coverart è supportato</string>
+    <string name="txt_capabilities_audiostate_no">Global Coverart non è supportato</string>
+    <string name="txt_capabilities_audiostate_id4">ID4 non supporta questa funzione</string>
+    <string name="txt_capabilities_audiostate_audiocontext">Questa funzione richiede il Contesto Audio</string>
+    <string name="txt_capabilities_audiostate_spotify">Installa l\'ultima versione di Spotify per abilitare questa funzione</string>
+    <string name="txt_capabilities_popup_yes">Notifiche Popup sono supportate</string>
+    <string name="txt_capabilities_popup_no">Notifiche Popup non sono supportate</string>
+    <string name="txt_capabilities_popup_hint">Le notifiche popup sono supportate solo su ID4</string>
+    <string name="txt_capabilities_tts_yes">Le Notifiche Text-to-Speech sono supportate</string>
+    <string name="txt_capabilities_tts_no">Le Notifiche Text-to-Speech non sono supportate</string>
+    <string name="txt_capabilities_navi_yes">Il Navigatore è supportato</string>
+    <string name="txt_capabilities_navi_no">Il Navigatore non è supportato</string>
+    <!-- debug status -->
     <string name="txt_build_info">Versione di build: %1$s %2$s</string>
     <string name="txt_bcl_report">BCL Tunnel Performance:</string>
     <string name="txt_car_capabilities">Capacità dell\'auto rilevate:</string>
-    <string name="btn_install">Installa</string>
-    <string name="btn_install_bmw">Installa BMW Connected</string>
-    <string name="btn_install_mini">Installa Mini Connected</string>
-    <string name="btn_install_bmwclassic">Installa BMW Connected Classic</string>
-    <string name="btn_install_miniclassic">Installa Mini Connected Classic</string>
     <string name="lbl_advanced_settings">Mostra le impostazioni avanzate</string>
     <string name="lbl_assistant">Assistente vocale (Beta)</string>
     <string name="lbl_assistant_empty">Non trovato</string>
