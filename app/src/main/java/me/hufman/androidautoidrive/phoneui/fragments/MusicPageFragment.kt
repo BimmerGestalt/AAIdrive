@@ -9,7 +9,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_musicpage.*
 import me.hufman.androidautoidrive.*
-import me.hufman.androidautoidrive.phoneui.UIState
+import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.phoneui.visible
 
 class MusicPageFragment: Fragment() {
@@ -39,6 +39,6 @@ class MusicPageFragment: Fragment() {
 	}
 
 	fun hasNotificationPermission(): Boolean {
-		return UIState.notificationListenerConnected && NotificationManagerCompat.getEnabledListenerPackages(requireContext()).contains(requireContext().packageName)
+		return NotificationListenerServiceImpl.serviceState.value == true && NotificationManagerCompat.getEnabledListenerPackages(requireContext()).contains(requireContext().packageName)
 	}
 }

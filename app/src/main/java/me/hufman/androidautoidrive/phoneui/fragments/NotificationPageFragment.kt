@@ -27,7 +27,7 @@ import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.TAG
-import me.hufman.androidautoidrive.phoneui.UIState
+import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.phoneui.visible
 
 class NotificationPageFragment: Fragment() {
@@ -127,14 +127,14 @@ class NotificationPageFragment: Fragment() {
 		appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS] = isChecked.toString()
 		if (isChecked) {
 			// make sure we have permissions to read the notifications
-			if (!hasNotificationPermission() || !UIState.notificationListenerConnected) {
+			if (!hasNotificationPermission() || NotificationListenerServiceImpl.serviceState.value != true) {
 				promptNotificationPermission()
 			}
 		}
 	}
 
 	fun hasNotificationPermission(): Boolean {
-		return UIState.notificationListenerConnected && NotificationManagerCompat.getEnabledListenerPackages(requireContext()).contains(requireContext().packageName)
+		return NotificationListenerServiceImpl.serviceState.value == true && NotificationManagerCompat.getEnabledListenerPackages(requireContext()).contains(requireContext().packageName)
 	}
 
 	fun promptNotificationPermission() {
