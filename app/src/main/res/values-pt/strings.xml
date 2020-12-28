@@ -12,6 +12,7 @@
     <string name="notification_description_mini">Conectado com Mini</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <!-- Labels on the navigation trigger activity -->
+    <!-- Menu Titles -->
     <string name="spawn_test_notification">Teste de Notificação</string>
     <string name="message_notifications">Mensagem de Notificação</string>
     <string name="notification_popups">Popups de Notificação</string>
@@ -46,11 +47,18 @@
     <string name="connectionStatusConnected">Conectado com %s</string>
     <string name="nowplaying_notconnected">&lt;Não Conectado&gt;</string>
     <string name="nowplaying_unknown">&lt;Desconhecido&gt;</string>
+    <!-- connection setup -->
     <string name="txt_setup_bmw_ready">A app está pronta a ligar-se ao BMW</string>
     <string name="txt_setup_mini_ready">A app está pronta a ligar-se ao Mini</string>
     <string name="txt_setup_bmw_missing">A app não está pronta se ligar ao BMW:</string>
     <string name="txt_setup_mini_missing">A app não está pronta para se ligar ao Mini:</string>
     <string name="txt_setup_security_missing">Centro de Segurança não está disponível:</string>
+    <string name="btn_install">Instalar</string>
+    <string name="btn_install_bmw">Instalar BMW Connected</string>
+    <string name="btn_install_mini">Instalar Mini Connected</string>
+    <string name="btn_install_bmwclassic">Instalar BMW Connected Classic</string>
+    <string name="btn_install_miniclassic">Instalar Mini Connected Classic</string>
+    <!-- connection status -->
     <string name="txt_setup_bt_disconnected">Sem viatura ligada por Bluetooth</string>
     <string name="txt_setup_bt_connected">Viatura ligada por Bluetooth</string>
     <string name="txt_setup_a2dp_disconnected">Música Bluetooth não está conectada</string>
@@ -70,14 +78,11 @@
     <string name="txt_setup_bcl_connecting">Ligação às Apps em execução</string>
     <string name="txt_setup_bcl_connected">Ligação às Apps em execução</string>
     <string name="txt_setup_bcl_connected_transport">Ligação às Apps em execução em %s</string>
+    <!-- capabilities -->
+    <!-- debug status -->
     <string name="txt_build_info">Versão: %1$s %2$s</string>
     <string name="txt_bcl_report">BCL Tunnel Performance:</string>
     <string name="txt_car_capabilities">Capacidades Disponíveis da Viatura:</string>
-    <string name="btn_install">Instalar</string>
-    <string name="btn_install_bmw">Instalar BMW Connected</string>
-    <string name="btn_install_mini">Instalar Mini Connected</string>
-    <string name="btn_install_bmwclassic">Instalar BMW Connected Classic</string>
-    <string name="btn_install_miniclassic">Instalar Mini Connected Classic</string>
     <string name="lbl_advanced_settings">Mostrar Opçoes Avançadas</string>
     <string name="lbl_assistant">Assistante de Voz (Beta)</string>
     <string name="lbl_assistant_empty">Não encontrado</string>
