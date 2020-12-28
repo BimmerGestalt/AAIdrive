@@ -18,6 +18,7 @@
     <string name="lbl_navigation_listener_parsefailure">Impossibile trovare la destinazione</string>
     <string name="lbl_navigation_listener_pending">Avvio della navigazione</string>
     <string name="lbl_navigation_listener_success">Completato</string>
+    <!-- Menu Titles -->
     <string name="spawn_test_notification">Notifica di prova</string>
     <string name="message_notifications">Notifica messaggi</string>
     <string name="notification_popups">Popup di notifica</string>
@@ -59,6 +60,7 @@
     <string name="connectionStatusConnected">Connesso a %s</string>
     <string name="nowplaying_notconnected">&lt;Non connessa&gt;</string>
     <string name="nowplaying_unknown">&lt;Sconosciuto&gt;</string>
+    <!-- connection setup -->
     <string name="txt_setup_bmw_ready">L\'app è pronta a connettersi con una BMW</string>
     <string name="txt_setup_mini_ready">L\'app è pronta a connettersi con una Mini</string>
     <string name="txt_setup_bmw_missing">Non pronta a connettersi con una BMW:</string>
@@ -66,6 +68,12 @@
     <string name="txt_setup_bmw_mine_detected">La nuova app My BMW è installata, può causare problemi con l\'app BMW Connected e non è supportata</string>
     <string name="txt_setup_mini_mine_detected">La nuova app MINI è installata, può causare problemi con l\'app MINI Connected e non è supportata</string>
     <string name="txt_setup_security_missing">Il Security Service non è raggiungibile:</string>
+    <string name="btn_install">Installa</string>
+    <string name="btn_install_bmw">Installa BMW Connected</string>
+    <string name="btn_install_mini">Installa Mini Connected</string>
+    <string name="btn_install_bmwclassic">Installa BMW Connected Classic</string>
+    <string name="btn_install_miniclassic">Installa Mini Connected Classic</string>
+    <!-- connection status -->
     <string name="txt_setup_bt_disconnected">Non è presente un\'auto connessa via Bluetooth</string>
     <string name="txt_setup_bt_connected">L\'auto è connessa via Bluetooth</string>
     <string name="txt_setup_a2dp_disconnected">La musica Bluetooth non è connessa</string>
@@ -85,14 +93,11 @@
     <string name="txt_setup_bcl_connecting">La connessione Apps è in corso</string>
     <string name="txt_setup_bcl_connected">La connessione Apps è attiva</string>
     <string name="txt_setup_bcl_connected_transport">La connessione Apps è attiva via %s</string>
+    <!-- capabilities -->
+    <!-- debug status -->
     <string name="txt_build_info">Versione di build: %1$s %2$s</string>
     <string name="txt_bcl_report">BCL Tunnel Performance:</string>
     <string name="txt_car_capabilities">Capacità dell\'auto rilevate:</string>
-    <string name="btn_install">Installa</string>
-    <string name="btn_install_bmw">Installa BMW Connected</string>
-    <string name="btn_install_mini">Installa Mini Connected</string>
-    <string name="btn_install_bmwclassic">Installa BMW Connected Classic</string>
-    <string name="btn_install_miniclassic">Installa Mini Connected Classic</string>
     <string name="lbl_advanced_settings">Mostra le impostazioni avanzate</string>
     <string name="lbl_assistant">Assistente vocale (Beta)</string>
     <string name="lbl_assistant_empty">Non trovato</string>
