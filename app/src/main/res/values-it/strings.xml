@@ -31,6 +31,7 @@
     <string name="menu_support">Supporto</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integra alcune delle applicazioni musicali del tuo telefono e le notifiche del tuo telefono nella tua auto tramite il protocollo BMW Apps personalizzato</string>
     <string name="lbl_connectionpage">La connessione delle app all\'auto dipende da alcuni fattori e qui ci sono alcuni suggerimenti per assicurarsi che stia funzionando bene</string>
+    <string name="lbl_notificationpage">Le tue notifiche in arrivo possono essere visualizzate e interagite dall\'auto</string>
     <string name="spawn_test_notification">Notifica di prova</string>
     <string name="message_notifications">Notifica messaggi</string>
     <string name="notification_popups">Popup di notifica</string>
@@ -41,6 +42,7 @@
     <string name="notification_readout_popup_passenger">… con un passeggero</string>
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
+    <string name="lbl_mapspage">Una schermata standard di Google Maps può essere visualizzata nell\'auto</string>
     <string name="enable_google_maps">Abilita Google Maps</string>
     <string name="lbl_widescreen_map">Mappa a tutto schermo</string>
     <string name="lbl_map_invert_zoom">Inverti direzione zoom</string>
