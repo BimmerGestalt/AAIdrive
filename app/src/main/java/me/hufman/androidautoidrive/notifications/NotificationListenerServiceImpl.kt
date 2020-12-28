@@ -19,7 +19,6 @@ import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent.Companion.INTENT_INTERACTION
 import me.hufman.androidautoidrive.notifications.NotificationParser.Companion.dumpNotification
 import me.hufman.androidautoidrive.phoneui.UIState
-import me.hufman.androidautoidrive.phoneui.MainActivity
 import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
 
 fun Notification.isGroupSummary(): Boolean {
@@ -85,7 +84,6 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	override fun onListenerConnected() {
 		super.onListenerConnected()
 		UIState.notificationListenerConnected = true
-		sendBroadcast(Intent(MainActivity.INTENT_REDRAW))
 
 		updateNotificationList()
 	}

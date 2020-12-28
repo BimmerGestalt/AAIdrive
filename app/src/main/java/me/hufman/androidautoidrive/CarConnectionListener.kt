@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
-import me.hufman.androidautoidrive.phoneui.MainActivity
 import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
 
 /**
@@ -30,8 +29,6 @@ class CarConnectionListener: BroadcastReceiver() {
 				intent.action == "me.hufman.androidautoidrive.CarConnectionListener_STOP") {
 			context.stopService(Intent(context, MainService::class.java).setAction(MainService.ACTION_STOP))
 		}
-
-		context.sendBroadcast(Intent(MainActivity.INTENT_REDRAW))
 	}
 
 	fun register(context: Context) {

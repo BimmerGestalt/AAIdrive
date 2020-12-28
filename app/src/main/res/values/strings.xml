@@ -20,6 +20,26 @@
     <string name="lbl_navigation_listener_pending">Starting navigation</string>
     <string name="lbl_navigation_listener_success">Success</string>
 
+    <!-- Menu Titles -->
+    <string name="menu_overview">Overview</string>
+    <string name="menu_setup">Setup</string>
+    <string name="menu_connection">Connection</string>
+    <string name="menu_music">Music</string>
+    <string name="menu_notifications">Notifications</string>
+    <string name="menu_assistants">Assistants</string>
+    <string name="menu_maps">Maps</string>
+    <string name="menu_navigation">Navigation</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_support">Support</string>
+
+    <string name="lbl_overviewpage">AndroidAutoIdrive integrates some of your phone\'s music apps and your phone\'s notifications into your car over the custom BMW Apps protocol</string>
+    <string name="lbl_connectionpage">The apps connection to the car depends on a few pieces, and here are some hints to make sure it\'s working well</string>
+    <plurals name="lbl_assistantpage">
+        <item quantity="one">Your phone\'s voice assistant is added as a Connected app, in case the car\'s voice input doesn\'t trigger it</item>
+        <item quantity="other">Your phone\'s voice assistants are added as a Connected app, in case the car\'s voice input doesn\'t trigger it</item>
+    </plurals>
+
+    <string name="lbl_notificationpage">Your incoming notifications can be viewed and interacted with from the car</string>
     <string name="spawn_test_notification">Test Notification</string>
     <string name="message_notifications">Message Notifications</string>
     <string name="notification_popups">Notification Popups</string>
@@ -31,10 +51,13 @@
     <string name="lbl_popupVersion">Popups only work with IDrive4</string>
     <string name="lbl_smsPermission">Grant the SMS permission to view pictures from incoming SMS images in the car. The text itself is always visible.</string>
 
+    <string name="lbl_mapspage">A basic Google Maps screen can be displayed in the car</string>
     <string name="enable_google_maps">Enable Google Maps</string>
     <string name="lbl_widescreen_map">Widescreen Map</string>
     <string name="lbl_map_invert_zoom">Invert zoom direction</string>
     <string name="gmapStyleLabel">Map Style</string>
+
+    <string name="lbl_musicpage">Your phone\'s music apps are selectable as media sources in the car</string>
     <string name="lbl_music_apps">Music Apps</string>
     <string name="musicAppIcon">App Icon</string>
     <string name="musicAppNowPlaying">Now Playing</string>
@@ -44,7 +67,7 @@
     <string name="musicAppSearchable">Searchable</string>
     <string name="musicAppUnavailable">Unavailable</string>
     <string name="musicAppHidden">Hidden</string>
-    <string name="enable_audio_context">Force Audio Focus</string>
+    <string name="enable_audio_context">Force Audio Focus over USB connection</string>
     <string name="enable_spotify_layout">Always appear as Spotify app in IDrive5+</string>
     <string name="lbl_grant_sessions">Control over active music apps:</string>
     <string name="lbl_grant">Grant</string>
@@ -54,6 +77,10 @@
     <string name="musicAppNotes_spotify_apiNotFound">Please install the official Spotify client</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Please confirm internet connectivity and disable any ad blocking</string>
 
+    <string name="lbl_settingspage">Advanced settings for tweaking behavior, may cause unexpected behavior</string>
+    <string name="lbl_github_discussions">Check out the Discussions page for support</string>
+    <string name="btn_github_discussions">Github Discussions</string>
+
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancel</string>
     <string name="btn_configure">Configure …</string>
@@ -61,10 +88,15 @@
 
     <string name="connectionStatusMissingConnectedApp">Can\'t find Connected or Connected Classic app</string>
     <string name="connectionStatusWaiting">Waiting for connection to car</string>
+    <string name="connectionStatusConnected">Connected to %s</string>
+
+    <string name="lblChassisCode">Chassis</string>
+    <string name="lblHmiVersion">IDrive Type</string>
 
     <string name="nowplaying_notconnected">&lt;Not Connected&gt;</string>
     <string name="nowplaying_unknown">&lt;Unknown&gt;</string>
 
+    <!-- connection setup -->
     <string name="txt_setup_bmw_ready">The app is ready to connect to a BMW</string>
     <string name="txt_setup_mini_ready">The app is ready to connect to a Mini</string>
     <string name="txt_setup_bmw_missing">Not ready to connect to a BMW:</string>
@@ -72,6 +104,14 @@
     <string name="txt_setup_bmw_mine_detected">The new My BMW app is installed, which might cause problems with BMW Connected and is not supported</string>
     <string name="txt_setup_mini_mine_detected">The new MINI app is installed, which might cause problems with Mini Connected and is not supported</string>
     <string name="txt_setup_security_missing">Security Service is unreachable:</string>
+
+    <string name="btn_install">Install</string>
+    <string name="btn_install_bmw">Install BMW Connected</string>
+    <string name="btn_install_mini">Install Mini Connected</string>
+    <string name="btn_install_bmwclassic">Install BMW Connected Classic</string>
+    <string name="btn_install_miniclassic">Install Mini Connected Classic</string>
+
+    <!-- connection status -->
     <string name="txt_setup_bt_disconnected">No car connected over Bluetooth</string>
     <string name="txt_setup_bt_connected">Car is connected over Bluetooth</string>
     <string name="txt_setup_a2dp_disconnected">Bluetooth Music is not connected</string>
@@ -91,17 +131,35 @@
     <string name="txt_setup_bcl_connecting">Apps Connection is connecting</string>
     <string name="txt_setup_bcl_connected">Apps Connection is running</string>
     <string name="txt_setup_bcl_connected_transport">Apps Connection is running over %s</string>
+
+    <!-- capabilities -->
+    <string name="lbl_capabilities_detected">Detected car capabilities:</string>
+    <string name="txt_capabilities_audiocontext_yes">Audio Context is supported</string>
+    <string name="txt_capabilities_audiocontext_no">Audio Context is not supported</string>
+    <string name="txt_capabilities_audiocontext_no_usb">Audio Context is not supported over USB</string>
+    <string name="txt_capabilities_audiocontext_hint">Listen to your phone\'s music over Bluetooth</string>
+    <string name="txt_capabilities_audiostate_yes">Global Coverart is supported</string>
+    <string name="txt_capabilities_audiostate_no">Global Coverart is not supported</string>
+    <string name="txt_capabilities_audiostate_id4">ID4 does not support this feature</string>
+    <string name="txt_capabilities_audiostate_audiocontext">This feature requires Audio Context</string>
+    <string name="txt_capabilities_audiostate_spotify">Install the latest Spotify to enable this feature</string>
+    <string name="txt_capabilities_popup_yes">Notification Popups are supported</string>
+    <string name="txt_capabilities_popup_no">Notification Popups are not supported</string>
+    <string name="txt_capabilities_popup_hint">Notification Popups are only supported on ID4</string>
+    <string name="txt_capabilities_tts_yes">Notification Text-to-Speech is supported</string>
+    <string name="txt_capabilities_tts_no">Notification Text-to-Speech is not supported</string>
+    <string name="txt_capabilities_navi_yes">Car Navigation is supported</string>
+    <string name="txt_capabilities_navi_no">Car Navigation is not supported</string>
+
+    <!-- debug status -->
     <string name="txt_build_info">Build Version: %1$s %2$s</string>
     <string name="txt_bcl_report">BCL Tunnel Performance:</string>
-    <string name="txt_car_capabilities">Reported Car Capabilities:</string>
-    <string name="btn_install">Install</string>
-    <string name="btn_install_bmw">Install BMW Connected</string>
-    <string name="btn_install_mini">Install Mini Connected</string>
-    <string name="btn_install_bmwclassic">Install BMW Connected Classic</string>
-    <string name="btn_install_miniclassic">Install Mini Connected Classic</string>
+    <string name="txt_car_capabilities">Detailed Car Capabilities:</string>
     <string name="lbl_advanced_settings">Show Advanced Settings</string>
+
     <string name="lbl_assistant">Voice Assistant (Beta)</string>
     <string name="lbl_assistant_empty">None found</string>
+
     <string name="notification_assistant_tap">Tap to launch %s</string>
     <string name="notification_assistant_description">Only necessary because the screen is on</string>
     <string name="donation_title">Like this app?</string>

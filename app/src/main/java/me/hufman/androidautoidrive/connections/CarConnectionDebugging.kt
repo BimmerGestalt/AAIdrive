@@ -23,10 +23,14 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 	private val securityAccess = SecurityAccess.getInstance(context).also {
 		it.callback = callback
 	}
-	private val idriveListener = IDriveConnectionObserver()
+
+	private val idriveListener = IDriveConnectionObserver { callback() }
 
 	val isConnectedSecurityInstalled
 		get() = SecurityAccess.installedSecurityServices.isNotEmpty()
+
+	val isConnectedSecurityConnecting
+		get() = securityAccess.isConnecting()
 
 	val isConnectedSecurityConnected
 		get() = securityAccess.isConnected()

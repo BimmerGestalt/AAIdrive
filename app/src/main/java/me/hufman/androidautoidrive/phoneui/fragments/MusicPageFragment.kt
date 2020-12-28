@@ -8,14 +8,11 @@ import android.view.ViewGroup
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_musicpage.*
-import kotlinx.android.synthetic.main.fragment_musicpage.paneMusicAdvancedSettings
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.phoneui.UIState
 import me.hufman.androidautoidrive.phoneui.visible
 
 class MusicPageFragment: Fragment() {
-	val appSettings = AppSettingsViewer()
-
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.fragment_musicpage, container, false)
 	}
@@ -34,7 +31,6 @@ class MusicPageFragment: Fragment() {
 	}
 
 	fun redraw() {
-		paneMusicAdvancedSettings.visible = appSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
 		paneGrantSessions.visible = !hasNotificationPermission()
 	}
 
