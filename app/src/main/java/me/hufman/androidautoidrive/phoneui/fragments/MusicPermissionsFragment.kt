@@ -23,5 +23,6 @@ class MusicPermissionsFragment: Fragment() {
 	override fun onResume() {
 		super.onResume()
 		viewModel.update()
+		viewModel.updateSpotify()
 	}
 }

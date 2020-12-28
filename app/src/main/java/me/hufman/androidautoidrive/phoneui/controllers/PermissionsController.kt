@@ -4,6 +4,10 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.music.MusicAppInfo
+import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 
 class PermissionsController(val activity: Activity) {
 	companion object {
@@ -26,5 +30,10 @@ class PermissionsController(val activity: Activity) {
 		ActivityCompat.requestPermissions(activity,
 				arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
 				REQUEST_LOCATION)
+	}
+
+	fun promptSpotifyControl() {
+		val connector = SpotifyAppController.Connector(activity, true)
+		connector.connect()
 	}
 }
