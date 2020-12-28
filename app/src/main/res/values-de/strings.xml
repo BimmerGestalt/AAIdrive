@@ -18,6 +18,7 @@
     <string name="lbl_navigation_listener_parsefailure">Ziel konnte nicht gefunden werden</string>
     <string name="lbl_navigation_listener_pending">Navigation wird gestartet</string>
     <string name="lbl_navigation_listener_success">Erfolgreich</string>
+    <!-- Menu Titles -->
     <string name="spawn_test_notification">Test Benachrichtigung</string>
     <string name="message_notifications">Benachrichtigungen für Mitteilungen</string>
     <string name="notification_popups">PopUp-Benachrichtigung</string>
@@ -41,7 +42,6 @@
     <string name="musicAppSearchable">Suchbar</string>
     <string name="musicAppUnavailable">Nicht Verfügbar</string>
     <string name="musicAppHidden">Versteckt</string>
-    <string name="enable_audio_context">AudioFokus erzwingen</string>
     <string name="enable_spotify_layout">Immer als Spotify-App erscheinen bei iDrive5+</string>
     <string name="lbl_grant_sessions">Steuerung der aktiven Musik Apps:</string>
     <string name="lbl_grant">Erteilen</string>
@@ -56,9 +56,9 @@
     <string name="lbl_error">Fehler</string>
     <string name="connectionStatusMissingConnectedApp">Kann Connected oder Connected Classic App nicht finden</string>
     <string name="connectionStatusWaiting">Warte auf Verbindung mit Fahrzeug</string>
-    <string name="connectionStatusConnected">Verbunden mit %s</string>
     <string name="nowplaying_notconnected">&lt;Nicht Verbunden&gt;</string>
     <string name="nowplaying_unknown">&lt;Unbekannt&gt;</string>
+    <!-- connection setup -->
     <string name="txt_setup_bmw_ready">Diese App ist bereit für die Verbindung mit einem BMW</string>
     <string name="txt_setup_mini_ready">Diese App ist bereit für die Verbindung mit einem Mini</string>
     <string name="txt_setup_bmw_missing">Nicht bereit für die Verbindung mit einem BMW:</string>
@@ -66,6 +66,12 @@
     <string name="txt_setup_bmw_mine_detected">Die neue My BMW App ist installiert, was Probleme mit BMW Connected verursachen kann und nicht unterstützt wird</string>
     <string name="txt_setup_mini_mine_detected">Die neue MINI-App ist installiert, was Probleme mit Mini Connected verursachen kann und nicht unterstützt wird</string>
     <string name="txt_setup_security_missing">Security Service ist nicht erreichbar:</string>
+    <string name="btn_install">Installieren</string>
+    <string name="btn_install_bmw">BMW Connected installieren</string>
+    <string name="btn_install_mini">Mini Connected installieren</string>
+    <string name="btn_install_bmwclassic">BMW Connected Classic installieren</string>
+    <string name="btn_install_miniclassic">Mini Connected Classic installieren</string>
+    <!-- connection status -->
     <string name="txt_setup_bt_disconnected">Fahrzeug nicht mit Bluetooth verbunden</string>
     <string name="txt_setup_bt_connected">Fahrzeug mit Bluetooth verbunden</string>
     <string name="txt_setup_a2dp_disconnected">Bluetooth Audio nicht verbunden</string>
@@ -85,14 +91,10 @@
     <string name="txt_setup_bcl_connecting">Apps-Verbindung wird hergestellt</string>
     <string name="txt_setup_bcl_connected">Apps-Verbindung aktiv</string>
     <string name="txt_setup_bcl_connected_transport">Apps-Verbindung läuft über %s</string>
+    <!-- capabilities -->
+    <!-- debug status -->
     <string name="txt_build_info">Build Version: %1$s %2$s</string>
     <string name="txt_bcl_report">BCL Tunnel Performance:</string>
-    <string name="txt_car_capabilities">Berichtete Fahrzeug Möglichkeiten:</string>
-    <string name="btn_install">Installieren</string>
-    <string name="btn_install_bmw">BMW Connected installieren</string>
-    <string name="btn_install_mini">Mini Connected installieren</string>
-    <string name="btn_install_bmwclassic">BMW Connected Classic installieren</string>
-    <string name="btn_install_miniclassic">Mini Connected Classic installieren</string>
     <string name="lbl_advanced_settings">Zeige erweiterte Einstellungen</string>
     <string name="lbl_assistant">Sprachassistent (Beta)</string>
     <string name="lbl_assistant_empty">Nichts gefunden</string>
