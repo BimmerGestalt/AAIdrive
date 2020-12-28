@@ -291,6 +291,8 @@ class ConnectionStatusModelTest {
 		verify(context).getString(eq(R.string.connectionStatusWaiting))
 		context.run(model.carConnectionColor.value!!)
 		verify(context).getColor(R.color.connectionWaiting)
+		context.run(model.carLogo.value!!)
+		verifyNoMoreInteractions(context)
 	}
 
 	@Test
@@ -307,6 +309,8 @@ class ConnectionStatusModelTest {
 		verify(context).getString(eq(R.string.connectionStatusConnected), eq("BMW"))
 		context.run(model.carConnectionColor.value!!)
 		verify(context).getColor(R.color.connectionConnected)
+		context.run(model.carLogo.value!!)
+		verify(context).getDrawable(R.drawable.logo_bmw)
 	}
 
 	@Test
@@ -323,6 +327,8 @@ class ConnectionStatusModelTest {
 		verify(context).getString(eq(R.string.connectionStatusConnected), eq("MINI"))
 		context.run(model.carConnectionColor.value!!)
 		verify(context).getColor(R.color.connectionConnected)
+		context.run(model.carLogo.value!!)
+		verify(context).getDrawable(R.drawable.logo_mini)
 	}
 
 	@Test

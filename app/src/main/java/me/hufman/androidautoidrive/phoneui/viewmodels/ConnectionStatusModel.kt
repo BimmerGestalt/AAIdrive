@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.phoneui.viewmodels
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Handler
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
@@ -82,6 +83,8 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 	val isCarConnected = isBclConnected
 	private val _carBrand = MutableLiveData<String?>(null)
 	val carBrand: LiveData<String?> = _carBrand
+	private val _carLogo = MutableLiveData<Context.() -> Drawable?> { null }
+	val carLogo: LiveData<Context.() -> Drawable?> = _carLogo
 	private val _carChassisCode = MutableLiveData<ChassisCode?>()
 	val carChassisCode = _carChassisCode
 	private val _carConnectionText = MutableLiveData<Context.() -> String>()
@@ -121,6 +124,12 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		// current car overview
 		val brand = connection.carBrand?.toUpperCase(Locale.ROOT)
 		_carBrand.value = brand
+		when (brand) {
+			"BMW" -> _carLogo.value = { ContextCompat.getDrawable(this, R.drawable.logo_bmw) }
+			"MINI" -> _carLogo.value = { ContextCompat.getDrawable(this, R.drawable.logo_mini) }
+			else -> _carLogo.value = { null }
+		}
+
 		val chassisCode = ChassisCode.fromCode(carInfo.capabilities["vehicle.type"] ?: "Unknown")
 		_carChassisCode.value = chassisCode
 

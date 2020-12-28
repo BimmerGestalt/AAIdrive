@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.*
 import androidx.databinding.BindingAdapter
@@ -21,6 +22,10 @@ fun setImageViewBitmap(view: ImageView, bitmap: Bitmap) {
 @BindingAdapter("android:src")
 fun setImageViewResource(view: ImageView, resource: Int) {
 	view.setImageResource(resource)
+}
+@BindingAdapter("android:src")
+fun setImageViewResource(view: ImageView, drawable: Context.() -> Drawable?) {
+	view.setImageDrawable(view.context.run(drawable))
 }
 
 @BindingAdapter("android:visibility")
