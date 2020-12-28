@@ -31,7 +31,7 @@
     <string name="musicAppUnavailable">No disponible</string>
     <string name="musicAppHidden">Oculto</string>
     <string name="enable_audio_context">Solicitar focus de Audio</string>
-    <string name="lbl_grant_sessions">Control sobre la aplicación de música activa:</string>
+    <string name="lbl_grant_sessions">Control sobre la aplicación de música activa</string>
     <string name="lbl_grant">Grant</string>
     <string name="musicAppNotes_unauthorizedSpotify">Presione aquí para autorizar el acceso a Spotify</string>
     <string name="musicAppNotes_oldSpotify">Porfavor degrade Spotify para un completo funcionamiento (Buscando)</string>

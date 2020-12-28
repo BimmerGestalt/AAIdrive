@@ -30,7 +30,6 @@
     <string name="musicAppSearchable">Suportă căutare</string>
     <string name="musicAppUnavailable">Indisponibil</string>
     <string name="enable_audio_context">Cere Audio Focus</string>
-    <string name="lbl_grant_sessions">Control pe aplicațiile de muzică:</string>
     <string name="lbl_grant">Permite</string>
     <string name="musicAppNotes_unauthorizedSpotify">Autorizează acces Spotify</string>
     <string name="musicAppNotes_oldSpotify">Încarcă o versiune mai veche de Spotify pentru control complet</string>
@@ -130,4 +129,5 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Thumb Down</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Thumbed Down</string>
+    <string name="lbl_grant_sessions">Control pe aplicațiile de muzică</string>
 </resources>

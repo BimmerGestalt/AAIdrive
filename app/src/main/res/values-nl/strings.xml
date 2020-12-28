@@ -31,7 +31,7 @@
     <string name="musicAppUnavailable">Niet beschikbaar</string>
     <string name="musicAppHidden">Niet zichtbaar</string>
     <string name="enable_audio_context">Audio focus gevraagd</string>
-    <string name="lbl_grant_sessions">Controlle over muziek app:</string>
+    <string name="lbl_grant_sessions">Controlle over muziek app</string>
     <string name="lbl_grant">Verlenen</string>
     <string name="musicAppNotes_unauthorizedSpotify">Klik hier om Spotify toegang te verlenen</string>
     <string name="musicAppNotes_oldSpotify">Downgrade Spotify om van de volledige functionaliteit gebruik te maken</string>

@@ -31,7 +31,7 @@
     <string name="musicAppUnavailable">Niedostępna</string>
     <string name="musicAppHidden">Ukryta</string>
     <string name="enable_audio_context">Przełącz na audio z telefonu</string>
-    <string name="lbl_grant_sessions">Kontrola poprzez aktywną aplikacje muzyczną:</string>
+    <string name="lbl_grant_sessions">Kontrola poprzez aktywną aplikacje muzyczną</string>
     <string name="lbl_grant">Przyznaj</string>
     <string name="musicAppNotes_unauthorizedSpotify">Kliknij tutaj aby przyznać dostęp do Spotify</string>
     <string name="musicAppNotes_oldSpotify">Aby uzyskać pełną funkcjonalność (przeglądanie,wyszukiwanie), obniż wersję Spotify</string>

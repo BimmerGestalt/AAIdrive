@@ -18,31 +18,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/lbl_music_apps" />
+        android:text="@string/lbl_music_apps"
+        android:layout_marginBottom="4dp" />
 
-    <LinearLayout
-        android:id="@+id/paneGrantSessions"
+    <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:visibility="visible">
-
-        <TextView
-            android:id="@+id/txtGrantSessionsLabel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/lbl_grant_sessions" />
-
-        <Button
-            android:id="@+id/btnGrantSessions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/lbl_grant"
-            android:textSize="12sp" />
-    </LinearLayout>
+        android:layout_marginBottom="10dp"
+        android:id="@+id/fragmentMusicPermissions"
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicPermissionsFragment"/>
 
     <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
