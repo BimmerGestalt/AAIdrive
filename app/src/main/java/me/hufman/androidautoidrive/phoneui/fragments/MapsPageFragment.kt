@@ -1,25 +1,23 @@
 package me.hufman.androidautoidrive.phoneui.fragments
 
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_mapspage.*
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.BooleanLiveSetting
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
+import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
 import me.hufman.androidautoidrive.phoneui.visible
 
 class MapsPageFragment: Fragment() {
 	val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }
-
-	companion object {
-		const val REQUEST_LOCATION = 4000
-	}
+	val permissionsController by lazy { PermissionsController(requireActivity()) }
+	val viewModel by lazy { PermissionsModel.Factory(requireContext().applicationContext).create(PermissionsModel::class.java) }
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.fragment_mapspage, container, false)
@@ -28,44 +26,34 @@ class MapsPageFragment: Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
-		swMapsEnabled.setOnCheckedChangeListener { _, isChecked ->
-			onChangedSwitchGMaps(isChecked)
-			redraw()
+		val mapsEnabledSetting = BooleanLiveSetting(requireContext().applicationContext, AppSettings.KEYS.ENABLED_GMAPS)
+		mapsEnabledSetting.observe(viewLifecycleOwner) {
+			swMapsEnabled.isChecked = it
+			paneMaps.visible = it
 		}
-	}
+		swMapsEnabled.setOnCheckedChangeListener { _, isChecked ->
+			onChangedSwitchGMaps(mapsEnabledSetting, isChecked)
+		}
 
-	fun onChangedSwitchGMaps(isChecked: Boolean) {
-		appSettings[AppSettings.KEYS.ENABLED_GMAPS] = isChecked.toString()
-		if (isChecked) {
-			// make sure we have permissions to show current location
-			if (!hasLocationPermission()) {
-				promptForLocation()
+		viewModel.hasLocationPermission.observe(viewLifecycleOwner) {
+			if (!it) {
+				mapsEnabledSetting.setValue(false)
 			}
 		}
 	}
 
-	fun hasLocationPermission(): Boolean {
-		return ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-	}
-	fun promptForLocation() {
-		ActivityCompat.requestPermissions(requireActivity(),
-				arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-				REQUEST_LOCATION)
+	fun onChangedSwitchGMaps(setting: BooleanLiveSetting, isChecked: Boolean) {
+		setting.setValue(isChecked)
+		if (isChecked) {
+			// make sure we have permissions to show current location
+			if (viewModel.hasLocationPermission.value != true) {
+				permissionsController.promptLocation()
+			}
+		}
 	}
 
 	override fun onResume() {
 		super.onResume()
-
-		redraw()
-	}
-
-	fun redraw() {
-		// reset the GMaps setting if we don't have permission
-		if (!hasLocationPermission()) {
-			appSettings[AppSettings.KEYS.ENABLED_GMAPS] = "false"
-		}
-
-		swMapsEnabled.isChecked = appSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
-		paneMaps.visible = appSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
+		viewModel.update()
 	}
 }

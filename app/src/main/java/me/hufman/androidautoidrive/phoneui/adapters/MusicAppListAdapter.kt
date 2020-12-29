@@ -112,13 +112,8 @@ class MusicAppListAdapter(val context: Context, val handler: Handler, val suppor
 
 				// show app-specific notes
 				if (appInfo.packageName == "com.spotify.music" && appInfo.probed && !appInfo.connectable) {
-					if (SpotifyAppController.hasSupport(context)) {
-						// prompt the user to click again to show the Spotify auth dialog
-						txtMusicAppNotes.text = context.getString(R.string.musicAppNotes_unauthorizedSpotify)
-						txtMusicAppNotes.visible = false
-						txtMusicAppNotes.setOnClickListener(null)
-					} else {
-						// show a note to downgrade Spotify
+					if (!SpotifyAppController.hasSupport(context)) {
+						// show a note to downgrade Spotify, since API support isn't compiled
 						txtMusicAppNotes.text = context.getString(R.string.musicAppNotes_oldSpotify)
 						txtMusicAppNotes.visible = true
 						txtMusicAppNotes.setOnClickListener {
