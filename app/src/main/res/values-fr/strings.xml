@@ -32,7 +32,6 @@
     <string name="musicAppUnavailable">Non Disponible</string>
     <string name="musicAppHidden">Non Visible</string>
     <string name="enable_audio_context">Demande de Focus Audio</string>
-    <string name="lbl_grant_sessions">Contrôle des applications de musiques:</string>
     <string name="lbl_grant">Autoriser</string>
     <string name="musicAppNotes_unauthorizedSpotify">Cliquer ici pour autoriser l\'accès à Spotify</string>
     <string name="musicAppNotes_oldSpotify">Installez une version plus ancienne de Spotify pour un contrôle complet (navigation)</string>
