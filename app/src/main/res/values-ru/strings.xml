@@ -31,7 +31,6 @@
     <string name="musicAppSearchable">Доступные для поиска</string>
     <string name="musicAppUnavailable">Недоступные</string>
     <string name="enable_audio_context">Включить аудио связь</string>
-    <string name="lbl_grant_sessions">Контроль над активными музыкальными приложениями:</string>
     <string name="lbl_grant">Разрешить</string>
     <string name="musicAppNotes_unauthorizedSpotify">Нажмите здесь, чтобы авторизовать доступ Spotify</string>
     <string name="musicAppNotes_oldSpotify">Пожалуйста, понизьте версию Spotify для полной функциональности (просмотр)</string>
