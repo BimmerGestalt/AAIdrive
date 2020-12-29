@@ -27,7 +27,6 @@
     <string name="musicAppSearchable">Serĉebla</string>
     <string name="musicAppUnavailable">Ne havebla</string>
     <string name="enable_audio_context">Petu Muzikan Kuntekson</string>
-    <string name="lbl_grant_sessions">Permesu regi nunmuzikludantojn</string>
     <string name="lbl_grant">Permesu</string>
     <string name="connectionStatusMissingConnectedApp">Ne trovas la Connected programeton</string>
     <string name="connectionStatusWaiting">Trovadas la aŭton</string>
