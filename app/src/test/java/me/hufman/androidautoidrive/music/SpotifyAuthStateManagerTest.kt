@@ -1,9 +1,9 @@
 package me.hufman.androidautoidrive.music
 
-import android.content.Context
-import android.content.SharedPreferences
 import com.adamratzman.spotify.SpotifyException
 import com.nhaarman.mockito_kotlin.*
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.MockAppSettings
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import net.openid.appauth.*
 import org.json.JSONException
@@ -15,64 +15,49 @@ import org.mockito.internal.util.reflection.FieldSetter
 import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
+import org.powermock.reflect.Whitebox
 
 @RunWith(PowerMockRunner::class)
 @PrepareForTest(AuthState::class, System::class, SpotifyAuthStateManager::class)
 class SpotifyAuthStateManagerTest {
 
 	lateinit var spotifyAuthStateManager: SpotifyAuthStateManager
-	lateinit var prefs: SharedPreferences
+	lateinit var appSettings: MockAppSettings
 
 	@Before
 	fun setup() {
-		prefs = mock()
-		whenever(prefs.getString("state", null)).thenReturn(null)
-
-		val context: Context = mock()
-		whenever(context.getSharedPreferences("AuthState", Context.MODE_PRIVATE)).thenReturn(prefs)
-		spotifyAuthStateManager = SpotifyAuthStateManager(context)
+		appSettings = MockAppSettings()
+		spotifyAuthStateManager = Whitebox.invokeConstructor(SpotifyAuthStateManager::class.java, appSettings)
 	}
 
 	@Test
-	fun testRefreshCurrentState_NullSharedPrefsString() {
-		whenever(prefs.getString(SpotifyAuthStateManager.KEY_STATE, null)).thenReturn(null)
-
-		spotifyAuthStateManager.refreshCurrentState()
-
+	fun testNewInstance_EmptyAuthStateString() {
 		assertTrue(isEmptyAuthState(spotifyAuthStateManager.currentState))
 	}
 
-	private fun isEmptyAuthState(authState: AuthState): Boolean {
-		return !authState.isAuthorized
-				&& authState.accessToken == null
-				&& authState.refreshToken == null
-				&& authState.lastAuthorizationResponse == null
-				&& authState.lastTokenResponse == null
-	}
-
 	@Test
-	fun testRefreshCurrentState_ExistingSharedPrefsString() {
+	fun testNewInstance_ExistingAuthStateString() {
 		val state = "authStateJson"
-		whenever(prefs.getString(SpotifyAuthStateManager.KEY_STATE, null)).thenReturn(state)
+		appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON] = state
 
 		val authState = AuthState()
 		PowerMockito.mockStatic(AuthState::class.java)
 		PowerMockito.`when`(AuthState.jsonDeserialize(state)).thenAnswer { authState }
 
-		spotifyAuthStateManager.refreshCurrentState()
+		spotifyAuthStateManager = Whitebox.invokeConstructor(SpotifyAuthStateManager::class.java, appSettings)
 
 		assertEquals(authState, spotifyAuthStateManager.currentState)
 	}
 
 	@Test
-	fun testRefreshCurrentState_DeserializeJsonException() {
+	fun testNewInstance_DeserializeJsonException() {
 		val state = "authStateJson"
-		whenever(prefs.getString(SpotifyAuthStateManager.KEY_STATE, null)).thenReturn(state)
+		appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON] = state
 
 		PowerMockito.mockStatic(AuthState::class.java)
 		PowerMockito.`when`(AuthState.jsonDeserialize(state)).thenAnswer { throw JSONException("message") }
 
-		spotifyAuthStateManager.refreshCurrentState()
+		spotifyAuthStateManager = Whitebox.invokeConstructor(SpotifyAuthStateManager::class.java, appSettings)
 
 		assertTrue(isEmptyAuthState(spotifyAuthStateManager.currentState))
 	}
@@ -180,14 +165,10 @@ class SpotifyAuthStateManagerTest {
 		whenever(currentState.jsonSerializeString()).thenReturn(authStateSerializedString)
 		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
 
-		val sharedPreferencesEditor: SharedPreferences.Editor = mock()
-		whenever(sharedPreferencesEditor.commit()).thenReturn(true)
-		whenever(prefs.edit()).thenReturn(sharedPreferencesEditor)
-
 		spotifyAuthStateManager.updateAuthorizationResponse(authorizationResponse, null)
 
 		verify(currentState).update(authorizationResponse, null)
-		verify(sharedPreferencesEditor).putString(SpotifyAuthStateManager.KEY_STATE, authStateSerializedString)
+		assertEquals(authStateSerializedString, appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON])
 	}
 
 	@Test
@@ -199,14 +180,10 @@ class SpotifyAuthStateManagerTest {
 		whenever(currentState.jsonSerializeString()).thenReturn(authStateSerializedString)
 		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
 
-		val sharedPreferencesEditor: SharedPreferences.Editor = mock()
-		whenever(sharedPreferencesEditor.commit()).thenReturn(true)
-		whenever(prefs.edit()).thenReturn(sharedPreferencesEditor)
-
 		spotifyAuthStateManager.updateTokenResponse(tokenResponse, null)
 
 		verify(currentState).update(tokenResponse, null)
-		verify(sharedPreferencesEditor).putString(SpotifyAuthStateManager.KEY_STATE, authStateSerializedString)
+		assertEquals(authStateSerializedString, appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON])
 	}
 
 	@Test
@@ -222,14 +199,10 @@ class SpotifyAuthStateManagerTest {
 		whenever(currentState.jsonSerializeString()).thenReturn(authStateSerializedString)
 		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
 
-		val sharedPreferencesEditor: SharedPreferences.Editor = mock()
-		whenever(sharedPreferencesEditor.commit()).thenReturn(true)
-		whenever(prefs.edit()).thenReturn(sharedPreferencesEditor)
-
 		spotifyAuthStateManager.addAccessTokenAuthorizationException(exception)
 
 		verify(currentState).update(tokenResponse, authorizationException)
-		verify(sharedPreferencesEditor).putString(SpotifyAuthStateManager.KEY_STATE, authStateSerializedString)
+		assertEquals(authStateSerializedString, appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON])
 	}
 
 	@Test
@@ -246,14 +219,10 @@ class SpotifyAuthStateManagerTest {
 
 		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
 
-		val sharedPreferencesEditor: SharedPreferences.Editor = mock()
-		whenever(sharedPreferencesEditor.commit()).thenReturn(true)
-		whenever(prefs.edit()).thenReturn(sharedPreferencesEditor)
-
 		spotifyAuthStateManager.addAuthorizationCodeAuthorizationException(exception)
 
 		verify(currentState).update(authorizationResponse, authorizationException)
-		verify(sharedPreferencesEditor).putString(SpotifyAuthStateManager.KEY_STATE, authStateSerializedString)
+		assertEquals(authStateSerializedString, appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON])
 	}
 
 	@Test
@@ -261,36 +230,21 @@ class SpotifyAuthStateManagerTest {
 		val currentState: AuthState = mock()
 		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
 
-		val sharedPreferencesEditor: SharedPreferences.Editor = mock()
-		whenever(sharedPreferencesEditor.commit()).thenReturn(true)
-		whenever(prefs.edit()).thenReturn(sharedPreferencesEditor)
-
 		val authStateSerializedString = "auth state serialized"
 		val authState: AuthState = mock()
 		whenever(authState.jsonSerializeString()).thenReturn(authStateSerializedString)
 
 		spotifyAuthStateManager.replaceAuthState(authState)
-
-		verify(sharedPreferencesEditor).putString(SpotifyAuthStateManager.KEY_STATE, authStateSerializedString)
 
 		assertEquals(authState, spotifyAuthStateManager.currentState)
+		assertEquals(authStateSerializedString, appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON])
 	}
 
-	@Test
-	fun testReplaceAuthState_JSONException() {
-		val currentState: AuthState = mock()
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
-
-		val sharedPreferencesEditor: SharedPreferences.Editor = mock()
-		whenever(sharedPreferencesEditor.commit()).thenReturn(false)
-		whenever(prefs.edit()).thenReturn(sharedPreferencesEditor)
-
-		val authStateSerializedString = "auth state serialized"
-		val authState: AuthState = mock()
-		whenever(authState.jsonSerializeString()).thenReturn(authStateSerializedString)
-
-		spotifyAuthStateManager.replaceAuthState(authState)
-
-		verify(sharedPreferencesEditor).putString(SpotifyAuthStateManager.KEY_STATE, authStateSerializedString)
+	private fun isEmptyAuthState(authState: AuthState): Boolean {
+		return !authState.isAuthorized
+				&& authState.accessToken == null
+				&& authState.refreshToken == null
+				&& authState.lastAuthorizationResponse == null
+				&& authState.lastTokenResponse == null
 	}
 }

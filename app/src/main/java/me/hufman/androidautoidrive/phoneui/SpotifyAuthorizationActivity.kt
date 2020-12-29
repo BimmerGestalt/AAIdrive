@@ -67,11 +67,11 @@ class SpotifyAuthorizationActivity: Activity() {
 		createAuthorizationService()
 	}
 	private val authService: AuthorizationService by lazyAuthService
-	private val authStateManager: SpotifyAuthStateManager by lazy {
-		SpotifyAuthStateManager(this)
-	}
 	private val appSettingsReceiver: MutableAppSettingsReceiver by lazy {
-		MutableAppSettingsReceiver(this)
+		MutableAppSettingsReceiver(applicationContext)
+	}
+	private val authStateManager: SpotifyAuthStateManager by lazy {
+		SpotifyAuthStateManager.getInstance(appSettingsReceiver)
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -222,7 +222,7 @@ class SpotifyAuthorizationActivity: Activity() {
 		Log.d(TAG, "Authorization process completed successfully. AuthState updated")
 		clearNotAuthorizedNotification()
 		appSettingsReceiver[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION] = "true"
-		SpotifyWebApi.getInstance(this).initializeWebApi()
+		SpotifyWebApi.getInstance(applicationContext, appSettingsReceiver).initializeWebApi()
 		Toast.makeText(this, getString(R.string.txt_spotify_api_authorization_success), Toast.LENGTH_SHORT).show()
 		finishActivityWithResult(AUTHORIZATION_SUCCESS)
 	}

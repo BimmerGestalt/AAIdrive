@@ -1,37 +1,37 @@
 package me.hufman.androidautoidrive.music.spotify
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
 import com.adamratzman.spotify.SpotifyException
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.MutableAppSettings
 import net.openid.appauth.*
 import org.json.JSONException
 
 /**
- * Spotify manager for an [AuthState] instance that is created from and mutates a JSON shared preferences
- * file. If there are multiple instances of this class modifying the [AuthState], the current instance
- * of the [AuthState] must manually be refreshed.
+ * Spotify manager for an [AuthState] instance that is created from and mutates a JSON stored [AuthState]
+ * in [AppSettings]. This class is a singleton.
  */
-class SpotifyAuthStateManager(context: Context) {
+class SpotifyAuthStateManager private constructor(val appSettings: MutableAppSettings) {
 	companion object {
 		const val TAG = "AuthStateManager"
-		const val STORE_NAME = "AuthState"
-		const val KEY_STATE = "state"
+
+		private var authStateManagerInstance: SpotifyAuthStateManager? = null
+
+		/**
+		 * Retrieves the current [SpotifyAuthStateManager] instance, creating one if it there are no
+		 * current instances.
+		 */
+		fun getInstance(appSettings: MutableAppSettings): SpotifyAuthStateManager {
+			if (authStateManagerInstance == null) {
+				authStateManagerInstance = SpotifyAuthStateManager(appSettings)
+			}
+			return authStateManagerInstance as SpotifyAuthStateManager
+		}
 	}
 
-	private val prefs: SharedPreferences
 	var currentState: AuthState
 
 	init {
-		prefs = context.getSharedPreferences(STORE_NAME, Context.MODE_PRIVATE)
-		currentState = readState()
-	}
-
-	/**
-	 * Refreshes the current [AuthState] instance from what is written in the shared preferences. WARNING:
-	 * this will overwrite the current [AuthState] with the [AuthState] stored in the shared preferences.
-	 */
-	fun refreshCurrentState() {
 		currentState = readState()
 	}
 
@@ -129,28 +129,27 @@ class SpotifyAuthStateManager(context: Context) {
 	}
 
 	/**
-	 * Writes the new [AuthState] to the shared preferences file, replacing the existing one with the
-	 * new one.
+	 * Writes the new [AuthState] to [AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION],
+	 * replacing the existing [AuthState] with the new one.
 	 */
 	private fun writeState(state: AuthState) {
 		Log.d(TAG, "Writing new AuthState to shared prefs")
-		val editor = prefs.edit()
-		editor.putString(KEY_STATE, state.jsonSerializeString())
-		val commitResult = editor.commit()
-		if (!commitResult) {
-			Log.e(TAG, "Error writing new AuthState to shared prefs")
-		}
+		appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON] = state.jsonSerializeString()
 	}
 
 	/**
-	 * Reads the existing [AuthState] from the shared preferences file. If the AuthState doesn't exist
-	 * or can't be read then an empty unauthenticated AuthState is returned.
+	 * Reads the existing [AuthState] from [AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION].
+	 * If the [AuthState] doesn't exist or can't be read then an empty unauthenticated [AuthState] is
+	 * returned.
 	 */
 	private fun readState(): AuthState {
 		Log.d(TAG, "Reading AuthState from shared prefs")
-		val currentState = prefs.getString(KEY_STATE, null) ?: return AuthState()
+		val strJson = appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON]
+		if (strJson == "") {
+			return AuthState()
+		}
 		return try {
-			AuthState.jsonDeserialize(currentState)
+			AuthState.jsonDeserialize(strJson)
 		} catch (ex: JSONException) {
 			Log.d(TAG, "Failed to deserialize stored auth state - discarding")
 			AuthState()

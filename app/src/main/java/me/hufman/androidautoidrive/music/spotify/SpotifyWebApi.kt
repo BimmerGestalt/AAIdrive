@@ -11,7 +11,7 @@ import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
 import com.adamratzman.spotify.models.Token
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.AppSettingsViewer
+import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
@@ -21,7 +21,7 @@ import net.openid.appauth.*
  * Handles the logic around the Spotify Web API. This class is a singleton to prevent issues of having
  * multiple [SpotifyClientAPI]s.
  */
-class SpotifyWebApi private constructor(val context: Context) {
+class SpotifyWebApi private constructor(val context: Context, val appSettings: MutableAppSettings) {
 	companion object {
 		const val TAG = "SpotifyWebApi"
 		const val NOTIFICATION_CHANNEL_ID = "SpotifyAuthorization"
@@ -34,9 +34,9 @@ class SpotifyWebApi private constructor(val context: Context) {
 		 * Retrieves the current [SpotifyWebApi] instance creating one if it there are no instances
 		 * currently running.
 		 */
-		fun getInstance(context: Context): SpotifyWebApi {
+		fun getInstance(context: Context, appSettings: MutableAppSettings): SpotifyWebApi {
 			if (webApiInstance == null) {
-				webApiInstance = SpotifyWebApi(context)
+				webApiInstance = SpotifyWebApi(context, appSettings)
 			}
 			return webApiInstance as SpotifyWebApi
 		}
@@ -46,15 +46,13 @@ class SpotifyWebApi private constructor(val context: Context) {
 	private var webApi: SpotifyClientAPI? = null
 
 	private val authStateManager: SpotifyAuthStateManager
-	private val appSettingsViewer: AppSettingsViewer
 	private var getLikedSongsAttempted: Boolean = false
 	private var spotifyAppControllerCaller: SpotifyAppController? = null
 	var isUsingSpotify: Boolean = false
 
 	init {
 		Log.d(TAG, "Initializing for the first time")
-		authStateManager = SpotifyAuthStateManager(context)
-		appSettingsViewer = AppSettingsViewer()
+		authStateManager = SpotifyAuthStateManager.getInstance(appSettings)
 	}
 
 	/**
@@ -98,7 +96,6 @@ class SpotifyWebApi private constructor(val context: Context) {
 	 * Initializes the [SpotifyClientAPI] instance and updates the [AuthState] with the token used.
 	 */
 	fun initializeWebApi() {
-		authStateManager.refreshCurrentState()
 		webApi = createWebApiClient()
 		if (webApi != null) {
 			updateAuthStateWithAccessToken(webApi!!.token)
@@ -187,7 +184,7 @@ class SpotifyWebApi private constructor(val context: Context) {
 	 * user has previously successfully authorized.
 	 */
 	private fun createNotAuthorizedNotification() {
-		if (appSettingsViewer[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION] == "false") {
+		if (appSettings[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION] == "false") {
 			return
 		}
 		val notifyIntent = Intent(context, SpotifyAuthorizationActivity::class.java)

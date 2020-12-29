@@ -36,6 +36,7 @@ interface AppSettings {
 		DONATION_DAYS_COUNT("Donation_Days_Count", "0", "Number of days that the user has used the app, counting towards the donation request threshold"),
 		DONATION_LAST_DAY("Donation_Last_Day", "2000-01-01", "The last day that the user used the app"),
 		SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION("Spotify_Show_Unauthenticated_Notification", "false", "Show a notification when the Spotify Web API is not authenticated"),
+		SPOTIFY_AUTH_STATE_JSON("Spotify_Auth_State_Json", "", "String serialized JSON representation of the Spotify Web API AuthState.")
 	}
 
 	/** Store the active preferences in a singleton */

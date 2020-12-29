@@ -12,9 +12,8 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.*
 import kotlinx.coroutines.*
-import me.hufman.androidautoidrive.MutableObservable
+import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.Observable
-import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
@@ -87,7 +86,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 					if (remote != null) {
 						Log.i(TAG, "Successfully connected to Spotify Remote")
 
-						val spotifyWebApi = SpotifyWebApi.getInstance(context)
+						val spotifyWebApi = SpotifyWebApi.getInstance(context, MutableAppSettingsReceiver(context))
 						spotifyWebApi.initializeWebApi()
 						spotifyWebApi.isUsingSpotify = true
 

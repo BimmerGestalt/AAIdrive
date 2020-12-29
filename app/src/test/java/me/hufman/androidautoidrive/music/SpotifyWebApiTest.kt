@@ -6,14 +6,14 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
 import com.adamratzman.spotify.endpoints.client.ClientLibraryApi
 import com.adamratzman.spotify.models.*
 import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.AppSettingsViewer
+import me.hufman.androidautoidrive.MockAppSettings
+import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
@@ -31,36 +31,31 @@ import org.powermock.modules.junit4.PowerMockRunner
 import org.powermock.reflect.Whitebox
 
 @RunWith(PowerMockRunner::class)
-@PrepareForTest(SpotifyWebApi::class, SpotifyAppController::class, PendingIntent::class)
+@PrepareForTest(SpotifyWebApi::class, SpotifyAppController::class, PendingIntent::class, SpotifyAuthStateManager::class)
 class SpotifyWebApiTest {
 
 	lateinit var context: Context
 	lateinit var spotifyAuthStateManager: SpotifyAuthStateManager
 	lateinit var spotifyWebApi: SpotifyWebApi
-	lateinit var appSettingsViewer: AppSettingsViewer
+	lateinit var appSettings: MutableAppSettings
 
 	@Before
 	fun setup()
 	{
-		val sharedPreferences: SharedPreferences = mock()
-		whenever(sharedPreferences.getString("state", null)).thenReturn(null)
-
 		context = mock()
-		whenever(context.getSharedPreferences("AuthState", Context.MODE_PRIVATE)).thenReturn(sharedPreferences)
-
 		spotifyAuthStateManager = mock()
-		PowerMockito.whenNew(SpotifyAuthStateManager::class.java).withAnyArguments().thenReturn(spotifyAuthStateManager)
+		appSettings = MockAppSettings()
 
-		appSettingsViewer = mock()
-		PowerMockito.whenNew(AppSettingsViewer::class.java).withNoArguments().thenReturn(appSettingsViewer)
+		PowerMockito.mockStatic(SpotifyAuthStateManager::class.java)
+		val companion = PowerMockito.mock(SpotifyAuthStateManager.Companion::class.java)
+		Whitebox.setInternalState(SpotifyAuthStateManager::class.java, "Companion", companion)
+		PowerMockito.`when`(SpotifyAuthStateManager.getInstance(appSettings)).thenReturn(spotifyAuthStateManager)
 
-		spotifyWebApi = Whitebox.invokeConstructor(SpotifyWebApi::class.java, context)
+		spotifyWebApi = Whitebox.invokeConstructor(SpotifyWebApi::class.java, context, appSettings)
 	}
 
 	@Test
 	fun testInitializeWebApi_ValidAccessToken() {
-		doNothing().whenever(spotifyAuthStateManager).refreshCurrentState()
-
 		PowerMockito.mockStatic(SpotifyAppController::class.java)
 		val spotifyAppControllerCompanion = PowerMockito.mock(SpotifyAppController.Companion::class.java)
 		Whitebox.setInternalState(SpotifyAppController::class.java, "Companion", spotifyAppControllerCompanion)
@@ -124,15 +119,12 @@ class SpotifyWebApiTest {
 
 		spotifyWebApi.initializeWebApi()
 
-		verify(spotifyAuthStateManager).refreshCurrentState()
 		verify(spotifyAuthStateManager).updateTokenResponse(tokenResponse, null)
 	}
 
 	@Test
 	fun testInitializeWebApi_InvalidAccessToken()
 	{
-		doNothing().whenever(spotifyAuthStateManager).refreshCurrentState()
-
 		PowerMockito.mockStatic(SpotifyAppController::class.java)
 		val spotifyAppControllerCompanion = PowerMockito.mock(SpotifyAppController.Companion::class.java)
 		Whitebox.setInternalState(SpotifyAppController::class.java, "Companion", spotifyAppControllerCompanion)
@@ -173,14 +165,11 @@ class SpotifyWebApiTest {
 
 		doNothing().whenever(spotifyAuthStateManager).addAccessTokenAuthorizationException(exception)
 
-		whenever(appSettingsViewer[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION]).thenReturn("false")
-
 		val notificationManager: NotificationManager = mock()
 		whenever(context.getSystemService(NotificationManager::class.java)).thenReturn(notificationManager)
 
 		spotifyWebApi.initializeWebApi()
 
-		verify(spotifyAuthStateManager).refreshCurrentState()
 		verify(spotifyAuthStateManager).addAccessTokenAuthorizationException(exception)
 		verify(notificationManager, never()).notify(any(), any())
 	}
@@ -188,8 +177,6 @@ class SpotifyWebApiTest {
 	@Test
 	fun testInitializeWebApi_NullAuthorizationCode()
 	{
-		doNothing().whenever(spotifyAuthStateManager).refreshCurrentState()
-
 		PowerMockito.mockStatic(SpotifyAppController::class.java)
 		val spotifyAppControllerCompanion = PowerMockito.mock(SpotifyAppController.Companion::class.java)
 		Whitebox.setInternalState(SpotifyAppController::class.java, "Companion", spotifyAppControllerCompanion)
@@ -205,22 +192,17 @@ class SpotifyWebApiTest {
 		whenever(spotifyAuthStateManager.getAccessToken()).thenReturn(null)
 		whenever(spotifyAuthStateManager.getAuthorizationCode()).thenReturn(null)
 
-		whenever(appSettingsViewer[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION]).thenReturn("false")
-
 		val notificationManager: NotificationManager = mock()
 		whenever(context.getSystemService(NotificationManager::class.java)).thenReturn(notificationManager)
 
 		spotifyWebApi.initializeWebApi()
 
-		verify(spotifyAuthStateManager).refreshCurrentState()
 		verify(notificationManager, never()).notify(any(), any())
 	}
 
 	@Test
 	fun testInitializeWebApi_ValidAuthorizationCode()
 	{
-		doNothing().whenever(spotifyAuthStateManager).refreshCurrentState()
-
 		PowerMockito.mockStatic(SpotifyAppController::class.java)
 		val spotifyAppControllerCompanion = PowerMockito.mock(SpotifyAppController.Companion::class.java)
 		Whitebox.setInternalState(SpotifyAppController::class.java, "Companion", spotifyAppControllerCompanion)
@@ -281,15 +263,12 @@ class SpotifyWebApiTest {
 
 		spotifyWebApi.initializeWebApi()
 
-		verify(spotifyAuthStateManager).refreshCurrentState()
 		verify(spotifyAuthStateManager).updateTokenResponse(tokenResponse, null)
 	}
 
 	@Test
 	fun testInitializeWebApi_InvalidAuthorizationCode()
 	{
-		doNothing().whenever(spotifyAuthStateManager).refreshCurrentState()
-
 		PowerMockito.mockStatic(SpotifyAppController::class.java)
 		val spotifyAppControllerCompanion = PowerMockito.mock(SpotifyAppController.Companion::class.java)
 		Whitebox.setInternalState(SpotifyAppController::class.java, "Companion", spotifyAppControllerCompanion)
@@ -317,14 +296,11 @@ class SpotifyWebApiTest {
 
 		doNothing().whenever(spotifyAuthStateManager).addAuthorizationCodeAuthorizationException(exception)
 
-		whenever(appSettingsViewer[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION]).thenReturn("false")
-
 		val notificationManager: NotificationManager = mock()
 		whenever(context.getSystemService(NotificationManager::class.java)).thenReturn(notificationManager)
 
 		spotifyWebApi.initializeWebApi()
 
-		verify(spotifyAuthStateManager).refreshCurrentState()
 		verify(spotifyAuthStateManager).addAuthorizationCodeAuthorizationException(exception)
 		verify(notificationManager, never()).notify(any(), any())
 	}
@@ -332,8 +308,6 @@ class SpotifyWebApiTest {
 	@Test
 	fun testInitializeWebApi_GetLikedSongsAttemptedTrue()
 	{
-		doNothing().whenever(spotifyAuthStateManager).refreshCurrentState()
-
 		PowerMockito.mockStatic(SpotifyAppController::class.java)
 		val spotifyAppControllerCompanion = PowerMockito.mock(SpotifyAppController.Companion::class.java)
 		Whitebox.setInternalState(SpotifyAppController::class.java, "Companion", spotifyAppControllerCompanion)
@@ -400,15 +374,12 @@ class SpotifyWebApiTest {
 
 		spotifyWebApi.initializeWebApi()
 
-		verify(spotifyAuthStateManager).refreshCurrentState()
 		verify(spotifyAuthStateManager).updateTokenResponse(tokenResponse, null)
 		verify(spotifyAppController).createLikedSongsQueueMetadata()
 	}
 
 	@Test
 	fun testInitializeWebApi_NullAuthenticationCode_ShowUnauthenticatedNotificationSettingTrue() {
-		doNothing().whenever(spotifyAuthStateManager).refreshCurrentState()
-
 		PowerMockito.mockStatic(SpotifyAppController::class.java)
 		val spotifyAppControllerCompanion = PowerMockito.mock(SpotifyAppController.Companion::class.java)
 		Whitebox.setInternalState(SpotifyAppController::class.java, "Companion", spotifyAppControllerCompanion)
@@ -424,7 +395,7 @@ class SpotifyWebApiTest {
 		whenever(spotifyAuthStateManager.getAccessToken()).thenReturn(null)
 		whenever(spotifyAuthStateManager.getAuthorizationCode()).thenReturn(null)
 
-		whenever(appSettingsViewer[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION]).thenReturn("true")
+		appSettings[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION] = "true"
 
 		val notifyIntent: Intent = mock()
 		PowerMockito.whenNew(Intent::class.java).withArguments(context, SpotifyAuthorizationActivity::class.java).thenReturn(notifyIntent)
@@ -456,7 +427,6 @@ class SpotifyWebApiTest {
 
 		spotifyWebApi.initializeWebApi()
 
-		verify(spotifyAuthStateManager).refreshCurrentState()
 		verify(notificationManager).createNotificationChannel(notificationChannel)
 		verify(notificationManager).notify(SpotifyWebApi.NOTIFICATION_REQ_ID, notification)
 	}
@@ -541,8 +511,6 @@ class SpotifyWebApiTest {
 		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
 
 		doNothing().whenever(spotifyAuthStateManager).addAccessTokenAuthorizationException(exception)
-
-		whenever(appSettingsViewer[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION]).thenReturn("false")
 
 		val notificationManager: NotificationManager = mock()
 		whenever(context.getSystemService(NotificationManager::class.java)).thenReturn(notificationManager)

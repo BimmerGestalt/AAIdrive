@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.QueueMetadata
@@ -20,7 +21,7 @@ class MusicActivityModel(val musicController: MusicController, val spotifyWebApi
 		override fun <T : ViewModel?> create(modelClass: Class<T>): T {
 			var model: MusicActivityModel? = null
 			val controller = MusicController(appContext, Handler())
-			val spotifyWebApi = SpotifyWebApi.getInstance(appContext)
+			val spotifyWebApi = SpotifyWebApi.getInstance(appContext, MutableAppSettingsReceiver(appContext))
 			controller.connectAppManually(musicApp)
 			controller.listener = Runnable {
 				model?.update()
