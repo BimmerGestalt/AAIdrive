@@ -39,6 +39,7 @@ class InstrumentedTestVirtualDisplay {
 
 		await().untilAsserted {
 			verify(frameListener).onImageAvailable(any())
+			projection.changeColor()
 		}
 
 		testCapture.onDestroy()
