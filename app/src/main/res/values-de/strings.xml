@@ -63,7 +63,6 @@
     <string name="musicAppHidden">Versteckt</string>
     <string name="enable_audio_context">AudioFokus erzwingen</string>
     <string name="enable_spotify_layout">Immer als Spotify-App erscheinen bei iDrive5+</string>
-    <string name="lbl_grant_sessions">Steuerung der aktiven Musik Apps:</string>
     <string name="lbl_grant">Erteilen</string>
     <string name="musicAppNotes_unauthorizedSpotify">Hier klicken um Spotify Zugriff zu autorisieren</string>
     <string name="musicAppNotes_oldSpotify">Bitte ältere Spotify Version für volle Funktionalität nutzen (Browsing)</string>
