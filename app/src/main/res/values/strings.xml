@@ -178,6 +178,7 @@
     <string name="txt_spotify_api_authorization_success">Spotify Web API authorized!</string>
     <string name="txt_spotify_api_authorization_canceled">Spotify Web API authorization canceled.</string>
     <string name="txt_spotify_api_authorization_failed">Spotify Web API authorization failed. Please try again.</string>
+    <string name="lbl_spotify_api_authorized">Spotify Web API Authorized</string>
     <string name="btn_authorize">Authorize</string>
 
     <!-- car app strings -->

@@ -109,9 +109,11 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				override fun onConnected(remote: SpotifyAppRemote?) {
 					if (remote != null) {
 						Log.i(TAG, "Successfully connected to Spotify Remote")
-						MutableAppSettingsReceiver(context)[AppSettings.KEYS.SPOTIFY_CONTROL_SUCCESS] = "true"
 
-						val spotifyWebApi = SpotifyWebApi.getInstance(context, MutableAppSettingsReceiver(context))
+						val appSettings = MutableAppSettingsReceiver(context)
+						appSettings[AppSettings.KEYS.SPOTIFY_CONTROL_SUCCESS] = "true"
+
+						val spotifyWebApi = SpotifyWebApi.getInstance(context, appSettings)
 						spotifyWebApi.initializeWebApi()
 						spotifyWebApi.isUsingSpotify = true
 

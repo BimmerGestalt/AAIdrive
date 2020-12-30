@@ -72,7 +72,7 @@ class MusicActivityModelTest {
 	@Test
 	fun apiAuthenticated() {
 		whenever(webApi.isUsingSpotify) doReturn false
-		whenever(webApi.isAuthorized()) doAnswer { true }
+		whenever(webApi.isAuthorized()) doReturn true
 
 		viewModel.update()
 
@@ -82,7 +82,7 @@ class MusicActivityModelTest {
 	@Test
 	fun apiNotAuthenticated_NotUsingSpotify() {
 		whenever(webApi.isUsingSpotify) doReturn false
-		whenever(webApi.isAuthorized()) doAnswer { false }
+		whenever(webApi.isAuthorized()) doReturn false
 
 		viewModel.update()
 
@@ -92,7 +92,7 @@ class MusicActivityModelTest {
 	@Test
 	fun apiNotAuthenticated_UsingSpotify() {
 		whenever(webApi.isUsingSpotify) doReturn true
-		whenever(webApi.isAuthorized()) doAnswer { false }
+		whenever(webApi.isAuthorized()) doReturn false
 
 		viewModel.update()
 

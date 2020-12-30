@@ -74,7 +74,31 @@
                 android:layout_height="wrap_content"
                 android:visibility="@{viewModel.spotifyHint}"
                 android:text="@{viewModel.spotifyHint}" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:src="@{viewModel.isSpotifyWebApiAuthorized ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background}" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/lbl_spotify_api_authorized" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_authorize"
+                android:textSize="12sp"
+                android:onClick="@{() -> controller.promptSpotifyAuthorization()}"
+                android:visibility="@{!viewModel.isSpotifyWebApiAuthorized}"/>
         </LinearLayout>
     </LinearLayout>
 </layout>
