@@ -211,12 +211,18 @@ class PermissionsModelTest {
 	fun testSpotifyControlConnected() {
 		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
 		whenever(spotifyConnector.hasSupport()) doReturn true
+		whenever(spotifyConnector.previousControlSuccess()) doReturn false
 
 		val result = MutableObservable<SpotifyAppController>()
 		result.value = mock()
 		whenever(spotifyConnector.connect()) doReturn result
 
-		viewModel.updateSpotify()
+		viewModel.updateSpotify()   // tries to connect
+		result.callback?.invoke(mock())     // should trigger _updateSpotify
+		assertEquals(false, viewModel.hasSpotifyControlPermission.value)
+
+		// connection succeeded
+		whenever(spotifyConnector.previousControlSuccess()) doReturn true
 		result.callback?.invoke(mock())     // should trigger _updateSpotify
 		assertEquals(true, viewModel.hasSpotifyControlPermission.value)
 	}

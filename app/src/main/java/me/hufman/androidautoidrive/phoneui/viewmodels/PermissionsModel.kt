@@ -34,7 +34,6 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 
 	private val _hasSpotify = MutableLiveData(false)
 	val hasSpotify = _hasSpotify as LiveData<Boolean>
-	private var _spotifyController: Observable<SpotifyAppController>? = null
 	private val _hasSpotifyControlPermission = MutableLiveData(spotifyConnector.previousControlSuccess())
 	val hasSpotifyControlPermission = _hasSpotifyControlPermission as LiveData<Boolean>
 	private val _spotifyErrorHint = MutableLiveData<Context.() -> String> { "" }
@@ -52,15 +51,14 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 		_hasSpotify.value = hasSpotify
 
 		if (hasSpotify) {
-			_spotifyController = spotifyConnector.connect().apply {
-				callback = { _updateSpotify() }
+			spotifyConnector.connect().apply {
+				callback = { _updateSpotify(); it?.disconnect() }
 			}
 		}
 	}
 
 	private fun _updateSpotify() {
-		println("Updating spotify connection: ${_spotifyController?.value}")
-		_hasSpotifyControlPermission.value = _spotifyController?.value != null
+		_hasSpotifyControlPermission.value = spotifyConnector.previousControlSuccess()
 		val errorName = spotifyConnector.lastError?.javaClass?.simpleName
 		val errorMessage = spotifyConnector.lastError?.message
 		when(errorName) {
