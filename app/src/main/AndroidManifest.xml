@@ -24,12 +24,19 @@
 
         <activity android:name=".phoneui.SpotifyAuthorizationActivity" />
 
-        <activity android:name=".phoneui.MainActivity">
+        <activity-alias
+            android:name=".phoneui.MainActivity"
+            android:targetActivity=".phoneui.NavHostActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity-alias>
+
+        <activity
+            android:name=".phoneui.NavHostActivity"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
@@ -919,15 +926,8 @@
             </intent-filter>
         </activity-alias>
 
-        <activity android:name=".phoneui.SetupActivity">
-        </activity>
-        <activity android:name=".phoneui.MusicActivity">
-        </activity>
         <activity android:name=".phoneui.MusicPlayerActivity"
             android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".phoneui.ConfigureNotificationsActivity"
-            android:label="@string/message_notifications">
         </activity>
 
         <service android:name=".MainService"

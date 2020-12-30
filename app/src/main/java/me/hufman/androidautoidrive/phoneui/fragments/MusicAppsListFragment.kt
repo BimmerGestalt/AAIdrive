@@ -83,8 +83,8 @@ class MusicAppsListFragment: Fragment() {
 		appDiscoveryThread.discovery()
 	}
 
-	override fun onPause() {
-		super.onPause()
+	override fun onDestroy() {
+		super.onDestroy()
 		appDiscoveryThread.stopDiscovery()
 	}
 }

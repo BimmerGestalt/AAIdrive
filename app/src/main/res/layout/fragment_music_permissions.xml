@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data class="MusicPermissionsBinding">
+        <variable
+            name="controller"
+            type="me.hufman.androidautoidrive.phoneui.controllers.PermissionsController" />
+        <variable
+            name="viewModel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel" />
+    </data>
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:src="@{viewModel.hasNotificationPermission ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background}" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/lbl_grant_sessions" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_grant"
+                android:textSize="12sp"
+                android:onClick="@{() -> controller.promptNotification()}"
+                android:visibility="@{!viewModel.hasNotificationPermission}"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:visibility="@{viewModel.hasSpotify}">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:paddingEnd="5dp"
+                    android:src="@{viewModel.hasSpotifyControlPermission ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background}" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/lbl_grant_spotify_control" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lbl_grant"
+                    android:textSize="12sp"
+                    android:onClick="@{() -> controller.promptSpotifyControl()}"
+                    android:visibility="@{!viewModel.hasSpotifyControlPermission}"/>
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="@{viewModel.spotifyHint}"
+                android:text="@{viewModel.spotifyHint}" />
+
+        </LinearLayout>
+    </LinearLayout>
+</layout>

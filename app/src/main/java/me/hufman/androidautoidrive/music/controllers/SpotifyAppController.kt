@@ -11,13 +11,16 @@ import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
-import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
+import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import java.util.*
 
 class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController {
@@ -33,6 +36,13 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		fun hasSupport(context: Context): Boolean {
 			val clientId = getClientId(context)
 			return clientId != "unavailable" && clientId != ""
+		}
+
+		fun isSpotifyInstalled(context: Context): Boolean {
+			return try {
+				context.packageManager.getPackageInfo("com.spotify.music", 0)
+				true
+			} catch (e: PackageManager.NameNotFoundException) { false }
 		}
 
 		fun MusicMetadata.Companion.fromSpotify(track: Track, coverArt: Bitmap? = null): MusicMetadata {
@@ -51,29 +61,46 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		}
 	}
 
-	class Connector(val context: Context): MusicAppController.Connector {
+	class Connector(val context: Context, val prompt: Boolean = true): MusicAppController.Connector {
 		var lastError: Throwable? = null
 
+		fun hasSupport(): Boolean {
+			return SpotifyAppController.hasSupport(context)
+		}
+		fun isSpotifyInstalled(): Boolean {
+			return SpotifyAppController.isSpotifyInstalled(context)
+		}
+		fun previousControlSuccess(): Boolean {
+			return AppSettings[AppSettings.KEYS.SPOTIFY_CONTROL_SUCCESS].toBoolean()
+		}
+
 		override fun connect(appInfo: MusicAppInfo): Observable<SpotifyAppController> {
-			val pendingController = MutableObservable<SpotifyAppController>()
 			if (appInfo.packageName != "com.spotify.music") {
+				val pendingController = MutableObservable<SpotifyAppController>()
 				pendingController.value = null
 				return pendingController
 			}
+			return connect()
+		}
 
+		fun connect(): Observable<SpotifyAppController> {
 			Log.w(TAG, "Attempting to connect to Spotify Remote")
 			val params = ConnectionParams.Builder(getClientId(context))
 					.setRedirectUri(REDIRECT_URI)
-					.showAuthView(true)
+					.showAuthView(prompt)
 					.build()
 
-
+			val pendingController = MutableObservable<SpotifyAppController>()
 			val remoteListener = object: com.spotify.android.appremote.api.Connector.ConnectionListener {
 				override fun onFailure(e: Throwable?) {
 					Log.e(TAG, "Failed to connect to Spotify Remote: $e")
 					if (hasSupport(context)) {
 						// show an error to the UI, unless we don't have an API key
 						this@Connector.lastError = e
+					}
+					// remember that we failed to connect
+					if (pendingController.value == null) {
+						MutableAppSettingsReceiver(context)[AppSettings.KEYS.SPOTIFY_CONTROL_SUCCESS] = "false"
 					}
 					// disconnect an existing session, if any
 					pendingController.value?.disconnect()
@@ -85,6 +112,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				override fun onConnected(remote: SpotifyAppRemote?) {
 					if (remote != null) {
 						Log.i(TAG, "Successfully connected to Spotify Remote")
+						MutableAppSettingsReceiver(context)[AppSettings.KEYS.SPOTIFY_CONTROL_SUCCESS] = "true"
 
 						val spotifyWebApi = SpotifyWebApi.getInstance(context, MutableAppSettingsReceiver(context))
 						spotifyWebApi.initializeWebApi()
@@ -93,8 +121,11 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 						pendingController.value = SpotifyAppController(context, remote, spotifyWebApi)
 
 						// if app discovery says we aren't able to connect, discover again
-						if (!appInfo.connectable) {
-							MusicAppDiscovery(context, Handler()).probeApp(appInfo)
+						val musicAppDiscovery = MusicAppDiscovery(context, Handler())
+						musicAppDiscovery.loadCache()
+						val spotifyAppInfo = musicAppDiscovery.allApps.firstOrNull { it.packageName == "com.spotify.music" }
+						if (spotifyAppInfo?.connectable == false) {
+							musicAppDiscovery.probeApp(spotifyAppInfo)
 						}
 					} else {
 						Log.e(TAG, "Connected to a null Spotify Remote?")
@@ -132,7 +163,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	var playerOptions: PlayerOptions? = null
 	var currentTrack: MusicMetadata? = null
 	var currentSongCoverArtCache = LruCache<ImageUri, Bitmap>(4)
-	var position: PlaybackPosition = PlaybackPosition(true, 0, 0, -1)
+	var position: PlaybackPosition = PlaybackPosition(true, false, 0, 0, -1)
 	var currentTrackLibrary: Boolean? = null
 	var queueUri: String? = null
 	var queueItems: List<MusicMetadata> = LinkedList()
@@ -175,7 +206,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			}
 
 			// update a progress bar
-			position = PlaybackPosition(playerState.isPaused, lastPosition = playerState.playbackPosition, maximumPosition = playerState.track.duration)
+			position = PlaybackPosition(playerState.isPaused, false, lastPosition = playerState.playbackPosition, maximumPosition = playerState.track.duration)
 
 			callback?.invoke(this)
 		}

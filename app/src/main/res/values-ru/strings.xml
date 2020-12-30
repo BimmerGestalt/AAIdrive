@@ -12,6 +12,7 @@
     <string name="notification_description_mini">Подключен к Mini</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <!-- Labels on the navigation trigger activity -->
+    <!-- Menu Titles -->
     <string name="spawn_test_notification">Тест уведомлений</string>
     <string name="message_notifications">Уведомления о сообщениях</string>
     <string name="notification_popups">Всплывающие уведомления</string>
@@ -30,7 +31,7 @@
     <string name="musicAppSearchable">Доступные для поиска</string>
     <string name="musicAppUnavailable">Недоступные</string>
     <string name="enable_audio_context">Включить аудио связь</string>
-    <string name="lbl_grant_sessions">Контроль над активными музыкальными приложениями:</string>
+    <string name="lbl_grant_sessions">Контроль над активными музыкальными приложениями</string>
     <string name="lbl_grant">Разрешить</string>
     <string name="musicAppNotes_unauthorizedSpotify">Нажмите здесь, чтобы авторизовать доступ Spotify</string>
     <string name="musicAppNotes_oldSpotify">Пожалуйста, понизьте версию Spotify для полной функциональности (просмотр)</string>
@@ -40,20 +41,25 @@
     <string name="btn_configure">Настроить …</string>
     <string name="connectionStatusMissingConnectedApp">Не найдено приложения Connected или Connected Classic</string>
     <string name="connectionStatusWaiting">Ожидание подключения к машине</string>
+    <string name="connectionStatusConnected">Подключен к %s</string>
     <string name="nowplaying_notconnected">&lt;Не подключено&gt;</string>
     <string name="nowplaying_unknown">&lt;Неизвестный исполнитель&gt;</string>
+    <!-- connection setup -->
     <string name="txt_setup_bmw_ready">Приложение готово для подключения к BMW</string>
     <string name="txt_setup_mini_ready">Приложение готово для подключения к Mini</string>
     <string name="txt_setup_bmw_missing">Не готово к подключению к BMW:</string>
     <string name="txt_setup_mini_missing">Не готово к подключению к Mini:</string>
-    <string name="txt_build_info">Версия сборки: %1$s %2$s</string>
-    <string name="txt_bcl_report">Производительность туннеля BCL:</string>
-    <string name="txt_car_capabilities">Автомобильные возможности:</string>
     <string name="btn_install">Установить</string>
     <string name="btn_install_bmw">Установить BMW Connected</string>
     <string name="btn_install_mini">Установить Mini Connected</string>
     <string name="btn_install_bmwclassic">Установить BMW Connected Classic</string>
     <string name="btn_install_miniclassic">Установить Mini Connected Classic</string>
+    <!-- connection status -->
+    <!-- capabilities -->
+    <!-- debug status -->
+    <string name="txt_build_info">Версия сборки: %1$s %2$s</string>
+    <string name="txt_bcl_report">Производительность туннеля BCL:</string>
+    <string name="txt_car_capabilities">Автомобильные возможности:</string>
     <string name="lbl_advanced_settings">Показать расширенные настройки</string>
     <string name="lbl_assistant">Голосовой помощник (бета)</string>
     <string name="lbl_assistant_empty">Не найдено</string>

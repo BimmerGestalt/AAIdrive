@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/main"
+    app:startDestination="@id/nav_overview">
+
+    <fragment
+        android:id="@+id/nav_overview"
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.OverviewPageFragment"
+        android:label="@string/app_name" />
+    <fragment
+        android:id="@+id/nav_connection"
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.ConnectionPageFragment"
+        android:label="@string/menu_connection" />
+    <fragment
+        android:id="@+id/nav_music"
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicPageFragment"
+        android:label="@string/menu_music" />
+    <fragment
+        android:id="@+id/nav_notifications"
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.NotificationPageFragment"
+        android:label="@string/menu_notifications" />
+    <fragment
+        android:id="@+id/nav_assistants"
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.AssistantPageFragment"
+        android:label="@string/menu_assistants" />
+    <fragment
+        android:id="@+id/nav_maps"
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.MapsPageFragment"
+        android:label="@string/menu_maps" />
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.SettingsPageFragment"
+        android:label="@string/menu_settings" />
+    <fragment
+        android:id="@+id/nav_support"
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.SupportPageFragment"
+        android:label="@string/menu_support" />
+</navigation>

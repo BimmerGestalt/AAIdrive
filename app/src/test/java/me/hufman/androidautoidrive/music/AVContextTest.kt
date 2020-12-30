@@ -56,7 +56,7 @@ class AVContextTest {
 				duration=180000L,
 				icon=mock(), coverArt=mock(),
 				artist="Artist", album="Album", title="Title")
-		on { getPlaybackPosition() } doReturn PlaybackPosition(false, 0, 5000L, 180000L)
+		on { getPlaybackPosition() } doReturn PlaybackPosition(false, false, 0, 5000L, 180000L)
 		on { isSupportedAction(any()) } doReturn true
 		on { isSupportedAction(MusicAction.PLAY_FROM_SEARCH) } doReturn false
 		on { loadDesiredApp() } doReturn ""

@@ -22,7 +22,7 @@ class MusicActivityModelTest {
 
 	val metadata = MusicMetadata(artist="Artist", album="Album", title="Title")
 	val playbackPosition = mock<PlaybackPosition> {
-		on { playbackPaused } doReturn false
+		on { isPaused } doReturn false
 		on { getPosition() } doReturn 4500
 		on { maximumPosition } doReturn 300000
 	}

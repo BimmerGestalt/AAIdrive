@@ -94,6 +94,7 @@ class MainService: Service() {
 			// never started?
 		}
 		carProberThread?.quitSafely()
+		securityServiceThread.disconnect()
 		super.onDestroy()
 	}
 
@@ -168,7 +169,7 @@ class MainService: Service() {
 
 	private fun startServiceNotification(brand: String?, chassisCode: ChassisCode?) {
 		Log.i(TAG, "Creating foreground notification")
-		val notifyIntent = Intent(this, MainActivity::class.java).apply {
+		val notifyIntent = Intent(this, NavHostActivity::class.java).apply {
 			flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 		}
 		val foregroundNotificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
@@ -438,7 +439,6 @@ class MainService: Service() {
 		synchronized(MainService::class.java) {
 			stopCarApps()
 			appSettings.callback = null
-			securityServiceThread.disconnect()
 		}
 	}
 

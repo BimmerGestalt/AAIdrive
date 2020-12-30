@@ -1,12 +1,16 @@
 package me.hufman.androidautoidrive.phoneui.viewmodels
 
+import android.animation.ValueAnimator
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.*
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
+import com.google.android.material.animation.ArgbEvaluatorCompat
 import me.hufman.androidautoidrive.phoneui.visible
 import kotlin.math.max
 
@@ -18,6 +22,10 @@ fun setImageViewBitmap(view: ImageView, bitmap: Bitmap) {
 @BindingAdapter("android:src")
 fun setImageViewResource(view: ImageView, resource: Int) {
 	view.setImageResource(resource)
+}
+@BindingAdapter("android:src")
+fun setImageViewResource(view: ImageView, drawable: Context.() -> Drawable?) {
+	view.setImageDrawable(view.context.run(drawable))
 }
 
 @BindingAdapter("android:visibility")
@@ -69,4 +77,28 @@ fun getSelectedValue(spinner: Spinner): String {
 @BindingAdapter("android:text")
 fun setText(view: TextView, value: Context.() -> String) {
 	view.text = view.context.run(value)
+}
+
+// Dynamic text
+@BindingAdapter("android:visibility")
+fun setVisibilityByTextGetter(view: TextView, value: Context.() -> String) {
+	val text = view.context.run(value)
+	view.visible = text.isNotBlank()
+}
+
+// Dynamic color with a smooth transition
+@BindingAdapter("android:backgroundTint")
+fun setBackgroundTint(view: View, value: Context.() -> Int) {
+	val color = view.context.run(value)
+	val startColor = view.backgroundTintList?.defaultColor
+	if (startColor != color) {
+		if (startColor == null) {
+			view.backgroundTintList = ColorStateList.valueOf(color)
+		} else {
+			ValueAnimator.ofObject(ArgbEvaluatorCompat(), startColor, color).apply {
+				addUpdateListener { view.backgroundTintList = ColorStateList.valueOf(it.animatedValue as Int) }
+				start()
+			}
+		}
+	}
 }

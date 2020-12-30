@@ -131,7 +131,7 @@ class MusicQueueFragment: Fragment() {
 		override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 			val item = contents.getOrNull(position) ?: return
 
-			if (item.queueId == musicController.getMetadata()?.queueId && !musicController.getPlaybackPosition().playbackPaused) {
+			if (item.queueId == musicController.getMetadata()?.queueId && !musicController.getPlaybackPosition().isPaused) {
 				holder.checkmarkImageView.setImageDrawable(equalizerAnimated)
 				equalizerAnimated.start()
 			} else {

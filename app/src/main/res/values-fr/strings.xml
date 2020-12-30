@@ -12,6 +12,7 @@
     <string name="notification_description_mini">Connecté à votre Mini</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <!-- Labels on the navigation trigger activity -->
+    <!-- Menu Titles -->
     <string name="spawn_test_notification">Tester les Notifications</string>
     <string name="message_notifications">Notifications de Message</string>
     <string name="notification_popups">Popups de Notification</string>
@@ -31,7 +32,7 @@
     <string name="musicAppUnavailable">Non Disponible</string>
     <string name="musicAppHidden">Non Visible</string>
     <string name="enable_audio_context">Demande de Focus Audio</string>
-    <string name="lbl_grant_sessions">Contrôle des applications de musiques:</string>
+    <string name="lbl_grant_sessions">Contrôle des applications de musiques</string>
     <string name="lbl_grant">Autoriser</string>
     <string name="musicAppNotes_unauthorizedSpotify">Cliquer ici pour autoriser l\'accès à Spotify</string>
     <string name="musicAppNotes_oldSpotify">Installez une version plus ancienne de Spotify pour un contrôle complet (navigation)</string>
@@ -41,13 +42,21 @@
     <string name="btn_configure">Configurer …</string>
     <string name="connectionStatusMissingConnectedApp">Applications Connected ou Connected Classic non trouvées</string>
     <string name="connectionStatusWaiting">En Attente de Connection</string>
+    <string name="connectionStatusConnected">Connecté à votre %s</string>
     <string name="nowplaying_notconnected">&lt;Non Connecté&gt;</string>
     <string name="nowplaying_unknown">&lt;Inconnu&gt;</string>
+    <!-- connection setup -->
     <string name="txt_setup_bmw_ready">L\'app est prête à être connectée à une BMW</string>
     <string name="txt_setup_mini_ready">L\'app est prête à être connectée à une Mini</string>
     <string name="txt_setup_bmw_missing">App non prête à être connectée à une BMW:</string>
     <string name="txt_setup_mini_missing">App non prête à être connectée à une Mini:</string>
     <string name="txt_setup_security_missing">Le service Security est manquant:</string>
+    <string name="btn_install">Installer</string>
+    <string name="btn_install_bmw">Installer BMW Connected</string>
+    <string name="btn_install_mini">Installer Mini Connected</string>
+    <string name="btn_install_bmwclassic">Installer BMW Connected Classic</string>
+    <string name="btn_install_miniclassic">Installer Mini Connected Classic</string>
+    <!-- connection status -->
     <string name="txt_setup_bt_disconnected">Aucune voiture n\'est connectée en Bluetooth</string>
     <string name="txt_setup_bt_connected">Voiture connectée en Bluetooth</string>
     <string name="txt_setup_a2dp_disconnected">Bluetooth Music n\'est pas connecté</string>
@@ -67,14 +76,11 @@
     <string name="txt_setup_bcl_connecting">Apps Connection est connectée</string>
     <string name="txt_setup_bcl_connected">Apps Connection est lancée</string>
     <string name="txt_setup_bcl_connected_transport">Apps Connection est lancée en %s</string>
+    <!-- capabilities -->
+    <!-- debug status -->
     <string name="txt_build_info">Version de Build: %1$s %2$s</string>
     <string name="txt_bcl_report">Performance Tunnel BCL:</string>
     <string name="txt_car_capabilities">Capacités reportées de la voiture:</string>
-    <string name="btn_install">Installer</string>
-    <string name="btn_install_bmw">Installer BMW Connected</string>
-    <string name="btn_install_mini">Installer Mini Connected</string>
-    <string name="btn_install_bmwclassic">Installer BMW Connected Classic</string>
-    <string name="btn_install_miniclassic">Installer Mini Connected Classic</string>
     <string name="lbl_advanced_settings">Afficher les Paramètres Avancés</string>
     <string name="lbl_assistant">Assistant Vocal (Beta)</string>
     <string name="lbl_assistant_empty">Aucun résultat trouvé</string>
