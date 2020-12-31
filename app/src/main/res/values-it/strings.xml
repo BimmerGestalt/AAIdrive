@@ -69,13 +69,13 @@
     <string name="musicAppNotes_spotify_apiUnavailable">Prego verificare la connessione e disabilitare qualsiasi blocco pubblicità</string>
     <string name="lbl_settingspage">Impostazioni avanzate, possono causare comportamenti imprevisti</string>
     <string name="lbl_donations_volunteer">AndroidAutoIdrive è un progetto gratuito</string>
-    <string name="lbl_donations_request">Se ti piace questo progetto e lo trovi utile, considera di dare il tuo supporto donando:</string>
+    <string name="lbl_donations_request">Se ti piace questo progetto e lo trovi utile, considera di sostenerlo:</string>
     <string name="btn_donations">Effettua una donazione</string>
     <string name="lbl_support_other_ways">Puoi anche supportare il progetto in altri modi:</string>
     <string name="lbl_support_feedback">Dando un feedback</string>
     <string name="lbl_support_issues">Segnalando problemi o bug</string>
     <string name="lbl_support_share">Facendo passaparola</string>
-    <string name="lbl_support_thanks">Grazie per il tuo utilizzo di AndroidAutoIdrive!</string>
+    <string name="lbl_support_thanks">Grazie per utilizzare AndroidAutoIdrive!</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancella</string>
     <string name="btn_configure">Configura…</string>
