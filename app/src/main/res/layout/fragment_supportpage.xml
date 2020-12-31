@@ -31,6 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:drawableStart="@drawable/ic_heart_feather"
+            android:drawableTint="?android:attr/colorControlNormal"
             android:drawablePadding="8dp"
             android:text="@string/btn_donations"
             android:layout_marginBottom="10dp" />
@@ -65,7 +66,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    app:srcCompat="@drawable/ic_send_feather" />
+                    app:srcCompat="@drawable/ic_send_feather"
+                    app:tint="?android:attr/colorControlNormal" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -82,7 +84,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    app:srcCompat="@drawable/ic_tag_feather" />
+                    app:srcCompat="@drawable/ic_tag_feather"
+                    app:tint="?android:attr/colorControlNormal" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -99,7 +102,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    app:srcCompat="@drawable/ic_share_feather" />
+                    app:srcCompat="@drawable/ic_share_feather"
+                    app:tint="?android:attr/colorControlNormal" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
