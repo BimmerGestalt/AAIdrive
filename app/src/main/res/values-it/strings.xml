@@ -60,6 +60,7 @@
     <string name="enable_audio_context">Forza il focus sull\'audio</string>
     <string name="enable_spotify_layout">Mostra sempre come Spotify in IDrive5+</string>
     <string name="lbl_grant_sessions">Controllo sulle app di musica attive:</string>
+    <string name="lbl_grant_spotify_control">Possibilità di navigare nella libreria Spotify</string>
     <string name="lbl_grant">Concedi</string>
     <string name="musicAppNotes_unauthorizedSpotify">Clicca qui per autorizzare l\'accesso a Spotify</string>
     <string name="musicAppNotes_oldSpotify">Esegui il downgrade di Spotify per la funzionalità completa (Ricerca)</string>
@@ -121,6 +122,10 @@
     <string name="txt_setup_bcl_connected_transport">La connessione Apps è attiva via %s</string>
     <!-- capabilities -->
     <string name="lbl_capabilities_detected">Capacità dell\'auto rilevate:</string>
+    <string name="txt_capabilities_audiocontext_yes">Contesto audio è supportato</string>
+    <string name="txt_capabilities_audiocontext_no">Contesto audio non è supportato</string>
+    <string name="txt_capabilities_audiocontext_no_usb">Contesto audio non supportato tramite USB</string>
+    <string name="txt_capabilities_audiocontext_hint">Ascolta la musica del telefono tramite Bluetooth</string>
     <string name="txt_capabilities_audiostate_yes">Global Coverart è supportato</string>
     <string name="txt_capabilities_audiostate_no">Global Coverart non è supportato</string>
     <string name="txt_capabilities_audiostate_id4">ID4 non supporta questa funzione</string>
