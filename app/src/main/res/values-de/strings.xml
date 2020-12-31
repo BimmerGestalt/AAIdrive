@@ -120,6 +120,7 @@
     <string name="txt_setup_bcl_init_stuck">Apps-Verbindung ist nicht aktiviert:</string>
     <string name="txt_setup_enable_bcl_mode">Aktiviere die Apps Option im Fahrzug für %s</string>
     <string name="txt_setup_bcl_disconnected">Apps Verbindung ist nicht bereit:</string>
+    <string name="txt_setup_bcl_waiting">Warten auf den Start der App-Verbindung</string>
     <string name="txt_setup_enable_bclspp">Versuche Bluetooth Audio an- und auszuschalten oder mit USB-Kabel zu verbinden</string>
     <string name="txt_setup_bcl_connecting">Apps-Verbindung wird hergestellt</string>
     <string name="txt_setup_bcl_connected">Apps-Verbindung aktiv</string>
