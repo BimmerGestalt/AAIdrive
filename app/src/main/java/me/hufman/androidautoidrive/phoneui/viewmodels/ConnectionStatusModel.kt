@@ -4,10 +4,9 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.ChassisCode
@@ -61,11 +60,19 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 	private val _hintUsbAccessory = MutableLiveData<Context.() -> String> { "" }
 	val hintUsbAccessory = _hintUsbAccessory as LiveData<Context.() -> String>
 
+	// BCL connection delay
+	private val BCL_READY_THRESHOLD = 5000L
+	private var _bclReadyTime = 0L
+	private val _bclReadyElapsed
+		get() = System.currentTimeMillis() - _bclReadyTime
+
 	// BCL
 	private val _isBclReady = MutableLiveData<Boolean>()
 	val isBclReady = _isBclReady as LiveData<Boolean>   // BT-SPP or USB-ACC is ready
 	private val _isBclDisconnected = MutableLiveData<Boolean>()
 	val isBclDisconnected = _isBclDisconnected as LiveData<Boolean>
+	private val _hintBclDisconnected = MutableLiveData<Context.() -> String> {""}
+	val hintBclDisconnected = _hintBclDisconnected as LiveData<Context.() -> String>
 	private val _isBclConnecting = MutableLiveData<Boolean>()
 	val isBclConnecting = _isBclConnecting as LiveData<Boolean>
 	private val _isBclStuck = MutableLiveData<Boolean>()
@@ -109,7 +116,22 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		_isUsbAccessory.value = connection.isUsbConnected && connection.isUsbAccessoryConnected
 		_hintUsbAccessory.value = {getString(R.string.txt_setup_enable_usbacc, connection.deviceName)}
 
-		_isBclReady.value = (connection.isSPPAvailable || connection.isUsbAccessoryConnected || connection.isBCLConnected)
+		val oldBclReady = _isBclReady.value ?: false
+		val newBclReady = (connection.isSPPAvailable || connection.isUsbAccessoryConnected || connection.isBCLConnected)
+		if (!oldBclReady && newBclReady) {
+			_bclReadyTime = System.currentTimeMillis()
+			_hintBclDisconnected.value = { "" }
+			// fire off a timer and set the connection hint after the timer finishes
+			// if the connection has succeeded, this panel is hidden before the hint shows
+			viewModelScope.launch {
+				delay(BCL_READY_THRESHOLD)
+				if (_bclReadyElapsed > BCL_READY_THRESHOLD) {
+					_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bclspp) }
+				}
+			}
+		}
+
+		_isBclReady.value = newBclReady
 		_isBclDisconnected.value = !connection.isBCLConnecting && !connection.isBCLConnected
 		_isBclConnecting.value = connection.isBCLConnecting && !connection.isBCLConnected
 		_isBclStuck.value = connection.isBCLStuck

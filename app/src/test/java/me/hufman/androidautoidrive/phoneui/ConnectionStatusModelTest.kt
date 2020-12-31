@@ -5,12 +5,18 @@ import android.content.res.Resources
 import android.util.TypedValue
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.nhaarman.mockito_kotlin.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.ChassisCode
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.connections.CarConnectionDebugging
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel
+import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
@@ -19,6 +25,8 @@ class ConnectionStatusModelTest {
 	@Rule
 	@JvmField
 	val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+	private val mainThreadSurrogate = newSingleThreadContext("UI thread")
 
 	@Suppress("DEPRECATION")
 	val resources: Resources = mock {
@@ -31,6 +39,16 @@ class ConnectionStatusModelTest {
 		on {getString(any())} doReturn ""
 		on {getString(any(), any())} doReturn ""
 		on {resources} doReturn resources
+	}
+
+	@Before
+	fun setUp() {
+		Dispatchers.setMain(mainThreadSurrogate)
+	}
+	@After
+	fun tearDown() {
+		Dispatchers.resetMain()
+		mainThreadSurrogate.close()
 	}
 
 	@Test
@@ -170,6 +188,13 @@ class ConnectionStatusModelTest {
 		assertEquals(true, model.isBclDisconnected.value)
 		assertEquals(false, model.isBclConnecting.value)
 		assertEquals(false, model.isBclConnected.value)
+
+		// empty hint
+		assertEquals("", context.run(model.hintBclDisconnected.value!!))
+		Thread.sleep(5500L)
+		// flips to show a hint after a timeout
+		context.run(model.hintBclDisconnected.value!!)
+		verify(context).getString(eq(R.string.txt_setup_enable_bclspp))
 	}
 
 	@Test

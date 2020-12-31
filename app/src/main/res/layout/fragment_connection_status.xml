@@ -301,7 +301,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/txt_setup_bcl_disconnected" />
+                        android:text="@string/txt_setup_bcl_waiting" />
                 </LinearLayout>
                 <TextView
                     android:id="@+id/txtEnableBclSpp"
@@ -310,7 +310,8 @@
                     android:layout_weight="1"
                     android:paddingStart="36dp"
                     android:paddingEnd="36dp"
-                    android:text="@string/txt_setup_enable_bclspp" />
+                    android:visibility="@{viewModel.hintBclDisconnected}"
+                    android:text="@{viewModel.hintBclDisconnected}"  />
             </LinearLayout>
 
             <LinearLayout
