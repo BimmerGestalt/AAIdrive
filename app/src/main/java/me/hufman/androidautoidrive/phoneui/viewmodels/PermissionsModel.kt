@@ -26,18 +26,18 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 	}
 
 	private val _hasNotificationPermission = MutableLiveData(false)
-	val hasNotificationPermission = _hasNotificationPermission as LiveData<Boolean>
+	val hasNotificationPermission: LiveData<Boolean> = _hasNotificationPermission
 	private val _hasSmsPermission = MutableLiveData<Boolean>(false)
-	val hasSmsPermission = _hasSmsPermission as LiveData<Boolean>
+	val hasSmsPermission: LiveData<Boolean> = _hasSmsPermission
 	private val _hasLocationPermission = MutableLiveData<Boolean>(false)
-	val hasLocationPermission = _hasLocationPermission as LiveData<Boolean>
+	val hasLocationPermission: LiveData<Boolean> = _hasLocationPermission
 
 	private val _hasSpotify = MutableLiveData(false)
-	val hasSpotify = _hasSpotify as LiveData<Boolean>
+	val hasSpotify: LiveData<Boolean> = _hasSpotify
 	private val _hasSpotifyControlPermission = MutableLiveData(spotifyConnector.previousControlSuccess())
-	val hasSpotifyControlPermission = _hasSpotifyControlPermission as LiveData<Boolean>
+	val hasSpotifyControlPermission: LiveData<Boolean> = _hasSpotifyControlPermission
 	private val _spotifyErrorHint = MutableLiveData<Context.() -> String> { "" }
-	val spotifyHint = _spotifyErrorHint as LiveData<Context.() -> String>
+	val spotifyHint: LiveData<Context.() -> String> = _spotifyErrorHint
 
 	fun update() {
 		_hasNotificationPermission.value = notificationListenerState.value == true && permissionsState.hasNotificationPermission

@@ -42,23 +42,23 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 
 	// Bluetooth
 	private val _isBtConnected = MutableLiveData<Boolean>()
-	val isBtConnected = _isBtConnected as LiveData<Boolean>
+	val isBtConnected: LiveData<Boolean> = _isBtConnected
 	private val _isA2dpConnected = MutableLiveData<Boolean>()
-	val isA2dpConnected = _isA2dpConnected as LiveData<Boolean>
+	val isA2dpConnected: LiveData<Boolean> = _isA2dpConnected
 	private val _isSppAvailable = MutableLiveData<Boolean>()
-	val isSppAvailable = _isSppAvailable as LiveData<Boolean>
+	val isSppAvailable: LiveData<Boolean> = _isSppAvailable
 
 	// USB
 	private val _isUsbConnected = MutableLiveData<Boolean>()
-	val isUsbConnected = _isUsbConnected as LiveData<Boolean>
+	val isUsbConnected: LiveData<Boolean> = _isUsbConnected
 	private val _isUsbCharging = MutableLiveData<Boolean>()
-	val isUsbCharging = _isUsbCharging as LiveData<Boolean>
+	val isUsbCharging: LiveData<Boolean> = _isUsbCharging
 	private val _isUsbTransfer = MutableLiveData<Boolean>()
-	val isUsbTransfer = _isUsbTransfer as LiveData<Boolean>
+	val isUsbTransfer: LiveData<Boolean> = _isUsbTransfer
 	private val _isUsbAccessory = MutableLiveData<Boolean>()
-	val isUsbAccessory = _isUsbAccessory as LiveData<Boolean>
+	val isUsbAccessory: LiveData<Boolean> = _isUsbAccessory
 	private val _hintUsbAccessory = MutableLiveData<Context.() -> String> { "" }
-	val hintUsbAccessory = _hintUsbAccessory as LiveData<Context.() -> String>
+	val hintUsbAccessory: LiveData<Context.() -> String> = _hintUsbAccessory
 
 	// BCL connection delay
 	private val BCL_READY_THRESHOLD = 5000L
@@ -68,23 +68,23 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 
 	// BCL
 	private val _isBclReady = MutableLiveData<Boolean>()
-	val isBclReady = _isBclReady as LiveData<Boolean>   // BT-SPP or USB-ACC is ready
+	val isBclReady: LiveData<Boolean> = _isBclReady   // BT-SPP or USB-ACC is ready
 	private val _isBclDisconnected = MutableLiveData<Boolean>()
-	val isBclDisconnected = _isBclDisconnected as LiveData<Boolean>
+	val isBclDisconnected: LiveData<Boolean> = _isBclDisconnected
 	private val _hintBclDisconnected = MutableLiveData<Context.() -> String> {""}
-	val hintBclDisconnected = _hintBclDisconnected as LiveData<Context.() -> String>
+	val hintBclDisconnected: LiveData<Context.() -> String> = _hintBclDisconnected
 	private val _isBclConnecting = MutableLiveData<Boolean>()
-	val isBclConnecting = _isBclConnecting as LiveData<Boolean>
+	val isBclConnecting: LiveData<Boolean> = _isBclConnecting
 	private val _isBclStuck = MutableLiveData<Boolean>()
-	val isBclStuck = _isBclStuck as LiveData<Boolean>
+	val isBclStuck: LiveData<Boolean> = _isBclStuck
 	private val _isBclConnected = MutableLiveData<Boolean>()
-	val isBclConnected = _isBclConnected as LiveData<Boolean>
+	val isBclConnected: LiveData<Boolean> = _isBclConnected
 	private val _hintBclMode = MutableLiveData<Context.() -> String>()
-	val hintBclMode = _hintBclMode as LiveData<Context.() -> String>
+	val hintBclMode: LiveData<Context.() -> String> = _hintBclMode
 	private val _bclModeText = MutableLiveData<Context.() -> String> {
 		getString(R.string.txt_setup_bcl_connected)
 	}
-	val bclModeText = _bclModeText as LiveData<Context.() -> String>
+	val bclModeText: LiveData<Context.() -> String> = _bclModeText
 
 	// Car
 	val isCarConnected = isBclConnected
@@ -95,7 +95,7 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 	private val _carChassisCode = MutableLiveData<ChassisCode?>()
 	val carChassisCode = _carChassisCode
 	private val _carConnectionText = MutableLiveData<Context.() -> String>()
-	val carConnectionText = _carConnectionText as LiveData<Context.() -> String>
+	val carConnectionText: LiveData<Context.() -> String> = _carConnectionText
 	private val _carConnectionColor = MutableLiveData<Context.() -> Int> {ContextCompat.getColor(this, R.color.connectionWaiting)}
 	val carConnectionColor: LiveData<Context.() -> Int> = _carConnectionColor
 

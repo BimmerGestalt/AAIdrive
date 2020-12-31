@@ -31,38 +31,38 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 	}
 
 	private val _isCarConnected = MutableLiveData<Boolean>()
-	val isCarConnnected = _isCarConnected as LiveData<Boolean>
+	val isCarConnnected: LiveData<Boolean> = _isCarConnected
 
 	private val _isAudioContextSupported = MutableLiveData<Boolean>()
-	val isAudioContextSupported = _isAudioContextSupported as LiveData<Boolean>
+	val isAudioContextSupported: LiveData<Boolean> = _isAudioContextSupported
 	private val _audioContextStatus = MutableLiveData<Context.() -> String>()
-	val audioContextStatus = _audioContextStatus as LiveData<Context.() -> String>
+	val audioContextStatus: LiveData<Context.() -> String> = _audioContextStatus
 	private val _audioContextHint = MutableLiveData<Context.() -> String>()
-	val audioContextHint = _audioContextHint as LiveData<Context.() -> String>
+	val audioContextHint: LiveData<Context.() -> String> = _audioContextHint
 
 	private val _isAudioStateSupported = MutableLiveData<Boolean>()
-	val isAudioStateSupported = _isAudioStateSupported as LiveData<Boolean>
+	val isAudioStateSupported: LiveData<Boolean> = _isAudioStateSupported
 	private val _audioStateStatus = MutableLiveData<Context.() -> String>()
-	val audioStateStatus = _audioStateStatus as LiveData<Context.() -> String>
+	val audioStateStatus: LiveData<Context.() -> String> = _audioStateStatus
 	private val _audioStateHint = MutableLiveData<Context.() -> String>()
-	val audioStateHint = _audioStateHint as LiveData<Context.() -> String>
+	val audioStateHint: LiveData<Context.() -> String> = _audioStateHint
 
 	private val _isPopupSupported = MutableLiveData<Boolean>()
-	val isPopupSupported = _isPopupSupported as LiveData<Boolean>
+	val isPopupSupported: LiveData<Boolean> = _isPopupSupported
 	private val _popupStatus = MutableLiveData<Context.() -> String>()
-	val popupStatus = _popupStatus as LiveData<Context.() -> String>
+	val popupStatus: LiveData<Context.() -> String> = _popupStatus
 	private val _popupHint = MutableLiveData<Context.() -> String>()
-	val popupHint = _popupHint as LiveData<Context.() -> String>
+	val popupHint: LiveData<Context.() -> String> = _popupHint
 
 	private val _isTtsSupported = MutableLiveData<Boolean>()
-	val isTtsSupported = _isTtsSupported as LiveData<Boolean>
+	val isTtsSupported: LiveData<Boolean> = _isTtsSupported
 	private val _ttsStatus = MutableLiveData<Context.() -> String>()
-	val ttsStatus = _ttsStatus as LiveData<Context.() -> String>
+	val ttsStatus: LiveData<Context.() -> String> = _ttsStatus
 
 	private val _isNaviSupported = MutableLiveData<Boolean>()
-	val isNaviSupported = _isNaviSupported as LiveData<Boolean>
+	val isNaviSupported: LiveData<Boolean> = _isNaviSupported
 	private val _naviStatus = MutableLiveData<Context.() -> String>()
-	val naviStatus = _naviStatus as LiveData<Context.() -> String>
+	val naviStatus: LiveData<Context.() -> String> = _naviStatus
 
 	fun update() {
 		val capabilities = carInformation.capabilities
