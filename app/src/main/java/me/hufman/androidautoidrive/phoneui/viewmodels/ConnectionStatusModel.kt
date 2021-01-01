@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.os.Handler
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.CarInformation
@@ -62,9 +63,7 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 
 	// BCL connection delay
 	private val BCL_READY_THRESHOLD = 5000L
-	private var _bclReadyTime = 0L
-	private val _bclReadyElapsed
-		get() = System.currentTimeMillis() - _bclReadyTime
+	private var _bclReadyTimer: Job? = null
 
 	// BCL
 	private val _isBclReady = MutableLiveData<Boolean>()
@@ -119,15 +118,13 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		val oldBclReady = _isBclReady.value ?: false
 		val newBclReady = (connection.isSPPAvailable || connection.isUsbAccessoryConnected || connection.isBCLConnected)
 		if (!oldBclReady && newBclReady) {
-			_bclReadyTime = System.currentTimeMillis()
 			_hintBclDisconnected.value = { "" }
 			// fire off a timer and set the connection hint after the timer finishes
 			// if the connection has succeeded, this panel is hidden before the hint shows
-			viewModelScope.launch {
+			_bclReadyTimer?.cancel()
+			_bclReadyTimer = viewModelScope.launch {
 				delay(BCL_READY_THRESHOLD)
-				if (_bclReadyElapsed > BCL_READY_THRESHOLD) {
-					_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bclspp) }
-				}
+				_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bclspp) }
 			}
 		}
 
