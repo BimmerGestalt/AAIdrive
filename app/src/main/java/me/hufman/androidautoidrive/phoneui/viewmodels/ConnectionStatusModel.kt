@@ -93,8 +93,10 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 	val carLogo: LiveData<Context.() -> Drawable?> = _carLogo
 	private val _carChassisCode = MutableLiveData<ChassisCode?>()
 	val carChassisCode = _carChassisCode
-	private val _carConnectionText = MutableLiveData<Context.() -> String>()
+	private val _carConnectionText = MutableLiveData<Context.() -> String> { getString(R.string.connectionStatusWaiting) }
 	val carConnectionText: LiveData<Context.() -> String> = _carConnectionText
+	private val _carConnectionHint = MutableLiveData<Context.() -> String> {""}
+	val carConnectionHint: LiveData<Context.() -> String> = _carConnectionHint
 	private val _carConnectionColor = MutableLiveData<Context.() -> Int> {ContextCompat.getColor(this, R.color.connectionWaiting)}
 	val carConnectionColor: LiveData<Context.() -> Int> = _carConnectionColor
 
@@ -105,6 +107,9 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 
 
 	fun update() {
+		var connectingStatus: Context.() -> String = { getString(R.string.connectionStatusWaiting) }
+		var connectingHint: Context.() -> String = { "" }
+
 		_isBtConnected.value = connection.isBTConnected
 		_isA2dpConnected.value = connection.isA2dpConnected
 		_isSppAvailable.value = connection.isSPPAvailable
@@ -114,6 +119,11 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		_isUsbTransfer.value = connection.isUsbConnected && connection.isUsbTransferConnected && !connection.isUsbAccessoryConnected
 		_isUsbAccessory.value = connection.isUsbConnected && connection.isUsbAccessoryConnected
 		_hintUsbAccessory.value = {getString(R.string.txt_setup_enable_usbacc, connection.deviceName)}
+		if (_isUsbCharging.value == true) {
+			connectingHint = {getString(R.string.txt_setup_enable_usbmtp)}
+		} else if (_isUsbTransfer.value == true) {
+			connectingHint = {getString(R.string.txt_setup_enable_usbacc, connection.deviceName)}
+		}
 
 		val oldBclReady = _isBclReady.value ?: false
 		val newBclReady = (connection.isSPPAvailable || connection.isUsbAccessoryConnected || connection.isBCLConnected)
@@ -124,7 +134,10 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 			_bclReadyTimer?.cancel()
 			_bclReadyTimer = viewModelScope.launch {
 				delay(BCL_READY_THRESHOLD)
-				_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bclspp) }
+				if (_isBclConnected.value != true) {
+					_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bclspp) }
+					_carConnectionHint.value = { getString(R.string.txt_setup_enable_bclspp) }
+				}
 			}
 		}
 
@@ -138,6 +151,17 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 			{ getString(R.string.txt_setup_bcl_connected) }
 		} else {
 			{ getString(R.string.txt_setup_bcl_connected_transport, connection.bclTransport) }
+		}
+		if (newBclReady && _isBclDisconnected.value == true) {
+			connectingStatus = { getString(R.string.txt_setup_bcl_waiting) }
+		}
+		if (connection.isBCLConnecting || connection.isBCLConnected) {
+			// tunnel is connecting or connected
+			// connectingStatus will be ignored if carInfo is ready
+			connectingStatus = { getString(R.string.txt_setup_bcl_connecting) }
+		}
+		if (_isBclStuck.value == true) {
+			connectingHint = {getString(R.string.txt_setup_enable_bcl_mode, connection.deviceName)}
 		}
 
 		// current car overview
@@ -154,15 +178,19 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 
 		if (!connection.isConnectedSecurityConnected && !connection.isConnectedSecurityConnecting && _age > SECURITY_SERVICE_THRESHOLD) {
 			_carConnectionText.value = { getString(R.string.connectionStatusMissingConnectedApp) }
+			_carConnectionHint.value = { "" }
 			_carConnectionColor.value = { ContextCompat.getColor(this, R.color.connectionError) }
 		} else if (connection.isBCLConnected && chassisCode != null) {
 			_carConnectionText.value = { getString(R.string.connectionStatusConnected, chassisCode.toString()) }
+			_carConnectionHint.value = { "" }
 			_carConnectionColor.value = { ContextCompat.getColor(this, R.color.connectionConnected) }
 		} else if (connection.isBCLConnected && brand != null) {
 			_carConnectionText.value = { getString(R.string.connectionStatusConnected, brand) }
+			_carConnectionHint.value = { "" }
 			_carConnectionColor.value = { ContextCompat.getColor(this, R.color.connectionConnected) }
 		} else {
-			_carConnectionText.value = { getString(R.string.connectionStatusWaiting) }
+			_carConnectionText.value = connectingStatus
+			_carConnectionHint.value = connectingHint
 			_carConnectionColor.value = { ContextCompat.getColor(this, R.color.connectionWaiting) }
 		}
 

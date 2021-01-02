@@ -48,6 +48,10 @@ class ConnectionStatusModelTest {
 		assertEquals(false, model.isBtConnected.value)
 		assertEquals(false, model.isUsbConnected.value)
 		assertEquals(false, model.isBclReady.value)
+
+		context.run(model.carConnectionText.value!!)
+		verify(context).getString(eq(R.string.connectionStatusWaiting))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
 	}
 
 	@Test
@@ -65,6 +69,10 @@ class ConnectionStatusModelTest {
 		assertEquals(false, model.isSppAvailable.value)
 		assertEquals(false, model.isUsbConnected.value)
 		assertEquals(false, model.isBclReady.value)
+
+		context.run(model.carConnectionText.value!!)
+		verify(context).getString(eq(R.string.connectionStatusWaiting))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
 	}
 
 	@Test
@@ -82,6 +90,10 @@ class ConnectionStatusModelTest {
 		assertEquals(false, model.isSppAvailable.value)
 		assertEquals(false, model.isUsbConnected.value)
 		assertEquals(false, model.isBclReady.value)
+
+		context.run(model.carConnectionText.value!!)
+		verify(context).getString(eq(R.string.connectionStatusWaiting))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
 	}
 
 	@Test
@@ -99,6 +111,10 @@ class ConnectionStatusModelTest {
 		assertEquals(true, model.isSppAvailable.value)
 		assertEquals(false, model.isUsbConnected.value)
 		assertEquals(true, model.isBclReady.value)
+
+		context.run(model.carConnectionText.value!!)
+		verify(context).getString(eq(R.string.txt_setup_bcl_waiting))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
 	}
 
 	@Test
@@ -117,6 +133,11 @@ class ConnectionStatusModelTest {
 		assertEquals(false, model.isUsbTransfer.value)
 		assertEquals(false, model.isUsbAccessory.value)
 		assertEquals(false, model.isBclReady.value)
+
+		context.run(model.carConnectionText.value!!)
+		verify(context).getString(eq(R.string.connectionStatusWaiting))
+		context.run(model.carConnectionHint.value!!)
+		verify(context).getString(eq(R.string.txt_setup_enable_usbmtp))
 	}
 
 	@Test
@@ -139,6 +160,11 @@ class ConnectionStatusModelTest {
 
 		context.run(model.hintUsbAccessory.value!!)
 		verify(context).getString(eq(R.string.txt_setup_enable_usbacc), eq("Test"))
+
+		context.run(model.carConnectionText.value!!)
+		verify(context).getString(eq(R.string.connectionStatusWaiting))
+		context.run(model.carConnectionHint.value!!)
+		verify(context, times(2)).getString(eq(R.string.txt_setup_enable_usbacc), eq("Test"))
 	}
 
 	@Test
@@ -157,6 +183,10 @@ class ConnectionStatusModelTest {
 		assertEquals(false, model.isUsbTransfer.value)
 		assertEquals(true, model.isUsbAccessory.value)
 		assertEquals(true, model.isBclReady.value)
+
+		context.run(model.carConnectionText.value!!)
+		verify(context).getString(eq(R.string.txt_setup_bcl_waiting))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
 	}
 
 	@Test
@@ -177,12 +207,22 @@ class ConnectionStatusModelTest {
 		assertEquals(false, model.isBclConnecting.value)
 		assertEquals(false, model.isBclConnected.value)
 
+		context.run(model.carConnectionText.value!!)
+		verify(context).getString(eq(R.string.txt_setup_bcl_waiting))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
 		// empty hint
 		assertEquals("", context.run(model.hintBclDisconnected.value!!))
+
 		delay(5500L)
 		// flips to show a hint after a timeout
 		context.run(model.hintBclDisconnected.value!!)
 		verify(context).getString(eq(R.string.txt_setup_enable_bclspp))
+
+		// main connection status shows the hint too
+		context.run(model.carConnectionText.value!!)
+		verify(context, times(2)).getString(eq(R.string.txt_setup_bcl_waiting))
+		context.run(model.carConnectionHint.value!!)
+		verify(context, times(2)).getString(eq(R.string.txt_setup_enable_bclspp))
 	}
 
 	@Test
@@ -202,6 +242,10 @@ class ConnectionStatusModelTest {
 		assertEquals(false, model.isBclDisconnected.value)
 		assertEquals(true, model.isBclConnecting.value)
 		assertEquals(false, model.isBclConnected.value)
+
+		context.run(model.carConnectionText.value!!)
+		verify(context).getString(eq(R.string.txt_setup_bcl_connecting))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
 	}
 
 	@Test
@@ -227,6 +271,11 @@ class ConnectionStatusModelTest {
 
 		context.run(model.hintBclMode.value!!)
 		verify(context).getString(eq(R.string.txt_setup_enable_bcl_mode), eq("Test"))
+
+		context.run(model.carConnectionText.value!!)
+		verify(context).getString(eq(R.string.txt_setup_bcl_connecting))
+		context.run(model.carConnectionHint.value!!)
+		verify(context, times(2)).getString(eq(R.string.txt_setup_enable_bcl_mode), eq("Test"))
 		// not actually displayed, but the value is generic
 		context.run(model.bclModeText.value!!)
 		verify(context).getString(eq(R.string.txt_setup_bcl_connected))
@@ -253,6 +302,9 @@ class ConnectionStatusModelTest {
 
 		context.run(model.bclModeText.value!!)
 		verify(context).getString(eq(R.string.txt_setup_bcl_connected_transport), eq("BT"))
+
+		context.run(model.carConnectionText.value!!)
+		verify(context).getString(eq(R.string.txt_setup_bcl_connecting))
 	}
 
 	@Test
@@ -305,7 +357,8 @@ class ConnectionStatusModelTest {
 		val model = ConnectionStatusModel(connection, carInfo).apply { update() }
 
 		context.run(model.carConnectionText.value!!)
-		verify(context).getString(eq(R.string.connectionStatusWaiting))
+		verify(context).getString(eq(R.string.txt_setup_bcl_connecting))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
 		context.run(model.carConnectionColor.value!!)
 		verify(context).getColor(R.color.connectionWaiting)
 		context.run(model.carLogo.value!!)
@@ -325,6 +378,7 @@ class ConnectionStatusModelTest {
 
 		context.run(model.carConnectionText.value!!)
 		verify(context).getString(eq(R.string.connectionStatusConnected), eq("BMW"))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
 		context.run(model.carConnectionColor.value!!)
 		verify(context).getColor(R.color.connectionConnected)
 		context.run(model.carLogo.value!!)
@@ -343,6 +397,7 @@ class ConnectionStatusModelTest {
 
 		context.run(model.carConnectionText.value!!)
 		verify(context).getString(eq(R.string.connectionStatusConnected), eq("MINI"))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
 		context.run(model.carConnectionColor.value!!)
 		verify(context).getColor(R.color.connectionConnected)
 		context.run(model.carLogo.value!!)
@@ -371,6 +426,7 @@ class ConnectionStatusModelTest {
 
 		context.run(model.carConnectionText.value!!)
 		verify(context).getString(eq(R.string.connectionStatusConnected), eq(ChassisCode.F56.toString()))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
 		context.run(model.carConnectionColor.value!!)
 		verify(context).getColor(R.color.connectionConnected)
 	}

@@ -81,7 +81,7 @@ fun setText(view: TextView, value: Context.() -> String) {
 
 // Dynamic text
 @BindingAdapter("android:visibility")
-fun setVisibilityByTextGetter(view: TextView, value: Context.() -> String) {
+fun setVisibilityByTextGetter(view: View, value: Context.() -> String) {
 	val text = view.context.run(value)
 	view.visible = text.isNotBlank()
 }
