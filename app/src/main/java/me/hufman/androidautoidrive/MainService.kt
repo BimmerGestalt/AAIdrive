@@ -332,12 +332,18 @@ class MainService: Service() {
 	fun stopNotifications() {
 		carappNotifications?.notificationSettings?.btStatus?.unregister()
 		carappNotifications?.onDestroy(this)
-		carappNotifications = null
 		carappReadout?.onDestroy()
-		carappReadout = null
 		// if we caught it during initialization, kill it again
-		threadNotifications?.post {
-			stopNotifications()
+		val thread = threadNotifications
+		if (thread?.isAlive == true) {
+			thread.post {
+				stopNotifications()
+				carappNotifications = null
+				carappReadout = null
+			}
+		} else {
+			carappNotifications = null
+			carappReadout = null
 		}
 		threadNotifications?.quitSafely()
 		threadNotifications = null
