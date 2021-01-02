@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/paneDependencyInfo"
-        android:name="me.hufman.androidautoidrive.phoneui.fragments.DependencyInfoFragment"/>
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.DependencySummaryFragment"/>
     <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
