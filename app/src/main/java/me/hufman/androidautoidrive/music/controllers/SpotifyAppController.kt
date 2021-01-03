@@ -421,7 +421,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			MusicAction.SKIP_TO_QUEUE_ITEM -> false
 			MusicAction.SET_SHUFFLE_MODE -> playerActions?.canToggleShuffle == true
 			MusicAction.SET_REPEAT_MODE -> playerActions?.canRepeatContext == true || playerActions?.canRepeatTrack == true
-			// figure out search
+			MusicAction.PLAY_FROM_SEARCH -> true
 			else -> false
 		}
 	}
@@ -510,9 +510,12 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		return deferred.await()
 	}
 
-	override suspend fun search(query: String): List<MusicMetadata>? {
-		// requires a Web API call, not sure how to get the access token
-		return null
+	override suspend fun search(query: String): List<MusicMetadata> {
+		val deferred = CompletableDeferred<List<MusicMetadata>>()
+		GlobalScope.launch(defaultDispatcher) {
+			deferred.complete(webApi.searchForQuery(this@SpotifyAppController, query))
+		}
+		return deferred.await()
 	}
 
 	override fun subscribe(callback: (MusicAppController) -> Unit) {

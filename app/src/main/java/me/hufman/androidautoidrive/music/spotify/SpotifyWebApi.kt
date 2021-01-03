@@ -9,7 +9,9 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
+import com.adamratzman.spotify.endpoints.public.SearchApi
 import com.adamratzman.spotify.models.Token
+import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.R
@@ -19,7 +21,7 @@ import net.openid.appauth.*
 
 /**
  * Handles the logic around the Spotify Web API. This class is a singleton to prevent issues of having
- * multiple [SpotifyClientAPI]s.
+ * multiple [SpotifyClientApi]s.
  */
 class SpotifyWebApi private constructor(val context: Context, val appSettings: MutableAppSettings) {
 	companion object {
@@ -43,7 +45,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	}
 
 	// will be null if the user is not authenticated
-	private var webApi: SpotifyClientAPI? = null
+	private var webApi: SpotifyClientApi? = null
 
 	private val authStateManager: SpotifyAuthStateManager
 	private var getLikedSongsAttempted: Boolean = false
@@ -63,14 +65,14 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		spotifyAppControllerCaller = null
 	}
 
-	fun getLikedSongs(spotifyAppController: SpotifyAppController): List<SpotifyMusicMetadata>?  {
+	suspend fun getLikedSongs(spotifyAppController: SpotifyAppController): List<SpotifyMusicMetadata>?  {
 		if (webApi == null) {
 			getLikedSongsAttempted = true
 			spotifyAppControllerCaller = spotifyAppController
 			return emptyList()
 		}
 		try {
-			val likedSongs = webApi?.library?.getSavedTracks(50)?.getAllItemsNotNull()?.complete()
+			val likedSongs = webApi?.library?.getSavedTracks(50)?.getAllItemsNotNull()
 			return likedSongs?.map {
 				val track = it.track
 				val mediaId = track.uri.uri
@@ -92,8 +94,122 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		return null
 	}
 
+	suspend fun searchForQuery(spotifyAppController: SpotifyAppController, query: String): List<SpotifyMusicMetadata> {
+		if (webApi == null) {
+			return emptyList()
+		}
+		try {
+			val searchResults = webApi?.search?.search(
+					query,
+					SearchApi.SearchType.ARTIST,
+					SearchApi.SearchType.ALBUM,
+					SearchApi.SearchType.EPISODE,
+					SearchApi.SearchType.PLAYLIST,
+					SearchApi.SearchType.SHOW,
+					SearchApi.SearchType.TRACK,
+					limit = 20)
+
+			val searchResultMusicMetadata: ArrayList<SpotifyMusicMetadata> = ArrayList()
+
+			// run through each of the search result categories and compile full list
+			val artistResults = searchResults?.artists
+			if (artistResults != null && artistResults.size > 0) {
+				searchResultMusicMetadata.addAll(artistResults.items.map {
+					val mediaId = it.uri.uri
+					val coverArtIndex = it.images.indexOfFirst { it.height == 320 }
+					val coverArtUri = if (coverArtIndex != -1) {
+						val imageUrl = it.images[coverArtIndex].url
+						val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
+						"spotify:image:$coverArtCode"
+					} else {
+						null
+					}
+
+					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.type.capitalize(), null, it.name)
+				})
+			}
+
+			val albumResults = searchResults?.albums
+			if (albumResults != null && albumResults.size > 0) {
+				searchResultMusicMetadata.addAll(albumResults.items.map {
+					val mediaId = it.uri.uri
+					val coverArtIndex = it.images.indexOfFirst { it.height == 300 }
+					val coverArtUri = if (coverArtIndex != -1) {
+						val imageUrl = it.images[coverArtIndex].url
+						val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
+						"spotify:image:$coverArtCode"
+					} else {
+						null
+					}
+					val artists = it.artists.map { it.name }.joinToString(", ")
+
+					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.type.capitalize() + " - " + artists, null, it.name)
+				})
+			}
+
+			val songResults = searchResults?.tracks
+			if (songResults != null && songResults.size > 0) {
+				searchResultMusicMetadata.addAll(songResults.items.map {
+					val mediaId = it.uri.uri
+					val coverArtIndex = it.album.images.indexOfFirst { it.height == 300 }
+					val coverArtUri = if (coverArtIndex != -1) {
+						val imageUrl = it.album.images[coverArtIndex].url
+						val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
+						"spotify:image:$coverArtCode"
+					} else {
+						null
+					}
+					val artists = it.artists.map { it.name }.joinToString(", ")
+
+					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.type.capitalize() + " - " + artists, null, it.name)
+				})
+			}
+
+			val episodeResults = searchResults?.episodes
+			if (episodeResults != null && episodeResults.size > 0) {
+				searchResultMusicMetadata.addAll(episodeResults.items.filterNotNull().map {
+					val mediaId = it.uri.uri
+					val coverArtIndex = it.images.indexOfFirst { it.height == 300 }
+					val coverArtUri = if (coverArtIndex != -1) {
+						val imageUrl = it.images[coverArtIndex].url
+						val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
+						"spotify:image:$coverArtCode"
+					} else {
+						null
+					}
+					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.type.capitalize(), null, it.name)
+				})
+			}
+
+			val showResults = searchResults?.shows
+			if (showResults != null && showResults.size > 0) {
+				searchResultMusicMetadata.addAll(showResults.items.filterNotNull().map {
+					val mediaId = it.uri.uri
+					val coverArtIndex = it.images.indexOfFirst { it.height == 300 }
+					val coverArtUri = if (coverArtIndex != -1) {
+						val imageUrl = it.images[coverArtIndex].url
+						val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
+						"spotify:image:$coverArtCode"
+					} else {
+						null
+					}
+					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.type.capitalize() + " - " + it.publisher, null, it.name)
+				})
+			}
+
+			return searchResultMusicMetadata
+		} catch (e: SpotifyException.AuthenticationException) {
+			Log.e(TAG, "Failed to get search results due to authentication error with the message: ${e.message}")
+			authStateManager.addAccessTokenAuthorizationException(e)
+			createNotAuthorizedNotification()
+		} catch (e: SpotifyException) {
+			Log.e(TAG, "Exception occurred while attempting to get search results with the message: ${e.message}")
+		}
+		return emptyList()
+	}
+
 	/**
-	 * Initializes the [SpotifyClientAPI] instance and updates the [AuthState] with the token used.
+	 * Initializes the [SpotifyClientApi] instance and updates the [AuthState] with the token used.
 	 */
 	fun initializeWebApi() {
 		webApi = createWebApiClient()
@@ -115,26 +231,24 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	}
 
 	/**
-	 * Creates the Web API client using the PKCE authentication flow. If the [SpotifyClientAPI] creation
+	 * Creates the Web API client using the PKCE authentication flow. If the [SpotifyClientApi] creation
 	 * and validation process encounters a authentication failure, a null instance is returned and the
 	 * [AuthState] updated with the exception.
 	 */
-	private fun createWebApiClient(): SpotifyClientAPI? {
+	private fun createWebApiClient(): SpotifyClientApi? = runBlocking {
 		val clientId = SpotifyAppController.getClientId(context)
-		val spotifyApiOptionsBuilder = SpotifyApiOptionsBuilder(
-				retryWhenRateLimited = false,
-				onTokenRefresh = {
-					Log.d(TAG, "Updating AuthState with refreshed token")
-					updateAuthStateWithAccessToken(it.token)
-				})
 		val accessToken = authStateManager.getAccessToken()
 		if (accessToken != null) {
-			return try {
+			return@runBlocking try {
 				val expirationIn = authStateManager.getAccessTokenExpirationIn()
 				val refreshToken = authStateManager.getRefreshToken()
 				val scopes = authStateManager.getScopeString()
 				val token = Token(accessToken, "Bearer", expirationIn.toInt(), refreshToken, scopes)
-				val apiBuilder = SpotifyClientApiBuilderHelper.createApiBuilderWithAccessToken(clientId, token, spotifyApiOptionsBuilder)
+				val apiBuilder = SpotifyClientApiBuilderHelper.createApiBuilderWithAccessToken(clientId, token)
+				apiBuilder.options.onTokenRefresh = {
+					Log.d(TAG, "Updating AuthState with refreshed token")
+					updateAuthStateWithAccessToken(it.token)
+				}
 				apiBuilder.build()
 			} catch (e: SpotifyException.AuthenticationException) {
 				Log.e(SpotifyAppController.TAG, "Failed to create the web API with an access token. Access token is invalid")
@@ -147,11 +261,15 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			if (authorizationCode == null) {
 				Log.e(SpotifyAppController.TAG, "Failed to create the Web API with an authorization code. Authorization code is invalid or not found")
 				createNotAuthorizedNotification()
-				return null
+				return@runBlocking null
 			}
 
-			return try {
-				val apiBuilder = SpotifyClientApiBuilderHelper.createApiBuilderWithAuthorizationCode(clientId, authorizationCode, spotifyApiOptionsBuilder)
+			return@runBlocking try {
+				val apiBuilder = SpotifyClientApiBuilderHelper.createApiBuilderWithAuthorizationCode(clientId, authorizationCode)
+				apiBuilder.options.onTokenRefresh = {
+					Log.d(TAG, "Updating AuthState with refreshed token")
+					updateAuthStateWithAccessToken(it.token)
+				}
 				apiBuilder.build()
 			} catch (e: SpotifyException.AuthenticationException) {
 				authStateManager.addAuthorizationCodeAuthorizationException(e)
@@ -204,7 +322,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	}
 
 	/**
-	 * Disconnect process for shutting down the [SpotifyClientAPI].
+	 * Disconnect process for shutting down the [SpotifyClientApi].
 	 */
 	fun disconnect() {
 		Log.d(TAG, "Disconnecting Web API")
@@ -221,25 +339,23 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			/**
 			 * Creates a [SpotifyClientApiBuilder] from an authorization code.
 			 */
-			fun createApiBuilderWithAuthorizationCode(clientId: String, authorizationCode: String, spotifyApiOptionsBuilder: SpotifyApiOptionsBuilder): SpotifyClientApiBuilder {
+			fun createApiBuilderWithAuthorizationCode(clientId: String, authorizationCode: String): SpotifyClientApiBuilder {
+				val spotifyUserAuthorization = SpotifyUserAuthorization(authorizationCode = authorizationCode, pkceCodeVerifier = SpotifyAuthorizationActivity.CODE_VERIFIER)
 				return spotifyClientPkceApi(
 						clientId,
 						SpotifyAppController.REDIRECT_URI,
-						authorizationCode,
-						SpotifyAuthorizationActivity.CODE_VERIFIER,
-						spotifyApiOptionsBuilder)
+						spotifyUserAuthorization)
 			}
 
 			/**
 			 * Creates a [SpotifyClientApiBuilder] from an access token.
 			 */
-			fun createApiBuilderWithAccessToken(clientId: String, token: Token, spotifyApiOptionsBuilder: SpotifyApiOptionsBuilder): SpotifyClientApiBuilder {
+			fun createApiBuilderWithAccessToken(clientId: String, token: Token): SpotifyClientApiBuilder {
+				val spotifyUserAuthorization = SpotifyUserAuthorization(token = token, pkceCodeVerifier = SpotifyAuthorizationActivity.CODE_VERIFIER)
 				return spotifyClientPkceApi(
 						clientId,
 						SpotifyAppController.REDIRECT_URI,
-						token,
-						SpotifyAuthorizationActivity.CODE_VERIFIER,
-						spotifyApiOptionsBuilder)
+						spotifyUserAuthorization)
 			}
 		}
 	}
