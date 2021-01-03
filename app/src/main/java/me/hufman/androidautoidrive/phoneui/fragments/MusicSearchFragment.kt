@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.music_queuepage.*
 import kotlinx.android.synthetic.main.music_searchpage.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
@@ -35,6 +36,7 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 
 	lateinit var musicController: MusicController
 	val contents = ArrayList<MusicMetadata>()
+	var searchJob: Job? = null
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.music_searchpage, container, false)
@@ -75,9 +77,14 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 		val inputManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 		inputManager.hideSoftInputFromWindow(searchBar.windowToken, 0)
 
+		if (searchJob != null) {
+			searchJob?.cancel()
+		}
+
+		contents.clear()
 		txtSearchResultsEmpty.text = getString(R.string.MUSIC_BROWSE_LOADING)
 
-		launch {
+		searchJob = launch {
 			val result = musicController.searchAsync(query)
 			val contents = result.await() ?: emptyList()
 			this@MusicSearchFragment.contents.clear()
@@ -88,7 +95,7 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 
 	private fun redraw() {
 		if (contents.isEmpty()) {
-			txtSearchResultsEmpty.text = "No results found"
+			txtSearchResultsEmpty.text = getString(R.string.MUSIC_SEARCH_EMPTY)
 		} else {
 			txtSearchResultsEmpty.text = ""
 		}
@@ -96,7 +103,7 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 	}
 
 	class SearchResultsAdapter(val context: Context, val iconsModel: MusicActivityIconsModel, val contents: ArrayList<MusicMetadata>, val clickListener: (MusicMetadata?) -> Unit): RecyclerView.Adapter<SearchResultsAdapter.ViewHolder>() {
-		inner class ViewHolder(val view: View): RecyclerView.ViewHolder(view), View.OnClickListener {
+		inner class ViewHolder(val view: View, val searchResultCoverArtImageView: ImageView, val searchResultTitleTextView: TextView, val searchResultSubtitleTextView: TextView): RecyclerView.ViewHolder(view), View.OnClickListener {
 			init {
 				view.setOnClickListener(this)
 			}
@@ -111,17 +118,18 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 		}
 
 		override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-			val layout = LayoutInflater.from(context).inflate(R.layout.music_browse_listitem, parent, false)
-		    return ViewHolder(layout)
+			val layout = LayoutInflater.from(context).inflate(R.layout.music_search_listitem, parent, false)
+		    return ViewHolder(layout, layout.findViewById(R.id.imgSearchResultCover), layout.findViewById(R.id.txtSearchResultTitle), layout.findViewById(R.id.txtSearchResultSubtitleTitle))
 		}
 
 		override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 			val item = contents.getOrNull(position) ?: return
-			holder.view.findViewById<TextView>(R.id.txtBrowseEntryTitle).text = item.title
-			holder.view.findViewById<TextView>(R.id.txtBrowseEntrySubtitle).text = item.artist
 
-			holder.view.findViewById<ImageView>(R.id.imgBrowseType).colorFilter = Utils.getIconMask(context.getThemeColor(android.R.attr.textColorSecondary))
-			holder.view.findViewById<ImageView>(R.id.imgBrowseType).setImageBitmap(if (item.coverArt != null) {
+			holder.searchResultTitleTextView.text = item.title
+			holder.searchResultSubtitleTextView.text = item.artist
+
+			holder.searchResultCoverArtImageView.colorFilter = Utils.getIconMask(context.getThemeColor(android.R.attr.textColorSecondary))
+			holder.searchResultCoverArtImageView.setImageBitmap(if (item.coverArt != null) {
 				item.coverArt
 			} else {
 				iconsModel.songIcon
