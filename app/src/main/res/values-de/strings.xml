@@ -64,6 +64,7 @@
     <string name="enable_audio_context">AudioFokus erzwingen</string>
     <string name="enable_spotify_layout">Immer als Spotify-App erscheinen bei iDrive5+</string>
     <string name="lbl_grant_sessions">Steuerung der aktiven Musik Apps</string>
+    <string name="lbl_grant_spotify_control">Möglichkeit, deine Spotify-Bibliothek zu durchsuchen</string>
     <string name="lbl_grant">Erteilen</string>
     <string name="musicAppNotes_unauthorizedSpotify">Hier klicken um Spotify Zugriff zu autorisieren</string>
     <string name="musicAppNotes_oldSpotify">Bitte ältere Spotify Version für volle Funktionalität nutzen (Browsing)</string>
@@ -119,6 +120,7 @@
     <string name="txt_setup_bcl_init_stuck">Apps-Verbindung ist nicht aktiviert:</string>
     <string name="txt_setup_enable_bcl_mode">Aktiviere die Apps Option im Fahrzug für %s</string>
     <string name="txt_setup_bcl_disconnected">Apps Verbindung ist nicht bereit:</string>
+    <string name="txt_setup_bcl_waiting">Warten auf den Start der App-Verbindung</string>
     <string name="txt_setup_enable_bclspp">Versuche Bluetooth Audio an- und auszuschalten oder mit USB-Kabel zu verbinden</string>
     <string name="txt_setup_bcl_connecting">Apps-Verbindung wird hergestellt</string>
     <string name="txt_setup_bcl_connected">Apps-Verbindung aktiv</string>

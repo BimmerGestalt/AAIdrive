@@ -5,7 +5,6 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
-import android.provider.Settings
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
@@ -13,13 +12,6 @@ import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
-import me.hufman.androidautoidrive.carapp.notifications.NotificationSettings
-import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
-import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
-import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
-import me.hufman.androidautoidrive.carapp.notifications.ReadoutApp
-import me.hufman.androidautoidrive.connections.BtStatus
-import me.hufman.androidautoidrive.notifications.AudioPlayer
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
@@ -54,9 +46,7 @@ class MainService: Service() {
 	var threadCapabilities: CarThread? = null
 	var carappCapabilities: CarInformationDiscovery? = null
 
-	var threadNotifications: CarThread? = null
-	var carappNotifications: PhoneNotifications? = null
-	var carappReadout: ReadoutApp? = null
+	var notificationService: NotificationService? = null
 
 	var mapService: MapService? = null
 
@@ -281,66 +271,15 @@ class MainService: Service() {
 	}
 
 	fun startNotifications(): Boolean {
-		val enabled = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
-				Settings.Secure.getString(contentResolver, "enabled_notification_listeners")?.contains(packageName) == true
-		if (enabled) {
-			synchronized(this) {
-				if (carInformationObserver.capabilities.isNotEmpty() && threadNotifications?.isAlive != true) {
-					threadNotifications = CarThread("Notifications") {
-						Log.i(TAG, "Starting notifications app")
-						val handler = threadNotifications?.handler
-						if (handler == null) {
-							Log.e(TAG, "CarThread Handler is null?")
-						}
-						val notificationSettings = NotificationSettings(carInformationObserver.capabilities, BtStatus(this) {}, MutableAppSettingsReceiver(this, handler))
-						notificationSettings.btStatus.register()
-						carappNotifications = PhoneNotifications(iDriveConnectionReceiver, securityAccess,
-								CarAppAssetManager(this, "basecoreOnlineServices"),
-								PhoneAppResourcesAndroid(this),
-								GraphicsHelpersAndroid(),
-								CarNotificationControllerIntent(this),
-								AudioPlayer(this),
-								notificationSettings)
-						if (handler != null) {
-							carappNotifications?.onCreate(this, handler)
-						}
-						// request an initial draw
-						sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
-
-						handler?.post {
-							// start up the readout app
-							// using a handler to automatically handle shutting down during init
-							val carappReadout = ReadoutApp(iDriveConnectionReceiver, securityAccess,
-									CarAppAssetManager(this, "news"))
-							carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
-							this.carappReadout = carappReadout
-						}
-					}
-					threadNotifications?.start()
-				}
-			}
-			return true
-		} else {    // we should not run the service
-			if (threadNotifications != null) {
-				Log.i(TAG, "Notifications app needs to be shut down...")
-				stopNotifications()
-			}
-			return false
+		if (carInformationObserver.capabilities.isNotEmpty() && notificationService == null) {
+			notificationService = NotificationService(this, iDriveConnectionReceiver, securityAccess, carInformationObserver)
 		}
+		return notificationService?.start() ?: false
 	}
 
 	fun stopNotifications() {
-		carappNotifications?.notificationSettings?.btStatus?.unregister()
-		carappNotifications?.onDestroy(this)
-		carappNotifications = null
-		carappReadout?.onDestroy()
-		carappReadout = null
-		// if we caught it during initialization, kill it again
-		threadNotifications?.post {
-			stopNotifications()
-		}
-		threadNotifications?.quitSafely()
-		threadNotifications = null
+		notificationService?.stop()
+		notificationService = null
 	}
 
 	fun startMaps(): Boolean {

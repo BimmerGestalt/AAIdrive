@@ -23,15 +23,16 @@
             android:layout_height="wrap_content"
             android:id="@+id/paneDependencyInfo"
             android:name="me.hufman.androidautoidrive.phoneui.fragments.DependencyInfoFragment"/>
+
         <View style="@style/Divider"
             android:layout_marginBottom="15dp"/>
 
         <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
             android:id="@+id/paneConnectionStatus"
             android:name="me.hufman.androidautoidrive.phoneui.fragments.ConnectionStatusFragment"/>
+
         <View style="@style/Divider"
             android:layout_marginBottom="15dp"/>
 

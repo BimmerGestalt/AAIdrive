@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data class="DependencySummaryBinding">
+        <variable
+            name="viewModel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.DependencyInfoModel" />
+        <variable
+            name="controller"
+            type="me.hufman.androidautoidrive.phoneui.controllers.DependencyInfoController" />
+    </data>
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- BMW Connection -->
+        <LinearLayout
+            android:visibility="@{viewModel.isBmwReady()}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="15dp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:src="@android:drawable/checkbox_on_background" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/txt_setup_bmw_ready" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="@{viewModel.isBmwMineInstalled()}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="15dp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:src="@drawable/ic_error_outline_black_24dp" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/txt_setup_bmw_mine_detected" />
+        </LinearLayout>
+
+        <!-- MINI Connection -->
+        <LinearLayout
+            android:visibility="@{viewModel.isMiniReady()}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="15dp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:src="@android:drawable/checkbox_on_background" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/txt_setup_mini_ready" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="@{viewModel.isMiniMineInstalled()}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="15dp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:src="@drawable/ic_error_outline_black_24dp" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/txt_setup_mini_mine_detected" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="15dp"
+            android:visibility="@{!viewModel.isBmwReady() &amp;&amp; !viewModel.isMiniReady()}">
+
+            <Button
+                android:visibility="@{!viewModel.isBmwConnectedInstalled()}"
+                android:onClick="@{() -> controller.installBMWConnected()}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_install_bmw"/>
+            <Button
+                android:visibility="@{!viewModel.isMiniConnectedInstalled()}"
+                android:onClick="@{() -> controller.installMiniConnected()}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_install_mini"/>
+        </LinearLayout>
+
+        <!-- Security Service -->
+        <LinearLayout
+            android:visibility="@{viewModel.isSecurityServiceDisconnected()}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="15dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:paddingEnd="5dp"
+                    android:src="@android:drawable/checkbox_off_background" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/txt_setup_security_missing" />
+            </LinearLayout>
+            <Button
+                android:visibility="@{viewModel.isMiniConnectedInstalled()}"
+                android:onClick="@{() -> controller.installBMWConnectedClassic()}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_install_bmwclassic"/>
+            <Button
+                android:visibility="@{!viewModel.isMiniConnectedInstalled()}"
+                android:onClick="@{() -> controller.installMiniConnectedClassic()}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_install_miniclassic"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

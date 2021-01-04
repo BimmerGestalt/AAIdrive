@@ -74,11 +74,16 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 		virtualDisplay = null
 		mapController = null
 		mapListener = null
-		mapApp = null
 
 		// if we caught it during initialization, kill it again
-		threadGMaps?.post {
-			stop()
+		val thread = threadGMaps
+		if (thread?.isAlive == true) {
+			thread.post {
+				stop()
+				mapApp = null
+			}
+		} else {
+			mapApp = null
 		}
 		threadGMaps?.quitSafely()
 		threadGMaps = null

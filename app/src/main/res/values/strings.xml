@@ -134,6 +134,7 @@
     <string name="txt_setup_bcl_init_stuck">Apps Connection is not enabled:</string>
     <string name="txt_setup_enable_bcl_mode">Enable the Apps option in the car for this %s</string>
     <string name="txt_setup_bcl_disconnected">Apps Connection is not ready:</string>
+    <string name="txt_setup_bcl_waiting">Waiting for Apps Connection to start</string>
     <string name="txt_setup_enable_bclspp">Try toggling Bluetooth Music or connecting over USB</string>
     <string name="txt_setup_bcl_connecting">Apps Connection is connecting</string>
     <string name="txt_setup_bcl_connected">Apps Connection is running</string>

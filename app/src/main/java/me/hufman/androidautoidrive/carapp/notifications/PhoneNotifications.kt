@@ -27,6 +27,7 @@ import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
+import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 import java.util.*
 
@@ -271,7 +272,9 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	fun onDestroy(context: Context) {
 		val notificationReceiver = this.notificationBroadcastReceiver
 		if (notificationReceiver != null) {
-			context.unregisterReceiver(notificationReceiver)
+			try {
+				context.unregisterReceiver(notificationReceiver)
+			} catch (e: IllegalArgumentException) {}
 		}
 		try {
 			Log.i(TAG, "Trying to shut down etch connection")

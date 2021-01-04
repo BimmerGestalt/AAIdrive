@@ -5,6 +5,7 @@ import android.os.Looper
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
+import java.lang.IllegalStateException
 import java.lang.RuntimeException
 
 const val TAG = "CarThread"
@@ -28,6 +29,9 @@ class CarThread(name: String, val runnable: () -> (Unit)): Thread(name) {
 			Log.i(TAG, "Successfully finished runnable for thread $name, starting Handler loop")
 			Looper.loop()
 			Log.i(TAG, "Successfully finished tasks for thread $name")
+		} catch (e: IllegalStateException) {
+			// posted to a dead handler
+			Log.i(TAG, "Shutting down thread $name due to IllegalStateException: $e", e)
 		} catch (e: RuntimeException) {
 			// phone was unplugged during an RPC command
 			Log.i(TAG, "Shutting down thread $name due to RuntimeException: $e", e)

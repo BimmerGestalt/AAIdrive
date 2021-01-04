@@ -27,7 +27,7 @@ android {
         applicationId "me.hufman.androidautoidrive"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode androidGitVersion.code()
+        versionCode androidGitVersion.code() + 1
         versionName androidGitVersion.name()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         archivesBaseName = "androidautoidrive-${androidGitVersion.name()}"
@@ -105,6 +105,16 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    def assertGit = tasks.create(name: "assertGitVersionRelease") { doLast {
+        throw new GradleException("Could not load git versionCode for release build, make sure the project is cloned from git")
+    }}
+    applicationVariants.all { variant ->
+        if (!variant.buildType.isDebuggable() && variant.mergedFlavor.versionCode == 1) {
+            def assembleTaskName = "assemble${variant.name.capitalize()}"
+            tasks[assembleTaskName].dependsOn(assertGit)
+        }
     }
 }
 
