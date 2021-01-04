@@ -17,20 +17,30 @@ import java.lang.Exception
 class MusicAppMode(val iDriveConnectionStatus: IDriveConnectionStatus, val capabilities: Map<String, String?>, val appSettings: AppSettings,
                    val iHeartRadioVersion: String?, val pandoraVersion: String?, val spotifyVersion: String?) {
 	companion object {
-		fun build(capabilities: Map<String, String?>, context: Context): MusicAppMode {
-			val iHeartRadioVersion = try {
+		fun getIHeartRadioVersion(context: Context): String? {
+			return try {
 				context.packageManager.getPackageInfo("com.pandora.android", 0).versionName
 			} catch (e: Exception) { null }
-			val pandoraVersion = try {
+		}
+		fun getPandoraVersion(context: Context): String? {
+			return try {
 				context.packageManager.getPackageInfo("com.clearchannel.iheartradio.connect", 0).versionName
 			} catch (e: Exception) {
 				try {
 					context.packageManager.getPackageInfo("com.clearchannel.iheartradio.controller", 0).versionName
 				} catch (e: Exception) { null }
 			}
-			val spotifyVersion = try {
+		}
+		fun getSpotifyVersion(context: Context): String? {
+			return try {
 				context.packageManager.getPackageInfo("com.spotify.music", 0).versionName
 			} catch (e: Exception) { null }
+		}
+
+		fun build(capabilities: Map<String, String?>, context: Context): MusicAppMode {
+			val iHeartRadioVersion = getIHeartRadioVersion(context)
+			val pandoraVersion = getPandoraVersion(context)
+			val spotifyVersion = getSpotifyVersion(context)
 			return MusicAppMode(IDriveConnectionObserver(), capabilities, AppSettingsViewer(), iHeartRadioVersion, pandoraVersion, spotifyVersion)
 		}
 	}
@@ -68,28 +78,38 @@ class MusicAppMode(val iDriveConnectionStatus: IDriveConnectionStatus, val capab
 	fun supportsUsbAudio(): Boolean {
 		return appSettings[AppSettings.KEYS.AUDIO_SUPPORTS_USB].toBoolean()
 	}
+	fun heuristicAudioContext(): Boolean {
+		val useUSB = supportsUsbAudio() // works even if an old phone is connected over BT
+		val useBT = isBTConnection()
+		return useUSB || useBT
+	}
 	fun shouldRequestAudioContext(): Boolean {
 		val manualOverride = appSettings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT].toBoolean()
 		if (manualOverride) {
 			return manualOverride
 		}
-		val useUSB = supportsUsbAudio() // works even if an old phone is connected over BT
-		val useBT = isBTConnection()
-		return useUSB || useBT
+		return heuristicAudioContext()
 	}
 	fun isId4(): Boolean {
 		return capabilities["hmi.type"]?.contains("ID4") == true
 	}
+	fun isNewSpotifyInstalled(): Boolean {
+		val spotifySplits = spotifyVersion?.split('.')?.map { it.toInt() }
+		return spotifySplits != null && spotifySplits.size >= 3 && (
+				spotifySplits[0] > 8 ||
+						(spotifySplits[0] == 8 && spotifySplits[1] > 5) ||
+						(spotifySplits[0] == 8 && spotifySplits[1] == 5 && spotifySplits[2] >= 68)
+				)
+	}
+	fun heuristicAudioState(): Boolean {
+		val idrive4 = capabilities["hmi.type"]?.contains("ID4") == true
+
+		return !idrive4 && isNewSpotifyInstalled() && shouldRequestAudioContext()
+	}
 	fun shouldId5Playback(): Boolean {
 		val idrive4 = capabilities["hmi.type"]?.contains("ID4") == true
 		val manualOverride = !idrive4 && appSettings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT].toBoolean()
-		val spotifySplits = spotifyVersion?.split('.')?.map { it.toInt() }
-		val newSpotifyInstalled = spotifySplits != null && spotifySplits.size >= 3 && (
-				spotifySplits[0] > 8 ||
-				(spotifySplits[0] == 8 && spotifySplits[1] > 5) ||
-				(spotifySplits[0] == 8 && spotifySplits[1] == 5 && spotifySplits[2] >= 68)
-		)
-		val autodetect = !idrive4 && newSpotifyInstalled && shouldRequestAudioContext()
+		val autodetect = heuristicAudioState()
 		return manualOverride || autodetect
 	}
 

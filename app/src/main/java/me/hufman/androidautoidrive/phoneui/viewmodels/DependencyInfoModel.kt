@@ -26,21 +26,21 @@ class DependencyInfoModel(val connection: CarConnectionDebugging): ViewModel() {
 	}
 
 	private val _isBmwConnectedInstalled = MutableLiveData<Boolean>()
-	val isBmwConnectedInstalled = _isBmwConnectedInstalled as LiveData<Boolean>
+	val isBmwConnectedInstalled: LiveData<Boolean> = _isBmwConnectedInstalled
 	private val _isMiniConnectedInstalled = MutableLiveData<Boolean>()
-	val isMiniConnectedInstalled = _isMiniConnectedInstalled as LiveData<Boolean>
+	val isMiniConnectedInstalled: LiveData<Boolean> = _isMiniConnectedInstalled
 	private val _isBmwReady = MutableLiveData<Boolean>()
-	val isBmwReady = _isBmwReady as LiveData<Boolean>
+	val isBmwReady: LiveData<Boolean> = _isBmwReady
 	private val _isMiniReady = MutableLiveData<Boolean>()
-	val isMiniReady = _isMiniReady as LiveData<Boolean>
+	val isMiniReady: LiveData<Boolean> = _isMiniReady
 	private val _isBmwMineInstalled = MutableLiveData<Boolean>()
-	val isBmwMineInstalled = _isBmwMineInstalled as LiveData<Boolean>
+	val isBmwMineInstalled: LiveData<Boolean> = _isBmwMineInstalled
 	private val _isMiniMineInstalled = MutableLiveData<Boolean>()
-	val isMiniMineInstalled = _isMiniMineInstalled as LiveData<Boolean>
+	val isMiniMineInstalled: LiveData<Boolean> = _isMiniMineInstalled
 
 	// Connected Security Service is installed but not connected
 	private val _isSecurityServiceDisconnected = MutableLiveData<Boolean>()
-	val isSecurityServiceDisconnected = _isSecurityServiceDisconnected as LiveData<Boolean>
+	val isSecurityServiceDisconnected: LiveData<Boolean> = _isSecurityServiceDisconnected
 
 	fun update() {
 		_isBmwConnectedInstalled.value = connection.isBMWConnectedInstalled

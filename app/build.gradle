@@ -27,7 +27,7 @@ android {
         applicationId "me.hufman.androidautoidrive"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode androidGitVersion.code()
+        versionCode androidGitVersion.code() + 1
         versionName androidGitVersion.name()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         archivesBaseName = "androidautoidrive-${androidGitVersion.name()}"
@@ -100,7 +100,19 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 
+    def assertGit = tasks.create(name: "assertGitVersionRelease") { doLast {
+        throw new GradleException("Could not load git versionCode for release build, make sure the project is cloned from git")
+    }}
+    applicationVariants.all { variant ->
+        if (!variant.buildType.isDebuggable() && variant.mergedFlavor.versionCode == 1) {
+            def assembleTaskName = "assemble${variant.name.capitalize()}"
+            tasks[assembleTaskName].dependsOn(assertGit)
+        }
+    }
 }
 
 // What files to extract from the source APK files
@@ -353,6 +365,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android:flexbox:2.0.1'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation "androidx.lifecycle:lifecycle-extensions:$androidx_lifecycle_extensions_version"
@@ -363,6 +376,9 @@ dependencies {
     implementation "com.google.code.gson:gson:2.8.6"
     implementation "com.google.openlocationcode:openlocationcode:1.0.4"
     implementation "ar.com.hjg:pngj:2.1.0"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$androidx_navigation_version"
+    implementation "androidx.navigation:navigation-fragment-ktx:$androidx_navigation_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$androidx_navigation_version"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
@@ -372,6 +388,7 @@ dependencies {
     testImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     testImplementation 'org.awaitility:awaitility-scala:3.1.5'
     testImplementation 'org.json:json:20180813'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2'
     androidTestImplementation "org.mockito:mockito-android:2.28.2"
     androidTestImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
@@ -391,4 +408,3 @@ dependencies {
     sentryImplementation 'io.sentry:sentry-android:1.7.16'
     sentryImplementation 'org.slf4j:slf4j-nop:1.7.25'
 }
-

@@ -882,6 +882,7 @@ class NotificationAppTest {
 
 		// user leaves
 		callbacks.rhmi_onHmiEvent(1, "unused", app.viewDetails.state.id, 1, mapOf(4.toByte() to false))
+		callbacks.rhmi_onHmiEvent(1, "unused", app.viewDetails.state.id, 11, mapOf(4.toByte() to false))
 
 		// clears the display
 		val emptyTitleList = mockServer.data[520] as BMWRemoting.RHMIDataTable
@@ -1145,6 +1146,7 @@ class NotificationAppTest {
 
 		// hide the viewDetails
 		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(1, "unused", 20, 1, mapOf(4.toByte() to false))
+		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(1, "unused", 20, 11, mapOf(4.toByte() to false))
 
 		// verify that it shows the notification
 		run {

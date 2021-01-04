@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data class="OverviewBinding">
+        <variable
+            name="viewModel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel" />
+    </data>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical" android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/default_margin"
+            android:paddingEnd="@dimen/default_margin"
+            android:paddingTop="@dimen/default_margin">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/lbl_overviewpage" />
+
+            <View style="@style/Divider"
+                android:layout_marginBottom="10dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="@string/lbl_music_apps" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:id="@+id/fragmentMusicAppGrid"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicAppsGridFragment"/>
+
+            <View style="@style/Divider"
+                android:layout_marginBottom="10dp"/>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/paneOverviewConnecting"
+                android:visibility="@{!viewModel.isCarConnected()}"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.OverviewConnectingFragment"/>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/paneOverviewConnected"
+                android:visibility="@{viewModel.isCarConnected()}"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.OverviewConnectedFragment"/>
+
+        </LinearLayout>
+    </ScrollView>
+</layout>

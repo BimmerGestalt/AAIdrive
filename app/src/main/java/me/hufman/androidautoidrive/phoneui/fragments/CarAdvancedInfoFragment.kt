@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import kotlinx.android.synthetic.main.fragment_car_advancedinfo.*
 import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.R

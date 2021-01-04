@@ -18,6 +18,7 @@ class DependencyInfoController(val appContext: Context) {
 		val packageName = if (isUSA) "de.$brand.connected.na" else "de.$brand.connected"
 		val intent = Intent(Intent.ACTION_VIEW).apply {
 			data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+			flags = Intent.FLAG_ACTIVITY_NEW_TASK
 		}
 		appContext.startActivity(intent)
 	}
@@ -26,6 +27,7 @@ class DependencyInfoController(val appContext: Context) {
 		val packageName = if (isUSA) "com.bmwgroup.connected.$brand.usa" else "com.bmwgroup.connected.$brand"
 		val intent = Intent(Intent.ACTION_VIEW).apply {
 			data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+			flags = Intent.FLAG_ACTIVITY_NEW_TASK
 		}
 		appContext.startActivity(intent)
 	}

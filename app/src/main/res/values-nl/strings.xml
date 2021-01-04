@@ -12,6 +12,7 @@
     <string name="notification_description_mini">Verbonden met uw Mini</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <!-- Labels on the navigation trigger activity -->
+    <!-- Menu Titles -->
     <string name="spawn_test_notification">Test bericht</string>
     <string name="message_notifications">Meldingen</string>
     <string name="notification_popups">Popups</string>
@@ -31,7 +32,7 @@
     <string name="musicAppUnavailable">Niet beschikbaar</string>
     <string name="musicAppHidden">Niet zichtbaar</string>
     <string name="enable_audio_context">Audio focus gevraagd</string>
-    <string name="lbl_grant_sessions">Controlle over muziek app:</string>
+    <string name="lbl_grant_sessions">Controlle over muziek app</string>
     <string name="lbl_grant">Verlenen</string>
     <string name="musicAppNotes_unauthorizedSpotify">Klik hier om Spotify toegang te verlenen</string>
     <string name="musicAppNotes_oldSpotify">Downgrade Spotify om van de volledige functionaliteit gebruik te maken</string>
@@ -41,13 +42,21 @@
     <string name="btn_configure">Configureren …</string>
     <string name="connectionStatusMissingConnectedApp">Connected of Connected Classic app niet gevonden</string>
     <string name="connectionStatusWaiting">Wacht op verbinding</string>
+    <string name="connectionStatusConnected">Verbonden met uw %s</string>
     <string name="nowplaying_notconnected">&lt;Niet verdbonden&gt;</string>
     <string name="nowplaying_unknown">&lt;Onbekend&gt;</string>
+    <!-- connection setup -->
     <string name="txt_setup_bmw_ready">De app is klaar om verbinding te maken met uw BMW</string>
     <string name="txt_setup_mini_ready">De app is klaar om verbinding te maken met uw Mini</string>
     <string name="txt_setup_bmw_missing">Niet klaar om met uw BMW te verbinden:</string>
     <string name="txt_setup_mini_missing">Niet klaar om met uw Mini te verbinden:</string>
     <string name="txt_setup_security_missing">Security Service is onbereikbaar:</string>
+    <string name="btn_install">Installeren</string>
+    <string name="btn_install_bmw">Installeer BMW Connected</string>
+    <string name="btn_install_mini">Installeer Mini Connected</string>
+    <string name="btn_install_bmwclassic">Installeer BMW Connected Classic</string>
+    <string name="btn_install_miniclassic">Installeer Mini Connected Classic</string>
+    <!-- connection status -->
     <string name="txt_setup_bt_disconnected">Auto is niet verbonden via Bluetooth</string>
     <string name="txt_setup_bt_connected">Auto is verbonden via Bluetooth</string>
     <string name="txt_setup_a2dp_disconnected">Bluetooth audio is niet verbonden</string>
@@ -67,14 +76,11 @@
     <string name="txt_setup_bcl_connecting">Apps maakt verbinding</string>
     <string name="txt_setup_bcl_connected">Apps is verbonden</string>
     <string name="txt_setup_bcl_connected_transport">Apps is verbonden via %s</string>
+    <!-- capabilities -->
+    <!-- debug status -->
     <string name="txt_build_info">Build versie: %1$s %2$s</string>
     <string name="txt_bcl_report">BCL Tunnel prestaties:</string>
     <string name="txt_car_capabilities">Auto mogelijkheden:</string>
-    <string name="btn_install">Installeren</string>
-    <string name="btn_install_bmw">Installeer BMW Connected</string>
-    <string name="btn_install_mini">Installeer Mini Connected</string>
-    <string name="btn_install_bmwclassic">Installeer BMW Connected Classic</string>
-    <string name="btn_install_miniclassic">Installeer Mini Connected Classic</string>
     <string name="lbl_advanced_settings">Toon geavanceerde instellingen</string>
     <string name="lbl_assistant">Stem assistant (Beta)</string>
     <string name="lbl_assistant_empty">None found</string>

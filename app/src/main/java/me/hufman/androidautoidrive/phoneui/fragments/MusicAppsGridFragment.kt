@@ -12,7 +12,9 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_music_appgrid.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
@@ -31,33 +33,28 @@ class MusicAppsGridFragment: Fragment() {
 				displayedMusicApps.addAll(appDiscovery.validApps)
 				view?.findViewById<NestedGridView>(R.id.listMusicApps)?.invalidateViews() // redraw the app list
 			}
-		}
+		}.apply { start() }
 	}
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.fragment_music_appgrid, container, false)
 	}
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
 		// build list of discovered music apps
-		appDiscoveryThread.start()
+		appDiscoveryThread.discovery()
 
-		listMusicApps.setOnItemClickListener { adapterView, _, i, _ ->
-			val appInfo = adapterView.adapter.getItem(i) as? MusicAppInfo
-			if (appInfo != null) {
-				UIState.selectedMusicApp = appInfo
-				val intent = Intent(requireContext(), MusicPlayerActivity::class.java)
-				startActivity(intent)
-			}
+		listMusicApps.setOnItemClickListener { _, _, _, _ ->
+			findNavController().navigate(R.id.nav_music)
 		}
+
 		listMusicApps.adapter = object : ArrayAdapter<MusicAppInfo>(requireContext(), R.layout.musicapp_listitem, displayedMusicApps) {
 			val animationLoopCallback = object : Animatable2.AnimationCallback() {
 				override fun onAnimationEnd(drawable: Drawable?) {
 					handler.post { (drawable as? AnimatedVectorDrawable)?.start() }
 				}
 			}
-			val equalizerStatic = resources.getDrawable(R.drawable.ic_equalizer_black_24dp, null)
-			val equalizerAnimated = (resources.getDrawable(R.drawable.ic_dancing_equalizer, null) as AnimatedVectorDrawable).apply {
+			val equalizerStatic = ResourcesCompat.getDrawable(resources, R.drawable.ic_equalizer_black_24dp, null)
+			val equalizerAnimated = (ResourcesCompat.getDrawable(resources, R.drawable.ic_dancing_equalizer, null) as AnimatedVectorDrawable).apply {
 				this.registerAnimationCallback(animationLoopCallback)
 			}
 

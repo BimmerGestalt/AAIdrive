@@ -163,7 +163,7 @@ class MusicAppTest {
 				duration=180000L,
 				icon=mock(), coverArt=mock(),
 				artist="Artist", album="Album", title="Title")
-		on { getPlaybackPosition() } doReturn PlaybackPosition(false, 0, 5000L, 180000L)
+		on { getPlaybackPosition() } doReturn PlaybackPosition(false, false, 0, 5000L, 180000L)
 		on { isSupportedAction(any()) } doReturn true
 		on { isSupportedAction(MusicAction.PLAY_FROM_SEARCH) } doReturn false
 		on { loadDesiredApp() } doReturn ""
@@ -249,8 +249,10 @@ class MusicAppTest {
 		assertEquals(setOf(IDs.AUDIOSTATE_MAX_TIME_MODEL), playbackView.maximumTimeModel.members.map { it?.id }.toSet())
 		assertEquals(IDs.AUDIOSTATE_PLAYBACK_PROGRESS_MODEL, (playbackView.gaugeModel as ProgressGaugeAudioState).model.id)
 		val playlist = mockServer.data[IDs.AUDIOSTATE_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable
+
 		assertEquals(3, playlist.totalRows)
 		assertEquals(listOf("Back", "", "Next"), playlist.data.map { it[2] })
+		assertEquals(false, playlist.data[1][0])        // not animated
 		assertEquals(1, state.getPlayListFocusRowModel()?.asRaIntModel()?.value)
 
 		// test disabled buttons in id5 audioHmiState
@@ -259,6 +261,12 @@ class MusicAppTest {
 		playbackView.redraw()
 		assertEquals("Shuffle Unavailable", playbackView.shuffleButton.getTooltipModel()?.asRaDataModel()?.value)
 		assertEquals("Repeat Unavailable", playbackView.repeatButton?.getTooltipModel()?.asRaDataModel()?.value)
+
+		// test buffering spinner
+		whenever(musicController.getPlaybackPosition()) doReturn PlaybackPosition(false, true, 0, 5000L, 180000L)
+		playbackView.redraw()
+		val loadingPlaylist = mockServer.data[IDs.AUDIOSTATE_PLAYLIST_MODEL] as BMWRemoting.RHMIDataTable
+		assertEquals(true, loadingPlaylist.data[1][0])     // animated
 	}
 
 	@Test

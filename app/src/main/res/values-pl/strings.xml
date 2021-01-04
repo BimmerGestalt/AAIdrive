@@ -11,15 +11,27 @@
     <string name="notification_description_bmw">Połączono z BMW</string>
     <string name="notification_description_mini">Połączono z Mini</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <string name="navigation_listener_bmw">Nawigacja BMW</string>
+    <string name="navigation_listener_mini">Namigacja Mini</string>
     <!-- Labels on the navigation trigger activity -->
+    <string name="lbl_navigation_listener_searching">Wyszukiwanie miejsca docelowego</string>
+    <string name="lbl_navigation_listener_parsefailure">Nie znaleziono miejsca docelowego</string>
+    <string name="lbl_navigation_listener_pending">Uruchamianie nawigacji</string>
+    <string name="lbl_navigation_listener_success">Sukces</string>
+    <!-- Menu Titles -->
     <string name="spawn_test_notification">Testowe powiadomienie</string>
     <string name="message_notifications">Treść powiadomienia</string>
     <string name="notification_popups">Wyskakujące okno powiadomień</string>
     <string name="notification_popups_passenger">Pokaż powiadomienia z siedzącym pasażerem</string>
+    <string name="notification_sound">Odtwarzanie dźwięku powiadomienia</string>
+    <string name="notification_readout">Odczytaj powiadomienie podczas podglądu (TTS)</string>
+    <string name="notification_readout_popup">Odczytaj nowe powiadomienia (TTS)</string>
+    <string name="notification_readout_popup_passenger">... z obecnym pasażerem</string>
     <string name="lbl_popupVersion">Wyskakujace powiadomienia działaja tylko z IDrive4</string>
     <string name="lbl_smsPermission">Przyznaj uprawnienia SMS aby wyświetlać obrazy z przychodzących SMS w samochodzie. Tekst jest zawsze widoczny.</string>
     <string name="enable_google_maps">Włącz Google Maps</string>
     <string name="lbl_widescreen_map">Mapy w trybie pełnoekranowym</string>
+    <string name="lbl_map_invert_zoom">Odwróć kierunek powiększenia</string>
     <string name="gmapStyleLabel">Styl map</string>
     <string name="lbl_music_apps">Aplikacje muzyczne</string>
     <string name="musicAppIcon">Ikony aplikacji</string>
@@ -31,23 +43,37 @@
     <string name="musicAppUnavailable">Niedostępna</string>
     <string name="musicAppHidden">Ukryta</string>
     <string name="enable_audio_context">Przełącz na audio z telefonu</string>
-    <string name="lbl_grant_sessions">Kontrola poprzez aktywną aplikacje muzyczną:</string>
+    <string name="enable_spotify_layout">Zawsze pojawiaj się jako Spotify w IDrive5+ (Okladki w całym Idrive)</string>
+    <string name="lbl_grant_sessions">Kontrola poprzez aktywną aplikacje muzyczną</string>
     <string name="lbl_grant">Przyznaj</string>
     <string name="musicAppNotes_unauthorizedSpotify">Kliknij tutaj aby przyznać dostęp do Spotify</string>
     <string name="musicAppNotes_oldSpotify">Aby uzyskać pełną funkcjonalność (przeglądanie,wyszukiwanie), obniż wersję Spotify</string>
     <string name="musicAppNotes_oldSpotifyInstructions">Ta aplikacja może zapewnić pełną kontrolę nad Spotify do wersji 8.4.96.953, taką jak przeglądanie list odtwarzania i wyszukiwanie. Aby uzyskać pełną kontrolę, pobierz starszą wersję z APKPure lub podobnej.</string>
+    <string name="musicAppNotes_spotify_apiNotFound">Proszę zainstalować oficjalnego klienta Spotify</string>
+    <string name="musicAppNotes_spotify_apiUnavailable">Prosimy sprawdzić połączenie z Internetem i wyłączenie blokady reklam.</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Anuluj</string>
     <string name="btn_configure">Konfiguruj …</string>
-    <string name="connectionStatusMissingConnectedApp">Nie znależiono aplikacji Connected lub Connected Classic</string>
+    <string name="lbl_error">Błąd</string>
+    <string name="connectionStatusMissingConnectedApp">Nie moge znależć aplikacji Connected lub Connected Classic</string>
     <string name="connectionStatusWaiting">Oczekiwanie na połączenie z samochodem</string>
+    <string name="connectionStatusConnected">Połączono z %s</string>
     <string name="nowplaying_notconnected">&lt;Nie połączony&gt;</string>
     <string name="nowplaying_unknown">&lt;Nieznany&gt;</string>
+    <!-- connection setup -->
     <string name="txt_setup_bmw_ready">Aplikacja gotowa do połączenia z BMW</string>
     <string name="txt_setup_mini_ready">Aplikacja gotowa do połączenia z Mini</string>
     <string name="txt_setup_bmw_missing">Nie gotowy do połączenia z BMW:</string>
     <string name="txt_setup_mini_missing">Nie gotowy do połączenia z Mini:</string>
+    <string name="txt_setup_bmw_mine_detected">Nowa aplikacja \"My BMW\" jest zainstalowana, co może powodować problemy z BMW Connected i nie jest obsługiwana.</string>
+    <string name="txt_setup_mini_mine_detected">Nowa aplikacja MINI jest zainstalowana, co może powodować problemy z Mini Connected i nie jest obsługiwana.</string>
     <string name="txt_setup_security_missing">Usługa bezpieczeństwa jest nieosiągalna:</string>
+    <string name="btn_install">Instalacja</string>
+    <string name="btn_install_bmw">Zainstaluj BMW Connected</string>
+    <string name="btn_install_mini">Zainstaluj Mini Connected</string>
+    <string name="btn_install_bmwclassic">Zainstaluj BMW Connected Classic</string>
+    <string name="btn_install_miniclassic">Zainstaluj Mini Connected Classic</string>
+    <!-- connection status -->
     <string name="txt_setup_bt_disconnected">Samochód nie jest połączony przez Bluetooth</string>
     <string name="txt_setup_bt_connected">Samochód jest połączony przez Bluetooth</string>
     <string name="txt_setup_a2dp_disconnected">Muzyka Bluetooth nie jest podłączona</string>
@@ -67,14 +93,11 @@
     <string name="txt_setup_bcl_connecting">Połączenie w trybie Aplikacji łączenie …</string>
     <string name="txt_setup_bcl_connected">Połączenie w trybie Aplikacji działa</string>
     <string name="txt_setup_bcl_connected_transport">Połączenie w trybie Aplikacji przez %s</string>
+    <!-- capabilities -->
+    <!-- debug status -->
     <string name="txt_build_info">Wersja: %1$s %2$s</string>
     <string name="txt_bcl_report">Wydajność tunelu BCL:</string>
     <string name="txt_car_capabilities">Zgłoszane możliwości samochodu:</string>
-    <string name="btn_install">Instalacja</string>
-    <string name="btn_install_bmw">Zainstaluj BMW Connected</string>
-    <string name="btn_install_mini">Zainstaluj Mini Connected</string>
-    <string name="btn_install_bmwclassic">Zainstaluj BMW Connected Classic</string>
-    <string name="btn_install_miniclassic">Zainstaluj Mini Connected Classic</string>
     <string name="lbl_advanced_settings">Pokaż ustawienia zaawansowane</string>
     <string name="lbl_assistant">Asystent głosowy (beta)</string>
     <string name="lbl_assistant_empty">Nic nie znaleziono</string>
@@ -88,7 +111,12 @@
     <string name="NOTIFICATION_CLEAR_ACTION">Wyczyść</string>
     <string name="NOTIFICATION_OPTIONS">Opcje</string>
     <string name="NOTIFICATION_POPUPS">Wyskakujace okno powiadomień</string>
-    <string name="NOTIFICATION_POPUPS_PASSENGER">... z obecnym pasażerem</string>
+    <string name="NOTIFICATION_POPUPS_PASSENGER">Pokaż powiadomienia z siedzącym pasażerem</string>
+    <string name="NOTIFICATION_SOUND">Odtwarzaj dźwięk powiadomienia</string>
+    <string name="NOTIFICATION_READOUT">Odczytaj powiadomienie podczas podglądu (TTS)</string>
+    <string name="NOTIFICATION_READOUT_POPUP">Odczytaj nowe powiadomienia (TTS)</string>
+    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER">... z obecnym pasażerem</string>
+    <string name="READOUT_DESCRIPTION">Ta aplikacja jest używana do odczytu powiadomień (TTS)</string>
     <string name="MAP_ACTION_VIEWMAP">Zobacz całą mapę</string>
     <string name="MAP_ACTION_SEARCH">Szukaj miejsca</string>
     <string name="MAP_ACTION_CLEARNAV">Wyczyść nawigacja</string>
@@ -108,8 +136,10 @@
     <string name="MUSIC_QUEUE_EMPTY">&lt;Pusta kolejka&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Poprzednia</string>
     <string name="MUSIC_SKIP_NEXT">Następna</string>
+    <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Odtwarzanie losowe niedostępne</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Odtwarzanie losowe włączone</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Odtwarzanie losowe wyłączone</string>
+    <string name="MUSIC_TURN_REPEAT_UNAVAILABLE">Powtarzanie niedostepne</string>
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Powtarzaj wszystkie</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Powtarzaj pojedynczo </string>
     <string name="MUSIC_TURN_REPEAT_OFF">Wyłącz powtarzanie</string>
@@ -120,28 +150,4 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Kciuk w górę</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Kciuk w dół</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Kciuk w dół</string>
-    <string name="navigation_listener_bmw">Nawigacja BMW</string>
-    <string name="navigation_listener_mini">Namigacja Mini</string>
-    <string name="lbl_navigation_listener_searching">Wyszukiwanie miejsca docelowego</string>
-    <string name="lbl_navigation_listener_parsefailure">Nie znaleziono miejsca docelowego</string>
-    <string name="lbl_navigation_listener_pending">Uruchamianie nawigacji</string>
-    <string name="lbl_navigation_listener_success">Sukces</string>
-    <string name="notification_sound">Odtwarzanie dźwięku powiadomienia</string>
-    <string name="notification_readout">Odczytaj powiadomienie podczas podglądu (TTS)</string>
-    <string name="notification_readout_popup">Odczytaj nowe powiadomienia (TTS)</string>
-    <string name="notification_readout_popup_passenger">... z obecnym pasażerem</string>
-    <string name="lbl_map_invert_zoom">Odwróć kierunek powiększenia</string>
-    <string name="enable_spotify_layout">Zawsze pojawiaj się jako Spotify w IDrive5+ (Okladki w całym Idrive)</string>
-    <string name="musicAppNotes_spotify_apiNotFound">Proszę zainstalować oficjalnego klienta Spotify</string>
-    <string name="musicAppNotes_spotify_apiUnavailable">Prosimy sprawdzić połączenie z Internetem i wyłączenie blokady reklam.</string>
-    <string name="lbl_error">Błąd</string>
-    <string name="txt_setup_bmw_mine_detected">Nowa aplikacja \"My BMW\" jest zainstalowana, co może powodować problemy z BMW Connected i nie jest obsługiwana.</string>
-    <string name="txt_setup_mini_mine_detected">Nowa aplikacja MINI jest zainstalowana, co może powodować problemy z Mini Connected i nie jest obsługiwana.</string>
-    <string name="NOTIFICATION_SOUND">Odtwarzaj dźwięk powiadomienia</string>
-    <string name="READOUT_DESCRIPTION">Ta aplikacja jest używana do odczytu powiadomień (TTS)</string>
-    <string name="MUSIC_TURN_REPEAT_UNAVAILABLE">Powtarzanie niedostepne</string>
-    <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Odtwarzanie losowe niedostępne</string>
-    <string name="NOTIFICATION_READOUT_POPUP">Odczytaj nowe powiadomienia (TTS)</string>
-    <string name="NOTIFICATION_READOUT">Odczytaj powiadomienie podczas podglądu (TTS)</string>
-    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER">... z obecnym pasażerem</string>
 </resources>

@@ -58,6 +58,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	var displayedSong: MusicMetadata? = null    // the song  that was last redrawn
 	var displayedConnected: Boolean = false     // whether the controller was connected during redraw
 	var isNewerIDrive: Boolean = false
+	var isBuffering: Boolean = false
 	var skipBackEnabled: Boolean = true
 	var skipNextEnabled: Boolean = true
 
@@ -326,7 +327,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			val playlistModel = state.getPlayListModel()?.asRaListModel()
 			val playlist = RHMIModel.RaListModel.RHMIListConcrete(10)
 			playlist.addRow(PlaylistItem(false, skipBackEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_BACK), L.MUSIC_SKIP_PREVIOUS))
-			playlist.addRow(PlaylistItem(false, true, grayscaleNoteIcon, title))
+			playlist.addRow(PlaylistItem(isBuffering, true, grayscaleNoteIcon, title))
 			playlist.addRow(PlaylistItem(false, skipNextEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_NEXT), L.MUSIC_SKIP_NEXT))
 			playlistModel?.asRaListModel()?.setValue(playlist, 0, 3, 3)
 		}
@@ -429,6 +430,10 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 	private fun redrawPosition() {
 		val progress = controller.getPlaybackPosition()
+		if (isBuffering != progress.isBuffering) {
+			isBuffering = progress.isBuffering
+			redrawAudiostatePlaylist(displayedSong?.title ?: "")
+		}
 		if (state is RHMIState.AudioHmiState && progress.maximumPosition <= 0) {
 			// hide the progress bar from the sidebar
 			gaugeModel.value = 0
@@ -440,7 +445,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			} else {
 				gaugeModel.value = (100 * progress.getPosition() / progress.maximumPosition).toInt()
 			}
-			if (progress.playbackPaused && System.currentTimeMillis() % 1000 >= 500) {
+			if (progress.isPaused && System.currentTimeMillis() % 1000 >= 500) {
 				currentTimeModel.value = "   :  "
 			} else {
 				currentTimeModel.value = formatTime(progress.getPosition())

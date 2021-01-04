@@ -14,12 +14,13 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import android.widget.TextView
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import me.hufman.androidautoidrive.CarConnectionListener
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent.Companion.INTENT_INTERACTION
 import me.hufman.androidautoidrive.notifications.NotificationParser.Companion.dumpNotification
 import me.hufman.androidautoidrive.phoneui.UIState
-import me.hufman.androidautoidrive.phoneui.MainActivity
 import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
 
 fun Notification.isGroupSummary(): Boolean {
@@ -32,6 +33,9 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		const val TAG = "IDriveNotifications"
 		const val LOG_NOTIFICATIONS = false
 		const val INTENT_REQUEST_DATA = "me.hufman.androidaudoidrive.PhoneNotificationUpdate.REQUEST_DATA"
+
+		private val _serviceState = MutableLiveData(false)
+		val serviceState = _serviceState as LiveData<Boolean>
 	}
 
 	val iDriveConnectionReceiver = IDriveConnectionReceiver()       // watches connection state
@@ -84,14 +88,13 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 
 	override fun onListenerConnected() {
 		super.onListenerConnected()
-		UIState.notificationListenerConnected = true
-		sendBroadcast(Intent(MainActivity.INTENT_REDRAW))
+		_serviceState.value = true
 
 		updateNotificationList()
 	}
 
 	override fun onListenerDisconnected() {
-		UIState.notificationListenerConnected = false
+		_serviceState.value = false
 	}
 
 	override fun onNotificationRemoved(sbn: StatusBarNotification?, rankingMap: RankingMap?) {

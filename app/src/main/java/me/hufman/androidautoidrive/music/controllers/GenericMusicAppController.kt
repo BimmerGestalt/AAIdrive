@@ -117,7 +117,7 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 	override fun getPlaybackPosition(): PlaybackPosition {
 		val state = remoteData { mediaController.playbackState }
 		return if (state == null) {
-			PlaybackPosition(true, 0, 0, 0)
+			PlaybackPosition(true, false, 0, 0, 0)
 		} else {
 			val metadata = getMetadata()
 			val isPaused = (
@@ -127,7 +127,11 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 					state.state == PlaybackStateCompat.STATE_CONNECTING ||
 					state.state == PlaybackStateCompat.STATE_BUFFERING
 					)
-			PlaybackPosition(isPaused, state.lastPositionUpdateTime, state.position, metadata?.duration ?: -1)
+			val isBuffering = (
+					state.state == PlaybackStateCompat.STATE_CONNECTING ||
+					state.state == PlaybackStateCompat.STATE_BUFFERING
+					)
+			PlaybackPosition(isPaused, isBuffering, state.lastPositionUpdateTime, state.position, metadata?.duration ?: -1)
 		}
 	}
 

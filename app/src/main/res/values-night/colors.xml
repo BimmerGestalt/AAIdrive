@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="connectionWaiting">#222222</color>
-    <color name="connectionConnected">#114411</color>
-    <color name="connectionError">#442222</color>
+    <color name="colorPrimary">#5F71E5</color>
+    <color name="connectionWaiting">#666</color>
+    <color name="connectionConnected">#559922</color>
+    <color name="connectionError">#661122</color>
 </resources>
