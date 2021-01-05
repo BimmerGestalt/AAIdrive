@@ -84,7 +84,6 @@ class MainService: Service() {
 			// never started?
 		}
 		carProberThread?.quitSafely()
-		securityServiceThread.disconnect()
 		super.onDestroy()
 	}
 
