@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.phoneui.viewmodels
 
+import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
@@ -12,6 +13,7 @@ import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import me.hufman.androidautoidrive.phoneui.visible
+import java.util.*
 import kotlin.math.max
 
 
@@ -100,5 +102,30 @@ fun setBackgroundTint(view: View, value: Context.() -> Int) {
 				start()
 			}
 		}
+	}
+}
+
+// Add an animation for alpha
+@BindingAdapter("android:alpha")
+fun setAlpha(view: View, value: Float) {
+	view.animation?.cancel()
+	ValueAnimator.ofFloat(view.alpha, value).apply {
+		addUpdateListener { view.alpha = it.animatedValue as Float }
+		start()
+	}
+}
+
+// set an animator
+val CANCELLABLE_ANIMATORS = WeakHashMap<View, Animator>()
+@BindingAdapter("animator")
+fun setAnimator(view: View, value: Animator?) {
+	CANCELLABLE_ANIMATORS[view]?.cancel()
+	if (value != null) {
+		value.setTarget(view)
+		value.start()
+		CANCELLABLE_ANIMATORS[view] = value
+	} else {
+		view.animation?.cancel()
+		view.clearAnimation()
 	}
 }

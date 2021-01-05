@@ -48,6 +48,7 @@ class ConnectionStatusModelTest {
 		assertEquals(false, model.isBtConnected.value)
 		assertEquals(false, model.isUsbConnected.value)
 		assertEquals(false, model.isBclReady.value)
+		assertEquals("", model.bclTransport.value)
 
 		context.run(model.carConnectionText.value!!)
 		verify(context).getString(eq(R.string.connectionStatusWaiting))
@@ -299,6 +300,7 @@ class ConnectionStatusModelTest {
 		assertEquals(false, model.isBclDisconnected.value)
 		assertEquals(false, model.isBclConnecting.value)
 		assertEquals(true, model.isBclConnected.value)
+		assertEquals("BT", model.bclTransport.value)
 
 		context.run(model.bclModeText.value!!)
 		verify(context).getString(eq(R.string.txt_setup_bcl_connected_transport), eq("BT"))

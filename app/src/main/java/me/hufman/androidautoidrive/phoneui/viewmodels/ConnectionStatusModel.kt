@@ -80,6 +80,8 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 	val isBclConnected: LiveData<Boolean> = _isBclConnected
 	private val _hintBclMode = MutableLiveData<Context.() -> String>()
 	val hintBclMode: LiveData<Context.() -> String> = _hintBclMode
+	private val _bclTransport = MutableLiveData("")
+	val bclTransport: LiveData<String> = _bclTransport
 	private val _bclModeText = MutableLiveData<Context.() -> String> {
 		getString(R.string.txt_setup_bcl_connected)
 	}
@@ -147,11 +149,13 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		_isBclStuck.value = connection.isBCLStuck
 		_isBclConnected.value = connection.isBCLConnected
 		_hintBclMode.value = {getString(R.string.txt_setup_enable_bcl_mode, connection.deviceName)}
+		_bclTransport.value = connection.bclTransport?.toUpperCase(Locale.ROOT) ?: ""
 		_bclModeText.value = if (connection.bclTransport == null) {
 			{ getString(R.string.txt_setup_bcl_connected) }
 		} else {
 			{ getString(R.string.txt_setup_bcl_connected_transport, connection.bclTransport) }
 		}
+
 		if (newBclReady && _isBclDisconnected.value == true) {
 			connectingStatus = { getString(R.string.txt_setup_bcl_waiting) }
 		}

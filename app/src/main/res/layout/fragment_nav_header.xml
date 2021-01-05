@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data class="NavHeaderBinding">
+        <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel" />
@@ -24,30 +25,90 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/nav_header_vertical_spacing"
+            android:layout_marginTop="@dimen/nav_header_vertical_spacing"
             android:text="@string/app_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
         <LinearLayout
+            android:id="@+id/paneConnectionStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/nav_header_vertical_spacing"
             android:orientation="horizontal"
-            android:gravity="bottom">
-            <TextView
-                android:id="@+id/txtConnectionStatus"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="6dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_notify"
+                android:alpha="@{viewModel.isCarConnected() ? 1.0f : 0.2f}"
+                app:tint="?android:attr/textColorSecondary"/>
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="8dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_dots_horiz_24dp"
+                android:alpha="@{viewModel.isCarConnected() ? 1.0f : 0.2f}"
+                app:tint="?android:attr/textColorSecondary"/>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_cellphone_android"
+                android:alpha="@{viewModel.isCarConnected() ? 1.0f : 0.2f}"
+                app:animator="@{viewModel.isBclConnecting() ? @animator/pulse_in : null}"
+                app:tint="?android:attr/textColorSecondary"/>
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.carConnectionText}" />
-
+                android:layout_height="24dp"
+                android:orientation="vertical"
+                android:gravity="center">
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/ic_bluetooth_24dp"
+                    android:alpha="@{viewModel.isA2dpConnected() ? 1.0f : 0.0f}"/>
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="8dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_dots_horiz_24dp"
+                    android:alpha="@{viewModel.isBclReady() || viewModel.isCarConnected() ? 1.0f : 0.2f}"
+                    app:tint="?android:attr/textColorSecondary"/>
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/ic_usb_24dp"
+                    android:rotation="90"
+                    app:animator="@{viewModel.isUsbConnected() &amp;&amp; !viewModel.isBclReady() ? @animator/pulse_in : null}"
+                    android:alpha="@{viewModel.isUsbAccessory() &amp;&amp; viewModel.bclTransport != &quot;BT&quot; ? 1.0f : 0.0f}"/>
+            </LinearLayout>
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="8dp"
+                android:scaleType="fitEnd"
+                android:src="@drawable/ic_car_sports"
+                android:alpha="@{viewModel.isBclReady() ? 1.0f : 0.2f}"
+                app:animator="@{!viewModel.isBclReady() &amp;&amp; (viewModel.isUsbConnected() || viewModel.isBtConnected()) ? @animator/pulse_in : null}"
+                app:tint="?android:attr/textColorSecondary"/>
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="8dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_error_outline_black_24dp"
                 app:tint="?android:attr/textColorSecondary"
                 android:visibility="@{viewModel.carConnectionHint}"/>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@{viewModel.carLogo}" />
         </LinearLayout>
     </LinearLayout>
 </layout>

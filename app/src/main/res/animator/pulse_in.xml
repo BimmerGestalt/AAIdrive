@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@android:integer/config_mediumAnimTime"
+    android:repeatCount="infinite"
+    android:repeatMode="reverse"
+    android:propertyName="alpha"
+    android:valueFrom="0.2"
+    android:valueTo="1"
+    >
+
+</objectAnimator>
