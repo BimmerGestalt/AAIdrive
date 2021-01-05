@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.MenuInflater
 import android.view.View
 import android.widget.PopupMenu
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -63,8 +62,8 @@ class NavHostActivity: AppCompatActivity() {
 		nav_view.removeHeaderView(nav_view.getHeaderView(0))
 		nav_view.addHeaderView(binding.root)
 
-		val txtConnectionStatus = nav_view.getHeaderView(0).findViewById<TextView>(R.id.txtConnectionStatus)
-		txtConnectionStatus.setOnClickListener {
+		val paneConnectionStatus = nav_view.getHeaderView(0).findViewById<View>(R.id.paneConnectionStatus)
+		paneConnectionStatus.setOnClickListener {
 			findNavController(R.id.nav_host_fragment).navigate(R.id.nav_connection)
 			val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
 			drawerLayout?.closeDrawer(GravityCompat.START)
