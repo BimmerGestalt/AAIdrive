@@ -132,16 +132,16 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 						deferred.complete(emptyList())
 					}
 
-					override fun onChildrenLoaded(parentId: String, children: MutableList<MediaBrowserCompat.MediaItem>) {
+					override fun onChildrenLoaded(parentId: String, children: MutableList<MediaBrowserCompat.MediaItem?>) {
 						mediaBrowser.unsubscribe(browsePath, callback!!)
-						deferred.complete(children)
+						deferred.complete(children.filterNotNull())
 					}
 
 					override fun onError(parentId: String, options: Bundle) {
 						onError(parentId)
 					}
 
-					override fun onChildrenLoaded(parentId: String, children: MutableList<MediaBrowserCompat.MediaItem>, options: Bundle) {
+					override fun onChildrenLoaded(parentId: String, children: MutableList<MediaBrowserCompat.MediaItem?>, options: Bundle) {
 						onChildrenLoaded(parentId, children)
 					}
 				}
@@ -178,8 +178,8 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 						deferred.complete(null)
 					}
 
-					override fun onSearchResult(query: String, extras: Bundle?, items: MutableList<MediaBrowserCompat.MediaItem>) {
-						deferred.complete(items)
+					override fun onSearchResult(query: String, extras: Bundle?, items: MutableList<MediaBrowserCompat.MediaItem?>) {
+						deferred.complete(items.filterNotNull())
 					}
 				})
 			} else {
