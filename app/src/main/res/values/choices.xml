@@ -2,6 +2,7 @@
 <resources>
     <string-array name="gmaps_styles">
         <item>Auto</item>
+        <item>Hybrid</item>
         <item>Day</item>
         <item>Night</item>
         <item>Aubergine</item>

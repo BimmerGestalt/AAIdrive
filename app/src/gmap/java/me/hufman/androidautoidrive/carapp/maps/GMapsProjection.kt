@@ -50,7 +50,6 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 			applySettings()
 
 			map.isIndoorEnabled = false
-			map.isTrafficEnabled = true
 
 			if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 				map.isMyLocationEnabled = true
@@ -86,6 +85,7 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 		val location = this.location
 		val mapstyleId = when(style) {
 			"auto" -> if (location == null || TimeUtils.getDayMode(LatLong(location.latitude, location.longitude))) null else R.raw.gmaps_style_night
+			"hybrid" -> null
 			"night" -> R.raw.gmaps_style_night
 			"aubergine" -> R.raw.gmaps_style_aubergine
 			"midnight_commander" -> R.raw.gmaps_style_midnight_commander
@@ -96,6 +96,13 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 			val mapstyle = if (mapstyleId != null) MapStyleOptions.loadRawResourceStyle(parentContext, mapstyleId) else null
 			map?.setMapStyle(mapstyle)
 		}
+		if (style == "hybrid") {
+			map?.mapType = GoogleMap.MAP_TYPE_HYBRID
+		} else {
+			map?.mapType = GoogleMap.MAP_TYPE_NORMAL
+		}
+		map?.isBuildingsEnabled = appSettings[AppSettings.KEYS.GMAPS_BUILDINGS] == "true"
+		map?.isTrafficEnabled = appSettings[AppSettings.KEYS.MAP_TRAFFIC] == "true"
 		currentStyleId = mapstyleId
 	}
 
