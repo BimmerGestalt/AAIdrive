@@ -6,6 +6,7 @@ import android.os.Handler
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
+import me.hufman.androidautoidrive.carapp.GenericRHMIDimensions
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
 import me.hufman.androidautoidrive.carapp.maps.VirtualDisplayScreenCapture
 import me.hufman.androidautoidrive.carapp.maps.MapApp
@@ -34,7 +35,7 @@ class MapAppTest {
 	}
 
 	val appSettings = MockAppSettings()
-	val mapAppMode = MapAppMode(mapOf("hmi.display-width" to "1280", "hmi.display-height" to "480"), appSettings)
+	val mapAppMode = MapAppMode(GenericRHMIDimensions(1280, 480), appSettings)
 	val mockImageReader = mock<ImageReader> {
 		on { width } doReturn 1000
 		on { height } doReturn 500
@@ -128,14 +129,14 @@ class MapAppTest {
 
 		// show the map screen
 		mockClient.rhmi_onHmiEvent(1, "", app.fullImageView.state.id, 1, mapOf(4.toByte() to true))
-		verify(mockMap).changeImageSize(726, 480)
+		verify(mockMap).changeImageSize(703, 480)
 		verify(mockController).showMap()
 
 		// Send the fullsize map
 		reset(mockMap)
 		whenever(mockMap.getFrame()).then {
 			mock<Bitmap> {
-				on { width } doReturn 726
+				on { width } doReturn 703
 				on { height } doReturn 480
 			}
 		}.thenReturn(null)

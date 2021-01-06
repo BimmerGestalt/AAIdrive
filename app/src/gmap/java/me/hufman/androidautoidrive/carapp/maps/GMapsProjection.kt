@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Presentation
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Point
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import android.util.Log
@@ -14,7 +15,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.gmap.gmaps_projection.*
 import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.carapp.SidebarRHMIDimensions
+import me.hufman.androidautoidrive.carapp.SubsetRHMIDimensions
 import me.hufman.androidautoidrive.utils.TimeUtils
+import java.util.*
 
 class GMapsProjection(val parentContext: Context, display: Display, val appSettings: AppSettingsObserver): Presentation(parentContext, display) {
 	val TAG = "GMapsProjection"
@@ -22,6 +26,15 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 	var mapListener: Runnable? = null
 	var currentStyleId: Int? = null
 	var location: LatLng? = null
+
+	val fullDimensions = display.run {
+		val dimension = Point()
+		display.getSize(dimension)
+		SubsetRHMIDimensions(dimension.x, dimension.y)
+	}
+	val sidebarDimensions = SidebarRHMIDimensions(fullDimensions) {
+		appSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -38,7 +51,6 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 
 			map.isIndoorEnabled = false
 			map.isTrafficEnabled = true
-			map.setPadding(150, 0, 150, 0)
 
 			if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 				map.isMyLocationEnabled = true
@@ -64,7 +76,12 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 	}
 
 	fun applySettings() {
-		val style = appSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase()
+		// the narrow-screen option centers the viewport to the middle of the display
+		// so update the map's margin to match
+		val margin = (fullDimensions.appWidth - sidebarDimensions.appWidth) / 2 + 30
+		map?.setPadding(margin, 0, margin, 0)
+
+		val style = appSettings[AppSettings.KEYS.GMAPS_STYLE].toLowerCase(Locale.ROOT)
 
 		val location = this.location
 		val mapstyleId = when(style) {

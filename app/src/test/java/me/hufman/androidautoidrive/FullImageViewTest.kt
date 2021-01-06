@@ -1,8 +1,7 @@
 package me.hufman.androidautoidrive
 
 import com.nhaarman.mockito_kotlin.*
-import me.hufman.androidautoidrive.carapp.FullImageInteraction
-import me.hufman.androidautoidrive.carapp.FullImageView
+import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.utils.removeFirst
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
@@ -30,23 +29,55 @@ class FullImageViewTest {
 	fun testInitialize() {
 		val appSettings = MockAppSettings()
 		appSettings[AppSettings.KEYS.MAP_WIDESCREEN] = "false"
-		val fullImageConfig = MapAppMode(mapOf("hmi.display-width" to "1280", "hmi.display-height" to "480"), appSettings)
+		val fullImageConfig = MapAppMode(GenericRHMIDimensions(1280, 480), appSettings)
 		val fullImageView = FullImageView(this.fullImageState, "Map", fullImageConfig, mock(), mock())
 		fullImageView.initWidgets()
-		assertEquals(726, fullImageView.imageComponent.properties[RHMIProperty.PropertyId.WIDTH.id]?.value)
+		assertEquals(703, fullImageView.imageComponent.properties[RHMIProperty.PropertyId.WIDTH.id]?.value)
 		assertEquals(480, fullImageView.imageComponent.properties[RHMIProperty.PropertyId.HEIGHT.id]?.value)
 
 		appSettings[AppSettings.KEYS.MAP_WIDESCREEN] = "true"
 		fullImageView.initWidgets()
-		assertEquals(1210, fullImageView.imageComponent.properties[RHMIProperty.PropertyId.WIDTH.id]?.value)
+		assertEquals(1211, fullImageView.imageComponent.properties[RHMIProperty.PropertyId.WIDTH.id]?.value)
 		assertEquals(480, fullImageView.imageComponent.properties[RHMIProperty.PropertyId.HEIGHT.id]?.value)
+	}
+
+	@Test
+	fun testDimensionsFactory() {
+		assert(RHMIDimensions.create(mapOf("hmi.display-width" to "1280", "hmi.display-height" to "480"))
+				is GenericRHMIDimensions)
+		assert(RHMIDimensions.create(mapOf("hmi.display-width" to "1280", "hmi.display-height" to "480",
+				"hmi.type" to "BMW ID5"))
+				is GenericRHMIDimensions)
+		assert(RHMIDimensions.create(mapOf("hmi.display-width" to "1440", "hmi.display-height" to "540",
+				"hmi.type" to "BMW ID5"))
+				is BMW5XLRHMIDimensions)
+		assert(RHMIDimensions.create(mapOf("hmi.display-width" to "1280", "hmi.display-height" to "480",
+				"hmi.type" to "MINI ID4"))
+				is MiniDimensions)
+		assert(RHMIDimensions.create(mapOf("hmi.display-width" to "1280", "hmi.display-height" to "480",
+				"hmi.type" to "MINI ID5", "a4axl" to "false"))
+				is MiniDimensions)
+		assert(RHMIDimensions.create(mapOf("hmi.display-width" to "1280", "hmi.display-height" to "480",
+				"hmi.type" to "MINI ID5", "a4axl" to "true"))
+				is Mini5XLDimensions)
+	}
+
+	@Test
+	fun testSidebarDimensions() {
+		var isWidescreen = true
+		val base = GenericRHMIDimensions(1280, 480)
+		val sidebar = SidebarRHMIDimensions(base) {isWidescreen}
+		assertEquals(1141, sidebar.appWidth)
+
+		isWidescreen = false
+		assertEquals(633, sidebar.appWidth)
 	}
 
 	@Test
 	fun testInteraction() {
 		val appSettings = MockAppSettings()
 		appSettings[AppSettings.KEYS.MAP_INVERT_SCROLL] = "false"
-		val fullImageConfig = MapAppMode(mapOf("hmi.display-width" to "1280"), appSettings)
+		val fullImageConfig = MapAppMode(GenericRHMIDimensions(1280, 480), appSettings)
 		val mockInteraction = mock<FullImageInteraction> {
 			on { getClickState() } doReturn RHMIState.PlainState(carApp, 99)
 		}

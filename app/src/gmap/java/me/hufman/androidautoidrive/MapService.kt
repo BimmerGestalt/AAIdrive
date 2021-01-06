@@ -30,9 +30,9 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 				if (threadGMaps?.isAlive != true) {
 					threadGMaps = CarThread("GMaps") {
 						Log.i(MainService.TAG, "Starting GMaps")
-						val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.maxWidth, mapAppMode.maxHeight)
+						val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.fullDimensions.visibleWidth, mapAppMode.fullDimensions.visibleHeight)
 						this.mapScreenCapture = mapScreenCapture
-						val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(context, mapScreenCapture.imageCapture, 225)
+						val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(context, mapScreenCapture.imageCapture, 250)
 						this.virtualDisplay = virtualDisplay
 						val mapController = GMapsController(context, MapResultsSender(context), virtualDisplay, MutableAppSettingsReceiver(context, null /* specifically main thread */))
 						this.mapController = mapController

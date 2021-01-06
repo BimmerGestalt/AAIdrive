@@ -8,6 +8,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
+import me.hufman.androidautoidrive.carapp.RHMIDimensions
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
@@ -284,7 +285,7 @@ class MainService: Service() {
 	fun startMaps(): Boolean {
 		if (carInformationObserver.capabilities.isNotEmpty() && mapService == null) {
 			mapService = MapService(this, iDriveConnectionReceiver, securityAccess,
-					MapAppMode(carInformationObserver.capabilities, AppSettingsViewer()))
+					MapAppMode(RHMIDimensions.create(carInformationObserver.capabilities), AppSettingsViewer()))
 		}
 		return mapService?.start() ?: false
 	}
