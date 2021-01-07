@@ -50,10 +50,12 @@ object L {
 
 	var MUSIC_ACTION_SEEK_BACK_5 = "Seek back 5 seconds"
 	var MUSIC_ACTION_SEEK_BACK_10 = "Seek back 10 seconds"
+	var MUSIC_ACTION_SEEK_BACK_15 = "Seek back 15 seconds"
 	var MUSIC_ACTION_SEEK_BACK_20 = "Seek back 20 seconds"
 	var MUSIC_ACTION_SEEK_BACK_60 = "Seek back 60 seconds"
 	var MUSIC_ACTION_SEEK_FORWARD_5 = "Seek forward 5 seconds"
 	var MUSIC_ACTION_SEEK_FORWARD_10 = "Seek forward 10 seconds"
+	var MUSIC_ACTION_SEEK_FORWARD_15 = "Seek forward 15 seconds"
 	var MUSIC_ACTION_SEEK_FORWARD_20 = "Seek forward 20 seconds"
 	var MUSIC_ACTION_SEEK_FORWARD_60 = "Seek forward 60 seconds"
 

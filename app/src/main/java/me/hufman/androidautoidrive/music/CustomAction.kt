@@ -1,10 +1,10 @@
 package me.hufman.androidautoidrive.music
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.media.session.PlaybackStateCompat
+import androidx.core.content.res.ResourcesCompat
 import java.lang.Exception
 
 open class CustomAction(val packageName: String, val action: String, val name: String, val icon: Drawable?, val extras: Bundle?) {
@@ -12,7 +12,7 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 		fun fromMediaCustomAction(context: Context, packageName: String, action: PlaybackStateCompat.CustomAction): CustomAction {
 			val icon = try {
 				val resources = context.packageManager.getResourcesForApplication(packageName)
-				resources.getDrawable(action.icon, null)
+				ResourcesCompat.getDrawable(resources, action.icon, null)
 			} catch (e: Exception) {
 				null
 			}
@@ -57,6 +57,10 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 						niceName = L.MUSIC_SPOTIFY_THUMB_DOWN
 					"THUMBS_DOWN_SELECTED" ->
 						niceName = L.MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED
+					"SEEK_15_SECONDS_BACK" ->
+						niceName = L.MUSIC_ACTION_SEEK_BACK_15
+					"SEEK_15_SECONDS_FORWARD" ->
+						niceName = L.MUSIC_ACTION_SEEK_FORWARD_15
 					else ->
 						niceName = ca.name
 				}
