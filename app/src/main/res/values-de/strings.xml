@@ -50,6 +50,9 @@
     <string name="enable_google_maps">Google Maps aktivieren</string>
     <string name="lbl_widescreen_map">Breitbild (Widescreen) Karte</string>
     <string name="lbl_map_invert_zoom">Zoom-Richtung umkehren</string>
+    <string name="lbl_map_tilt">Neigung der Karte</string>
+    <string name="lbl_map_traffic">Verkehr anzeigen</string>
+    <string name="lbl_gmap_buildings">3D-Gebäude aktivieren</string>
     <string name="gmapStyleLabel">Kartenstil</string>
     <string name="lbl_musicpage">Die Musik-Apps Ihres Telefons können als Medienquellen im Auto ausgewählt werden</string>
     <string name="lbl_music_apps">Musik Apps</string>
@@ -61,7 +64,7 @@
     <string name="musicAppSearchable">Suchbar</string>
     <string name="musicAppUnavailable">Nicht Verfügbar</string>
     <string name="musicAppHidden">Versteckt</string>
-    <string name="enable_audio_context">AudioFokus erzwingen</string>
+    <string name="enable_audio_context">Audio Fokus via USB Verbindung erzwingen</string>
     <string name="enable_spotify_layout">Immer als Spotify-App erscheinen bei iDrive5+</string>
     <string name="lbl_grant_sessions">Steuerung der aktiven Musik Apps</string>
     <string name="lbl_grant_spotify_control">Möglichkeit, deine Spotify-Bibliothek zu durchsuchen</string>
@@ -77,7 +80,7 @@
     <string name="btn_donations">Spenden</string>
     <string name="lbl_support_other_ways">Sie können das Projekt auch auf andere Weise unterstützen:</string>
     <string name="lbl_support_feedback">Feedback geben</string>
-    <string name="lbl_support_issues">Geöffnete Probleme</string>
+    <string name="lbl_support_issues">Öffne Tickets</string>
     <string name="lbl_support_share">Weitersagen</string>
     <string name="lbl_support_thanks">Vielen Dank, dass Sie AndroidAutoIdrive verwenden!</string>
     <string name="lbl_ok">OK</string>
@@ -87,7 +90,7 @@
     <string name="connectionStatusMissingConnectedApp">Kann Connected oder Connected Classic App nicht finden</string>
     <string name="connectionStatusWaiting">Warte auf Verbindung mit Fahrzeug</string>
     <string name="connectionStatusConnected">Verbunden mit %s</string>
-    <string name="lblChassisCode">Fahrzeugrahmen</string>
+    <string name="lblChassisCode">Fahrgestell</string>
     <string name="lblHmiVersion">IDrive-Typ</string>
     <string name="nowplaying_notconnected">&lt;Nicht Verbunden&gt;</string>
     <string name="nowplaying_unknown">&lt;Unbekannt&gt;</string>
@@ -120,7 +123,7 @@
     <string name="txt_setup_bcl_init_stuck">Apps-Verbindung ist nicht aktiviert:</string>
     <string name="txt_setup_enable_bcl_mode">Aktiviere die Apps Option im Fahrzug für %s</string>
     <string name="txt_setup_bcl_disconnected">Apps Verbindung ist nicht bereit:</string>
-    <string name="txt_setup_bcl_waiting">Warten auf den Start der App-Verbindung</string>
+    <string name="txt_setup_bcl_waiting">Wartet auf das Starten der Apps Verbindung</string>
     <string name="txt_setup_enable_bclspp">Versuche Bluetooth Audio an- und auszuschalten oder mit USB-Kabel zu verbinden</string>
     <string name="txt_setup_bcl_connecting">Apps-Verbindung wird hergestellt</string>
     <string name="txt_setup_bcl_connected">Apps-Verbindung aktiv</string>
