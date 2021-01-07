@@ -13,25 +13,37 @@
         android:animateLayoutChanges="true">
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/swMapWidescreen"
             android:checked="@={settings.mapWidescreen}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/lbl_widescreen_map" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/swMapInvertZoom"
             android:checked="@={settings.mapInvertZoom}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/lbl_map_invert_zoom" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:checked="@={settings.gmapBuildings}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/lbl_gmap_buildings" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:checked="@={settings.mapTraffic}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/lbl_map_traffic" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="8dp"
             android:orientation="horizontal">
 
             <TextView

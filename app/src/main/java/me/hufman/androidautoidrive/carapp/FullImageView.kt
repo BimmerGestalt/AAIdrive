@@ -20,46 +20,7 @@ interface FullImageInteraction {
  */
 interface FullImageConfig {
 	val invertScroll: Boolean
-	val width: Int
-	val height: Int
-}
-
-/**
- * A helper implementation of FullImageConfig
- * with some common screen sizes and what image sizes to use
- */
-abstract class FullImageConfigAutosize(val rhmiWidth: Int, val rhmiHeight: Int): FullImageConfig {
-	/*
-	@jezikk82 calculated the following sizes
-		Side panel on the left: 70px
-		Side panel on the right open is 40% wide according to what I found.
-		Side panel on the right closed is 5px (omitted)
-		800 x 480
-		1280 x 480 * (1210/730 x 480)
-		1440 x 540 * (1370/825 x 540)
-		1920 x 720
-	 */
-	val LEFT_MARGIN = 70
-
-	abstract val isWidescreen: Boolean
-
-	override val width: Int
-		get() {
-			val contentWidth = rhmiWidth - LEFT_MARGIN
-			return if (isWidescreen || rhmiWidth <= 1000) {
-				// no adjustment for a sidebar
-				contentWidth
-			} else {
-				(contentWidth * 0.60).toInt()
-			}
-		}
-	override val height: Int
-		get() {
-			return rhmiHeight
-		}
-
-	val maxWidth = rhmiWidth - LEFT_MARGIN
-	val maxHeight = rhmiHeight
+	val rhmiDimensions: RHMIDimensions
 }
 
 class FullImageView(val state: RHMIState, val title: String, val config: FullImageConfig, val interaction: FullImageInteraction, val frameUpdater: FrameUpdater) {
@@ -88,9 +49,9 @@ class FullImageView(val state: RHMIState, val title: String, val config: FullIma
 		state.focusCallback = FocusCallback { focused ->
 			if (focused) {
 				Log.i(TAG, "Showing map on full screen")
-				imageComponent.setProperty(RHMIProperty.PropertyId.WIDTH.id, config.width)
-				imageComponent.setProperty(RHMIProperty.PropertyId.HEIGHT.id, config.height)
-				frameUpdater.showWindow(config.width, config.height, imageModel)
+				imageComponent.setProperty(RHMIProperty.PropertyId.WIDTH.id, config.rhmiDimensions.visibleWidth)
+				imageComponent.setProperty(RHMIProperty.PropertyId.HEIGHT.id, config.rhmiDimensions.visibleHeight)
+				frameUpdater.showWindow(config.rhmiDimensions.visibleWidth, config.rhmiDimensions.visibleHeight, imageModel)
 			} else {
 				Log.i(TAG, "Hiding map on full screen")
 				frameUpdater.hideWindow(imageModel)
@@ -148,11 +109,9 @@ class FullImageView(val state: RHMIState, val title: String, val config: FullIma
 		inputList.setProperty(RHMIProperty.PropertyId.BOOKMARKABLE, true)
 
 		imageComponent.setVisible(true)
-		//imageComponent.setProperty(18, 0)    // offsetX
-		//imageComponent.setProperty(19, 0)    // offsetY
-		imageComponent.setProperty(RHMIProperty.PropertyId.POSITION_X.id, -80)    // positionX
-		imageComponent.setProperty(RHMIProperty.PropertyId.POSITION_Y.id, 0)    // positionY, but moving up interferes with my car's status bar
-		imageComponent.setProperty(RHMIProperty.PropertyId.WIDTH.id, config.width)
-		imageComponent.setProperty(RHMIProperty.PropertyId.HEIGHT.id, config.height)
+		imageComponent.setProperty(RHMIProperty.PropertyId.POSITION_X.id, -config.rhmiDimensions.paddingLeft)    // positionX
+		imageComponent.setProperty(RHMIProperty.PropertyId.POSITION_Y.id, -config.rhmiDimensions.paddingTop)    // positionY
+		imageComponent.setProperty(RHMIProperty.PropertyId.WIDTH.id, config.rhmiDimensions.visibleWidth)
+		imageComponent.setProperty(RHMIProperty.PropertyId.HEIGHT.id, config.rhmiDimensions.visibleHeight)
 	}
 }

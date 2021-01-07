@@ -55,6 +55,9 @@
     <string name="enable_google_maps">Enable Google Maps</string>
     <string name="lbl_widescreen_map">Widescreen Map</string>
     <string name="lbl_map_invert_zoom">Invert zoom direction</string>
+    <string name="lbl_map_tilt">Tilt map</string>
+    <string name="lbl_map_traffic">Show traffic</string>
+    <string name="lbl_gmap_buildings">Enable 3D buildings</string>
     <string name="gmapStyleLabel">Map Style</string>
 
     <string name="lbl_musicpage">Your phone\'s music apps are selectable as media sources in the car</string>
