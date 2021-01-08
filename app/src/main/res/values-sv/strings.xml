@@ -9,9 +9,44 @@
     <string name="notification_description">Ansluten till bil</string>
     <string name="notification_description_chassiscode">Ansluten till %s</string>
     <string name="notification_description_bmw">Ansluten till BMW</string>
+    <string name="notification_description_mini">Ansluten till Mini</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <string name="navigation_listener_bmw">BMW Navigation</string>
+    <string name="navigation_listener_mini">MINI navigation</string>
     <!-- Labels on the navigation trigger activity -->
+    <string name="lbl_navigation_listener_searching">Söker efter destinationen</string>
+    <string name="lbl_navigation_listener_parsefailure">Destinationen ej funnen</string>
+    <string name="lbl_navigation_listener_pending">Startar navigering</string>
+    <string name="lbl_navigation_listener_success">Slutförd</string>
     <!-- Menu Titles -->
+    <string name="menu_overview">Översikt</string>
+    <string name="menu_setup">Inställningar</string>
+    <string name="menu_connection">Anslutning</string>
+    <string name="menu_music">Musik</string>
+    <string name="menu_notifications">Aviseringar</string>
+    <string name="menu_assistants">Hjälp</string>
+    <string name="menu_maps">Kartor</string>
+    <string name="menu_navigation">Navigering</string>
+    <string name="menu_settings">Inställningar</string>
+    <string name="menu_support">Hjälp</string>
+    <string name="lbl_overviewpage">AndroidAutoIdrive integrerar några av din telefons musikappar och aviseringar till bilen via BMW-protokollet</string>
+    <string name="lbl_connectionpage">Apparnas anslutning till bilen beror på ett par saker. Här är några tips för att säkerställa bra funktion</string>
+    <plurals name="lbl_assistantpage">
+        <item quantity="one">Telefonens röstassistent läggs till som en \"Connected app\", om bilens röstingång inte utlöser den</item>
+        <item quantity="other">Telefonens röstassistenter läggs till som \"Connected appar\", om bilens röstingång inte utlöser dem</item>
+    </plurals>
+    <string name="lbl_notificationpage">Inkommande aviseringar kan ses och integreras i bilen</string>
+    <string name="spawn_test_notification">Testa avisering</string>
+    <string name="message_notifications">Meddelandeaviseringar</string>
+    <string name="notification_popups">Popupfönster för aviseringar</string>
+    <string name="notification_popups_passenger">Popupfönster vid passagerare med</string>
+    <string name="notification_sound">Aviseringsljud</string>
+    <string name="notification_readout">Tala vid visning av aviseringar</string>
+    <string name="notification_readout_popup">Tala in nya aviseringar</string>
+    <string name="notification_readout_popup_passenger">… med en passagerare</string>
+    <string name="lbl_popupVersion">Popupfönster fungerar endast med IDrive4</string>
+    <string name="lbl_smsPermission">Ge behörighet för inkommande SMS att visa bilder i bilen. Texten är däremot alltid synlig.</string>
+    <string name="lbl_mapspage">Ett enkelt Google Maps fönster kan visas i bilen</string>
     <!-- connection setup -->
     <!-- connection status -->
     <!-- capabilities -->
