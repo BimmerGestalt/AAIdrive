@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AndroidAutoIdrive</string>
+    <string name="permlab_accessNotifications">IDrive aviseringsåtkomst</string>
+    <string name="permlab_bindNotificationListenerService">IDrive aviseringsåtkomst</string>
+    <string name="permdesc_accessNotifications">IDrive aviseringsåtkomst</string>
+    <string name="permdesc_bindNotificationListenerService">IDrive aviseringsåtkomst</string>
+    <string name="notification_title">Android Auto för IDrive</string>
+    <string name="notification_description">Ansluten till bil</string>
+    <string name="notification_description_chassiscode">Ansluten till %s</string>
+    <string name="notification_description_bmw">Ansluten till BMW</string>
+    <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <!-- Labels on the navigation trigger activity -->
+    <!-- Menu Titles -->
+    <!-- connection setup -->
+    <!-- connection status -->
+    <!-- capabilities -->
+    <!-- debug status -->
+    <!-- car app strings -->
+</resources>
