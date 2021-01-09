@@ -13,6 +13,7 @@ import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.utils.removeFirst
+import me.hufman.idriveconnectionkit.CDS
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
@@ -47,7 +48,8 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 	val customActionsView: CustomActionsView
 
 	init {
-		val carappListener = CarAppListener()
+		val cdsData = CDSDataProvider()
+		val carappListener = CarAppListener(cdsData)
 		carConnection = IDriveConnection.getEtchConnection(iDriveConnectionStatus.host ?: "127.0.0.1", iDriveConnectionStatus.port ?: 8003, carappListener)
 		val appCert = carAppAssets.getAppCertificate(iDriveConnectionStatus.brand ?: "")?.readBytes() as ByteArray
 		val sas_challenge = carConnection.sas_certificate(appCert)
@@ -91,8 +93,11 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			initWidgets()
 
 			// listen for HMI Context events
-			val cdsHandle = carConnection.cds_create()
-			carConnection.cds_addPropertyChangedEventHandler(cdsHandle, "hmi.graphicalContext", "114", 50)
+			cdsData.setConnection(CDSConnectionEtch(carConnection))
+			cdsData.subscriptions.defaultIntervalLimit = 50
+			cdsData.subscriptions[CDS.HMI.GRAPHICALCONTEXT] = {
+				hmiContextChangedTime = System.currentTimeMillis()
+			}
 		}
 
 		// set up AM Apps
@@ -199,7 +204,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 		amAppList.setApps(amApps)
 	}
 
-	inner class CarAppListener: BaseBMWRemotingClient() {
+	inner class CarAppListener(val cdsEventHandler: CDSEventHandler): BaseBMWRemotingClient() {
 		var server: BMWRemotingServer? = null
 		var app: RHMIApplication? = null
 		override fun rhmi_onActionEvent(handle: Int?, ident: String?, actionId: Int?, args: MutableMap<*, *>?) {
@@ -341,10 +346,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 		}
 
 		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
-			if (propertyName == "hmi.graphicalContext") {
-//				Log.i(TAG, "Received graphicalContext: $propertyValue")
-				hmiContextChangedTime = System.currentTimeMillis()
-			}
+			cdsEventHandler.onPropertyChangedEvent(ident, propertyValue)
 		}
 	}
 

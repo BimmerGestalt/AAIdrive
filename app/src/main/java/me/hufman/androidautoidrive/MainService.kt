@@ -8,6 +8,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
+import com.google.gson.JsonObject
 import me.hufman.androidautoidrive.carapp.RHMIDimensions
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
@@ -15,11 +16,12 @@ import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
+import me.hufman.idriveconnectionkit.CDS
+import me.hufman.idriveconnectionkit.CDSProperty
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
 import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import org.json.JSONObject
 import java.lang.IllegalArgumentException
 import java.util.*
 
@@ -250,8 +252,8 @@ class MainService: Service() {
 							startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
 						}
 
-						override fun onCdsProperty(propertyName: String, propertyValue: String, parsedValue: JSONObject?) {
-							if (propertyName == "navigation.guidanceStatus" && parsedValue?.getInt("guidanceStatus") == 1) {
+						override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
+							if (property == CDS.NAVIGATION.GUIDANCESTATUS && propertyValue["guidanceStatus"]?.asInt == 1) {
 								sendBroadcast(Intent(NavIntentActivity.INTENT_NAV_SUCCESS))
 							}
 						}

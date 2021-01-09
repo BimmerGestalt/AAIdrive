@@ -2,21 +2,25 @@ package me.hufman.androidautoidrive
 
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
+import me.hufman.androidautoidrive.carapp.*
+import me.hufman.idriveconnectionkit.CDS
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import org.json.JSONException
-import org.json.JSONObject
 import java.lang.Exception
 
 class CarInformationDiscovery(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, carAppAssets: CarAppResources, val listener: CarInformationDiscoveryListener?) {
 
-	val carappListener = CarAppListener()
+	val carappListener: CarAppListener
 	val carConnection: BMWRemotingServer
+	val cdsData: CDSData
 	var capabilities: Map<String, String?>? = null
 
 	init {
+		val cdsData = CDSDataProvider()
+		this.cdsData = cdsData
+		carappListener = CarAppListener(cdsData)
 		carConnection = IDriveConnection.getEtchConnection(iDriveConnectionStatus.host
 				?: "127.0.0.1", iDriveConnectionStatus.port ?: 8003, carappListener)
 		val appCert = carAppAssets.getAppCertificate(iDriveConnectionStatus.brand
@@ -24,6 +28,7 @@ class CarInformationDiscovery(iDriveConnectionStatus: IDriveConnectionStatus, se
 		val sas_challenge = carConnection.sas_certificate(appCert)
 		val sas_login = securityAccess.signChallenge(challenge = sas_challenge)
 		carConnection.sas_login(sas_login)
+		cdsData.setConnection(CDSConnectionEtch(carConnection))
 	}
 
 	fun onCreate() {
@@ -59,20 +64,15 @@ class CarInformationDiscovery(iDriveConnectionStatus: IDriveConnectionStatus, se
 	}
 
 	fun subscribeToCds() {
-		val handle = carConnection.cds_create()
-		carConnection.cds_addPropertyChangedEventHandler(handle, "navigation.guidanceStatus", "63", 1000)
+		if (listener != null) {
+			// forward all events through
+			cdsData.addEventHandler(CDS.NAVIGATION.GUIDANCESTATUS, 1000, listener)
+		}
 	}
 
-	inner class CarAppListener: BaseBMWRemotingClient() {
+	inner class CarAppListener(val cdsEventHandler: CDSEventHandler): BaseBMWRemotingClient() {
 		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
-			if (propertyName != null && propertyValue != null) {
-				val parsed = try {
-					JSONObject(propertyValue)
-				} catch (e: JSONException) {
-					null
-				}
-				listener?.onCdsProperty(propertyName, propertyValue, parsed)
-			}
+			cdsEventHandler.onPropertyChangedEvent(ident, propertyValue)
 		}
 	}
 
@@ -83,7 +83,6 @@ class CarInformationDiscovery(iDriveConnectionStatus: IDriveConnectionStatus, se
 	}
 }
 
-interface CarInformationDiscoveryListener {
+interface CarInformationDiscoveryListener: CDSEventHandler {
 	fun onCapabilities(capabilities: Map<String, String?>)
-	fun onCdsProperty(propertyName: String, propertyValue: String, parsedValue: JSONObject?)
 }
