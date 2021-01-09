@@ -47,6 +47,23 @@
     <string name="lbl_popupVersion">Popupfönster fungerar endast med IDrive4</string>
     <string name="lbl_smsPermission">Ge behörighet för inkommande SMS att visa bilder i bilen. Texten är däremot alltid synlig.</string>
     <string name="lbl_mapspage">Ett enkelt Google Maps fönster kan visas i bilen</string>
+    <string name="enable_google_maps">Aktivera Google Maps</string>
+    <string name="lbl_widescreen_map">Widescreen karta</string>
+    <string name="lbl_map_invert_zoom">Zooma ut</string>
+    <string name="lbl_map_tilt">Luta kartvyn</string>
+    <string name="lbl_map_traffic">Visa trafik</string>
+    <string name="lbl_gmap_buildings">Aktivera 3D-byggnader</string>
+    <string name="gmapStyleLabel">Kart utseende</string>
+    <string name="lbl_musicpage">Telefonens musikappar är valbara mediakällor i bilen</string>
+    <string name="lbl_music_apps">Musikappar</string>
+    <string name="musicAppIcon">Appikon</string>
+    <string name="musicAppNowPlaying">Nu spelas</string>
+    <string name="musicAppControllable">Kontrollerbar under körning</string>
+    <string name="musicAppConnectable">Fullt kontrollerbar</string>
+    <string name="musicAppBrowseable">Bläddringsbar</string>
+    <string name="musicAppSearchable">Sökbar</string>
+    <string name="musicAppUnavailable">Ej tillgänglig</string>
+    <string name="musicAppHidden">Dold</string>
     <!-- connection setup -->
     <!-- connection status -->
     <!-- capabilities -->
