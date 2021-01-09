@@ -64,6 +64,7 @@
     <string name="musicAppSearchable">Sökbar</string>
     <string name="musicAppUnavailable">Ej tillgänglig</string>
     <string name="musicAppHidden">Dold</string>
+    <string name="enable_audio_context">Tvinga audio via USB-anslutning</string>
     <!-- connection setup -->
     <!-- connection status -->
     <!-- capabilities -->
