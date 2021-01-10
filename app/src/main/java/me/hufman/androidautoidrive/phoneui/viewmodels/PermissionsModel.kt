@@ -57,6 +57,8 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 		val hasSpotify = spotifyConnector.isSpotifyInstalled() && spotifyConnector.hasSupport()
 		_hasSpotify.value = hasSpotify
 
+		_isSpotifyWebApiAuthorized.value = spotifyAuthStateManager.isAuthorized()
+
 		if (hasSpotify) {
 			spotifyConnector.connect().apply {
 				callback = { _updateSpotify(); it?.disconnect() }
@@ -87,8 +89,6 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 			}
 			else -> _spotifyErrorHint.value = { errorMessage ?: "" }
 		}
-
-		_isSpotifyWebApiAuthorized.value = spotifyAuthStateManager.isAuthorized()
 	}
 
 	// subscription management
