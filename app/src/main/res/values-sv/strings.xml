@@ -116,6 +116,9 @@
     <string name="txt_setup_spp_connected">Bluetooth appar stöds</string>
     <string name="txt_setup_usb_disconnected">Bilen ej ansluten via USB</string>
     <string name="txt_setup_usb_connected">USB ansluten i laddläge</string>
+    <string name="txt_setup_enable_usbmtp">Växla till telefonens USB-läge för filöverföring</string>
+    <string name="txt_setup_enable_usbacc">Aktivera USB Accessory Mode eller Apps-alternativet i bilen för denna %s</string>
+    <string name="txt_setup_usbmtp_connected">USB ansluten i lagringsläge</string>
     <!-- capabilities -->
     <!-- debug status -->
     <!-- car app strings -->
