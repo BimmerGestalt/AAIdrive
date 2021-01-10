@@ -277,11 +277,11 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		if (queueUri != null && queueItems.isEmpty()) {
 			val listItem = ListItem(queueUri, queueUri, null, playerContext.title, playerContext.subtitle, false, true)
 			loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
-				queueItems = it
-
 				// shuffle play button somehow gets returned with the rest of the tracks when loading an album
-				if (queueItems.isNotEmpty() && queueItems[0].artist == "" && queueItems[0].title == "Shuffle Play") {
-					queueItems = queueItems.drop(1)
+				queueItems = if (queueItems.isNotEmpty() && queueItems[0].artist == "" && queueItems[0].title == "Shuffle Play") {
+					it.drop(1)
+				} else {
+					it
 				}
 
 				// build a basic QueueMetadata while waiting for cover art to load
