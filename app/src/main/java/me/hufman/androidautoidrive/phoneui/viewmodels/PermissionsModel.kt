@@ -44,7 +44,7 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 	val spotifyHint: LiveData<Context.() -> String> = _spotifyErrorHint
 
 	private val _isSpotifyWebApiAuthorized = MutableLiveData(false)
-	val isSpotifyWebApiAuthorized = _isSpotifyWebApiAuthorized as LiveData<Boolean>
+	val isSpotifyWebApiAuthorized: LiveData<Boolean> = _isSpotifyWebApiAuthorized
 
 	fun update() {
 		_hasNotificationPermission.value = notificationListenerState.value == true && permissionsState.hasNotificationPermission
