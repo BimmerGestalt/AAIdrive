@@ -111,7 +111,53 @@
     <string name="txt_setup_bt_disconnected">Ingen anslutning till bil via Bluetooth</string>
     <string name="txt_setup_bt_connected">Bilen är ansluten via Bluetooth</string>
     <string name="txt_setup_a2dp_disconnected">Bluetooth musik är ej ansluten</string>
+    <string name="txt_setup_a2dp_connected">Bluetooth musik är ansluten</string>
+    <string name="txt_setup_spp_disconnected">Bluetooth-appar stöds ej</string>
+    <string name="txt_setup_spp_connected">Bluetooth appar stöds</string>
+    <string name="txt_setup_usb_disconnected">Bilen ej ansluten via USB</string>
+    <string name="txt_setup_usb_connected">USB ansluten i laddläge</string>
     <!-- capabilities -->
     <!-- debug status -->
     <!-- car app strings -->
+    <string name="MAP_ACTION_VIEWMAP">Se hela kartan</string>
+    <string name="MAP_ACTION_SEARCH">Sök efter plats</string>
+    <string name="MAP_ACTION_CLEARNAV">Ta bort navigering</string>
+    <string name="MUSIC_APPLIST_TITLE">Appar</string>
+    <string name="MUSIC_APPLIST_EMPTY">&lt;Inga Appar&gt;</string>
+    <string name="MUSIC_CUSTOMACTIONS_TITLE">Åtgärder</string>
+    <string name="MUSIC_DISCONNECTED">&lt;Ej uppkopplad&gt;</string>
+    <string name="MUSIC_BROWSE_TITLE">Utforska</string>
+    <string name="MUSIC_BROWSE_EMPTY">&lt;Tom&gt;</string>
+    <string name="MUSIC_BROWSE_LOADING">&lt;Laddar&gt;</string>
+    <string name="MUSIC_BROWSE_SEARCHING">&lt;Söker&gt;</string>
+    <string name="MUSIC_BROWSE_ACTION_JUMPBACK">Hoppa tillbaka</string>
+    <string name="MUSIC_BROWSE_ACTION_FILTER">Filter</string>
+    <string name="MUSIC_BROWSE_ACTION_SEARCH">Sök</string>
+    <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Spela från sökning</string>
+    <string name="MUSIC_QUEUE_TITLE">Nu spelas</string>
+    <string name="MUSIC_QUEUE_EMPTY">&lt;Spellistan tom&gt;</string>
+    <string name="MUSIC_SKIP_PREVIOUS">Backa</string>
+    <string name="MUSIC_SKIP_NEXT">Nästa</string>
+    <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Shuffle ej tillgänglig</string>
+    <string name="MUSIC_TURN_SHUFFLE_ON">Slå på Shuffle</string>
+    <string name="MUSIC_TURN_SHUFFLE_OFF">Stäng av Shuffle</string>
+    <string name="MUSIC_TURN_REPEAT_UNAVAILABLE">Upprepa ej tillgänglig</string>
+    <string name="MUSIC_TURN_REPEAT_ALL_ON">Sätt på \"Upprepa alla\"</string>
+    <string name="MUSIC_TURN_REPEAT_ONE_ON">Sätt på \"Upprepa en\"</string>
+    <string name="MUSIC_TURN_REPEAT_OFF">Stäng av \"Upprepa\"</string>
+    <plurals name="MUSIC_ACTION_SEEK_BACK">
+        <item quantity="one">Bakåt %s sekunder</item>
+        <item quantity="other">Bakåt %s sekunder</item>
+    </plurals>
+    <plurals name="MUSIC_ACTION_SEEK_FORWARD">
+        <item quantity="one">Framåt %s sekunder</item>
+        <item quantity="other">Framåt %s sekunder</item>
+    </plurals>
+    <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Ogillar</string>
+    <string name="MUSIC_SPOTIFY_START_RADIO">Skapa radiostation</string>
+    <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Gilla</string>
+    <string name="MUSIC_SPOTIFY_THUMB_UP">Tumme upp</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Tummen upp</string>
+    <string name="MUSIC_SPOTIFY_THUMB_DOWN">Tumme Ned</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Tummen ner</string>
 </resources>
