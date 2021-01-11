@@ -89,6 +89,8 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 			}
 			else -> _spotifyErrorHint.value = { errorMessage ?: "" }
 		}
+
+		_isSpotifyWebApiAuthorized.value = spotifyAuthStateManager.isAuthorized()
 	}
 
 	// subscription management
