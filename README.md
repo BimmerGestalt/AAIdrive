@@ -68,9 +68,10 @@ Implemented Features
   - Phone Notifications
     - Popup about new notifications
     - Supports Dismiss, Mark As Read, or other notification actions
-  - Google Maps
+  - Google Maps (proof-of-concept)
     - Basic search and routing
     - Includes some dark themes
+    - Poor performance due to the nature of the protocol
     - Not compiled by default, because showing Google Maps in a car is against the Maps API license
   - Control of Android Auto compatible music apps
     - Supports browsing and searching apps' music libraries
@@ -172,7 +173,7 @@ This project replicates some of the features of Android Auto using the IDrive in
 Due to the unofficial reverse-engineered nature of this project, it has some limitations:
 
   - The main menu entries' icons and text can't be altered, and so do not look exactly correct
-  - The individual music source icons may not be fully functional, but they do switch the active music source
+  - The individual music source icons sometimes don't open the Audioplayer interface in ID4, but they do switch the active music source
   - Android Oreo disabled Android Open Accessory Protocol 2 audio output, which is required to play audio over the app's USB connection in model years 2014-2017. Please listen over Bluetooth audio and use this app as a control interface.
   - Some Android Auto music apps enforce a list of allowed client apps, preventing this app from launching them or browsing their libraries. However, once they are running, they can be controlled. For example, these popular music apps can not be launched, they must be started manually:
     - Amazon Music
