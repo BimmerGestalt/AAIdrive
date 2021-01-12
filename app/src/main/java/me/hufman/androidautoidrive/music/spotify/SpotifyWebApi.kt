@@ -25,7 +25,6 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	companion object {
 		const val TAG = "SpotifyWebApi"
 		const val NOTIFICATION_CHANNEL_ID = "SpotifyAuthorization"
-		const val NOTIFICATION_CHANNEL_NAME = "Spotify Authorization"
 		const val NOTIFICATION_REQ_ID = 56
 
 		private var webApiInstance: SpotifyWebApi? = null
@@ -197,7 +196,9 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				.build()
 		val notificationManager = context.getSystemService(NotificationManager::class.java)
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
+			val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID,
+					context.getString(R.string.notification_channel_spotify),
+					NotificationManager.IMPORTANCE_HIGH)
 			notificationManager.createNotificationChannel(channel)
 		}
 		notificationManager.notify(NOTIFICATION_REQ_ID, notification)
