@@ -24,7 +24,7 @@ class MusicAppsListFragment: Fragment() {
 
 	val displayedApps = ArrayList<MusicAppInfo>()
 	val appDiscoveryThread by lazy {
-		MusicAppDiscoveryThread(requireContext()) { appDiscovery ->
+		MusicAppDiscoveryThread(requireActivity().applicationContext) { appDiscovery ->
 			handler.post {
 				displayedApps.clear()
 				displayedApps.addAll(appDiscovery.allApps)

@@ -1,8 +1,9 @@
-package me.hufman.androidautoidrive.music
+package me.hufman.androidautoidrive.music.spotify
 
 import android.graphics.Bitmap
 import com.spotify.protocol.types.ImageUri
 import com.spotify.protocol.types.ListItem
+import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 
 class SpotifyMusicMetadata(

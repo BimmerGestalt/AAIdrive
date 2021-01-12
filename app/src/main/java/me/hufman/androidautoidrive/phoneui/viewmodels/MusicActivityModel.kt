@@ -8,22 +8,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.QueueMetadata
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
+import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 
-class MusicActivityModel(val musicController: MusicController): ViewModel() {
+class MusicActivityModel(val musicController: MusicController, val spotifyWebApi: SpotifyWebApi): ViewModel() {
 	class Factory(val appContext: Context, val musicApp: MusicAppInfo): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel?> create(modelClass: Class<T>): T {
 			var model: MusicActivityModel? = null
 			val controller = MusicController(appContext, Handler())
+			val spotifyWebApi = SpotifyWebApi.getInstance(appContext, MutableAppSettingsReceiver(appContext))
 			controller.connectAppManually(musicApp)
 			controller.listener = Runnable {
 				model?.update()
 			}
-			model = MusicActivityModel(controller)
+			model = MusicActivityModel(controller, spotifyWebApi)
 			// prepare initial data
 			model.update()
 			return model as T
@@ -59,6 +62,8 @@ class MusicActivityModel(val musicController: MusicController): ViewModel() {
 	val errorTitle: LiveData<String?> = _errorTitle
 	private val _errorMessage = MutableLiveData<String?>()
 	val errorMessage: LiveData<String?> = _errorMessage
+	private val _isWebApiAuthorized = MutableLiveData<Boolean?>()
+	val isWebApiAuthorized: LiveData<Boolean?> = _isWebApiAuthorized
 
 	@VisibleForTesting
 	fun update() {
@@ -84,12 +89,15 @@ class MusicActivityModel(val musicController: MusicController): ViewModel() {
 
 	private fun updateErrors() {
 		val spotifyError = musicController.connectors.filterIsInstance<SpotifyAppController.Connector>().firstOrNull()?.lastError
-		if (spotifyError != null) {
-			_errorTitle.value = spotifyError.javaClass.simpleName
-			_errorMessage.value = spotifyError.message
+		val isWebApiAuthorized = spotifyWebApi.isAuthorized()
+		if (spotifyError != null || (spotifyWebApi.isUsingSpotify && !isWebApiAuthorized)) {
+			_errorTitle.value = spotifyError?.javaClass?.simpleName
+			_errorMessage.value = spotifyError?.message
+			_isWebApiAuthorized.value = isWebApiAuthorized
 		} else {
 			_errorTitle.value = null
 			_errorMessage.value = null
+			_isWebApiAuthorized.value = null
 		}
 	}
 

@@ -297,8 +297,8 @@ class MainService: Service() {
 
 	fun startMusic(): Boolean {
 		if (carInformationObserver.capabilities.isNotEmpty() && musicService == null) {
-			musicService = MusicService(this, iDriveConnectionReceiver, securityAccess,
-					MusicAppMode.build(carInformationObserver.capabilities, this))
+			musicService = MusicService(applicationContext, iDriveConnectionReceiver, securityAccess,
+					MusicAppMode.build(carInformationObserver.capabilities, applicationContext))
 			musicService?.start()
 		}
 		return true

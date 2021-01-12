@@ -78,7 +78,7 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_error_outline_black_24dp"
                     app:tint="?android:attr/textColorSecondary"
-                    android:visibility="@{viewModel.errorTitle != null}"/>
+                    android:visibility="@{viewModel.errorTitle != null || viewModel.isWebApiAuthorized != null}"/>
             </LinearLayout>
 
             <LinearLayout
