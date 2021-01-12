@@ -154,6 +154,12 @@
     <string name="notification_assistant_description">Necessario solo se lo schermo è attivo</string>
     <string name="donation_title">Ti piace questa app?</string>
     <string name="donation_text">Valuta di mostrare il tuo supporta con una piccola donazione</string>
+    <string name="txt_spotify_auth_notification">L\'API Web di Spotify deve essere autorizzata. Clicca qui per autorizzare.</string>
+    <string name="txt_spotify_app_remote_last_error">Ultimo Errore Dell\'App Remote Spotify:</string>
+    <string name="txt_spotify_api_authorization_needed">È necessaria l\'autorizzazione delle API Web Spotify.</string>
+    <string name="txt_spotify_api_authorization_success">API Web di Spotify autorizzata!</string>
+    <string name="txt_spotify_api_authorization_canceled">Autorizzazione API Web Spotify annullata.</string>
+    <string name="txt_spotify_api_authorization_failed">Autorizzazione delle API Web Spotify non riuscita. Riprova.</string>
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notifiche</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Nessuna notifica</string>
