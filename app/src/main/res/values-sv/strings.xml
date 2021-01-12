@@ -11,6 +11,10 @@
     <string name="notification_description_bmw">Ansluten till BMW</string>
     <string name="notification_description_mini">Ansluten till Mini</string>
     <!-- notification channel names -->
+    <string name="notification_channel_connection">Anslutningsstatus</string>
+    <string name="notification_channel_donation">Donationsbegäran</string>
+    <string name="notification_channel_spotify">Spotify auktorisation</string>
+    <string name="notification_channel_test">Testa avisering</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <string name="navigation_listener_bmw">BMW Navigation</string>
     <string name="navigation_listener_mini">MINI navigation</string>
