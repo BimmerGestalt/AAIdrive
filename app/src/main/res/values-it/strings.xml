@@ -10,6 +10,7 @@
     <string name="notification_description_chassiscode">Connesso a %s</string>
     <string name="notification_description_bmw">Connesso a BMW</string>
     <string name="notification_description_mini">Connesso a Mini</string>
+    <!-- notification channel names -->
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <string name="navigation_listener_bmw">Navigazione BMW</string>
     <string name="navigation_listener_mini">Navigazione MINI</string>
