@@ -22,6 +22,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
+        <activity android:name=".phoneui.SpotifyAuthorizationActivity" />
+
         <activity-alias
             android:name=".phoneui.MainActivity"
             android:targetActivity=".phoneui.NavHostActivity" >

@@ -27,7 +27,6 @@ import me.hufman.androidautoidrive.phoneui.visible
 class NotificationPageFragment: Fragment() {
 	companion object {
 		const val NOTIFICATION_CHANNEL_ID = "TestNotification"
-		const val NOTIFICATION_CHANNEL_NAME = "Test Notification"
 		const val NOTIFICATION_SERVICE_TIMEOUT = 1000
 	}
 
@@ -122,7 +121,7 @@ class NotificationPageFragment: Fragment() {
 	private fun createNotificationChannel() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID,
-					NOTIFICATION_CHANNEL_NAME,
+					getString(R.string.notification_channel_test),
 					NotificationManager.IMPORTANCE_DEFAULT)
 
 			NotificationManagerCompat.from(requireContext()).createNotificationChannel(channel)

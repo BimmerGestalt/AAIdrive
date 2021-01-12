@@ -11,6 +11,13 @@
     <string name="notification_description_bmw">Connected to BMW</string>
     <string name="notification_description_mini">Connected to Mini</string>
 
+    <!-- notification channel names -->
+    <string name="notification_channel_assistant">Assistant Launcher</string>
+    <string name="notification_channel_connection">Car Connection Status</string>
+    <string name="notification_channel_donation">Donation Request</string>
+    <string name="notification_channel_spotify">Spotify Authorization</string>
+    <string name="notification_channel_test">Test Notification</string>
+
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <string name="navigation_listener_bmw">BMW Navigation</string>
     <string name="navigation_listener_mini">MINI Navigation</string>
@@ -176,6 +183,14 @@
     <string name="donation_title">Like this app?</string>
     <string name="donation_text">Consider showing your support with a small donation</string>
 
+    <string name="txt_spotify_auth_notification">Spotify Web API needs to be authorized. Click here to authorize.</string>
+    <string name="txt_spotify_app_remote_last_error">Spotify App Remote Last Error:</string>
+    <string name="txt_spotify_api_authorization_needed">Spotify Web API authorization needed.</string>
+    <string name="txt_spotify_api_authorization_success">Spotify Web API authorized!</string>
+    <string name="txt_spotify_api_authorization_canceled">Spotify Web API authorization canceled.</string>
+    <string name="txt_spotify_api_authorization_failed">Spotify Web API authorization failed. Please try again.</string>
+    <string name="lbl_spotify_api_authorized">Spotify Web API Authorized</string>
+    <string name="btn_authorize">Authorize</string>
 
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notifications</string>

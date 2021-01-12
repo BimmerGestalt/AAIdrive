@@ -53,7 +53,6 @@ class DonationRequest(val context: Context) {
 		const val DONATION_DAYS_THRESHOLD = 5   // show at the 5th day of use
 		const val DONATION_URL = "https://hufman.github.io/AndroidAutoIdrive/support"
 		const val NOTIFICATION_CHANNEL_ID = "DonationRequest"
-		const val NOTIFICATION_CHANNEL_NAME = "Donation Request"
 	}
 
 	private val dayCounter = DayCounter(MutableAppSettingsReceiver(context)) {
@@ -73,7 +72,7 @@ class DonationRequest(val context: Context) {
 	private fun createNotificationChannel() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID,
-					NOTIFICATION_CHANNEL_NAME,
+					context.getString(R.string.notification_channel_donation),
 					NotificationManager.IMPORTANCE_MIN)
 			channel.setSound(null, null)
 

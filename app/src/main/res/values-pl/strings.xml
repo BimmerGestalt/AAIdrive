@@ -19,6 +19,21 @@
     <string name="lbl_navigation_listener_pending">Uruchamianie nawigacji</string>
     <string name="lbl_navigation_listener_success">Sukces</string>
     <!-- Menu Titles -->
+    <string name="menu_overview">Przegląd</string>
+    <string name="menu_setup">Ustawiać (setup)</string>
+    <string name="menu_connection">Połączenie</string>
+    <string name="menu_music">Muzyka</string>
+    <string name="menu_notifications">Powiadomienia</string>
+    <string name="menu_assistants">Asystenci</string>
+    <string name="menu_maps">Mapy</string>
+    <string name="menu_navigation">Nawigacja</string>
+    <string name="menu_settings">Ustawienia</string>
+    <string name="menu_support">Wsparcie</string>
+
+    <string name="lbl_overviewpage">AndroidAutoIdrive integruje niektóre aplikacje muzyczne i powiadomienia z telefonu z samochodem za pośrednictwem niestandardowego protokołu BMW Apps</string>
+    <string name="lbl_connectionpage">Połączenie aplikacji z samochodem zależy od kilku elementów, a oto kilka wskazówek, aby upewnić się, że działa dobrze</string>
+
+    <string name="lbl_notificationpage">Przychodzące powiadomienia można przeglądać i obsługiwać z poziomu samochodu</string>
     <string name="spawn_test_notification">Testowe powiadomienie</string>
     <string name="message_notifications">Treść powiadomienia</string>
     <string name="notification_popups">Wyskakujące okno powiadomień</string>
@@ -26,13 +41,20 @@
     <string name="notification_sound">Odtwarzanie dźwięku powiadomienia</string>
     <string name="notification_readout">Odczytaj powiadomienie podczas podglądu (TTS)</string>
     <string name="notification_readout_popup">Odczytaj nowe powiadomienia (TTS)</string>
-    <string name="notification_readout_popup_passenger">... z obecnym pasażerem</string>
+    <string name="notification_readout_popup_passenger">… z obecnym pasażerem</string>
     <string name="lbl_popupVersion">Wyskakujace powiadomienia działaja tylko z IDrive4</string>
     <string name="lbl_smsPermission">Przyznaj uprawnienia SMS aby wyświetlać obrazy z przychodzących SMS w samochodzie. Tekst jest zawsze widoczny.</string>
+
+    <string name="lbl_mapspage">W samochodzie można wyświetlić podstawowy ekran Google Maps (proof of concept)</string>
     <string name="enable_google_maps">Włącz Google Maps</string>
     <string name="lbl_widescreen_map">Mapy w trybie pełnoekranowym</string>
     <string name="lbl_map_invert_zoom">Odwróć kierunek powiększenia</string>
+    <string name="lbl_map_tilt">Pochylenie mapy</string>
+    <string name="lbl_map_traffic">Pokaż natężenie ruchu</string>
+    <string name="lbl_gmap_buildings">Włącz budynki 3D</string>
     <string name="gmapStyleLabel">Styl map</string>
+
+    <string name="lbl_musicpage">Aplikacje muzyczną z telefonu można wybrać jako źródła multimediów w samochodzie</string>
     <string name="lbl_music_apps">Aplikacje muzyczne</string>
     <string name="musicAppIcon">Ikony aplikacji</string>
     <string name="musicAppNowPlaying">Obecnie odtwarzane</string>
@@ -45,12 +67,24 @@
     <string name="enable_audio_context">Przełącz na audio z telefonu</string>
     <string name="enable_spotify_layout">Zawsze pojawiaj się jako Spotify w IDrive5+ (Okladki w całym Idrive)</string>
     <string name="lbl_grant_sessions">Kontrola poprzez aktywną aplikacje muzyczną</string>
+    <string name="lbl_grant_spotify_control">Możliwość przeglądania swojej biblioteki Spotify</string>
     <string name="lbl_grant">Przyznaj</string>
     <string name="musicAppNotes_unauthorizedSpotify">Kliknij tutaj aby przyznać dostęp do Spotify</string>
     <string name="musicAppNotes_oldSpotify">Aby uzyskać pełną funkcjonalność (przeglądanie,wyszukiwanie), obniż wersję Spotify</string>
     <string name="musicAppNotes_oldSpotifyInstructions">Ta aplikacja może zapewnić pełną kontrolę nad Spotify do wersji 8.4.96.953, taką jak przeglądanie list odtwarzania i wyszukiwanie. Aby uzyskać pełną kontrolę, pobierz starszą wersję z APKPure lub podobnej.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Proszę zainstalować oficjalnego klienta Spotify</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Prosimy sprawdzić połączenie z Internetem i wyłączenie blokady reklam.</string>
+
+    <string name="lbl_settingspage">Zaawansowane ustawienia, mogą powodować nieoczekiwane zachowanie aplikacji</string>
+    <string name="lbl_donations_volunteer">AndroidAutoIdrive to projekt darmowy, wolontariacki, otwarto źródłowy</string>
+    <string name="lbl_donations_request">Jeśli podoba Ci się ten projekt i uznasz go za przydatny, rozważ okazanie wsparcia, przekazując:</string>
+    <string name="btn_donations">Darowizna</string>
+    <string name="lbl_support_other_ways">Możesz również wesprzeć projekt w inny sposób:</string>
+    <string name="lbl_support_feedback">Przekaz swoją opinie</string>
+    <string name="lbl_support_issues">Zgłoś problem</string>
+    <string name="lbl_support_share">Poleć znajomym</string>
+    <string name="lbl_support_thanks">Dziękujemy za korzystanie z AndroidAutoIdrive!</string>
+
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Anuluj</string>
     <string name="btn_configure">Konfiguruj …</string>
@@ -58,6 +92,10 @@
     <string name="connectionStatusMissingConnectedApp">Nie moge znależć aplikacji Connected lub Connected Classic</string>
     <string name="connectionStatusWaiting">Oczekiwanie na połączenie z samochodem</string>
     <string name="connectionStatusConnected">Połączono z %s</string>
+
+    <string name="lblChassisCode">Podwozie</string>
+    <string name="lblHmiVersion">Typ IDrive</string>
+
     <string name="nowplaying_notconnected">&lt;Nie połączony&gt;</string>
     <string name="nowplaying_unknown">&lt;Nieznany&gt;</string>
     <!-- connection setup -->
@@ -89,15 +127,35 @@
     <string name="txt_setup_bcl_init_stuck">Usługa Apps Connection nie jest włączona:</string>
     <string name="txt_setup_enable_bcl_mode">Włącz usługę Aplikacje w samochodzie dla tego %s</string>
     <string name="txt_setup_bcl_disconnected">Połączenie w trybie Aplikacji nie jest gotowe:</string>
+    <string name="txt_setup_bcl_waiting">Czekam na rozpoczęcie połączenia z aplikacjami</string>
     <string name="txt_setup_enable_bclspp">Spróbuj przełączyć na Muzykę Bluetooth lub podłącz kabel USB</string>
     <string name="txt_setup_bcl_connecting">Połączenie w trybie Aplikacji łączenie …</string>
     <string name="txt_setup_bcl_connected">Połączenie w trybie Aplikacji działa</string>
     <string name="txt_setup_bcl_connected_transport">Połączenie w trybie Aplikacji przez %s</string>
+
     <!-- capabilities -->
+    <string name="lbl_capabilities_detected">Wykryte możliwości samochodu:</string>
+    <string name="txt_capabilities_audiocontext_yes">Audio kontekst obsługiwany</string>
+    <string name="txt_capabilities_audiocontext_no">Audio kontekst nie jest obsługiwany</string>
+    <string name="txt_capabilities_audiocontext_no_usb">Audio kontekst nie jest obsługiwany przez USB</string>
+    <string name="txt_capabilities_audiocontext_hint">Słuchaj muzyki z telefonu przez Bluetooth</string>
+    <string name="txt_capabilities_audiostate_yes">Globalne okładki są obsługiwane</string>
+    <string name="txt_capabilities_audiostate_no">Globalne okładki nie są obsługiwane</string>
+    <string name="txt_capabilities_audiostate_id4">ID4 nie obsługuje tej funkcji</string>
+    <string name="txt_capabilities_audiostate_audiocontext">Ta funkcja wymaga kontekstu audio</string>
+    <string name="txt_capabilities_audiostate_spotify">Zainstaluj najnowszą wersję Spotify, aby włączyć tę funkcję</string>
+    <string name="txt_capabilities_popup_yes">Wyskakujące powiadomienia są obsługiwane</string>
+    <string name="txt_capabilities_popup_no">Wyskakujące powiadomienia nie są obsługiwane</string>
+    <string name="txt_capabilities_popup_hint">Wyskakujące powiadomienia są obsługiwane tylko w ID4</string>
+    <string name="txt_capabilities_tts_yes">Zamiana tekstu na mowę (TTS) w powiadomieniach jest obsługiwana</string>
+    <string name="txt_capabilities_tts_no">Zamiana tekstu na mowę (TTS) w powiadomieniach nie jest obsługiwana</string>
+    <string name="txt_capabilities_navi_yes">Nawigacja samochodowa obsługiwana</string>
+    <string name="txt_capabilities_navi_no">Nawigacja samochodowa nie jest obsługiwana</string>
+
     <!-- debug status -->
     <string name="txt_build_info">Wersja: %1$s %2$s</string>
     <string name="txt_bcl_report">Wydajność tunelu BCL:</string>
-    <string name="txt_car_capabilities">Zgłoszane możliwości samochodu:</string>
+    <string name="txt_car_capabilities">Szczegółowe możliwości samochodu:</string>
     <string name="lbl_advanced_settings">Pokaż ustawienia zaawansowane</string>
     <string name="lbl_assistant">Asystent głosowy (beta)</string>
     <string name="lbl_assistant_empty">Nic nie znaleziono</string>
@@ -115,7 +173,7 @@
     <string name="NOTIFICATION_SOUND">Odtwarzaj dźwięk powiadomienia</string>
     <string name="NOTIFICATION_READOUT">Odczytaj powiadomienie podczas podglądu (TTS)</string>
     <string name="NOTIFICATION_READOUT_POPUP">Odczytaj nowe powiadomienia (TTS)</string>
-    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER">... z obecnym pasażerem</string>
+    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER">… z obecnym pasażerem</string>
     <string name="READOUT_DESCRIPTION">Ta aplikacja jest używana do odczytu powiadomień (TTS)</string>
     <string name="MAP_ACTION_VIEWMAP">Zobacz całą mapę</string>
     <string name="MAP_ACTION_SEARCH">Szukaj miejsca</string>
@@ -135,7 +193,7 @@
     <string name="MUSIC_QUEUE_TITLE">Aktualnie odtwarzane</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;Pusta kolejka&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Poprzednia</string>
-    <string name="MUSIC_SKIP_NEXT">Następna</string>
+    <string name="MUSIC_SKIP_NEXT">Aktualnie odtwarzane</string>
     <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Odtwarzanie losowe niedostępne</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Odtwarzanie losowe włączone</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Odtwarzanie losowe wyłączone</string>

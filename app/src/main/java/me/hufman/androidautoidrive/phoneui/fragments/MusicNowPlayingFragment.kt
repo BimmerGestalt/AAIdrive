@@ -1,6 +1,5 @@
 package me.hufman.androidautoidrive.phoneui.fragments
 
-import android.graphics.*
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +18,7 @@ class MusicNowPlayingFragment: Fragment() {
 	lateinit var viewModel: MusicActivityModel
 	lateinit var musicController: MusicController
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 		val viewModel = ViewModelProvider(requireActivity()).get(MusicActivityModel::class.java)
 		val iconsModel = ViewModelProvider(requireActivity()).get(MusicActivityIconsModel::class.java)
 
@@ -43,8 +42,9 @@ class MusicNowPlayingFragment: Fragment() {
 		// handlers
 		imgError.setOnClickListener {
 			val arguments = Bundle().apply {
-				putString(SpotifyApiErrorDialog.EXTRA_CLASSNAME, viewModel.errorTitle.value)
+				putString(SpotifyApiErrorDialog.EXTRA_TITLE, viewModel.errorTitle.value)
 				putString(SpotifyApiErrorDialog.EXTRA_MESSAGE, viewModel.errorMessage.value)
+				putBoolean(SpotifyApiErrorDialog.EXTRA_WEB_API_AUTHORIZED, viewModel.isWebApiAuthorized.value == true)
 			}
 			val fragmentManager = activity?.supportFragmentManager
 			if (fragmentManager != null) {

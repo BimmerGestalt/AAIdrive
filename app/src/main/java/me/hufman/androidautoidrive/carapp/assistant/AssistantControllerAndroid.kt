@@ -20,7 +20,6 @@ open class AssistantControllerAndroid(val context: Context, val phoneAppResource
 
 		val NOTIFICATION_ID = 20506
 		val NOTIFICATION_CHANNEL_ID = "AssistantLauncher"
-		val NOTIFICATION_CHANNEL_NAME = "Assistant Launcher"
 
 		fun getVoiceIntent(): Intent {
 			return Intent(Intent.ACTION_VOICE_COMMAND)
@@ -34,7 +33,7 @@ open class AssistantControllerAndroid(val context: Context, val phoneAppResource
 	private fun createNotificationChannel() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID,
-					NOTIFICATION_CHANNEL_NAME,
+					context.getString(R.string.notification_channel_assistant),
 					NotificationManager.IMPORTANCE_HIGH)
 			channel.setSound(null, null)
 

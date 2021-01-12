@@ -33,7 +33,10 @@ android {
         archivesBaseName = "androidautoidrive-${androidGitVersion.name()}"
         buildConfigField "long", "BUILD_TIME", System.currentTimeMillis() + "L"
 
-        manifestPlaceholders = [spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey]
+        manifestPlaceholders = [
+                spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey,
+                appAuthRedirectScheme: applicationId
+        ]
 
         // show the Audio Context option for advanced users
         // Forcing it is only useful for old phones with Android Open Accessory v2 Audio support
@@ -379,17 +382,19 @@ dependencies {
     implementation "androidx.navigation:navigation-dynamic-features-fragment:$androidx_navigation_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$androidx_navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$androidx_navigation_version"
+    implementation 'net.openid:appauth:0.7.1'
+    implementation "androidx.browser:browser:1.3.0"
+    implementation 'com.adamratzman:spotify-api-kotlin-android:3.2.14'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     testImplementation "androidx.arch.core:core-testing:2.1.0"
-    testImplementation "org.mockito:mockito-core:2.28.2"
+    testImplementation "org.mockito:mockito-core:3.4.4"
     testImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     testImplementation 'org.awaitility:awaitility-scala:3.1.5'
     testImplementation 'org.json:json:20180813'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2'
-    androidTestImplementation "org.mockito:mockito-android:2.28.2"
+    androidTestImplementation "org.mockito:mockito-android:3.4.4"
     androidTestImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
     implementation project(path: ':IDriveConnectKitAndroid')
@@ -398,6 +403,10 @@ dependencies {
     androidTestImplementation project(path: ':IDriveConnectKitAndroid')
     androidTestImplementation project(path: ':IDriveConnectKit')
     androidTestImplementation "org.bouncycastle:bcmail-jdk16:1.46"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
+    testImplementation "org.powermock:powermock-core:2.0.9"
+    testImplementation "org.powermock:powermock-api-mockito2:2.0.9"
+    testImplementation "org.powermock:powermock-module-junit4:2.0.9"
 
     implementation 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
     gmapImplementation 'com.google.android.gms:play-services-maps:17.0.0'

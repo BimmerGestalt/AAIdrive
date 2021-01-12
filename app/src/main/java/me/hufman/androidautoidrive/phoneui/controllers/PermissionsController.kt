@@ -4,10 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
+import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
 
 class PermissionsController(val activity: Activity) {
 	companion object {
@@ -37,5 +35,10 @@ class PermissionsController(val activity: Activity) {
 		connector.connect().apply {
 			callback = { it?.disconnect() }
 		}
+	}
+
+	fun promptSpotifyAuthorization() {
+		val intent = Intent(activity.applicationContext, SpotifyAuthorizationActivity::class.java)
+		activity.startActivity(intent)
 	}
 }
