@@ -19,8 +19,6 @@ import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import net.openid.appauth.*
-import net.openid.appauth.browser.BrowserWhitelist
-import net.openid.appauth.browser.VersionedBrowserMatcher
 import net.openid.appauth.connectivity.DefaultConnectionBuilder
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
@@ -163,9 +161,6 @@ class SpotifyAuthorizationActivity: Activity() {
 	private fun createAuthorizationService(): AuthorizationService {
 		Log.d(TAG, "Creating authorization service")
 		val builder = AppAuthConfiguration.Builder()
-		builder.setBrowserMatcher(BrowserWhitelist(
-				VersionedBrowserMatcher.CHROME_CUSTOM_TAB,
-				VersionedBrowserMatcher.SAMSUNG_CUSTOM_TAB))
 		builder.setConnectionBuilder(DefaultConnectionBuilder.INSTANCE)
 		return AuthorizationService(this, builder.build())
 	}
