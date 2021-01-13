@@ -10,6 +10,7 @@
     <string name="notification_description_chassiscode">Conectat la %s</string>
     <string name="notification_description_bmw">Conectat la BMW</string>
     <string name="notification_description_mini">Conectat la Mini</string>
+    <!-- notification channel names -->
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <!-- Labels on the navigation trigger activity -->
     <!-- Menu Titles -->

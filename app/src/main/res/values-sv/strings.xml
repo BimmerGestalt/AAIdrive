@@ -10,6 +10,11 @@
     <string name="notification_description_chassiscode">Ansluten till %s</string>
     <string name="notification_description_bmw">Ansluten till BMW</string>
     <string name="notification_description_mini">Ansluten till Mini</string>
+    <!-- notification channel names -->
+    <string name="notification_channel_connection">Anslutningsstatus</string>
+    <string name="notification_channel_donation">Donationsbegäran</string>
+    <string name="notification_channel_spotify">Spotify auktorisation</string>
+    <string name="notification_channel_test">Testa avisering</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <string name="navigation_listener_bmw">BMW Navigation</string>
     <string name="navigation_listener_mini">MINI navigation</string>
@@ -157,6 +162,14 @@
     <string name="notification_assistant_description">Endast nödvändigt eftersom skärmen är på</string>
     <string name="donation_title">Gillar du denna app?</string>
     <string name="donation_text">Bidra gärna med en donation som stöd för detta projekt</string>
+    <string name="txt_spotify_auth_notification">Spotify Web API måste auktoriseras. Klicka här för att auktoriseras.</string>
+    <string name="txt_spotify_app_remote_last_error">Spotify Remote App Senaste fel:</string>
+    <string name="txt_spotify_api_authorization_needed">Spotify Web API auktorisering krävs.</string>
+    <string name="txt_spotify_api_authorization_success">Spotify Web API auktoriserad!</string>
+    <string name="txt_spotify_api_authorization_canceled">Spotify Web API auktorisering avbruten.</string>
+    <string name="txt_spotify_api_authorization_failed">Spotify Web API auktorisering misslyckades. Försök igen.</string>
+    <string name="lbl_spotify_api_authorized">Spotify Web API Auktoriserad</string>
+    <string name="btn_authorize">Auktorisera</string>
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Aviseringar</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Inga aviseringar</string>

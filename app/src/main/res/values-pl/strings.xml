@@ -10,6 +10,7 @@
     <string name="notification_description_chassiscode">Połączono z %s</string>
     <string name="notification_description_bmw">Połączono z BMW</string>
     <string name="notification_description_mini">Połączono z Mini</string>
+    <!-- notification channel names -->
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <string name="navigation_listener_bmw">Nawigacja BMW</string>
     <string name="navigation_listener_mini">Namigacja Mini</string>
@@ -29,10 +30,8 @@
     <string name="menu_navigation">Nawigacja</string>
     <string name="menu_settings">Ustawienia</string>
     <string name="menu_support">Wsparcie</string>
-
     <string name="lbl_overviewpage">AndroidAutoIdrive integruje niektóre aplikacje muzyczne i powiadomienia z telefonu z samochodem za pośrednictwem niestandardowego protokołu BMW Apps</string>
     <string name="lbl_connectionpage">Połączenie aplikacji z samochodem zależy od kilku elementów, a oto kilka wskazówek, aby upewnić się, że działa dobrze</string>
-
     <string name="lbl_notificationpage">Przychodzące powiadomienia można przeglądać i obsługiwać z poziomu samochodu</string>
     <string name="spawn_test_notification">Testowe powiadomienie</string>
     <string name="message_notifications">Treść powiadomienia</string>
@@ -44,7 +43,6 @@
     <string name="notification_readout_popup_passenger">… z obecnym pasażerem</string>
     <string name="lbl_popupVersion">Wyskakujace powiadomienia działaja tylko z IDrive4</string>
     <string name="lbl_smsPermission">Przyznaj uprawnienia SMS aby wyświetlać obrazy z przychodzących SMS w samochodzie. Tekst jest zawsze widoczny.</string>
-
     <string name="lbl_mapspage">W samochodzie można wyświetlić podstawowy ekran Google Maps (proof of concept)</string>
     <string name="enable_google_maps">Włącz Google Maps</string>
     <string name="lbl_widescreen_map">Mapy w trybie pełnoekranowym</string>
@@ -53,7 +51,6 @@
     <string name="lbl_map_traffic">Pokaż natężenie ruchu</string>
     <string name="lbl_gmap_buildings">Włącz budynki 3D</string>
     <string name="gmapStyleLabel">Styl map</string>
-
     <string name="lbl_musicpage">Aplikacje muzyczną z telefonu można wybrać jako źródła multimediów w samochodzie</string>
     <string name="lbl_music_apps">Aplikacje muzyczne</string>
     <string name="musicAppIcon">Ikony aplikacji</string>
@@ -74,7 +71,6 @@
     <string name="musicAppNotes_oldSpotifyInstructions">Ta aplikacja może zapewnić pełną kontrolę nad Spotify do wersji 8.4.96.953, taką jak przeglądanie list odtwarzania i wyszukiwanie. Aby uzyskać pełną kontrolę, pobierz starszą wersję z APKPure lub podobnej.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Proszę zainstalować oficjalnego klienta Spotify</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Prosimy sprawdzić połączenie z Internetem i wyłączenie blokady reklam.</string>
-
     <string name="lbl_settingspage">Zaawansowane ustawienia, mogą powodować nieoczekiwane zachowanie aplikacji</string>
     <string name="lbl_donations_volunteer">AndroidAutoIdrive to projekt darmowy, wolontariacki, otwarto źródłowy</string>
     <string name="lbl_donations_request">Jeśli podoba Ci się ten projekt i uznasz go za przydatny, rozważ okazanie wsparcia, przekazując:</string>
@@ -84,7 +80,6 @@
     <string name="lbl_support_issues">Zgłoś problem</string>
     <string name="lbl_support_share">Poleć znajomym</string>
     <string name="lbl_support_thanks">Dziękujemy za korzystanie z AndroidAutoIdrive!</string>
-
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Anuluj</string>
     <string name="btn_configure">Konfiguruj …</string>
@@ -92,10 +87,8 @@
     <string name="connectionStatusMissingConnectedApp">Nie moge znależć aplikacji Connected lub Connected Classic</string>
     <string name="connectionStatusWaiting">Oczekiwanie na połączenie z samochodem</string>
     <string name="connectionStatusConnected">Połączono z %s</string>
-
     <string name="lblChassisCode">Podwozie</string>
     <string name="lblHmiVersion">Typ IDrive</string>
-
     <string name="nowplaying_notconnected">&lt;Nie połączony&gt;</string>
     <string name="nowplaying_unknown">&lt;Nieznany&gt;</string>
     <!-- connection setup -->
@@ -132,7 +125,6 @@
     <string name="txt_setup_bcl_connecting">Połączenie w trybie Aplikacji łączenie …</string>
     <string name="txt_setup_bcl_connected">Połączenie w trybie Aplikacji działa</string>
     <string name="txt_setup_bcl_connected_transport">Połączenie w trybie Aplikacji przez %s</string>
-
     <!-- capabilities -->
     <string name="lbl_capabilities_detected">Wykryte możliwości samochodu:</string>
     <string name="txt_capabilities_audiocontext_yes">Audio kontekst obsługiwany</string>
@@ -151,7 +143,6 @@
     <string name="txt_capabilities_tts_no">Zamiana tekstu na mowę (TTS) w powiadomieniach nie jest obsługiwana</string>
     <string name="txt_capabilities_navi_yes">Nawigacja samochodowa obsługiwana</string>
     <string name="txt_capabilities_navi_no">Nawigacja samochodowa nie jest obsługiwana</string>
-
     <!-- debug status -->
     <string name="txt_build_info">Wersja: %1$s %2$s</string>
     <string name="txt_bcl_report">Wydajność tunelu BCL:</string>
