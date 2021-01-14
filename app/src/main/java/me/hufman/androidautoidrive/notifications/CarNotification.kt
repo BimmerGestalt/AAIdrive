@@ -5,12 +5,12 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 
 class CarNotification(val packageName: String, val key: String,     // main identifier
-                      val icon: Drawable,           // the icon in the main list
+                      val icon: Drawable?,          // the icon in the main list
                       val isClearable: Boolean,     // swipeable
                       val actions: List<Action>,    // other actions
                       val title: String,            // first line of text
                       val text: String,             // body of notification
-                      val appIcon: Drawable,        // the icon next to the app name in Details
+                      val appIcon: Drawable?,       // the icon next to the app name in Details
                       val sidePicture: Drawable?,   // an optional picture next to the title
                       val picture: Drawable?, val pictureUri: String?,    // a full picture
                       val soundUri: Uri?            // any custom audio clip

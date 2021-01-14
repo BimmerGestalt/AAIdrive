@@ -50,7 +50,7 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 	val shownNotifications = Collections.synchronizedList(ArrayList<CarNotification>())   // which notifications are showing
 	val notificationListData = object: RHMIListAdapter<CarNotification>(3, shownNotifications) {
 		override fun convertRow(index: Int, item: CarNotification): Array<Any> {
-			val icon = graphicsHelpers.compress(item.icon, 48, 48)
+			val icon = item.icon?.let { graphicsHelpers.compress(it, 48, 48) } ?: ""
 			val text = "${item.title}\n${item.text.trim().split(Regex("\n")).lastOrNull() ?: ""}"
 			return arrayOf(icon, "", text)
 		}
