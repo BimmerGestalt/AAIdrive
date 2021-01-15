@@ -27,7 +27,7 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 				ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
 				== PackageManager.PERMISSION_GRANTED) {
 			synchronized(this) {
-				if (threadGMaps?.isAlive != true) {
+				if (threadGMaps == null) {
 					threadGMaps = CarThread("GMaps") {
 						Log.i(MainService.TAG, "Starting GMaps")
 						val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.fullDimensions.visibleWidth, mapAppMode.fullDimensions.visibleHeight)

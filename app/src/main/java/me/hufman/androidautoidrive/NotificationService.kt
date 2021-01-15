@@ -25,7 +25,7 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 				Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")?.contains(context.packageName) == true
 		if (enabled) {
 			synchronized(this) {
-				if (carInformationObserver.capabilities.isNotEmpty() && threadNotifications?.isAlive != true) {
+				if (carInformationObserver.capabilities.isNotEmpty() && threadNotifications == null) {
 					threadNotifications = CarThread("Notifications") {
 						Log.i(MainService.TAG, "Starting notifications app")
 						val handler = threadNotifications?.handler
