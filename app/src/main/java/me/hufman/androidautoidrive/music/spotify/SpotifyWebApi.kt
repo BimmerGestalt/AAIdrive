@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
 import com.adamratzman.spotify.endpoints.public.SearchApi
+import com.adamratzman.spotify.models.SpotifyImage
 import com.adamratzman.spotify.models.Token
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
@@ -94,6 +95,22 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		return null
 	}
 
+	/**
+	 * Constructs the cover art uri from the list of [SpotifyImage]s that works with the Spotify App
+	 * Remote ImagesApi. If there are no images that are found that match the dimensions then null is
+	 * returned.
+	 */
+	private fun getCoverArtUri(images: List<SpotifyImage>, heightToMatch: Int = 300): String? {
+		val coverArtIndex = images.indexOfFirst { it.height == heightToMatch }
+		return if (coverArtIndex != -1) {
+			val imageUrl = images[coverArtIndex].url
+			val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
+			"spotify:image:$coverArtCode"
+		} else {
+			null
+		}
+	}
+
 	suspend fun searchForQuery(spotifyAppController: SpotifyAppController, query: String): List<SpotifyMusicMetadata> {
 		if (webApi == null) {
 			return emptyList()
@@ -106,43 +123,20 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 					SearchApi.SearchType.EPISODE,
 					SearchApi.SearchType.SHOW,
 					SearchApi.SearchType.TRACK,
-					limit = 10)
-
-			val searchResultMusicMetadata: ArrayList<SpotifyMusicMetadata> = ArrayList()
+					limit = 8)
 
 			// run through each of the search result categories and compile full list
-			val artistResults = searchResults?.artists
-			if (artistResults != null && artistResults.size > 0) {
-				searchResultMusicMetadata.addAll(artistResults.items.map {
-					val mediaId = it.uri.uri
-					val coverArtIndex = it.images.indexOfFirst { it.height == 320 }
-					val coverArtUri = if (coverArtIndex != -1) {
-						val imageUrl = it.images[coverArtIndex].url
-						val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
-						"spotify:image:$coverArtCode"
-					} else {
-						null
-					}
-
-					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.type.capitalize(), null, it.name)
-				})
-			}
+			val searchResultMusicMetadata: ArrayList<SpotifyMusicMetadata> = ArrayList()
 
 			val albumResults = searchResults?.albums
 			if (albumResults != null && albumResults.size > 0) {
 				searchResultMusicMetadata.addAll(albumResults.items.map {
 					val mediaId = it.uri.uri
-					val coverArtIndex = it.images.indexOfFirst { it.height == 300 }
-					val coverArtUri = if (coverArtIndex != -1) {
-						val imageUrl = it.images[coverArtIndex].url
-						val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
-						"spotify:image:$coverArtCode"
-					} else {
-						null
-					}
+					val coverArtUri = getCoverArtUri(it.images)
 					val artists = it.artists.map { it.name }.joinToString(", ")
+					val type = it.type.capitalize()
 
-					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.type.capitalize() + " - " + artists, null, it.name)
+					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, it.name, it.name, type, true, false)
 				})
 			}
 
@@ -150,17 +144,23 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			if (songResults != null && songResults.size > 0) {
 				searchResultMusicMetadata.addAll(songResults.items.map {
 					val mediaId = it.uri.uri
-					val coverArtIndex = it.album.images.indexOfFirst { it.height == 300 }
-					val coverArtUri = if (coverArtIndex != -1) {
-						val imageUrl = it.album.images[coverArtIndex].url
-						val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
-						"spotify:image:$coverArtCode"
-					} else {
-						null
-					}
+					val coverArtUri = getCoverArtUri(it.album.images)
 					val artists = it.artists.map { it.name }.joinToString(", ")
+					val albumMediaId = it.album.uri.uri
+					val type = it.type.capitalize()
 
-					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.type.capitalize() + " - " + artists, null, it.name)
+					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, albumMediaId, it.name, type, true, false)
+				})
+			}
+
+			val artistResults = searchResults?.artists
+			if (artistResults != null && artistResults.size > 0) {
+				searchResultMusicMetadata.addAll(artistResults.items.map {
+					val mediaId = it.uri.uri
+					val coverArtUri = getCoverArtUri(it.images, 320)
+					val type = it.type.capitalize()
+
+					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.name, null, it.name, type, false, true)
 				})
 			}
 
@@ -168,15 +168,10 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			if (showResults != null && showResults.size > 0) {
 				searchResultMusicMetadata.addAll(showResults.items.filterNotNull().map {
 					val mediaId = it.uri.uri
-					val coverArtIndex = it.images.indexOfFirst { it.height == 300 }
-					val coverArtUri = if (coverArtIndex != -1) {
-						val imageUrl = it.images[coverArtIndex].url
-						val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
-						"spotify:image:$coverArtCode"
-					} else {
-						null
-					}
-					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.type.capitalize() + " - " + it.publisher, null, it.name)
+					val coverArtUri = getCoverArtUri(it.images)
+					val subtitle = it.type.capitalize()
+
+					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.publisher, null, it.name, subtitle, true, false)
 				})
 			}
 
@@ -184,18 +179,12 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			if (episodeResults != null && episodeResults.size > 0) {
 				searchResultMusicMetadata.addAll(episodeResults.items.filterNotNull().map {
 					val mediaId = it.uri.uri
-					val coverArtIndex = it.images.indexOfFirst { it.height == 300 }
-					val coverArtUri = if (coverArtIndex != -1) {
-						val imageUrl = it.images[coverArtIndex].url
-						val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
-						"spotify:image:$coverArtCode"
-					} else {
-						null
-					}
-					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.type.capitalize(), null, it.name)
+					val coverArtUri = getCoverArtUri(it.images)
+					val subtitle = it.type.capitalize()
+
+					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, null, null, it.name, subtitle, true, false)
 				})
 			}
-
 			return searchResultMusicMetadata
 		} catch (e: SpotifyException.AuthenticationException) {
 			Log.e(TAG, "Failed to get search results due to authentication error with the message: ${e.message}")

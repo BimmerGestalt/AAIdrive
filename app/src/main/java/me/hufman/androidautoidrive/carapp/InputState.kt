@@ -38,8 +38,18 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 				onSelect(suggestion, index)
 			}
 		}
+		inputComponent.getResultAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+			onOk()
+		}
 		inputComponent.getResultModel()?.asRaDataModel()?.value = ""
 		inputComponent.getSuggestModel()?.setValue(RHMIModel.RaListModel.RHMIListConcrete(1),0,0, 0)
+	}
+
+	/**
+	 * Called when the ok button is clicked. Does nothing by default.
+	 */
+	open fun onOk() {
+
 	}
 
 	open fun sendSuggestions(newSuggestions: List<T>) {

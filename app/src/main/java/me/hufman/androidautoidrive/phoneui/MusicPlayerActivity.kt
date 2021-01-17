@@ -55,6 +55,10 @@ class MusicPlayerActivity: AppCompatActivity() {
 		pgrMusicPlayer.currentItem = 0
 	}
 
+	fun showBrowse() {
+		pgrMusicPlayer.currentItem = 1
+	}
+
 	override fun onBackPressed() {
 		if (pgrMusicPlayer.currentItem == 0) {
 			// pass through default behavior, to close the Activity

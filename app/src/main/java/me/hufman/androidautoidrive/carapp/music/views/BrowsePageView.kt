@@ -75,6 +75,7 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 	private var musicListComponent: RHMIComponent.List
 
 	private var folder = browsePageModel.folder
+	private var searchResults = browsePageModel.searchResults
 	private var musicList = ArrayList<MusicMetadata>()
 	private var currentListModel: RHMIModel.RaListModel.RHMIList = loadingList
 	private var shortcutSteps = 0
@@ -113,11 +114,19 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 		// enable focus setting until the user scrolls
 		hasSelectionChanged = false
 
-		// show the name of the directory
-		folderNameLabel.getModel()?.asRaDataModel()?.value = when (shortcutSteps) {
-			0 -> folder?.title ?: browsePageModel.musicAppInfo?.name ?: ""
-			1 -> "${browsePageModel.folder?.title ?: ""} / ${folder?.title ?: ""}"
-			else -> "${browsePageModel.folder?.title ?: ""} /../ ${folder?.title ?: ""}"
+		// show the name of the directory, if the item is an Album or Show search result then show the artist as well
+		folderNameLabel.getModel()?.asRaDataModel()?.value = if (searchResults != null) {
+			L.MUSIC_SEARCH_RESULTS_LABEL
+		} else {
+			if (folder?.subtitle == "Album" || folder?.subtitle == "Show") {
+				"${folder?.title} - ${folder?.artist}"
+			} else {
+				when (shortcutSteps) {
+					0 -> folder?.title ?: browsePageModel.musicAppInfo?.name ?: ""
+					1 -> "${browsePageModel.folder?.title ?: ""} / ${folder?.title ?: ""}"
+					else -> "${browsePageModel.folder?.title ?: ""} /../ ${folder?.title ?: ""}"
+				}
+			}
 		}
 
 		// update the list whenever the car requests some more data
@@ -144,71 +153,115 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 	fun load() {
 		// start loading data
 		loaderJob?.cancel()
-		loaderJob = launch(Dispatchers.IO) {
-			if (this@BrowsePageView.musicList.isEmpty()) {
+
+		if (searchResults != null) {
+			if (musicList.isEmpty()) {
 				currentListModel = loadingList
 				showList()
 			}
-			val musicListDeferred = browsePageModel.browseAsync(folder)
-			val musicList = musicListDeferred.awaitPending(LOADING_TIMEOUT) {
-				Log.d(TAG, "Browsing ${folder?.mediaId} timed out, retrying")
-				load()
-				delay(100)
-				return@launch
-			}
-			this@BrowsePageView.musicList = ArrayList(musicList)
-			Log.d(TAG, "Browsing ${folder?.mediaId} resulted in ${musicList.count()} items")
+			musicList = ArrayList(searchResults!!)
+			currentListModel = object: RHMIListAdapter<MusicMetadata>(4, musicList) {
+				override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
+					val coverArt = item.coverArt
+					val coverArtImage =
+							if (coverArt != null) {
+								graphicsHelpers.compress(coverArt, 90, 90, quality = 30)
+							} else if (item.browseable) {
+								folderIcon
+							} else {
+								songIcon
+							}
 
-			if (musicList.isEmpty()) {
-				currentListModel = emptyList
-				showList()
-			} else if (isSingleFolder(musicList)) {
-				// keep the loadingList in place
-				// navigate to the next deeper directory
-				folder = musicList.first { it.browseable }
-				shortcutSteps += 1
-				show()  // show the next page deeper
-				return@launch
-			} else {
-				currentListModel = object: RHMIListAdapter<MusicMetadata>(4, musicList) {
-					override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
-						val checkmarkIcon = if (previouslySelected == item) checkmarkIcon else ""
-						val coverArt = item.coverArt
-						val coverArtImage =
-								if (coverArt != null) {
-									graphicsHelpers.compress(coverArt, 90, 90, quality = 30)
-								} else if (item.browseable) {
-									folderIcon
-								} else {
-									songIcon
-								}
-
-						val cleanedTitle = UnicodeCleaner.clean(item.title ?: "")
-						// if there is no subtitle then don't display it
-						val displayString = if (item.subtitle.isNullOrBlank()) {
-							// add a newline to enable line wrapping to a second line, if needed
-							"$cleanedTitle\n"
-						} else {
-							// need to truncate the first line so it doesn't wrap
-							val cleanedSubtitle = UnicodeCleaner.clean(item.subtitle)
-							"${cleanedTitle.truncate(ROW_LINE_MAX_LENGTH)}\n${cleanedSubtitle}"
-						}
-
-						return arrayOf(
-								checkmarkIcon,
-								coverArtImage,
-								"",
-								displayString
-						)
+					val cleanedTitle = UnicodeCleaner.clean(item.title ?: "")
+					// if there is no subtitle then don't display it
+					val displayString = if (item.subtitle.isNullOrBlank()) {
+						// add a newline to enable line wrapping to a second line, if needed
+						"$cleanedTitle\n"
+					} else {
+						// need to truncate the first line so it doesn't wrap
+						val cleanedSubtitle = UnicodeCleaner.clean("${item.subtitle} - ${item.artist}")
+						"${cleanedTitle.truncate(ROW_LINE_MAX_LENGTH)}\n${cleanedSubtitle}"
 					}
-				}
-				// set the list's height but don't render any items yet
-				// to rely on the car to request the specific items to view
-				showList(0, 0)
-				setFocusToPreviouslySelected()
 
-				// having the song list loaded may change the available actions
-				showActionsList()
+					return arrayOf(
+							"",
+							coverArtImage,
+							"",
+							displayString
+					)
+				}
+			}
+			// set the list's height but don't render any items yet
+			// to rely on the car to request the specific items to view
+			showList(0, 0)
+			setFocusToPreviouslySelected()
+		} else {
+			loaderJob = launch(Dispatchers.IO) {
+				if (this@BrowsePageView.musicList.isEmpty()) {
+					currentListModel = loadingList
+					showList()
+				}
+				val musicListDeferred = browsePageModel.browseAsync(folder)
+				val musicList = musicListDeferred.awaitPending(LOADING_TIMEOUT) {
+					Log.d(TAG, "Browsing ${folder?.mediaId} timed out, retrying")
+					load()
+					delay(100)
+					return@launch
+				}
+				this@BrowsePageView.musicList = ArrayList(musicList)
+				Log.d(TAG, "Browsing ${folder?.mediaId} resulted in ${musicList.count()} items")
+
+				if (musicList.isEmpty()) {
+					currentListModel = emptyList
+					showList()
+				} else if (isSingleFolder(musicList)) {
+					// keep the loadingList in place
+					// navigate to the next deeper directory
+					folder = musicList.first { it.browseable }
+					shortcutSteps += 1
+					show()  // show the next page deeper
+					return@launch
+				} else {
+					currentListModel = object: RHMIListAdapter<MusicMetadata>(4, musicList) {
+						override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
+							val checkmarkIcon = if (previouslySelected == item) checkmarkIcon else ""
+							val coverArt = item.coverArt
+							val coverArtImage =
+									if (coverArt != null) {
+										graphicsHelpers.compress(coverArt, 90, 90, quality = 30)
+									} else if (item.browseable) {
+										folderIcon
+									} else {
+										songIcon
+									}
+
+							val cleanedTitle = UnicodeCleaner.clean(item.title ?: "")
+							// if there is no subtitle then don't display it
+							val displayString = if (item.subtitle.isNullOrBlank()) {
+								// add a newline to enable line wrapping to a second line, if needed
+								"$cleanedTitle\n"
+							} else {
+								// need to truncate the first line so it doesn't wrap
+								val cleanedSubtitle = UnicodeCleaner.clean(item.subtitle)
+								"${cleanedTitle.truncate(ROW_LINE_MAX_LENGTH)}\n${cleanedSubtitle}"
+							}
+
+							return arrayOf(
+									checkmarkIcon,
+									coverArtImage,
+									"",
+									displayString
+							)
+						}
+					}
+					// set the list's height but don't render any items yet
+					// to rely on the car to request the specific items to view
+					showList(0, 0)
+					setFocusToPreviouslySelected()
+
+					// having the song list loaded may change the available actions
+					showActionsList()
+				}
 			}
 		}
 	}
@@ -343,7 +396,7 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 						}
 						sendSuggestions(suggestions ?: LinkedList())
 					}
-				} else if (input.length >= 2) {
+				} else if (searchRetries <= 0) {
 					// too many retries
 					sendSuggestions(listOf(SEARCHRESULT_EMPTY))
 				}
@@ -362,21 +415,33 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 				if (item == SEARCHRESULT_EMPTY || item == SEARCHRESULT_SEARCHING) {
 					// invalid selection, don't change states
 					inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
+
 					throw RHMIActionAbort()
 				} else if (item == BrowseView.SEARCHRESULT_PLAY_FROM_SEARCH) {
 					browseController.playFromSearch(this.input)
 					browseController.onListSelection(item, inputComponent.getSuggestAction()?.asHMIAction())
 				} else {
-					previouslySelected = item  // update the selection state for future redraws
+					// update the selection state for future redraws
+					previouslySelected = item
+
 					browseController.onListSelection(item, inputComponent.getSuggestAction()?.asHMIAction())
 				}
 			}
 
 			override fun convertRow(row: MusicMetadata): String {
 				return if (row.subtitle != null) {
-					UnicodeCleaner.clean("${row.title}\n${row.subtitle}")
+					UnicodeCleaner.clean("${row.title} - ${row.subtitle} - ${row.artist}")
 				} else {
 					UnicodeCleaner.clean(row.title ?: "")
+				}
+			}
+
+			override fun onOk() {
+				if (suggestions.isNotEmpty()) {
+					// want to remove the Play From Search which is always the first entry
+					val searchResults = suggestions.drop(1)
+
+					browseController.showSearchResults(searchResults, inputComponent.getResultAction()?.asHMIAction())
 				}
 			}
 		}

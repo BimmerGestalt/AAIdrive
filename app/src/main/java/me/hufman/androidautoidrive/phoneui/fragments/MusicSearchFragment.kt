@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
@@ -24,6 +23,7 @@ import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
 import me.hufman.androidautoidrive.phoneui.getThemeColor
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
@@ -54,34 +54,40 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 
 		listSearchResult.setHasFixedSize(true)
 		listSearchResult.layoutManager = LinearLayoutManager(this.context)
-		listSearchResult.adapter = SearchResultsAdapter(this.requireContext(), iconsModel, contents) { }
+		listSearchResult.adapter = SearchResultsAdapter(this.requireContext(), iconsModel, contents) {
+			if (it != null) {
+				val musicPlayerActivity = (activity as MusicPlayerActivity)
+				if (it.browseable) {
+					musicPlayerActivity.pushBrowse(it)
+					musicPlayerActivity.showBrowse()
+				} else if (it.playable) {
+					musicController.playSong(it)
+					musicPlayerActivity.showNowPlaying()
+				}
+			}
+		}
 
 		searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 			override fun onQueryTextSubmit(query: String?): Boolean {
-				if (query != null && query.isNotBlank()) {
-					searchForQuery(query)
-				}
 				return true
 			}
 
 			override fun onQueryTextChange(newText: String?): Boolean {
+				if (newText != null && newText.length > 1) {
+					searchForQuery(newText)
+				}
 				return true
 			}
 		})
 	}
 
 	private fun searchForQuery(query: String) {
-		searchBar.clearFocus()
-
-		// hide the keyboard
-		val inputManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-		inputManager.hideSoftInputFromWindow(searchBar.windowToken, 0)
-
 		if (searchJob != null) {
 			searchJob?.cancel()
 		}
 
 		contents.clear()
+		listSearchResult.adapter?.notifyDataSetChanged()
 		txtSearchResultsEmpty.text = getString(R.string.MUSIC_BROWSE_LOADING)
 
 		searchJob = launch {
@@ -109,7 +115,8 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 			}
 
 			override fun onClick(v: View?) {
-
+				val entry = contents.getOrNull(adapterPosition)
+				clickListener(entry)
 			}
 		}
 
@@ -126,7 +133,9 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 			val item = contents.getOrNull(position) ?: return
 
 			holder.searchResultTitleTextView.text = item.title
-			holder.searchResultSubtitleTextView.text = item.artist
+
+			val subtitleString = "${item.subtitle} - ${item.artist}"
+			holder.searchResultSubtitleTextView.text = subtitleString
 
 			holder.searchResultCoverArtImageView.colorFilter = Utils.getIconMask(context.getThemeColor(android.R.attr.textColorSecondary))
 			holder.searchResultCoverArtImageView.setImageBitmap(if (item.coverArt != null) {

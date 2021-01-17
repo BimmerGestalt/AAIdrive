@@ -15,8 +15,10 @@ import me.hufman.idriveconnectionkit.rhmi.RHMIState
 import java.util.*
 
 data class BrowseState(val location: MusicMetadata?,    // the directory the user selected
-                       var pageView: BrowsePageView? = null     // the PageView that is showing for this location
+                       var pageView: BrowsePageView? = null,     // the PageView that is showing for this location
+	                   val searchResults: List<MusicMetadata>? = null   // the search results to be displayed
 )
+
 class BrowseView(val states: List<RHMIState>, val musicController: MusicController, val musicImageIDs: MusicImageIDs, val graphicsHelpers: GraphicsHelpers, val musicApp: MusicApp) {
 	companion object {
 		val SEARCHRESULT_PLAY_FROM_SEARCH = MusicMetadata(mediaId="__PLAY_FROM_SEARCH__", title=L.MUSIC_BROWSE_PLAY_FROM_SEARCH)
@@ -101,18 +103,24 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		}
 	}
 
-	fun pushBrowsePage(directory: MusicMetadata?, stateId: Int? = null): BrowsePageView {
+	/**
+	 * Returns the next browse view state to be used.
+	 */
+	private fun getNextState(): RHMIState {
 		val topPage = pageStack.lastOrNull()
 		val topPageIndex = states.indexOfFirst { it.id == topPage?.state?.id }
 		val nextStateIndex = (topPageIndex + 1) % states.size
 
 		// don't want the next state to be the original page state as the back action on original page state will exit to PlaybackView
-		val nextState = if (pageStack.size > 1 && nextStateIndex == 0) {
+		return if (pageStack.size > 1 && nextStateIndex == 0) {
 			states[nextStateIndex+1]
 		} else {
 			states[nextStateIndex]
 		}
+	}
 
+	fun pushBrowsePage(directory: MusicMetadata?, stateId: Int? = null): BrowsePageView {
+		val nextState = getNextState()
 		val state = states.firstOrNull { it.id == stateId } ?: nextState
 		val index = stack.indexOfLast { it.pageView != null } + 1 // what the next new index will be
 
@@ -131,6 +139,19 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		}
 
 		val browseModel = BrowsePageModel(this, musicController, directory)
+		val browsePage = BrowsePageView(state, musicImageIDs, browseModel, pageController, stack.getOrNull(index+1)?.location, graphicsHelpers)
+		browsePage.initWidgets(inputState)
+		stackSlot.pageView = browsePage
+		return browsePage
+	}
+
+	fun pushSearchResultPage(searchResults: List<MusicMetadata>): BrowsePageView {
+		val state = getNextState()
+		val index = stack.indexOfLast { it.pageView != null } + 1 // what the next new index will be
+
+		stack.subList(index, stack.size).clear()
+		val stackSlot = BrowseState(null, searchResults = searchResults).apply { stack.add(this) }
+		val browseModel = BrowsePageModel(this, musicController, null, searchResults)
 		val browsePage = BrowsePageView(state, musicImageIDs, browseModel, pageController, stack.getOrNull(index+1)?.location, graphicsHelpers)
 		browsePage.initWidgets(inputState)
 		stackSlot.pageView = browsePage
@@ -162,7 +183,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	}
 }
 
-class BrowsePageModel(private val browseView: BrowseView, private val musicController: MusicController, val folder: MusicMetadata?) {
+class BrowsePageModel(private val browseView: BrowseView, private val musicController: MusicController, val folder: MusicMetadata?, val searchResults: List<MusicMetadata>? = null) {
 	val musicAppInfo: MusicAppInfo?
 		get() = musicController.currentAppInfo
 
@@ -201,5 +222,10 @@ class BrowsePageController(private val browseView: BrowseView, private val music
 			}
 			hmiAction?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
 		}
+	}
+
+	fun showSearchResults(searchResults: List<MusicMetadata>, hmiAction: RHMIAction.HMIAction?) {
+		val nextPage = browseView.pushSearchResultPage(searchResults)
+		hmiAction?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
 	}
 }
