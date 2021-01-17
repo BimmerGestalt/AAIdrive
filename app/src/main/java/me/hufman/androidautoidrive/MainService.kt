@@ -244,6 +244,8 @@ class MainService: Service() {
 							// which triggers a callback to start more service modules
 							carInformationObserver.capabilities = capabilities.mapValues { it.value ?: "" }
 
+							CarInformation.saveCache(appSettings)
+
 							// update the notification
 							startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
 						}
