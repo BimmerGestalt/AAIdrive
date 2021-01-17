@@ -32,7 +32,6 @@ class MainService: Service() {
 	}
 	val ONGOING_NOTIFICATION_ID = 20503
 	val NOTIFICATION_CHANNEL_ID = "ConnectionNotification"
-	val NOTIFICATION_CHANNEL_NAME = "Car Connection Status"
 
 	var foregroundNotification: Notification? = null
 
@@ -123,7 +122,7 @@ class MainService: Service() {
 	private fun createNotificationChannel() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID,
-					NOTIFICATION_CHANNEL_NAME,
+					getString(R.string.notification_channel_connection),
 					NotificationManager.IMPORTANCE_MIN)
 
 			val notificationManager = getSystemService(NotificationManager::class.java)
@@ -244,6 +243,8 @@ class MainService: Service() {
 							// update the known capabilities
 							// which triggers a callback to start more service modules
 							carInformationObserver.capabilities = capabilities.mapValues { it.value ?: "" }
+
+							CarInformation.saveCache(appSettings)
 
 							// update the notification
 							startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))

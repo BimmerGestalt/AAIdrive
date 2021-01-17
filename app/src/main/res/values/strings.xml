@@ -11,6 +11,13 @@
     <string name="notification_description_bmw">Connected to BMW</string>
     <string name="notification_description_mini">Connected to Mini</string>
 
+    <!-- notification channel names -->
+    <string name="notification_channel_assistant">Assistant Launcher</string>
+    <string name="notification_channel_connection">Car Connection Status</string>
+    <string name="notification_channel_donation">Donation Request</string>
+    <string name="notification_channel_spotify">Spotify Authorization</string>
+    <string name="notification_channel_test">Test Notification</string>
+
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <string name="navigation_listener_bmw">BMW Navigation</string>
     <string name="navigation_listener_mini">MINI Navigation</string>
@@ -49,6 +56,7 @@
     <string name="notification_readout_popup">Speak new notifications</string>
     <string name="notification_readout_popup_passenger">… with a passenger</string>
     <string name="lbl_popupVersion">Popups only work with IDrive4</string>
+    <string name="lbl_ttsUnsupported">TTS is not supported by your car</string>
     <string name="lbl_smsPermission">Grant the SMS permission to view pictures from incoming SMS images in the car. The text itself is always visible.</string>
 
     <string name="lbl_mapspage">A basic Google Maps screen can be displayed in the car</string>

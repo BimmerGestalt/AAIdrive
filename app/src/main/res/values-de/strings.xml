@@ -10,6 +10,12 @@
     <string name="notification_description_chassiscode">Verbunden mit %s</string>
     <string name="notification_description_bmw">Verbunden mit BMW</string>
     <string name="notification_description_mini">Verbunden mit Mini</string>
+    <!-- notification channel names -->
+    <string name="notification_channel_assistant">Assistent Launcher</string>
+    <string name="notification_channel_connection">Fahrzeugverbindungsstatus</string>
+    <string name="notification_channel_donation">Spendenanfrage</string>
+    <string name="notification_channel_spotify">Spotify Autorisierung</string>
+    <string name="notification_channel_test">Test Benachrichtigung</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <string name="navigation_listener_bmw">BMW Navigation</string>
     <string name="navigation_listener_mini">MINI Navigation</string>
@@ -157,6 +163,14 @@
     <string name="notification_assistant_description">Nur nötig, weil der Bildschirm an ist</string>
     <string name="donation_title">Gefällt Dir diese App?</string>
     <string name="donation_text">Unterstütze den Entwickler mit einer kleinen Spende</string>
+    <string name="txt_spotify_auth_notification">Spotify Web API muss autorisiert werden. Klicken Sie hier, um zu autorisieren.</string>
+    <string name="txt_spotify_app_remote_last_error">Spotify App Remote letzter Fehler:</string>
+    <string name="txt_spotify_api_authorization_needed">Spotify Web API Autorisierung erforderlich.</string>
+    <string name="txt_spotify_api_authorization_success">Spotify Web API autorisiert!</string>
+    <string name="txt_spotify_api_authorization_canceled">Spotify Web API Autorisierung abgebrochen.</string>
+    <string name="txt_spotify_api_authorization_failed">Spotify Web API Autorisierung fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
+    <string name="lbl_spotify_api_authorized">Spotify Web API autorisiert</string>
+    <string name="btn_authorize">Autorisieren</string>
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Benachrichtigungen</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Keine Benachrichtigungen</string>

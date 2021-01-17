@@ -92,7 +92,9 @@ class GenericMusicAppControllerTest {
 		// parsing an official custom action
 		// prepare the context to return info from the app
 		val actionIcon = mock<Drawable>()
+		@Suppress("DEPRECATION")
 		val resources = mock<Resources> {
+			on { getDrawable(any()) } doReturn actionIcon       // unit tests run under old SDK codepath in ResourcesCompat
 			on { getDrawable(any(), anyOrNull()) } doReturn actionIcon
 		}
 		val packageManager = mock<PackageManager> {

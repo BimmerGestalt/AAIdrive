@@ -109,6 +109,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				override fun onConnected(remote: SpotifyAppRemote?) {
 					if (remote != null) {
 						Log.i(TAG, "Successfully connected to Spotify Remote")
+						this@Connector.lastError = null
 
 						val appSettings = MutableAppSettingsReceiver(context)
 						appSettings[AppSettings.KEYS.SPOTIFY_CONTROL_SUCCESS] = "true"

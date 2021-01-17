@@ -22,9 +22,30 @@ class CarCapabilitiesModelTest {
 	}
 
 	@Test
+	fun testNoCapabilities() {
+		val carInfo = mock<CarInformation> {
+			on { capabilities } doReturn mapOf()
+		}
+		val musicAppMode = mock<MusicAppMode> {
+			on { heuristicAudioContext() } doReturn false
+			on { isId4() } doReturn false
+			on { shouldId5Playback() } doReturn false
+		}
+		val viewModel = CarCapabilitiesViewModel(carInfo, musicAppMode).apply { update() }
+		assertEquals(false, viewModel.isAudioContextSupported.value)
+		assertEquals(false, viewModel.isAudioStateSupported.value)
+		assertEquals(false, viewModel.isPopupSupported.value)
+		assertEquals(false, viewModel.isPopupNotSupported.value)
+		assertEquals(false, viewModel.isTtsSupported.value)
+		assertEquals(false, viewModel.isTtsNotSupported.value)
+		assertEquals(false, viewModel.isNaviSupported.value)
+		assertEquals(false, viewModel.isNaviNotSupported.value)
+	}
+
+	@Test
 	fun testId4Usb() {
 		val carInfo = mock<CarInformation> {
-			on { capabilities } doReturn mapOf("tts" to "true", "navi" to "false")
+			on { capabilities } doReturn mapOf("hmi.type" to "ID4", "tts" to "true", "navi" to "false")
 		}
 		val musicAppMode = mock<MusicAppMode> {
 			on { heuristicAudioContext() } doReturn false
@@ -35,8 +56,11 @@ class CarCapabilitiesModelTest {
 		assertEquals(false, viewModel.isAudioContextSupported.value)
 		assertEquals(false, viewModel.isAudioStateSupported.value)
 		assertEquals(true, viewModel.isPopupSupported.value)
+		assertEquals(false, viewModel.isPopupNotSupported.value)
 		assertEquals(true, viewModel.isTtsSupported.value)
+		assertEquals(false, viewModel.isTtsNotSupported.value)
 		assertEquals(false, viewModel.isNaviSupported.value)
+		assertEquals(true, viewModel.isNaviNotSupported.value)
 
 		context.run(viewModel.audioContextStatus.value!!)
 		verify(context).getString(R.string.txt_capabilities_audiocontext_no_usb)
@@ -63,7 +87,7 @@ class CarCapabilitiesModelTest {
 	@Test
 	fun testId4UsbContext() {
 		val carInfo = mock<CarInformation> {
-			on { capabilities } doReturn mapOf("tts" to "true", "navi" to "false")
+			on { capabilities } doReturn mapOf("hmi.type" to "ID4", "tts" to "true", "navi" to "false")
 		}
 		val musicAppMode = mock<MusicAppMode> {
 			on { heuristicAudioContext() } doReturn true
@@ -74,8 +98,11 @@ class CarCapabilitiesModelTest {
 		assertEquals(true, viewModel.isAudioContextSupported.value)
 		assertEquals(false, viewModel.isAudioStateSupported.value)
 		assertEquals(true, viewModel.isPopupSupported.value)
+		assertEquals(false, viewModel.isPopupNotSupported.value)
 		assertEquals(true, viewModel.isTtsSupported.value)
+		assertEquals(false, viewModel.isTtsNotSupported.value)
 		assertEquals(false, viewModel.isNaviSupported.value)
+		assertEquals(true, viewModel.isNaviNotSupported.value)
 
 		context.run(viewModel.audioContextStatus.value!!)
 		verify(context).getString(R.string.txt_capabilities_audiocontext_yes)
@@ -91,7 +118,7 @@ class CarCapabilitiesModelTest {
 	@Test
 	fun testId5() {
 		val carInfo = mock<CarInformation> {
-			on { capabilities } doReturn mapOf("tts" to "false", "navi" to "true")
+			on { capabilities } doReturn mapOf("hmi.type" to "ID5", "tts" to "false", "navi" to "true")
 		}
 		val musicAppMode = mock<MusicAppMode> {
 			on { heuristicAudioContext() } doReturn true
@@ -102,8 +129,11 @@ class CarCapabilitiesModelTest {
 		assertEquals(true, viewModel.isAudioContextSupported.value)
 		assertEquals(true, viewModel.isAudioStateSupported.value)
 		assertEquals(false, viewModel.isPopupSupported.value)
+		assertEquals(true, viewModel.isPopupNotSupported.value)
 		assertEquals(false, viewModel.isTtsSupported.value)
+		assertEquals(true, viewModel.isTtsNotSupported.value)
 		assertEquals(true, viewModel.isNaviSupported.value)
+		assertEquals(false, viewModel.isNaviNotSupported.value)
 
 		context.run(viewModel.audioContextStatus.value!!)
 		verify(context).getString(R.string.txt_capabilities_audiocontext_yes)
@@ -130,7 +160,7 @@ class CarCapabilitiesModelTest {
 	@Test
 	fun testId5NoContext() {
 		val carInfo = mock<CarInformation> {
-			on { capabilities } doReturn mapOf("tts" to "false", "navi" to "true")
+			on { capabilities } doReturn mapOf("hmi.type" to "ID5", "tts" to "false", "navi" to "true")
 		}
 		val musicAppMode = mock<MusicAppMode> {
 			on { heuristicAudioContext() } doReturn false
@@ -144,8 +174,11 @@ class CarCapabilitiesModelTest {
 		assertEquals(false, viewModel.isAudioContextSupported.value)
 		assertEquals(false, viewModel.isAudioStateSupported.value)
 		assertEquals(false, viewModel.isPopupSupported.value)
+		assertEquals(true, viewModel.isPopupNotSupported.value)
 		assertEquals(false, viewModel.isTtsSupported.value)
+		assertEquals(true, viewModel.isTtsNotSupported.value)
 		assertEquals(true, viewModel.isNaviSupported.value)
+		assertEquals(false, viewModel.isNaviNotSupported.value)
 
 		context.run(viewModel.audioContextStatus.value!!)
 		verify(context).getString(R.string.txt_capabilities_audiocontext_no_usb)
@@ -161,7 +194,7 @@ class CarCapabilitiesModelTest {
 	@Test
 	fun testId5Spotify() {
 		val carInfo = mock<CarInformation> {
-			on { capabilities } doReturn mapOf("tts" to "false", "navi" to "true")
+			on { capabilities } doReturn mapOf("hmi.type" to "ID5", "tts" to "false", "navi" to "true")
 		}
 		val musicAppMode = mock<MusicAppMode> {
 			on { heuristicAudioContext() } doReturn true
@@ -174,8 +207,11 @@ class CarCapabilitiesModelTest {
 		assertEquals(true, viewModel.isAudioContextSupported.value)
 		assertEquals(false, viewModel.isAudioStateSupported.value)
 		assertEquals(false, viewModel.isPopupSupported.value)
+		assertEquals(true, viewModel.isPopupNotSupported.value)
 		assertEquals(false, viewModel.isTtsSupported.value)
+		assertEquals(true, viewModel.isTtsNotSupported.value)
 		assertEquals(true, viewModel.isNaviSupported.value)
+		assertEquals(false, viewModel.isNaviNotSupported.value)
 
 		context.run(viewModel.audioContextStatus.value!!)
 		verify(context).getString(R.string.txt_capabilities_audiocontext_yes)

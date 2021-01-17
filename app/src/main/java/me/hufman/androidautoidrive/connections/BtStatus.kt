@@ -86,9 +86,9 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 		}
 
 		fun isSPPAvailable(device: BluetoothDevice): Boolean {
-			return device.uuids.any {
+			return device.uuids?.any {
 				(it)?.uuid == UUID_SPP
-			}
+			} ?: false
 		}
 
 		override fun onReceive(p0: Context?, intent: Intent?) {

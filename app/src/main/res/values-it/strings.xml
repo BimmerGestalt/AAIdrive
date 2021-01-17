@@ -10,6 +10,12 @@
     <string name="notification_description_chassiscode">Connesso a %s</string>
     <string name="notification_description_bmw">Connesso a BMW</string>
     <string name="notification_description_mini">Connesso a Mini</string>
+    <!-- notification channel names -->
+    <string name="notification_channel_assistant">Assistente Launcher</string>
+    <string name="notification_channel_connection">Stato della connessione</string>
+    <string name="notification_channel_donation">Richiesta Donazione</string>
+    <string name="notification_channel_spotify">Autorizzazione Spotify</string>
+    <string name="notification_channel_test">Notifica di prova</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <string name="navigation_listener_bmw">Navigazione BMW</string>
     <string name="navigation_listener_mini">Navigazione MINI</string>
@@ -31,6 +37,10 @@
     <string name="menu_support">Supporto</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integra nella tua auto alcune delle applicazioni musicali e le notifiche del tuo telefono tramite il protocollo proprietario BMW Apps</string>
     <string name="lbl_connectionpage">La connessione delle app all\'auto dipende da alcuni fattori e qui ci sono alcuni suggerimenti per assicurarsi che tutto funzioni bene</string>
+    <plurals name="lbl_assistantpage">
+        <item quantity="one">L\'assistente vocale del tuo telefono viene aggiunto come app Connected, nel caso in cui l\'input vocale dell\'auto non lo attivi</item>
+        <item quantity="other">Gli assistenti vocali del tuo telefono vengono aggiunti come app Connected, nel caso in cui l\'input vocale dell\'auto non li attivi</item>
+    </plurals>
     <string name="lbl_notificationpage">Le tue notifiche in arrivo possono essere visualizzate e interagite dall\'auto</string>
     <string name="spawn_test_notification">Notifica di prova</string>
     <string name="message_notifications">Notifica messaggi</string>
@@ -46,6 +56,9 @@
     <string name="enable_google_maps">Abilita Google Maps</string>
     <string name="lbl_widescreen_map">Mappa a tutto schermo</string>
     <string name="lbl_map_invert_zoom">Inverti direzione zoom</string>
+    <string name="lbl_map_tilt">Inclina la mappa</string>
+    <string name="lbl_map_traffic">Mostra il traffico</string>
+    <string name="lbl_gmap_buildings">Abilita edifici 3D</string>
     <string name="gmapStyleLabel">Stile della mappa</string>
     <string name="lbl_musicpage">Le app musicali del tuo telefono sono selezionabili come sorgenti multimediali nell\'auto</string>
     <string name="lbl_music_apps">App di musica</string>
@@ -150,6 +163,14 @@
     <string name="notification_assistant_description">Necessario solo se lo schermo è attivo</string>
     <string name="donation_title">Ti piace questa app?</string>
     <string name="donation_text">Valuta di mostrare il tuo supporta con una piccola donazione</string>
+    <string name="txt_spotify_auth_notification">L\'API Web di Spotify deve essere autorizzata. Clicca qui per autorizzare.</string>
+    <string name="txt_spotify_app_remote_last_error">Ultimo Errore Dell\'App Remote Spotify:</string>
+    <string name="txt_spotify_api_authorization_needed">È necessaria l\'autorizzazione delle API Web Spotify.</string>
+    <string name="txt_spotify_api_authorization_success">API Web di Spotify autorizzata!</string>
+    <string name="txt_spotify_api_authorization_canceled">Autorizzazione API Web Spotify annullata.</string>
+    <string name="txt_spotify_api_authorization_failed">Autorizzazione delle API Web Spotify non riuscita. Riprova.</string>
+    <string name="lbl_spotify_api_authorized">API Web Di Spotify Autorizzata</string>
+    <string name="btn_authorize">Autorizza</string>
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notifiche</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Nessuna notifica</string>

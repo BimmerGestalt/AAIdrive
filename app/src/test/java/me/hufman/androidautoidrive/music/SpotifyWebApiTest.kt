@@ -14,6 +14,7 @@ import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MockAppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
+import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
@@ -417,10 +418,11 @@ class SpotifyWebApiTest {
 		PowerMockito.whenNew(NotificationCompat.Builder::class.java).withArguments(context, SpotifyWebApi.NOTIFICATION_CHANNEL_ID).thenReturn(notificationBuilder)
 
 		val notificationChannel: NotificationChannel = mock()
-		PowerMockito.whenNew(NotificationChannel::class.java).withArguments(SpotifyWebApi.NOTIFICATION_CHANNEL_ID, SpotifyWebApi.NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH).thenReturn(notificationChannel)
+		PowerMockito.whenNew(NotificationChannel::class.java).withArguments(SpotifyWebApi.NOTIFICATION_CHANNEL_ID, "Spotify Authorization", NotificationManager.IMPORTANCE_HIGH).thenReturn(notificationChannel)
 
 		val notificationManager: NotificationManager = mock()
 		doNothing().whenever(notificationManager).createNotificationChannel(notificationChannel)
+		whenever(context.getString(R.string.notification_channel_spotify)).thenReturn("Spotify Authorization")
 		whenever(context.getSystemService(NotificationManager::class.java)).thenReturn(notificationManager)
 
 		doNothing().whenever(notificationManager).notify(SpotifyWebApi.NOTIFICATION_REQ_ID, notification)

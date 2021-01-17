@@ -252,6 +252,16 @@ class NotificationAppTest {
 		// make sure the dump method doesn't crash
 		NotificationParser.dumpNotification("Title", notification, null)
 		NotificationParser.dumpMessage("Title", notification.notification.extras)
+
+		// try parsing a null icon
+		val notification2 = createNotification("Ticker Text", "Title", "Text \uD83D\uDE3B\nTwo\n", "Summary", true)
+		whenever(phoneAppResources.getIconDrawable(eq(notification2.notification.smallIcon))) doReturn null
+		val notificationNullIcon = NotificationParser(mock(), phoneAppResources, mock()).summarizeNotification(notification2)
+		assertEquals("testKey", notificationNullIcon.key)
+		assertEquals("me.hufman.androidautoidrive", notificationNullIcon.packageName)
+		assertEquals("Title", notificationNullIcon.title)
+		assertEquals("Text :heart_eyes_cat:\nTwo", notificationNullIcon.text)
+		assertNull(notificationNullIcon.icon)
 	}
 
 	@Test
