@@ -2,9 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data class="NotificationSettingsBinding">
-    <variable
-        name="settings"
-        type="me.hufman.androidautoidrive.phoneui.viewmodels.NotificationSettingsModel" />
+        <variable
+            name="capabilities"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.CarCapabilitiesViewModel" />
+        <variable
+            name="settings"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.NotificationSettingsModel" />
     </data>
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
@@ -14,6 +17,7 @@
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/swNotificationPopup"
             android:checked="@={settings.notificationPopup}"
+            android:alpha="@{capabilities.isPopupNotSupported() ? 0.5f : 1.0f}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -22,6 +26,7 @@
         <LinearLayout
             android:id="@+id/paneNotificationPopup"
             android:visibility="@{settings.notificationPopup}"
+            android:alpha="@{capabilities.isPopupNotSupported() ? 0.5f : 1.0f}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -29,8 +34,10 @@
 
             <TextView
                 android:id="@+id/txtPopupVersion"
+                android:visibility="@{!capabilities.isPopupSupported()}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
                 android:text="@string/lbl_popupVersion" />
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swNotificationPopupPassenger"
@@ -49,36 +56,50 @@
             android:layout_marginBottom="8dp"
             android:text="@string/notification_sound" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/swNotificationReadout"
-            android:checked="@={settings.notificationReadout}"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="@string/notification_readout" />
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/swNotificationReadoutPopup"
-            android:checked="@={settings.notificationReadoutPopup}"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="@string/notification_readout_popup" />
         <LinearLayout
-            android:id="@+id/paneNotificationReadout"
-            android:visibility="@{settings.notificationReadoutPopup}"
+            android:id="@+id/paneReadoutOptions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginStart="24dp">
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/swNotificationReadoutPopupPassenger"
-                android:checked="@={settings.notificationReadoutPopupPassenger}"
+            android:alpha="@{capabilities.isTtsNotSupported() ? 0.5f : 1.0f}" >
+            <TextView
+                android:id="@+id/txtTtsUnsupported"
+                android:visibility="@{capabilities.isTtsNotSupported()}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:text="@string/notification_readout_popup_passenger" />
-        </LinearLayout>
+                android:text="@string/lbl_ttsUnsupported" />
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/swNotificationReadout"
+                android:checked="@={settings.notificationReadout}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/notification_readout" />
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/swNotificationReadoutPopup"
+                android:checked="@={settings.notificationReadoutPopup}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/notification_readout_popup" />
+            <LinearLayout
+                android:id="@+id/paneNotificationReadout"
+                android:visibility="@{settings.notificationReadoutPopup}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="24dp">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/swNotificationReadoutPopupPassenger"
+                    android:checked="@={settings.notificationReadoutPopupPassenger}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:text="@string/notification_readout_popup_passenger" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </layout>
