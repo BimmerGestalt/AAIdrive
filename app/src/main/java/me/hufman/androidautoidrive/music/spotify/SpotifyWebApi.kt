@@ -78,10 +78,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				val mediaId = track.uri.uri
 				val artists = track.artists.map { it.name }.joinToString(", ")
 				val album = track.album
-				val coverArtIndex = album.images.indexOfFirst { it.height == 300 }
-				val imageUrl = album.images[coverArtIndex].url
-				val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
-				val coverArtUri = "spotify:image:$coverArtCode"
+				val coverArtUri = getCoverArtUri(album.images)
 				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, album.name, track.name)
 			}
 		} catch (e: SpotifyException.AuthenticationException) {
@@ -92,22 +89,6 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			Log.e(TAG, "Exception occurred while getting Liked Songs library data with message: ${e.message}")
 		}
 		return null
-	}
-
-	/**
-	 * Constructs the cover art uri from the list of [SpotifyImage]s that works with the Spotify App
-	 * Remote ImagesApi. If there are no images that are found that match the dimensions then null is
-	 * returned.
-	 */
-	private fun getCoverArtUri(images: List<SpotifyImage>, heightToMatch: Int = 300): String? {
-		val coverArtIndex = images.indexOfFirst { it.height == heightToMatch }
-		return if (coverArtIndex != -1) {
-			val imageUrl = images[coverArtIndex].url
-			val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
-			"spotify:image:$coverArtCode"
-		} else {
-			null
-		}
 	}
 
 	suspend fun searchForQuery(spotifyAppController: SpotifyAppController, query: String): List<SpotifyMusicMetadata> {
@@ -222,11 +203,11 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 * and validation process encounters a authentication failure, a null instance is returned and the
 	 * [AuthState] updated with the exception.
 	 */
-	private fun createWebApiClient(): SpotifyClientApi? = runBlocking {
+	private fun createWebApiClient(): SpotifyClientApi? {
 		val clientId = SpotifyAppController.getClientId(context)
 		val accessToken = authStateManager.getAccessToken()
 		if (accessToken != null) {
-			return@runBlocking try {
+			return try {
 				val expirationIn = authStateManager.getAccessTokenExpirationIn()
 				val refreshToken = authStateManager.getRefreshToken()
 				val scopes = authStateManager.getScopeString()
@@ -236,7 +217,9 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 					Log.d(TAG, "Updating AuthState with refreshed token")
 					updateAuthStateWithAccessToken(it.token)
 				}
-				apiBuilder.build()
+				runBlocking {
+					apiBuilder.build()
+				}
 			} catch (e: SpotifyException.AuthenticationException) {
 				Log.e(SpotifyAppController.TAG, "Failed to create the web API with an access token. Access token is invalid")
 				authStateManager.addAccessTokenAuthorizationException(e)
@@ -248,16 +231,18 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			if (authorizationCode == null) {
 				Log.e(SpotifyAppController.TAG, "Failed to create the Web API with an authorization code. Authorization code is invalid or not found")
 				createNotAuthorizedNotification()
-				return@runBlocking null
+				return null
 			}
 
-			return@runBlocking try {
+			return try {
 				val apiBuilder = SpotifyClientApiBuilderHelper.createApiBuilderWithAuthorizationCode(clientId, authorizationCode)
 				apiBuilder.options.onTokenRefresh = {
 					Log.d(TAG, "Updating AuthState with refreshed token")
 					updateAuthStateWithAccessToken(it.token)
 				}
-				apiBuilder.build()
+				runBlocking {
+					apiBuilder.build()
+				}
 			} catch (e: SpotifyException.AuthenticationException) {
 				authStateManager.addAuthorizationCodeAuthorizationException(e)
 				Log.e(SpotifyAppController.TAG, "Failed to create the web API with an authorization code. Authorization failed with the error: ${e.message}")
@@ -311,6 +296,22 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	}
 
 	/**
+	 * Constructs the cover art uri from the list of [SpotifyImage]s that works with the Spotify App
+	 * Remote ImagesApi. If there are no images that are found that match the dimensions then null is
+	 * returned.
+	 */
+	private fun getCoverArtUri(images: List<SpotifyImage>, heightToMatch: Int = 300): String? {
+		val coverArtIndex = images.indexOfFirst { it.height == heightToMatch }
+		return if (coverArtIndex != -1) {
+			val imageUrl = images[coverArtIndex].url
+			val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
+			"spotify:image:$coverArtCode"
+		} else {
+			null
+		}
+	}
+
+	/**
 	 * Disconnect process for shutting down the [SpotifyClientApi].
 	 */
 	fun disconnect() {
@@ -318,34 +319,5 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		webApi?.shutdown()
 		isUsingSpotify = false
 		clearGetLikedSongsAttemptedFlag()
-	}
-
-	/**
-	 * Helper class for creating [SpotifyClientApiBuilder]s through the PKCE authentication flow.
-	 */
-	class SpotifyClientApiBuilderHelper {
-		companion object {
-			/**
-			 * Creates a [SpotifyClientApiBuilder] from an authorization code.
-			 */
-			fun createApiBuilderWithAuthorizationCode(clientId: String, authorizationCode: String): SpotifyClientApiBuilder {
-				val spotifyUserAuthorization = SpotifyUserAuthorization(authorizationCode = authorizationCode, pkceCodeVerifier = SpotifyAuthorizationActivity.CODE_VERIFIER)
-				return spotifyClientPkceApi(
-						clientId,
-						SpotifyAppController.REDIRECT_URI,
-						spotifyUserAuthorization)
-			}
-
-			/**
-			 * Creates a [SpotifyClientApiBuilder] from an access token.
-			 */
-			fun createApiBuilderWithAccessToken(clientId: String, token: Token): SpotifyClientApiBuilder {
-				val spotifyUserAuthorization = SpotifyUserAuthorization(token = token, pkceCodeVerifier = SpotifyAuthorizationActivity.CODE_VERIFIER)
-				return spotifyClientPkceApi(
-						clientId,
-						SpotifyAppController.REDIRECT_URI,
-						spotifyUserAuthorization)
-			}
-		}
 	}
 }
