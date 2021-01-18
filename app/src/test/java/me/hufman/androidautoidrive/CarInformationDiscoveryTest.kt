@@ -31,7 +31,6 @@ class CarInformationDiscoveryTest {
 		verify(listener).onCapabilities(app.capabilities!!)
 
 		// test a CDS update
-		app.carappListener.cds_onPropertyChangedEvent(1, "63", "navigation.guidanceStatus", "{\"key\": \"propertyValue\"}")
-		verify(listener).onPropertyChangedEvent(eq(CDS.NAVIGATION.GUIDANCESTATUS), argThat { get("key")?.asString == "propertyValue"})
+		verify(listener).onCdsConnection(any())
 	}
 }

@@ -8,7 +8,8 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
-import com.google.gson.JsonObject
+import me.hufman.androidautoidrive.carapp.CDSConnection
+import me.hufman.androidautoidrive.carapp.CDSConnectionAsync
 import me.hufman.androidautoidrive.carapp.RHMIDimensions
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
@@ -16,8 +17,6 @@ import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
-import me.hufman.idriveconnectionkit.CDS
-import me.hufman.idriveconnectionkit.CDSProperty
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
 import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
@@ -237,28 +236,18 @@ class MainService: Service() {
 				// clear the capabilities to not start dependent services until it's ready
 				threadCapabilities = CarThread("Capabilities") {
 					Log.i(TAG, "Starting to discover car capabilities")
+					val handler = threadCapabilities?.handler!!
+
+					// receiver to receive capabilities and cds properties
+					// wraps the CDSConnection with a Handler async wrapper
+					val carInformationUpdater = object: CarInformationUpdater(appSettings) {
+						override fun onCdsConnection(connection: CDSConnection) {
+							super.onCdsConnection(CDSConnectionAsync(handler, connection))
+						}
+					}
 
 					carappCapabilities = CarInformationDiscovery(iDriveConnectionReceiver, securityAccess,
-							CarAppAssetManager(this, "smartthings"),
-							object: CarInformationDiscoveryListener {
-						override fun onCapabilities(capabilities: Map<String, String?>) {
-							// update the known capabilities
-							// which triggers a callback to start more service modules
-							carInformationObserver.capabilities = capabilities.mapValues { it.value ?: "" }
-
-							CarInformation.saveCache(appSettings)
-
-							// update the notification
-							startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
-						}
-
-						override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
-							if (property == CDS.NAVIGATION.GUIDANCESTATUS && propertyValue["guidanceStatus"]?.asInt == 1) {
-								sendBroadcast(Intent(NavIntentActivity.INTENT_NAV_SUCCESS))
-							}
-						}
-
-					})
+							CarAppAssetManager(this, "smartthings"), carInformationUpdater)
 					carappCapabilities?.onCreate()
 				}
 				threadCapabilities?.start()

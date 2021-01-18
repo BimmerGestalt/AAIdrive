@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.carapp
 
+import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonObject
@@ -36,6 +37,76 @@ class CDSConnectionEtch(private val carConnection: BMWRemotingServer): CDSConnec
 		synchronized(carConnection) {
 			carConnection.cds_removePropertyChangedEventHandler(_cdsHandle, property.propertyName, property.ident.toString())
 		}
+	}
+}
+
+/**
+ * A CDSConnection that is backed by a CDSData object and the given CDSEventHandler
+ */
+class CDSDataConnectionWrapper(private val cdsData: CDSData, private val eventHandler: CDSEventHandler): CDSConnection {
+	override fun subscribeProperty(property: CDSProperty, intervalLimit: Int) {
+		cdsData.addEventHandler(property, intervalLimit, eventHandler)
+	}
+
+	override fun unsubscribeProperty(property: CDSProperty) {
+		cdsData.removeEventHandler(property, eventHandler)
+	}
+}
+
+class CDSConnectionAsync(val handler: Handler, val connection: CDSConnection): CDSConnection {
+	override fun subscribeProperty(property: CDSProperty, intervalLimit: Int) {
+		handler.post { connection.subscribeProperty(property, intervalLimit) }
+	}
+
+	override fun unsubscribeProperty(property: CDSProperty) {
+		handler.post { unsubscribeProperty(property) }
+	}
+}
+
+class CDSConnectionBreakable: CDSConnection {
+	var connection: CDSConnection? = null
+		set(value) {
+			field = value
+			if (value != null) {
+				_intervals.forEach {
+					_subscribeProperty(it.key, it.value)
+				}
+			}
+		}
+
+	// the intended subscription intervals
+	// will be applied to any wrapped connection when set above
+	private val _intervals = HashMap<CDSProperty, Int>()
+
+	// wraps the subscription with error handling to drop the connection
+	private fun _subscribeProperty(property: CDSProperty, intervalLimit: Int) {
+		try {
+			connection?.subscribeProperty(property, intervalLimit)
+		} catch (e: Exception) {
+			connection = null
+		}
+	}
+
+	override fun subscribeProperty(property: CDSProperty, intervalLimit: Int) {
+		val previousLimit = _intervals[property]
+		if (previousLimit == null || intervalLimit < previousLimit) {
+			_intervals[property] = intervalLimit
+			_subscribeProperty(property, intervalLimit)
+		}
+	}
+
+	// wraps the subscription with error handling to drop the connection
+	private fun _unsubscribeProperty(property: CDSProperty) {
+		try {
+			connection?.unsubscribeProperty(property)
+		} catch (e: Exception) {
+			connection = null
+		}
+	}
+
+	override fun unsubscribeProperty(property: CDSProperty) {
+		_intervals.remove(property)
+		_unsubscribeProperty(property)
 	}
 }
 
@@ -82,25 +153,22 @@ class CDSDataProvider: CDSData, CDSEventHandler {
 	private val _data = HashMap<CDSProperty, JsonObject>()
 	override operator fun get(key: CDSProperty): JsonObject? = _data[key]
 
-	private var _connection: CDSConnection? = null
-	private val _intervals = HashMap<CDSProperty, Int>()    // tracking whether we've subscribed the connection
+	fun clear() = _data.clear()
+
+	private var _connection = CDSConnectionBreakable()
 
 	/**
-	 * Make sure to setConnection before adding any event handlers
+	 * Sets the underlying connection
+	 * Any previous subscriptions will be applied
 	 */
 	fun setConnection(connection: CDSConnection?) {
-		_connection = connection
+		_connection.connection = connection
 	}
 
 	private val _eventHandlers = HashMap<CDSProperty, MutableSet<CDSEventHandler>>()
 	override fun addEventHandler(property: CDSProperty, intervalLimit: Int, eventHandler: CDSEventHandler) {
 		_eventHandlers.getOrPut(property, {HashSet()}).add(eventHandler)
-
-		val previousLimit = _intervals[property]
-		if (previousLimit == null || intervalLimit < previousLimit) {
-			_connection?.subscribeProperty(property, intervalLimit)
-			_intervals[property] = intervalLimit
-		}
+		_connection.subscribeProperty(property, intervalLimit)
 	}
 
 	override fun removeEventHandler(property: CDSProperty, eventHandler: CDSEventHandler) {
@@ -108,14 +176,18 @@ class CDSDataProvider: CDSData, CDSEventHandler {
 
 		if (_eventHandlers[property]?.isEmpty() == true) {
 			_eventHandlers.remove(property)
-			_connection?.unsubscribeProperty(property)
-			_intervals.remove(property)
+			_connection.unsubscribeProperty(property)
 		}
 	}
 
 	override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
 		_data[property] = propertyValue
 		_eventHandlers[property]?.forEach { it.onPropertyChangedEvent(property, propertyValue) }
+	}
+
+	/** Use this CDSData object as a CDSConnection */
+	fun asConnection(): CDSConnection {
+		return CDSDataConnectionWrapper(this, this)
 	}
 }
 
