@@ -233,6 +233,9 @@ class MainService: Service() {
 	fun startCarCapabilities() {
 		synchronized(this) {
 			if (threadCapabilities == null) {
+				// receiver to save settings
+				val carInformationUpdater = CarInformationUpdater(appSettings)
+
 				// clear the capabilities to not start dependent services until it's ready
 				threadCapabilities = CarThread("Capabilities") {
 					Log.i(TAG, "Starting to discover car capabilities")

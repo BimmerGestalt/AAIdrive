@@ -7,6 +7,8 @@ import com.google.gson.JsonSyntaxException
 import me.hufman.androidautoidrive.carapp.CDSConnection
 import me.hufman.androidautoidrive.carapp.CDSData
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
+import me.hufman.androidautoidrive.carapp.CDSEventHandler
+import me.hufman.idriveconnectionkit.CDS
 import me.hufman.idriveconnectionkit.CDSProperty
 import java.util.*
 
@@ -19,12 +21,23 @@ open class CarInformation {
 				"tts"
 		)
 
+		private val CACHED_CDS_INTERVAL = 10000
+		@JvmStatic
+		protected val CACHED_CDS_KEYS = setOf(
+				CDS.VEHICLE.LANGUAGE
+		)
+
 		private val _listeners = Collections.synchronizedMap(WeakHashMap<CarInformationObserver, Boolean>())
 		val listeners: Map<CarInformationObserver, Boolean> = _listeners
 
 		var currentCapabilities: Map<String, String> = emptyMap()
 		var cachedCapabilities: Map<String, String> = emptyMap()
 		val cdsData = CDSDataProvider()
+		var cachedCdsData = CDSDataProvider().also { cachedCdsData ->
+			CACHED_CDS_KEYS.forEach { cachedProperty ->
+				cdsData.addEventHandler(cachedProperty, CACHED_CDS_INTERVAL, cachedCdsData)
+			}
+		}
 
 		fun addListener(listener: CarInformationObserver) {
 			_listeners[listener] = true
@@ -48,6 +61,21 @@ open class CarInformation {
 			} catch (e: IllegalStateException) {
 				Log.w(TAG, "Failed to restore cached capabilities", e)
 			}
+
+			val cdsCached = settings[AppSettings.KEYS.CACHED_CAR_DATA]
+			try {
+				val loaded = JsonParser.parseString(cdsCached).asJsonObject
+				CACHED_CDS_KEYS.forEach { propertyKey ->
+					val cachedProperty = loaded[propertyKey.propertyName]?.asJsonObject
+					if (cachedProperty != null) {
+						cachedCdsData.onPropertyChangedEvent(propertyKey, cachedProperty)
+					}
+				}
+			} catch (e: JsonSyntaxException) {
+				Log.w(TAG, "Failed to restore cached cds properties", e)
+			} catch (e: IllegalStateException) {
+				Log.w(TAG, "Failed to restore cached cds properties", e)
+			}
 		}
 
 		fun saveCache(settings: MutableAppSettings) {
@@ -56,6 +84,15 @@ open class CarInformation {
 				capabilities.addProperty(key, cachedCapabilities[key])
 			}
 			settings[AppSettings.KEYS.CACHED_CAR_CAPABILITIES] = capabilities.toString()
+
+			val cdsCached = JsonObject()
+			CACHED_CDS_KEYS.forEach { propertyKey ->
+				val value = cachedCdsData[propertyKey]
+				if (value != null) {
+					cdsCached.add(propertyKey.propertyName, value)
+				}
+			}
+			settings[AppSettings.KEYS.CACHED_CAR_DATA] = cdsCached.toString()
 		}
 	}
 
@@ -67,6 +104,7 @@ open class CarInformation {
 		}
 
 	open val cdsData: CDSData = CarInformation.cdsData
+	open val cachedCdsData: CDSData = CarInformation.cachedCdsData
 }
 
 open class CarInformationUpdater(val appSettings: MutableAppSettings): CarInformation(), CarInformationDiscoveryListener {
@@ -83,6 +121,7 @@ open class CarInformationUpdater(val appSettings: MutableAppSettings): CarInform
 	}
 
 	override val cdsData: CDSDataProvider = CarInformation.cdsData
+	override val cachedCdsData: CDSDataProvider = CarInformation.cachedCdsData
 
 	override fun onCdsConnection(connection: CDSConnection) {
 		cdsData.setConnection(connection)
@@ -90,6 +129,9 @@ open class CarInformationUpdater(val appSettings: MutableAppSettings): CarInform
 
 	override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
 		cdsData.onPropertyChangedEvent(property, propertyValue)
+		if (CACHED_CDS_KEYS.contains(property)) {
+			saveCache(appSettings)
+		}
 	}
 }
 
