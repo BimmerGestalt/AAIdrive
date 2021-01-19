@@ -10,6 +10,7 @@ import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
 import me.hufman.androidautoidrive.carapp.CDSConnection
 import me.hufman.androidautoidrive.carapp.CDSConnectionAsync
+import me.hufman.androidautoidrive.carapp.CDSVehicleLanguage
 import me.hufman.androidautoidrive.carapp.RHMIDimensions
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
@@ -17,6 +18,7 @@ import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
+import me.hufman.idriveconnectionkit.CDS
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
 import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
@@ -191,25 +193,41 @@ class MainService: Service() {
 				var startAny = false
 
 				AppSettings.loadSettings(this)
-				L.loadResources(this)
+
+				// set the car app languages
+				val locale = if (appSettings[AppSettings.KEYS.FORCE_CAR_LANGUAGE].isNotBlank()) {
+					Locale.forLanguageTag(appSettings[AppSettings.KEYS.FORCE_CAR_LANGUAGE])
+				} else if (appSettings[AppSettings.KEYS.PREFER_CAR_LANGUAGE].toBoolean() &&
+							carInformationObserver.cdsData[CDS.VEHICLE.LANGUAGE] != null) {
+					CDSVehicleLanguage.fromCdsProperty(carInformationObserver.cdsData[CDS.VEHICLE.LANGUAGE]).locale
+				} else {
+					null
+				}
+				L.loadResources(this, locale)
 
 				// report car capabilities
-				startCarCapabilities()
+				// also loads the car language
+				startAny = startAny or startCarCapabilities()
 
-				// start notifications
-				startAny = startAny or startNotifications()
+				if (appSettings[AppSettings.KEYS.PREFER_CAR_LANGUAGE].toBoolean() &&
+						carInformationObserver.cdsData[CDS.VEHICLE.LANGUAGE] == null) {
+					// still waiting for language
+				} else {
+					// start notifications
+					startAny = startAny or startNotifications()
 
-				// start maps
-				startAny = startAny or startMaps()
+					// start maps
+					startAny = startAny or startMaps()
 
-				// start music
-				startAny = startAny or startMusic()
+					// start music
+					startAny = startAny or startMusic()
 
-				// start assistant
-				startAny = startAny or startAssistant()
+					// start assistant
+					startAny = startAny or startAssistant()
 
-				// start navigation handler
-				startNavigationListener()
+					// start navigation handler
+					startNavigationListener()
+				}
 
 				// check if we are idle and should shut down
 				if (startAny ){
@@ -230,7 +248,7 @@ class MainService: Service() {
 		}
 	}
 
-	fun startCarCapabilities() {
+	fun startCarCapabilities(): Boolean {
 		synchronized(this) {
 			if (threadCapabilities == null) {
 				// receiver to save settings
@@ -256,6 +274,7 @@ class MainService: Service() {
 				threadCapabilities?.start()
 			}
 		}
+		return true
 	}
 
 	fun stopCarCapabilities() {
