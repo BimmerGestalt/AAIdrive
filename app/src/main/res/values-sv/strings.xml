@@ -11,6 +11,7 @@
     <string name="notification_description_bmw">Ansluten till BMW</string>
     <string name="notification_description_mini">Ansluten till Mini</string>
     <!-- notification channel names -->
+    <string name="notification_channel_assistant">Starta röstassistenter</string>
     <string name="notification_channel_connection">Anslutningsstatus</string>
     <string name="notification_channel_donation">Donationsbegäran</string>
     <string name="notification_channel_spotify">Spotify auktorisation</string>
@@ -50,6 +51,7 @@
     <string name="notification_readout_popup">Tala in nya aviseringar</string>
     <string name="notification_readout_popup_passenger">… med en passagerare</string>
     <string name="lbl_popupVersion">Popupfönster fungerar endast med IDrive4</string>
+    <string name="lbl_ttsUnsupported">TTS stöds ej av din bil</string>
     <string name="lbl_smsPermission">Ge behörighet för inkommande SMS att visa bilder i bilen. Texten är däremot alltid synlig.</string>
     <string name="lbl_mapspage">Ett enkelt Google Maps fönster kan visas i bilen</string>
     <string name="enable_google_maps">Aktivera Google Maps</string>
