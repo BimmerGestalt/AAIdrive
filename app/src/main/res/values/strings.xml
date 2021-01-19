@@ -82,6 +82,7 @@
     <string name="enable_spotify_layout">Always appear as Spotify app in IDrive5+</string>
     <string name="lbl_grant_sessions">Control over active music apps</string>
     <string name="lbl_grant_spotify_control">Ability to browse your Spotify library</string>
+    <string name="lbl_grant_background_music">Allow background execution for your music apps, if the car has troubles launching them</string>
     <string name="lbl_grant">Grant</string>
     <string name="musicAppNotes_unauthorizedSpotify">Tap here to authorize Spotify access</string>
     <string name="musicAppNotes_oldSpotify">Please downgrade Spotify for full functionality (Searching)</string>

@@ -15,6 +15,24 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/lbl_grant_background_music" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:gravity="center_vertical">
             <ImageView
                 android:layout_width="24dp"
@@ -40,6 +58,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:orientation="vertical"
             android:gravity="center_vertical"
             android:visibility="@{viewModel.hasSpotify}">
@@ -79,7 +98,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:layout_marginBottom="4dp"
+            android:gravity="center_vertical"
+            android:visibility="@{viewModel.hasSpotify}">
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
