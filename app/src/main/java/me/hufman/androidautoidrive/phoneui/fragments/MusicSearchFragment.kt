@@ -134,7 +134,11 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 
 			holder.searchResultTitleTextView.text = item.title
 
-			val subtitleString = "${item.subtitle} - ${item.artist}"
+			val subtitleString = if (item.subtitle == "Artist" || item.subtitle == "Episode") {
+				item.subtitle
+			} else {
+				"${item.subtitle} - ${item.artist}"
+			}
 			holder.searchResultSubtitleTextView.text = subtitleString
 
 			holder.searchResultCoverArtImageView.colorFilter = Utils.getIconMask(context.getThemeColor(android.R.attr.textColorSecondary))
