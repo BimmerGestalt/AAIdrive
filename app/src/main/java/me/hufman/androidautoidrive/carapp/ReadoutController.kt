@@ -7,6 +7,13 @@ import me.hufman.idriveconnectionkit.rhmi.RHMIEvent
 import me.hufman.idriveconnectionkit.rhmi.RHMIModel
 import java.lang.IllegalArgumentException
 
+data class TTSState(
+	val state: Int?,
+	val currentblock: Int?,
+	val blocks: Int?,
+	val type: String?,
+	val languageavailable: Int?
+)
 enum class ReadoutState(val value: Int) {
 	UNDEFINED(0),
 	IDLE(1),
@@ -42,10 +49,10 @@ class ReadoutController(val name: String, val speechEvent: RHMIEvent.ActionEvent
 	val isActive: Boolean
 		get() = currentName == name && (currentState == ReadoutState.ACTIVE || currentState == ReadoutState.BUSY)
 
-	fun onTTSEvent(ttsState: Map<String, Any?>) {
-		currentState = ReadoutState.fromValue(ttsState["state"] as? Int)
-		currentName = ttsState["type"] as? String ?: ""
-		currentBlock = ttsState["currentblock"] as? Int
+	fun onTTSEvent(ttsState: TTSState) {
+		currentState = ReadoutState.fromValue(ttsState.state)
+		currentName = ttsState.type ?: ""
+		currentBlock = ttsState.currentblock
 		Log.d(TAG, "TTSEvent: currentState:$currentState currentName:$currentName currentBlock:$currentBlock")
 	}
 
