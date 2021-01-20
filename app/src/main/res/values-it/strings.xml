@@ -37,6 +37,10 @@
     <string name="menu_support">Supporto</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integra nella tua auto alcune delle applicazioni musicali e le notifiche del tuo telefono tramite il protocollo proprietario BMW Apps</string>
     <string name="lbl_connectionpage">La connessione delle app all\'auto dipende da alcuni fattori e qui ci sono alcuni suggerimenti per assicurarsi che tutto funzioni bene</string>
+    <plurals name="lbl_assistantpage">
+        <item quantity="one">L\'assistente vocale del tuo telefono viene aggiunto come app Connected, nel caso in cui l\'input vocale dell\'auto non lo attivi</item>
+        <item quantity="other">Gli assistenti vocali del tuo telefono vengono aggiunti come app Connected, nel caso in cui l\'input vocale dell\'auto non li attivi</item>
+    </plurals>
     <string name="lbl_notificationpage">Le tue notifiche in arrivo possono essere visualizzate e interagite dall\'auto</string>
     <string name="spawn_test_notification">Notifica di prova</string>
     <string name="message_notifications">Notifica messaggi</string>

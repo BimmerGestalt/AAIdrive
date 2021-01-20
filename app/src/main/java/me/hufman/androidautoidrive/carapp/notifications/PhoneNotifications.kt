@@ -9,17 +9,15 @@ import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.*
-import me.hufman.androidautoidrive.carapp.RHMIActionAbort
-import me.hufman.androidautoidrive.carapp.RHMIApplicationSwappable
-import me.hufman.androidautoidrive.carapp.RHMIUtils
+import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
 import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
 import me.hufman.androidautoidrive.carapp.notifications.views.PopupView
 import me.hufman.androidautoidrive.notifications.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.Utils
-import me.hufman.androidautoidrive.utils.loadJSON
 import me.hufman.androidautoidrive.utils.removeFirst
+import me.hufman.idriveconnectionkit.CDS
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
@@ -38,7 +36,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	val notificationReceiver = NotificationUpdaterControllerIntent.Receiver(notificationListener)
 	var notificationBroadcastReceiver: BroadcastReceiver? = null
 	var readoutInteractions: ReadoutInteractions
-	val carappListener = CarAppListener()
+	val carappListener: CarAppListener
 	var rhmiHandle: Int = -1
 	val carConnection: BMWRemotingServer
 	val carAppSwappable: RHMIApplicationSwappable
@@ -54,6 +52,8 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	var passengerSeated = false             // whether a passenger is seated
 
 	init {
+		val cdsData = CDSDataProvider()
+		carappListener = CarAppListener(cdsData)
 		carConnection = IDriveConnection.getEtchConnection(iDriveConnectionStatus.host ?: "127.0.0.1", iDriveConnectionStatus.port ?: 8003, carappListener)
 		val appCert = carAppAssets.getAppCertificate(iDriveConnectionStatus.brand ?: "")?.readBytes() as ByteArray
 		val sas_challenge = carConnection.sas_certificate(appCert)
@@ -105,15 +105,24 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			viewDetails.initWidgets(viewList, stateInput)
 
 			// subscribe to CDS for passenger seat info
-			val cdsHandle = carConnection.cds_create()
-			val interestingProperties = mapOf("76" to "sensors.seatOccupiedPassenger",
-					"37" to "driving.gear",
-					"40" to "driving.parkingBrake")
-			interestingProperties.entries.forEach {
-				val ident = it.key
-				val name = it.value
-				carConnection.cds_addPropertyChangedEventHandler(cdsHandle, name, ident, 5000)
-				carConnection.cds_getPropertyAsync(cdsHandle, ident, name)
+			cdsData.setConnection(CDSConnectionEtch(carConnection))
+			cdsData.subscriptions.defaultIntervalLimit = 5000
+			cdsData.subscriptions[CDS.SENSORS.SEATOCCUPIEDPASSENGER] = {
+				val occupied = it["seatOccupiedPassenger"]?.asInt != 0
+				passengerSeated = occupied
+				readoutInteractions.passengerSeated = occupied
+			}
+			cdsData.subscriptions[CDS.DRIVING.GEAR] = {
+				val GEAR_PARK = 3
+				if (it["gear"]?.asInt == GEAR_PARK) {
+					viewDetails.lockSpeedLock()
+				}
+			}
+			cdsData.subscriptions[CDS.DRIVING.PARKINGBRAKE] = {
+				val APPLIED_BRAKES = setOf(2, 8, 32)
+				if (APPLIED_BRAKES.contains(it["parkingBrake"]?.asInt)) {
+					viewDetails.lockSpeedLock()
+				}
 			}
 		}
 	}
@@ -171,7 +180,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 		}
 	}
 
-	inner class CarAppListener: BaseBMWRemotingClient() {
+	inner class CarAppListener(val cdsEventHandler: CDSEventHandler): BaseBMWRemotingClient() {
 		var server: BMWRemotingServer? = null
 		var app: RHMIApplication? = null
 
@@ -233,26 +242,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 		}
 
 		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
-			val propertyData = loadJSON(propertyValue)
-					?: return
-			synced()
-
-			if (propertyName == "sensors.seatOccupiedPassenger") {
-				passengerSeated = propertyData.getInt("seatOccupiedPassenger") != 0
-				readoutInteractions.passengerSeated = propertyData.getInt("seatOccupiedPassenger") != 0
-			}
-			if (propertyName == "driving.gear") {
-				val GEAR_PARK = 3
-				if (propertyData.getInt("gear") == GEAR_PARK) {
-					viewDetails.lockSpeedLock()
-				}
-			}
-			if (propertyName == "driving.parkingBrake") {
-				val APPLIED_BRAKES = setOf(2, 8, 32)
-				if (APPLIED_BRAKES.contains(propertyData.getInt("parkingBrake"))) {
-					viewDetails.lockSpeedLock()
-				}
-			}
+			cdsEventHandler.onPropertyChangedEvent(ident, propertyValue)
 		}
 	}
 

@@ -1,13 +1,9 @@
 package me.hufman.androidautoidrive.utils
 
-import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.TypedValue
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
 import ar.com.hjg.pngj.*
 import ar.com.hjg.pngj.chunks.PngChunkPLTE
 import java.io.ByteArrayOutputStream
@@ -16,8 +12,6 @@ import java.util.zip.ZipInputStream
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.withTimeout
-import org.json.JSONException
-import org.json.JSONObject
 
 object Utils {
 	val FILTER_NEGATIVE by lazy {
@@ -248,20 +242,6 @@ suspend inline fun <T> Deferred<T>.awaitPending(timeout: Long, timeoutHandler: (
 }
 suspend inline fun <T> Deferred<T>.awaitPending(timeout: Int, timeoutHandler: () -> Unit): T {
 	return awaitPending(timeout.toLong(), timeoutHandler)
-}
-
-fun loadJSON(str: String?): JSONObject? {
-	if (str == null) return null
-	try {
-		return JSONObject(str)
-	} catch (e: JSONException) {
-		return null
-	}
-}
-fun JSONObject.toMap(): Map<String, Any?> {
-	return this.keys().asSequence().map {
-		it to this[it]
-	}.toMap()
 }
 
 fun String.truncate(length: Int, suffix: String = "..."): String {

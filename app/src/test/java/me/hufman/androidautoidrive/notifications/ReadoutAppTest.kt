@@ -51,7 +51,7 @@ class ReadoutAppTest {
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources)
 
-		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "1", "hmi.tts",
+		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "113", "hmi.tts",
 				"{\"TTSState\": {\"state\": 0, \"type\": \"app\", \"currentblock\": 0}}" )
 		assertEquals(ReadoutState.UNDEFINED, app.readoutController.currentState)
 		assertEquals("app", app.readoutController.currentName)
@@ -73,7 +73,7 @@ class ReadoutAppTest {
 		assertEquals(mapOf(0 to null), mockServer.triggeredEvents[app.readoutController.speechEvent.id])
 
 		// car updates the controller
-		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "1", "hmi.tts",
+		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "113", "hmi.tts",
 				"{\"TTSState\": {\"state\": 3, \"type\": \"NotificationReadout\", \"currentblock\": 0}}" )
 		assertTrue(app.readoutController.isActive)
 
@@ -84,7 +84,7 @@ class ReadoutAppTest {
 		assertEquals(mapOf(0 to null), mockServer.triggeredEvents[app.readoutController.commandEvent.id])
 
 		// car updates the controller
-		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "1", "hmi.tts",
+		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "113", "hmi.tts",
 				"{\"TTSState\": {\"state\": 0, \"type\": \"NotificationReadout\", \"currentblock\": 0}}" )
 		assertFalse(app.readoutController.isActive)
 

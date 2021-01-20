@@ -8,6 +8,9 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
+import me.hufman.androidautoidrive.carapp.CDSConnection
+import me.hufman.androidautoidrive.carapp.CDSConnectionAsync
+import me.hufman.androidautoidrive.carapp.CDSVehicleLanguage
 import me.hufman.androidautoidrive.carapp.RHMIDimensions
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
@@ -15,11 +18,11 @@ import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
+import me.hufman.idriveconnectionkit.CDS
 import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
 import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
 import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import org.json.JSONObject
 import java.lang.IllegalArgumentException
 import java.util.*
 
@@ -190,25 +193,41 @@ class MainService: Service() {
 				var startAny = false
 
 				AppSettings.loadSettings(this)
-				L.loadResources(this)
+
+				// set the car app languages
+				val locale = if (appSettings[AppSettings.KEYS.FORCE_CAR_LANGUAGE].isNotBlank()) {
+					Locale.forLanguageTag(appSettings[AppSettings.KEYS.FORCE_CAR_LANGUAGE])
+				} else if (appSettings[AppSettings.KEYS.PREFER_CAR_LANGUAGE].toBoolean() &&
+							carInformationObserver.cdsData[CDS.VEHICLE.LANGUAGE] != null) {
+					CDSVehicleLanguage.fromCdsProperty(carInformationObserver.cdsData[CDS.VEHICLE.LANGUAGE]).locale
+				} else {
+					null
+				}
+				L.loadResources(this, locale)
 
 				// report car capabilities
-				startCarCapabilities()
+				// also loads the car language
+				startAny = startAny or startCarCapabilities()
 
-				// start notifications
-				startAny = startAny or startNotifications()
+				if (appSettings[AppSettings.KEYS.PREFER_CAR_LANGUAGE].toBoolean() &&
+						carInformationObserver.cdsData[CDS.VEHICLE.LANGUAGE] == null) {
+					// still waiting for language
+				} else {
+					// start notifications
+					startAny = startAny or startNotifications()
 
-				// start maps
-				startAny = startAny or startMaps()
+					// start maps
+					startAny = startAny or startMaps()
 
-				// start music
-				startAny = startAny or startMusic()
+					// start music
+					startAny = startAny or startMusic()
 
-				// start assistant
-				startAny = startAny or startAssistant()
+					// start assistant
+					startAny = startAny or startAssistant()
 
-				// start navigation handler
-				startNavigationListener()
+					// start navigation handler
+					startNavigationListener()
+				}
 
 				// check if we are idle and should shut down
 				if (startAny ){
@@ -229,37 +248,33 @@ class MainService: Service() {
 		}
 	}
 
-	fun startCarCapabilities() {
+	fun startCarCapabilities(): Boolean {
 		synchronized(this) {
 			if (threadCapabilities == null) {
+				// receiver to save settings
+				val carInformationUpdater = CarInformationUpdater(appSettings)
+
 				// clear the capabilities to not start dependent services until it's ready
 				threadCapabilities = CarThread("Capabilities") {
 					Log.i(TAG, "Starting to discover car capabilities")
+					val handler = threadCapabilities?.handler!!
+
+					// receiver to receive capabilities and cds properties
+					// wraps the CDSConnection with a Handler async wrapper
+					val carInformationUpdater = object: CarInformationUpdater(appSettings) {
+						override fun onCdsConnection(connection: CDSConnection) {
+							super.onCdsConnection(CDSConnectionAsync(handler, connection))
+						}
+					}
 
 					carappCapabilities = CarInformationDiscovery(iDriveConnectionReceiver, securityAccess,
-							CarAppAssetManager(this, "smartthings"),
-							object: CarInformationDiscoveryListener {
-						override fun onCapabilities(capabilities: Map<String, String?>) {
-							// update the known capabilities
-							// which triggers a callback to start more service modules
-							carInformationObserver.capabilities = capabilities.mapValues { it.value ?: "" }
-
-							// update the notification
-							startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
-						}
-
-						override fun onCdsProperty(propertyName: String, propertyValue: String, parsedValue: JSONObject?) {
-							if (propertyName == "navigation.guidanceStatus" && parsedValue?.getInt("guidanceStatus") == 1) {
-								sendBroadcast(Intent(NavIntentActivity.INTENT_NAV_SUCCESS))
-							}
-						}
-
-					})
+							CarAppAssetManager(this, "smartthings"), carInformationUpdater)
 					carappCapabilities?.onCreate()
 				}
 				threadCapabilities?.start()
 			}
 		}
+		return true
 	}
 
 	fun stopCarCapabilities() {

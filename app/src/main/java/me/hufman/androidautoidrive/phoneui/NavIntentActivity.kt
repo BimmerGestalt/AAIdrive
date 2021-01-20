@@ -1,11 +1,6 @@
 package me.hufman.androidautoidrive.phoneui
 
 import android.animation.ObjectAnimator
-import android.app.Activity
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Point
 import android.os.AsyncTask
 import android.os.Bundle
@@ -13,16 +8,19 @@ import android.os.Handler
 import android.util.Log
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_navintent.*
+import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.carapp.liveData
 import me.hufman.androidautoidrive.carapp.navigation.AndroidGeocoderSearcher
 import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerSender
+import me.hufman.idriveconnectionkit.CDSProperty
 
-class NavIntentActivity: Activity() {
+class NavIntentActivity: AppCompatActivity() {
 	companion object {
 		val TAG = "NavActivity"
-		val INTENT_NAV_SUCCESS = "me.hufman.androidautoidrive.NavIntentActivity.SUCCESS"
 
 		val TIMEOUT = 8000L
 		val SUCCESS = 1000L
@@ -53,14 +51,6 @@ class NavIntentActivity: Activity() {
 	}
 
 	var parsingTask: ParserTask? = null
-	var listening = false
-	val successListener = object: BroadcastReceiver() {
-		override fun onReceive(p0: Context?, p1: Intent?) {
-			if (p1?.action == INTENT_NAV_SUCCESS) {
-				onSuccess()
-			}
-		}
-	}
 
 	override fun onAttachedToWindow() {
 		super.onAttachedToWindow()
@@ -105,8 +95,11 @@ class NavIntentActivity: Activity() {
 	}
 
 	fun onBegin() {
-		registerReceiver(successListener, IntentFilter(INTENT_NAV_SUCCESS))
-		listening = true
+		CarInformation.cdsData.liveData[CDSProperty.NAVIGATION_GUIDANCESTATUS].observe(this) {
+			if (it["guidanceStatus"]?.asInt == 1) {
+				onSuccess()
+			}
+		}
 
 		txtNavLabel.text = getText(R.string.lbl_navigation_listener_pending)
 		txtNavError.text = ""
@@ -134,9 +127,5 @@ class NavIntentActivity: Activity() {
 	override fun onPause() {
 		super.onPause()
 		parsingTask?.cancel(false)
-		if (listening) {
-			unregisterReceiver(successListener)
-			listening = false
-		}
 	}
 }

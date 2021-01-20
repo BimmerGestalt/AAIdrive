@@ -1,60 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
-    android:layout_marginEnd="@dimen/default_margin"
-    android:layout_marginStart="@dimen/default_margin"
-    android:layout_marginTop="@dimen/default_margin">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:text="@string/lbl_notificationpage" />
-
-    <View style="@style/Divider"
-        android:layout_marginBottom="10dp"/>
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/swMessageNotifications"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="@string/message_notifications" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/paneNotificationSettings"
-        android:name="me.hufman.androidautoidrive.phoneui.fragments.NotificationSettingsFragment"/>
-
-    <Button
-        android:id="@+id/btnTestNotification"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="8dp"
-        android:text="@string/spawn_test_notification" />
-
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout
-        android:id="@+id/paneSMSPermission"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:paddingEnd="@dimen/default_margin"
+        android:paddingStart="@dimen/default_margin"
+        android:paddingTop="@dimen/default_margin">
 
         <TextView
-            android:id="@+id/txtSMSPermission"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/lbl_smsPermission"
-            android:layout_marginBottom="4dp" />
+            android:layout_marginBottom="10dp"
+            android:text="@string/lbl_notificationpage" />
+
+        <View style="@style/Divider"
+            android:layout_marginBottom="10dp"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swMessageNotifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/message_notifications" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/paneNotificationSettings"
+            android:name="me.hufman.androidautoidrive.phoneui.fragments.NotificationSettingsFragment"/>
 
         <Button
-            android:id="@+id/btnGrantSMS"
-            android:layout_width="wrap_content"
+            android:id="@+id/btnTestNotification"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="@string/lbl_grant" />
-    </LinearLayout>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:text="@string/spawn_test_notification" />
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/paneSMSPermission"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtSMSPermission"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_smsPermission"
+                android:layout_marginBottom="4dp" />
+
+            <Button
+                android:id="@+id/btnGrantSMS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_grant" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

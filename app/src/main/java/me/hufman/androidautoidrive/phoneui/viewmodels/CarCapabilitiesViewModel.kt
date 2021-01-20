@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import java.util.*
+import kotlin.collections.HashMap
 
 class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppMode: MusicAppMode): ViewModel() {
 	class Factory(val context: Context): ViewModelProvider.Factory {
@@ -49,6 +51,8 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 
 	private val _isPopupSupported = MutableLiveData<Boolean>()
 	val isPopupSupported: LiveData<Boolean> = _isPopupSupported
+	private val _isPopupNotSupported = MutableLiveData<Boolean>()
+	val isPopupNotSupported: LiveData<Boolean> = _isPopupNotSupported
 	private val _popupStatus = MutableLiveData<Context.() -> String>()
 	val popupStatus: LiveData<Context.() -> String> = _popupStatus
 	private val _popupHint = MutableLiveData<Context.() -> String>()
@@ -56,11 +60,15 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 
 	private val _isTtsSupported = MutableLiveData<Boolean>()
 	val isTtsSupported: LiveData<Boolean> = _isTtsSupported
+	private val _isTtsNotSupported = MutableLiveData<Boolean>()
+	val isTtsNotSupported: LiveData<Boolean> = _isTtsNotSupported
 	private val _ttsStatus = MutableLiveData<Context.() -> String>()
 	val ttsStatus: LiveData<Context.() -> String> = _ttsStatus
 
 	private val _isNaviSupported = MutableLiveData<Boolean>()
 	val isNaviSupported: LiveData<Boolean> = _isNaviSupported
+	private val _isNaviNotSupported = MutableLiveData<Boolean>()
+	val isNaviNotSupported: LiveData<Boolean> = _isNaviNotSupported
 	private val _naviStatus = MutableLiveData<Context.() -> String>()
 	val naviStatus: LiveData<Context.() -> String> = _naviStatus
 
@@ -100,7 +108,8 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 			}
 		}
 
-		_isPopupSupported.value = musicAppMode.isId4()
+		_isPopupSupported.value = capabilities["hmi.type"]?.contains("ID4") == true
+		_isPopupNotSupported.value = capabilities["hmi.type"]?.contains("ID4") == false
 		if (musicAppMode.isId4()) {
 			_popupStatus.value = { getString(R.string.txt_capabilities_popup_yes) }
 			_popupHint.value = { "" }
@@ -109,15 +118,17 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 			_popupHint.value = { getString(R.string.txt_capabilities_popup_hint) }
 		}
 
-		_isTtsSupported.value = capabilities["tts"]?.toLowerCase() == "true"
-		if (capabilities["tts"]?.toLowerCase() == "true") {
+		_isTtsSupported.value = capabilities["tts"]?.toLowerCase(Locale.ROOT) == "true"
+		_isTtsNotSupported.value = capabilities["tts"]?.toLowerCase(Locale.ROOT) == "false"
+		if (capabilities["tts"]?.toLowerCase(Locale.ROOT) == "true") {
 			_ttsStatus.value = { getString(R.string.txt_capabilities_tts_yes) }
 		} else {
 			_ttsStatus.value = { getString(R.string.txt_capabilities_tts_no) }
 		}
 
-		_isNaviSupported.value = capabilities["navi"]?.toLowerCase() == "true"
-		if (capabilities["navi"]?.toLowerCase() == "true") {
+		_isNaviSupported.value = capabilities["navi"]?.toLowerCase(Locale.ROOT) == "true"
+		_isNaviNotSupported.value = capabilities["navi"]?.toLowerCase(Locale.ROOT) == "false"
+		if (capabilities["navi"]?.toLowerCase(Locale.ROOT) == "true") {
 			_naviStatus.value = { getString(R.string.txt_capabilities_navi_yes) }
 		} else {
 			_naviStatus.value = { getString(R.string.txt_capabilities_navi_no) }

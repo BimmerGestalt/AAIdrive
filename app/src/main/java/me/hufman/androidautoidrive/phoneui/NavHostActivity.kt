@@ -29,6 +29,7 @@ class NavHostActivity: AppCompatActivity() {
 		Analytics.init(this)
 		AppSettings.loadSettings(this)
 		L.loadResources(this)
+		CarInformation.loadCache(MutableAppSettingsReceiver(applicationContext))
 
 		setContentView(R.layout.activity_navhost)
 		val navToolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.nav_toolbar)!!

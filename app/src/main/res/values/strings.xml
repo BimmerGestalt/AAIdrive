@@ -56,6 +56,7 @@
     <string name="notification_readout_popup">Speak new notifications</string>
     <string name="notification_readout_popup_passenger">… with a passenger</string>
     <string name="lbl_popupVersion">Popups only work with IDrive4</string>
+    <string name="lbl_ttsUnsupported">TTS is not supported by your car</string>
     <string name="lbl_smsPermission">Grant the SMS permission to view pictures from incoming SMS images in the car. The text itself is always visible.</string>
 
     <string name="lbl_mapspage">A basic Google Maps screen can be displayed in the car</string>
@@ -89,6 +90,11 @@
     <string name="musicAppNotes_spotify_apiUnavailable">Please confirm internet connectivity and disable any ad blocking</string>
 
     <string name="lbl_settingspage">Advanced settings for tweaking behavior, may cause unexpected behavior</string>
+    <string name="lbl_language_carinterface">Language to show in the car</string>
+    <string name="lbl_language_prefercar">Prefer car language over phone language</string>
+    <string name="lbl_language_prefercar_code">Prefer car language (%s) over phone language</string>
+    <string name="lbl_language_forcelanguage">Force specific language</string>
+
     <string name="lbl_donations_volunteer">AndroidAutoIdrive is a volunteer project</string>
     <string name="lbl_donations_request">If you like this project and find it useful, consider showing your support by donating:</string>
     <string name="btn_donations">Donate</string>

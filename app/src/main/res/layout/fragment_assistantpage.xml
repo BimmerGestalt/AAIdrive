@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginEnd="@dimen/default_margin"
-    android:layout_marginStart="@dimen/default_margin"
-    android:layout_marginTop="@dimen/default_margin">
-
-    <TextView
-        android:id="@+id/lblAssistantPage"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp" />
+        android:paddingStart="@dimen/default_margin"
+        android:paddingEnd="@dimen/default_margin"
+        android:paddingTop="@dimen/default_margin">
 
-    <View style="@style/Divider"
-        android:layout_marginBottom="10dp"/>
+        <TextView
+            android:id="@+id/lblAssistantPage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/fragment_assistant_applist"
-        android:name="me.hufman.androidautoidrive.phoneui.fragments.AssistantAppsListFragment"/>
+        <View style="@style/Divider"
+            android:layout_marginBottom="10dp"/>
 
-</LinearLayout>
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragment_assistant_applist"
+            android:name="me.hufman.androidautoidrive.phoneui.fragments.AssistantAppsListFragment"/>
+
+    </LinearLayout>
+</ScrollView>

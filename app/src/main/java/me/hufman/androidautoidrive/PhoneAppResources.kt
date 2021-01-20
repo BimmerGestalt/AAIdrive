@@ -15,7 +15,7 @@ interface PhoneAppResources {
 	fun getAppIcon(packageName: String): Drawable
 	fun getAppName(packageName: String): String
 	fun getBitmapDrawable(bitmap: Bitmap): Drawable
-	fun getIconDrawable(icon: Icon): Drawable
+	fun getIconDrawable(icon: Icon): Drawable?
 	fun getUriDrawable(uri: String): Drawable
 }
 
@@ -30,7 +30,7 @@ class PhoneAppResourcesAndroid(val context: Context): PhoneAppResources {
 	override fun getBitmapDrawable(bitmap: Bitmap): Drawable {
 		return BitmapDrawable(context.resources, bitmap)
 	}
-	override fun getIconDrawable(icon: Icon): Drawable {
+	override fun getIconDrawable(icon: Icon): Drawable? {
 		return icon.loadDrawable(context)
 	}
 
