@@ -8,4 +8,21 @@
         <item>Aubergine</item>
         <item>Midnight Commander</item> <!-- From https://snazzymaps.com/style/2/midnight-commander -->
     </string-array>
+
+    <!-- Language codes to display in the Force Language selector -->
+    <string-array name="available_languages">
+        <item></item>
+        <item>de</item>
+        <item>eo</item>
+        <item>en</item>
+        <item>es</item>
+        <item>fr</item>
+        <item>it</item>
+        <item>nl</item>
+        <item>pl</item>
+        <item>pt</item>
+        <item>ro</item>
+        <item>ru</item>
+        <item>sv</item>
+    </string-array>
 </resources>

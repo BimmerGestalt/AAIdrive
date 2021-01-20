@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data class="LanguageSettingsBinding">
+        <variable
+            name="viewModel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.LanguageSettingsModel" />
+    </data>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/lbl_language_carinterface" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:checked="@={viewModel.preferCarLanguage}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@{viewModel.lblPreferCarLanguage}" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
+            android:visibility="@{viewModel.showAdvanced}">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/lbl_language_forcelanguage" />
+
+            <Spinner
+                app:selectedValue="@={viewModel.forceCarLanguage}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/available_languages" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

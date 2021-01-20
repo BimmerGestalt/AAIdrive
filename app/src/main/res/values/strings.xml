@@ -90,6 +90,11 @@
     <string name="musicAppNotes_spotify_apiUnavailable">Please confirm internet connectivity and disable any ad blocking</string>
 
     <string name="lbl_settingspage">Advanced settings for tweaking behavior, may cause unexpected behavior</string>
+    <string name="lbl_language_carinterface">Language to show in the car</string>
+    <string name="lbl_language_prefercar">Prefer car language over phone language</string>
+    <string name="lbl_language_prefercar_code">Prefer car language (%s) over phone language</string>
+    <string name="lbl_language_forcelanguage">Force specific language</string>
+
     <string name="lbl_donations_volunteer">AndroidAutoIdrive is a volunteer project</string>
     <string name="lbl_donations_request">If you like this project and find it useful, consider showing your support by donating:</string>
     <string name="btn_donations">Donate</string>

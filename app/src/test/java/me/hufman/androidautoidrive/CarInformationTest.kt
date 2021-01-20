@@ -5,6 +5,7 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import me.hufman.androidautoidrive.carapp.CDSConnection
 import me.hufman.idriveconnectionkit.CDSProperty
+import me.hufman.idriveconnectionkit.CDS
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -16,6 +17,7 @@ class CarInformationTest {
 		CarInformation.currentCapabilities = emptyMap()
 		CarInformation.cachedCapabilities = emptyMap()
 		CarInformation.cdsData.clear()
+		CarInformation.cachedCdsData.clear()
 	}
 
 	@Test
@@ -74,5 +76,25 @@ class CarInformationTest {
 		assertEquals(emptyMap<String, String>(), CarInformation.currentCapabilities)
 		assertEquals(mapOf("tts" to "true"), CarInformation.cachedCapabilities)
 		assertEquals(CarInformation.cachedCapabilities, carInformation.capabilities)
+	}
+
+	@Test
+	fun testCachedCdsLayer() {
+		val appSettings = MockAppSettings()
+		CarInformation.loadCache(appSettings)       // test empty settings
+		assertEquals(null, CarInformation.cachedCdsData[CDS.VEHICLE.LANGUAGE])
+
+		// the cache should be automatically linked to the main cdsData
+		val carInformation = CarInformationObserver()
+		val language = JsonObject().apply { addProperty("language", 3) }
+		assertEquals(null, carInformation.cachedCdsData[CDS.VEHICLE.LANGUAGE])
+		CarInformation.cdsData.onPropertyChangedEvent(CDS.VEHICLE.LANGUAGE, language)
+		assertEquals(language, carInformation.cachedCdsData[CDS.VEHICLE.LANGUAGE])
+
+		CarInformation.saveCache(appSettings)
+		CarInformation.cachedCdsData.clear()
+		assertEquals(null, carInformation.cachedCdsData[CDS.VEHICLE.LANGUAGE])
+		CarInformation.loadCache(appSettings)
+		assertEquals(language, carInformation.cachedCdsData[CDS.VEHICLE.LANGUAGE])
 	}
 }
