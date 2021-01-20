@@ -82,6 +82,10 @@
     <string name="musicAppNotes_spotify_apiNotFound">Vänligen installera den officiella Spotifyappen</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Bekräfta internetanslutning och inaktivera reklamblockering</string>
     <string name="lbl_settingspage">Avancerade inställningar för utökade funktioner, kan orsaka oväntat beteende</string>
+    <string name="lbl_language_carinterface">Språkval i bilen</string>
+    <string name="lbl_language_prefercar">Föredra bilspråk framför telefonspråk</string>
+    <string name="lbl_language_prefercar_code">Föredrar bilspråk (%s) över telefonspråk</string>
+    <string name="lbl_language_forcelanguage">Tvinga specifikt språk</string>
     <string name="lbl_donations_volunteer">AndroidAutoIdrive är ett volontärprojekt</string>
     <string name="lbl_donations_request">Om du gillar detta projekt och tycker att det är användbart så visa gärna ditt stöd genom att donera:</string>
     <string name="btn_donations">Donera</string>
