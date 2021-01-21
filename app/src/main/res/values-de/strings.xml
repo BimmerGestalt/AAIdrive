@@ -51,6 +51,7 @@
     <string name="notification_readout_popup">Neue Benachrichtigungen vorlesen</string>
     <string name="notification_readout_popup_passenger">… mit Beifahrer</string>
     <string name="lbl_popupVersion">PopUps funktionieren nur mit IDrive4</string>
+    <string name="lbl_ttsUnsupported">TTS wird von Ihrem Fahrzeug nicht unterstützt</string>
     <string name="lbl_smsPermission">Erteile Zugriff für SMS-Nachrichten um Bilder von Nachrichten im Fahrzeug zu sehen. Text ist immer sichtbar.</string>
     <string name="lbl_mapspage">Ein grundlegender Google Maps-Bildschirm kann im Auto angezeigt werden</string>
     <string name="enable_google_maps">Google Maps aktivieren</string>
@@ -81,6 +82,10 @@
     <string name="musicAppNotes_spotify_apiNotFound">Bitte den offiziellen Spotify-Client installieren</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Bitte Internetzugang bestätigen und Werbeblocker deaktivieren</string>
     <string name="lbl_settingspage">Erweiterte Einstellungen für das Optimieren des Verhaltens können zu unerwartetem Verhalten führen</string>
+    <string name="lbl_language_carinterface">Sprache für das Auto</string>
+    <string name="lbl_language_prefercar">Spracheinstellung des Fahrzeugs gegenüber Telefonsprache bevorzugen</string>
+    <string name="lbl_language_prefercar_code">Spracheinstellung des Fahrzeugs (%s) gegenüber Telefonsprache bevorzugen</string>
+    <string name="lbl_language_forcelanguage">Spezifische Sprache verwenden</string>
     <string name="lbl_donations_volunteer">AndroidAutoIdrive ist ein Freiwilligenprojekt</string>
     <string name="lbl_donations_request">Wenn Ihnen dieses Projekt gefällt und Sie es nützlich finden, können Sie Ihre Unterstützung durch eine Spende zeigen:</string>
     <string name="btn_donations">Spenden</string>
@@ -155,6 +160,7 @@
     <!-- debug status -->
     <string name="txt_build_info">Build Version: %1$s %2$s</string>
     <string name="txt_bcl_report">BCL Tunnel Performance:</string>
+    <string name="txt_cds_view">Fahrzeugdatenbericht:</string>
     <string name="txt_car_capabilities">Gemeldete Fähigkeiten des Fahrzeuges:</string>
     <string name="lbl_advanced_settings">Zeige erweiterte Einstellungen</string>
     <string name="lbl_assistant">Sprachassistent (Beta)</string>
