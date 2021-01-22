@@ -374,12 +374,12 @@ class MusicAppTest {
 		}
 
 		// test that the playback view redraw didn't happen since it's not focused
-		assertFalse(app.playbackViewVisible)
+		assertFalse(app.playbackView.visible)
 		assertEquals(null, mockServer.data[IDs.ARTIST_LARGE_MODEL])
 
 		// now redraw with the playback view selected
 		mockClient.rhmi_onHmiEvent(1, "unused", IDs.PLAYBACK_STATE, 1, mapOf(4.toByte() to true))
-		assertTrue(app.playbackViewVisible)
+		assertTrue(app.playbackView.visible)
 		verify(musicController, atLeastOnce()).getMetadata()
 
 		// verify things happened

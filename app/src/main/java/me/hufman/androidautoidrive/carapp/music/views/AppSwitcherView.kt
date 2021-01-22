@@ -24,6 +24,7 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 	val appsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3).apply {
 		this.addRow(arrayOf("", "", L.MUSIC_APPLIST_EMPTY))
 	}
+	var visible = false
 	val apps = ArrayList<MusicAppInfo>()
 	val appsListAdapter = object: RHMIListAdapter<MusicAppInfo>(3, apps) {
 		override fun convertRow(index: Int, item: MusicAppInfo): Array<Any> {
@@ -39,6 +40,13 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 
 
 	fun initWidgets(playbackView: PlaybackView) {
+		state.focusCallback = FocusCallback { focused ->
+			visible = focused
+			if (focused) {
+				show()
+				appDiscovery.discoverAppsAsync()
+			}
+		}
 		state.getTextModel()?.asRaDataModel()?.value = L.MUSIC_APPLIST_TITLE
 		listApps.setVisible(true)
 		listApps.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
