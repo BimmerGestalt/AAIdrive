@@ -51,6 +51,7 @@
     <string name="notification_readout_popup">Lettura vocale delle nuove notifiche</string>
     <string name="notification_readout_popup_passenger">… con un passeggero</string>
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
+    <string name="lbl_ttsUnsupported">TTS non è supportato dalla tua auto</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
     <string name="lbl_mapspage">Una schermata standard di Google Maps può essere visualizzata nell\'auto</string>
     <string name="enable_google_maps">Abilita Google Maps</string>
@@ -81,6 +82,10 @@
     <string name="musicAppNotes_spotify_apiNotFound">Prego installare il client ufficiale di Spotify</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Prego verificare la connessione e disabilitare qualsiasi blocco pubblicità</string>
     <string name="lbl_settingspage">Impostazioni avanzate, possono causare comportamenti imprevisti</string>
+    <string name="lbl_language_carinterface">Lingua da mostrare in auto</string>
+    <string name="lbl_language_prefercar">Preferisci la lingua della vettura alla lingua del telefono</string>
+    <string name="lbl_language_prefercar_code">Preferisci la lingua della vettura (%s) alla lingua del telefono</string>
+    <string name="lbl_language_forcelanguage">Forza la lingua specifica</string>
     <string name="lbl_donations_volunteer">AndroidAutoIdrive è un progetto gratuito</string>
     <string name="lbl_donations_request">Se ti piace questo progetto e lo trovi utile, considera di sostenerlo:</string>
     <string name="btn_donations">Effettua una donazione</string>
@@ -155,6 +160,7 @@
     <!-- debug status -->
     <string name="txt_build_info">Versione di build: %1$s %2$s</string>
     <string name="txt_bcl_report">BCL Tunnel Performance:</string>
+    <string name="txt_cds_view">Rapporto dati dell\'auto:</string>
     <string name="txt_car_capabilities">Capacità dell\'auto rilevate:</string>
     <string name="lbl_advanced_settings">Mostra le impostazioni avanzate</string>
     <string name="lbl_assistant">Assistente vocale (Beta)</string>
