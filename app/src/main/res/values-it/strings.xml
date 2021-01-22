@@ -11,7 +11,7 @@
     <string name="notification_description_bmw">Connesso a BMW</string>
     <string name="notification_description_mini">Connesso a Mini</string>
     <!-- notification channel names -->
-    <string name="notification_channel_assistant">Assistente Launcher</string>
+    <string name="notification_channel_assistant">Launcher Assistente</string>
     <string name="notification_channel_connection">Stato della connessione</string>
     <string name="notification_channel_donation">Richiesta Donazione</string>
     <string name="notification_channel_spotify">Autorizzazione Spotify</string>
