@@ -281,11 +281,18 @@ class CDSLiveDataManager(private val cdsData: CDSData): CDSLiveDataMap {
  * A LiveData subclass that dynamically subscribes to the given CDSConnection
  * Expects to be created and updated by CDSLiveDataManager
  */
-class CDSMutableLiveData(private val cdsData: CDSData, val property: CDSProperty, private val intervalLimit: Int): MutableLiveData<JsonObject>(cdsData[property]), CDSEventHandler {
+class CDSMutableLiveData(private val cdsData: CDSData, val property: CDSProperty, private val intervalLimit: Int): MutableLiveData<JsonObject>(), CDSEventHandler {
+	init {
+		val value = cdsData[property]
+		if (value != null) {
+			postValue(value)
+		}
+	}
+
 	override fun onActive() {
 		super.onActive()
-		cdsData.addEventHandler(property, intervalLimit, this)
-		this.postValue(cdsData[property])
+		cdsData[property]?.also { postValue(it) }       // update with latest value if it's been updated
+		cdsData.addEventHandler(property, intervalLimit, this)      // subscribe to updates
 	}
 
 	override fun onInactive() {
