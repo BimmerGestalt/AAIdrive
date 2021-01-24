@@ -20,6 +20,11 @@
         <View style="@style/Divider"
             android:layout_marginBottom="10dp"/>
 
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/paneLanguageSettings"
+            android:name="me.hufman.androidautoidrive.phoneui.fragments.LanguageSettingsFragment"/>
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/swAdvancedSettings"
             android:layout_width="match_parent"

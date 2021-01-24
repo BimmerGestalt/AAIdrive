@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat

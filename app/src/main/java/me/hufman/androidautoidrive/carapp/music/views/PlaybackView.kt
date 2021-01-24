@@ -54,6 +54,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	val albumArtPlaceholderSmall = carAppImages["${musicImageIDs.COVERART_SMALL}.png"]
 	val grayscaleNoteIcon: Any
 
+	var visible = false
 	var displayedApp: MusicAppInfo? = null  // the app that was last redrawn
 	var displayedSong: MusicMetadata? = null    // the song  that was last redrawn
 	var displayedConnected: Boolean = false     // whether the controller was connected during redraw
@@ -176,6 +177,13 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 	fun initWidgets(appSwitcherView: AppSwitcherView, enqueuedView: EnqueuedView, browseView: BrowseView, customActionsView: CustomActionsView) {
 		state as RHMIState.ToolbarState
+
+		state.focusCallback = FocusCallback { focused ->
+			visible = focused
+			if (focused) {
+				show()
+			}
+		}
 
 		val buttons = state.toolbarComponentsList
 		buttons[0].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_APPLIST_TITLE

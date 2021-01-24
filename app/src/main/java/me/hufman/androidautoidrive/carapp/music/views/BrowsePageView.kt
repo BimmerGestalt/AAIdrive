@@ -29,6 +29,10 @@ enum class BrowseAction(val getLabel: () -> String) {
 	}
 }
 class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val browsePageModel: BrowsePageModel, val browseController: BrowsePageController, var previouslySelected: MusicMetadata?, val graphicsHelpers: GraphicsHelpers): CoroutineScope {
+	// a previous row that may have a checkmark
+	// remember to clear it when a new previouslySelected is set
+	var oldPreviouslySelectedIndex: Int? = null
+
 	override val coroutineContext: CoroutineContext
 		get() = Dispatchers.IO
 
@@ -193,8 +197,18 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 			}
 			// set the list's height but don't render any items yet
 			// to rely on the car to request the specific items to view
-			showList(0, 0)
+			if (currentListModel.height <= 10) {
+				// the previous Loading screen is 1 row high
+				// and the car won't know that this new 1 row high table is different
+				// so we have to tell it explicitly
+				showList(0, currentListModel.height)
+			} else {
+				showList(0, 0)
+			}
 			setFocusToPreviouslySelected()
+
+			// having the song list loaded may change the available actions
+			showActionsList()
 		} else {
 			loaderJob = launch(Dispatchers.IO) {
 				if (this@BrowsePageView.musicList.isEmpty()) {
@@ -256,7 +270,14 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 					}
 					// set the list's height but don't render any items yet
 					// to rely on the car to request the specific items to view
-					showList(0, 0)
+					if (currentListModel.height <= 10) {
+						// the previous Loading screen is 1 row high
+						// and the car won't know that this new 1 row high table is different
+						// so we have to tell it explicitly
+						showList(0, currentListModel.height)
+					} else {
+						showList(0, 0)
+					}
 					setFocusToPreviouslySelected()
 
 					// having the song list loaded may change the available actions
@@ -464,6 +485,9 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 		loaderJob?.cancel()
 		searchJob?.cancel()
 		musicListComponent.requestDataCallback = null
+
+		// clear any old checkmarks
+		oldPreviouslySelectedIndex?.let { showList(it, 1) }
 	}
 
 	private fun onActionCallback(index: Int, inputState: RHMIState) {
@@ -491,6 +515,10 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 		if (entry != null) {
 			Log.i(TAG,"User selected browse entry $entry")
 
+			// remember the previous checkmark to clear it
+			oldPreviouslySelectedIndex = musicList.indexOf(previouslySelected).let {
+				if (it >= 0) it else null
+			}
 			previouslySelected = entry  // update the selection state for future redraws
 			browseController.onListSelection(entry, musicListComponent.getAction()?.asHMIAction())
 		} else {

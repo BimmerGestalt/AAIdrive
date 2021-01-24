@@ -32,6 +32,8 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	val queueImageComponent: RHMIComponent.Image
 	val titleLabelComponent: RHMIComponent.Label
 	val subtitleLabelComponent: RHMIComponent.Label
+
+	var visible = false
 	var currentSong: MusicMetadata? = null
 	val songsList = ArrayList<MusicMetadata>()
 	val songsEmptyList = RHMIModel.RaListModel.RHMIListConcrete(3)
@@ -74,6 +76,12 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {
+		state.focusCallback = FocusCallback { focused ->
+			visible = focused
+			if (focused) {
+				show()
+			}
+		}
 		queueImageComponent.setProperty(RHMIProperty.PropertyId.WIDTH, 180)
 		titleLabelComponent.setProperty(RHMIProperty.PropertyId.CUTTYPE, 0)
 		subtitleLabelComponent.setProperty(RHMIProperty.PropertyId.CUTTYPE, 0)

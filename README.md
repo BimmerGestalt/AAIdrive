@@ -88,7 +88,7 @@ Implemented Features
         - [Castbox](https://play.google.com/store/apps/details?id=fm.castbox.audiobook.radio.podcast)
         - [Google Play Books](https://play.google.com/store/apps/details?id=com.google.android.apps.books)
         - [iVooz](https://play.google.com/store/apps/details?id=com.ivoox.app)
-        - [Libro.fm Audiobooks](https://play.google.com/store/apps/details?id=fm.libro.librofm)
+        - [Libro.fm Audiobooks](https://play.google.com/store/apps/details?id=fm.libro.librofm) up to version [3.2.2](https://apkpure.com/libro-fm-audiobooks/fm.libro.librofm/download/90-APK)
         - [Listen Audiobook Player](https://play.google.com/store/apps/details?id=com.acmeandroid.listen)
         - [Player FM](https://play.google.com/store/apps/details?id=fm.player)
         - [Podcast Addict](https://play.google.com/store/apps/details?id=com.bambuna.podcastaddict)

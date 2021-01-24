@@ -82,6 +82,7 @@
     <string name="enable_spotify_layout">Always appear as Spotify app in IDrive5+</string>
     <string name="lbl_grant_sessions">Control over active music apps</string>
     <string name="lbl_grant_spotify_control">Ability to browse your Spotify library</string>
+    <string name="lbl_grant_background_music">Allow background execution for your music apps, if the car has troubles launching them</string>
     <string name="lbl_grant">Grant</string>
     <string name="musicAppNotes_unauthorizedSpotify">Tap here to authorize Spotify access</string>
     <string name="musicAppNotes_oldSpotify">Please downgrade Spotify for full functionality (Searching)</string>
@@ -90,6 +91,11 @@
     <string name="musicAppNotes_spotify_apiUnavailable">Please confirm internet connectivity and disable any ad blocking</string>
 
     <string name="lbl_settingspage">Advanced settings for tweaking behavior, may cause unexpected behavior</string>
+    <string name="lbl_language_carinterface">Language to show in the car</string>
+    <string name="lbl_language_prefercar">Prefer car language over phone language</string>
+    <string name="lbl_language_prefercar_code">Prefer car language (%s) over phone language</string>
+    <string name="lbl_language_forcelanguage">Force specific language</string>
+
     <string name="lbl_donations_volunteer">AndroidAutoIdrive is a volunteer project</string>
     <string name="lbl_donations_request">If you like this project and find it useful, consider showing your support by donating:</string>
     <string name="btn_donations">Donate</string>
@@ -173,6 +179,7 @@
     <!-- debug status -->
     <string name="txt_build_info">Build Version: %1$s %2$s</string>
     <string name="txt_bcl_report">BCL Tunnel Performance:</string>
+    <string name="txt_cds_view">Car Data Report:</string>
     <string name="txt_car_capabilities">Detailed Car Capabilities:</string>
     <string name="lbl_advanced_settings">Show Advanced Settings</string>
 

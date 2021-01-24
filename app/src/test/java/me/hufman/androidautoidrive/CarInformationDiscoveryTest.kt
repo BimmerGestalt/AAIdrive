@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive
 
 import com.nhaarman.mockito_kotlin.*
+import me.hufman.idriveconnectionkit.CDS
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
@@ -30,7 +31,6 @@ class CarInformationDiscoveryTest {
 		verify(listener).onCapabilities(app.capabilities!!)
 
 		// test a CDS update
-		app.carappListener.cds_onPropertyChangedEvent(1, "1", "propertyName", "{\"key\": \"propertyValue\"}")
-		verify(listener).onCdsProperty(eq("propertyName"), eq("{\"key\": \"propertyValue\"}"), argThat {getString("key") == "propertyValue"})
+		verify(listener).onCdsConnection(any())
 	}
 }

@@ -35,6 +35,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	lateinit var playbackView: PlaybackView
 	lateinit var inputState: RHMIState
 	lateinit var pageController: BrowsePageController
+	var visible = false
 	var lastApp: MusicAppInfo? = null
 	var currentPage: BrowsePageView? = null
 
@@ -45,11 +46,10 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 			BrowsePageView.initWidgets(it)
 			it.focusCallback = FocusCallback { focused ->
 				Log.d("BrowseView", "Received focusedCallback for ${it.id}: $focused")
+				visible = focused
 				if (focused) {
-					musicApp.browseViewVisible = true
 					show(it.id)
 				} else {
-					musicApp.browseViewVisible = false
 					hide(it.id)
 				}
 			}
