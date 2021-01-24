@@ -24,6 +24,8 @@ object L {
 	var MAP_ACTION_SEARCH = "Search for Place"
 	var MAP_ACTION_CLEARNAV = "Clear Navigation"
 
+	var MUSIC_SHUFFLE_PLAY_BUTTON_TITLE = "Shuffle Play"
+
 	var MUSIC_APPLIST_TITLE = "Apps"
 	var MUSIC_APPLIST_EMPTY = "<No Apps>"
 	var MUSIC_CUSTOMACTIONS_TITLE = "Actions"

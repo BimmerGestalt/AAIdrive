@@ -533,7 +533,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	 * shuffle play button.
 	 */
 	private fun removeShufflePlayButtonMetadata(items: List<MusicMetadata>): List<MusicMetadata> {
-		return if (items.isNotEmpty() && items[0].artist == "" && items[0].title == "Shuffle Play") {
+		return if (items.isNotEmpty() && items[0].artist == "" && items[0].title == L.MUSIC_SHUFFLE_PLAY_BUTTON_TITLE) {
 			items.drop(1)
 		} else {
 			items
