@@ -379,6 +379,13 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 
 			override fun onEntry(input: String) {
 				searchRetries = MAX_RETRIES
+
+				// want to keep the suggestions in sync with the entered input
+				synchronized(this) {
+					suggestions.clear()
+					sendSuggestions(emptyList())
+				}
+
 				search(input)
 			}
 
@@ -436,12 +443,17 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 				}
 			}
 
-			override fun onOk() {
-				if (suggestions.isNotEmpty()) {
-					// want to remove the Play From Search which is always the first entry
-					val searchResults = suggestions.drop(1)
-
-					browseController.showSearchResults(searchResults, inputComponent.getResultAction()?.asHMIAction())
+			override fun onOk(results: List<MusicMetadata>) {
+				if (results.isNotEmpty()) {
+					// want to remove the Play From Search which is always the first entry if it is present
+					val searchResults = if (results[0] == BrowseView.SEARCHRESULT_PLAY_FROM_SEARCH) {
+						results.drop(1)
+					} else {
+						results
+					}
+					if (searchResults.isNotEmpty() && searchResults[0] != SEARCHRESULT_EMPTY && searchResults[0] != SEARCHRESULT_SEARCHING) {
+						browseController.showSearchResults(searchResults, inputComponent.getResultAction()?.asHMIAction())
+					}
 				}
 			}
 		}
