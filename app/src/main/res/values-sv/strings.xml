@@ -75,6 +75,7 @@
     <string name="enable_spotify_layout">Visa alltid som Spotifyapp i IDrive5+</string>
     <string name="lbl_grant_sessions">Kontrollera aktiva musikappar</string>
     <string name="lbl_grant_spotify_control">Möjlighet att bläddra bland Spotify-bibliotek</string>
+    <string name="lbl_grant_background_music">Tillåt bakgrundskörning för dina musikappar, om bilen har problem att starta dem</string>
     <string name="lbl_grant">Bevilja</string>
     <string name="musicAppNotes_unauthorizedSpotify">Tryck här för att tillåta Spotify-åtkomst</string>
     <string name="musicAppNotes_oldSpotify">Vänligen nedgradera Spotify appen för full funktionalitet (Sök)</string>
