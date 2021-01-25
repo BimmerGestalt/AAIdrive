@@ -8,10 +8,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
-import me.hufman.androidautoidrive.carapp.CDSConnection
-import me.hufman.androidautoidrive.carapp.CDSConnectionAsync
-import me.hufman.androidautoidrive.carapp.CDSVehicleLanguage
-import me.hufman.androidautoidrive.carapp.RHMIDimensions
+import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
@@ -46,6 +43,7 @@ class MainService: Service() {
 	val securityServiceThread by lazy { SecurityServiceThread(securityAccess) }
 
 	val carInformationObserver = CarInformationObserver()
+	val cdsObserver = CDSEventHandler { _, _ -> combinedCallback() }
 	var threadCapabilities: CarThread? = null
 	var carappCapabilities: CarInformationDiscovery? = null
 
@@ -81,6 +79,7 @@ class MainService: Service() {
 	override fun onDestroy() {
 		handleActionStop()
 		// one time things
+		carInformationObserver.cdsData.removeEventHandler(CDS.VEHICLE.LANGUAGE, cdsObserver)
 		try {
 			iDriveConnectionReceiver.unsubscribe(this)
 		} catch (e: IllegalArgumentException) {
@@ -120,6 +119,8 @@ class MainService: Service() {
 		carInformationObserver.callback = {
 			combinedCallback()
 		}
+		// start some more services as the car language is discovered
+		carInformationObserver.cdsData.addEventHandler(CDS.VEHICLE.LANGUAGE, 1000, cdsObserver)
 	}
 
 	private fun createNotificationChannel() {

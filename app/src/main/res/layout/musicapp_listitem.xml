@@ -51,6 +51,14 @@
                     app:tint="?android:attr/textColorSecondary"
                     app:srcCompat="@drawable/ic_equalizer_black_24dp" />
 
+                <ImageButton
+                    android:id="@+id/imgSettings"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="@string/btn_configure"
+                    app:tint="?android:attr/textColorSecondary"
+                    android:src="@drawable/ic_settings_feather" />
+
                 <ImageView
                     android:id="@+id/imgControllable"
                     android:layout_width="24dp"

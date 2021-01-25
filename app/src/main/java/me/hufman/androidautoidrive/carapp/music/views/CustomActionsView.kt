@@ -36,6 +36,11 @@ class CustomActionsView(val state: RHMIState, val graphicsHelpers: GraphicsHelpe
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {
+		state.focusCallback = FocusCallback { focused ->
+			if (focused) {
+				show()
+			}
+		}
 		state.getTextModel()?.asRaDataModel()?.value = L.MUSIC_CUSTOMACTIONS_TITLE
 		listComponent.asList()?.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 			val action = actionList.getOrNull(index)

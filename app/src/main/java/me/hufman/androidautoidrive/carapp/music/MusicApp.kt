@@ -36,10 +36,6 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 
 	val globalMetadata: GlobalMetadata
 	var hmiContextChangedTime = 0L
-	var appListViewVisible = false
-	var playbackViewVisible = false
-	var enqueuedViewVisible = false
-	var browseViewVisible = false
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
 	val enqueuedView: EnqueuedView
@@ -130,7 +126,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			updateAmApps()
 
 			// redraw the internal app list
-			if (appListViewVisible) {
+			if (appSwitcherView.visible) {
 				appSwitcherView.redraw()
 			}
 		}
@@ -231,45 +227,6 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			val msg = "Received rhmi_onHmiEvent: handle=$handle ident=$ident componentId=$componentId eventId=$eventId args=${args?.toString()}"
 			Log.i(TAG, msg)
 			try {
-				if (componentId == appSwitcherView.state.id &&
-						eventId == 1 // FOCUS event
-				) {
-					appListViewVisible = args?.get(4.toByte()) as? Boolean == true
-					if (appListViewVisible) {
-						appSwitcherView.show()
-						musicAppDiscovery.discoverAppsAsync()
-					}
-				}
-				if (componentId == playbackView.state.id &&
-						eventId == 1 // FOCUS event
-				) {
-					playbackViewVisible = args?.get(4.toByte()) as? Boolean == true
-					// redraw after a new window is shown
-					if (playbackViewVisible) {
-						playbackView.show()
-					}
-				}
-				//gained focus
-				if (componentId == enqueuedView.state.id &&
-						eventId == 1 &&
-						args?.get(4.toByte()) as? Boolean == true
-				) {
-					enqueuedViewVisible = true
-					enqueuedView.show()
-				}
-				//lost focus
-				else if (componentId == enqueuedView.state.id &&
-						eventId == 1 &&
-						args?.get(4.toByte()) as? Boolean == false)
-				{
-					enqueuedViewVisible = false
-				}
-				if (componentId == customActionsView.state.id &&
-						eventId == 1 &&
-						args?.get(4.toByte()) as? Boolean == true) {
-					customActionsView.show()
-				}
-
 				// generic event handler
 				app?.states?.get(componentId)?.onHmiEvent(eventId, args)
 				app?.components?.get(componentId)?.onHmiEvent(eventId, args)
@@ -393,16 +350,16 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 	fun redraw() {
 		// check if we need to create an av handle, if it's missing
 		avContext.createAvHandle()
-		if (appListViewVisible) {
+		if (appSwitcherView.visible) {
 			appSwitcherView.redraw()
 		}
-		if (playbackViewVisible || playbackView.state is RHMIState.AudioHmiState) {
+		if (playbackView.visible || playbackView.state is RHMIState.AudioHmiState) {
 			playbackView.redraw()
 		}
-		if (enqueuedViewVisible) {
+		if (enqueuedView.visible) {
 			enqueuedView.redraw()
 		}
-		if (browseViewVisible) {
+		if (browseView.visible) {
 			browseView.redraw()
 		}
 
