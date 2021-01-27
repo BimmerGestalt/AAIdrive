@@ -16,7 +16,7 @@ import java.util.*
 
 data class BrowseState(val location: MusicMetadata?,    // the directory the user selected
                        var pageView: BrowsePageView? = null,     // the PageView that is showing for this location
-	                   val searchResults: List<MusicMetadata>? = null   // the search results to be displayed
+	                   val deferredSearchResults: Deferred<List<MusicMetadata>?>? = null   // the search results to be displayed
 )
 
 class BrowseView(val states: List<RHMIState>, val musicController: MusicController, val musicImageIDs: MusicImageIDs, val graphicsHelpers: GraphicsHelpers, val musicApp: MusicApp) {
@@ -145,14 +145,14 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		return browsePage
 	}
 
-	fun pushSearchResultPage(searchResults: List<MusicMetadata>): BrowsePageView {
+	fun pushSearchResultPage(deferredSearchResults: Deferred<List<MusicMetadata>?>): BrowsePageView {
 		val state = getNextState()
 		val index = stack.indexOfLast { it.pageView != null } + 1 // what the next new index will be
 
 		stack.subList(index, stack.size).clear()
-		val stackSlot = BrowseState(null, searchResults = searchResults).apply { stack.add(this) }
-		val browseModel = BrowsePageModel(this, musicController, null, searchResults)
-		val browsePage = BrowsePageView(state, musicImageIDs, browseModel, pageController, stack.getOrNull(index+1)?.location, graphicsHelpers)
+		val stackSlot = BrowseState(null, deferredSearchResults = deferredSearchResults).apply { stack.add(this) }
+		val browseModel = BrowsePageModel(this, musicController, null, deferredSearchResults)
+		val browsePage = BrowsePageView(state, musicImageIDs, browseModel, pageController, null, graphicsHelpers)
 		browsePage.initWidgets(inputState)
 		stackSlot.pageView = browsePage
 		return browsePage
@@ -183,7 +183,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 	}
 }
 
-class BrowsePageModel(private val browseView: BrowseView, private val musicController: MusicController, val folder: MusicMetadata?, val searchResults: List<MusicMetadata>? = null) {
+class BrowsePageModel(private val browseView: BrowseView, private val musicController: MusicController, val folder: MusicMetadata?, val deferredSearchResults: Deferred<List<MusicMetadata>?>? = null) {
 	val musicAppInfo: MusicAppInfo?
 		get() = musicController.currentAppInfo
 
@@ -224,8 +224,8 @@ class BrowsePageController(private val browseView: BrowseView, private val music
 		}
 	}
 
-	fun showSearchResults(searchResults: List<MusicMetadata>, hmiAction: RHMIAction.HMIAction?) {
-		val nextPage = browseView.pushSearchResultPage(searchResults)
+	fun showSearchResults(deferredSearchResults: Deferred<List<MusicMetadata>?>, hmiAction: RHMIAction.HMIAction?) {
+		val nextPage = browseView.pushSearchResultPage(deferredSearchResults)
 		hmiAction?.getTargetModel()?.asRaIntModel()?.value = nextPage.state.id
 	}
 }

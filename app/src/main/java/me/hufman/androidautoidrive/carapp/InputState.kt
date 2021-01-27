@@ -39,7 +39,7 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 			}
 		}
 		inputComponent.getResultAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-			onOk(suggestions)
+			onOk()
 		}
 		inputComponent.getResultModel()?.asRaDataModel()?.value = ""
 		inputComponent.getSuggestModel()?.setValue(RHMIModel.RaListModel.RHMIListConcrete(1),0,0, 0)
@@ -48,7 +48,7 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 	/**
 	 * Called when the ok button is clicked. Does nothing by default.
 	 */
-	open fun onOk(results: List<T>) {
+	open fun onOk() {
 
 	}
 

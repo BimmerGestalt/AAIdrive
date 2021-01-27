@@ -1949,12 +1949,11 @@ class MusicAppTest {
 		val item1Title = "Item 1"
 		val item2Title = "Item 2"
 		searchResults.complete(listOf(
-				BrowseView.SEARCHRESULT_PLAY_FROM_SEARCH,
 				MusicMetadata("testId1", title = item1Title, browseable = false, playable = true),
 				MusicMetadata("testid2", title = item2Title, browseable = false, playable = true)
 		))
 		await().untilAsserted {
-			assertArrayEquals(arrayOf(arrayOf(BrowseView.SEARCHRESULT_PLAY_FROM_SEARCH.title), arrayOf(item1Title), arrayOf(item2Title)), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
+			assertArrayEquals(arrayOf(arrayOf(item1Title), arrayOf(item2Title)), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
 		}
 
 		// user clicks OK button on input state
@@ -1964,7 +1963,11 @@ class MusicAppTest {
 		app.states[IDs.BROWSE2_STATE]?.onHmiEvent(1, mapOf(4.toByte() to true))
 		app.components[IDs.BROWSE2_MUSIC_COMPONENT]?.requestDataCallback?.onRequestData(0, 10)
 
-		// ensure search results page is shown
+		await().untilAsserted {
+			assertEquals(2, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+		}
+
+		// ensure search results page is shown with the correct data
 		assertEquals(L.MUSIC_SEARCH_RESULTS_LABEL, mockServer.data[IDs.BROWSE2_LABEL_MODEL])
 
 		val songs = (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data
