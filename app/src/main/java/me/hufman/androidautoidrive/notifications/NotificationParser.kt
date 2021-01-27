@@ -171,16 +171,17 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		val text = recentMessages.joinToString("\n") {
 			"${it.getCharSequence("sender")}: ${it.getCharSequence("text")}"
 		}
-		val person = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {   // person objects only exist in >= Pie
-			recentMessages.lastOrNull()?.getParcelable("sender_person") as? Person // last message person
+		val personIcon = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {   // person objects only exist in >= Pie
+			val person = recentMessages.lastOrNull()?.getParcelable("sender_person") as? Person // last message person
 			?: extras.getParcelable(Notification.EXTRA_MESSAGING_PERSON) as? Person
+			person?.icon
 		} else null
 		val pictureUri = recentMessages.filter {
 			it.getCharSequence("type")?.startsWith("image/") == true
-		}.map {
-			it.getParcelable("uri") as Uri
+		}.mapNotNull {
+			it.getParcelable("uri") as Uri?
 		}.lastOrNull()?.toString()
-		return MessagingNotificationParsed(text, person?.icon, pictureUri)
+		return MessagingNotificationParsed(text, personIcon, pictureUri)
 	}
 
 	fun summarizedCustomNotification(sbn: StatusBarNotification): CarNotification? {
