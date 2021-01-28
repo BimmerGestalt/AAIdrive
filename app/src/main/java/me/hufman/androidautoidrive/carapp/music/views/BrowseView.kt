@@ -16,7 +16,6 @@ import java.util.*
 
 data class BrowseState(val location: MusicMetadata?,    // the directory the user selected
                        var pageView: BrowsePageView? = null,     // the PageView that is showing for this location
-	                   val deferredSearchResults: Deferred<List<MusicMetadata>?>? = null   // the search results to be displayed
 )
 
 class BrowseView(val states: List<RHMIState>, val musicController: MusicController, val musicImageIDs: MusicImageIDs, val graphicsHelpers: GraphicsHelpers, val musicApp: MusicApp) {
@@ -150,7 +149,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		val index = stack.indexOfLast { it.pageView != null } + 1 // what the next new index will be
 
 		stack.subList(index, stack.size).clear()
-		val stackSlot = BrowseState(null, deferredSearchResults = deferredSearchResults).apply { stack.add(this) }
+		val stackSlot = BrowseState(null).apply { stack.add(this) }
 		val browseModel = BrowsePageModel(this, musicController, null, deferredSearchResults)
 		val browsePage = BrowsePageView(state, musicImageIDs, browseModel, pageController, null, graphicsHelpers)
 		browsePage.initWidgets(inputState)
