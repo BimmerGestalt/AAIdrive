@@ -164,12 +164,8 @@ class BrowsePageView(val state: RHMIState, musicImageIDs: MusicImageIDs, val bro
 			}
 			val isSearchResultView = deferredSearchResults != null
 			if (isSearchResultView) {
-				val results = deferredSearchResults!!.await()
-				musicList = if (results != null) {
-					ArrayList(results)
-				} else {
-					ArrayList()
-				}
+				val musicList = deferredSearchResults?.await() ?: emptyList()
+				this@BrowsePageView.musicList = ArrayList(musicList)
 			} else {
 				val musicListDeferred = browsePageModel.browseAsync(folder)
 				val musicList = musicListDeferred.awaitPending(LOADING_TIMEOUT) {
