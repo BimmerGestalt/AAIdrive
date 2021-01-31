@@ -72,6 +72,14 @@ class NavTriggerTest {
 		val geoWhitespaceAddress = "geo:0,0?q=1970 Naglee Ave San Jose, CA 95126"
 		val addressWhitespaceParsed = parser.parseUrl(geoWhitespaceAddress)
 		assertEquals(correctAnswer, addressWhitespaceParsed)
+
+		// unknown address
+		whenever(addressSearcher.search(any())) doReturn null
+		val empty = parser.parseUrl("geo:0,0?q=")
+		assertNull(empty)
+		val unknown = parser.parseUrl("geo:0,0?q=missingLocation")
+		assertNull(unknown)
+
 	}
 
 	@Test

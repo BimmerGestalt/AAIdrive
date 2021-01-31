@@ -43,6 +43,7 @@ class MainService: Service() {
 	val securityServiceThread by lazy { SecurityServiceThread(securityAccess) }
 
 	val carInformationObserver = CarInformationObserver()
+	var carInformationUpdater = CarInformationUpdater(appSettings)
 	val cdsObserver = CDSEventHandler { _, _ -> combinedCallback() }
 	var threadCapabilities: CarThread? = null
 	var carappCapabilities: CarInformationDiscovery? = null
@@ -243,18 +244,15 @@ class MainService: Service() {
 				DonationRequest(this).countUsage()
 			} else {
 				Log.d(TAG, "Not fully connected: IDrive:${iDriveConnectionReceiver.isConnected} SecurityService:${securityAccess.isConnected()}")
-
 				stopCarApps()
 			}
 		}
+		carInformationUpdater.isConnected = iDriveConnectionReceiver.isConnected && securityAccess.isConnected()
 	}
 
 	fun startCarCapabilities(): Boolean {
 		synchronized(this) {
 			if (threadCapabilities == null) {
-				// receiver to save settings
-				val carInformationUpdater = CarInformationUpdater(appSettings)
-
 				// clear the capabilities to not start dependent services until it's ready
 				threadCapabilities = CarThread("Capabilities") {
 					Log.i(TAG, "Starting to discover car capabilities")

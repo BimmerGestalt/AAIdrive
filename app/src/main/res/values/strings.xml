@@ -21,11 +21,14 @@
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <string name="navigation_listener_bmw">BMW Navigation</string>
     <string name="navigation_listener_mini">MINI Navigation</string>
+
     <!-- Labels on the navigation trigger activity -->
+    <string name="btn_search">Search</string>
     <string name="lbl_navigation_listener_searching">Searching for destination</string>
     <string name="lbl_navigation_listener_parsefailure">Could not locate destination</string>
     <string name="lbl_navigation_listener_pending">Starting navigation</string>
     <string name="lbl_navigation_listener_success">Success</string>
+    <string name="lbl_navigation_listener_unsuccess">Unsuccessful</string>
 
     <!-- Menu Titles -->
     <string name="menu_overview">Overview</string>
@@ -89,6 +92,11 @@
     <string name="musicAppNotes_oldSpotifyInstructions">This app can only provide full control over Spotify up to version 8.4.96.953, such as searching. For full control, please download an older version, from APKPure or similar.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Please install the official Spotify client</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Please confirm internet connectivity and disable any ad blocking</string>
+
+    <string name="lbl_navigationpage_address">Paste in an address to start the car\'s navigation system from your phone</string>
+    <string name="lbl_navigationpage_intent">While connected, your car\'s navigation system will show up as an option when other apps\' Navigation buttons open an app chooser</string>
+    <string name="lbl_navigationstatus_active">Currently navigating to</string>
+    <string name="lbl_navigationstatus_inactive">Not currently navigating</string>
 
     <string name="lbl_settingspage">Advanced settings for tweaking behavior, may cause unexpected behavior</string>
     <string name="lbl_language_carinterface">Language to show in the car</string>

@@ -39,12 +39,12 @@ fun showEither(falseView: View, trueView: View, prereq: () -> Boolean, determine
 
 // Inspired by https://github.com/tmurakami/aackt/blob/master/lifecycle-livedata/src/main/java/com/github/tmurakami/aackt/lifecycle/Transformations.kt
 /** Like Transformations.map(LiveData), except supports an initial value */
-inline fun <T, R: Any> LiveData<T>.map(initialValue: R?, crossinline block: (T) -> R?): LiveData<R> {
+inline fun <T, R: Any> LiveData<T>.map(initialValue: R? = null, crossinline block: (T) -> R?): LiveData<R> {
 	val result = MediatorLiveData<R>()
-	result.value = initialValue
+	initialValue?.also { result.value = it }
 	result.addSource(this) {
 		// only map nonnull data
-		it?.run { result.value = block(it) }
+		it?.also { result.value = block(it) }
 	}
 	return result
 }
