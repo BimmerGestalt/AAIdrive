@@ -33,6 +33,7 @@ import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
 import org.powermock.reflect.Whitebox
+import java.lang.Exception
 
 @RunWith(PowerMockRunner::class)
 @PrepareForTest(SpotifyWebApi::class, SpotifyAppController::class, PendingIntent::class, SpotifyAuthStateManager::class, SpotifyClientApiBuilderHelper::class)
@@ -143,6 +144,45 @@ class SpotifyWebApiTest {
 	}
 
 	@Test
+	fun testInitializeWebApi_InvalidAccessToken_ExceptionThrown() = runBlocking {
+		val accessToken = "validAccessToken"
+		val expirationIn: Long = 5
+		val refreshToken = "refreshToken"
+		val scopeString = "scopeString"
+		whenever(spotifyAuthStateManager.getAccessToken()).thenReturn(accessToken)
+		whenever(spotifyAuthStateManager.getAccessTokenExpirationIn()).thenReturn(expirationIn)
+		whenever(spotifyAuthStateManager.getRefreshToken()).thenReturn(refreshToken)
+		whenever(spotifyAuthStateManager.getScopeString()).thenReturn(scopeString)
+
+		val expiresAt: Long = 2
+		val token: Token = mock()
+		whenever(token.refreshToken).thenReturn(refreshToken)
+		whenever(token.accessToken).thenReturn(accessToken)
+		whenever(token.expiresAt).thenReturn(expiresAt)
+		whenever(token.scopes).thenReturn(listOf(SpotifyScope.USER_LIBRARY_READ))
+		PowerMockito.whenNew(Token::class.java).withArguments(accessToken, "Bearer", expirationIn.toInt(), refreshToken, scopeString).thenReturn(token)
+
+		val exception: Exception = mock()
+		val apiBuilder: SpotifyClientApiBuilder = mock()
+		whenever(apiBuilder.options).doAnswer { mock() }
+		whenever(apiBuilder.build()).doAnswer { throw exception }
+
+		PowerMockito.mockStatic(SpotifyClientApiBuilderHelper::class.java)
+		val companion = PowerMockito.mock(SpotifyClientApiBuilderHelper.Companion::class.java)
+		Whitebox.setInternalState(SpotifyClientApiBuilderHelper::class.java, "Companion", companion)
+		PowerMockito.`when`(companion.createApiBuilderWithAccessToken(clientId, token)).thenReturn(apiBuilder)
+
+		val notificationManager: NotificationManager = mock()
+		whenever(context.getSystemService(NotificationManager::class.java)).thenReturn(notificationManager)
+
+		spotifyWebApi.initializeWebApi()
+
+		verify(notificationManager, never()).notify(any(), any())
+		verify(spotifyAuthStateManager, never()).addAccessTokenAuthorizationException(any())
+		verify(spotifyAuthStateManager, never()).updateTokenResponseWithToken(token, clientId)
+	}
+
+	@Test
 	fun testInitializeWebApi_NullAuthorizationCode() {
 		whenever(spotifyAuthStateManager.getAccessToken()).thenReturn(null)
 		whenever(spotifyAuthStateManager.getAuthorizationCode()).thenReturn(null)
@@ -217,6 +257,32 @@ class SpotifyWebApiTest {
 
 		verify(spotifyAuthStateManager).addAuthorizationCodeAuthorizationException(exception)
 		verify(notificationManager, never()).notify(any(), any())
+	}
+
+	@Test
+	fun testInitializeWebApi_InvalidAuthorizationCode_ExceptionThrown() = runBlocking {
+		val authorizationCode = "authorizationCode"
+		whenever(spotifyAuthStateManager.getAccessToken()).thenReturn(null)
+		whenever(spotifyAuthStateManager.getAuthorizationCode()).thenReturn(authorizationCode)
+
+		val exception: Exception = mock()
+		val apiBuilder: SpotifyClientApiBuilder = mock()
+		whenever(apiBuilder.options).doAnswer { mock() }
+		whenever(apiBuilder.build()).doAnswer { throw exception }
+
+		PowerMockito.mockStatic(SpotifyClientApiBuilderHelper::class.java)
+		val companion = PowerMockito.mock(SpotifyClientApiBuilderHelper.Companion::class.java)
+		Whitebox.setInternalState(SpotifyClientApiBuilderHelper::class.java, "Companion", companion)
+		PowerMockito.`when`(companion.createApiBuilderWithAuthorizationCode(clientId, authorizationCode)).thenReturn(apiBuilder)
+
+		val notificationManager: NotificationManager = mock()
+		whenever(context.getSystemService(NotificationManager::class.java)).thenReturn(notificationManager)
+
+		spotifyWebApi.initializeWebApi()
+
+		verify(notificationManager, never()).notify(any(), any())
+		verify(spotifyAuthStateManager, never()).addAuthorizationCodeAuthorizationException(any())
+		verify(spotifyAuthStateManager, never()).updateTokenResponseWithToken(any(), any())
 	}
 
 	@Test
