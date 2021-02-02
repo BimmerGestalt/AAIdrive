@@ -5,12 +5,8 @@ import de.bmw.idrive.BMWRemoting
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.UnicodeCleaner
-import me.hufman.androidautoidrive.utils.awaitPending
-import me.hufman.androidautoidrive.carapp.InputState
-import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
-import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.utils.truncate
 import me.hufman.idriveconnectionkit.rhmi.*
@@ -28,7 +24,11 @@ enum class BrowseAction(val getLabel: () -> String) {
 		return getLabel()
 	}
 }
-class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val browsePageModel: BrowsePageModel, val browseController: BrowsePageController, var previouslySelected: MusicMetadata?, val graphicsHelpers: GraphicsHelpers): CoroutineScope {
+class BrowsePageView(val state: RHMIState,
+                     musicImageIDs: MusicImageIDs,
+                     val browsePageModel: BrowsePageModel,
+                     val browseController: BrowsePageController,
+                     val graphicsHelpers: GraphicsHelpers): CoroutineScope {
 	// a previous row that may have a checkmark
 	// remember to clear it when a new previouslySelected is set
 	var oldPreviouslySelectedIndex: Int? = null
@@ -73,15 +73,12 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 	}
 
 	private var loaderJob: Job? = null
-	private var searchJob: Job? = null
 	private var folderNameLabel: RHMIComponent.Label
 	private var actionsListComponent: RHMIComponent.List
 	private var musicListComponent: RHMIComponent.List
 
-	private var folder = browsePageModel.folder
 	private var musicList = ArrayList<MusicMetadata>()
 	private var currentListModel: RHMIModel.RaListModel.RHMIList = loadingList
-	private var shortcutSteps = 0
 
 	val checkmarkIcon = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK)
 	val folderIcon = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.BROWSE)
@@ -118,11 +115,7 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 		hasSelectionChanged = false
 
 		// show the name of the directory
-		folderNameLabel.getModel()?.asRaDataModel()?.value = when (shortcutSteps) {
-			0 -> folder?.title ?: browsePageModel.musicAppInfo?.name ?: ""
-			1 -> "${browsePageModel.folder?.title ?: ""} / ${folder?.title ?: ""}"
-			else -> "${browsePageModel.folder?.title ?: ""} /../ ${folder?.title ?: ""}"
-		}
+		folderNameLabel.getModel()?.asRaDataModel()?.value = browsePageModel.title
 
 		// update the list whenever the car requests some more data
 		musicListComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
@@ -137,7 +130,7 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 		showActionsList()
 
 		// show this page's previous list, if we are backing out to it and have wrapped the pages around
-		val index = max(0, musicList.indexOf(previouslySelected))   // redraw the checkmark item
+		val index = max(0, musicList.indexOf(browsePageModel.previouslySelected))   // redraw the checkmark item
 		showList(index, 1)
 		setFocusToPreviouslySelected()
 
@@ -153,15 +146,10 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 				currentListModel = loadingList
 				showList()
 			}
-			val musicListDeferred = browsePageModel.browseAsync(folder)
-			val musicList = musicListDeferred.awaitPending(LOADING_TIMEOUT) {
-				Log.d(TAG, "Browsing ${folder?.mediaId} timed out, retrying")
-				load()
-				delay(100)
-				return@launch
-			}
+			val musicListDeferred = browsePageModel.contents
+			val musicList = musicListDeferred.await()
 			this@BrowsePageView.musicList = ArrayList(musicList)
-			Log.d(TAG, "Browsing ${folder?.mediaId} resulted in ${musicList.count()} items")
+			Log.d(TAG, "Browsing ${browsePageModel.title} resulted in ${musicList.count()} items")
 
 			if (musicList.isEmpty()) {
 				currentListModel = emptyList
@@ -169,14 +157,12 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 			} else if (isSingleFolder(musicList)) {
 				// keep the loadingList in place
 				// navigate to the next deeper directory
-				folder = musicList.first { it.browseable }
-				shortcutSteps += 1
-				show()  // show the next page deeper
+				browseController.shortcutBrowsePage(musicList.first { it.browseable })
 				return@launch
 			} else {
 				currentListModel = object: RHMIListAdapter<MusicMetadata>(4, musicList) {
 					override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
-						val checkmarkIcon = if (previouslySelected == item) checkmarkIcon else ""
+						val checkmarkIcon = if (browsePageModel.previouslySelected == item) checkmarkIcon else ""
 						val coverArt = item.coverArt
 						val coverArtImage =
 								if (coverArt != null) {
@@ -248,14 +234,10 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 	private fun showActionsList() {
 		synchronized(actions) {
 			actions.clear()
-			if (browsePageModel.folder == null && (
-					browsePageModel.musicAppInfo?.searchable == true ||
-					browsePageModel.isSupportedAction(MusicAction.PLAY_FROM_SEARCH))) {
+			if (browsePageModel.showSearchAction) {
 				actions.add(BrowseAction.SEARCH)
 			}
-			if (browsePageModel.folder == null && browsePageModel.jumpbackFolder() != null) {
-				// the top of locationStack is always a single null element for the root
-				// we have previously browsed somewhere if locationStack.size > 1
+			if (browsePageModel.showJumpbackAction) {
 				actions.add(BrowseAction.JUMPBACK)
 			}
 			if (currentListModel != emptyList) {
@@ -274,7 +256,7 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 	private fun setFocusToPreviouslySelected() {
 		if (hasSelectionChanged) return     // user has changed selection
 		if (currentListModel == loadingList || currentListModel == emptyList) return    // not a valid music list
-		val previouslySelected = previouslySelected
+		val previouslySelected = browsePageModel.previouslySelected
 		if (previouslySelected != null) {
 			var index = musicList.indexOf(previouslySelected)
 			if (index < 0) {
@@ -304,99 +286,9 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 		}
 	}
 
-	private fun showFilterInput(inputState: RHMIState) {
-		object: InputState<MusicMetadata>(inputState) {
-			override fun onEntry(input: String) {
-				val suggestions = musicList.asSequence().filter {
-					UnicodeCleaner.clean(it.title ?: "").split(Regex("\\s+")).any { word ->
-						word.toLowerCase().startsWith(input.toLowerCase())
-					}
-				} + musicList.asSequence().filter {
-					UnicodeCleaner.clean(it.title?: "").toLowerCase().contains(input.toLowerCase())
-				}
-				sendSuggestions(suggestions.take(15).distinct().toList())
-			}
-
-			override fun onSelect(item: MusicMetadata, index: Int) {
-				previouslySelected = item  // update the selection state for future redraws
-				browseController.onListSelection(item, inputComponent.getSuggestAction()?.asHMIAction())
-			}
-
-			override fun convertRow(row: MusicMetadata): String {
-				return UnicodeCleaner.clean(row.title ?: "")
-			}
-		}
-	}
-
-	fun showSearchInput(inputState: RHMIState) {
-		object : InputState<MusicMetadata>(inputState) {
-			val SEARCHRESULT_SEARCHING = MusicMetadata(mediaId="__SEARCHING__", title=L.MUSIC_BROWSE_SEARCHING)
-			val SEARCHRESULT_EMPTY = MusicMetadata(mediaId="__EMPTY__", title=L.MUSIC_BROWSE_EMPTY)
-			val MAX_RETRIES = 2
-			var searchRetries = MAX_RETRIES
-
-			override fun onEntry(input: String) {
-				searchRetries = MAX_RETRIES
-				search(input)
-			}
-
-			fun search(input: String) {
-				if (input.length >= 2 && searchRetries > 0) {
-					searchJob?.cancel()
-					searchJob = launch(Dispatchers.IO) {
-						sendSuggestions(listOf(SEARCHRESULT_SEARCHING))
-						val suggestionsDeferred = browsePageModel.searchAsync(input)
-						val suggestions = suggestionsDeferred.awaitPending(LOADING_TIMEOUT) {
-							Log.d(TAG, "Searching ${browsePageModel.musicAppInfo?.name} for \"$input\" timed out, retrying")
-							searchRetries -= 1
-							search(input)
-							return@launch
-						}
-						sendSuggestions(suggestions ?: LinkedList())
-					}
-				} else if (input.length >= 2) {
-					// too many retries
-					sendSuggestions(listOf(SEARCHRESULT_EMPTY))
-				}
-			}
-
-			override fun sendSuggestions(newSuggestions: List<MusicMetadata>) {
-				val fullSuggestions = if (browsePageModel.isSupportedAction(MusicAction.PLAY_FROM_SEARCH)) {
-					listOf(BrowseView.SEARCHRESULT_PLAY_FROM_SEARCH) + newSuggestions
-				} else {
-					newSuggestions
-				}
-				super.sendSuggestions(fullSuggestions)
-			}
-
-			override fun onSelect(item: MusicMetadata, index: Int) {
-				if (item == SEARCHRESULT_EMPTY || item == SEARCHRESULT_SEARCHING) {
-					// invalid selection, don't change states
-					inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
-					throw RHMIActionAbort()
-				} else if (item == BrowseView.SEARCHRESULT_PLAY_FROM_SEARCH) {
-					browseController.playFromSearch(this.input)
-					browseController.onListSelection(item, inputComponent.getSuggestAction()?.asHMIAction())
-				} else {
-					previouslySelected = item  // update the selection state for future redraws
-					browseController.onListSelection(item, inputComponent.getSuggestAction()?.asHMIAction())
-				}
-			}
-
-			override fun convertRow(row: MusicMetadata): String {
-				return if (row.subtitle != null) {
-					UnicodeCleaner.clean("${row.title}\n${row.subtitle}")
-				} else {
-					UnicodeCleaner.clean(row.title ?: "")
-				}
-			}
-		}
-	}
-
 	fun hide() {
 		// cancel any loading
 		loaderJob?.cancel()
-		searchJob?.cancel()
 		musicListComponent.requestDataCallback = null
 
 		// clear any old checkmarks
@@ -404,18 +296,16 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 	}
 
 	private fun onActionCallback(index: Int, inputState: RHMIState) {
-		val action = actions.getOrNull(index)
-		when (action) {
+		when (actions.getOrNull(index)) {
 			BrowseAction.JUMPBACK -> {
 				browseController.jumpBack(musicListComponent.getAction()?.asHMIAction())
 			}
 			BrowseAction.FILTER -> {
 				musicListComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputState.id
-				showFilterInput(inputState)
+				browseController.openFilterInput(musicListComponent.getAction()?.asHMIAction(), browsePageModel)
 			}
 			BrowseAction.SEARCH -> {
-				musicListComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputState.id
-				showSearchInput(inputState)
+				browseController.openSearchInput(musicListComponent.getAction()?.asHMIAction())
 			}
 		}
 	}
@@ -429,11 +319,11 @@ class BrowsePageView(val state: RHMIState, val musicImageIDs: MusicImageIDs, val
 			Log.i(TAG,"User selected browse entry $entry")
 
 			// remember the previous checkmark to clear it
-			oldPreviouslySelectedIndex = musicList.indexOf(previouslySelected).let {
+			oldPreviouslySelectedIndex = musicList.indexOf(browsePageModel.previouslySelected).let {
 				if (it >= 0) it else null
 			}
-			previouslySelected = entry  // update the selection state for future redraws
-			browseController.onListSelection(entry, musicListComponent.getAction()?.asHMIAction())
+			browsePageModel.previouslySelected = entry  // update the selection state for future redraws
+			browseController.onListSelection(musicListComponent.getAction()?.asHMIAction(), entry)
 		} else {
 			Log.w(TAG, "User selected index $index but the list is only ${musicList.size} long")
 		}
