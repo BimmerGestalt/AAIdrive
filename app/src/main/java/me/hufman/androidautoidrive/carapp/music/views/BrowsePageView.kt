@@ -208,7 +208,7 @@ class BrowsePageView(val state: RHMIState, musicImageIDs: MusicImageIDs, val bro
 							"$cleanedTitle\n"
 						} else {
 							// need to truncate the first line so it doesn't wrap
-							val cleanedSubtitle = if (isSearchResultView) {
+							val cleanedSubtitle = if (isSearchResultView && !item.artist.isNullOrBlank()) {
 								UnicodeCleaner.clean("${item.subtitle} - ${item.artist}")
 							} else {
 								UnicodeCleaner.clean(item.subtitle)
