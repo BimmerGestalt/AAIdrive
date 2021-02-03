@@ -15,7 +15,7 @@ import me.hufman.idriveconnectionkit.rhmi.RHMIState
 import java.util.*
 
 data class BrowseState(val location: MusicMetadata?,    // the directory the user selected
-                       var pageView: BrowsePageView? = null,     // the PageView that is showing for this location
+                       var pageView: BrowsePageView? = null     // the PageView that is showing for this location
 )
 
 class BrowseView(val states: List<RHMIState>, val musicController: MusicController, val musicImageIDs: MusicImageIDs, val graphicsHelpers: GraphicsHelpers, val musicApp: MusicApp) {

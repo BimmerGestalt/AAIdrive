@@ -364,9 +364,8 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	}
 
 	override fun playSong(song: MusicMetadata) {
-		// if the item is a track then we want to load the album context for it so the rest of the album is queued up
+		// if the item is a track then load the album context for it so the rest of the album is queued up
 		if (song.subtitle == "Track") {
-
 			// album queue loaded is not the correct context for the song, will need to load the correct album into the queue
 			if (queueMetadata?.mediaId != song.album) {
 				remote.playerApi.play(song.album)
@@ -529,8 +528,8 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	 * Removes the shuffle play button [MusicMetadata] if it is present in the supplied list.
 	 *
 	 * When loading a list of tracks such as an album, a shuffle play button [MusicMetadata] object is
-	 * sometimes present. Call this method to get the list of [MusicMetadata]s that doesn't contain the
-	 * shuffle play button.
+	 * sometimes present. Call this method to get the list of [MusicMetadata]s that omits the shuffle
+	 * play button.
 	 */
 	private fun removeShufflePlayButtonMetadata(items: List<MusicMetadata>): List<MusicMetadata> {
 		return if (items.isNotEmpty() && items[0].artist == "" && items[0].title == L.MUSIC_SHUFFLE_PLAY_BUTTON_TITLE) {
