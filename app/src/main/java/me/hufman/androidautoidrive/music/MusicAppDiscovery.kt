@@ -25,7 +25,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 	val TAG = "MusicAppDiscovery"
 
 	val appSettings = MutableAppSettingsReceiver(context, handler)
-	val hiddenApps = ListSetting(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS)
+	val hiddenApps = StoredSet(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS)
 
 	private val browseApps: MutableList<MusicAppInfo> = LinkedList()
 	private val combinedApps: MutableList<MusicAppInfo> = Collections.synchronizedList(LinkedList())
