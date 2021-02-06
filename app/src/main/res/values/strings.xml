@@ -55,6 +55,8 @@
     <string name="notification_readout">Speak when viewing notifications</string>
     <string name="notification_readout_popup">Speak new notifications</string>
     <string name="notification_readout_popup_passenger">… with a passenger</string>
+    <string name="notification_quickreplies">Quick Replies</string>
+    <string name="notification_quickreplies_default">[\"👍\",\"On my way!\",\"Currently in the car\",\"Can\'t text, call me instead\",\"I\'ll call you later\"]</string>
     <string name="lbl_popupVersion">Popups only work with IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS is not supported by your car</string>
     <string name="lbl_smsPermission">Grant the SMS permission to view pictures from incoming SMS images in the car. The text itself is always visible.</string>
@@ -108,6 +110,7 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancel</string>
     <string name="btn_configure">Configure …</string>
+    <string name="btn_add">Add</string>
     <string name="lbl_error">Error</string>
 
     <string name="connectionStatusMissingConnectedApp">Can\'t find Connected or Connected Classic app</string>

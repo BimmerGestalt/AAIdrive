@@ -25,6 +25,7 @@ interface AppSettings {
 		NOTIFICATIONS_READOUT("Notifications_Readout", "false", "Viewing a notification also reads it aloud"),
 		NOTIFICATIONS_READOUT_POPUP("Notifications_Readout_Popup", "false", "New notifications are read aloud"),
 		NOTIFICATIONS_READOUT_POPUP_PASSENGER("Notifications_Readout_Popup_Passenger", "false", "New notifications are read aloud when a passenger is seated"),
+		NOTIFICATIONS_QUICK_REPLIES("Notifications_Quick_Replies", "[]", "A list of quick replies"),
 		ENABLED_GMAPS("Enabled_GMaps", "false", "Show Google Maps in the car"),
 		MAP_WIDESCREEN("Map_Widescreen", "false", "Show Map in widescreen"),
 		MAP_INVERT_SCROLL("Map_Invert_Scroll", "false", "Invert zoom direction"),
@@ -74,6 +75,10 @@ interface AppSettings {
 				KEYS.values().forEach { setting ->
 					val value = preferences.getString(setting.key, setting.default) ?: setting.default
 					loadedSettings[setting] = value
+				}
+				// default comes from translated strings
+				if (loadedSettings[KEYS.NOTIFICATIONS_QUICK_REPLIES] == "[]") {
+					loadedSettings[KEYS.NOTIFICATIONS_QUICK_REPLIES] = ctx.getString(R.string.notification_quickreplies_default)
 				}
 			}
 		}
