@@ -10,7 +10,7 @@ interface ReplyController {
 	fun sendReply(reply: String)
 }
 
-class ReplyControllerNotification(val notification: CarNotification, val action: CarNotification.Action, val controller: CarNotificationController): ReplyController {
+class ReplyControllerNotification(val notification: CarNotification, val action: CarNotification.Action, val controller: CarNotificationController, val quickReplies: List<String>): ReplyController {
 	fun getEmojiSuggestions(draft: String): List<CharSequence> {
 		val prefix = draft.substringBeforeLast(':')
 		val emojiSearch = draft.substringAfterLast(':', "")
@@ -22,7 +22,7 @@ class ReplyControllerNotification(val notification: CarNotification, val action:
 
 	override fun getSuggestions(draft: String): List<CharSequence> {
 		return if (draft.isBlank()) {
-			action.suggestedReplies
+			action.suggestedReplies + quickReplies
 		} else {
 			getEmojiSuggestions(draft)
 		}

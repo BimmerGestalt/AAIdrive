@@ -76,7 +76,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			// figure out which views to use
 			viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
 			viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, graphicsHelpers, notificationSettings, readoutInteractions)
-			viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller, readoutInteractions)
+			viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings, controller, readoutInteractions)
 
 			stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first {
 				it.componentsList.filterIsInstance<RHMIComponent.Input>().isNotEmpty()
