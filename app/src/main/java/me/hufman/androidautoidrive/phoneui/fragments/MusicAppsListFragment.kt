@@ -35,7 +35,7 @@ class MusicAppsListFragment: Fragment() {
 				}
 				listView?.adapter?.notifyDataSetChanged() // redraw the app list
 			}
-		}
+		}.apply { start() }
 	}
 	val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }
 	val hiddenApps by lazy { ListSetting(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS) }
@@ -45,9 +45,6 @@ class MusicAppsListFragment: Fragment() {
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		// build list of discovered music apps
-		appDiscoveryThread.start()
-
 		listMusicApps.setHasFixedSize(true)
 		listMusicApps.layoutManager = LinearLayoutManager(requireActivity())
 
@@ -80,6 +77,8 @@ class MusicAppsListFragment: Fragment() {
 
 	override fun onResume() {
 		super.onResume()
+
+		// build list of discovered music apps
 		appDiscoveryThread.discovery()
 	}
 

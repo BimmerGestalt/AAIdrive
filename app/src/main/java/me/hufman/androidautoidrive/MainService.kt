@@ -56,6 +56,29 @@ class MainService: Service() {
 	var threadAssistant: CarThread? = null
 	var carappAssistant: AssistantApp? = null
 
+	override fun onCreate() {
+		super.onCreate()
+
+		// only register listeners a single time
+
+		// subscribe to configuration changes
+		appSettings.callback = {
+			combinedCallback()
+		}
+		// set up connection listeners
+		securityAccess.callback = {
+			combinedCallback()
+		}
+		iDriveConnectionReceiver.callback = {
+			combinedCallback()
+		}
+		// start some more services as the capabilities are known
+		carInformationObserver.callback = {
+			combinedCallback()
+		}
+		// start some more services as the car language is discovered
+		carInformationObserver.cdsData.addEventHandler(CDS.VEHICLE.LANGUAGE, 1000, cdsObserver)
+	}
 
 	override fun onBind(intent: Intent?): IBinder? {
 		return null
@@ -85,6 +108,7 @@ class MainService: Service() {
 		} catch (e: IllegalArgumentException) {
 			// never started?
 		}
+		appSettings.callback = null
 		carProberThread?.quitSafely()
 		super.onDestroy()
 	}
@@ -95,17 +119,6 @@ class MainService: Service() {
 	private fun handleActionStart() {
 		Log.i(TAG, "Starting up service")
 		createNotificationChannel()
-		// subscribe to configuration changes
-		appSettings.callback = {
-			combinedCallback()
-		}
-		// set up connection listeners
-		securityAccess.callback = {
-			combinedCallback()
-		}
-		iDriveConnectionReceiver.callback = {
-			combinedCallback()
-		}
 		// try connecting to the security service
 		if (!securityServiceThread.isAlive) {
 			securityServiceThread.start()
@@ -115,12 +128,6 @@ class MainService: Service() {
 		announceCarAPI()
 		iDriveConnectionReceiver.subscribe(this)
 		startCarProber()
-		// start some more services as the capabilities are known
-		carInformationObserver.callback = {
-			combinedCallback()
-		}
-		// start some more services as the car language is discovered
-		carInformationObserver.cdsData.addEventHandler(CDS.VEHICLE.LANGUAGE, 1000, cdsObserver)
 	}
 
 	private fun createNotificationChannel() {
@@ -392,7 +399,6 @@ class MainService: Service() {
 		Log.i(TAG, "Shutting down service")
 		synchronized(MainService::class.java) {
 			stopCarApps()
-			appSettings.callback = null
 		}
 	}
 
