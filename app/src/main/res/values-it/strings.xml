@@ -25,6 +25,7 @@
     <string name="lbl_navigation_listener_parsefailure">Impossibile trovare la destinazione</string>
     <string name="lbl_navigation_listener_pending">Avvio della navigazione</string>
     <string name="lbl_navigation_listener_success">Completato</string>
+    <string name="lbl_navigation_listener_unsuccess">Operazione non riuscita</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Panoramica</string>
     <string name="menu_setup">Configurazione</string>
@@ -86,6 +87,7 @@
     <string name="musicAppNotes_spotify_apiNotFound">Prego installare il client ufficiale di Spotify</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Prego verificare la connessione e disabilitare qualsiasi blocco pubblicità</string>
     <string name="lbl_navigationpage_address">Incolla in un indirizzo per avviare il sistema di navigazione dell\'auto dal telefono</string>
+    <string name="lbl_navigationpage_intent">Quando connesso, il sistema di navigazione dell\'auto verrà visualizzato come opzione quando altre app vorranno inizializzare una navigazione verso un luogo</string>
     <string name="lbl_navigationstatus_active">Navigazione attiva verso</string>
     <string name="lbl_navigationstatus_inactive">Navigazione attualmente non attiva</string>
     <string name="lbl_settingspage">Impostazioni avanzate, possono causare comportamenti imprevisti</string>
