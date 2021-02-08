@@ -25,8 +25,8 @@ class LanguageSettingsModel(appContext: Context, carInformation: CarInformation)
 			CDSVehicleLanguage.fromCdsProperty(it).locale
 		} catch (e: Exception) { null }
 	})
-	val lblPreferCarLanguage: LiveData<Context.() -> String> = Transformations.map(carLocale) {
-		if (it == null || it == CDSVehicleLanguage.NONE.locale) {
+	val lblPreferCarLanguage: LiveData<Context.() -> String> = carLocale.map({ getString(R.string.lbl_language_prefercar) }) {
+		if (it == CDSVehicleLanguage.NONE.locale) {
 			{ getString(R.string.lbl_language_prefercar) }
 		} else {
 			{ getString(R.string.lbl_language_prefercar_code, it.toLanguageTag()) }

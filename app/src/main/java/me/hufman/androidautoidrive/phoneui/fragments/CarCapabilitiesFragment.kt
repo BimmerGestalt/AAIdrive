@@ -10,8 +10,6 @@ import me.hufman.androidautoidrive.databinding.CarCapabilitiesBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.CarCapabilitiesViewModel
 
 class CarCapabilitiesFragment: Fragment() {
-	private val viewModel by viewModels<CarCapabilitiesViewModel> { CarCapabilitiesViewModel.Factory(requireContext().applicationContext) }
-
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 		val viewModel by viewModels<CarCapabilitiesViewModel> { CarCapabilitiesViewModel.Factory(requireContext().applicationContext) }
 		val binding = CarCapabilitiesBinding.inflate(inflater, container, false)
