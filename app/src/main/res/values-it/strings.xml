@@ -50,6 +50,7 @@
     <string name="notification_readout">Lettura vocale notifiche quando aperte</string>
     <string name="notification_readout_popup">Lettura vocale delle nuove notifiche</string>
     <string name="notification_readout_popup_passenger">… con un passeggero</string>
+    <string name="notification_quickreplies">Risposte rapide</string>
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS non è supportato dalla tua auto</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
