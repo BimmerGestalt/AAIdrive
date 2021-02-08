@@ -50,6 +50,8 @@
     <string name="notification_readout">Tala vid visning av aviseringar</string>
     <string name="notification_readout_popup">Tala in nya aviseringar</string>
     <string name="notification_readout_popup_passenger">… med en passagerare</string>
+    <string name="notification_quickreplies">Snabbt svar</string>
+    <string name="notification_quickreplies_default">[\"👍\",\"På väg!\",\"Kör bil nu! \",\"Kan inte sms:a nu ring mig istället\",\"Jag ringer dig senare\"]</string>
     <string name="lbl_popupVersion">Popupfönster fungerar endast med IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS stöds ej av din bil</string>
     <string name="lbl_smsPermission">Ge behörighet för inkommande SMS att visa bilder i bilen. Texten är däremot alltid synlig.</string>
@@ -98,6 +100,7 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Avbryt</string>
     <string name="btn_configure">Konfigurera …</string>
+    <string name="btn_add">Lägg till</string>
     <string name="lbl_error">Fel</string>
     <string name="connectionStatusMissingConnectedApp">Kan inte hitta Connected eller Connected Classic, appen</string>
     <string name="connectionStatusWaiting">Väntar på anslutning till bilen</string>
