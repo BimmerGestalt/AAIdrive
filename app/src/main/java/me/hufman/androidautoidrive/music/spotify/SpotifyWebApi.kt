@@ -85,7 +85,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			Log.e(TAG, "Failed to get data from Liked Songs library due to authentication error with the message: ${e.message}")
 			authStateManager.addAccessTokenAuthorizationException(e)
 			createNotAuthorizedNotification()
-		} catch (e: SpotifyException) {
+		} catch (e: Exception) {
 			Log.e(TAG, "Exception occurred while getting Liked Songs library data with message: ${e.message}")
 		}
 		return null
@@ -140,6 +140,9 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				authStateManager.addAccessTokenAuthorizationException(e)
 				createNotAuthorizedNotification()
 				null
+			} catch (e: Exception) {
+				Log.e(SpotifyAppController.TAG, "Failed to create the web API due to the error: ${e.message}")
+				null
 			}
 		} else {
 			val authorizationCode = authStateManager.getAuthorizationCode()
@@ -156,6 +159,9 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				authStateManager.addAuthorizationCodeAuthorizationException(e)
 				Log.e(SpotifyAppController.TAG, "Failed to create the web API with an authorization code. Authorization failed with the error: ${e.message}")
 				createNotAuthorizedNotification()
+				null
+			} catch (e: Exception) {
+				Log.e(SpotifyAppController.TAG, "Failed to create the web API due to the error: ${e.message}")
 				null
 			}
 		}

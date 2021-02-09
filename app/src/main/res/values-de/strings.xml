@@ -50,6 +50,8 @@
     <string name="notification_readout">Benachrichtigungen beim Betrachten vorlesen</string>
     <string name="notification_readout_popup">Neue Benachrichtigungen vorlesen</string>
     <string name="notification_readout_popup_passenger">… mit Beifahrer</string>
+    <string name="notification_quickreplies">Schnellantworten</string>
+    <string name="notification_quickreplies_default">[\"👍\",\"Ich bin auf dem Weg!\",\"Momentan im Auto\",\"Kann nicht schreiben, bitte stadessen anrufen\",\"Ich rufe dich später an\"]</string>
     <string name="lbl_popupVersion">PopUps funktionieren nur mit IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS wird von Ihrem Fahrzeug nicht unterstützt</string>
     <string name="lbl_smsPermission">Erteile Zugriff für SMS-Nachrichten um Bilder von Nachrichten im Fahrzeug zu sehen. Text ist immer sichtbar.</string>
@@ -98,6 +100,7 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Abbrechen</string>
     <string name="btn_configure">Konfigurieren …</string>
+    <string name="btn_add">Hinzufügen</string>
     <string name="lbl_error">Fehler</string>
     <string name="connectionStatusMissingConnectedApp">Kann Connected oder Connected Classic App nicht finden</string>
     <string name="connectionStatusWaiting">Warte auf Verbindung mit Fahrzeug</string>

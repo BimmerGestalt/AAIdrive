@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.android.synthetic.main.fragment_music_applist.*
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.ListSetting
+import me.hufman.androidautoidrive.StoredSet
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
@@ -35,19 +35,16 @@ class MusicAppsListFragment: Fragment() {
 				}
 				listView?.adapter?.notifyDataSetChanged() // redraw the app list
 			}
-		}
+		}.apply { start() }
 	}
 	val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }
-	val hiddenApps by lazy { ListSetting(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS) }
+	val hiddenApps by lazy { StoredSet(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS) }
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.fragment_music_applist, container, false)
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		// build list of discovered music apps
-		appDiscoveryThread.start()
-
 		listMusicApps.setHasFixedSize(true)
 		listMusicApps.layoutManager = LinearLayoutManager(requireActivity())
 
@@ -80,6 +77,8 @@ class MusicAppsListFragment: Fragment() {
 
 	override fun onResume() {
 		super.onResume()
+
+		// build list of discovered music apps
 		appDiscoveryThread.discovery()
 	}
 

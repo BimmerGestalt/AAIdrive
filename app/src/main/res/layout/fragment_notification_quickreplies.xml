@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data class="NotificationQuickRepliesBinding">
+        <import type="android.view.View"/>
+        <variable
+            name="controller"
+            type="me.hufman.androidautoidrive.phoneui.controllers.NotificationQuickRepliesController" />
+    </data>
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?android:attr/textColorPrimary"
+            android:text="@string/notification_quickreplies"
+            android:layout_marginBottom="8dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/listNotificationQuickReplies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+            <EditText
+                android:id="@+id/txtInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="text"
+                android:text="@={controller.currentInput}"
+                android:onEditorAction="@{(v, id, event) -> event != null ? controller.addItem() : true}"/>
+            <ImageButton
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_weight="0"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/btn_add"
+                app:tint="?android:attr/textColorSecondary"
+                android:src="@drawable/spotify_add_library"
+                android:onClick="@{() -> controller.addItem()}"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</layout>

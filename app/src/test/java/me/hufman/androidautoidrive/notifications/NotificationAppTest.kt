@@ -82,6 +82,7 @@ class NotificationAppTest {
 				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER, AppSettings.KEYS.NOTIFICATIONS_SOUND,
 				AppSettings.KEYS.NOTIFICATIONS_READOUT, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
 		)}
+		on { quickReplies } doAnswer { listOf("\uD83D\uDE3B") }
 		on { shouldPopup(any()) } doReturn true
 		on { shouldPlaySound() } doReturn true
 		on { shouldReadoutNotificationDetails() } doReturn true
@@ -986,9 +987,10 @@ class NotificationAppTest {
 		assertEquals(app.stateInput.id, buttons[1].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
 
 		val inputComponent = app.stateInput.componentsList[0] as RHMIComponent.Input
+
 		// show the suggested replies
 		app.stateInput.focusCallback?.onFocus(true) // shown to user
-		assertEquals(listOf("Yes", "No"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
+		assertEquals(listOf("Yes", "No", ":heart_eyes_cat:"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
 		verify(carNotificationController).reply(notification.key, notification.actions[0].name.toString(), "No")
 		reset(carNotificationController)
@@ -1014,7 +1016,7 @@ class NotificationAppTest {
 		// erase, should show the suggestions again
 		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(emptyMap<Int, Any>())
 		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "delall"))
-		assertEquals(listOf("Yes", "No"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
+		assertEquals(listOf("Yes", "No", ":heart_eyes_cat:"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		verify(carNotificationController).reply(notification.key, notification.actions[0].name.toString(), "Yes")
 	}

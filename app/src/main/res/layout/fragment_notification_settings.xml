@@ -101,5 +101,11 @@
                     android:text="@string/notification_readout_popup_passenger" />
             </LinearLayout>
         </LinearLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/paneNotificationQuickReplies"
+            android:name="me.hufman.androidautoidrive.phoneui.fragments.NotificationQuickRepliesFragment"/>
     </LinearLayout>
 </layout>
