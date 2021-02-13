@@ -129,6 +129,14 @@ class SpotifyAuthStateManager private constructor(val appSettings: MutableAppSet
 	}
 
 	/**
+	 * Forget an existing auth session
+	 */
+	fun clear() {
+		currentState = AuthState()
+		writeState(currentState)
+	}
+
+	/**
 	 * Writes the new [AuthState] to [AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION],
 	 * replacing the existing [AuthState] with the new one.
 	 */

@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.databinding.MusicPermissionsBinding
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
 
 class MusicPermissionsFragment: Fragment() {
+	val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }
 	val viewModel by viewModels<PermissionsModel> { PermissionsModel.Factory(requireContext().applicationContext) }
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 		val binding = MusicPermissionsBinding.inflate(inflater, container, false)
@@ -24,5 +26,13 @@ class MusicPermissionsFragment: Fragment() {
 		super.onResume()
 		viewModel.update()
 		viewModel.updateSpotify()
+
+		// while the screen is open, watch for the controller to clear Spotify Web access
+		appSettings.callback = { viewModel._updateSpotifyWeb() }
+	}
+
+	override fun onPause() {
+		super.onPause()
+		appSettings.callback = null
 	}
 }

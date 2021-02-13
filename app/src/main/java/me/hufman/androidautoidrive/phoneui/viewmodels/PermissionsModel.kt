@@ -2,13 +2,11 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
-import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
@@ -58,7 +56,7 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 		val hasSpotify = spotifyConnector.isSpotifyInstalled() && spotifyConnector.hasSupport()
 		_hasSpotify.value = hasSpotify
 
-		_isSpotifyWebApiAuthorized.value = spotifyAuthStateManager.isAuthorized()
+		_updateSpotifyWeb()
 
 		if (hasSpotify) {
 			spotifyConnector.connect().apply {
@@ -67,6 +65,12 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 		}
 	}
 
+	/** Update the Spotify Web auth LiveData from the cached settings */
+	fun _updateSpotifyWeb() {
+		_isSpotifyWebApiAuthorized.value = spotifyAuthStateManager.isAuthorized()
+	}
+
+	/** Update Spotify Control status LiveData from the connection results */
 	private fun _updateSpotify() {
 		_hasSpotifyControlPermission.value = spotifyConnector.previousControlSuccess()
 		val errorName = spotifyConnector.lastError?.javaClass?.simpleName
