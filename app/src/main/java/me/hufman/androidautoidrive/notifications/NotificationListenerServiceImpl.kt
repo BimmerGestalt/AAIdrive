@@ -95,6 +95,10 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 
 	override fun onListenerDisconnected() {
 		_serviceState.value = false
+
+		// clear the list in the car
+		NotificationsState.replaceNotifications(emptyList())
+		carController.onUpdatedList()
 	}
 
 	override fun onNotificationRemoved(sbn: StatusBarNotification?, rankingMap: RankingMap?) {

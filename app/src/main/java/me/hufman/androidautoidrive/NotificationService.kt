@@ -21,9 +21,7 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 	var carappReadout: ReadoutApp? = null
 
 	fun start(): Boolean {
-		val enabled = AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean() &&
-				Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")?.contains(context.packageName) == true
-		if (enabled) {
+		if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()) {
 			synchronized(this) {
 				if (carInformationObserver.capabilities.isNotEmpty() && threadNotifications == null) {
 					threadNotifications = CarThread("Notifications") {
@@ -33,6 +31,7 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 							Log.e(MainService.TAG, "CarThread Handler is null?")
 						}
 						val notificationSettings = NotificationSettings(carInformationObserver.capabilities, BtStatus(context) {}, MutableAppSettingsReceiver(context, handler))
+						notificationSettings.notificationListenerConnected = Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")?.contains(context.packageName) == true
 						notificationSettings.btStatus.register()
 						carappNotifications = PhoneNotifications(iDriveConnectionStatus, securityAccess,
 								CarAppAssetManager(context, "basecoreOnlineServices"),

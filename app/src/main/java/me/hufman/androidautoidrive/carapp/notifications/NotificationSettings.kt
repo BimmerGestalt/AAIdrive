@@ -13,6 +13,9 @@ class NotificationSettings(val capabilities: Map<String, String?>, val btStatus:
 	// quick replies for input suggestions
 	val quickReplies: List<String> = StoredList(appSettings, AppSettings.KEYS.NOTIFICATIONS_QUICK_REPLIES)
 
+	// whether the notification listener service is connected
+	var notificationListenerConnected = true
+
 	// car's supported features
 	val idrive4 = capabilities["hmi.type"]?.contains("ID4") == true
 	val tts = capabilities["tts"]?.toLowerCase() == "true"
