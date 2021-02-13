@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.phoneui
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -8,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.activity_musicplayer.*
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.phoneui.fragments.MusicBrowseFragment
@@ -31,6 +33,8 @@ class MusicPlayerActivity: AppCompatActivity() {
 		val musicApp = UIState.selectedMusicApp ?: return
 		this.musicApp = musicApp
 
+		discoverApp(musicApp)
+
 		// initialize the viewmodels
 		ViewModelProvider(this, MusicActivityModel.Factory(applicationContext, musicApp)).get(MusicActivityModel::class.java)
 		ViewModelProvider(this, MusicActivityIconsModel.Factory(this)).get(MusicActivityIconsModel::class.java)
@@ -47,6 +51,11 @@ class MusicPlayerActivity: AppCompatActivity() {
 		pgrMusicPlayer.offscreenPageLimit = 2
 
 		tabMusicPlayer.setupWithViewPager(pgrMusicPlayer)
+	}
+
+	fun discoverApp(musicAppInfo: MusicAppInfo) {
+		val musicAppDiscovery = MusicAppDiscovery(this, Handler())
+		musicAppDiscovery.probeApp(musicAppInfo)
 	}
 
 	fun pushBrowse(directory: MusicMetadata?) {
