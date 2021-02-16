@@ -54,6 +54,8 @@
     <string name="notification_readout_popup_passenger">… mit Beifahrer</string>
     <string name="notification_quickreplies">Schnellantworten</string>
     <string name="notification_quickreplies_default">[\"👍\",\"Ich bin auf dem Weg!\",\"Momentan im Auto\",\"Kann nicht schreiben, bitte stattdessen anrufen\",\"Ich rufe dich später an\"]</string>
+    <string name="lbl_notification_permissions">Zugriff auf Benachrichtigungen</string>
+    <string name="lbl_notification_sms_permissions">Zugriff um SMS Bilder anzuzeigen</string>
     <string name="lbl_popupVersion">PopUps funktionieren nur mit IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS wird von Ihrem Fahrzeug nicht unterstützt</string>
     <string name="lbl_smsPermission">Erteile Zugriff für SMS-Nachrichten um Bilder von Nachrichten im Fahrzeug zu sehen. Text ist immer sichtbar.</string>
@@ -198,6 +200,7 @@
     <string name="NOTIFICATION_READOUT">Benachrichtigungen beim Betrachten vorlesen</string>
     <string name="NOTIFICATION_READOUT_POPUP">Neue Benachrichtigungen vorlesen</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … mit Beifahrer</string>
+    <string name="NOTIFICATION_PERMISSION_NEEDED">Diese App muss Zugriff auf Benachrichtigungen erhalten</string>
     <string name="READOUT_DESCRIPTION">Diese App wird zum Auslesen verwendet</string>
     <string name="MAP_ACTION_VIEWMAP">Volle Karte zeigen</string>
     <string name="MAP_ACTION_SEARCH">Ort suchen</string>
