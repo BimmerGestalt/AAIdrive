@@ -54,6 +54,8 @@
     <string name="notification_readout_popup_passenger">… med en passagerare</string>
     <string name="notification_quickreplies">Snabbt svar</string>
     <string name="notification_quickreplies_default">[\"👍\",\"På väg!\",\"Kör bil nu! \",\"Kan inte sms:a nu ring mig istället\",\"Jag ringer dig senare\"]</string>
+    <string name="lbl_notification_permissions">Åtkomst till aviseringar</string>
+    <string name="lbl_notification_sms_permissions">Åtkomst att visa SMS-bilder</string>
     <string name="lbl_popupVersion">Popupfönster fungerar endast med IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS stöds ej av din bil</string>
     <string name="lbl_smsPermission">Ge behörighet för inkommande SMS att visa bilder i bilen. Texten är däremot alltid synlig.</string>
@@ -198,6 +200,7 @@
     <string name="NOTIFICATION_READOUT">Tala när aviseringar visas</string>
     <string name="NOTIFICATION_READOUT_POPUP">Tala in nya aviseringar</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … med en passagerare</string>
+    <string name="NOTIFICATION_PERMISSION_NEEDED">Appen måste beviljas Tillgång till aviseringa</string>
     <string name="READOUT_DESCRIPTION">Appen används för avläsningsändamål</string>
     <string name="MAP_ACTION_VIEWMAP">Se hela kartan</string>
     <string name="MAP_ACTION_SEARCH">Sök efter plats</string>
