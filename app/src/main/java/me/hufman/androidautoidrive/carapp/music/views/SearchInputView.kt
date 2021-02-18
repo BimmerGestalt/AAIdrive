@@ -19,6 +19,8 @@ class SearchInputView(val state: RHMIState,
                       private val browseController: BrowsePageController): CoroutineScope {
 	val SEARCHRESULT_SEARCHING = MusicMetadata(mediaId="__SEARCHING__", title=L.MUSIC_BROWSE_SEARCHING)
 	val SEARCHRESULT_EMPTY = MusicMetadata(mediaId="__EMPTY__", title=L.MUSIC_BROWSE_EMPTY)
+	val SEARCHRESULT_VIEW_FULL_RESULTS = MusicMetadata(mediaId="__VIEWFULLRESULTS__", title=L.MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS)
+	val SEARCHRESULT_ELIPSIS = MusicMetadata(mediaId="__MORERESULTS__", title=L.MUSIC_SEARCH_RESULTS_ELLIPSIS)
 
 	override val coroutineContext: CoroutineContext
 		get() = Dispatchers.IO
@@ -34,6 +36,7 @@ class SearchInputView(val state: RHMIState,
 			val MAX_RETRIES = 2
 			var searchRetries = MAX_RETRIES
 			var deferredSearchResults: Deferred<List<MusicMetadata>?> = CompletableDeferred(emptyList())
+			val isSpotify = musicController.currentAppInfo?.name == "Spotify"
 
 			override fun onEntry(input: String) {
 				searchRetries = MAX_RETRIES
@@ -59,7 +62,19 @@ class SearchInputView(val state: RHMIState,
 							search(input)
 							return@launch
 						}
-						sendSuggestions(suggestions ?: LinkedList())
+
+						// The suggestModel can only show the first 32 entries correctly so show 29 entries leaving room for the other potential buttons
+						val trimmedSuggestions = if (suggestions != null) {
+							if (suggestions.size > 29) {
+								suggestions.subList(0, 28) + listOf(SEARCHRESULT_ELIPSIS)
+							} else {
+								suggestions
+							}
+						} else {
+							LinkedList()
+						}
+
+						sendSuggestions(trimmedSuggestions)
 					}
 				} else if (searchRetries <= 0) {
 					// too many retries
@@ -68,10 +83,15 @@ class SearchInputView(val state: RHMIState,
 			}
 
 			override fun sendSuggestions(newSuggestions: List<MusicMetadata>) {
-				val fullSuggestions = if (musicController.isSupportedAction(MusicAction.PLAY_FROM_SEARCH)) {
+				val suggestions = if (musicController.isSupportedAction(MusicAction.PLAY_FROM_SEARCH) && !isSpotify) {
 					listOf(BrowseView.SEARCHRESULT_PLAY_FROM_SEARCH) + newSuggestions
 				} else {
 					newSuggestions
+				}
+				val fullSuggestions = if (newSuggestions.isNotEmpty() && newSuggestions[0] != SEARCHRESULT_SEARCHING && newSuggestions[0] != SEARCHRESULT_EMPTY) {
+					listOf(SEARCHRESULT_VIEW_FULL_RESULTS) + suggestions
+				} else {
+					suggestions
 				}
 				super.sendSuggestions(fullSuggestions)
 			}
@@ -83,6 +103,10 @@ class SearchInputView(val state: RHMIState,
 					throw RHMIActionAbort()
 				} else if (item == BrowseView.SEARCHRESULT_PLAY_FROM_SEARCH) {
 					browseController.playFromSearch(inputComponent.getSuggestAction()?.asHMIAction(), this.input)
+				} else if (item == SEARCHRESULT_VIEW_FULL_RESULTS) {
+					browseController.showSearchResults(deferredSearchResults, inputComponent.getSuggestAction()?.asHMIAction())
+				} else if (item == SEARCHRESULT_ELIPSIS) {
+					browseController.showSearchResults(deferredSearchResults, inputComponent.getSuggestAction()?.asHMIAction())
 				} else {
 					browseController.onListSelection(inputComponent.getSuggestAction()?.asHMIAction(), item)
 				}
@@ -97,7 +121,11 @@ class SearchInputView(val state: RHMIState,
 			}
 
 			override fun onOk() {
-				browseController.showSearchResults(deferredSearchResults, inputComponent.getResultAction()?.asHMIAction())
+				if(!isSpotify && deferredSearchResults.isCompleted && deferredSearchResults.getCompleted()?.isEmpty() == true) {
+					browseController.playFromSearch(inputComponent.getResultAction()?.asHMIAction(), this.input)
+				} else {
+					browseController.showSearchResults(deferredSearchResults, inputComponent.getResultAction()?.asHMIAction())
+				}
 			}
 		}
 	}

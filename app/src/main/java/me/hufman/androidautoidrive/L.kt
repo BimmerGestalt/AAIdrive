@@ -39,6 +39,8 @@ object L {
 	var MUSIC_BROWSE_ACTION_SEARCH = "Search"
 	var MUSIC_BROWSE_PLAY_FROM_SEARCH = "Play From Search"
 	val MUSIC_SEARCH_RESULTS_LABEL = "Search Results"
+	val MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS = "View Full Results"
+	val MUSIC_SEARCH_RESULTS_ELLIPSIS = "..."
 	var MUSIC_QUEUE_TITLE = "Now Playing"
 	var MUSIC_QUEUE_EMPTY = "<Empty Queue>"
 	var MUSIC_SKIP_PREVIOUS = "Back"

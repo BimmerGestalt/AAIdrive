@@ -434,7 +434,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			MusicAction.SKIP_TO_QUEUE_ITEM -> false
 			MusicAction.SET_SHUFFLE_MODE -> playerActions?.canToggleShuffle == true
 			MusicAction.SET_REPEAT_MODE -> playerActions?.canRepeatContext == true || playerActions?.canRepeatTrack == true
-			MusicAction.PLAY_FROM_SEARCH -> true
 			else -> false
 		}
 	}
