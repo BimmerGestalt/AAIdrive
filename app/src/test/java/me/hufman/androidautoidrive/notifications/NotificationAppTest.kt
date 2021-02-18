@@ -82,6 +82,8 @@ class NotificationAppTest {
 				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER, AppSettings.KEYS.NOTIFICATIONS_SOUND,
 				AppSettings.KEYS.NOTIFICATIONS_READOUT, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
 		)}
+		on { notificationListenerConnected } doReturn true
+		on { quickReplies } doAnswer { listOf("\uD83D\uDE3B") }
 		on { shouldPopup(any()) } doReturn true
 		on { shouldPlaySound() } doReturn true
 		on { shouldReadoutNotificationDetails() } doReturn true
@@ -172,6 +174,16 @@ class NotificationAppTest {
 			assertEquals(false, mockServer.properties[visibleWidgets[1].id]?.get(RHMIProperty.PropertyId.ENABLED.id) as Boolean)
 			assertTrue(visibleWidgets[2] is RHMIComponent.List)
 			assertNotNull(visibleWidgets[2].asList()?.getAction()?.asRAAction()?.rhmiActionCallback)
+		}
+		// test statePermission setup
+		run {
+			val visibleWidgets = app.viewPermission.state.componentsList.filter {
+				mockServer.properties[it.id]?.get(RHMIProperty.PropertyId.VISIBLE.id) as? Boolean == true
+			}
+			assertEquals(1, visibleWidgets.size)
+			val label = visibleWidgets[0].asLabel()!!
+			assertFalse(mockServer.properties[label.id]?.get(RHMIProperty.PropertyId.ENABLED.id) as Boolean)
+			assertEquals(L.NOTIFICATION_PERMISSION_NEEDED, label.getModel()?.asRaDataModel()?.value)
 		}
 		// test speedlock
 		run {
@@ -579,6 +591,36 @@ class NotificationAppTest {
 		assertEquals(true, mockServer.triggeredEvents[1]?.get(0))
 	}
 
+	/**
+	 * Show a one-time popup about missing notification permissions
+	 */
+	@Test
+	fun testViewNotificationsMissingPermission() {
+		whenever(notificationSettings.notificationListenerConnected) doReturn false
+
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+		NotificationsState.notifications.clear()
+
+		// on viewing the state, it should skip to the permissions view
+		app.viewList.state.focusCallback!!.onFocus(true)
+		assertEquals(app.viewPermission.state.id, mockServer.triggeredEvents[app.focusEvent.id]?.get(0.toByte()))
+		assertNull(mockServer.data[386])
+
+		// doing it again should not skip through, and should draw the list like normal
+		mockServer.triggeredEvents.clear()
+		app.viewList.state.focusCallback?.onFocus(true)
+
+		val list = mockServer.data[386] as BMWRemoting.RHMIDataTable
+		assertNotNull(list)
+		assertEquals(1, list.numRows)
+		val row = list.data[0]
+		assertEquals("", row[0])
+		assertEquals("", row[1])
+		assertEquals("No Notifications", row[2])
+	}
+
 	@Test
 	fun testViewEmptyNotifications() {
 		val mockServer = MockBMWRemotingServer()
@@ -602,7 +644,7 @@ class NotificationAppTest {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
-		app.viewList.initWidgets(app.viewDetails)
+		app.viewList.initWidgets(app.viewDetails, app.viewPermission)
 
 		val item1 = createNotificationObject("Title", "Text")
 		val item2 = createNotificationObject("Title2", "Text2\nLine2")
@@ -649,7 +691,7 @@ class NotificationAppTest {
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++", "tts" to "true"), mock(), appSettings)
 			val id4Menu = NotificationListView(state, graphicsHelpers, settings, mock())
-			id4Menu.initWidgets(mock())
+			id4Menu.initWidgets(mock(), mock())
 			id4Menu.redrawNotificationList()
 			id4Menu.redrawSettingsList()
 
@@ -665,7 +707,7 @@ class NotificationAppTest {
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5", "tts" to "true"), mock(), appSettings)
 			val id5Menu = NotificationListView(state, graphicsHelpers, settings, mock())
-			id5Menu.initWidgets(mock())
+			id5Menu.initWidgets(mock(), mock())
 			id5Menu.redrawNotificationList()
 			id5Menu.redrawSettingsList()
 
@@ -680,7 +722,7 @@ class NotificationAppTest {
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5", "tts" to "false"), mock(), appSettings)
 			val id5Menu = NotificationListView(state, graphicsHelpers, settings, mock())
-			id5Menu.initWidgets(mock())
+			id5Menu.initWidgets(mock(), mock())
 			id5Menu.redrawNotificationList()
 			id5Menu.redrawSettingsList()
 
@@ -986,9 +1028,10 @@ class NotificationAppTest {
 		assertEquals(app.stateInput.id, buttons[1].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
 
 		val inputComponent = app.stateInput.componentsList[0] as RHMIComponent.Input
+
 		// show the suggested replies
 		app.stateInput.focusCallback?.onFocus(true) // shown to user
-		assertEquals(listOf("Yes", "No"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
+		assertEquals(listOf("Yes", "No", ":heart_eyes_cat:"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
 		verify(carNotificationController).reply(notification.key, notification.actions[0].name.toString(), "No")
 		reset(carNotificationController)
@@ -1014,7 +1057,7 @@ class NotificationAppTest {
 		// erase, should show the suggestions again
 		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(emptyMap<Int, Any>())
 		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "delall"))
-		assertEquals(listOf("Yes", "No"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
+		assertEquals(listOf("Yes", "No", ":heart_eyes_cat:"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		verify(carNotificationController).reply(notification.key, notification.actions[0].name.toString(), "Yes")
 	}
@@ -1025,7 +1068,7 @@ class NotificationAppTest {
 		IDriveConnection.mockRemotingServer = mockServer
 
 		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
-		app.viewList.initWidgets(app.viewDetails)
+		app.viewList.initWidgets(app.viewDetails, mock())
 
 		whenever(notificationSettings.isChecked(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP)) doReturn true
 		whenever(notificationSettings.isChecked(AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER)) doReturn false

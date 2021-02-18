@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data class="MusicPermissionsBinding">
         <variable
             name="controller"
@@ -38,7 +39,17 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:paddingEnd="5dp"
-                android:src="@{viewModel.hasNotificationPermission ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background}" />
+                android:visibility="@{!viewModel.hasNotificationPermission}"
+                android:onClick="@{() -> controller.promptNotification()}"
+                app:srcCompat="@android:drawable/checkbox_off_background" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:visibility="@{viewModel.hasNotificationPermission}"
+                android:onClick="@{() -> controller.promptNotification()}"
+                app:srcCompat="@android:drawable/checkbox_on_background" />
 
             <TextView
                 android:layout_width="0dp"
@@ -72,7 +83,17 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:paddingEnd="5dp"
-                    android:src="@{viewModel.hasSpotifyControlPermission ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background}" />
+                    android:visibility="@{!viewModel.hasSpotifyControlPermission}"
+                    android:onClick="@{() -> controller.promptSpotifyControl()}"
+                    app:srcCompat="@android:drawable/checkbox_off_background" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:paddingEnd="5dp"
+                    android:visibility="@{viewModel.hasSpotifyControlPermission}"
+                    android:onClick="@{() -> controller.clearSpotifyControl()}"
+                    app:srcCompat="@android:drawable/checkbox_on_background" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -105,7 +126,17 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:paddingEnd="5dp"
-                android:src="@{viewModel.isSpotifyWebApiAuthorized ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background}" />
+                android:visibility="@{!viewModel.isSpotifyWebApiAuthorized()}"
+                android:onClick="@{() -> controller.promptSpotifyAuthorization()}"
+                app:srcCompat="@android:drawable/checkbox_off_background" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:visibility="@{viewModel.isSpotifyWebApiAuthorized()}"
+                android:onClick="@{() -> controller.clearSpotifyAuthorization()}"
+                app:srcCompat="@android:drawable/checkbox_on_background" />
 
             <TextView
                 android:layout_width="0dp"

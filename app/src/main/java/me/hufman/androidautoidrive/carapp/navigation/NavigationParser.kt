@@ -6,6 +6,7 @@ import android.location.Geocoder
 import android.util.Log
 import com.google.openlocationcode.OpenLocationCode
 import me.hufman.androidautoidrive.carapp.maps.LatLong
+import java.io.IOException
 import java.lang.IllegalArgumentException
 import java.net.URI
 import java.net.URISyntaxException
@@ -19,7 +20,11 @@ interface AddressSearcher {
 class AndroidGeocoderSearcher(context: Context): AddressSearcher {
 	val geocoder = Geocoder(context)
 	override fun search(query: String): Address? {
-		return geocoder.getFromLocationName(query, 1)?.getOrNull(0)
+		return try {
+			geocoder.getFromLocationName(query, 1)?.getOrNull(0)
+		} catch (e: IOException) {
+			null
+		}
 	}
 }
 
@@ -111,6 +116,7 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 			val splits = latlng.split(',')
 			LatLong(splits[0].trim().toDouble(), splits[1].trim().toDouble())
 		} else null
+		if (latlong?.latitude == 0.0 && latlong.latitude == 0.0) return null
 		val label = queryResult?.groupValues?.getOrNull(4) ?: ""
 		if (latlong != null) return latlongToRHMI(latlong, label)   // found a latlong
 

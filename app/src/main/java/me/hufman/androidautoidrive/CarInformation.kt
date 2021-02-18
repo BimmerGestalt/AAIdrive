@@ -30,6 +30,8 @@ open class CarInformation {
 		private val _listeners = Collections.synchronizedMap(WeakHashMap<CarInformationObserver, Boolean>())
 		val listeners: Map<CarInformationObserver, Boolean> = _listeners
 
+		var isConnected = false
+
 		var currentCapabilities: Map<String, String> = emptyMap()
 		var cachedCapabilities: Map<String, String> = emptyMap()
 		val cdsData = CDSDataProvider()
@@ -96,6 +98,9 @@ open class CarInformation {
 		}
 	}
 
+	open val isConnected: Boolean
+		get() = CarInformation.isConnected
+
 	open val capabilities: Map<String, String>
 		get() = if (currentCapabilities.isEmpty()) {
 			cachedCapabilities
@@ -108,6 +113,16 @@ open class CarInformation {
 }
 
 open class CarInformationUpdater(val appSettings: MutableAppSettings): CarInformation(), CarInformationDiscoveryListener {
+	override var isConnected: Boolean
+		get() = super.isConnected
+		set(value) {
+			val oldValue = isConnected
+			CarInformation.isConnected = value
+			if (oldValue != value) {
+				onCarCapabilities()
+			}
+		}
+
 	override var capabilities: Map<String, String>
 		get() = super.capabilities
 		set(value) {

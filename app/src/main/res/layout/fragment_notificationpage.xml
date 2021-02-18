@@ -25,7 +25,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="@string/message_notifications" />
+            android:text="@string/message_notifications"
+            android:checked="true" />
 
         <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"
@@ -40,26 +41,6 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="8dp"
             android:text="@string/spawn_test_notification" />
-
-        <LinearLayout
-            android:id="@+id/paneSMSPermission"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txtSMSPermission"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/lbl_smsPermission"
-                android:layout_marginBottom="4dp" />
-
-            <Button
-                android:id="@+id/btnGrantSMS"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lbl_grant" />
-        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

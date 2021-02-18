@@ -2,12 +2,19 @@ package me.hufman.androidautoidrive.carapp.notifications
 
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsObserver
+import me.hufman.androidautoidrive.StoredList
 import me.hufman.androidautoidrive.connections.BtStatus
 
 class NotificationSettings(val capabilities: Map<String, String?>, val btStatus: BtStatus, val appSettings: MutableAppSettingsObserver) {
 	var callback
 		get() = appSettings.callback
 		set(value) { appSettings.callback = value }
+
+	// quick replies for input suggestions
+	val quickReplies: List<String> = StoredList(appSettings, AppSettings.KEYS.NOTIFICATIONS_QUICK_REPLIES)
+
+	// whether the notification listener service is connected
+	var notificationListenerConnected = true
 
 	// car's supported features
 	val idrive4 = capabilities["hmi.type"]?.contains("ID4") == true

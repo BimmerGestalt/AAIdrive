@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.databinding.BindingAdapter
@@ -127,5 +128,17 @@ fun setAnimator(view: View, value: Animator?) {
 	} else {
 		view.animation?.cancel()
 		view.clearAnimation()
+	}
+}
+
+@BindingAdapter("onTouchDown")
+fun setOnTouchDown(view: View, callback: View.OnClickListener) {
+	view.setOnTouchListener { v, event ->
+		if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+			callback.onClick(v)
+		} else {
+			v.performClick()
+		}
+		true
 	}
 }

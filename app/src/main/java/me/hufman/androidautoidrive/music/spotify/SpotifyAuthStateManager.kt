@@ -138,6 +138,14 @@ class SpotifyAuthStateManager private constructor(val appSettings: MutableAppSet
 	}
 
 	/**
+	 * Forget an existing auth session
+	 */
+	fun clear() {
+		currentState = AuthState()
+		writeState(currentState)
+	}
+
+	/**
 	 * Updates the [AuthState] with the token response and authorization exception, replacing the old
 	 * AuthState with the new one.
 	 */

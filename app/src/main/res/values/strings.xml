@@ -21,11 +21,14 @@
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <string name="navigation_listener_bmw">BMW Navigation</string>
     <string name="navigation_listener_mini">MINI Navigation</string>
+
     <!-- Labels on the navigation trigger activity -->
+    <string name="btn_search">Search</string>
     <string name="lbl_navigation_listener_searching">Searching for destination</string>
     <string name="lbl_navigation_listener_parsefailure">Could not locate destination</string>
     <string name="lbl_navigation_listener_pending">Starting navigation</string>
     <string name="lbl_navigation_listener_success">Success</string>
+    <string name="lbl_navigation_listener_unsuccess">Unsuccessful</string>
 
     <!-- Menu Titles -->
     <string name="menu_overview">Overview</string>
@@ -55,6 +58,10 @@
     <string name="notification_readout">Speak when viewing notifications</string>
     <string name="notification_readout_popup">Speak new notifications</string>
     <string name="notification_readout_popup_passenger">… with a passenger</string>
+    <string name="notification_quickreplies">Quick Replies</string>
+    <string name="notification_quickreplies_default">[\"👍\",\"On my way!\",\"Currently in the car\",\"Can\'t text, call me instead\",\"I\'ll call you later\"]</string>
+    <string name="lbl_notification_permissions">Access to view notifications</string>
+    <string name="lbl_notification_sms_permissions">Access to show SMS pictures</string>
     <string name="lbl_popupVersion">Popups only work with IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS is not supported by your car</string>
     <string name="lbl_smsPermission">Grant the SMS permission to view pictures from incoming SMS images in the car. The text itself is always visible.</string>
@@ -90,6 +97,11 @@
     <string name="musicAppNotes_spotify_apiNotFound">Please install the official Spotify client</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Please confirm internet connectivity and disable any ad blocking</string>
 
+    <string name="lbl_navigationpage_address">Paste in an address to start the car\'s navigation system from your phone</string>
+    <string name="lbl_navigationpage_intent">While connected, your car\'s navigation system will show up as an option when other apps\' Navigation buttons open an app chooser</string>
+    <string name="lbl_navigationstatus_active">Currently navigating to</string>
+    <string name="lbl_navigationstatus_inactive">Not currently navigating</string>
+
     <string name="lbl_settingspage">Advanced settings for tweaking behavior, may cause unexpected behavior</string>
     <string name="lbl_language_carinterface">Language to show in the car</string>
     <string name="lbl_language_prefercar">Prefer car language over phone language</string>
@@ -108,6 +120,7 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancel</string>
     <string name="btn_configure">Configure …</string>
+    <string name="btn_add">Add</string>
     <string name="lbl_error">Error</string>
 
     <string name="connectionStatusMissingConnectedApp">Can\'t find Connected or Connected Classic app</string>
@@ -211,6 +224,7 @@
     <string name="NOTIFICATION_READOUT">Speak when viewing notifications</string>
     <string name="NOTIFICATION_READOUT_POPUP">Speak new notifications</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … with a passenger</string>
+    <string name="NOTIFICATION_PERMISSION_NEEDED">This app needs to be granted Notification Access</string>
     <string name="READOUT_DESCRIPTION">This app is used for readout purposes</string>
 
     <string name="MAP_ACTION_VIEWMAP">View Full Map</string>

@@ -272,6 +272,25 @@ class SpotifyAuthStateManagerTest {
 		assertEquals(authStateSerializedString, appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON])
 	}
 
+	@Test
+	fun testClearAuthState() {
+		val currentState: AuthState = mock()
+		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+
+		val authStateSerializedString = "auth state serialized"
+		val authState: AuthState = mock()
+		whenever(authState.jsonSerializeString()).thenReturn(authStateSerializedString)
+
+		spotifyAuthStateManager.replaceAuthState(authState)
+
+		assertEquals(authState, spotifyAuthStateManager.currentState)
+		assertEquals(authStateSerializedString, appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON])
+
+		PowerMockito.whenNew(AuthState::class.java).withAnyArguments().thenReturn(authState)
+		spotifyAuthStateManager.clear()
+		assertTrue(isEmptyAuthState(spotifyAuthStateManager.currentState))
+	}
+
 	private fun isEmptyAuthState(authState: AuthState): Boolean {
 		return !authState.isAuthorized
 				&& authState.accessToken == null

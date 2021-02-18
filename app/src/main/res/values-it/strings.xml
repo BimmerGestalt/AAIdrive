@@ -20,10 +20,12 @@
     <string name="navigation_listener_bmw">Navigazione BMW</string>
     <string name="navigation_listener_mini">Navigazione MINI</string>
     <!-- Labels on the navigation trigger activity -->
+    <string name="btn_search">Cerca</string>
     <string name="lbl_navigation_listener_searching">Ricerca della destinazione</string>
     <string name="lbl_navigation_listener_parsefailure">Impossibile trovare la destinazione</string>
     <string name="lbl_navigation_listener_pending">Avvio della navigazione</string>
     <string name="lbl_navigation_listener_success">Completato</string>
+    <string name="lbl_navigation_listener_unsuccess">Operazione non riuscita</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Panoramica</string>
     <string name="menu_setup">Configurazione</string>
@@ -50,6 +52,8 @@
     <string name="notification_readout">Lettura vocale notifiche quando aperte</string>
     <string name="notification_readout_popup">Lettura vocale delle nuove notifiche</string>
     <string name="notification_readout_popup_passenger">… con un passeggero</string>
+    <string name="notification_quickreplies">Risposte rapide</string>
+    <string name="notification_quickreplies_default">[\"👍\",\"Sto arrivando!\",\"Sono in auto\",\"Non posso messaggiare, chiamami\",\"Ti chiamerò più tardi\"]</string>
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS non è supportato dalla tua auto</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
@@ -75,12 +79,17 @@
     <string name="enable_spotify_layout">Mostra sempre come Spotify in IDrive5+</string>
     <string name="lbl_grant_sessions">Controllo sulle app di musica attive:</string>
     <string name="lbl_grant_spotify_control">Possibilità di navigare nella libreria Spotify</string>
+    <string name="lbl_grant_background_music">Permetti l\'esecuzione in background per le tue app musicali, se l\'auto ha problemi a lanciarle</string>
     <string name="lbl_grant">Concedi</string>
     <string name="musicAppNotes_unauthorizedSpotify">Clicca qui per autorizzare l\'accesso a Spotify</string>
     <string name="musicAppNotes_oldSpotify">Esegui il downgrade di Spotify per la funzionalità completa (Ricerca)</string>
     <string name="musicAppNotes_oldSpotifyInstructions">Quest\'app può garantire il controllo completo di Spotify solo fino alla versione 8.4.96.953, per la funzionalità di ricerca ad esempio. Per il controllo completo scarica una versione precedente da APKPure o simili.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Prego installare il client ufficiale di Spotify</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Prego verificare la connessione e disabilitare qualsiasi blocco pubblicità</string>
+    <string name="lbl_navigationpage_address">Incolla in un indirizzo per avviare il sistema di navigazione dell\'auto dal telefono</string>
+    <string name="lbl_navigationpage_intent">Quando connesso, il sistema di navigazione dell\'auto verrà visualizzato come opzione quando altre app vorranno inizializzare una navigazione verso un luogo</string>
+    <string name="lbl_navigationstatus_active">Navigazione attiva verso</string>
+    <string name="lbl_navigationstatus_inactive">Navigazione attualmente non attiva</string>
     <string name="lbl_settingspage">Impostazioni avanzate, possono causare comportamenti imprevisti</string>
     <string name="lbl_language_carinterface">Lingua da mostrare in auto</string>
     <string name="lbl_language_prefercar">Preferisci la lingua della vettura alla lingua del telefono</string>
@@ -97,6 +106,7 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancella</string>
     <string name="btn_configure">Configura…</string>
+    <string name="btn_add">Aggiungi</string>
     <string name="lbl_error">Errore</string>
     <string name="connectionStatusMissingConnectedApp">Non trovo l\'app Connected o Connected Classic</string>
     <string name="connectionStatusWaiting">In attesa della connessione con l\'auto</string>

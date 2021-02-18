@@ -12,6 +12,7 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
 import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
+import me.hufman.androidautoidrive.carapp.notifications.views.PermissionView
 import me.hufman.androidautoidrive.carapp.notifications.views.PopupView
 import me.hufman.androidautoidrive.notifications.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
@@ -47,6 +48,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	val viewPopup: PopupView                // notification about notification
 	val viewList: NotificationListView      // show a list of active notifications
 	val viewDetails: DetailsView            // view a notification with actions to do
+	val viewPermission: PermissionView      // show a message if permissions are missing
 	val stateInput: RHMIState.PlainState    // show a reply input form
 
 	var passengerSeated = false             // whether a passenger is seated
@@ -76,7 +78,8 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			// figure out which views to use
 			viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
 			viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, graphicsHelpers, notificationSettings, readoutInteractions)
-			viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, controller, readoutInteractions)
+			viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings, controller, readoutInteractions)
+			viewPermission = PermissionView(unclaimedStates.removeFirst { PermissionView.fits(it) })
 
 			stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first {
 				it.componentsList.filterIsInstance<RHMIComponent.Input>().isNotEmpty()
@@ -96,13 +99,16 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			createAmApp()
 
 			// set up the list
-			viewList.initWidgets(viewDetails)
+			viewList.initWidgets(viewDetails, viewPermission)
 
 			// set up the popup
 			viewPopup.initWidgets()
 
 			// set up the details view
 			viewDetails.initWidgets(viewList, stateInput)
+
+			// set up the permission view
+			viewPermission.initWidgets()
 
 			// subscribe to CDS for passenger seat info
 			cdsData.setConnection(CDSConnectionEtch(carConnection))

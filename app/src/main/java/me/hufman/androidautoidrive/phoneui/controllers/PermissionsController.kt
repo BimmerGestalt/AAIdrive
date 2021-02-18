@@ -7,7 +7,9 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
+import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
+import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
 
 class PermissionsController(val activity: Activity) {
@@ -82,8 +84,20 @@ class PermissionsController(val activity: Activity) {
 		}
 	}
 
+	fun clearSpotifyControl() {
+		val spotifyUrl = "http://www.spotify.com/account/apps/"
+		val intent = Intent(Intent.ACTION_VIEW, Uri.parse(spotifyUrl))
+		intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+		activity.startActivity(intent)
+	}
+
 	fun promptSpotifyAuthorization() {
 		val intent = Intent(activity.applicationContext, SpotifyAuthorizationActivity::class.java)
 		activity.startActivity(intent)
+	}
+
+	fun clearSpotifyAuthorization() {
+		val authStateManager = SpotifyAuthStateManager.getInstance(MutableAppSettingsReceiver(activity))
+		authStateManager.clear()
 	}
 }
