@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AndroidAutoIdrive</string>
-    <string name="permlab_accessNotifications">IDrive toegangs melding</string>
+    <string name="permlab_accessNotifications">IDrive Meldingen toegang</string>
     <string name="permlab_bindNotificationListenerService">IDrive toegangs melding</string>
     <string name="permdesc_accessNotifications">IDrive toegangs melding</string>
     <string name="permdesc_bindNotificationListenerService">IDrive toegangs melding</string>
