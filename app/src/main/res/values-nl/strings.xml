@@ -180,7 +180,7 @@
     <string name="notification_assistant_tap">Druk om te starten %s</string>
     <string name="notification_assistant_description">Enkel nodig omdat het scherm aan is</string>
     <string name="donation_title">Vindt je deze app leuk?</string>
-    <string name="donation_text">Toon je support middels een kleine donatie</string>
+    <string name="donation_text">Overweeg om uw steun te tonen met een kleine donatie</string>
     <string name="txt_spotify_auth_notification">Spotify Web API moet worden geautoriseerd. Klik hier om toestemming te geven.</string>
     <string name="txt_spotify_app_remote_last_error">Spotify App Remote Laatste fout:</string>
     <string name="txt_spotify_api_authorization_needed">Spotify Web API autorisatie vereist.</string>
