@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Handler
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
@@ -15,6 +16,8 @@ import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.music.MusicAppDiscovery
+import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
 import net.openid.appauth.*
@@ -182,6 +185,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				getLikedSongsAttempted = false
 				spotifyAppControllerCaller?.createLikedSongsQueueMetadata()
 			}
+			updateSpotifyAppInfoAsSearchable()
 		}
 	}
 
@@ -190,6 +194,20 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 */
 	fun isAuthorized(): Boolean {
 		return authStateManager.isAuthorized()
+	}
+
+	/**
+	 * Updates the Spotify [MusicAppInfo] searchable flag to true if it is set to false.
+	 */
+	private fun updateSpotifyAppInfoAsSearchable() {
+		val musicAppDiscovery = MusicAppDiscovery(context, Handler())
+		musicAppDiscovery.loadInstalledMusicApps()
+		val spotifyAppInfo = musicAppDiscovery.allApps.firstOrNull { it.packageName == "com.spotify.music" }
+
+		// if app discovery says we aren't able to search, discover again
+		if (spotifyAppInfo?.searchable == false) {
+			musicAppDiscovery.probeApp(spotifyAppInfo)
+		}
 	}
 
 	/**

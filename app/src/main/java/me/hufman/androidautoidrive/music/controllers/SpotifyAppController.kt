@@ -122,7 +122,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 
 						// if app discovery says we aren't able to connect, discover again
 						val musicAppDiscovery = MusicAppDiscovery(context, Handler())
-						musicAppDiscovery.loadCache()
+						musicAppDiscovery.loadInstalledMusicApps()
 						val spotifyAppInfo = musicAppDiscovery.allApps.firstOrNull { it.packageName == "com.spotify.music" }
 						if (spotifyAppInfo?.connectable == false) {
 							musicAppDiscovery.probeApp(spotifyAppInfo)

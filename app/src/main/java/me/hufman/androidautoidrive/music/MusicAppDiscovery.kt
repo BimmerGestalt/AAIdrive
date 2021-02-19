@@ -81,7 +81,6 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 						app.browseable = jsonData.getBoolean("browseable")
 						app.searchable = jsonData.getBoolean("searchable")
 						app.playsearchable = jsonData.getBoolean("playsearchable")
-
 					}
 				}
 			}
@@ -110,11 +109,9 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 	}
 
 	/**
-	 * Discover what apps are installed on the phone that implement MediaBrowserServer
-	 * Loads a cache of previous probe results
-	 * Also adds a list of active Media Sessions
+	 * Loads the music apps installed that implement the MediaBrowserService.
 	 */
-	fun discoverApps() {
+	fun loadInstalledMusicApps() {
 		val discoveredApps = HashSet<MusicAppInfo>()
 		val previousApps = HashSet<MusicAppInfo>(browseApps)
 
@@ -142,12 +139,24 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 			}
 		}
 
-		loadCache() // load previously-probed states
+		// load previously-probed states
+		loadCache()
 
 		this.browseApps.sortBy { it.name.toLowerCase() }
 
-		// load up music session info, and register for updates
+		// load the music session apps
 		addSessionApps()
+	}
+
+	/**
+	 * Discover what apps are installed on the phone that implement MediaBrowserServer
+	 * Loads a cache of previous probe results
+	 * Also adds a list of active Media Sessions
+	 */
+	fun discoverApps() {
+		loadInstalledMusicApps()
+
+		// load up music session info, and register for updates
 		musicSessions.registerCallback(Runnable { addSessionApps() })
 
 		// watch for Hidden Apps updates

@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
 import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
 import com.adamratzman.spotify.endpoints.client.ClientLibraryApi
@@ -97,6 +98,11 @@ class SpotifyWebApiTest {
 		PowerMockito.`when`(companion.createApiBuilderWithAccessToken(clientId, token)).thenReturn(apiBuilder)
 
 		doNothing().whenever(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
+
+		val handler: Handler = mock()
+		PowerMockito.whenNew(Handler::class.java).withNoArguments().thenReturn(handler)
+		val musicAppDiscovery: MusicAppDiscovery = mock()
+		PowerMockito.whenNew(MusicAppDiscovery::class.java).withArguments(context, handler).thenReturn(musicAppDiscovery)
 
 		spotifyWebApi.initializeWebApi()
 
@@ -227,6 +233,11 @@ class SpotifyWebApiTest {
 
 		doNothing().whenever(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
 
+		val handler: Handler = mock()
+		PowerMockito.whenNew(Handler::class.java).withNoArguments().thenReturn(handler)
+		val musicAppDiscovery: MusicAppDiscovery = mock()
+		PowerMockito.whenNew(MusicAppDiscovery::class.java).withArguments(context, handler).thenReturn(musicAppDiscovery)
+
 		spotifyWebApi.initializeWebApi()
 
 		verify(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
@@ -323,6 +334,11 @@ class SpotifyWebApiTest {
 		doNothing().whenever(spotifyAppController).createLikedSongsQueueMetadata()
 		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("spotifyAppControllerCaller"), spotifyAppController)
 
+		val handler: Handler = mock()
+		PowerMockito.whenNew(Handler::class.java).withNoArguments().thenReturn(handler)
+		val musicAppDiscovery: MusicAppDiscovery = mock()
+		PowerMockito.whenNew(MusicAppDiscovery::class.java).withArguments(context, handler).thenReturn(musicAppDiscovery)
+
 		spotifyWebApi.initializeWebApi()
 
 		verify(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
@@ -369,6 +385,104 @@ class SpotifyWebApiTest {
 
 		verify(notificationManager).createNotificationChannel(notificationChannel)
 		verify(notificationManager).notify(SpotifyWebApi.NOTIFICATION_REQ_ID, notification)
+	}
+
+	@Test
+	fun testInitializeWebApi_MusicAppDiscoveryNotSearchable() = runBlocking {
+		val accessToken = "validAccessToken"
+		val expirationIn: Long = 5
+		val refreshToken = "refreshToken"
+		val scopeString = "scopeString"
+		whenever(spotifyAuthStateManager.getAccessToken()).thenReturn(accessToken)
+		whenever(spotifyAuthStateManager.getAccessTokenExpirationIn()).thenReturn(expirationIn)
+		whenever(spotifyAuthStateManager.getRefreshToken()).thenReturn(refreshToken)
+		whenever(spotifyAuthStateManager.getScopeString()).thenReturn(scopeString)
+
+		val expiresAt: Long = 2
+		val token: Token = mock()
+		whenever(token.refreshToken).thenReturn(refreshToken)
+		whenever(token.accessToken).thenReturn(accessToken)
+		whenever(token.expiresAt).thenReturn(expiresAt)
+		whenever(token.scopes).thenReturn(listOf(SpotifyScope.USER_LIBRARY_READ))
+		PowerMockito.whenNew(Token::class.java).withArguments(accessToken, "Bearer", expirationIn.toInt(), refreshToken, scopeString).thenReturn(token)
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.token).thenReturn(token)
+
+		val apiBuilder: SpotifyClientApiBuilder = mock()
+		whenever(apiBuilder.options).doAnswer { mock() }
+		whenever(apiBuilder.build()).thenReturn(webApi)
+
+		PowerMockito.mockStatic(SpotifyClientApiBuilderHelper::class.java)
+		val companion = PowerMockito.mock(SpotifyClientApiBuilderHelper.Companion::class.java)
+		Whitebox.setInternalState(SpotifyClientApiBuilderHelper::class.java, "Companion", companion)
+		PowerMockito.`when`(companion.createApiBuilderWithAccessToken(clientId, token)).thenReturn(apiBuilder)
+
+		doNothing().whenever(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
+
+		val handler: Handler = mock()
+		PowerMockito.whenNew(Handler::class.java).withNoArguments().thenReturn(handler)
+		val spotifyMusicApp = MusicAppInfo("Spotify", mock(), "com.spotify.music", null)
+		spotifyMusicApp.searchable = false
+		val musicAppInfoList = listOf(spotifyMusicApp)
+		val musicAppDiscovery: MusicAppDiscovery = mock()
+		doNothing().whenever(musicAppDiscovery).loadInstalledMusicApps()
+		whenever(musicAppDiscovery.allApps).thenReturn(musicAppInfoList)
+		PowerMockito.whenNew(MusicAppDiscovery::class.java).withArguments(context, handler).thenReturn(musicAppDiscovery)
+
+		spotifyWebApi.initializeWebApi()
+
+		verify(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
+		verify(musicAppDiscovery).probeApp(spotifyMusicApp)
+	}
+
+	@Test
+	fun testInitializeWebApi_MusicAppDiscoverySearchable() = runBlocking {
+		val accessToken = "validAccessToken"
+		val expirationIn: Long = 5
+		val refreshToken = "refreshToken"
+		val scopeString = "scopeString"
+		whenever(spotifyAuthStateManager.getAccessToken()).thenReturn(accessToken)
+		whenever(spotifyAuthStateManager.getAccessTokenExpirationIn()).thenReturn(expirationIn)
+		whenever(spotifyAuthStateManager.getRefreshToken()).thenReturn(refreshToken)
+		whenever(spotifyAuthStateManager.getScopeString()).thenReturn(scopeString)
+
+		val expiresAt: Long = 2
+		val token: Token = mock()
+		whenever(token.refreshToken).thenReturn(refreshToken)
+		whenever(token.accessToken).thenReturn(accessToken)
+		whenever(token.expiresAt).thenReturn(expiresAt)
+		whenever(token.scopes).thenReturn(listOf(SpotifyScope.USER_LIBRARY_READ))
+		PowerMockito.whenNew(Token::class.java).withArguments(accessToken, "Bearer", expirationIn.toInt(), refreshToken, scopeString).thenReturn(token)
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.token).thenReturn(token)
+
+		val apiBuilder: SpotifyClientApiBuilder = mock()
+		whenever(apiBuilder.options).doAnswer { mock() }
+		whenever(apiBuilder.build()).thenReturn(webApi)
+
+		PowerMockito.mockStatic(SpotifyClientApiBuilderHelper::class.java)
+		val companion = PowerMockito.mock(SpotifyClientApiBuilderHelper.Companion::class.java)
+		Whitebox.setInternalState(SpotifyClientApiBuilderHelper::class.java, "Companion", companion)
+		PowerMockito.`when`(companion.createApiBuilderWithAccessToken(clientId, token)).thenReturn(apiBuilder)
+
+		doNothing().whenever(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
+
+		val handler: Handler = mock()
+		PowerMockito.whenNew(Handler::class.java).withNoArguments().thenReturn(handler)
+		val spotifyMusicApp = MusicAppInfo("Spotify", mock(), "com.spotify.music", null)
+		spotifyMusicApp.searchable = true
+		val musicAppInfoList = listOf(spotifyMusicApp)
+		val musicAppDiscovery: MusicAppDiscovery = mock()
+		doNothing().whenever(musicAppDiscovery).loadInstalledMusicApps()
+		whenever(musicAppDiscovery.allApps).thenReturn(musicAppInfoList)
+		PowerMockito.whenNew(MusicAppDiscovery::class.java).withArguments(context, handler).thenReturn(musicAppDiscovery)
+
+		spotifyWebApi.initializeWebApi()
+
+		verify(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
+		verify(musicAppDiscovery, never()).probeApp(spotifyMusicApp)
 	}
 
 	@Test
