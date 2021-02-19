@@ -11,13 +11,46 @@
     <string name="notification_description_bmw">Verbonden met uw BMW</string>
     <string name="notification_description_mini">Verbonden met uw Mini</string>
     <!-- notification channel names -->
+    <string name="notification_channel_assistant">Assistent Launcher</string>
+    <string name="notification_channel_connection">Status autoverbinding</string>
+    <string name="notification_channel_donation">Donatie verzoek</string>
+    <string name="notification_channel_spotify">Spotify Autorisatie</string>
+    <string name="notification_channel_test">Test bericht</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <string name="navigation_listener_bmw">BMW Navigatie</string>
+    <string name="navigation_listener_mini">MINI Navigatie</string>
     <!-- Labels on the navigation trigger activity -->
+    <string name="btn_search">Zoeken</string>
+    <string name="lbl_navigation_listener_searching">Zoek naar bestemming</string>
+    <string name="lbl_navigation_listener_parsefailure">Kan de bestemming niet vinden</string>
+    <string name="lbl_navigation_listener_pending">Navigatie starten</string>
+    <string name="lbl_navigation_listener_success">Succes</string>
+    <string name="lbl_navigation_listener_unsuccess">Mislukt</string>
     <!-- Menu Titles -->
+    <string name="menu_overview">Overzicht</string>
+    <string name="menu_setup">Installatie</string>
+    <string name="menu_connection">Verbinding</string>
+    <string name="menu_music">Muziek</string>
+    <string name="menu_notifications">Meldingen</string>
+    <string name="menu_assistants">Assistenten</string>
+    <string name="menu_maps">Kaarten</string>
+    <string name="menu_navigation">Navigatie</string>
+    <string name="menu_settings">Instellingen</string>
+    <string name="menu_support">Ondersteuning</string>
+    <string name="lbl_overviewpage">AndroidAutoIdrive integreert een aantal muziek-apps van uw telefoon en de meldingen van uw telefoon in uw auto via het aangepaste BMW Apps protocol</string>
+    <string name="lbl_connectionpage">De verbinding met de auto is afhankelijk van een aantal onderdelen, en hier zijn enkele tips om ervoor te zorgen dat het goed werkt</string>
+    <plurals name="lbl_assistantpage">
+        <item quantity="one">Spraakassistent van uw telefoon is toegevoegd als een Connected app, in het geval dat de spraakinvoer van de auto het niet activeert</item>
+        <item quantity="other">Spraakassistenten van uw telefoon worden toegevoegd als een Connected app, in het geval dat de spraakinvoer van de auto het niet activeert</item>
+    </plurals>
+    <string name="lbl_notificationpage">Uw inkomende meldingen kunnen worden bekeken en in behandeld worden vanuit de auto</string>
     <string name="spawn_test_notification">Test bericht</string>
     <string name="message_notifications">Meldingen</string>
     <string name="notification_popups">Popups</string>
     <string name="notification_popups_passenger">Popup berichten met passagier</string>
+    <string name="notification_sound">Meldingsgeluid</string>
+    <string name="notification_readout">Spreek wanneer je meldingen bekijkt</string>
+    <string name="notification_readout_popup">Nieuwe meldingen uitspreken</string>
     <string name="lbl_popupVersion">Popups werken enkel met IDrive4</string>
     <string name="lbl_smsPermission">Geef de SMS toegang om afbeeldingen weer te geven van inkomende SMS berichten in de auto. De tekst blijft altijd zichtbaar.</string>
     <string name="enable_google_maps">Google Maps inschakelen</string>
