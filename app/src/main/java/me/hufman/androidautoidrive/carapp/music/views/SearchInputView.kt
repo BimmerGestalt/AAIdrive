@@ -123,7 +123,7 @@ class SearchInputView(val state: RHMIState,
 			override fun onOk() {
 				if(!isSpotify && deferredSearchResults.isCompleted && deferredSearchResults.getCompleted()?.isEmpty() == true) {
 					browseController.playFromSearch(inputComponent.getResultAction()?.asHMIAction(), this.input)
-				} else {
+				} else if (!deferredSearchResults.isCompleted || deferredSearchResults.getCompleted()?.isNotEmpty() == true) {
 					browseController.showSearchResults(deferredSearchResults, inputComponent.getResultAction()?.asHMIAction())
 				}
 			}
