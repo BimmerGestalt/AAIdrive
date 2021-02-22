@@ -188,6 +188,7 @@
     <string name="txt_spotify_api_authorization_canceled">Spotify Web API Autorisierung abgebrochen.</string>
     <string name="txt_spotify_api_authorization_failed">Spotify Web API Autorisierung fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
     <string name="lbl_spotify_api_authorized">Spotify Web API autorisiert</string>
+    <string name="lbl_spotify_api_authorized_user_friendly">Suchmöglichkeit für Spotify</string>
     <string name="btn_authorize">Autorisieren</string>
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Benachrichtigungen</string>
@@ -217,8 +218,12 @@
     <string name="MUSIC_BROWSE_ACTION_FILTER">Filter</string>
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Suche</string>
     <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Wiedergabe aus Suche</string>
+    <string name="MUSIC_SEARCH_RESULTS_LABEL">Suchergebnisse</string>
+    <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Alle Ergebnisse anzeigen</string>
+    <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">Aktuelle Wiedergabe</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;Leere Warteschlange&gt;</string>
+    <string name="MUSIC_SEARCH_EMPTY">&lt;Keine Ergebnisse gefunden&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Zurück</string>
     <string name="MUSIC_SKIP_NEXT">Nächster</string>
     <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Zufallswiedergabe nicht verfügbar</string>
