@@ -188,6 +188,7 @@
     <string name="txt_spotify_api_authorization_canceled">Spotify Web API autorisatie geannuleerd.</string>
     <string name="txt_spotify_api_authorization_failed">Spotify Web API autorisatie mislukt. Probeer het opnieuw.</string>
     <string name="lbl_spotify_api_authorized">Spotify Web API geautoriseerd</string>
+    <string name="lbl_spotify_api_authorized_user_friendly">Mogelijkheid om te zoeken op Spotify</string>
     <string name="btn_authorize">Toestaan</string>
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Meldingen</string>
@@ -217,8 +218,12 @@
     <string name="MUSIC_BROWSE_ACTION_FILTER">Filteren</string>
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Zoeken</string>
     <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Afspelen van zoekactie</string>
+    <string name="MUSIC_SEARCH_RESULTS_LABEL">Zoekresultaten</string>
+    <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Bekijk alle resultaten</string>
+    <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">Speelt nu</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;Wachtrij leeg&gt;</string>
+    <string name="MUSIC_SEARCH_EMPTY">&lt;Geen resultaten&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Vorige</string>
     <string name="MUSIC_SKIP_NEXT">Volgende</string>
     <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Shuffle niet beschikbaar</string>
