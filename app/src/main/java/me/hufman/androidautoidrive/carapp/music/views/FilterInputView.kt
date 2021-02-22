@@ -27,10 +27,10 @@ class FilterInputView(val state: RHMIState,
 		// make sure the deferred contents are loaded
 		if (browsePageModel.contents.isCompleted) {
 			@Suppress("EXPERIMENTAL_API_USAGE")
-			musicList = browsePageModel.contents.getCompleted()
+			musicList = browsePageModel.contents.getCompleted() ?: emptyList()
 		} else {
 			loadingJob = launch(Dispatchers.IO) {
-				musicList = browsePageModel.contents.await()
+				musicList = browsePageModel.contents.await() ?: emptyList()
 				// update suggestions, if any input exists
 				inputState?.input?.also {
 					inputState?.onEntry(it)

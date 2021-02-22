@@ -12,10 +12,7 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.androidautoidrive.phoneui.fragments.MusicBrowseFragment
-import me.hufman.androidautoidrive.phoneui.fragments.MusicBrowsePageFragment
-import me.hufman.androidautoidrive.phoneui.fragments.MusicNowPlayingFragment
-import me.hufman.androidautoidrive.phoneui.fragments.MusicQueueFragment
+import me.hufman.androidautoidrive.phoneui.fragments.*
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 
@@ -67,6 +64,10 @@ class MusicPlayerActivity: AppCompatActivity() {
 		pgrMusicPlayer.currentItem = 0
 	}
 
+	fun showBrowse() {
+		pgrMusicPlayer.currentItem = 1
+	}
+
 	override fun onBackPressed() {
 		if (pgrMusicPlayer.currentItem == 0) {
 			// pass through default behavior, to close the Activity
@@ -83,6 +84,10 @@ class MusicPlayerActivity: AppCompatActivity() {
 			// go back to the main playback page
 			pgrMusicPlayer.currentItem = 0
 		}
+		if (pgrMusicPlayer.currentItem == 3) {
+			// go back to the main playback page
+			pgrMusicPlayer.currentItem = 0
+		}
 	}
 }
 
@@ -91,6 +96,7 @@ class MusicPlayerPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm
 		this["Now Playing"] = MusicNowPlayingFragment()
 		this["Browse"] = MusicBrowseFragment.newInstance(MusicBrowsePageFragment.newInstance(null))
 		this["Queue"] = MusicQueueFragment()
+		this["Search"] = MusicSearchFragment()
 	}
 
 	override fun getCount(): Int {

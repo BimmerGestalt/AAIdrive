@@ -211,6 +211,7 @@
     <string name="txt_spotify_api_authorization_canceled">Spotify Web API authorization canceled.</string>
     <string name="txt_spotify_api_authorization_failed">Spotify Web API authorization failed. Please try again.</string>
     <string name="lbl_spotify_api_authorized">Spotify Web API Authorized</string>
+    <string name="lbl_spotify_api_authorized_user_friendly">Ability to search Spotify</string>
     <string name="btn_authorize">Authorize</string>
 
     <!-- car app strings -->
@@ -243,8 +244,12 @@
     <string name="MUSIC_BROWSE_ACTION_FILTER">Filter</string>
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Search</string>
     <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Play From Search</string>
+    <string name="MUSIC_SEARCH_RESULTS_LABEL">Search Results</string>
+    <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">View Full Results</string>
+    <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">Now Playing</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;Empty Queue&gt;</string>
+    <string name="MUSIC_SEARCH_EMPTY">&lt;No Results Found&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Back</string>
     <string name="MUSIC_SKIP_NEXT">Next</string>
     <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Shuffle Unavailable</string>

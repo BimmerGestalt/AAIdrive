@@ -59,7 +59,7 @@ class MusicQueueFragment: Fragment() {
 
 		listQueue.setHasFixedSize(true)
 		listQueue.layoutManager = LinearLayoutManager(this.context)
-		listQueue.adapter = QueueAdapter(this.context!!, contents) { mediaEntry ->
+		listQueue.adapter = QueueAdapter(this.requireContext(), contents) { mediaEntry ->
 			if (mediaEntry != null) {
 				musicController.playQueue(mediaEntry)
 				(activity as MusicPlayerActivity).showNowPlaying()
