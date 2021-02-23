@@ -16,7 +16,7 @@
             android:text="@string/lbl_connectionpage" />
 
         <View style="@style/Divider"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
         <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"
@@ -25,7 +25,7 @@
             android:name="me.hufman.androidautoidrive.phoneui.fragments.DependencyInfoFragment"/>
 
         <View style="@style/Divider"
-            android:layout_marginBottom="15dp"/>
+            android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
         <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"
@@ -34,7 +34,7 @@
             android:name="me.hufman.androidautoidrive.phoneui.fragments.ConnectionStatusFragment"/>
 
         <View style="@style/Divider"
-            android:layout_marginBottom="15dp"/>
+            android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
         <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"

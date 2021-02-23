@@ -14,17 +14,17 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:text="@string/lbl_notificationpage" />
 
         <View style="@style/Divider"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/swMessageNotifications"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="@dimen/settings_vertical_margin"
             android:text="@string/message_notifications"
             android:checked="true" />
 
@@ -39,7 +39,7 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="@dimen/settings_vertical_margin"
             android:text="@string/spawn_test_notification" />
 
     </LinearLayout>

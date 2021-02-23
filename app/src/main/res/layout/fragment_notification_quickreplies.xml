@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:textColor="?android:attr/textColorPrimary"
             android:text="@string/notification_quickreplies"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="@dimen/settings_vertical_margin" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/listNotificationQuickReplies"

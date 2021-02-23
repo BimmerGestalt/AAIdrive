@@ -14,18 +14,17 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:text="@string/lbl_mapspage" />
 
         <View style="@style/Divider"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/swMapsEnabled"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:text="@string/enable_google_maps" />
 
         <androidx.fragment.app.FragmentContainerView

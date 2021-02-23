@@ -23,11 +23,11 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:text="@string/lbl_navigationpage_address" />
 
         <View style="@style/Divider"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
         <LinearLayout
             android:orientation="vertical"
@@ -37,7 +37,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
                 android:visibility="@{viewModel.isNaviNotSupported()}"
                 android:text="@string/txt_capabilities_navi_no" />
 
@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <FrameLayout
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -55,6 +55,7 @@
                         android:id="@+id/txtNavigationAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingEnd="24dp"
                         android:inputType="text"
                         android:imeOptions="actionSearch"
                         android:enabled="@{viewModel.isConnected()}"
@@ -85,14 +86,14 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
                 android:text="@{viewModel.searchStatus}" />
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:text="@string/connectionStatusWaiting"
             android:visibility="@{!viewModel.isConnected()}"/>
 
@@ -104,13 +105,13 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
                 android:text="@{viewModel.navigationStatus}" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
                 android:visibility="@{viewModel.isNavigating()}"
                 android:text="@{viewModel.destination}" />
         </LinearLayout>
@@ -120,12 +121,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <View style="@style/Divider"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
                 android:text="@string/lbl_navigationpage_intent" />
         </LinearLayout>
     </LinearLayout>

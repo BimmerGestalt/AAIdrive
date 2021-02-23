@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/enable_audio_context"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="@dimen/settings_vertical_margin" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/swSpotifyLayout"
@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/enable_spotify_layout"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="@dimen/settings_vertical_margin" />
 
     </LinearLayout>
 </layout>
