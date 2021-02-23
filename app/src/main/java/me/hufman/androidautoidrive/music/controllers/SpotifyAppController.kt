@@ -58,7 +58,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		}
 	}
 
-	class Connector(val context: Context, val prompt: Boolean = true): MusicAppController.Connector {
+	class Connector(val context: Context, val prompt: Boolean = true, val isProbing: Boolean = false): MusicAppController.Connector {
 		var lastError: Throwable? = null
 
 		fun hasSupport(): Boolean {
@@ -115,17 +115,19 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 						appSettings[AppSettings.KEYS.SPOTIFY_CONTROL_SUCCESS] = "true"
 
 						val spotifyWebApi = SpotifyWebApi.getInstance(context, appSettings)
-						spotifyWebApi.initializeWebApi()
+						spotifyWebApi.initializeWebApi(isProbing)
 						spotifyWebApi.isUsingSpotify = true
 
 						pendingController.value = SpotifyAppController(context, remote, spotifyWebApi)
 
 						// if app discovery says we aren't able to connect, discover again
-						val musicAppDiscovery = MusicAppDiscovery(context, Handler())
-						musicAppDiscovery.loadInstalledMusicApps()
-						val spotifyAppInfo = musicAppDiscovery.allApps.firstOrNull { it.packageName == "com.spotify.music" }
-						if (spotifyAppInfo?.connectable == false) {
-							musicAppDiscovery.probeApp(spotifyAppInfo)
+						if (!isProbing) {
+							val musicAppDiscovery = MusicAppDiscovery(context, Handler())
+							musicAppDiscovery.loadInstalledMusicApps()
+							val spotifyAppInfo = musicAppDiscovery.allApps.firstOrNull { it.packageName == "com.spotify.music" }
+							if (spotifyAppInfo?.connectable == false) {
+								musicAppDiscovery.probeApp(spotifyAppInfo)
+							}
 						}
 					} else {
 						Log.e(TAG, "Connected to a null Spotify Remote?")

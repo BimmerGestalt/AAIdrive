@@ -177,7 +177,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	/**
 	 * Initializes the [SpotifyClientApi] instance and updates the [AuthState] with the token used.
 	 */
-	fun initializeWebApi() {
+	fun initializeWebApi(isProbing: Boolean = false) {
 		webApi = createWebApiClient()
 		if (webApi != null) {
 			authStateManager.updateTokenResponseWithToken(webApi!!.token, clientId)
@@ -185,7 +185,9 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				getLikedSongsAttempted = false
 				spotifyAppControllerCaller?.createLikedSongsQueueMetadata()
 			}
-			updateSpotifyAppInfoAsSearchable()
+			if (!isProbing) {
+				updateSpotifyAppInfoAsSearchable()
+			}
 		}
 	}
 

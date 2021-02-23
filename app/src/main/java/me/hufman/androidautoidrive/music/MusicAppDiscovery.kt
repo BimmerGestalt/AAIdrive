@@ -56,7 +56,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 	val musicSessions = MusicSessions(context)
 
 	val connectors = listOf(
-			SpotifyAppController.Connector(context),
+			SpotifyAppController.Connector(context, isProbing = true),
 			MusicBrowser.Connector(context, handler)
 	)
 
