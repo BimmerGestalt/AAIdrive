@@ -52,6 +52,7 @@ class MusicPlayerActivity: AppCompatActivity() {
 
 	fun discoverApp(musicAppInfo: MusicAppInfo) {
 		val musicAppDiscovery = MusicAppDiscovery(this, Handler())
+		musicAppDiscovery.loadInstalledMusicApps()
 		musicAppDiscovery.probeApp(musicAppInfo)
 	}
 
