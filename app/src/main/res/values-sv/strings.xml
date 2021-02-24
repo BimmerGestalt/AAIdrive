@@ -188,6 +188,7 @@
     <string name="txt_spotify_api_authorization_canceled">Spotify Web API auktorisering avbruten.</string>
     <string name="txt_spotify_api_authorization_failed">Spotify Web API auktorisering misslyckades. Försök igen.</string>
     <string name="lbl_spotify_api_authorized">Spotify Web API Auktoriserad</string>
+    <string name="lbl_spotify_api_authorized_user_friendly">Möjlighet att söka på Spotify</string>
     <string name="btn_authorize">Auktorisera</string>
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Aviseringar</string>
@@ -217,8 +218,12 @@
     <string name="MUSIC_BROWSE_ACTION_FILTER">Filter</string>
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Sök</string>
     <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Spela från sökning</string>
+    <string name="MUSIC_SEARCH_RESULTS_LABEL">Sökresultat</string>
+    <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Visa alla resultat</string>
+    <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">Nu spelas</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;Spellistan tom&gt;</string>
+    <string name="MUSIC_SEARCH_EMPTY">&lt;Inga sökträffar&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Backa</string>
     <string name="MUSIC_SKIP_NEXT">Nästa</string>
     <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Shuffle ej tillgänglig</string>
