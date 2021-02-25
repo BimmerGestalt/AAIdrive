@@ -188,6 +188,7 @@
     <string name="txt_spotify_api_authorization_canceled">Autorizzazione API Web Spotify annullata.</string>
     <string name="txt_spotify_api_authorization_failed">Autorizzazione delle API Web Spotify non riuscita. Riprova.</string>
     <string name="lbl_spotify_api_authorized">API Web Di Spotify Autorizzata</string>
+    <string name="lbl_spotify_api_authorized_user_friendly">Possibilità di cercare in Spotify</string>
     <string name="btn_authorize">Autorizza</string>
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notifiche</string>
@@ -217,8 +218,12 @@
     <string name="MUSIC_BROWSE_ACTION_FILTER">Filtra</string>
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Cerca</string>
     <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Fai play dalla ricerca</string>
+    <string name="MUSIC_SEARCH_RESULTS_LABEL">Risultati di ricerca</string>
+    <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Visualizza risultati completi</string>
+    <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">In ascolto</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;La coda è vuota&gt;</string>
+    <string name="MUSIC_SEARCH_EMPTY">&lt;Nessun risultato trovato&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Precedente</string>
     <string name="MUSIC_SKIP_NEXT">Successivo</string>
     <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Esecuzione casuale non disponibile</string>
