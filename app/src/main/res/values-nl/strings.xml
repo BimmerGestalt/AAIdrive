@@ -67,7 +67,7 @@
     <string name="lbl_map_traffic">Toon verkeer</string>
     <string name="lbl_gmap_buildings">3D-gebouwen inschakelen</string>
     <string name="gmapStyleLabel">Map stijl</string>
-    <string name="lbl_musicpage">De muziekapps van uw telefoon zijn selecteerbaar als mediabronnen in de auto</string>
+    <string name="lbl_musicpage">De muziek-apps van uw telefoon zijn selecteerbaar als mediabronnen in de auto</string>
     <string name="lbl_music_apps">Muziek apps</string>
     <string name="musicAppIcon">App icoon</string>
     <string name="musicAppNowPlaying">Speelt nu</string>
@@ -79,7 +79,7 @@
     <string name="musicAppHidden">Niet zichtbaar</string>
     <string name="enable_audio_context">Audio focus gevraagd</string>
     <string name="enable_spotify_layout">Altijd als Spotify app verschijnen in IDrive5+</string>
-    <string name="lbl_grant_sessions">Controlle over muziek app</string>
+    <string name="lbl_grant_sessions">Controle over muziek-app</string>
     <string name="lbl_grant_spotify_control">Mogelijkheid om door uw Spotify bibliotheek te bladeren</string>
     <string name="lbl_grant_background_music">Op de achtergrond uitvoeren van de muziek-apps toestaan, als de auto problemen heeft met het starten ervan</string>
     <string name="lbl_grant">Verlenen</string>
@@ -188,6 +188,7 @@
     <string name="txt_spotify_api_authorization_canceled">Spotify Web API autorisatie geannuleerd.</string>
     <string name="txt_spotify_api_authorization_failed">Spotify Web API autorisatie mislukt. Probeer het opnieuw.</string>
     <string name="lbl_spotify_api_authorized">Spotify Web API geautoriseerd</string>
+    <string name="lbl_spotify_api_authorized_user_friendly">Mogelijkheid om te zoeken op Spotify</string>
     <string name="btn_authorize">Toestaan</string>
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Meldingen</string>
@@ -217,8 +218,12 @@
     <string name="MUSIC_BROWSE_ACTION_FILTER">Filteren</string>
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Zoeken</string>
     <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Afspelen van zoekactie</string>
+    <string name="MUSIC_SEARCH_RESULTS_LABEL">Zoekresultaten</string>
+    <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Bekijk alle resultaten</string>
+    <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">Speelt nu</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;Wachtrij leeg&gt;</string>
+    <string name="MUSIC_SEARCH_EMPTY">&lt;Geen resultaten&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Vorige</string>
     <string name="MUSIC_SKIP_NEXT">Volgende</string>
     <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Shuffle niet beschikbaar</string>
