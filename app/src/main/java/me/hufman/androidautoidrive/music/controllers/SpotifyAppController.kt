@@ -518,8 +518,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			}
 		} else {
 			loadPaginatedItems(directory.toListItem(), { !deferred.isCancelled }) {
-				val items = removeShufflePlayButtonMetadata(it)
-				deferred.complete(items)
+				deferred.complete(it)
 			}
 		}
 		return deferred.await()

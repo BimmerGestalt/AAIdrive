@@ -148,7 +148,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 		val previouslySelected = stack.getOrNull(index+1)?.location
 		val jumpable = false        // pushed pages are never browsable, we update the top page later
 		val searchable = directory == null && ((musicController.currentAppInfo?.searchable ?: false) || musicController.isSupportedAction(MusicAction.PLAY_FROM_SEARCH))
-		val browseModel = BrowsePageModel(title, contents, previouslySelected, jumpable, searchable, false)
+		val browseModel = BrowsePageModel(title, contents, previouslySelected, jumpable, searchable, true, false)
 		val browsePage = BrowsePageView(state, musicImageIDs, browseModel, pageController, graphicsHelpers)
 		browsePage.initWidgets(inputState)
 		stackSlot.pageModel = browseModel
@@ -162,7 +162,7 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 
 		stack.subList(index, stack.size).clear()
 		val stackSlot = BrowseState(null, mutableListOf()).apply { stack.add(this) }
-		val browseModel = BrowsePageModel(L.MUSIC_SEARCH_RESULTS_LABEL, deferredSearchResults, null, false, true, true)
+		val browseModel = BrowsePageModel(L.MUSIC_SEARCH_RESULTS_LABEL, deferredSearchResults, null, false, false, false, true)
 		val browsePage = BrowsePageView(state, musicImageIDs, browseModel, pageController, graphicsHelpers)
 		browsePage.initWidgets(inputState)
 		stackSlot.pageModel = browseModel
@@ -219,7 +219,8 @@ class BrowseView(val states: List<RHMIState>, val musicController: MusicControll
 
 data class BrowsePageModel(var title: String, var contents: Deferred<List<MusicMetadata>?>,
                            var previouslySelected: MusicMetadata?,
-                           var showJumpbackAction: Boolean, var showSearchAction: Boolean, var isSearchResultView: Boolean) {
+                           var showJumpbackAction: Boolean, var showSearchAction: Boolean, var showFilterAction: Boolean,
+                           var isSearchResultView: Boolean) {
 	companion object {
 		fun getTitle(appInfo: MusicAppInfo?, locations: List<MusicMetadata?>): String {
 			return when (locations.size) {

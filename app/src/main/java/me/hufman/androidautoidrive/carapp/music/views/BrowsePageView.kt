@@ -243,7 +243,7 @@ class BrowsePageView(val state: RHMIState,
 			if (browsePageModel.showJumpbackAction) {
 				actions.add(BrowseAction.JUMPBACK)
 			}
-			if (currentListModel != emptyList) {
+			if (browsePageModel.showFilterAction && currentListModel != emptyList) {
 				// show Filter entry while loading, until we know the list is empty
 				actions.add(BrowseAction.FILTER)
 			}
