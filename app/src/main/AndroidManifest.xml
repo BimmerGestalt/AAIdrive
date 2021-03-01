@@ -40,6 +40,9 @@
         </activity>
 
         <activity
+            android:name=".phoneui.WelcomeActivity" >
+        </activity>
+        <activity
             android:name=".phoneui.NavIntentActivity"
             >
         </activity>

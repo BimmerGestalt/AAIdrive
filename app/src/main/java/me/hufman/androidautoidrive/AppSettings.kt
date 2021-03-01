@@ -18,6 +18,7 @@ import java.lang.IllegalStateException
  */
 interface AppSettings {
 	enum class KEYS(val key: String, val default: String, val comment: String) {
+		FIRST_START_DONE("First_Start_Done", "false", "Whether the initial setup wizard finished"),
 		ENABLED_NOTIFICATIONS("Enabled_Notifications", "false", "Show phone notifications in the car"),
 		ENABLED_NOTIFICATIONS_POPUP("Enabled_Notifications_Popup", "true", "Show notification popups in the car"),
 		ENABLED_NOTIFICATIONS_POPUP_PASSENGER("Enabled_Notifications_Popup_Passenger", "false", "Show notification popups in the car when a passenger is seated"),
