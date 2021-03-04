@@ -139,8 +139,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			return emptyList()
 		}
 		try {
-			//TODO: figure out market, some relation to token??
-			val topSongs = webApi?.artists?.getArtistTopTracks(artistUri, Market.US)
+			val topSongs = webApi?.artists?.getArtistTopTracks(artistUri)
 			return topSongs?.map {
 				createSpotifyMusicMetadataFromTrack(it, spotifyAppController)
 			}
