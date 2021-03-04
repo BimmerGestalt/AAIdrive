@@ -6,6 +6,7 @@
     <string name="permdesc_accessNotifications">通知アクセス</string>
     <string name="permdesc_bindNotificationListenerService">通知へのアクセス</string>
     <string name="notification_title">IDRive用のAndroid Auto</string>
+    <string name="notification_description">%@ に接続完了</string>
     <!-- notification channel names -->
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <!-- Labels on the navigation trigger activity -->
