@@ -299,7 +299,6 @@ class MainService: Service() {
 
 	fun stopNotifications() {
 		notificationService?.stop()
-		notificationService = null
 	}
 
 	fun startMaps(): Boolean {
@@ -312,20 +311,18 @@ class MainService: Service() {
 
 	fun stopMaps() {
 		mapService?.stop()
-		mapService = null
 	}
 
 	fun startMusic(): Boolean {
 		if (carInformationObserver.capabilities.isNotEmpty() && musicService == null) {
 			musicService = MusicService(applicationContext, iDriveConnectionReceiver, securityAccess,
 					MusicAppMode.build(carInformationObserver.capabilities, applicationContext))
-			musicService?.start()
 		}
+		musicService?.start()
 		return true
 	}
 	fun stopMusic() {
 		musicService?.stop()
-		musicService = null
 	}
 
 	fun startAssistant(): Boolean {

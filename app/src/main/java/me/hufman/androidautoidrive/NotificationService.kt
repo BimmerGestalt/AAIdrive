@@ -19,11 +19,13 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 	var threadNotifications: CarThread? = null
 	var carappNotifications: PhoneNotifications? = null
 	var carappReadout: ReadoutApp? = null
+	var running = false
 
 	fun start(): Boolean {
 		if (AppSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()) {
+			running = true
 			synchronized(this) {
-				if (carInformationObserver.capabilities.isNotEmpty() && threadNotifications == null) {
+				if (carInformationObserver.capabilities.isNotEmpty() && threadNotifications?.isAlive != true) {
 					threadNotifications = CarThread("Notifications") {
 						Log.i(MainService.TAG, "Starting notifications app")
 						val handler = threadNotifications?.handler
@@ -47,12 +49,14 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 						context.sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
 
 						handler?.post {
-							// start up the readout app
-							// using a handler to automatically handle shutting down during init
-							val carappReadout = ReadoutApp(iDriveConnectionStatus, securityAccess,
-									CarAppAssetManager(context, "news"))
-							carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
-							this.carappReadout = carappReadout
+							if (running) {
+								// start up the readout app
+								// using a handler to automatically handle shutting down during init
+								val carappReadout = ReadoutApp(iDriveConnectionStatus, securityAccess,
+										CarAppAssetManager(context, "news"))
+								carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
+								this.carappReadout = carappReadout
+							}
 						}
 					}
 					threadNotifications?.start()
@@ -69,22 +73,23 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 	}
 
 	fun stop() {
-		carappNotifications?.notificationSettings?.btStatus?.unregister()
-		carappNotifications?.onDestroy(context)
-		carappReadout?.onDestroy()
-		// if we caught it during initialization, kill it again
-		val thread = threadNotifications
-		if (thread?.isAlive == true) {
-			thread.post {
-				stop()
+		running = false
+		// post it to the thread to run after initialization finishes
+		threadNotifications?.post {
+			if (!running) { // check that we do actually intend to shut down
+				carappNotifications?.notificationSettings?.btStatus?.unregister()
+				carappNotifications?.onDestroy(context)
 				carappNotifications = null
+				carappReadout?.onDestroy()
 				carappReadout = null
+				threadNotifications?.quit()
+				threadNotifications = null
+
+				// if we started up again during shutdown
+				if (running) {
+					start()
+				}
 			}
-		} else {
-			carappNotifications = null
-			carappReadout = null
 		}
-		threadNotifications?.quitSafely()
-		threadNotifications = null
 	}
 }
