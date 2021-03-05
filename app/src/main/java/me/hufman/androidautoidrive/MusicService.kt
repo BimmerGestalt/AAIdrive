@@ -22,6 +22,7 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 	var threadMusic: CarThread? = null
 	var carappMusic: MusicApp? = null
 	var navigationTriggerReceiver: NavigationTriggerReceiver? = null
+	var running = false
 
 	// watch for bluetooth audio connection changes
 	private val btConnectionCallback = BtStatus(context) {
@@ -36,7 +37,7 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 	}
 
 	fun start(): Boolean {
-
+		running = true
 		synchronized(this) {
 			if (threadMusic?.isAlive != true) {
 				threadMusic = CarThread("Music") {
@@ -110,16 +111,24 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 	}
 
 	fun stop() {
-		btConnectionCallback.unregister()
-
+		running = false
+		// post it to the thread to run after initialization finishes
 		threadMusic?.post {
-			navigationTriggerReceiver?.unregister(context)
-			carappMusic?.musicController?.disconnectApp(pause=false)
-			carappMusic?.musicAppDiscovery?.cancelDiscovery()
-			carappMusic = null
+			if (!running) { // check that we do actually intend to shut down
+				btConnectionCallback.unregister()
+				navigationTriggerReceiver?.unregister(context)
+				carappMusic?.musicController?.disconnectApp(pause = false)
+				carappMusic?.musicAppDiscovery?.cancelDiscovery()
+				carappMusic = null
+				threadMusic?.quit()
+				threadMusic = null
+
+				// if we started up again during shutdown
+				if (running) {
+					start()
+				}
+			}
 		}
-		threadMusic?.quitSafely()
-		threadMusic = null
 	}
 
 
