@@ -44,7 +44,7 @@ class PopupView(val state: RHMIState, val phoneAppResources: PhoneAppResources) 
 			val appname = phoneAppResources.getAppName(sbn.packageName)
 			titleLabel.value = appname
 			bodyLabel1.value = sbn.title
-			bodyLabel2.value = sbn.text.trim().split(Regex("\n")).lastOrNull() ?: ""
+			bodyLabel2.value = sbn.lastLine
 			popEvent?.triggerEvent(mapOf(0 to true))
 		} catch (e: Exception) {
 			Log.e(TAG, "Error while triggering notification popup: $e")

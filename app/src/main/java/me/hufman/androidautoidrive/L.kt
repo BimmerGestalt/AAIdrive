@@ -19,6 +19,7 @@ object L {
 	var NOTIFICATION_READOUT_POPUP = "Speak new notifications"
 	var NOTIFICATION_READOUT_POPUP_PASSENGER = "... with a passenger"
 	var NOTIFICATION_PERMISSION_NEEDED = "This app needs to be granted Notification Access"
+	var NOTIFICATION_CENTER_APP = "This app is used to push to the car's Notification Center"
 	var READOUT_DESCRIPTION = "This app is used for readout purposes"
 
 	var MAP_ACTION_VIEWMAP = "View Full Map"

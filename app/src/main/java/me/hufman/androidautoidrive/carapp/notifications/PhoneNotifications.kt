@@ -36,7 +36,8 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	val notificationListener = PhoneNotificationListener(this)
 	val notificationReceiver = NotificationUpdaterControllerIntent.Receiver(notificationListener)
 	var notificationBroadcastReceiver: BroadcastReceiver? = null
-	var readoutInteractions: ReadoutInteractions
+	val statusbarController: StatusbarControllerWrapper
+	val readoutInteractions: ReadoutInteractions
 	val carappListener: CarAppListener
 	var rhmiHandle: Int = -1
 	val carConnection: BMWRemotingServer
@@ -73,11 +74,15 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			carappListener.app = carApp
 			carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
+			val notificationIconEvent = carApp.events.values.filterIsInstance<RHMIEvent.NotificationIconEvent>().first()
+			val id4StatusbarController = ID4StatusbarController(notificationIconEvent, 157)
+			statusbarController = StatusbarControllerWrapper(id4StatusbarController)
+
 			val unclaimedStates = LinkedList(carApp.states.values)
 
 			// figure out which views to use
 			viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
-			viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, graphicsHelpers, notificationSettings, readoutInteractions)
+			viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, graphicsHelpers, notificationSettings, statusbarController, readoutInteractions)
 			viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings, controller, readoutInteractions)
 			viewPermission = PermissionView(unclaimedStates.removeFirst { PermissionView.fits(it) })
 
@@ -331,6 +336,9 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			if (currentNotifications.find { it.key == readoutInteractions.currentNotification?.key } == null) {
 				readoutInteractions.cancel()
 			}
+
+			// remove any removed notifications from the statusbar controller
+			statusbarController.retainAll(currentNotifications)
 		}
 	}
 }
