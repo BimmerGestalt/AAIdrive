@@ -690,7 +690,7 @@ class NotificationAppTest {
 
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++", "tts" to "true"), mock(), appSettings)
-			val id4Menu = NotificationListView(state, graphicsHelpers, settings, mock())
+			val id4Menu = NotificationListView(state, graphicsHelpers, settings, mock(), mock())
 			id4Menu.initWidgets(mock(), mock())
 			id4Menu.redrawNotificationList()
 			id4Menu.redrawSettingsList()
@@ -706,7 +706,7 @@ class NotificationAppTest {
 		rhmiApp.modelData.clear()
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5", "tts" to "true"), mock(), appSettings)
-			val id5Menu = NotificationListView(state, graphicsHelpers, settings, mock())
+			val id5Menu = NotificationListView(state, graphicsHelpers, settings, mock(), mock())
 			id5Menu.initWidgets(mock(), mock())
 			id5Menu.redrawNotificationList()
 			id5Menu.redrawSettingsList()
@@ -721,7 +721,7 @@ class NotificationAppTest {
 		rhmiApp.modelData.clear()
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5", "tts" to "false"), mock(), appSettings)
-			val id5Menu = NotificationListView(state, graphicsHelpers, settings, mock())
+			val id5Menu = NotificationListView(state, graphicsHelpers, settings, mock(), mock())
 			id5Menu.initWidgets(mock(), mock())
 			id5Menu.redrawNotificationList()
 			id5Menu.redrawSettingsList()

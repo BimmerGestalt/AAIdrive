@@ -6,16 +6,15 @@ import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
-import me.hufman.androidautoidrive.notifications.CarNotification
-import me.hufman.androidautoidrive.carapp.notifications.NotificationSettings
-import me.hufman.androidautoidrive.carapp.notifications.ReadoutInteractions
-import me.hufman.androidautoidrive.notifications.NotificationsState
+import me.hufman.androidautoidrive.carapp.notifications.*
 import me.hufman.androidautoidrive.carapp.notifications.TAG
+import me.hufman.androidautoidrive.notifications.CarNotification
+import me.hufman.androidautoidrive.notifications.NotificationsState
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*
 
-class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHelpers, val settings: NotificationSettings, val readoutInteractions: ReadoutInteractions) {
+class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHelpers, val settings: NotificationSettings, val statusbarController: StatusbarController, val readoutInteractions: ReadoutInteractions) {
 	companion object {
 		const val INTERACTION_DEBOUNCE_MS = 2000              // how long to wait after lastInteractionTime to update the list
 		const val SKIPTHROUGH_THRESHOLD = 2000                // how long after an entrybutton push to allow skipping through to a current notification
@@ -31,7 +30,6 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 
 	val notificationListView: RHMIComponent.List    // the list component of notifications
 	val settingsListView: RHMIComponent.List    // the list component of notifications
-	val notificationIconEvent: RHMIEvent.NotificationIconEvent    // to trigger the status bar icon
 
 	var visible = false                 // whether the notification list is showing
 	var firstView = true                // whether this is the first time this view is shown
@@ -80,7 +78,6 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 	init {
 		notificationListView = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 		settingsListView = state.componentsList.filterIsInstance<RHMIComponent.List>().last()
-		notificationIconEvent = state.app.events.values.filterIsInstance<RHMIEvent.NotificationIconEvent>().first()
 	}
 
 	fun initWidgets(detailsView: DetailsView, permissionView: PermissionView) {
@@ -183,8 +180,6 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 				throw RHMIActionAbort()
 			}
 		}
-
-		notificationIconEvent.getImageIdModel()?.asImageIdModel()?.imageId = 157
 	}
 
 	fun onCreate(handler: Handler) {
@@ -239,25 +234,13 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 	fun showNotification(sbn: CarNotification) {
 		mostInterestingNotification = sbn
 		notificationArrivalTimestamp = System.currentTimeMillis()
-		showStatusBarIcon()
-	}
-
-	fun showStatusBarIcon() {
 		// a new message arrived but the window is not visible, show the icon
 		if (!visible) {
-			try {
-				notificationIconEvent.triggerEvent(mapOf(0 to true))
-			} catch (e: BMWRemoting.ServiceException) {
-				// error showing icon
-			}
-		}
-	}
-	fun hideStatusBarIcon() {
-		try {
-			notificationIconEvent.triggerEvent(mapOf(0 to false))
-		} catch (e: BMWRemoting.ServiceException) {
-			// error hiding icon
+			statusbarController.add(sbn)
 		}
 	}
 
+	fun hideStatusBarIcon() {
+		statusbarController.clear()
+	}
 }

@@ -150,6 +150,11 @@ def RHMISources = [
                 "basecore/rhmi/common/images.zip": "basecoreOnlineServices/rhmi/common/images.zip",
                 "basecore/rhmi/common/texts.zip": "basecoreOnlineServices/rhmi/common/texts.zip",
 
+                // bmwone (id5+ notifications)
+                "bmwone/bmwone.p7b": "bmwone/rhmi/bmw/bmwone.p7b",
+                "bmwone/rhmi/ui_description_ID5.xml": "bmwone/rhmi/ui_description.xml",
+                "bmwone/rhmi/common/images.zip": "bmwone/rhmi/common/images.zip",
+
                 // Smartthings UI layout
                 // SmartThings <= v2.3.1 uses OnlineServices v2, >= v2.3.6 uses v3
                 "basecore/rhmi/onlineservices/id5/v2/ui_description.xml": "smartthings/rhmi/ui_description.xml",
@@ -170,6 +175,7 @@ def RHMISources = [
         "MINI": [
                 "basecore/basecore.p7b": "basecoreOnlineServices/rhmi/mini/basecoreOnlineServices.p7b",
                 "basecore/rhmi/mini/images.zip": "basecoreOnlineServices/rhmi/mini/images.zip",
+                "bmwone/bmwone.p7b": "bmwone/rhmi/mini/bmwone.p7b",
         ],
         "Smartthings": [
                 "com.smartthings.android/com.smartthings.android.p7b": "smartthings/smartthings.p7b",
@@ -268,6 +274,7 @@ def RHMISourcesTest = [
         "basecore/rhmi/multimedia/id5/v3/ui_description.xml": "ui_description_multimedia_v3.xml",
         "basecore/rhmi/onlineservices/id5/v1/ui_description.xml": "ui_description_onlineservices_v1.xml",
         "basecore/rhmi/onlineservices/id5/v2/ui_description.xml": "ui_description_onlineservices_v2.xml",
+        "bmwone/rhmi/ui_description_ID5.xml": "ui_description_bmwone.xml",
 ]
 task extractRHMITest(type: Copy) {
     description "Extracts necessary RHMI resources for unit tests"
