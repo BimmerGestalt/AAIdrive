@@ -20,7 +20,6 @@ class PopupView(val state: RHMIState, val phoneAppResources: PhoneAppResources) 
 	val bodyLabel1: RHMIModel.RaDataModel
 	val bodyLabel2: RHMIModel.RaDataModel
 	val popEvent: RHMIEvent.PopupEvent?
-	val focusEvent: RHMIEvent.FocusEvent?
 
 	var currentNotification: CarNotification? = null
 
@@ -30,7 +29,6 @@ class PopupView(val state: RHMIState, val phoneAppResources: PhoneAppResources) 
 		bodyLabel1 = state.componentsList.filterIsInstance<RHMIComponent.Label>().firstOrNull()?.getModel()?.asRaDataModel() ?: dummyLabel
 		bodyLabel2 = state.componentsList.filterIsInstance<RHMIComponent.Label>().lastOrNull()?.getModel()?.asRaDataModel() ?: dummyLabel
 		popEvent = state.app.events.values.filterIsInstance<RHMIEvent.PopupEvent>().firstOrNull { it.getTarget() == state }
-		focusEvent = state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()
 	}
 
 	fun initWidgets() {
