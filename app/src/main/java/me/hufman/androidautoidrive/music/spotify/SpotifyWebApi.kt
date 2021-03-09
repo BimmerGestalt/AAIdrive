@@ -22,6 +22,8 @@ import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
 import net.openid.appauth.*
 import java.lang.Exception
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Handles the logic around the Spotify Web API. This class is a singleton to prevent issues of having
@@ -112,7 +114,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 					val mediaId = it.uri.uri
 					val coverArtUri = getCoverArtUri(it.images)
 					val artists = it.artists.map { it.name }.joinToString(", ")
-					val type = it.type.capitalize()
+					val type = it.type.capitalize(Locale.getDefault())
 
 					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, it.name, it.name, type, true, false)
 				})
@@ -125,7 +127,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 					val coverArtUri = getCoverArtUri(it.album.images)
 					val artists = it.artists.map { it.name }.joinToString(", ")
 					val albumMediaId = it.album.uri.uri
-					val type = it.type.capitalize()
+					val type = it.type.capitalize(Locale.getDefault())
 
 					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, albumMediaId, it.name, type, true, false)
 				})
@@ -136,7 +138,18 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				searchResultMusicMetadata.addAll(artistResults.items.map {
 					val mediaId = it.uri.uri
 					val coverArtUri = getCoverArtUri(it.images, 320)
-					val type = it.type.capitalize()
+					val type = it.type.capitalize(Locale.getDefault())
+
+					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.name, null, it.name, type, false, true)
+				})
+			}
+
+			val playlistResults = searchResults?.playlists
+			if (playlistResults != null && playlistResults.isNotEmpty()) {
+				searchResultMusicMetadata.addAll(playlistResults.items.map {
+					val mediaId = it.uri.uri
+					val coverArtUri = getCoverArtUri(it.images, 320)
+					val type = it.type.capitalize(Locale.getDefault())
 
 					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.name, null, it.name, type, false, true)
 				})
@@ -147,7 +160,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				searchResultMusicMetadata.addAll(showResults.items.filterNotNull().map {
 					val mediaId = it.uri.uri
 					val coverArtUri = getCoverArtUri(it.images)
-					val subtitle = it.type.capitalize()
+					val subtitle = it.type.capitalize(Locale.getDefault())
 
 					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.publisher, null, it.name, subtitle, false, true)
 				})
@@ -158,7 +171,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				searchResultMusicMetadata.addAll(episodeResults.items.filterNotNull().map {
 					val mediaId = it.uri.uri
 					val coverArtUri = getCoverArtUri(it.images)
-					val subtitle = it.type.capitalize()
+					val subtitle = it.type.capitalize(Locale.getDefault())
 
 					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, null, null, it.name, subtitle, true, false)
 				})
