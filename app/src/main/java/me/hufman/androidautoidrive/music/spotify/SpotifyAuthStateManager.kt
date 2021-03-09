@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.music.spotify
 
 import android.util.Log
 import com.adamratzman.spotify.SpotifyException
+import com.adamratzman.spotify.models.Token
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
 import net.openid.appauth.*
@@ -96,12 +97,20 @@ class SpotifyAuthStateManager private constructor(val appSettings: MutableAppSet
 	}
 
 	/**
-	 * Updates the [AuthState] with the token response and authorization exception, replacing the old
-	 * AuthState in the shared preferences file with the new one.
+	 * Updates the [AuthState] with the provided [Token], replacing the old AuthState with the new one.
 	 */
-	fun updateTokenResponse(response: TokenResponse?, ex: AuthorizationException?) {
-		currentState.update(response, ex)
-		writeState(currentState)
+	fun updateTokenResponseWithToken(token: Token, clientId: String) {
+		val tokenRequest = TokenRequest.Builder(getAuthorizationServiceConfiguration()!!, clientId)
+				.setRefreshToken(token.refreshToken)
+				.setGrantType(GrantTypeValues.REFRESH_TOKEN)
+				.build()
+		val tokenResponse = TokenResponse.Builder(tokenRequest)
+				.setAccessToken(token.accessToken)
+				.setRefreshToken(token.refreshToken)
+				.setAccessTokenExpirationTime(token.expiresAt)
+				.setScopes(token.scopes?.map { it.uri })
+				.build()
+		updateTokenResponse(tokenResponse, null)
 	}
 
 	/**
@@ -126,6 +135,25 @@ class SpotifyAuthStateManager private constructor(val appSettings: MutableAppSet
 	fun replaceAuthState(authState: AuthState) {
 		currentState = authState
 		writeState(authState)
+	}
+
+	/**
+	 * Forget an existing auth session
+	 */
+	fun clear() {
+		currentState = AuthState()
+		writeState(currentState)
+		// suppress the notification popup for the future
+		appSettings[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION] = "false"
+	}
+
+	/**
+	 * Updates the [AuthState] with the token response and authorization exception, replacing the old
+	 * AuthState with the new one.
+	 */
+	private fun updateTokenResponse(response: TokenResponse?, ex: AuthorizationException?) {
+		currentState.update(response, ex)
+		writeState(currentState)
 	}
 
 	/**

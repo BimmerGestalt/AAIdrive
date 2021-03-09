@@ -58,7 +58,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		}
 	}
 
-	class Connector(val context: Context, val prompt: Boolean = true): MusicAppController.Connector {
+	class Connector(val context: Context, val prompt: Boolean = true, val isProbing: Boolean = false): MusicAppController.Connector {
 		var lastError: Throwable? = null
 
 		fun hasSupport(): Boolean {
@@ -115,17 +115,19 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 						appSettings[AppSettings.KEYS.SPOTIFY_CONTROL_SUCCESS] = "true"
 
 						val spotifyWebApi = SpotifyWebApi.getInstance(context, appSettings)
-						spotifyWebApi.initializeWebApi()
+						spotifyWebApi.initializeWebApi(isProbing)
 						spotifyWebApi.isUsingSpotify = true
 
 						pendingController.value = SpotifyAppController(context, remote, spotifyWebApi)
 
 						// if app discovery says we aren't able to connect, discover again
-						val musicAppDiscovery = MusicAppDiscovery(context, Handler())
-						musicAppDiscovery.loadCache()
-						val spotifyAppInfo = musicAppDiscovery.allApps.firstOrNull { it.packageName == "com.spotify.music" }
-						if (spotifyAppInfo?.connectable == false) {
-							musicAppDiscovery.probeApp(spotifyAppInfo)
+						if (!isProbing) {
+							val musicAppDiscovery = MusicAppDiscovery(context, Handler())
+							musicAppDiscovery.loadInstalledMusicApps()
+							val spotifyAppInfo = musicAppDiscovery.allApps.firstOrNull { it.packageName == "com.spotify.music" }
+							if (spotifyAppInfo?.connectable == false) {
+								musicAppDiscovery.probeApp(spotifyAppInfo)
+							}
 						}
 					} else {
 						Log.e(TAG, "Connected to a null Spotify Remote?")
@@ -171,6 +173,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	val coverArtCache = LruCache<ImageUri, Bitmap>(50)
 	var createQueueMetadataJob: Job? = null
 	var defaultDispatcher = Dispatchers.Default
+	var onQueueLoaded: (() -> Unit)? = null
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -278,17 +281,13 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		if (queueUri != null && queueItems.isEmpty()) {
 			val listItem = ListItem(queueUri, queueUri, null, playerContext.title, playerContext.subtitle, false, true)
 			loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
-				// shuffle play button somehow gets returned with the rest of the tracks when loading an album
-				queueItems = if (queueItems.isNotEmpty() && queueItems[0].artist == "" && queueItems[0].title == "Shuffle Play") {
-					it.drop(1)
-				} else {
-					it
-				}
+				queueItems = removeShufflePlayButtonMetadata(it)
 
 				// build a basic QueueMetadata while waiting for cover art to load
-				queueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, queueItems)
+				queueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, queueItems, mediaId = playerContext.uri)
 				loadQueueCoverart()
 
+				onQueueLoaded?.invoke()
 				callback?.invoke(this)
 			}
 		}
@@ -304,7 +303,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			val item = recentlyPlayed?.items?.get(0)
 			if (item != null) {
 				remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
-					queueMetadata = QueueMetadata(item.title, item.subtitle, queueItems, coverArt)
+					queueMetadata = QueueMetadata(item.title, item.subtitle, queueItems, coverArt, item.uri)
 				}
 			}
 		}
@@ -367,7 +366,22 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	}
 
 	override fun playSong(song: MusicMetadata) {
-		remote.playerApi.play(song.mediaId)
+		// if the item is a track then load the album context for it so the rest of the album is queued up
+		if (song.subtitle == "Track") {
+			// album queue loaded is not the correct context for the song, will need to load the correct album into the queue
+			if (queueMetadata?.mediaId != song.album) {
+				remote.playerApi.play(song.album)
+
+				// queue is loaded async but is needed before playing the song from the queue
+				onQueueLoaded = {
+					playQueue(song)
+				}
+			} else {
+				playQueue(song)
+			}
+		} else {
+			remote.playerApi.play(song.mediaId)
+		}
 	}
 
 	override fun playQueue(song: MusicMetadata) {
@@ -422,7 +436,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			MusicAction.SKIP_TO_QUEUE_ITEM -> false
 			MusicAction.SET_SHUFFLE_MODE -> playerActions?.canToggleShuffle == true
 			MusicAction.SET_REPEAT_MODE -> playerActions?.canRepeatContext == true || playerActions?.canRepeatTrack == true
-			// figure out search
 			else -> false
 		}
 	}
@@ -511,9 +524,27 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		return deferred.await()
 	}
 
-	override suspend fun search(query: String): List<MusicMetadata>? {
-		// requires a Web API call, not sure how to get the access token
-		return null
+	/**
+	 * Removes the shuffle play button [MusicMetadata] if it is present in the supplied list.
+	 *
+	 * When loading a list of tracks such as an album, a shuffle play button [MusicMetadata] object is
+	 * sometimes present. Call this method to get the list of [MusicMetadata]s that omit the shuffle
+	 * play button.
+	 */
+	private fun removeShufflePlayButtonMetadata(items: List<MusicMetadata>): List<MusicMetadata> {
+		return if (items.isNotEmpty() && items[0].mediaId == queueUri) {
+			items.drop(1)
+		} else {
+			items
+		}
+	}
+
+	override suspend fun search(query: String): List<MusicMetadata> {
+		val deferred = CompletableDeferred<List<MusicMetadata>>()
+		GlobalScope.launch(defaultDispatcher) {
+			deferred.complete(webApi.searchForQuery(this@SpotifyAppController, query))
+		}
+		return deferred.await()
 	}
 
 	override fun subscribe(callback: (MusicAppController) -> Unit) {

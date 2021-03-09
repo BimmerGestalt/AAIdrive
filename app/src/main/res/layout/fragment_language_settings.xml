@@ -16,21 +16,21 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="@dimen/settings_vertical_margin"
             android:text="@string/lbl_language_carinterface" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:checked="@={viewModel.preferCarLanguage}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="@dimen/settings_vertical_margin"
             android:text="@{viewModel.lblPreferCarLanguage}" />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="@dimen/settings_vertical_margin"
             android:visibility="@{viewModel.showAdvanced}">
             <TextView
                 android:layout_width="0dp"

@@ -21,13 +21,15 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 	var virtualDisplay: VirtualDisplay? = null
 	var mapController: GMapsController? = null
 	var mapListener: MapsInteractionControllerListener? = null
+	var running = false
 
 	fun start(): Boolean {
 		if (AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean() &&
 				ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
 				== PackageManager.PERMISSION_GRANTED) {
+			running = true
 			synchronized(this) {
-				if (threadGMaps == null) {
+				if (threadGMaps?.isAlive != true) {
 					threadGMaps = CarThread("GMaps") {
 						Log.i(MainService.TAG, "Starting GMaps")
 						val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.fullDimensions.visibleWidth, mapAppMode.fullDimensions.visibleHeight)
@@ -64,28 +66,30 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 	}
 
 	fun stop() {
-		mapScreenCapture?.onDestroy()
-		virtualDisplay?.release()
-		// nothing to stop in mapController
-		mapListener?.onDestroy()
-		mapApp?.onDestroy(context)
+		running = false
+		// post it to the thread to run after initialization finishes
+		threadGMaps?.post {
+			if (!running) { // check that we do actually intend to shut down
+				mapScreenCapture?.onDestroy()
+				virtualDisplay?.release()
+				// nothing to stop in mapController
+				mapListener?.onDestroy()
+				mapApp?.onDestroy(context)
 
-		mapScreenCapture = null
-		virtualDisplay = null
-		mapController = null
-		mapListener = null
-
-		// if we caught it during initialization, kill it again
-		val thread = threadGMaps
-		if (thread?.isAlive == true) {
-			thread.post {
-				stop()
+				mapScreenCapture = null
+				virtualDisplay = null
+				mapController = null
+				mapListener = null
 				mapApp = null
+
+				threadGMaps?.quit()
+				threadGMaps = null
+
+				// if we started up again during shutdown
+				if (running) {
+					start()
+				}
 			}
-		} else {
-			mapApp = null
 		}
-		threadGMaps?.quitSafely()
-		threadGMaps = null
 	}
 }

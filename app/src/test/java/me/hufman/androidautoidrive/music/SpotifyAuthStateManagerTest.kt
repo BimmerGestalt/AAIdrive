@@ -1,6 +1,8 @@
 package me.hufman.androidautoidrive.music
 
 import com.adamratzman.spotify.SpotifyException
+import com.adamratzman.spotify.SpotifyScope
+import com.adamratzman.spotify.models.Token
 import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MockAppSettings
@@ -172,15 +174,45 @@ class SpotifyAuthStateManagerTest {
 	}
 
 	@Test
-	fun testUpdateTokenResponse() {
-		val tokenResponse: TokenResponse = mock()
-		val authStateSerializedString = "auth state serialized"
+	fun testUpdateTokenResponseWithToken() {
+		val refreshToken = "refreshToken"
+		val accessToken = "accessToken"
+		val expiresAt = 5L
+		val spotifyScopes = listOf(SpotifyScope.USER_LIBRARY_READ)
+		val token: Token = mock()
+		whenever(token.refreshToken).thenReturn(refreshToken)
+		whenever(token.accessToken).thenReturn(accessToken)
+		whenever(token.expiresAt).thenReturn(expiresAt)
+		whenever(token.scopes).thenReturn(spotifyScopes)
+
+		val authorizationServiceConfiguration: AuthorizationServiceConfiguration = mock()
 		val currentState: AuthState = mock()
+		whenever(currentState.authorizationServiceConfiguration).thenReturn(authorizationServiceConfiguration)
+		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+
+		val clientId = "clientId"
+		val tokenRequest: TokenRequest = mock()
+		val tokenRequestBuilder: TokenRequest.Builder = mock()
+		whenever(tokenRequestBuilder.setRefreshToken(refreshToken)).thenReturn(tokenRequestBuilder)
+		whenever(tokenRequestBuilder.setGrantType(GrantTypeValues.REFRESH_TOKEN)).thenReturn(tokenRequestBuilder)
+		whenever(tokenRequestBuilder.build()).thenReturn(tokenRequest)
+		PowerMockito.whenNew(TokenRequest.Builder::class.java).withArguments(authorizationServiceConfiguration, clientId).thenReturn(tokenRequestBuilder)
+
+		val tokenResponse: TokenResponse = mock()
+		val tokenResponseBuilder: TokenResponse.Builder = mock()
+		whenever(tokenResponseBuilder.setAccessToken(accessToken)).thenReturn(tokenResponseBuilder)
+		whenever(tokenResponseBuilder.setRefreshToken(refreshToken)).thenReturn(tokenResponseBuilder)
+		whenever(tokenResponseBuilder.setAccessTokenExpirationTime(expiresAt)).thenReturn(tokenResponseBuilder)
+		whenever(tokenResponseBuilder.setScopes(listOf(SpotifyScope.USER_LIBRARY_READ.uri))).thenReturn(tokenResponseBuilder)
+		whenever(tokenResponseBuilder.build()).thenReturn(tokenResponse)
+		PowerMockito.whenNew(TokenResponse.Builder::class.java).withArguments(tokenRequest).thenReturn(tokenResponseBuilder)
+
+		val authStateSerializedString = "auth state serialized"
 		doNothing().whenever(currentState).update(tokenResponse, null)
 		whenever(currentState.jsonSerializeString()).thenReturn(authStateSerializedString)
 		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
 
-		spotifyAuthStateManager.updateTokenResponse(tokenResponse, null)
+		spotifyAuthStateManager.updateTokenResponseWithToken(token, clientId)
 
 		verify(currentState).update(tokenResponse, null)
 		assertEquals(authStateSerializedString, appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON])
@@ -238,6 +270,25 @@ class SpotifyAuthStateManagerTest {
 
 		assertEquals(authState, spotifyAuthStateManager.currentState)
 		assertEquals(authStateSerializedString, appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON])
+	}
+
+	@Test
+	fun testClearAuthState() {
+		val currentState: AuthState = mock()
+		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+
+		val authStateSerializedString = "auth state serialized"
+		val authState: AuthState = mock()
+		whenever(authState.jsonSerializeString()).thenReturn(authStateSerializedString)
+
+		spotifyAuthStateManager.replaceAuthState(authState)
+
+		assertEquals(authState, spotifyAuthStateManager.currentState)
+		assertEquals(authStateSerializedString, appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON])
+
+		PowerMockito.whenNew(AuthState::class.java).withAnyArguments().thenReturn(authState)
+		spotifyAuthStateManager.clear()
+		assertTrue(isEmptyAuthState(spotifyAuthStateManager.currentState))
 	}
 
 	private fun isEmptyAuthState(authState: AuthState): Boolean {

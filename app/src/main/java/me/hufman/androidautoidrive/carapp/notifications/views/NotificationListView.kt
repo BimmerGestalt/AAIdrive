@@ -34,6 +34,7 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 	val notificationIconEvent: RHMIEvent.NotificationIconEvent    // to trigger the status bar icon
 
 	var visible = false                 // whether the notification list is showing
+	var firstView = true                // whether this is the first time this view is shown
 
 	var entryButtonTimestamp = 0L   // when the user pushed the entryButton
 	val timeSinceEntryButton: Long
@@ -82,11 +83,15 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 		notificationIconEvent = state.app.events.values.filterIsInstance<RHMIEvent.NotificationIconEvent>().first()
 	}
 
-	fun initWidgets(detailsView: DetailsView) {
+	fun initWidgets(detailsView: DetailsView, permissionView: PermissionView) {
 		// refresh the list when we are displayed
 		state.focusCallback = FocusCallback { focused ->
 			visible = focused
-			if (focused) {
+			if (firstView && !settings.notificationListenerConnected) {
+				val focusEvent = state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
+				focusEvent.triggerEvent(mapOf(0.toByte() to permissionView.state.id))   // skip through to permissions view
+				firstView = false
+			} else if (focused) {
 				val didEntryButton = timeSinceEntryButton < SKIPTHROUGH_THRESHOLD
 				val focusEvent = state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
 				val skipThroughNotification = readoutInteractions.currentNotification ?:

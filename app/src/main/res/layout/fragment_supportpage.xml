@@ -15,14 +15,14 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:textSize="16sp"
             android:text="@string/lbl_donations_volunteer" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:text="@string/lbl_donations_request" />
 
         <Button
@@ -34,22 +34,22 @@
             android:drawableTint="?android:attr/colorControlNormal"
             android:drawablePadding="8dp"
             android:text="@string/btn_donations"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="@dimen/pane_vertical_margin" />
 
         <View style="@style/Divider"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:gravity="center"
             android:text="@string/lbl_support_other_ways" />
 
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:orientation="horizontal"
             app:justifyContent="center"
             app:flexWrap="wrap"
@@ -114,7 +114,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:layout_gravity="center"
             android:textStyle="bold"
             android:text="@string/lbl_support_thanks" />
@@ -125,14 +125,14 @@
             android:layout_weight="1" />
 
         <View style="@style/Divider"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:layout_gravity="bottom"/>
 
         <TextView
             android:id="@+id/txtBuildInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:layout_gravity="bottom"
             android:longClickable="true"
             android:textIsSelectable="true" />

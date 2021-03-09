@@ -27,14 +27,10 @@ import me.hufman.androidautoidrive.phoneui.visible
 class NotificationPageFragment: Fragment() {
 	companion object {
 		const val NOTIFICATION_CHANNEL_ID = "TestNotification"
-		const val NOTIFICATION_SERVICE_TIMEOUT = 1000
 	}
 
 	val permissionsController by lazy { PermissionsController(requireActivity()) }
 	val viewModel by lazy { PermissionsModel.Factory(requireContext().applicationContext).create(PermissionsModel::class.java) }
-	var whenActivityStarted = 0L
-	val ageOfActivity: Long
-		get() = System.currentTimeMillis() - whenActivityStarted
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.fragment_notificationpage, container, false)
@@ -52,20 +48,6 @@ class NotificationPageFragment: Fragment() {
 			onChangedSwitchNotifications(notificationsEnabledSetting, isChecked)
 		}
 
-		btnGrantSMS.setOnClickListener {
-			permissionsController.promptSms()
-		}
-
-		viewModel.hasNotificationPermission.observe(viewLifecycleOwner) {
-			if (ageOfActivity > NOTIFICATION_SERVICE_TIMEOUT && !it) {
-				notificationsEnabledSetting.setValue(false)
-			}
-		}
-
-		viewModel.hasSmsPermission.observe(viewLifecycleOwner) {
-			paneSMSPermission.visible = !it
-		}
-
 		// spawn a Test notification
 		btnTestNotification.setOnClickListener {
 			sendTestNotification()
@@ -75,7 +57,6 @@ class NotificationPageFragment: Fragment() {
 	override fun onResume() {
 		super.onResume()
 
-		whenActivityStarted = System.currentTimeMillis()
 		viewModel.update()
 	}
 

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data class="NotificationPermissionsBinding">
+        <variable
+            name="controller"
+            type="me.hufman.androidautoidrive.phoneui.controllers.PermissionsController" />
+        <variable
+            name="viewModel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel" />
+    </data>
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:visibility="@{!viewModel.hasNotificationPermission}"
+                android:onClick="@{() -> controller.promptNotification()}"
+                app:srcCompat="@android:drawable/checkbox_off_background" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:visibility="@{viewModel.hasNotificationPermission}"
+                android:onClick="@{() -> controller.promptNotification()}"
+                app:srcCompat="@android:drawable/checkbox_on_background" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/lbl_notification_permissions" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_grant"
+                android:textSize="12sp"
+                android:onClick="@{() -> controller.promptNotification()}"
+                android:visibility="@{!viewModel.hasNotificationPermission}"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="center_vertical"
+            android:visibility="@{viewModel.hasNotificationPermission}">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:visibility="@{!viewModel.hasSmsPermission}"
+                android:onClick="@{() -> controller.promptSms()}"
+                app:srcCompat="@android:drawable/checkbox_off_background" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:visibility="@{viewModel.hasSmsPermission}"
+                android:onClick="@{() -> controller.openApplicationPermissions(&quot;me.hufman.androidautoidrive&quot;)}"
+                app:srcCompat="@android:drawable/checkbox_on_background" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/lbl_notification_sms_permissions" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_grant"
+                android:textSize="12sp"
+                android:onClick="@{() -> controller.promptSms()}"
+                android:visibility="@{!viewModel.hasSmsPermission}"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

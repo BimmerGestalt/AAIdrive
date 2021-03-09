@@ -18,6 +18,7 @@ object L {
 	var NOTIFICATION_READOUT = "Speak when viewing notifications"
 	var NOTIFICATION_READOUT_POPUP = "Speak new notifications"
 	var NOTIFICATION_READOUT_POPUP_PASSENGER = "... with a passenger"
+	var NOTIFICATION_PERMISSION_NEEDED = "This app needs to be granted Notification Access"
 	var READOUT_DESCRIPTION = "This app is used for readout purposes"
 
 	var MAP_ACTION_VIEWMAP = "View Full Map"
@@ -36,6 +37,9 @@ object L {
 	var MUSIC_BROWSE_ACTION_FILTER = "Filter"
 	var MUSIC_BROWSE_ACTION_SEARCH = "Search"
 	var MUSIC_BROWSE_PLAY_FROM_SEARCH = "Play From Search"
+	val MUSIC_SEARCH_RESULTS_LABEL = "Search Results"
+	val MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS = "View Full Results"
+	val MUSIC_SEARCH_RESULTS_ELLIPSIS = "..."
 	var MUSIC_QUEUE_TITLE = "Now Playing"
 	var MUSIC_QUEUE_EMPTY = "<Empty Queue>"
 	var MUSIC_SKIP_PREVIOUS = "Back"

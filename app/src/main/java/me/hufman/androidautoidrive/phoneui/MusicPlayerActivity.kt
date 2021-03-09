@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.phoneui
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -8,12 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.activity_musicplayer.*
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.androidautoidrive.phoneui.fragments.MusicBrowseFragment
-import me.hufman.androidautoidrive.phoneui.fragments.MusicBrowsePageFragment
-import me.hufman.androidautoidrive.phoneui.fragments.MusicNowPlayingFragment
-import me.hufman.androidautoidrive.phoneui.fragments.MusicQueueFragment
+import me.hufman.androidautoidrive.phoneui.fragments.*
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 
@@ -30,6 +29,8 @@ class MusicPlayerActivity: AppCompatActivity() {
 
 		val musicApp = UIState.selectedMusicApp ?: return
 		this.musicApp = musicApp
+
+		discoverApp(musicApp)
 
 		// initialize the viewmodels
 		ViewModelProvider(this, MusicActivityModel.Factory(applicationContext, musicApp)).get(MusicActivityModel::class.java)
@@ -49,6 +50,12 @@ class MusicPlayerActivity: AppCompatActivity() {
 		tabMusicPlayer.setupWithViewPager(pgrMusicPlayer)
 	}
 
+	fun discoverApp(musicAppInfo: MusicAppInfo) {
+		val musicAppDiscovery = MusicAppDiscovery(this, Handler())
+		musicAppDiscovery.loadInstalledMusicApps()
+		musicAppDiscovery.probeApp(musicAppInfo)
+	}
+
 	fun pushBrowse(directory: MusicMetadata?) {
 		val container = (pgrMusicPlayer.adapter as MusicPlayerPagerAdapter).getItem(1) as MusicBrowseFragment
 		container.replaceFragment(MusicBrowsePageFragment.newInstance(directory), true)
@@ -56,6 +63,10 @@ class MusicPlayerActivity: AppCompatActivity() {
 
 	fun showNowPlaying() {
 		pgrMusicPlayer.currentItem = 0
+	}
+
+	fun showBrowse() {
+		pgrMusicPlayer.currentItem = 1
 	}
 
 	override fun onBackPressed() {
@@ -74,6 +85,10 @@ class MusicPlayerActivity: AppCompatActivity() {
 			// go back to the main playback page
 			pgrMusicPlayer.currentItem = 0
 		}
+		if (pgrMusicPlayer.currentItem == 3) {
+			// go back to the main playback page
+			pgrMusicPlayer.currentItem = 0
+		}
 	}
 }
 
@@ -82,6 +97,7 @@ class MusicPlayerPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm
 		this["Now Playing"] = MusicNowPlayingFragment()
 		this["Browse"] = MusicBrowseFragment.newInstance(MusicBrowsePageFragment.newInstance(null))
 		this["Queue"] = MusicQueueFragment()
+		this["Search"] = MusicSearchFragment()
 	}
 
 	override fun getCount(): Int {

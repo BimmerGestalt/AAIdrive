@@ -147,7 +147,7 @@ class BrowsePageView(val state: RHMIState,
 				showList()
 			}
 			val musicListDeferred = browsePageModel.contents
-			val musicList = musicListDeferred.await()
+			val musicList = musicListDeferred.await() ?: emptyList()
 			this@BrowsePageView.musicList = ArrayList(musicList)
 			Log.d(TAG, "Browsing ${browsePageModel.title} resulted in ${musicList.count()} items")
 
@@ -172,7 +172,6 @@ class BrowsePageView(val state: RHMIState,
 								} else {
 									songIcon
 								}
-
 						val cleanedTitle = UnicodeCleaner.clean(item.title ?: "")
 						// if there is no subtitle then don't display it
 						val displayString = if (item.subtitle.isNullOrBlank()) {
@@ -180,7 +179,11 @@ class BrowsePageView(val state: RHMIState,
 							"$cleanedTitle\n"
 						} else {
 							// need to truncate the first line so it doesn't wrap
-							val cleanedSubtitle = UnicodeCleaner.clean(item.subtitle)
+							val cleanedSubtitle = if (browsePageModel.isSearchResultView && !item.artist.isNullOrBlank()) {
+								UnicodeCleaner.clean("${item.subtitle} - ${item.artist}")
+							} else {
+								UnicodeCleaner.clean(item.subtitle)
+							}
 							"${cleanedTitle.truncate(ROW_LINE_MAX_LENGTH)}\n${cleanedSubtitle}"
 						}
 
@@ -240,7 +243,7 @@ class BrowsePageView(val state: RHMIState,
 			if (browsePageModel.showJumpbackAction) {
 				actions.add(BrowseAction.JUMPBACK)
 			}
-			if (currentListModel != emptyList) {
+			if (browsePageModel.showFilterAction && currentListModel != emptyList) {
 				// show Filter entry while loading, until we know the list is empty
 				actions.add(BrowseAction.FILTER)
 			}

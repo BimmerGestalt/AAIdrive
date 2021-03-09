@@ -20,10 +20,12 @@
     <string name="navigation_listener_bmw">BMW Navigation</string>
     <string name="navigation_listener_mini">MINI Navigation</string>
     <!-- Labels on the navigation trigger activity -->
+    <string name="btn_search">Suche</string>
     <string name="lbl_navigation_listener_searching">Suche nach Ziel</string>
     <string name="lbl_navigation_listener_parsefailure">Ziel konnte nicht gefunden werden</string>
     <string name="lbl_navigation_listener_pending">Navigation wird gestartet</string>
     <string name="lbl_navigation_listener_success">Erfolgreich</string>
+    <string name="lbl_navigation_listener_unsuccess">Erfolglos</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Überblick</string>
     <string name="menu_setup">Einrichtung</string>
@@ -51,7 +53,9 @@
     <string name="notification_readout_popup">Neue Benachrichtigungen vorlesen</string>
     <string name="notification_readout_popup_passenger">… mit Beifahrer</string>
     <string name="notification_quickreplies">Schnellantworten</string>
-    <string name="notification_quickreplies_default">[\"👍\",\"Ich bin auf dem Weg!\",\"Momentan im Auto\",\"Kann nicht schreiben, bitte stadessen anrufen\",\"Ich rufe dich später an\"]</string>
+    <string name="notification_quickreplies_default">[\"👍\",\"Ich bin auf dem Weg!\",\"Momentan im Auto\",\"Kann nicht schreiben, bitte stattdessen anrufen\",\"Ich rufe dich später an\"]</string>
+    <string name="lbl_notification_permissions">Zugriff auf Benachrichtigungen</string>
+    <string name="lbl_notification_sms_permissions">Zugriff um SMS Bilder anzuzeigen</string>
     <string name="lbl_popupVersion">PopUps funktionieren nur mit IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS wird von Ihrem Fahrzeug nicht unterstützt</string>
     <string name="lbl_smsPermission">Erteile Zugriff für SMS-Nachrichten um Bilder von Nachrichten im Fahrzeug zu sehen. Text ist immer sichtbar.</string>
@@ -84,6 +88,10 @@
     <string name="musicAppNotes_oldSpotifyInstructions">Diese App bietet die vollständige Spotify Steuerung (Playlists durchsuchen und Suche) nur bis Spotify-Version 8.4.96.953. Für volle Steuerung bitte ältere Version von APKPure oder ähnlich herunterladen.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Bitte den offiziellen Spotify-Client installieren</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Bitte Internetzugang bestätigen und Werbeblocker deaktivieren</string>
+    <string name="lbl_navigationpage_address">Fügen Sie eine Adresse ein, um die Navigation im Auto von ihrem Telefon aus zu starten</string>
+    <string name="lbl_navigationpage_intent">Wenn eine Verbindung besteht, wird das Navigationssystem Ihres Autos als Option in der App Auswahl angezeigt, wenn in anderen Apps ein Navigationsbutton betätigt wird</string>
+    <string name="lbl_navigationstatus_active">Navigiere aktuell zu</string>
+    <string name="lbl_navigationstatus_inactive">Derzeit wird nicht navigiert</string>
     <string name="lbl_settingspage">Erweiterte Einstellungen für das Optimieren des Verhaltens können zu unerwartetem Verhalten führen</string>
     <string name="lbl_language_carinterface">Sprache für das Auto</string>
     <string name="lbl_language_prefercar">Spracheinstellung des Fahrzeugs gegenüber Telefonsprache bevorzugen</string>
@@ -180,6 +188,7 @@
     <string name="txt_spotify_api_authorization_canceled">Spotify Web API Autorisierung abgebrochen.</string>
     <string name="txt_spotify_api_authorization_failed">Spotify Web API Autorisierung fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
     <string name="lbl_spotify_api_authorized">Spotify Web API autorisiert</string>
+    <string name="lbl_spotify_api_authorized_user_friendly">Suchmöglichkeit für Spotify</string>
     <string name="btn_authorize">Autorisieren</string>
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Benachrichtigungen</string>
@@ -192,6 +201,7 @@
     <string name="NOTIFICATION_READOUT">Benachrichtigungen beim Betrachten vorlesen</string>
     <string name="NOTIFICATION_READOUT_POPUP">Neue Benachrichtigungen vorlesen</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … mit Beifahrer</string>
+    <string name="NOTIFICATION_PERMISSION_NEEDED">Diese App muss Zugriff auf Benachrichtigungen erhalten</string>
     <string name="READOUT_DESCRIPTION">Diese App wird zum Auslesen verwendet</string>
     <string name="MAP_ACTION_VIEWMAP">Volle Karte zeigen</string>
     <string name="MAP_ACTION_SEARCH">Ort suchen</string>
@@ -208,8 +218,12 @@
     <string name="MUSIC_BROWSE_ACTION_FILTER">Filter</string>
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Suche</string>
     <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Wiedergabe aus Suche</string>
+    <string name="MUSIC_SEARCH_RESULTS_LABEL">Suchergebnisse</string>
+    <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Alle Ergebnisse anzeigen</string>
+    <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">Aktuelle Wiedergabe</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;Leere Warteschlange&gt;</string>
+    <string name="MUSIC_SEARCH_EMPTY">&lt;Keine Ergebnisse gefunden&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Zurück</string>
     <string name="MUSIC_SKIP_NEXT">Nächster</string>
     <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Zufallswiedergabe nicht verfügbar</string>

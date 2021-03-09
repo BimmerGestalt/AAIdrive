@@ -20,10 +20,12 @@
     <string name="navigation_listener_bmw">Navigazione BMW</string>
     <string name="navigation_listener_mini">Navigazione MINI</string>
     <!-- Labels on the navigation trigger activity -->
+    <string name="btn_search">Cerca</string>
     <string name="lbl_navigation_listener_searching">Ricerca della destinazione</string>
     <string name="lbl_navigation_listener_parsefailure">Impossibile trovare la destinazione</string>
     <string name="lbl_navigation_listener_pending">Avvio della navigazione</string>
     <string name="lbl_navigation_listener_success">Completato</string>
+    <string name="lbl_navigation_listener_unsuccess">Operazione non riuscita</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Panoramica</string>
     <string name="menu_setup">Configurazione</string>
@@ -50,6 +52,10 @@
     <string name="notification_readout">Lettura vocale notifiche quando aperte</string>
     <string name="notification_readout_popup">Lettura vocale delle nuove notifiche</string>
     <string name="notification_readout_popup_passenger">… con un passeggero</string>
+    <string name="notification_quickreplies">Risposte rapide</string>
+    <string name="notification_quickreplies_default">[\"👍\",\"Sto arrivando!\",\"Sono in auto\",\"Non posso messaggiare, chiamami\",\"Ti chiamerò più tardi\"]</string>
+    <string name="lbl_notification_permissions">Accesso per visualizzare le notifiche</string>
+    <string name="lbl_notification_sms_permissions">Accesso per visualizzare immagini negli SMS</string>
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS non è supportato dalla tua auto</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
@@ -82,6 +88,10 @@
     <string name="musicAppNotes_oldSpotifyInstructions">Quest\'app può garantire il controllo completo di Spotify solo fino alla versione 8.4.96.953, per la funzionalità di ricerca ad esempio. Per il controllo completo scarica una versione precedente da APKPure o simili.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Prego installare il client ufficiale di Spotify</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Prego verificare la connessione e disabilitare qualsiasi blocco pubblicità</string>
+    <string name="lbl_navigationpage_address">Incolla in un indirizzo per avviare il sistema di navigazione dell\'auto dal telefono</string>
+    <string name="lbl_navigationpage_intent">Quando connesso, il sistema di navigazione dell\'auto verrà visualizzato come opzione quando altre app vorranno inizializzare una navigazione verso un luogo</string>
+    <string name="lbl_navigationstatus_active">Navigazione attiva verso</string>
+    <string name="lbl_navigationstatus_inactive">Navigazione attualmente non attiva</string>
     <string name="lbl_settingspage">Impostazioni avanzate, possono causare comportamenti imprevisti</string>
     <string name="lbl_language_carinterface">Lingua da mostrare in auto</string>
     <string name="lbl_language_prefercar">Preferisci la lingua della vettura alla lingua del telefono</string>
@@ -98,6 +108,7 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancella</string>
     <string name="btn_configure">Configura…</string>
+    <string name="btn_add">Aggiungi</string>
     <string name="lbl_error">Errore</string>
     <string name="connectionStatusMissingConnectedApp">Non trovo l\'app Connected o Connected Classic</string>
     <string name="connectionStatusWaiting">In attesa della connessione con l\'auto</string>
@@ -177,6 +188,7 @@
     <string name="txt_spotify_api_authorization_canceled">Autorizzazione API Web Spotify annullata.</string>
     <string name="txt_spotify_api_authorization_failed">Autorizzazione delle API Web Spotify non riuscita. Riprova.</string>
     <string name="lbl_spotify_api_authorized">API Web Di Spotify Autorizzata</string>
+    <string name="lbl_spotify_api_authorized_user_friendly">Possibilità di cercare in Spotify</string>
     <string name="btn_authorize">Autorizza</string>
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notifiche</string>
@@ -189,6 +201,7 @@
     <string name="NOTIFICATION_READOUT">Leggi\Pronuncia le notifiche quando aperte</string>
     <string name="NOTIFICATION_READOUT_POPUP">Leggi\Pronuncia le nuove notifiche</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … con un passeggero</string>
+    <string name="NOTIFICATION_PERMISSION_NEEDED">Questa app ha bisogno di ottenere l\'accesso alle notifiche</string>
     <string name="READOUT_DESCRIPTION">Questa app è utilizzata per scopi di lettura</string>
     <string name="MAP_ACTION_VIEWMAP">Visualizza la mappa fullscreen</string>
     <string name="MAP_ACTION_SEARCH">Cerca un luogo</string>
@@ -205,8 +218,12 @@
     <string name="MUSIC_BROWSE_ACTION_FILTER">Filtra</string>
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Cerca</string>
     <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Fai play dalla ricerca</string>
+    <string name="MUSIC_SEARCH_RESULTS_LABEL">Risultati di ricerca</string>
+    <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Visualizza risultati completi</string>
+    <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">In ascolto</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;La coda è vuota&gt;</string>
+    <string name="MUSIC_SEARCH_EMPTY">&lt;Nessun risultato trovato&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Precedente</string>
     <string name="MUSIC_SKIP_NEXT">Successivo</string>
     <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Esecuzione casuale non disponibile</string>

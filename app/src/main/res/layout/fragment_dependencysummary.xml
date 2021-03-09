@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="15dp"
+            android:paddingBottom="@dimen/pane_vertical_margin"
             android:gravity="center">
 
             <ImageView
@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="15dp"
+            android:paddingBottom="@dimen/pane_vertical_margin"
             android:gravity="center">
 
             <ImageView
@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="15dp"
+            android:paddingBottom="@dimen/pane_vertical_margin"
             android:gravity="center">
 
             <ImageView
@@ -79,7 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="15dp"
+            android:paddingBottom="@dimen/pane_vertical_margin"
             android:gravity="center">
 
             <ImageView
@@ -98,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="15dp"
+            android:paddingBottom="@dimen/pane_vertical_margin"
             android:visibility="@{!viewModel.isBmwReady() &amp;&amp; !viewModel.isMiniReady()}">
 
             <Button
@@ -121,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="15dp"
+            android:paddingBottom="@dimen/pane_vertical_margin"
             android:gravity="center">
 
             <LinearLayout
