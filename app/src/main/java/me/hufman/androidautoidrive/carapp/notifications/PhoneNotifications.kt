@@ -44,7 +44,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	val carAppSwappable: RHMIApplicationSwappable
 	val carApp: RHMIApplicationSynchronized
 	val amHandle: Int
-	val focusEvent: RHMIEvent.FocusEvent
+	val focusTriggerController: FocusTriggerController
 	val showNotificationController: ShowNotificationController
 	val readHistory = PopupHistory()       // suppress any duplicate New Notification actions
 	val viewPopup: PopupView                // notification about notification
@@ -75,6 +75,11 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			carappListener.app = carApp
 			carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
+			val focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
+			focusTriggerController = FocusTriggerController(focusEvent) {
+				recreateRhmiApp()
+			}
+
 			val notificationIconEvent = carApp.events.values.filterIsInstance<RHMIEvent.NotificationIconEvent>().first()
 			val id4StatusbarController = ID4StatusbarController(notificationIconEvent, 157)
 			statusbarController = StatusbarControllerWrapper(id4StatusbarController)
@@ -83,8 +88,8 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 
 			// figure out which views to use
 			viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
-			viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, graphicsHelpers, notificationSettings, statusbarController, readoutInteractions)
-			viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings, controller, statusbarController, readoutInteractions)
+			viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, graphicsHelpers, notificationSettings, focusTriggerController, statusbarController, readoutInteractions)
+			viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings, controller, focusTriggerController, statusbarController, readoutInteractions)
 			viewPermission = PermissionView(unclaimedStates.removeFirst { PermissionView.fits(it) })
 
 			stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first {
@@ -101,8 +106,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			// set up the AM icon in the "Addressbook"/Communications section
 			amHandle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
 			carConnection.am_addAppEventHandler(amHandle, "me.hufman.androidautoidrive.notifications")
-			focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
-			showNotificationController = ShowNotificationController(viewDetails, focusEvent)
+			showNotificationController = ShowNotificationController(viewDetails, focusTriggerController)
 			createAmApp()
 
 			// set up the list
@@ -205,19 +209,8 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 
 		override fun am_onAppEvent(handle: Int?, ident: String?, appId: String?, event: BMWRemoting.AMEvent?) {
 			synced()
-			try {
-				viewList.entryButtonTimestamp = System.currentTimeMillis()
-				focusEvent.triggerEvent(mapOf(0.toByte() to viewList.state.id))
-			} catch (e: BMWRemoting.ServiceException) {
-				Log.i(TAG, "Failed to trigger focus event for AM icon, recreating RHMI and trying again")
-				try {
-					recreateRhmiApp()
-					viewList.entryButtonTimestamp = System.currentTimeMillis()
-					focusEvent.triggerEvent(mapOf(0.toByte() to viewList.state.id))
-				} catch (e: BMWRemoting.ServiceException) {
-					Log.w(TAG, "Failed to trigger focus event for AM icon: $e")
-				}
-			}
+			viewList.entryButtonTimestamp = System.currentTimeMillis()
+			focusTriggerController.focusState(viewList.state, true)
 			createAmApp()
 		}
 
@@ -345,7 +338,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	}
 }
 
-class ShowNotificationController(val detailsView: DetailsView, val focusEvent: RHMIEvent.FocusEvent) {
+class ShowNotificationController(val detailsView: DetailsView, val focusTriggerController: FocusTriggerController) {
 	/**
 	 * If the source action is tied to a widget with a linked HmiAction,
 	 * setting the HMIAction's destination is preferred and 100% reliable
@@ -358,11 +351,9 @@ class ShowNotificationController(val detailsView: DetailsView, val focusEvent: R
 	/**
 	 * For other uses, this focus event may work less reliably
 	 */
-	fun showFromFocusEvent(notification: CarNotification?) {
+	fun showFromFocusEvent(notification: CarNotification?, recreate: Boolean): Boolean {
 		notification?.also { detailsView.selectedNotification = it }
-		focusEvent.triggerEvent(mapOf(
-			0.toByte() to (detailsView.state.id)
-		))
+		return focusTriggerController.focusState(detailsView.state, recreate)
 	}
 
 	fun getSelectedNotification(): CarNotification? {

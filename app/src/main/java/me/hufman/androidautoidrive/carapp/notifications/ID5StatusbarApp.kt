@@ -18,7 +18,7 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 	val carApp: RHMIApplication
 	val infoState: RHMIState.PlainState
 
-	val focusEvent: RHMIEvent.FocusEvent
+	val focusTriggerController: FocusTriggerController
 	var showNotificationController: ShowNotificationController? = null
 	val notificationEvent: RHMIEvent.NotificationEvent
 	val statusbarController: ID5NotificationCenter
@@ -43,7 +43,8 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 		carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)), carConnection)
 		carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
-		focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().minByOrNull { it.id }!!
+		val focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().minByOrNull { it.id }!!
+		focusTriggerController = FocusTriggerController(focusEvent) {}
 
 		listener.app = carApp
 
@@ -103,7 +104,7 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 	fun initWidgets() {
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach { button ->
 			button.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionCallback {
-				focusEvent.triggerEvent(mapOf(0.toByte() to infoState.id))
+				focusTriggerController.focusState(infoState, true)
 			}
 		}
 
@@ -120,7 +121,7 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 
 		notificationEvent.getActionId()?.asRAAction()?.rhmiActionCallback = statusbarController
 		statusbarController.onClicked = {
-			showNotificationController?.showFromFocusEvent(it)
+			showNotificationController?.showFromFocusEvent(it, true)
 		}
 	}
 

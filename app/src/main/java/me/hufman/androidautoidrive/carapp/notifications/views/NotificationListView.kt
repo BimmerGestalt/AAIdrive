@@ -4,6 +4,7 @@ import android.os.Handler
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.carapp.FocusTriggerController
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.notifications.*
@@ -14,7 +15,8 @@ import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*
 
-class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHelpers, val settings: NotificationSettings, val statusbarController: StatusbarController, val readoutInteractions: ReadoutInteractions) {
+class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHelpers, val settings: NotificationSettings,
+                           val focusTriggerController: FocusTriggerController, val statusbarController: StatusbarController, val readoutInteractions: ReadoutInteractions) {
 	companion object {
 		const val INTERACTION_DEBOUNCE_MS = 2000              // how long to wait after lastInteractionTime to update the list
 		const val SKIPTHROUGH_THRESHOLD = 2000                // how long after an entrybutton push to allow skipping through to a current notification
@@ -85,23 +87,19 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 		state.focusCallback = FocusCallback { focused ->
 			visible = focused
 			if (firstView && !settings.notificationListenerConnected) {
-				val focusEvent = state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
-				focusEvent.triggerEvent(mapOf(0.toByte() to permissionView.state.id))   // skip through to permissions view
+				focusTriggerController.focusState(permissionView.state, false)   // skip through to permissions view
 				firstView = false
 			} else if (focused) {
 				val didEntryButton = timeSinceEntryButton < SKIPTHROUGH_THRESHOLD
-				val focusEvent = state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
 				val skipThroughNotification = readoutInteractions.currentNotification ?:
 						if (timeSinceNotificationArrival < ARRIVAL_THRESHOLD) mostInterestingNotification else null
 				if (didEntryButton && skipThroughNotification != null) {
 					// don't try to skip through to a new notification again
 					notificationArrivalTimestamp = 0L
-					try {
-						showNotificationController.showFromFocusEvent(skipThroughNotification)
-						// done processing here, don't continue on to redrawing
+					val success = showNotificationController.showFromFocusEvent(skipThroughNotification, false)
+					// done processing here, don't continue on to redrawing
+					if (success) {
 						return@FocusCallback
-					} catch (e: BMWRemoting.ServiceException) {
-						Log.w(TAG, "Failed to skip through to the speaking notification: $e")
 					}
 				} else {
 					// we are backing out of a details view, cancel any current readout
@@ -123,7 +121,7 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 				val preselectedNotification = readoutInteractions.currentNotification ?: mostInterestingNotification
 				val index = shownNotifications.indexOf(preselectedNotification)
 				if (didEntryButton && index >= 0) {
-					focusEvent.triggerEvent(mapOf(0 to notificationListView.id, 41 to index))
+					focusTriggerController.focusComponent(notificationListView, index)
 				}
 
 				redrawSettingsList()

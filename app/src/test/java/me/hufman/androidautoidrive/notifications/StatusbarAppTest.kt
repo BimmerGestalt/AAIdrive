@@ -66,7 +66,7 @@ class StatusbarAppTest {
 
 		val button = app.carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().first()
 		button.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0.toByte() to 0))
-		assertEquals(app.infoState.id, mockServer.triggeredEvents[app.focusEvent.id]!![0.toByte()])
+		assertEquals(app.infoState.id, mockServer.triggeredEvents[app.focusTriggerController.focusEvent.id]!![0.toByte()])
 	}
 
 	@Test
