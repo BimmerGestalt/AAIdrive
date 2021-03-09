@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.carapp.notifications
 
 import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.notifications.CarNotification
+import me.hufman.idriveconnectionkit.rhmi.RHMIActionListCallback
 import me.hufman.idriveconnectionkit.rhmi.RHMIEvent
 
 interface StatusbarController {
@@ -32,18 +33,20 @@ class StatusbarControllerWrapper(var controller: StatusbarController): Statusbar
 
 /** Tracks which CarNotifications are active for the Statusbar */
 abstract class BaseStatusbarController: StatusbarController {
-	protected val contents = HashMap<String, Int>()
+	protected val indices = HashMap<String, Int>()
+	protected val notifications = HashMap<Int, CarNotification>()
+
 	override fun add(sbn: CarNotification) {
-		synchronized(contents) {
-			if (!contents.containsKey(sbn.key)) {
-				contents[sbn.key] = (contents.values.maxOrNull() ?: -1) + 1
-			}
+		synchronized(indices) {
+			val index = indices[sbn.key] ?: (indices.values.maxOrNull() ?: -1) + 1
+			indices[sbn.key] = index
+			notifications[index] = sbn
 		}
 	}
 	override fun retainAll(bounds: Collection<CarNotification>) {
-		synchronized(contents) {
+		synchronized(indices) {
 			val boundsKeys = bounds.map { it.key }.toSet()
-			contents.keys.toList().forEach { key ->
+			indices.keys.toList().forEach { key ->
 				if (!boundsKeys.contains(key)) {
 					remove(key)
 				}
@@ -54,13 +57,15 @@ abstract class BaseStatusbarController: StatusbarController {
 		remove(sbn.key)
 	}
 	open fun remove(key: String) {
-		synchronized(contents) {
-			contents.remove(key)
+		synchronized(indices) {
+			val index = indices.remove(key)
+			notifications.remove(index)
 		}
 	}
 	override fun clear() {
-		synchronized(contents) {
-			contents.clear()
+		synchronized(indices) {
+			indices.clear()
+			notifications.clear()
 		}
 	}
 }
@@ -84,7 +89,7 @@ class ID4StatusbarController(val notificationIconEvent: RHMIEvent.NotificationIc
 		super.remove(key)
 
 		// remove the icon if not showing any messages
-		if (contents.isEmpty()) {
+		if (indices.isEmpty()) {
 			clear()
 		}
 	}
@@ -102,11 +107,12 @@ class ID4StatusbarController(val notificationIconEvent: RHMIEvent.NotificationIc
 /**
  * Manages the messages shown in the Notification Center
  */
-class ID5NotificationCenter(val notificationEvent: RHMIEvent.NotificationEvent, val imageId: Int): BaseStatusbarController() {
+class ID5NotificationCenter(val notificationEvent: RHMIEvent.NotificationEvent, val imageId: Int): BaseStatusbarController(), RHMIActionListCallback {
+	var onClicked: ((CarNotification) -> Unit)? = null
 	override fun add(sbn: CarNotification) {
-		synchronized(contents) {
+		synchronized(indices) {
 			super.add(sbn)
-			val index = contents[sbn.key] ?: 0
+			val index = indices[sbn.key] ?: 0
 
 			try {
 				notificationEvent.getIndexId()?.asRaIntModel()?.value = index
@@ -122,8 +128,8 @@ class ID5NotificationCenter(val notificationEvent: RHMIEvent.NotificationEvent, 
 	}
 
 	override fun remove(key: String) {
-		synchronized(contents) {
-			val index = contents[key]
+		synchronized(indices) {
+			val index = indices[key]
 			super.remove(key)
 			if (index != null) {
 				try {
@@ -137,11 +143,17 @@ class ID5NotificationCenter(val notificationEvent: RHMIEvent.NotificationEvent, 
 	}
 
 	override fun clear() {
-		synchronized(contents) {
+		synchronized(indices) {
 			// remove each of the messages
-			contents.keys.toList().forEach {
+			indices.keys.toList().forEach {
 				remove(it)
 			}
 		}
+	}
+
+	override fun onAction(index: Int, invokedBy: Int?) {
+		// user clicked a message in the Notification Center
+		val notification = notifications[index] ?: return
+		onClicked?.invoke(notification)
 	}
 }

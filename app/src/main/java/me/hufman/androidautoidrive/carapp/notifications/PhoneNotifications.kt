@@ -45,6 +45,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	val carApp: RHMIApplicationSynchronized
 	val amHandle: Int
 	val focusEvent: RHMIEvent.FocusEvent
+	val showNotificationController: ShowNotificationController
 	val readHistory = PopupHistory()       // suppress any duplicate New Notification actions
 	val viewPopup: PopupView                // notification about notification
 	val viewList: NotificationListView      // show a list of active notifications
@@ -83,7 +84,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			// figure out which views to use
 			viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
 			viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, graphicsHelpers, notificationSettings, statusbarController, readoutInteractions)
-			viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings, controller, readoutInteractions)
+			viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings, controller, statusbarController, readoutInteractions)
 			viewPermission = PermissionView(unclaimedStates.removeFirst { PermissionView.fits(it) })
 
 			stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first {
@@ -101,10 +102,11 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			amHandle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
 			carConnection.am_addAppEventHandler(amHandle, "me.hufman.androidautoidrive.notifications")
 			focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
+			showNotificationController = ShowNotificationController(viewDetails, focusEvent)
 			createAmApp()
 
 			// set up the list
-			viewList.initWidgets(viewDetails, viewPermission)
+			viewList.initWidgets(showNotificationController, viewPermission)
 
 			// set up the popup
 			viewPopup.initWidgets()
@@ -340,5 +342,30 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			// remove any removed notifications from the statusbar controller
 			statusbarController.retainAll(currentNotifications)
 		}
+	}
+}
+
+class ShowNotificationController(val detailsView: DetailsView, val focusEvent: RHMIEvent.FocusEvent) {
+	/**
+	 * If the source action is tied to a widget with a linked HmiAction,
+	 * setting the HMIAction's destination is preferred and 100% reliable
+	 */
+	fun showFromHmiAction(action: RHMIAction.HMIAction?, notification: CarNotification?) {
+		notification?.also { detailsView.selectedNotification = it }
+		action?.getTargetModel()?.asRaIntModel()?.value = detailsView.state.id
+	}
+
+	/**
+	 * For other uses, this focus event may work less reliably
+	 */
+	fun showFromFocusEvent(notification: CarNotification?) {
+		notification?.also { detailsView.selectedNotification = it }
+		focusEvent.triggerEvent(mapOf(
+			0.toByte() to (detailsView.state.id)
+		))
+	}
+
+	fun getSelectedNotification(): CarNotification? {
+		return detailsView.selectedNotification
 	}
 }

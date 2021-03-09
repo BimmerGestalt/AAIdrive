@@ -644,7 +644,6 @@ class NotificationAppTest {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
-		app.viewList.initWidgets(app.viewDetails, app.viewPermission)
 
 		val item1 = createNotificationObject("Title", "Text")
 		val item2 = createNotificationObject("Title2", "Text2\nLine2")
@@ -775,7 +774,7 @@ class NotificationAppTest {
 		app.readoutInteractions.currentNotification = statusbarNotification2
 		whenever(readoutController.isActive) doReturn true
 		mockClient.rhmi_onHmiEvent(0, "don't care", 8, 1, mapOf(4.toByte() to true))
-		assertEquals(app.viewDetails.state.id, mockServer.triggeredEvents[5]?.get(0))
+		assertEquals(app.viewDetails.state.id, mockServer.triggeredEvents[5]?.get(0.toByte()))
 
 		// check that it cancels the reading-out when pushing back
 		mockServer.triggeredEvents.remove(5)
@@ -1068,7 +1067,6 @@ class NotificationAppTest {
 		IDriveConnection.mockRemotingServer = mockServer
 
 		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
-		app.viewList.initWidgets(app.viewDetails, mock())
 
 		whenever(notificationSettings.isChecked(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP)) doReturn true
 		whenever(notificationSettings.isChecked(AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER)) doReturn false
