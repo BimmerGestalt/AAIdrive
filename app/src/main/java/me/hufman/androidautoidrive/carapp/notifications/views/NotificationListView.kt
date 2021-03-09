@@ -80,7 +80,7 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 		settingsListView = state.componentsList.filterIsInstance<RHMIComponent.List>().last()
 	}
 
-	fun initWidgets(detailsView: DetailsView, permissionView: PermissionView) {
+	fun initWidgets(showNotificationController: ShowNotificationController, permissionView: PermissionView) {
 		// refresh the list when we are displayed
 		state.focusCallback = FocusCallback { focused ->
 			visible = focused
@@ -94,11 +94,10 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 				val skipThroughNotification = readoutInteractions.currentNotification ?:
 						if (timeSinceNotificationArrival < ARRIVAL_THRESHOLD) mostInterestingNotification else null
 				if (didEntryButton && skipThroughNotification != null) {
-					detailsView.selectedNotification = skipThroughNotification
 					// don't try to skip through to a new notification again
 					notificationArrivalTimestamp = 0L
 					try {
-						focusEvent.triggerEvent(mapOf(0 to detailsView.state.id))   // skip through to details view
+						showNotificationController.showFromFocusEvent(skipThroughNotification)
 						// done processing here, don't continue on to redrawing
 						return@FocusCallback
 					} catch (e: BMWRemoting.ServiceException) {
@@ -109,8 +108,14 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 					readoutInteractions.cancel()
 				}
 				// if we did not skip through, refresh:
-				hideStatusBarIcon()
 				redrawNotificationList()
+
+				// if we entered through the EntryButton, clear the statusbar icon
+				// the other way is to come from an action in the DetailsView
+				// and we want to keep the other messages in the Notification Center
+				if (didEntryButton) {
+					hideStatusBarIcon()
+				}
 
 				// if a notification is speaking, pre-select it
 				// otherwise pre-select the most recent notification that showed up or was selected
@@ -139,16 +144,17 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 		notificationListView.setProperty(RHMIProperty.PropertyId.BOOKMARKABLE, true)
 		notificationListView.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIActionListCallback {
 			override fun onAction(index: Int, invokedBy: Int?) {
-				if (invokedBy != 2) {       // don't change the notification
-					val notification = shownNotifications.getOrNull(index)
-					detailsView.selectedNotification = notification
+				val notification = if (invokedBy != 2) {       // don't change the notification
+					shownNotifications.getOrNull(index)
+				} else {
+					showNotificationController.getSelectedNotification()
 				}
-				if (detailsView.selectedNotification != null) {
+				if (notification != null) {
 					// save this notification for future pre-selections
-					mostInterestingNotification = detailsView.selectedNotification
+					mostInterestingNotification = notification
 
 					// set the list to go into the details state
-					notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = detailsView.state.id
+					showNotificationController.showFromHmiAction(notificationListView.getAction()?.asHMIAction(), notification)
 				} else {
 					notificationListView.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = 0
 				}

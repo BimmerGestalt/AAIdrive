@@ -19,8 +19,9 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 	val infoState: RHMIState.PlainState
 
 	val focusEvent: RHMIEvent.FocusEvent
+	var showNotificationController: ShowNotificationController? = null
 	val notificationEvent: RHMIEvent.NotificationEvent
-	val statusbarController: StatusbarController
+	val statusbarController: ID5NotificationCenter
 
 	init {
 		val listener = ID5StatusbarListener()
@@ -116,6 +117,11 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 		val data = RHMIModel.RaListModel.RHMIListConcrete(1)
 		data.addRow(arrayOf(L.NOTIFICATION_CENTER_APP + "\n"))
 		list.getModel()?.setValue(data, 0, 1, 1)
+
+		notificationEvent.getActionId()?.asRAAction()?.rhmiActionCallback = statusbarController
+		statusbarController.onClicked = {
+			showNotificationController?.showFromFocusEvent(it)
+		}
 	}
 
 	private fun locateEnvelopeImageId(resources: CarAppResources): Int {

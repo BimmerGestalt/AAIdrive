@@ -12,7 +12,7 @@ import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.ArrayList
 import kotlin.math.min
 
-class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val notificationSettings: NotificationSettings, val controller: CarNotificationController, val readoutInteractions: ReadoutInteractions) {
+class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val notificationSettings: NotificationSettings, val controller: CarNotificationController, val statusbarController: StatusbarController, val readoutInteractions: ReadoutInteractions) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.ToolbarState &&
@@ -137,6 +137,11 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to buttons[0].id))
 
 		redraw()
+
+		// remove the message from the Notification Center, since we are reading it now
+		selectedNotification?.also {
+			statusbarController.remove(it)
+		}
 	}
 
 	fun redraw() {
