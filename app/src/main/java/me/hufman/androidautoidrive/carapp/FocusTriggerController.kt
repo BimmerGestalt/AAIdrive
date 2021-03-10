@@ -6,7 +6,10 @@ import me.hufman.idriveconnectionkit.rhmi.RHMIEvent
 import me.hufman.idriveconnectionkit.rhmi.RHMIState
 
 class FocusTriggerController(val focusEvent: RHMIEvent.FocusEvent, val recreateCallback: () -> Unit) {
+	var hasFocusedState = false
+
 	fun focusState(state: RHMIState, recreate: Boolean): Boolean {
+		hasFocusedState = true
 		return try {
 			focusEvent.triggerEvent(mapOf(
 				0.toByte() to state.id

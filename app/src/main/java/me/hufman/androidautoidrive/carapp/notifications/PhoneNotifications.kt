@@ -45,6 +45,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	val carApp: RHMIApplicationSynchronized
 	val amHandle: Int
 	val focusTriggerController: FocusTriggerController
+	val focusedStateTracker = FocusedStateTracker()
 	val showNotificationController: ShowNotificationController
 	val readHistory = PopupHistory()       // suppress any duplicate New Notification actions
 	val viewPopup: PopupView                // notification about notification
@@ -144,6 +145,23 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 		}
 	}
 
+	/**
+	 * Check if we should recreate the app
+	 * Is called from within an HMI focused event handler,
+	 * so sleeping here is inside a background thread
+	 * */
+	fun checkRecreate() {
+		if (focusTriggerController.hasFocusedState && focusedStateTracker.getFocused() == null) {
+			Thread.sleep(1000)      // debounce if we are navigating between windows
+			if (focusedStateTracker.getFocused() == null) {
+				Thread.sleep(4000)  // make sure we actually left the app
+				if (focusedStateTracker.getFocused() == null) {
+					recreateRhmiApp()
+				}
+			}
+		}
+	}
+
 	/** creates the app in the car */
 	fun createRhmiApp(): RHMIApplication {
 		// load the resources
@@ -169,6 +187,8 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			carConnection.rhmi_dispose(rhmiHandle)
 			// create a new one
 			carAppSwappable.app = createRhmiApp()
+			// clear FocusTriggerController because of the new rhmi app
+			focusTriggerController.hasFocusedState = false
 			// reconnect, triggering a sync down to the new RHMI Etch app
 			carAppSwappable.isConnected = true
 		}
@@ -242,6 +262,12 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 
 			val state = app?.states?.get(componentId)
 			state?.onHmiEvent(eventId, args)
+
+			if (state != null && eventId == 1) {
+				val focused = args?.get(4.toByte()) as? Boolean ?: false
+				focusedStateTracker.onFocus(state.id, focused)
+				checkRecreate()
+			}
 
 			val component = app?.components?.get(componentId)
 			component?.onHmiEvent(eventId, args)
