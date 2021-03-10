@@ -81,7 +81,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		}
 
 		fun connect(): Observable<SpotifyAppController> {
-			Log.w(TAG, "Attempting to connect to Spotify Remote")
+			Log.i(TAG, "Attempting to connect to Spotify Remote")
 			val params = ConnectionParams.Builder(getClientId(context))
 					.setRedirectUri(REDIRECT_URI)
 					.showAuthView(prompt)

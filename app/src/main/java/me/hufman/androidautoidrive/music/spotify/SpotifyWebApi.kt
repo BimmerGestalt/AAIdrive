@@ -90,6 +90,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			Log.e(TAG, "Failed to get data from Liked Songs library due to authentication error with the message: ${e.message}")
 			authStateManager.addAccessTokenAuthorizationException(e)
 			createNotAuthorizedNotification()
+			webApi = null
 		} catch (e: Exception) {
 			Log.e(TAG, "Exception occurred while getting Liked Songs library data with message: ${e.message}")
 		}
@@ -168,6 +169,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			Log.e(TAG, "Failed to get search results due to authentication error with the message: ${e.message}")
 			authStateManager.addAccessTokenAuthorizationException(e)
 			createNotAuthorizedNotification()
+			webApi = null
 		} catch (e: Exception) {
 			Log.e(TAG, "Exception occurred while attempting to get search results with the message: ${e.message}")
 		}
@@ -178,6 +180,9 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 * Initializes the [SpotifyClientApi] instance and updates the [AuthState] with the token used.
 	 */
 	fun initializeWebApi(isProbing: Boolean = false) {
+		if(webApi != null) {
+			return
+		}
 		webApi = createWebApiClient()
 		if (webApi != null) {
 			authStateManager.updateTokenResponseWithToken(webApi!!.token, clientId)
