@@ -28,6 +28,9 @@ class CarNotification(val packageName: String, val key: String,     // main iden
 		}
 	}
 
+	val lastLine: String
+		get() = text.trim().split(Regex("\n")).lastOrNull() ?: ""
+
 	override fun toString(): String {
 		return "CarNotification(key='$key', title=$title, text=$text, picture=$picture)"
 	}
