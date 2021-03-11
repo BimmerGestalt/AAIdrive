@@ -78,7 +78,7 @@ class StatusbarAppTest {
 		val event = app.notificationEvent
 
 		// adds a notification to the car's Notification Center
-		val sbn = CarNotification("test", "test", null, true, emptyList(),
+		val sbn = CarNotification("test", "test", "Test AppName", null, true, emptyList(),
 				"Title", "line1\nline2 yay",
 				null, null, null, null, null)
 		controller.add(sbn)
@@ -89,7 +89,7 @@ class StatusbarAppTest {
 		assertEquals("line2 yay", event.getNotificationTextModel()?.asRaDataModel()?.value)
 
 		// updates the notification to the car's Notification Center
-		val sbnUpdate = CarNotification("test", "test", null, true, emptyList(),
+		val sbnUpdate = CarNotification("test", "test", "Test AppName",null, true, emptyList(),
 				"Title", "line1\nline2 yay\nline3",
 				null, null, null, null, null)
 		controller.add(sbnUpdate)
@@ -100,7 +100,7 @@ class StatusbarAppTest {
 		assertEquals("line3", event.getNotificationTextModel()?.asRaDataModel()?.value)
 
 		// adds a new notification
-		val sbnSecond = CarNotification("test", "test2", null, true, emptyList(),
+		val sbnSecond = CarNotification("test", "test2", "Test AppName", null, true, emptyList(),
 				"Title2", "more test",
 				null, null, null, null, null)
 		controller.add(sbnSecond)

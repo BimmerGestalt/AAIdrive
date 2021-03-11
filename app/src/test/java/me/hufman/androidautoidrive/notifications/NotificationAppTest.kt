@@ -458,7 +458,7 @@ class NotificationAppTest {
 				"Custom Action", false, emptyList()
 		))
 
-		return CarNotification("me.hufman.androidautoidrive", "test$title", mock(), clearable, usedNotifications,
+		return CarNotification("me.hufman.androidautoidrive", "test$title", "Test AppName", mock(), clearable, usedNotifications,
 				title, text, mock(), sidePicture, picture, pictureUri, mock())
 	}
 

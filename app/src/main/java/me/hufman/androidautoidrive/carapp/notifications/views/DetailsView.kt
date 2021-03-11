@@ -164,7 +164,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 
 		// prepare the app icon and title
 		val appIcon = notification.appIcon?.let {graphicsHelpers.compress(it, 48, 48)} ?: ""
-		val appName = phoneAppResources.getAppName(notification.packageName)
+		val appName = notification.appName
 		val iconListData = RHMIModel.RaListModel.RHMIListConcrete(3)
 		iconListData.addRow(arrayOf(appIcon, "", appName))
 
