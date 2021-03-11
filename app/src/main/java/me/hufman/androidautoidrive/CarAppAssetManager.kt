@@ -44,4 +44,10 @@ class CarAppAssetManager(val context: Context, val name: String): CarAppResource
 		       loadFile("carapplications/$name/rhmi/common/texts.zip")
 	}
 
+	// BMWOne has a widgets DB to upload
+	fun getWidgetsDB(brand: String): InputStream? {
+		return loadFile("carapplications/$name/rhmi/${brand.toLowerCase()}/widgets.zip") ?:
+		loadFile("carapplications/$name/rhmi/common/widgets.zip")
+	}
+
 }

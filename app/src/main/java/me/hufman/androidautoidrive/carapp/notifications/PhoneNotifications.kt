@@ -10,10 +10,7 @@ import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.*
-import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
-import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
-import me.hufman.androidautoidrive.carapp.notifications.views.PermissionView
-import me.hufman.androidautoidrive.carapp.notifications.views.PopupView
+import me.hufman.androidautoidrive.carapp.notifications.views.*
 import me.hufman.androidautoidrive.notifications.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.Utils
@@ -48,7 +45,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	val focusedStateTracker = FocusedStateTracker()
 	val showNotificationController: ShowNotificationController
 	val readHistory = PopupHistory()       // suppress any duplicate New Notification actions
-	val viewPopup: PopupView                // notification about notification
+	var viewPopup: PopupView                // notification about notification
 	val viewList: NotificationListView      // show a list of active notifications
 	val viewDetails: DetailsView            // view a notification with actions to do
 	val viewPermission: PermissionView      // show a message if permissions are missing
@@ -319,12 +316,13 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			val alreadyShown = readHistory.contains(sbn)
 			readHistory.add(sbn)
 			if (!alreadyShown) {
-				viewList.showNotification(sbn)
-
 				if (notificationSettings.shouldPopup(passengerSeated)) {
 					if (!sbn.equalsKey(viewDetails.selectedNotification)) {
 						viewPopup.showNotification(sbn)
 					}
+				} else {
+					// only show the statusbar icon if we didn't pop it up
+					viewList.showNotification(sbn)
 				}
 
 				val played = if (notificationSettings.shouldPlaySound()) {

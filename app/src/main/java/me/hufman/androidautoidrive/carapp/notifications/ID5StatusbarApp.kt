@@ -4,7 +4,10 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
+import me.hufman.androidautoidrive.CarAppAssetManager
 import me.hufman.androidautoidrive.carapp.*
+import me.hufman.androidautoidrive.carapp.notifications.views.ID5PopupView
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
@@ -13,10 +16,11 @@ import me.hufman.idriveconnectionkit.rhmi.*
 import java.lang.RuntimeException
 import java.util.zip.ZipInputStream
 
-class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, carAppAssets: CarAppResources) {
+class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, carAppAssets: CarAppAssetManager, graphicsHelpers: GraphicsHelpers) {
 	val carConnection: BMWRemotingServer
 	val carApp: RHMIApplication
 	val infoState: RHMIState.PlainState
+	val popupView: ID5PopupView
 
 	val focusTriggerController: FocusTriggerController
 	var showNotificationController: ShowNotificationController? = null
@@ -36,6 +40,7 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 				"me.hufman.androidautoidrive.notification.statusbar", "me.hufman"))
 		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
 		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(iDriveConnectionStatus.brand ?: "common"))
+		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.WIDGETDB, carAppAssets.getWidgetsDB(iDriveConnectionStatus.brand ?: "common"))
 
 		// no text, so sneaky
 		carConnection.rhmi_initialize(rhmiHandle)
@@ -57,6 +62,8 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 			it.componentsList.isNotEmpty() &&
 			it.componentsList[0] is RHMIComponent.List
 		}
+
+		this.popupView = ID5PopupView(carApp.states.values.filterIsInstance<RHMIState.PopupState>().first(), graphicsHelpers, imageId)
 
 		// register for events from the car
 		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1)
@@ -120,9 +127,14 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 		list.getModel()?.setValue(data, 0, 1, 1)
 
 		notificationEvent.getActionId()?.asRAAction()?.rhmiActionCallback = statusbarController
+		popupView.onClicked = {
+			showNotificationController?.showFromFocusEvent(it, true)
+		}
 		statusbarController.onClicked = {
 			showNotificationController?.showFromFocusEvent(it, true)
 		}
+
+		popupView.initWidgets()
 	}
 
 	private fun locateEnvelopeImageId(resources: CarAppResources): Int {
