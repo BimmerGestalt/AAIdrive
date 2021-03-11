@@ -17,18 +17,13 @@ class NotificationSettings(val capabilities: Map<String, String?>, val btStatus:
 	var notificationListenerConnected = true
 
 	// car's supported features
-	val idrive4 = capabilities["hmi.type"]?.contains("ID4") == true
 	val tts = capabilities["tts"]?.toLowerCase() == "true"
 
 	fun getSettings(): List<AppSettings.KEYS> {
-		val popupSettings = if (idrive4) {
-			listOf(
-					AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP,
-					AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER
-			)
-		} else {
-			listOf()
-		}
+		val popupSettings = listOf(
+				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP,
+				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER
+		)
 		val soundSettings = listOf(
 				AppSettings.KEYS.NOTIFICATIONS_SOUND
 		)
@@ -53,8 +48,7 @@ class NotificationSettings(val capabilities: Map<String, String?>, val btStatus:
 	}
 
 	fun shouldPopup(passengerSeated: Boolean): Boolean {
-		return idrive4 &&
-			appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
+		return appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
 			(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
 				!passengerSeated)
 	}
