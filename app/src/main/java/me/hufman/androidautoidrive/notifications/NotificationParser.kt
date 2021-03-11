@@ -74,6 +74,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		var text:String? = null
 		var summary:String? = null
 		val extras = sbn.notification.extras
+		val appName = phoneAppResources.getAppName(sbn.packageName)
 		val appIcon = phoneAppResources.getIconDrawable(sbn.notification.smallIcon)
 		var icon = appIcon
 		var sidePicture: Drawable? = null
@@ -155,7 +156,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 
 		val soundUri = getNotificationSound(sbn.notification)
 
-		val summarized = CarNotification(sbn.packageName, sbn.key, icon, sbn.isClearable, actions,
+		val summarized = CarNotification(sbn.packageName, sbn.key, appName, icon, sbn.isClearable, actions,
 				title ?: "", text?.trim() ?: "",
 				appIcon, sidePicture, picture, pictureUri, soundUri)
 		return summarized
@@ -185,6 +186,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 	}
 
 	fun summarizedCustomNotification(sbn: StatusBarNotification): CarNotification? {
+		val appName = phoneAppResources.getAppName(sbn.packageName)
 		val appIcon = phoneAppResources.getIconDrawable(sbn.notification.smallIcon)
 		val smallIcon = phoneAppResources.getIconDrawable(sbn.notification.smallIcon)
 		val extras = sbn.notification.extras
@@ -207,7 +209,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 			.map { CarNotification.Action(it.text.toString(), false, emptyList()) }
 			.take(5).toList()
 
-		return CarNotification(sbn.packageName, sbn.key, smallIcon, sbn.isClearable,
+		return CarNotification(sbn.packageName, sbn.key, appName, smallIcon, sbn.isClearable,
 				actions, title, lines.joinToString("\n"), appIcon, sidePicture, picture, null,
 				getNotificationSound(sbn.notification))
 	}

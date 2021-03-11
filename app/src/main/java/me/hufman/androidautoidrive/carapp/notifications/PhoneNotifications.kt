@@ -88,7 +88,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			val unclaimedStates = LinkedList(carApp.states.values)
 
 			// figure out which views to use
-			viewPopup = PopupView(unclaimedStates.removeFirst { PopupView.fits(it) }, phoneAppResources)
+			viewPopup = ID4PopupView(unclaimedStates.removeFirst { ID4PopupView.fits(it) })
 			viewList = NotificationListView(unclaimedStates.removeFirst { NotificationListView.fits(it) }, graphicsHelpers, notificationSettings, focusTriggerController, statusbarController, readoutInteractions)
 			viewDetails = DetailsView(unclaimedStates.removeFirst { DetailsView.fits(it) }, phoneAppResources, graphicsHelpers, notificationSettings, controller, focusTriggerController, statusbarController, readoutInteractions)
 			viewPermission = PermissionView(unclaimedStates.removeFirst { PermissionView.fits(it) })

@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 
 class CarNotification(val packageName: String, val key: String,     // main identifier
+                      val appName: String,          // the app name to show
                       val icon: Drawable?,          // the icon in the main list
                       val isClearable: Boolean,     // swipeable
                       val actions: List<Action>,    // other actions
