@@ -458,8 +458,32 @@ class NotificationAppTest {
 				"Custom Action", false, emptyList()
 		))
 
-		return CarNotification("me.hufman.androidautoidrive", "test$title", mock(), clearable, usedNotifications,
+		return CarNotification("me.hufman.androidautoidrive", "test$title", "Test AppName", mock(), clearable, usedNotifications,
 				title, text, mock(), sidePicture, picture, pictureUri, mock())
+	}
+
+	@Test
+	fun testPopupStatusbar() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+		app.readoutInteractions.readoutController = readoutController
+
+		val bundle = createNotificationObject("Chat: Title", "Title: FirstLine\nTitle: Text")
+
+		// show the statusbar icon when not popping
+		whenever(notificationSettings.shouldPopup(any())) doReturn false
+		app.notificationListener.onNotification(bundle)
+		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
+		assertEquals(157, (mockServer.data[551] as BMWRemoting.RHMIResourceIdentifier).id)
+
+		// plays the ringtone when showing statusbar icon
+		verify(audioPlayer).playRingtone(any())
+
+		// reads out the new notification
+		verify(readoutController).readout(listOf("Chat: ", "Title: Text"))
+		whenever(readoutController.isActive) doReturn true
+		assertEquals(bundle, app.readoutInteractions.currentNotification)
 	}
 
 	@Test
@@ -471,10 +495,9 @@ class NotificationAppTest {
 
 		val bundle = createNotificationObject("Chat: Title", "Title: FirstLine\nTitle: Text")
 
+		// don't show the statusbar icon when popping
 		app.notificationListener.onNotification(bundle)
-
-		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
-		assertEquals(157, (mockServer.data[551] as BMWRemoting.RHMIResourceIdentifier).id)
+		assertEquals(null, mockServer.triggeredEvents[4])       // does not trigger the notificationIconEvent
 
 		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent
 		val expectedHeader = "Test AppName"
@@ -484,8 +507,10 @@ class NotificationAppTest {
 		assertEquals(expectedLabel1, mockServer.data[405])
 		assertEquals(expectedLabel2, mockServer.data[406])
 
+		// plays the ringtone with the popup
 		verify(audioPlayer).playRingtone(any())
 
+		// reads out the popup
 		verify(readoutController).readout(listOf("Chat: ", "Title: Text"))
 		whenever(readoutController.isActive) doReturn true
 		assertEquals(bundle, app.readoutInteractions.currentNotification)
@@ -714,7 +739,8 @@ class NotificationAppTest {
 			assertEquals("Options", label)
 			assertEquals(true, rhmiApp.propertyData[id5Menu.settingsListView.id]!![RHMIProperty.PropertyId.VISIBLE.id])
 			val menu = rhmiApp.modelData[394] as BMWRemoting.RHMIDataTable
-			assertEquals(listOf(L.NOTIFICATION_SOUND, L.NOTIFICATION_READOUT, L.NOTIFICATION_READOUT_POPUP, L.NOTIFICATION_READOUT_POPUP_PASSENGER), menu.data.map { it[2] })
+			assertEquals(listOf(L.NOTIFICATION_POPUPS, L.NOTIFICATION_POPUPS_PASSENGER,
+					L.NOTIFICATION_SOUND, L.NOTIFICATION_READOUT, L.NOTIFICATION_READOUT_POPUP, L.NOTIFICATION_READOUT_POPUP_PASSENGER), menu.data.map { it[2] })
 		}
 
 		rhmiApp.modelData.clear()
@@ -729,7 +755,7 @@ class NotificationAppTest {
 			assertEquals("Options", label)
 			assertEquals(true, rhmiApp.propertyData[id5Menu.settingsListView.id]!![RHMIProperty.PropertyId.VISIBLE.id])
 			val menu = rhmiApp.modelData[394] as BMWRemoting.RHMIDataTable
-			assertEquals(listOf(L.NOTIFICATION_SOUND), menu.data.map { it[2] })
+			assertEquals(listOf(L.NOTIFICATION_POPUPS, L.NOTIFICATION_POPUPS_PASSENGER, L.NOTIFICATION_SOUND), menu.data.map { it[2] })
 		}
 	}
 

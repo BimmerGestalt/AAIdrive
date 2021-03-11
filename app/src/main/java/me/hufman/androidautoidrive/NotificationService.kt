@@ -66,7 +66,9 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 								// start up the id5 statusbar app
 								// using a handler to automatically handle shutting down during init
 								val carappStatusbar = ID5StatusbarApp(iDriveConnectionStatus, securityAccess,
-										CarAppAssetManager(context, "bmwone"))
+										CarAppAssetManager(context, "bmwone"), GraphicsHelpersAndroid())
+								// main app should use this for popup access
+								carappNotifications?.viewPopup = carappStatusbar.popupView
 								// main app should use this for statusbar access
 								carappNotifications?.statusbarController?.controller = carappStatusbar.statusbarController
 								// the statusbar can trigger the main app

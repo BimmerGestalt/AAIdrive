@@ -154,6 +154,7 @@ def RHMISources = [
                 "bmwone/bmwone.p7b": "bmwone/rhmi/bmw/bmwone.p7b",
                 "bmwone/rhmi/ui_description_ID5.xml": "bmwone/rhmi/ui_description.xml",
                 "bmwone/rhmi/common/images.zip": "bmwone/rhmi/common/images.zip",
+                "bmwone/rhmi/common/bmwone_widgetdb.zip": "bmwone/rhmi/common/widgetdb.zip",
 
                 // Smartthings UI layout
                 // SmartThings <= v2.3.1 uses OnlineServices v2, >= v2.3.6 uses v3

@@ -1,17 +1,20 @@
 package me.hufman.androidautoidrive.notifications
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doAnswer
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
+import me.hufman.androidautoidrive.CarAppAssetManager
 import me.hufman.androidautoidrive.MockBMWRemotingServer
 import me.hufman.androidautoidrive.carapp.notifications.ID5StatusbarApp
+import me.hufman.androidautoidrive.carapp.notifications.ShowNotificationController
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
+import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
+import me.hufman.idriveconnectionkit.rhmi.RHMIState
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.ByteArrayInputStream
@@ -35,18 +38,23 @@ class StatusbarAppTest {
 			close()
 		}
 	}.toByteArray()
-	val carAppResources = mock<CarAppResources> {
+	val carAppResources = mock<CarAppAssetManager> {
 		on { getAppCertificate() } doReturn ByteArrayInputStream(ByteArray(0))
 		on { getUiDescription() } doAnswer { this.javaClass.classLoader!!.getResourceAsStream("ui_description_bmwone.xml") }
 		on { getImagesDB(any()) } doAnswer { ByteArrayInputStream(images) }
 		on { getTextsDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 	}
+	val graphicsHelpers = mock<GraphicsHelpers> {
+		on { compress(isA<Drawable>(), any(), any(), any(), any()) } doAnswer {"Drawable{${it.arguments[1]}x${it.arguments[2]}}".toByteArray()}
+		on { compress(isA<Bitmap>(), any(), any(), any(), any()) } doAnswer {"Bitmap{${it.arguments[1]}x${it.arguments[2]}}".toByteArray()}
+	}
+	val showNotificationController = mock<ShowNotificationController>()
 
 	@Test
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources)
+		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources, graphicsHelpers)
 
 		assertEquals(null, mockServer.resources[BMWRemoting.RHMIResourceType.TEXTDB])
 		assertArrayEquals(carAppResources.getImagesDB("")?.readBytes(), mockServer.resources[BMWRemoting.RHMIResourceType.IMAGEDB])
@@ -55,6 +63,15 @@ class StatusbarAppTest {
 		val infoList = mockServer.data[infoComponent.model] as BMWRemoting.RHMIDataTable
 		assertEquals(L.NOTIFICATION_CENTER_APP + "\n", infoList.data[0][0])
 
+		// verify that the popup is set up right
+		val visiblePopupComponents = app.popupView.state.componentsList.filter {
+			mockServer.properties[it.id]?.get(RHMIProperty.PropertyId.VISIBLE.id) as? Boolean ?: true
+		}
+		assertEquals(2, visiblePopupComponents.size)
+		assertTrue(visiblePopupComponents[0] is RHMIComponent.List)
+		assertTrue(visiblePopupComponents[1] is RHMIComponent.Button)
+		assertEquals(app.popupView.imageId, (mockServer.data[visiblePopupComponents[1].asButton()?.imageModel] as BMWRemoting.RHMIResourceIdentifier).id)
+
 		app.onDestroy()
 	}
 
@@ -62,7 +79,7 @@ class StatusbarAppTest {
 	fun testAppEntrybutton() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources)
+		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources, graphicsHelpers)
 
 		val button = app.carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().first()
 		button.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0.toByte() to 0))
@@ -73,12 +90,12 @@ class StatusbarAppTest {
 	fun testNotificationCenterController() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources)
+		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources, graphicsHelpers)
 		val controller = app.statusbarController
 		val event = app.notificationEvent
 
 		// adds a notification to the car's Notification Center
-		val sbn = CarNotification("test", "test", null, true, emptyList(),
+		val sbn = CarNotification("test", "test", "Test AppName", null, true, emptyList(),
 				"Title", "line1\nline2 yay",
 				null, null, null, null, null)
 		controller.add(sbn)
@@ -89,7 +106,7 @@ class StatusbarAppTest {
 		assertEquals("line2 yay", event.getNotificationTextModel()?.asRaDataModel()?.value)
 
 		// updates the notification to the car's Notification Center
-		val sbnUpdate = CarNotification("test", "test", null, true, emptyList(),
+		val sbnUpdate = CarNotification("test", "test", "Test AppName",null, true, emptyList(),
 				"Title", "line1\nline2 yay\nline3",
 				null, null, null, null, null)
 		controller.add(sbnUpdate)
@@ -100,7 +117,7 @@ class StatusbarAppTest {
 		assertEquals("line3", event.getNotificationTextModel()?.asRaDataModel()?.value)
 
 		// adds a new notification
-		val sbnSecond = CarNotification("test", "test2", null, true, emptyList(),
+		val sbnSecond = CarNotification("test", "test2", "Test AppName", null, true, emptyList(),
 				"Title2", "more test",
 				null, null, null, null, null)
 		controller.add(sbnSecond)
@@ -119,5 +136,40 @@ class StatusbarAppTest {
 		controller.clear()
 		assertEquals(false, mockServer.triggeredEvents[event.id]!![0.toByte()])
 		assertEquals(1, event.getIndexId()?.asRaIntModel()?.value)
+	}
+
+	@Test
+	fun testID5Popup() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources, graphicsHelpers)
+		app.showNotificationController = showNotificationController
+		val popupState = app.carApp.states.values.filterIsInstance<RHMIState.PopupState>().first()
+		val popupView = app.popupView
+
+		val sbn = CarNotification("test package", "asdf", "Test App Name", mock(),
+				true, emptyList(), "Title", "Body\nBody 2",
+				null, null, null, null, null)
+		popupView.showNotification(sbn)
+
+		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent
+		assertEquals(true, mockServer.triggeredEvents[1]!![0])
+		assertEquals("Test App Name", mockServer.data[popupState.textModel])
+		val list = mockServer.data[popupState.componentsList.first().asList()?.model] as BMWRemoting.RHMIDataTable
+		assertEquals(1, list.totalRows)
+		assertArrayEquals("Drawable{48x48}".toByteArray(), list.data[0][0] as ByteArray)
+		assertEquals("Title", list.data[0][1])
+		assertEquals("Body 2", list.data[0][2])
+
+		// assert focus event when clicked
+		val callback = popupState.componentsList.filterIsInstance<RHMIComponent.Button>().first().getAction()?.asRAAction()?.rhmiActionCallback
+		callback?.onActionEvent(mapOf(0.toByte() to null))
+		val focusEvent = app.focusTriggerController.focusEvent
+		verify(showNotificationController).showFromFocusEvent(popupView.currentNotification, true)
+
+		// assert hide
+		popupView.hideNotification()
+		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent
+		assertEquals(false, mockServer.triggeredEvents[1]!![0])
 	}
 }
