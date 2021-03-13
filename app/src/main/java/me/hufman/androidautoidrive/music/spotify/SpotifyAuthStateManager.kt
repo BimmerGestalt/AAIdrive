@@ -143,6 +143,8 @@ class SpotifyAuthStateManager private constructor(val appSettings: MutableAppSet
 	fun clear() {
 		currentState = AuthState()
 		writeState(currentState)
+		// suppress the notification popup for the future
+		appSettings[AppSettings.KEYS.SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION] = "false"
 	}
 
 	/**
