@@ -67,6 +67,17 @@ class SpotifyWebApiTest {
 	}
 
 	@Test
+	fun testInitializeWebApi_WebApiExisting()
+	{
+		val webApi: SpotifyClientApi = mock()
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		spotifyWebApi.initializeWebApi()
+
+		assertEquals(webApi, Whitebox.getInternalState(spotifyWebApi, "webApi"))
+	}
+
+	@Test
 	fun testInitializeWebApi_ValidAccessToken() = runBlocking {
 		val accessToken = "validAccessToken"
 		val expirationIn: Long = 5
@@ -572,6 +583,8 @@ class SpotifyWebApiTest {
 		verify(notificationManager, never()).notify(any(), any())
 
 		assertEquals(null, likedSongs)
+		val internalWebApi: SpotifyClientApi? = Whitebox.getInternalState(spotifyWebApi, "webApi")
+		assertNull(internalWebApi)
 	}
 
 	@Test
@@ -916,6 +929,9 @@ class SpotifyWebApiTest {
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
 
 		assertTrue(searchResults.isEmpty())
+
+		val internalWebApi: SpotifyClientApi? = Whitebox.getInternalState(spotifyWebApi, "webApi")
+		assertNull(internalWebApi)
 
 		verify(spotifyAuthStateManager).addAccessTokenAuthorizationException(exception)
 		verify(notificationManager, never()).notify(any(), any())

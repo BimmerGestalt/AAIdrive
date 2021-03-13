@@ -58,6 +58,7 @@ interface MusicAppController {
 	 * Returns whether the app is still connected
 	 */
 	fun isConnected(): Boolean
+
 	/**
 	 * Disconnects the app, and also clears out any subscribed callback
 	 */

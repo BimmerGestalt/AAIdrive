@@ -247,7 +247,8 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 			Log.w(TAG, "Did not successfully create CombinedMusicAppController!")
 			return
 		}
-		controller.subscribe {
+
+		controller.onCreatedCallback {
 			Log.d(TAG, "Received update about controller probe ${appInfo.name}: connectable=${controller.isConnected()} pending=${controller.isPending()}")
 			appInfo.connectable = controller.isConnected()
 			appInfo.playsearchable = controller.isSupportedAction(MusicAction.PLAY_FROM_SEARCH)
@@ -261,11 +262,14 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 						appInfo.browseable = true
 						listener?.run()
 					}
+
 					val searchResults = controller.search("query")
+					Log.d(TAG, "Received search results from ${appInfo.name}")
 					if (searchResults?.isNotEmpty() == true) {
 						appInfo.searchable = true
 						listener?.run()
 					}
+
 					// save our cached version and stop probing
 					disconnectApp(appInfo)
 					appInfo.probed = true
