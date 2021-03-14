@@ -529,6 +529,7 @@ class NotificationAppTest {
 
 		// read the notification
 		app.viewDetails.selectedNotification = bundle
+		app.viewDetails.state.focusCallback?.onFocus(true)
 
 		// it should not popup
 		val bundle2 = createNotificationObject("Title", "Text\nNext Message")

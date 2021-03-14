@@ -319,10 +319,9 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			val alreadyShown = readHistory.contains(sbn)
 			readHistory.add(sbn)
 			if (!alreadyShown) {
-				if (notificationSettings.shouldPopup(passengerSeated)) {
-					if (!sbn.equalsKey(viewDetails.selectedNotification)) {
-						viewPopup.showNotification(sbn)
-					}
+				val currentlyReading = viewDetails.visible && sbn.equalsKey(viewDetails.selectedNotification)
+				if (notificationSettings.shouldPopup(passengerSeated) && !currentlyReading) {
+					viewPopup.showNotification(sbn)
 				} else {
 					// only show the statusbar icon if we didn't pop it up
 					viewList.showNotification(sbn)
