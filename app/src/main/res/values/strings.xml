@@ -226,6 +226,7 @@
     <string name="NOTIFICATION_READOUT_POPUP">Speak new notifications</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … with a passenger</string>
     <string name="NOTIFICATION_PERMISSION_NEEDED">This app needs to be granted Notification Access</string>
+    <string name="NOTIFICATION_CENTER_APP">This app is used to push to the car\'s Notification Center</string>
     <string name="READOUT_DESCRIPTION">This app is used for readout purposes</string>
 
     <string name="MAP_ACTION_VIEWMAP">View Full Map</string>

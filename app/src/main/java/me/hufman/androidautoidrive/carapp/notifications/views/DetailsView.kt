@@ -4,6 +4,7 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.carapp.FocusTriggerController
 import me.hufman.androidautoidrive.carapp.notifications.*
 import me.hufman.androidautoidrive.notifications.CarNotification
 import me.hufman.androidautoidrive.notifications.CarNotificationController
@@ -12,7 +13,9 @@ import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.ArrayList
 import kotlin.math.min
 
-class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val notificationSettings: NotificationSettings, val controller: CarNotificationController, val readoutInteractions: ReadoutInteractions) {
+class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers,
+                  val notificationSettings: NotificationSettings, val controller: CarNotificationController,
+                  val focusTriggerController: FocusTriggerController, val statusbarController: StatusbarController, val readoutInteractions: ReadoutInteractions) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.ToolbarState &&
@@ -24,7 +27,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		const val MAX_LENGTH = 10000
 	}
 
-	var listViewId: Int = 0                // where to set the focus when the active notification disappears
+	var listState: RHMIState = state        // where to set the focus when the active notification disappears, linked during initWidgets
 	val iconWidget: RHMIComponent.List     // the widget to display the notification app's icon
 	val titleWidget: RHMIComponent.List    // the widget to display the title in
 	val listWidget: RHMIComponent.List     // the widget to display the text
@@ -112,7 +115,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listView.state.id
 		}
 
-		listViewId = listView.state.id
+		this.listState = listView.state
 	}
 
 	/**
@@ -134,9 +137,14 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		// set the focus to the first button
 		state as RHMIState.ToolbarState
 		val buttons = ArrayList(state.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
-		state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to buttons[0].id))
+		focusTriggerController.focusComponent(buttons[0])
 
 		redraw()
+
+		// remove the message from the Notification Center, since we are reading it now
+		selectedNotification?.also {
+			statusbarController.remove(it)
+		}
 	}
 
 	fun redraw() {
@@ -150,17 +158,13 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		// find the notification, or bail to the list
 		val notification = NotificationsState.getNotificationByKey(selectedNotification?.key)
 		if (notification == null) {
-			try {
-				state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().firstOrNull()?.triggerEvent(mapOf(0 to listViewId))
-			} catch (e: BMWRemoting.ServiceException) {
-				Log.w(TAG, "Failed to close detailsView showing a missing notification: $e")
-			}
+			focusTriggerController.focusState(listState, false)
 			return
 		}
 
 		// prepare the app icon and title
 		val appIcon = notification.appIcon?.let {graphicsHelpers.compress(it, 48, 48)} ?: ""
-		val appName = phoneAppResources.getAppName(notification.packageName)
+		val appName = notification.appName
 		val iconListData = RHMIModel.RaListModel.RHMIListConcrete(3)
 		iconListData.addRow(arrayOf(appIcon, "", appName))
 
@@ -242,12 +246,12 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 						// show input to reply
 						button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputView.id
 						val replyController = ReplyControllerNotification(notification, action, controller, notificationSettings.quickReplies)
-						ReplyView(listViewId, inputView, replyController)
+						ReplyView(listState, inputView, replyController)
 						readoutInteractions.cancel()
 					} else {
 						// trigger the custom action
 						controller.action(notification.key, action.name.toString())
-						button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listViewId
+						button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listState.id
 					}
 				}
 			}

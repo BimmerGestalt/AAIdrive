@@ -108,15 +108,10 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 			}
 		}
 
-		_isPopupSupported.value = capabilities["hmi.type"]?.contains("ID4") == true
-		_isPopupNotSupported.value = capabilities["hmi.type"]?.contains("ID4") == false
-		if (musicAppMode.isId4()) {
-			_popupStatus.value = { getString(R.string.txt_capabilities_popup_yes) }
-			_popupHint.value = { "" }
-		} else {
-			_popupStatus.value = { getString(R.string.txt_capabilities_popup_no) }
-			_popupHint.value = { getString(R.string.txt_capabilities_popup_hint) }
-		}
+		_isPopupSupported.value = capabilities["hmi.type"]?.contains("ID") == true
+		_isPopupNotSupported.value = false
+		_popupStatus.value = { getString(R.string.txt_capabilities_popup_yes) }
+		_popupHint.value = { "" }
 
 		_isTtsSupported.value = capabilities["tts"]?.toLowerCase(Locale.ROOT) == "true"
 		_isTtsNotSupported.value = capabilities["tts"]?.toLowerCase(Locale.ROOT) == "false"
