@@ -44,7 +44,12 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	val focusTriggerController: FocusTriggerController
 	val focusedStateTracker = FocusedStateTracker()
 	val showNotificationController: ShowNotificationController
-	val readHistory = PopupHistory()       // suppress any duplicate New Notification actions
+	val readHistory = PopupHistory().apply {       // suppress any duplicate New Notification actions
+		NotificationsState.cloneNotifications().forEach {
+			add(it)     // add the currently shown notifications to suppress popups
+		}
+	}
+
 	var viewPopup: PopupView                // notification about notification
 	val viewList: NotificationListView      // show a list of active notifications
 	val viewDetails: DetailsView            // view a notification with actions to do

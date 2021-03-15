@@ -517,10 +517,28 @@ class NotificationAppTest {
 	}
 
 	/**
-	 * Don't popup if we are currently reading the relevant notification
+	 * Don't popup if the phone was already showing the notification
 	 */
 	@Test
 	fun testPopupExistingNotification() {
+		val bundle = createNotificationObject("Title", "Text")
+		NotificationsState.replaceNotifications(listOf(bundle))
+
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+
+		// it should not popup
+		val bundle2 = createNotificationObject("Title", "Text")
+		app.notificationListener.onNotification(bundle2)
+		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+	}
+
+	/**
+	 * Don't popup if we are currently reading the relevant notification
+	 */
+	@Test
+	fun testPopupReadingNotification() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
