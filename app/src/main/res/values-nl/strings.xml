@@ -202,6 +202,7 @@
     <string name="NOTIFICATION_READOUT_POPUP">Nieuwe meldingen uitspreken</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> ... met een bijrijder</string>
     <string name="NOTIFICATION_PERMISSION_NEEDED">Deze app moet toegang tot meldingen krijgen</string>
+    <string name="NOTIFICATION_CENTER_APP">Deze app wordt gebruikt om naar het Notificatie Centrum van de auto te zenden</string>
     <string name="READOUT_DESCRIPTION">Deze app wordt gebruikt voor readout doeleinden</string>
     <string name="MAP_ACTION_VIEWMAP">Toon volledige map</string>
     <string name="MAP_ACTION_SEARCH">Locatie zoeken</string>
