@@ -16,6 +16,7 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
+import me.hufman.androidautoidrive.music.spotify.SpotifySkipQueueController
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import java.util.*
@@ -161,6 +162,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	var callback: ((MusicAppController) -> Unit)? = null    // UI listener
 	val spotifySubscription: Subscription<PlayerState> = remote.playerApi.subscribeToPlayerState()
 	val playlistSubscription: Subscription<PlayerContext> = remote.playerApi.subscribeToPlayerContext()
+	var playerState: PlayerState? = null
 	var playerActions: PlayerRestrictions? = null
 	var playerOptions: PlayerOptions? = null
 	var currentTrack: MusicMetadata? = null
@@ -174,20 +176,31 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	var createQueueMetadataJob: Job? = null
 	var defaultDispatcher = Dispatchers.Default
 	var onQueueLoaded: (() -> Unit)? = null
+	var queueSkippingToController= SpotifySkipQueueController()
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
-			Log.d(TAG, "Heard an update from Spotify")
+			Log.d(TAG, "Heard an update from Spotify: ${playerState.track.name}\n$playerState")
 
+			this.playerState = playerState
 			// update the available actions
 			playerActions = playerState.playbackRestrictions
 			playerOptions = playerState.playbackOptions
+
+			// update a progress bar
+			position = PlaybackPosition(playerState.isPaused, false, lastPosition = playerState.playbackPosition, maximumPosition = playerState.track.duration)
 
 			// update the current track info
 			val track = playerState.track
 			if (track != null) {
 				val cachedCoverArt = currentSongCoverArtCache[track.imageUri]
 				currentTrack = MusicMetadata.fromSpotify(track, coverArt = cachedCoverArt)
+
+				// update any skipping progress
+				queueSkippingToController.updateState(playerState)
+				queueSkippingToController.skipTowards(remote.playerApi, queueItems)
+
+				// do any async loading
 				val loadingTrack = currentTrack
 				if (cachedCoverArt == null) {
 					// try to load the coverart
@@ -202,14 +215,13 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				}
 				currentTrackLibrary = null
 				remote.userApi.getLibraryState(track.uri).setResultCallback {
-					currentTrackLibrary = it.isAdded
+					if (loadingTrack?.mediaId == currentTrack?.mediaId) {   // still playing the same song
+						currentTrackLibrary = it.isAdded
+					}
 				}
 			} else {
 				currentTrack = null
 			}
-
-			// update a progress bar
-			position = PlaybackPosition(playerState.isPaused, false, lastPosition = playerState.playbackPosition, maximumPosition = playerState.track.duration)
 
 			callback?.invoke(this)
 		}
@@ -222,6 +234,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				queueUri = uri
 				queueItems = emptyList()
 
+				queueSkippingToController.updateContext(playerContext)
 				val isLikedSongsPlaylist = playerContext.type == "your_library" || playerContext.type == "your_library_tracks"
 				if (isLikedSongsPlaylist) {
 					createLikedSongsQueueMetadata()
@@ -392,7 +405,17 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		if (song.queueId != null) {
 			queueItems.forEachIndexed { index, it ->
 				if (it.queueId == song.queueId) {
-					remote.playerApi.skipToIndex(queueUri, index)
+					Log.i(TAG, "Preparing to skip to queue position ${it.title}")
+					val playerState = playerState
+					if (playerState != null && it.mediaId != null) {
+						queueSkippingToController.startSkipping(playerState, it.mediaId)
+					}
+					// if we know we are supposed to
+					if (queueSkippingToController.isSkipQueueType) {
+						queueSkippingToController.skipTowards(remote.playerApi, queueItems)
+					} else {
+						remote.playerApi.skipToIndex(queueUri, index)
+					}
 					return
 				}
 			}
