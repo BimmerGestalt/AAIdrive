@@ -202,6 +202,7 @@
     <string name="NOTIFICATION_READOUT_POPUP">Leggi\Pronuncia le nuove notifiche</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … con un passeggero</string>
     <string name="NOTIFICATION_PERMISSION_NEEDED">Questa app ha bisogno di ottenere l\'accesso alle notifiche</string>
+    <string name="NOTIFICATION_CENTER_APP">Questa app è utilizzata per comunicare con il Centro Notifiche dell\'auto</string>
     <string name="READOUT_DESCRIPTION">Questa app è utilizzata per scopi di lettura</string>
     <string name="MAP_ACTION_VIEWMAP">Visualizza la mappa fullscreen</string>
     <string name="MAP_ACTION_SEARCH">Cerca un luogo</string>

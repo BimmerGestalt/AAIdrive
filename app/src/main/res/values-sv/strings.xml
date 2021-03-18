@@ -202,6 +202,7 @@
     <string name="NOTIFICATION_READOUT_POPUP">Tala in nya aviseringar</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … med en passagerare</string>
     <string name="NOTIFICATION_PERMISSION_NEEDED">Appen måste beviljas Tillgång till aviseringa</string>
+    <string name="NOTIFICATION_CENTER_APP">Denna app används för att kommunicera aviseringar i bilen</string>
     <string name="READOUT_DESCRIPTION">Appen används för avläsningsändamål</string>
     <string name="MAP_ACTION_VIEWMAP">Se hela kartan</string>
     <string name="MAP_ACTION_SEARCH">Sök efter plats</string>
