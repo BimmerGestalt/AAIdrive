@@ -31,6 +31,12 @@ class ID4PopupView(val state: RHMIState): PopupView {
 
 	override fun initWidgets() {
 		state.componentsList.filterIsInstance<RHMIComponent.Label>().lastOrNull()?.setSelectable(true)
+
+		state.focusCallback = FocusCallback { focused ->
+			if (!focused) {
+				currentNotification = null
+			}
+		}
 	}
 
 	override fun showNotification(sbn: CarNotification) {
@@ -43,6 +49,7 @@ class ID4PopupView(val state: RHMIState): PopupView {
 			popEvent?.triggerEvent(mapOf(0 to true))
 		} catch (e: Exception) {
 			Log.e(TAG, "Error while triggering notification popup: $e")
+			currentNotification = null
 		}
 	}
 

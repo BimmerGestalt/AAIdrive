@@ -50,6 +50,12 @@ class ID5PopupView(val state: RHMIState, val graphicsHelpers: GraphicsHelpers, v
 				onClicked?.invoke(sbn)
 			}
 		}
+
+		state.focusCallback = FocusCallback { focused ->
+			if (!focused) {
+				currentNotification = null
+			}
+		}
 	}
 
 	override fun showNotification(sbn: CarNotification) {
@@ -65,6 +71,7 @@ class ID5PopupView(val state: RHMIState, val graphicsHelpers: GraphicsHelpers, v
 			popEvent?.triggerEvent(mapOf(0 to true))
 		} catch (e: Exception) {
 			Log.e(TAG, "Error while triggering notification popup: $e")
+			currentNotification = null
 		}
 	}
 
