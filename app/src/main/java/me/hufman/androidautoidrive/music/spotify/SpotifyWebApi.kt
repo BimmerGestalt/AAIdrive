@@ -10,6 +10,7 @@ import android.os.Handler
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
+import com.adamratzman.spotify.models.PlaylistUri
 import com.adamratzman.spotify.models.SpotifyImage
 import com.adamratzman.spotify.models.Token
 import kotlinx.coroutines.runBlocking
@@ -18,6 +19,7 @@ import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
+import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
 import net.openid.appauth.*
@@ -34,6 +36,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		const val TAG = "SpotifyWebApi"
 		const val NOTIFICATION_CHANNEL_ID = "SpotifyAuthorization"
 		const val NOTIFICATION_REQ_ID = 56
+		const val LIKED_SONGS_PLAYLIST_NAME = "ANDROIDAUTOIDRIVE_LIKED_SONGS"
 
 		private var webApiInstance: SpotifyWebApi? = null
 
@@ -70,6 +73,46 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	fun clearGetLikedSongsAttemptedFlag() {
 		getLikedSongsAttempted = false
 		spotifyAppControllerCaller = null
+	}
+
+	suspend fun createDummyPlaylist(): PlaylistUri? {
+		try {
+			return webApi?.playlists?.createClientPlaylist(name = LIKED_SONGS_PLAYLIST_NAME, public = false)?.uri
+		} catch (e: SpotifyException.AuthenticationException) {
+			Log.e(TAG, "Authorization issue")
+			authStateManager.addAccessTokenAuthorizationException(e)
+			createNotAuthorizedNotification()
+			webApi = null
+		} catch (e: Exception) {
+			Log.e(TAG, "Exception: ${e.message}")
+		}
+		return null
+	}
+
+	suspend fun addSongsToDummyPlaylist(playlistId: String, songs: List<MusicMetadata>) {
+		try {
+			webApi?.playlists?.addTracksToClientPlaylist(playlistId, *songs.map { it.mediaId!! }.toTypedArray())
+		} catch (e: SpotifyException.AuthenticationException) {
+			Log.e(TAG, "Authorization issue")
+			authStateManager.addAccessTokenAuthorizationException(e)
+			createNotAuthorizedNotification()
+			webApi = null
+		} catch (e: Exception) {
+			Log.e(TAG, "Exception: ${e.message}")
+		}
+	}
+
+	suspend fun replaceDummyPlaylistSongs(playlistId: String, songs: List<MusicMetadata>) {
+		try {
+			webApi?.playlists?.replaceClientPlaylistTracks(playlistId, *songs.map { it.mediaId!! }.toTypedArray())
+		} catch (e: SpotifyException.AuthenticationException) {
+			Log.e(TAG, "Authorization issue")
+			authStateManager.addAccessTokenAuthorizationException(e)
+			createNotAuthorizedNotification()
+			webApi = null
+		} catch (e: Exception) {
+			Log.e(TAG, "Exception: ${e.message}")
+		}
 	}
 
 	suspend fun getLikedSongs(spotifyAppController: SpotifyAppController): List<SpotifyMusicMetadata>?  {
@@ -201,7 +244,8 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			authStateManager.updateTokenResponseWithToken(webApi!!.token, clientId)
 			if (getLikedSongsAttempted) {
 				getLikedSongsAttempted = false
-				spotifyAppControllerCaller?.createLikedSongsQueueMetadata()
+				//todo re-enable - commented out for testing
+				//spotifyAppControllerCaller?.createLikedSongsQueueMetadata()
 			}
 			if (!isProbing) {
 				updateSpotifyAppInfoAsSearchable()

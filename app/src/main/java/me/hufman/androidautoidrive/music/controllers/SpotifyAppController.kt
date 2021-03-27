@@ -12,6 +12,10 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.*
 import kotlinx.coroutines.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.music.*
@@ -19,6 +23,9 @@ import me.hufman.androidautoidrive.music.PlaybackPosition
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import java.util.*
+
+@Serializable
+data class LikedSongsState(val hashCode: String, val playlistUri: String, val playlistId: String, var queueCoverArtUri: String?)
 
 class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController {
 	companion object {
@@ -174,6 +181,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	var createQueueMetadataJob: Job? = null
 	var defaultDispatcher = Dispatchers.Default
 	var onQueueLoaded: (() -> Unit)? = null
+	val appSettings = MutableAppSettingsReceiver(context)
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -223,7 +231,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				queueItems = emptyList()
 
 				val isLikedSongsPlaylist = playerContext.type == "your_library" || playerContext.type == "your_library_tracks"
-				if (isLikedSongsPlaylist) {
+				if (isLikedSongsPlaylist || playerContext.title == SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME) {
 					createLikedSongsQueueMetadata()
 				} else {
 					if (createQueueMetadataJob?.isActive == true) {
@@ -244,15 +252,67 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	 * not authorized then the the [QueueMetadata] is created from the app remote API.
 	 */
 	fun createLikedSongsQueueMetadata() {
+		if (createQueueMetadataJob?.isActive == true) {
+			createQueueMetadataJob?.cancel()
+		}
+
 		createQueueMetadataJob = GlobalScope.launch(defaultDispatcher) {
 			queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
+
 			if (queueItems.isNotEmpty()) {
 				queueMetadata = QueueMetadata("Liked Songs", null, queueItems)
-				loadQueueCoverart()
+
+				val hashCode = queueItems.hashCode().toString()
+				val jsonLikedSongsState = appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE]
+				val likedSongsState: LikedSongsState
+				if (jsonLikedSongsState.isBlank()) {
+					val uri = webApi.createDummyPlaylist()
+					if(uri == null) {
+						Log.e(TAG, "ERROR")
+						return@launch
+					}
+					webApi.addSongsToDummyPlaylist(uri.id, queueItems)
+					likedSongsState = LikedSongsState(hashCode, uri.uri, uri.id, null)
+					appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = Json.encodeToString(likedSongsState)
+				} else {
+					likedSongsState = Json.decodeFromString(jsonLikedSongsState)
+				}
+
+				//todo need to handle case where the user deleted their Dummy Liked Songs playlist
+
+				// dummy playlist exists and the likedSongs retrieved hashed is not the same as the playlist, update playlist and store new hash state
+				if (hashCode != likedSongsState.hashCode)
+				{
+					webApi.replaceDummyPlaylistSongs(likedSongsState.playlistId, queueItems)
+					likedSongsState.queueCoverArtUri = hashCode
+					appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = Json.encodeToString(likedSongsState)
+				}
+
+				queueUri = likedSongsState.playlistUri
+
+				if(likedSongsState.queueCoverArtUri == null) {
+					val recentlyPlayedUri = "com.spotify.recently-played"
+					val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
+					remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
+						val item = recentlyPlayed?.items?.get(0)
+						if (item != null) {
+							likedSongsState.queueCoverArtUri = item.imageUri.raw
+							remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
+								queueMetadata?.coverArt = coverArt
+							}
+							appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = Json.encodeToString(likedSongsState)
+						}
+					}
+				} else {
+					remote.imagesApi.getImage(ImageUri(likedSongsState.queueCoverArtUri), Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
+						queueMetadata?.coverArt = coverArt
+					}
+				}
 
 				callback?.invoke(this@SpotifyAppController)
 			} else {
-				createQueueMetadata(PlayerContext(queueUri, "Liked Songs", null, null))
+				//todo: re-enable - commented out for testing
+				//createQueueMetadata(PlayerContext(queueUri, "Liked Songs", null, null))
 			}
 		}
 	}
