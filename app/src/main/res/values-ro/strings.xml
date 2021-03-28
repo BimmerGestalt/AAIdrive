@@ -49,7 +49,7 @@
     <string name="notification_readout_popup">Citire notificări noi</string>
     <string name="notification_readout_popup_passenger">... cu un pasager</string>
     <string name="notification_quickreplies">Răspunsuri rapide</string>
-    <string name="notification_quickreplies_default">[\"👍\",\"Pe drum!\",\"Momentan în mașină\",\"Nu pot vorbi prin mesaj, sună-mă te rog\", \"Te sun mai târziu\"]</string>
+    <string name="notification_quickreplies_default">[\"👍\",\"Pe drum!\",\"Momentan în mașină\",\"Nu pot vorbi prin mesaj, sună-mă te rog\",\"Te sun mai târziu\"]</string>
     <string name="lbl_notification_permissions">Acces vizualizare notificări</string>
     <string name="lbl_notification_sms_permissions">Acces poze SMS</string>
     <string name="lbl_popupVersion">Popup-urile funcționează doar cu IDrive4</string>
