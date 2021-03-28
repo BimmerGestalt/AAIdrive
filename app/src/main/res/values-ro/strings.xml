@@ -11,18 +11,59 @@
     <string name="notification_description_bmw">Conectat la BMW</string>
     <string name="notification_description_mini">Conectat la Mini</string>
     <!-- notification channel names -->
+    <string name="notification_channel_assistant">Lansator asistenți</string>
+    <string name="notification_channel_connection">Stare conectare mașină</string>
+    <string name="notification_channel_donation">Cerere donație</string>
+    <string name="notification_channel_spotify">Autorizare Spotify</string>
+    <string name="notification_channel_test">Notificare de test</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <string name="navigation_listener_bmw">Navigare BMW</string>
+    <string name="navigation_listener_mini">Navigare MINI</string>
     <!-- Labels on the navigation trigger activity -->
+    <string name="btn_search">Căutare</string>
+    <string name="lbl_navigation_listener_searching">Se caută destinația</string>
+    <string name="lbl_navigation_listener_parsefailure">Nu am putut găsi destinația</string>
+    <string name="lbl_navigation_listener_pending">Începere navigare</string>
+    <string name="lbl_navigation_listener_success">Succes</string>
+    <string name="lbl_navigation_listener_unsuccess">Eroare</string>
     <!-- Menu Titles -->
+    <string name="menu_overview">General</string>
+    <string name="menu_setup">Configurare</string>
+    <string name="menu_connection">Conecțiune</string>
+    <string name="menu_music">Muzică</string>
+    <string name="menu_notifications">Notificări</string>
+    <string name="menu_assistants">Asistenți</string>
+    <string name="menu_maps">Hărți</string>
+    <string name="menu_navigation">Navigare</string>
+    <string name="menu_settings">Setări</string>
+    <string name="menu_support">Suport</string>
+    <string name="lbl_overviewpage">AndroidAutoIdrive integrează unele aplicații de muzică și notificările din telefon via protocolul BMW Apps</string>
+    <string name="lbl_connectionpage">Conecțiunea pentru aplicații a mașinii depinde de câteva piese, și aici aveți câteva sfaturi pentru a vă asigura că funcționează corect</string>
+    <string name="lbl_notificationpage">Notificările telefonului pot fi afișate și interacționate din mașină</string>
     <string name="spawn_test_notification">Notificare de test</string>
     <string name="message_notifications">Notificări mesaj</string>
     <string name="notification_popups">Popup-uri notificări</string>
     <string name="notification_popups_passenger">Popup-uri pasager</string>
+    <string name="notification_sound">Redare sunet notificare</string>
+    <string name="notification_readout">Vorbește la vizualizarea notificărilor</string>
+    <string name="notification_readout_popup">Citire notificări noi</string>
+    <string name="notification_readout_popup_passenger">... cu un pasager</string>
+    <string name="notification_quickreplies">Răspunsuri rapide</string>
+    <string name="notification_quickreplies_default">[\"👍\",\"Pe drum!\",\"Momentan în mașină\",\"Nu pot vorbi prin mesaj, sună-mă te rog\", \"Te sun mai târziu\"]</string>
+    <string name="lbl_notification_permissions">Acces vizualizare notificări</string>
+    <string name="lbl_notification_sms_permissions">Acces poze SMS</string>
     <string name="lbl_popupVersion">Popup-urile funcționează doar cu IDrive4</string>
+    <string name="lbl_ttsUnsupported">TTS nu e suportat de mașina dvs.</string>
     <string name="lbl_smsPermission">Permisiune SMS necesară pentru a vedea imaginile din mesaje în mașină. Textul este disponibil întotdeauna.</string>
+    <string name="lbl_mapspage">Un ecran simplu Google Maps poate fi afișat în mașină</string>
     <string name="enable_google_maps">Activează Google Maps</string>
     <string name="lbl_widescreen_map">Hartă widescreen</string>
+    <string name="lbl_map_invert_zoom">Inversează direcția de zoom</string>
+    <string name="lbl_map_tilt">Înclinare hartă</string>
+    <string name="lbl_map_traffic">Afișează trafic</string>
+    <string name="lbl_gmap_buildings">Activează clădiri 3D</string>
     <string name="gmapStyleLabel">Stil hartă</string>
+    <string name="lbl_musicpage">Aplicațiile de muzică din telefon sunt disponibile ca surse media în mașină</string>
     <string name="lbl_music_apps">Aplicații de muzică</string>
     <string name="musicAppIcon">Icon aplicație</string>
     <string name="musicAppNowPlaying">În redare</string>
@@ -31,6 +72,7 @@
     <string name="musicAppBrowseable">Suportă listare</string>
     <string name="musicAppSearchable">Suportă căutare</string>
     <string name="musicAppUnavailable">Indisponibil</string>
+    <string name="musicAppHidden">Ascuns</string>
     <string name="enable_audio_context">Cere Audio Focus</string>
     <string name="lbl_grant_sessions">Control pe aplicațiile de muzică</string>
     <string name="lbl_grant">Permite</string>
