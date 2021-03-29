@@ -11,6 +11,9 @@
     <string name="notification_description_bmw">Подключен к BMW</string>
     <string name="notification_description_mini">Подключен к Mini</string>
     <!-- notification channel names -->
+    <string name="notification_channel_connection">Статус подключения к автомобилю</string>
+    <string name="notification_channel_spotify">Авторизация в Spotify</string>
+    <string name="notification_channel_test">Тестовое уведомление</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <!-- Labels on the navigation trigger activity -->
     <!-- Menu Titles -->
