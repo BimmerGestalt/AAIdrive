@@ -12,7 +12,6 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.*
 import kotlinx.coroutines.*
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -20,12 +19,10 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
+import me.hufman.androidautoidrive.music.spotify.LikedSongsState
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import java.util.*
-
-@Serializable
-data class LikedSongsState(val hashCode: String, val playlistUri: String, val playlistId: String, var queueCoverArtUri: String?)
 
 class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController {
 	companion object {
@@ -263,34 +260,36 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				queueMetadata = QueueMetadata("Liked Songs", null, queueItems)
 
 				val hashCode = queueItems.hashCode().toString()
-				val jsonLikedSongsState = appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE]
+				val likedSongsStateJson = appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE]
 				val likedSongsState: LikedSongsState
-				if (jsonLikedSongsState.isBlank()) {
-					val uri = webApi.createDummyPlaylist()
-					if(uri == null) {
-						Log.e(TAG, "ERROR")
+				if (likedSongsStateJson.isBlank()) {
+					Log.d(TAG, "No previous liked songs state found.")
+					val uri = webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)
+					if (uri == null) {
+						Log.e(TAG, "Error creating liked songs playlist, falling back to app remote API")
+						createQueueMetadata(PlayerContext(queueUri, "Liked Songs", null, null))
 						return@launch
 					}
-					webApi.addSongsToDummyPlaylist(uri.id, queueItems)
+					webApi.addSongsToPlaylist(uri.id, queueItems)
 					likedSongsState = LikedSongsState(hashCode, uri.uri, uri.id, null)
-					appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = Json.encodeToString(likedSongsState)
+					saveLikedSongsState(likedSongsState)
 				} else {
-					likedSongsState = Json.decodeFromString(jsonLikedSongsState)
+					Log.d(TAG, "Found previous liked songs state.")
+					likedSongsState = Json.decodeFromString(likedSongsStateJson)
 				}
 
-				//todo need to handle case where the user deleted their Dummy Liked Songs playlist
-
-				// dummy playlist exists and the likedSongs retrieved hashed is not the same as the playlist, update playlist and store new hash state
 				if (hashCode != likedSongsState.hashCode)
 				{
-					webApi.replaceDummyPlaylistSongs(likedSongsState.playlistId, queueItems)
+					Log.d(TAG, "Previous liked songs state is no longer valid, updating liked songs playlist and writing new hash.")
+					webApi.replacePlaylistSongs(likedSongsState.playlistId, queueItems)
 					likedSongsState.queueCoverArtUri = hashCode
-					appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = Json.encodeToString(likedSongsState)
+					saveLikedSongsState(likedSongsState)
 				}
 
 				queueUri = likedSongsState.playlistUri
 
-				if(likedSongsState.queueCoverArtUri == null) {
+				if (likedSongsState.queueCoverArtUri == null) {
+					Log.d(TAG, "No previously stored queue cover art uri found.")
 					val recentlyPlayedUri = "com.spotify.recently-played"
 					val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
 					remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
@@ -300,10 +299,11 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 							remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
 								queueMetadata?.coverArt = coverArt
 							}
-							appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = Json.encodeToString(likedSongsState)
+							saveLikedSongsState(likedSongsState)
 						}
 					}
 				} else {
+					Log.d(TAG, "Found previously stored queue cover art uri.")
 					remote.imagesApi.getImage(ImageUri(likedSongsState.queueCoverArtUri), Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
 						queueMetadata?.coverArt = coverArt
 					}
@@ -311,10 +311,16 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 
 				callback?.invoke(this@SpotifyAppController)
 			} else {
-				//todo: re-enable - commented out for testing
-				//createQueueMetadata(PlayerContext(queueUri, "Liked Songs", null, null))
+				createQueueMetadata(PlayerContext(queueUri, "Liked Songs", null, null))
 			}
 		}
+	}
+
+	/**
+	 * Saves the provided [LikedSongsState] to the [AppSettings].
+	 */
+	private fun saveLikedSongsState(likedSongsState: LikedSongsState) {
+		appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = Json.encodeToString(likedSongsState)
 	}
 
 	/**
@@ -343,7 +349,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
 				queueItems = removeShufflePlayButtonMetadata(it)
 
-				// build a basic QueueMetadata while waiting for cover art to load
+				// builds the QueueMetadata while waiting for cover art to load
 				queueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, queueItems, mediaId = playerContext.uri)
 				loadQueueCoverart()
 
@@ -354,7 +360,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	}
 
 	/**
-	 * Creates a new instance of the [QueueMetadata] with the queue cover art loaded.
+	 * Updates the [QueueMetadata] with the cover art of the current queue.
 	 */
 	private fun loadQueueCoverart() {
 		val recentlyPlayedUri = "com.spotify.recently-played"
@@ -363,7 +369,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			val item = recentlyPlayed?.items?.get(0)
 			if (item != null) {
 				remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
-					queueMetadata = QueueMetadata(item.title, item.subtitle, queueItems, coverArt, item.uri)
+					queueMetadata?.coverArt = coverArt
 				}
 			}
 		}

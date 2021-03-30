@@ -75,43 +75,53 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		spotifyAppControllerCaller = null
 	}
 
-	suspend fun createDummyPlaylist(): PlaylistUri? {
+	/**
+	 * Creates a private playlist with the provided name. The newly created playlist's [PlaylistUri]
+	 * is returned.
+	 */
+	suspend fun createPlaylist(playlistName: String): PlaylistUri? {
 		try {
-			return webApi?.playlists?.createClientPlaylist(name = LIKED_SONGS_PLAYLIST_NAME, public = false)?.uri
+			return webApi?.playlists?.createClientPlaylist(name = playlistName, public = false)?.uri
 		} catch (e: SpotifyException.AuthenticationException) {
-			Log.e(TAG, "Authorization issue")
+			Log.e(TAG, "Failed to create playlist $playlistName due to authentication error with the message: ${e.message}")
 			authStateManager.addAccessTokenAuthorizationException(e)
 			createNotAuthorizedNotification()
 			webApi = null
 		} catch (e: Exception) {
-			Log.e(TAG, "Exception: ${e.message}")
+			Log.e(TAG, "Exception occurred when trying to create playlist $playlistName with the message: ${e.message}")
 		}
 		return null
 	}
 
-	suspend fun addSongsToDummyPlaylist(playlistId: String, songs: List<MusicMetadata>) {
+	/**
+	 * Adds the provided list of songs to the specified playlist.
+	 */
+	suspend fun addSongsToPlaylist(playlistId: String, songs: List<MusicMetadata>) {
 		try {
 			webApi?.playlists?.addTracksToClientPlaylist(playlistId, *songs.map { it.mediaId!! }.toTypedArray())
 		} catch (e: SpotifyException.AuthenticationException) {
-			Log.e(TAG, "Authorization issue")
+			Log.e(TAG, "Failed to add songs to playlist $playlistId due to authentication error with the message: ${e.message}")
 			authStateManager.addAccessTokenAuthorizationException(e)
 			createNotAuthorizedNotification()
 			webApi = null
 		} catch (e: Exception) {
-			Log.e(TAG, "Exception: ${e.message}")
+			Log.e(TAG, "Exception occurred when trying to add songs to playlist $playlistId with the message: ${e.message}")
 		}
 	}
 
-	suspend fun replaceDummyPlaylistSongs(playlistId: String, songs: List<MusicMetadata>) {
+	/**
+	 * Replaces the songs of the specified playlist with the provided list of songs.
+	 */
+	suspend fun replacePlaylistSongs(playlistId: String, songs: List<MusicMetadata>) {
 		try {
 			webApi?.playlists?.replaceClientPlaylistTracks(playlistId, *songs.map { it.mediaId!! }.toTypedArray())
 		} catch (e: SpotifyException.AuthenticationException) {
-			Log.e(TAG, "Authorization issue")
+			Log.e(TAG, "Failed to replace playlist $playlistId songs due to authentication error with the message: ${e.message}")
 			authStateManager.addAccessTokenAuthorizationException(e)
 			createNotAuthorizedNotification()
 			webApi = null
 		} catch (e: Exception) {
-			Log.e(TAG, "Exception: ${e.message}")
+			Log.e(TAG, "Exception occurred when trying to replace playlist $playlistId songs with the message: ${e.message}")
 		}
 	}
 
@@ -242,9 +252,10 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		webApi = createWebApiClient()
 		if (webApi != null) {
 			authStateManager.updateTokenResponseWithToken(webApi!!.token, clientId)
+
+			//TODO: this needs to be revisited and a better approach figured out
 			if (getLikedSongsAttempted) {
 				getLikedSongsAttempted = false
-				//todo re-enable - commented out for testing
 				//spotifyAppControllerCaller?.createLikedSongsQueueMetadata()
 			}
 			if (!isProbing) {
