@@ -102,14 +102,18 @@ class MainService: Service() {
 
 	override fun onDestroy() {
 		handleActionStop()
-		// one time things
+		// undo one time things
 		carInformationObserver.cdsData.removeEventHandler(CDS.VEHICLE.LANGUAGE, cdsObserver)
+		carInformationObserver.callback = { }
+		iDriveConnectionReceiver.callback = { }
 		try {
 			iDriveConnectionReceiver.unsubscribe(this)
 		} catch (e: IllegalArgumentException) {
 			// never started?
 		}
+		securityAccess.callback = {}
 		appSettings.callback = null
+
 		carProberThread?.quitSafely()
 		super.onDestroy()
 	}
