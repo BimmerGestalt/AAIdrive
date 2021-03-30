@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
+import java.lang.IllegalArgumentException
 
 const val INTENT_INTERACTION = "me.hufman.androidautoidrive.maps.INTERACTION"
 const val EXTRA_INTERACTION_TYPE = "me.hufman.androidautoidrive.maps.INTERACTION.TYPE"
@@ -111,7 +112,9 @@ class MapsInteractionControllerListener(val context: Context, val controller: Ma
 	}
 
 	fun onDestroy() {
-		context.unregisterReceiver(interactionListener)
+		try {
+			context.unregisterReceiver(interactionListener)
+		} catch (e: IllegalArgumentException) {}
 		controller.pauseMap()
 	}
 }

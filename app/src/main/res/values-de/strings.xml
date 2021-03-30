@@ -202,6 +202,7 @@
     <string name="NOTIFICATION_READOUT_POPUP">Neue Benachrichtigungen vorlesen</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … mit Beifahrer</string>
     <string name="NOTIFICATION_PERMISSION_NEEDED">Diese App muss Zugriff auf Benachrichtigungen erhalten</string>
+    <string name="NOTIFICATION_CENTER_APP">Diese App wird verwendet, um Nachrichten an das Benachrichtigungssystem des Autos zu senden</string>
     <string name="READOUT_DESCRIPTION">Diese App wird zum Auslesen verwendet</string>
     <string name="MAP_ACTION_VIEWMAP">Volle Karte zeigen</string>
     <string name="MAP_ACTION_SEARCH">Ort suchen</string>

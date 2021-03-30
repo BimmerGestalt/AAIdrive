@@ -28,6 +28,7 @@ import java.lang.RuntimeException
 import java.util.*
 
 const val TAG = "PhoneNotifications"
+const val HMI_CONTEXT_THRESHOLD = 5000L
 
 class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val audioPlayer: AudioPlayer, val notificationSettings: NotificationSettings) {
 	val notificationListener = PhoneNotificationListener(this)
@@ -43,8 +44,15 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	val amHandle: Int
 	val focusTriggerController: FocusTriggerController
 	val focusedStateTracker = FocusedStateTracker()
+	var hmiContextChangedTime = 0L
+	var hmiContextWidgetType: String = ""
 	val showNotificationController: ShowNotificationController
-	val readHistory = PopupHistory()       // suppress any duplicate New Notification actions
+	val readHistory = PopupHistory().apply {       // suppress any duplicate New Notification actions
+		NotificationsState.cloneNotifications().forEach {
+			add(it)     // add the currently shown notifications to suppress popups
+		}
+	}
+
 	var viewPopup: PopupView                // notification about notification
 	val viewList: NotificationListView      // show a list of active notifications
 	val viewDetails: DetailsView            // view a notification with actions to do
@@ -121,7 +129,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 
 			// subscribe to CDS for passenger seat info
 			cdsData.setConnection(CDSConnectionEtch(carConnection))
-			cdsData.subscriptions.defaultIntervalLimit = 5000
+			cdsData.subscriptions.defaultIntervalLimit = 2200
 			cdsData.subscriptions[CDS.SENSORS.SEATOCCUPIEDPASSENGER] = {
 				val occupied = it["seatOccupiedPassenger"]?.asInt != 0
 				passengerSeated = occupied
@@ -139,6 +147,18 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 					viewDetails.lockSpeedLock()
 				}
 			}
+			try {
+				// not sure if this works for id4
+				cdsData.subscriptions[CDS.HMI.GRAPHICALCONTEXT] = {
+					hmiContextChangedTime = System.currentTimeMillis()
+					if (it.has("graphicalContext")) {
+						val graphicalContext = it.getAsJsonObject("graphicalContext")
+						if (graphicalContext.has("widgetType")) {
+							hmiContextWidgetType = graphicalContext.getAsJsonPrimitive("widgetType").asString
+						}
+					}
+				}
+			} catch (e: BMWRemoting.ServiceException) {}
 		}
 	}
 
@@ -148,14 +168,17 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	 * so sleeping here is inside a background thread
 	 * */
 	fun checkRecreate() {
+		val interval = 500
+		val waitDelay = 10000
 		if (focusTriggerController.hasFocusedState && focusedStateTracker.getFocused() == null) {
-			Thread.sleep(1000)      // debounce if we are navigating between windows
-			if (focusedStateTracker.getFocused() == null) {
-				Thread.sleep(4000)  // make sure we actually left the app
-				if (focusedStateTracker.getFocused() == null) {
-					recreateRhmiApp()
+			for (i in 0..waitDelay step interval) {
+				Thread.sleep(500)
+				if (focusedStateTracker.getFocused() != null) {
+					return
 				}
 			}
+			// waited the entire time without getting focused, recreate
+			recreateRhmiApp()
 		}
 	}
 
@@ -316,10 +339,15 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			val alreadyShown = readHistory.contains(sbn)
 			readHistory.add(sbn)
 			if (!alreadyShown) {
-				if (notificationSettings.shouldPopup(passengerSeated)) {
-					if (!sbn.equalsKey(viewDetails.selectedNotification)) {
-						viewPopup.showNotification(sbn)
-					}
+				val currentlyPopped = sbn.equalsKey(viewPopup.currentNotification)
+				val currentlyReading = viewDetails.visible && sbn.equalsKey(viewDetails.selectedNotification)
+				val currentlyInputing = hmiContextWidgetType.toLowerCase(Locale.ROOT).contains("speller") ||
+						hmiContextWidgetType.toLowerCase(Locale.ROOT).contains("keyboard") ||
+						focusedStateTracker.isFocused[stateInput.id] == true
+				val timeSinceContextChange = System.currentTimeMillis() - hmiContextChangedTime
+				val userActivelyInteracting = timeSinceContextChange < HMI_CONTEXT_THRESHOLD
+				if (notificationSettings.shouldPopup(passengerSeated) && (currentlyPopped || (!currentlyReading && !currentlyInputing && !userActivelyInteracting))) {
+					viewPopup.showNotification(sbn)
 				} else {
 					// only show the statusbar icon if we didn't pop it up
 					viewList.showNotification(sbn)
