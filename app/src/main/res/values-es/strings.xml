@@ -11,9 +11,29 @@
     <string name="notification_description_bmw">Conectado con BMW</string>
     <string name="notification_description_mini">Conectado con Mini</string>
     <!-- notification channel names -->
+    <string name="notification_channel_connection">Estado de la conexión</string>
+    <string name="notification_channel_donation">Donar</string>
+    <string name="notification_channel_spotify">Autorización de Spotify</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <string name="navigation_listener_bmw">BMW Navegador</string>
+    <string name="navigation_listener_mini">MINI Navegador</string>
     <!-- Labels on the navigation trigger activity -->
+    <string name="btn_search">Buscar</string>
+    <string name="lbl_navigation_listener_searching">Buscar destino</string>
+    <string name="lbl_navigation_listener_parsefailure">Destino no encontrado</string>
+    <string name="lbl_navigation_listener_pending">Comenzar guiado a destino</string>
     <!-- Menu Titles -->
+    <string name="menu_setup">Configuración</string>
+    <string name="menu_connection">Conexión</string>
+    <string name="menu_music">Música</string>
+    <string name="menu_notifications">Notificaciones</string>
+    <string name="menu_assistants">Asistentes de voz</string>
+    <string name="menu_maps">Mapas</string>
+    <string name="menu_navigation">Navegación</string>
+    <string name="menu_settings">Ajustes</string>
+    <string name="menu_support">Soporte</string>
+    <string name="lbl_overviewpage">AndroidAutoIdrive integra algunas de las aplicaciones de música de tu teléfono y las notificaciones de tu teléfono en tu coche a través del protocolo de aplicaciones BMW</string>
+    <string name="lbl_connectionpage">La conexión de la aplicación con el coche depende de varios elementos, aquí puede encontrar una guía para asegurarse de que la conexión funcione correctamente</string>
     <string name="spawn_test_notification">Notificación de prueba</string>
     <string name="message_notifications">Notificaciones de mensaje</string>
     <string name="notification_popups">Popups de notificación</string>
