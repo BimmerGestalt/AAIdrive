@@ -932,7 +932,7 @@
 
         <service android:name=".MainService"
             android:label="@string/app_name"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="me.hufman.androidautoidrive.MainService.start" />
                 <action android:name="me.hufman.androidautoidrive.MainService.stop" />

@@ -159,6 +159,15 @@ class MainService: Service() {
 				appIcon = null
 		)
 		CarAPIDiscovery.announceApp(this, myApp)
+
+		// announce for My BMW
+		// My BMW currently tries to startService but fails due to being in the background
+		val intent = myApp.toIntent()
+				.setAction("ACTION_UPDATE_SERVICE")
+				.putExtra("EXTRA_APPLICATION_STATUS", "ACTIVATED")
+				.putExtra("EXTRA_APPLICATION_LAUNCH_ACTION", "me.hufman.androidautoidrive.MainService.start")
+				.putExtra("EXTRA_APPLICATION_MAIN_ACTION", "me.hufman.androidautoidrive.MainService.start")
+		sendBroadcast(intent)
 	}
 
 	private fun startCarProber() {
