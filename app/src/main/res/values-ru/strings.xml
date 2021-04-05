@@ -11,7 +11,7 @@
     <string name="notification_description_bmw">Подключен к BMW</string>
     <string name="notification_description_mini">Подключен к Mini</string>
     <!-- notification channel names -->
-    <string name="notification_channel_assistant">Помощник запуска</string>
+    <string name="notification_channel_assistant">Включатель помощника</string>
     <string name="notification_channel_connection">Статус подключения к автомобилю</string>
     <string name="notification_channel_donation">Запрос о пожертвовании</string>
     <string name="notification_channel_spotify">Авторизация в Spotify</string>
@@ -37,8 +37,8 @@
     <string name="menu_navigation">Навигация</string>
     <string name="menu_settings">Настройки</string>
     <string name="menu_support">Поддержка</string>
-    <string name="lbl_overviewpage">AndroidAutoIdrive интегрирует некоторые музыкальные приложения вашего телефона и уведомления вашего телефона в ваш автомобиль через пользовательский протокол BMW приложений</string>
-    <string name="lbl_connectionpage">Подключение приложений к автомобилю зависит от нескольких деталей, и вот подсказки, чтобы убедиться, что приложение работает хорошо</string>
+    <string name="lbl_overviewpage">AndroidAutoIdrive интегрирует некоторые музыкальные приложения вашего телефона и уведомления вашего телефона в ваш автомобиль через пользовательский протокол приложений BMW</string>
+    <string name="lbl_connectionpage">Подключение приложений к автомобилю зависит от нескольких деталей, и вот подсказки, чтобы убедиться, что все в порядке</string>
     <string name="lbl_notificationpage">Возможность просмотра и взаимодействия с вашими входящими уведомлениями</string>
     <string name="spawn_test_notification">Тест уведомлений</string>
     <string name="message_notifications">Уведомления о сообщениях</string>
@@ -62,7 +62,7 @@
     <string name="lbl_map_traffic">Показывать пробки</string>
     <string name="lbl_gmap_buildings">Включить 3D здания</string>
     <string name="gmapStyleLabel">Стиль карты</string>
-    <string name="lbl_musicpage">Ваши музыкальные приложения на телефоне выбираются в качестве источника информации в автомобиле</string>
+    <string name="lbl_musicpage">Ваши музыкальные приложения на телефоне выбираются в качестве медиа источника в автомобиле</string>
     <string name="lbl_music_apps">Музыкальные приложения</string>
     <string name="musicAppIcon">Значок Приложения</string>
     <string name="musicAppNowPlaying">Играет</string>
@@ -83,9 +83,11 @@
     <string name="musicAppNotes_oldSpotifyInstructions">Это приложение может обеспечить полный контроль над Spotify до версии 8.4.96.953. Для полного контроля загрузите старую версию.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Пожалуйста, установите официальный клиент Spotify</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Пожалуйста, подтвердите подключение к Интернету и отключите блокировку рекламы</string>
-    <string name="lbl_navigationpage_address">Вставьте адрес для запуска системы навигации автомобиля с вашего телефона</string>
+    <string name="lbl_navigationpage_address">Укажите адрес для запуска системы навигации автомобиля с вашего телефона</string>
+    <string name="lbl_navigationpage_intent">При подключении навигационная система Вашего автомобиля будет отображаться, как один из вариантов, если есть выбор других приложений для навигации</string>
+    <string name="lbl_navigationstatus_active">Сейчас движемся к</string>
     <string name="lbl_navigationstatus_inactive">В настоящее время нет навигации</string>
-    <string name="lbl_settingspage">Расширенные настройки поведения, могут привести к неожиданному поведению</string>
+    <string name="lbl_settingspage">Использование расширенных настроек, может привести к неожиданным последствиям</string>
     <string name="lbl_language_carinterface">Язык для отображения в автомобиле</string>
     <string name="lbl_language_prefercar">Предпочитать язык автомобиля языку на телефоне</string>
     <string name="lbl_language_prefercar_code">Предпочитать язык автомобиля (%s) языку на телефоне</string>
@@ -106,6 +108,7 @@
     <string name="connectionStatusMissingConnectedApp">Не найдено приложения Connected или Connected Classic</string>
     <string name="connectionStatusWaiting">Ожидание подключения к машине</string>
     <string name="connectionStatusConnected">Подключен к %s</string>
+    <string name="lblChassisCode">Серия</string>
     <string name="lblHmiVersion">Тип IDrive</string>
     <string name="nowplaying_notconnected">&lt;Не подключено&gt;</string>
     <string name="nowplaying_unknown">&lt;Неизвестный исполнитель&gt;</string>
@@ -114,7 +117,8 @@
     <string name="txt_setup_mini_ready">Приложение готово для подключения к Mini</string>
     <string name="txt_setup_bmw_missing">Не готово к подключению к BMW:</string>
     <string name="txt_setup_mini_missing">Не готово к подключению к Mini:</string>
-    <string name="txt_setup_bmw_mine_detected">Приложение My BMW установлено, оно не поддерживается и это может вызвать проблемы с BMW Connected</string>
+    <string name="txt_setup_bmw_mine_detected">Установлено новое приложение My BMW, которое может быть причиной проблем с BMW Connected и не поддерживается</string>
+    <string name="txt_setup_mini_mine_detected">Установлено новое приложение MINI, которое может быть причиной проблем с MINI Connected и не поддерживается</string>
     <string name="txt_setup_security_missing">Служба безопасности недоступна:</string>
     <string name="btn_install">Установить</string>
     <string name="btn_install_bmw">Установить BMW Connected</string>
@@ -135,7 +139,7 @@
     <string name="txt_setup_usbmtp_connected">USB соединение в режиме накопителя</string>
     <string name="txt_setup_usbacc_connected">USB подключен в режиме Аксессуаров</string>
     <string name="txt_setup_bcl_init_stuck">Подключение к приложениям не включено:</string>
-    <string name="txt_setup_enable_bcl_mode">Включите опцию Приложения в автомобиле для этого %s</string>
+    <string name="txt_setup_enable_bcl_mode">Включить опцию Приложения в автомобиле для этого %s</string>
     <string name="txt_setup_bcl_disconnected">Подключение к приложениям не готово:</string>
     <string name="txt_setup_bcl_waiting">Ожидание подключения к приложениям для запуска</string>
     <string name="txt_setup_enable_bclspp">Попробуйте переключить Bluetooth Music или подключитесь через USB</string>
@@ -148,8 +152,8 @@
     <string name="txt_capabilities_audiocontext_no">Аудио контекст не поддерживается</string>
     <string name="txt_capabilities_audiocontext_no_usb">Аудио контекст не поддерживается через USB</string>
     <string name="txt_capabilities_audiocontext_hint">Слушайте музыку своего телефона по Bluetooth</string>
-    <string name="txt_capabilities_audiostate_yes">Поддерживается глобальное обложка</string>
-    <string name="txt_capabilities_audiostate_no">Глобальное обложка не поддерживается</string>
+    <string name="txt_capabilities_audiostate_yes">Поддерживается глобальная обложка</string>
+    <string name="txt_capabilities_audiostate_no">Глобальная обложка не поддерживается</string>
     <string name="txt_capabilities_audiostate_id4">ID4 не поддерживает эту функцию</string>
     <string name="txt_capabilities_audiostate_audiocontext">Эта функция требует аудио контекста</string>
     <string name="txt_capabilities_audiostate_spotify">Установите последнюю версию Spotify, чтобы включить эту функцию</string>
@@ -194,6 +198,7 @@
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> ... с пассажиром</string>
     <string name="NOTIFICATION_PERMISSION_NEEDED">Этому приложению необходимо предоставить доступ к уведомлениям</string>
     <string name="NOTIFICATION_CENTER_APP">Это приложение используется для отправки в центр уведомлений автомобиля</string>
+    <string name="READOUT_DESCRIPTION">Это приложение используется для ввода даных</string>
     <string name="MAP_ACTION_VIEWMAP">Посмотреть полную карту</string>
     <string name="MAP_ACTION_SEARCH">Поиск места</string>
     <string name="MAP_ACTION_CLEARNAV">Удалить маршрут</string>
@@ -214,6 +219,7 @@
     <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">Играет </string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;Нет очереди&gt;</string>
+    <string name="MUSIC_SEARCH_EMPTY">&lt;Ничего не найдено&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Предыдущий</string>
     <string name="MUSIC_SKIP_NEXT">Следующий</string>
     <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">В случайном порядке недоступно</string>
