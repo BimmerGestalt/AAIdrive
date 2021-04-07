@@ -147,7 +147,7 @@
     <string name="txt_setup_enable_bcl_mode">Schakel de Apps optie in om gerbuik te maken van %s</string>
     <string name="txt_setup_bcl_disconnected">Apps verbinding is niet beschikbaar:</string>
     <string name="txt_setup_bcl_waiting">Wachten op een app-verbinding om te starten</string>
-    <string name="txt_setup_enable_bclspp">Herstart de Bluetooth verbinding of maak verbinding via USB</string>
+    <string name="txt_setup_enable_bclspp_usb">Herstart de Bluetooth verbinding of maak verbinding via USB</string>
     <string name="txt_setup_bcl_connecting">Apps maakt verbinding</string>
     <string name="txt_setup_bcl_connected">Apps is verbonden</string>
     <string name="txt_setup_bcl_connected_transport">Apps is verbonden via %s</string>

@@ -8,22 +8,29 @@ import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 
+@Suppress("BooleanLiteralArgument")
 class DependencyInfoModelTest {
 	@Rule
 	@JvmField
 	val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+	fun carConnection(bmwConnected: Boolean, bmwMine: Boolean,
+	                  miniConnected: Boolean, miniMine: Boolean): CarConnectionDebugging {
+		return mock<CarConnectionDebugging> {
+			on { isBMWInstalled } doReturn (bmwConnected || bmwMine)
+			on { isBMWConnectedInstalled } doReturn bmwConnected
+			on { isBMWMineInstalled } doReturn bmwMine
+			on { isMiniInstalled } doReturn (miniConnected || miniMine)
+			on { isMiniConnectedInstalled } doReturn miniConnected
+			on { isMiniMineInstalled } doReturn miniMine
+			on { isConnectedSecurityInstalled } doReturn (bmwConnected || bmwMine || miniConnected || miniMine)
+			on { isConnectedSecurityConnected } doReturn (bmwConnected || bmwMine || miniConnected || miniMine)
+		}
+	}
+
 	@Test
 	fun testStateBlank() {
-		val carConnectionDebugging = mock<CarConnectionDebugging> {
-			on { isBMWConnectedInstalled } doReturn false
-			on { isBMWMineInstalled } doReturn false
-			on { isMiniConnectedInstalled } doReturn false
-			on { isMiniMineInstalled } doReturn false
-			on { isConnectedSecurityInstalled } doReturn false
-			on { isConnectedSecurityConnected } doReturn false
-		}
-
+		val carConnectionDebugging = carConnection(false, false, false, false)
 		val model = DependencyInfoModel(carConnectionDebugging).apply { update() }
 
 		assertEquals(false, model.isBmwConnectedInstalled.value)
@@ -37,20 +44,13 @@ class DependencyInfoModelTest {
 
 	@Test
 	fun testStateBMWMine() {
-		val carConnectionDebugging = mock<CarConnectionDebugging> {
-			on { isBMWConnectedInstalled } doReturn false
-			on { isBMWMineInstalled } doReturn true
-			on { isMiniConnectedInstalled } doReturn false
-			on { isMiniMineInstalled } doReturn false
-			on { isConnectedSecurityInstalled } doReturn true
-			on { isConnectedSecurityConnected } doReturn true
-		}
+		val carConnectionDebugging = carConnection(false, true, false, false)
 
 		val model = DependencyInfoModel(carConnectionDebugging).apply { update() }
 
 		assertEquals(false, model.isBmwConnectedInstalled.value)
 		assertEquals(true, model.isBmwMineInstalled.value)
-		assertEquals(false, model.isBmwReady.value)
+		assertEquals(true, model.isBmwReady.value)
 		assertEquals(false, model.isMiniConnectedInstalled.value)
 		assertEquals(false, model.isMiniMineInstalled.value)
 		assertEquals(false, model.isMiniReady.value)
@@ -59,15 +59,8 @@ class DependencyInfoModelTest {
 
 	@Test
 	fun testStateBMWConnectedNoSecurity() {
-		val carConnectionDebugging = mock<CarConnectionDebugging> {
-			on { isBMWConnectedInstalled } doReturn true
-			on { isBMWMineInstalled } doReturn false
-			on { isMiniConnectedInstalled } doReturn false
-			on { isMiniMineInstalled } doReturn false
-			on { isConnectedSecurityInstalled } doReturn true
-			on { isConnectedSecurityConnected } doReturn false
-		}
-
+		val carConnectionDebugging = carConnection(true, false, false, false)
+		whenever(carConnectionDebugging.isConnectedSecurityConnected) doReturn false
 		val model = DependencyInfoModel(carConnectionDebugging).apply { update() }
 
 		assertEquals(true, model.isBmwConnectedInstalled.value)
@@ -81,15 +74,7 @@ class DependencyInfoModelTest {
 
 	@Test
 	fun testStateBMWConnectedYesSecurity() {
-		val carConnectionDebugging = mock<CarConnectionDebugging> {
-			on { isBMWConnectedInstalled } doReturn true
-			on { isBMWMineInstalled } doReturn false
-			on { isMiniConnectedInstalled } doReturn false
-			on { isMiniMineInstalled } doReturn false
-			on { isConnectedSecurityInstalled } doReturn true
-			on { isConnectedSecurityConnected } doReturn true
-		}
-
+		val carConnectionDebugging = carConnection(true, false, false, false)
 		val model = DependencyInfoModel(carConnectionDebugging).apply { update() }
 
 		assertEquals(true, model.isBmwConnectedInstalled.value)
@@ -103,15 +88,7 @@ class DependencyInfoModelTest {
 
 	@Test
 	fun testStateMiniMine() {
-		val carConnectionDebugging = mock<CarConnectionDebugging> {
-			on { isBMWConnectedInstalled } doReturn false
-			on { isBMWMineInstalled } doReturn false
-			on { isMiniConnectedInstalled } doReturn false
-			on { isMiniMineInstalled } doReturn true
-			on { isConnectedSecurityInstalled } doReturn true
-			on { isConnectedSecurityConnected } doReturn true
-		}
-
+		val carConnectionDebugging = carConnection(false, false, false, true)
 		val model = DependencyInfoModel(carConnectionDebugging).apply { update() }
 
 		assertEquals(false, model.isBmwConnectedInstalled.value)
@@ -119,21 +96,14 @@ class DependencyInfoModelTest {
 		assertEquals(false, model.isBmwReady.value)
 		assertEquals(false, model.isMiniConnectedInstalled.value)
 		assertEquals(true, model.isMiniMineInstalled.value)
-		assertEquals(false, model.isMiniReady.value)
+		assertEquals(true, model.isMiniReady.value)
 		assertEquals(false, model.isSecurityServiceDisconnected.value)  // installed securityservice is connected
 	}
 
 	@Test
 	fun testStateMiniConnectedNoSecurity() {
-		val carConnectionDebugging = mock<CarConnectionDebugging> {
-			on { isBMWConnectedInstalled } doReturn false
-			on { isBMWMineInstalled } doReturn false
-			on { isMiniConnectedInstalled } doReturn true
-			on { isMiniMineInstalled } doReturn false
-			on { isConnectedSecurityInstalled } doReturn true
-			on { isConnectedSecurityConnected } doReturn false
-		}
-
+		val carConnectionDebugging = carConnection(false, false, true, false)
+		whenever(carConnectionDebugging.isConnectedSecurityConnected) doReturn false
 		val model = DependencyInfoModel(carConnectionDebugging).apply { update() }
 
 		assertEquals(false, model.isBmwConnectedInstalled.value)
@@ -147,15 +117,7 @@ class DependencyInfoModelTest {
 
 	@Test
 	fun testStateMiniConnectedYesSecurity() {
-		val carConnectionDebugging = mock<CarConnectionDebugging> {
-			on { isBMWConnectedInstalled } doReturn false
-			on { isBMWMineInstalled } doReturn false
-			on { isMiniConnectedInstalled } doReturn true
-			on { isMiniMineInstalled } doReturn false
-			on { isConnectedSecurityInstalled } doReturn true
-			on { isConnectedSecurityConnected } doReturn true
-		}
-
+		val carConnectionDebugging = carConnection(false, false, true, false)
 		val model = DependencyInfoModel(carConnectionDebugging).apply { update() }
 
 		assertEquals(false, model.isBmwConnectedInstalled.value)
@@ -163,6 +125,7 @@ class DependencyInfoModelTest {
 		assertEquals(false, model.isBmwReady.value)
 		assertEquals(true, model.isMiniConnectedInstalled.value)
 		assertEquals(false, model.isMiniMineInstalled.value)
+		assertEquals(true, model.isMiniInstalled.value)
 		assertEquals(true, model.isMiniReady.value)
 		assertEquals(false, model.isSecurityServiceDisconnected.value)  // installed securityservice is connected
 	}

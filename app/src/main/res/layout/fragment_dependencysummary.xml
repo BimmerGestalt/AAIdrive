@@ -34,7 +34,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:visibility="@{viewModel.isBmwMineInstalled()}"
+            android:visibility="@{viewModel.isBmwConnectedInstalled() &amp;&amp; viewModel.isBmwMineInstalled()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -50,7 +50,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/txt_setup_bmw_mine_detected" />
+                android:text="@string/txt_setup_bmw_mine_conflict" />
         </LinearLayout>
 
         <!-- MINI Connection -->
@@ -75,7 +75,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:visibility="@{viewModel.isMiniMineInstalled()}"
+            android:visibility="@{viewModel.isMiniConnectedInstalled() &amp;&amp; viewModel.isMiniMineInstalled()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -91,7 +91,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/txt_setup_mini_mine_detected" />
+                android:text="@string/txt_setup_mini_mine_conflict" />
         </LinearLayout>
 
         <LinearLayout
@@ -102,13 +102,13 @@
             android:visibility="@{!viewModel.isBmwReady() &amp;&amp; !viewModel.isMiniReady()}">
 
             <Button
-                android:visibility="@{!viewModel.isBmwConnectedInstalled()}"
+                android:visibility="@{!viewModel.isBmwInstalled()}"
                 android:onClick="@{() -> controller.installBMWConnected()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/btn_install_bmw"/>
             <Button
-                android:visibility="@{!viewModel.isMiniConnectedInstalled()}"
+                android:visibility="@{!viewModel.isMiniInstalled()}"
                 android:onClick="@{() -> controller.installMiniConnected()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

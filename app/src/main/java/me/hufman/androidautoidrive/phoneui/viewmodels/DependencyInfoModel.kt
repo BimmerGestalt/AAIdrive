@@ -29,14 +29,20 @@ class DependencyInfoModel(val connection: CarConnectionDebugging): ViewModel() {
 	val isBmwConnectedInstalled: LiveData<Boolean> = _isBmwConnectedInstalled
 	private val _isMiniConnectedInstalled = MutableLiveData<Boolean>()
 	val isMiniConnectedInstalled: LiveData<Boolean> = _isMiniConnectedInstalled
-	private val _isBmwReady = MutableLiveData<Boolean>()
-	val isBmwReady: LiveData<Boolean> = _isBmwReady
-	private val _isMiniReady = MutableLiveData<Boolean>()
-	val isMiniReady: LiveData<Boolean> = _isMiniReady
 	private val _isBmwMineInstalled = MutableLiveData<Boolean>()
 	val isBmwMineInstalled: LiveData<Boolean> = _isBmwMineInstalled
 	private val _isMiniMineInstalled = MutableLiveData<Boolean>()
 	val isMiniMineInstalled: LiveData<Boolean> = _isMiniMineInstalled
+
+	private val _isMiniInstalled = MutableLiveData<Boolean>()
+	val isMiniInstalled: LiveData<Boolean> = _isMiniInstalled
+	private val _isBmwInstalled = MutableLiveData<Boolean>()
+	val isBmwInstalled: LiveData<Boolean> = _isBmwInstalled
+
+	private val _isBmwReady = MutableLiveData<Boolean>()
+	val isBmwReady: LiveData<Boolean> = _isBmwReady
+	private val _isMiniReady = MutableLiveData<Boolean>()
+	val isMiniReady: LiveData<Boolean> = _isMiniReady
 
 	// Connected Security Service is installed but not connected
 	private val _isSecurityServiceDisconnected = MutableLiveData<Boolean>()
@@ -45,10 +51,12 @@ class DependencyInfoModel(val connection: CarConnectionDebugging): ViewModel() {
 	fun update() {
 		_isBmwConnectedInstalled.value = connection.isBMWConnectedInstalled
 		_isMiniConnectedInstalled.value = connection.isMiniConnectedInstalled
-		_isBmwReady.value = connection.isBMWConnectedInstalled && connection.isConnectedSecurityConnected
-		_isMiniReady.value = connection.isMiniConnectedInstalled && connection.isConnectedSecurityConnected
 		_isBmwMineInstalled.value = connection.isBMWMineInstalled
 		_isMiniMineInstalled.value = connection.isMiniMineInstalled
+		_isBmwInstalled.value = connection.isBMWInstalled
+		_isMiniInstalled.value = connection.isMiniInstalled
+		_isBmwReady.value = connection.isBMWInstalled && connection.isConnectedSecurityConnected
+		_isMiniReady.value = connection.isMiniInstalled && connection.isConnectedSecurityConnected
 		_isSecurityServiceDisconnected.value = connection.isConnectedSecurityInstalled && !connection.isConnectedSecurityConnected
 	}
 

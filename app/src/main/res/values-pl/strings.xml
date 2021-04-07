@@ -121,7 +121,7 @@
     <string name="txt_setup_enable_bcl_mode">Włącz usługę Aplikacje w samochodzie dla tego %s</string>
     <string name="txt_setup_bcl_disconnected">Połączenie w trybie Aplikacji nie jest gotowe:</string>
     <string name="txt_setup_bcl_waiting">Czekam na rozpoczęcie połączenia z aplikacjami</string>
-    <string name="txt_setup_enable_bclspp">Spróbuj przełączyć na Muzykę Bluetooth lub podłącz kabel USB</string>
+    <string name="txt_setup_enable_bclspp_usb">Spróbuj przełączyć na Muzykę Bluetooth lub podłącz kabel USB</string>
     <string name="txt_setup_bcl_connecting">Połączenie w trybie Aplikacji łączenie …</string>
     <string name="txt_setup_bcl_connected">Połączenie w trybie Aplikacji działa</string>
     <string name="txt_setup_bcl_connected_transport">Połączenie w trybie Aplikacji przez %s</string>

@@ -138,7 +138,7 @@
     <string name="txt_setup_enable_bcl_mode">Включите опцию Приложения в автомобиле для этого %s</string>
     <string name="txt_setup_bcl_disconnected">Подключение к приложениям не готово:</string>
     <string name="txt_setup_bcl_waiting">Ожидание подключения к приложениям для запуска</string>
-    <string name="txt_setup_enable_bclspp">Попробуйте переключить Bluetooth Music или подключитесь через USB</string>
+    <string name="txt_setup_enable_bclspp_usb">Попробуйте переключить Bluetooth Music или подключитесь через USB</string>
     <string name="txt_setup_bcl_connecting">Соединение с приложениями подключено</string>
     <string name="txt_setup_bcl_connected">Выполняется подключение к приложениям</string>
     <string name="txt_setup_bcl_connected_transport">Выполняется подключение к приложениям через %s</string>
