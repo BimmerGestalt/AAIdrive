@@ -25,6 +25,7 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 		this.addRow(arrayOf("", "", L.MUSIC_APPLIST_EMPTY))
 	}
 	var visible = false
+	var hasSelectionChanged = 0 // allow the car to set the selection one time
 	val apps = ArrayList<MusicAppInfo>()
 	val appsListAdapter = object: RHMIListAdapter<MusicAppInfo>(3, apps) {
 		override fun convertRow(index: Int, item: MusicAppInfo): Array<Any> {
@@ -49,6 +50,9 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 		}
 		state.getTextModel()?.asRaDataModel()?.value = L.MUSIC_APPLIST_TITLE
 		listApps.setVisible(true)
+		listApps.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback {
+			hasSelectionChanged += 1
+		}
 		listApps.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
 		listApps.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { onClick(it) }
 	}
@@ -58,11 +62,12 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 	 * draw the current list of apps, and set the cursor to the connected app
 	 */
 	fun show() {
+		hasSelectionChanged = 0
 		redraw()
 
 		if (apps.isNotEmpty()) {
 			val index = apps.indexOfFirst { it == avContext.controller.currentAppInfo }
-			if (index >= 0) {
+			if (hasSelectionChanged < 2 && index >= 0) {
 				state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
 						mapOf(0.toByte() to listApps.id, 41.toByte() to index)
 				)

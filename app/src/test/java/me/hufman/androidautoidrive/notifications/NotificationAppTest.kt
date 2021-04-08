@@ -29,10 +29,7 @@ import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
-import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
-import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
+import me.hufman.idriveconnectionkit.rhmi.*
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -517,6 +514,45 @@ class NotificationAppTest {
 	}
 
 	/**
+	 * Update the popup of the same notification
+	 */
+	@Test
+	fun testPopupUpdatedNotification() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+
+		// posting the notification
+		val bundle = createNotificationObject("Title", "Text")
+		app.notificationListener.onNotification(bundle)
+		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popup
+		assertNull(mockServer.triggeredEvents[4])    // does not trigger the notificationIconEvent
+
+		// system tells us that the screen is shown
+		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "114", "hmi.graphicalContext",
+				"{\"graphicalContext\": { \"widgetType\": \"LT_Button_1Row_1CheckLeft_1IconLeft\" }}")
+
+		// updating it should update the popup
+		mockServer.triggeredEvents.clear()
+		val bundle2 = createNotificationObject("Title", "Text\nLine2")
+		app.notificationListener.onNotification(bundle2)
+		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popup
+		assertNull(mockServer.triggeredEvents[4])    // does not trigger the notificationIconEvent
+
+		// system tells us that the screen is shown
+		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "114", "hmi.graphicalContext",
+				"{\"graphicalContext\": { \"widgetType\": \"LT_Button_1Row_1CheckLeft_1IconLeft\" }}")
+
+		// another notification should not update
+		mockServer.triggeredEvents.clear()
+		val bundle3 = createNotificationObject("A different", "Text")
+		app.notificationListener.onNotification(bundle3)
+		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
+
+	}
+
+	/**
 	 * Don't popup if the phone was already showing the notification
 	 */
 	@Test
@@ -558,6 +594,93 @@ class NotificationAppTest {
 		app.viewDetails.state.focusCallback?.onFocus(false)
 		app.notificationListener.onNotification(bundle2)
 		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup that we just read
+	}
+
+	/**
+	 * Don't popup if we are currently inputting text
+	 */
+	@Test
+	fun testPopupInputSuppress() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+
+		val bundle = createNotificationObject("Title", "Text")
+
+		// focus the Notification Reply input
+		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(app.rhmiHandle, "test", app.stateInput.id, 1, mapOf(4.toByte() to true))
+		// new message
+		app.notificationListener.onNotification(bundle)
+
+		// it should not popup
+		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
+
+		// leave the Input
+		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(app.rhmiHandle, "test", app.stateInput.id, 1, mapOf(4.toByte() to false))
+
+		// confirm that it does show afterward
+		mockServer.triggeredEvents.clear()
+		app.readHistory.retainAll(emptyList())
+		app.notificationListener.onNotification(bundle)
+
+		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popup
+		assertNull(mockServer.triggeredEvents[4])    // does not trigger the notificationIconEvent
+
+		// now try suppressing on system-wide input events
+		mockServer.triggeredEvents.clear()
+		app.readHistory.retainAll(emptyList())
+		// user hides the popup
+		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(app.rhmiHandle, "test", app.carApp.events.values.filterIsInstance<RHMIEvent.PopupEvent>().first().target, 1, mapOf(4.toByte() to false))
+
+		// a system-wide input
+		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "114", "hmi.graphicalContext",
+		"{\"graphicalContext\": { \"widgetType\": \"LT_Speller_Normal\" }}")
+		assertTrue(app.hmiContextChangedTime > 0)
+		assertEquals("LT_Speller_Normal", app.hmiContextWidgetType)
+		app.hmiContextChangedTime = 0       // don't rely on this to suppress, in this test
+
+		// new message
+		app.notificationListener.onNotification(bundle)
+
+		// it should not popup
+		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
+	}
+
+	/**
+	 * Don't popup if we are currently interacting
+	 */
+	@Test
+	fun testPopupInteractionSuppress() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+
+		val bundle = createNotificationObject("Title", "Text")
+
+		// a system-wide window update
+		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "114", "hmi.graphicalContext",
+				"{\"graphicalContext\": { \"widgetType\": \"LT_Button_1Row_1CheckLeft_1IconLeft\" }}")
+		assertTrue(app.hmiContextChangedTime > 0)
+
+		// new message
+		app.notificationListener.onNotification(bundle)
+
+		// it should not popup
+		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
+
+		// interaction times out
+		app.hmiContextChangedTime -= 10000
+
+		// try showing the notification now
+		mockServer.triggeredEvents.clear()
+		app.readHistory.retainAll(emptyList())
+		app.notificationListener.onNotification(bundle)
+
+		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popup
+		assertNull(mockServer.triggeredEvents[4])    // does not trigger the notificationIconEvent
 	}
 
 	/**
