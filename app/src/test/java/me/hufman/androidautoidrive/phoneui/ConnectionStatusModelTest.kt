@@ -407,6 +407,23 @@ class ConnectionStatusModelTest {
 	}
 
 	@Test
+	fun testDisconnectedBrand() {
+		val connection = mock<CarConnectionDebugging>{
+			on {isConnectedSecurityConnected} doReturn true
+			on {isBCLConnected} doReturn false      // we've disconnected after a previous branded connection
+			on {carBrand} doReturn "Mini"
+		}
+		val carInfo = mock<CarInformation>()
+		val model = ConnectionStatusModel(connection, carInfo).apply { update() }
+
+		assertEquals("", context.run(model.carConnectionText.value!!))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
+		context.run(model.carConnectionColor.value!!)
+		verify(context).getColor(R.color.connectionWaiting)
+		assertEquals(null, context.run(model.carLogo.value!!))
+	}
+
+	@Test
 	fun testChassisCode() {
 		val carCapabilities = mapOf(
 			"vehicle.type" to "F56"

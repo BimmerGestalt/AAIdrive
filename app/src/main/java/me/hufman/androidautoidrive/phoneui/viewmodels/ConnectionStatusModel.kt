@@ -169,7 +169,7 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		}
 
 		// current car overview
-		val brand = connection.carBrand?.toUpperCase(Locale.ROOT)
+		val brand = if (connection.isBCLConnected) connection.carBrand?.toUpperCase(Locale.ROOT) else null
 		_carBrand.value = brand
 		when (brand) {
 			"BMW" -> _carLogo.value = { ContextCompat.getDrawable(this, R.drawable.logo_bmw) }
