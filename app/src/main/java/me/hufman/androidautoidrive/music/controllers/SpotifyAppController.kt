@@ -257,7 +257,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
 
 			if (queueItems.isNotEmpty()) {
-				queueMetadata = QueueMetadata("Liked Songs", null, queueItems)
+				queueMetadata = QueueMetadata(L.MUSIC_LIKED_SONGS_PLAYLIST_NAME, null, queueItems)
 
 				val hashCode = queueItems.hashCode().toString()
 				val likedSongsStateJson = appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE]
@@ -267,7 +267,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 					val uri = webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)
 					if (uri == null) {
 						Log.e(TAG, "Error creating liked songs playlist, falling back to app remote API")
-						createQueueMetadata(PlayerContext(queueUri, "Liked Songs", null, null))
+						createQueueMetadata(PlayerContext(queueUri, L.MUSIC_LIKED_SONGS_PLAYLIST_NAME, null, null))
 						return@launch
 					}
 					webApi.addSongsToPlaylist(uri.id, queueItems)
@@ -311,7 +311,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 
 				callback?.invoke(this@SpotifyAppController)
 			} else {
-				createQueueMetadata(PlayerContext(queueUri, "Liked Songs", null, null))
+				createQueueMetadata(PlayerContext(queueUri, L.MUSIC_LIKED_SONGS_PLAYLIST_NAME, null, null))
 			}
 		}
 	}
