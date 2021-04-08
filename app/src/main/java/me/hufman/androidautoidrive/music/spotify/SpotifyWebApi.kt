@@ -256,7 +256,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			//TODO: this needs to be revisited and a better approach figured out
 			if (getLikedSongsAttempted) {
 				getLikedSongsAttempted = false
-				//spotifyAppControllerCaller?.createLikedSongsQueueMetadata()
+				spotifyAppControllerCaller?.createLikedSongsQueueMetadata()
 			}
 			if (!isProbing) {
 				updateSpotifyAppInfoAsSearchable()

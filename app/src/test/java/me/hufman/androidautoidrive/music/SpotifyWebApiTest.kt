@@ -10,6 +10,7 @@ import android.os.Handler
 import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
 import com.adamratzman.spotify.endpoints.client.ClientLibraryApi
+import com.adamratzman.spotify.endpoints.client.ClientPlaylistApi
 import com.adamratzman.spotify.endpoints.client.ClientSearchApi
 import com.adamratzman.spotify.models.*
 import com.nhaarman.mockito_kotlin.*
@@ -954,6 +955,213 @@ class SpotifyWebApiTest {
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
 
 		assertTrue(searchResults.isEmpty())
+	}
+
+	@Test
+	fun testCreatePlaylist() = runBlocking {
+		val playlistName = "playlistName"
+		val playlistUri: PlaylistUri = mock()
+		val playlist: Playlist = mock()
+		whenever(playlist.uri) doAnswer { playlistUri }
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.createClientPlaylist(name = playlistName, description = L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION, public = false)).doAnswer { playlist }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		val playlistCreateResult = spotifyWebApi.createPlaylist(playlistName)
+
+		assertEquals(playlistCreateResult, playlistUri)
+	}
+
+	@Test
+	fun testCreatePlaylist_AuthenticationException() = runBlocking {
+		val playlistName = "playlistName"
+
+		val exception = SpotifyException.AuthenticationException("message")
+		doNothing().whenever(spotifyAuthStateManager).addAccessTokenAuthorizationException(exception)
+
+		val notificationManager: NotificationManager = mock()
+		whenever(context.getSystemService(NotificationManager::class.java)).thenReturn(notificationManager)
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.createClientPlaylist(name = playlistName, description = L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION, public = false)).doAnswer { throw exception }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		val playlistCreateResult = spotifyWebApi.createPlaylist(playlistName)
+
+		val internalWebApi: SpotifyClientApi? = Whitebox.getInternalState(spotifyWebApi, "webApi")
+		assertNull(internalWebApi)
+		assertNull(playlistCreateResult)
+
+		verify(notificationManager, never()).notify(any(), any())
+	}
+
+	@Test
+	fun testCreatePlaylist_SpotifyException() = runBlocking {
+		val playlistName = "playlistName"
+
+		val exception = SpotifyException.BadRequestException("message")
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.createClientPlaylist(name = playlistName, description = L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION, public = false)).doAnswer { throw exception }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		val playlistCreateResult = spotifyWebApi.createPlaylist(playlistName)
+
+		assertNull(playlistCreateResult)
+	}
+
+	@Test
+	fun testAddSongsToPlaylist() = runBlocking {
+		val playlistId = "playlistId"
+		val songs = listOf(
+				MusicMetadata("mediaId1", 1, true, false, 5, null, "coverArtUri1", null, "Artist 1", "Album 1", "Title 1"),
+				MusicMetadata("mediaId2", 2, true, false, 3, null,"coverArtUri2", null, "Artist 2", "Album 2", "Title 2")
+		)
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.addTracksToClientPlaylist(playlistId, songs[0].mediaId!!, songs[1].mediaId!!)).doAnswer {  }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		spotifyWebApi.addSongsToPlaylist(playlistId, songs)
+
+		verify(clientPlaylistApi).addTracksToClientPlaylist(playlistId, songs[0].mediaId!!, songs[1].mediaId!!)
+	}
+
+	@Test
+	fun testAddSongsToPlaylist_AuthenticationException() = runBlocking {
+		val playlistId = "playlistId"
+		val songs = listOf(
+				MusicMetadata("mediaId1", 1, true, false, 5, null, "coverArtUri1", null, "Artist 1", "Album 1", "Title 1"),
+				MusicMetadata("mediaId2", 2, true, false, 3, null,"coverArtUri2", null, "Artist 2", "Album 2", "Title 2")
+		)
+
+		val exception = SpotifyException.AuthenticationException("message")
+		doNothing().whenever(spotifyAuthStateManager).addAccessTokenAuthorizationException(exception)
+
+		val notificationManager: NotificationManager = mock()
+		whenever(context.getSystemService(NotificationManager::class.java)).thenReturn(notificationManager)
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.addTracksToClientPlaylist(playlistId, songs[0].mediaId!!, songs[1].mediaId!!)).doAnswer { throw exception }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		spotifyWebApi.addSongsToPlaylist(playlistId, songs)
+
+		val internalWebApi: SpotifyClientApi? = Whitebox.getInternalState(spotifyWebApi, "webApi")
+		assertNull(internalWebApi)
+
+		verify(clientPlaylistApi).addTracksToClientPlaylist(playlistId, songs[0].mediaId!!, songs[1].mediaId!!)
+		verify(notificationManager, never()).notify(any(), any())
+	}
+
+	@Test
+	fun testAddSongsToPlaylist_SpotifyException() = runBlocking {
+		val playlistId = "playlistId"
+		val songs = listOf(
+				MusicMetadata("mediaId1", 1, true, false, 5, null, "coverArtUri1", null, "Artist 1", "Album 1", "Title 1"),
+				MusicMetadata("mediaId2", 2, true, false, 3, null,"coverArtUri2", null, "Artist 2", "Album 2", "Title 2")
+		)
+
+		val exception = SpotifyException.BadRequestException("message")
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.addTracksToClientPlaylist(playlistId, songs[0].mediaId!!, songs[1].mediaId!!)).doAnswer { throw exception }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		spotifyWebApi.addSongsToPlaylist(playlistId, songs)
+
+		verify(clientPlaylistApi).addTracksToClientPlaylist(playlistId, songs[0].mediaId!!, songs[1].mediaId!!)
+	}
+
+	@Test
+	fun testReplacePlaylistSongs() = runBlocking {
+		val playlistId = "playlistId"
+		val songs = listOf(
+				MusicMetadata("mediaId1", 1, true, false, 5, null, "coverArtUri1", null, "Artist 1", "Album 1", "Title 1"),
+				MusicMetadata("mediaId2", 2, true, false, 3, null,"coverArtUri2", null, "Artist 2", "Album 2", "Title 2")
+		)
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.replaceClientPlaylistTracks(playlistId, songs[0].mediaId!!, songs[1].mediaId!!)).doAnswer {  }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		spotifyWebApi.replacePlaylistSongs(playlistId, songs)
+
+		verify(clientPlaylistApi).replaceClientPlaylistTracks(playlistId, songs[0].mediaId!!, songs[1].mediaId!!)
+	}
+
+	@Test
+	fun testReplacePlaylistSongs_AuthenticationException() = runBlocking {
+		val playlistId = "playlistId"
+		val songs = listOf(
+				MusicMetadata("mediaId1", 1, true, false, 5, null, "coverArtUri1", null, "Artist 1", "Album 1", "Title 1"),
+				MusicMetadata("mediaId2", 2, true, false, 3, null,"coverArtUri2", null, "Artist 2", "Album 2", "Title 2")
+		)
+
+		val exception = SpotifyException.AuthenticationException("message")
+		doNothing().whenever(spotifyAuthStateManager).addAccessTokenAuthorizationException(exception)
+
+		val notificationManager: NotificationManager = mock()
+		whenever(context.getSystemService(NotificationManager::class.java)).thenReturn(notificationManager)
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.replaceClientPlaylistTracks(playlistId, songs[0].mediaId!!, songs[1].mediaId!!)).doAnswer { throw exception }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		spotifyWebApi.replacePlaylistSongs(playlistId, songs)
+
+		val internalWebApi: SpotifyClientApi? = Whitebox.getInternalState(spotifyWebApi, "webApi")
+		assertNull(internalWebApi)
+
+		verify(clientPlaylistApi).replaceClientPlaylistTracks(playlistId, songs[0].mediaId!!, songs[1].mediaId!!)
+		verify(notificationManager, never()).notify(any(), any())
+	}
+
+	@Test
+	fun testReplacePlaylistSongs_SpotifyException() = runBlocking {
+		val playlistId = "playlistId"
+		val songs = listOf(
+				MusicMetadata("mediaId1", 1, true, false, 5, null, "coverArtUri1", null, "Artist 1", "Album 1", "Title 1"),
+				MusicMetadata("mediaId2", 2, true, false, 3, null,"coverArtUri2", null, "Artist 2", "Album 2", "Title 2")
+		)
+
+		val exception = SpotifyException.BadRequestException("message")
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.replaceClientPlaylistTracks(playlistId, songs[0].mediaId!!, songs[1].mediaId!!)).doAnswer { throw exception }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		spotifyWebApi.replacePlaylistSongs(playlistId, songs)
+
+		verify(clientPlaylistApi).replaceClientPlaylistTracks(playlistId, songs[0].mediaId!!, songs[1].mediaId!!)
 	}
 
 	private fun createSpotifyMusicMetadata(spotifyAppController: SpotifyAppController, uriId: String, coverArtCode: String?, artistName: String?, albumName: String?, trackName: String, subtitle: String?, playable: Boolean, browseable: Boolean): SpotifyMusicMetadata {

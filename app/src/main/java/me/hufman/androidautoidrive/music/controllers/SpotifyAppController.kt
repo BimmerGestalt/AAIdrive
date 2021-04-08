@@ -24,7 +24,7 @@ import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import java.util.*
 
-class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController {
+class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi, val appSettings: MutableAppSettings): MusicAppController {
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
@@ -122,7 +122,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 						spotifyWebApi.initializeWebApi(isProbing)
 						spotifyWebApi.isUsingSpotify = true
 
-						pendingController.value = SpotifyAppController(context, remote, spotifyWebApi)
+						pendingController.value = SpotifyAppController(context, remote, spotifyWebApi, appSettings)
 
 						// if app discovery says we aren't able to connect, discover again
 						if (!isProbing) {
@@ -178,7 +178,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	var createQueueMetadataJob: Job? = null
 	var defaultDispatcher = Dispatchers.Default
 	var onQueueLoaded: (() -> Unit)? = null
-	val appSettings = MutableAppSettingsReceiver(context)
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -267,6 +266,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 					val uri = webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)
 					if (uri == null) {
 						Log.e(TAG, "Error creating liked songs playlist, falling back to app remote API")
+						queueItems = emptyList()
 						createQueueMetadata(PlayerContext(queueUri, L.MUSIC_LIKED_SONGS_PLAYLIST_NAME, null, null))
 						return@launch
 					}
@@ -276,14 +276,13 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				} else {
 					Log.d(TAG, "Found previous liked songs state.")
 					likedSongsState = Json.decodeFromString(likedSongsStateJson)
-				}
 
-				if (hashCode != likedSongsState.hashCode)
-				{
-					Log.d(TAG, "Previous liked songs state is no longer valid, updating liked songs playlist and writing new hash.")
-					webApi.replacePlaylistSongs(likedSongsState.playlistId, queueItems)
-					likedSongsState.queueCoverArtUri = hashCode
-					saveLikedSongsState(likedSongsState)
+					if (hashCode != likedSongsState.hashCode) {
+						Log.d(TAG, "Previous liked songs state is no longer valid, updating liked songs playlist and writing new hash.")
+						webApi.replacePlaylistSongs(likedSongsState.playlistId, queueItems)
+						likedSongsState.hashCode = hashCode
+						saveLikedSongsState(likedSongsState)
+					}
 				}
 
 				queueUri = likedSongsState.playlistUri
