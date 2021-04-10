@@ -260,6 +260,8 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Turn Repeat All On</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Turn Repeat One On</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Turn Repeat Off</string>
+    <string name="MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION">AndroidAutoIDrive dummy playlist - please do not delete</string>
+    <string name="MUSIC_LIKED_SONGS_PLAYLIST_NAME">Liked Songs</string>
 
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Seek back %s second</item>
