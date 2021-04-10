@@ -140,6 +140,8 @@
     <string name="txt_setup_mini_missing">Not ready to connect to a Mini:</string>
     <string name="txt_setup_bmw_mine_detected">The new My BMW app is installed, which might cause problems with BMW Connected and is not supported</string>
     <string name="txt_setup_mini_mine_detected">The new MINI app is installed, which might cause problems with Mini Connected and is not supported</string>
+    <string name="txt_setup_bmw_mine_conflict">Both the BMW Connected and My BMW apps are installed, which might cause connection instability unless connecting over USB</string>
+    <string name="txt_setup_mini_mine_conflict">Both the MINI Connected and My MINI apps are installed, which might cause connection instability unless connecting over USB</string>
     <string name="txt_setup_security_missing">Security Service is unreachable:</string>
 
     <string name="btn_install">Install</string>
@@ -157,6 +159,7 @@
     <string name="txt_setup_spp_connected">Bluetooth Apps are supported</string>
     <string name="txt_setup_usb_disconnected">No car connected over USB</string>
     <string name="txt_setup_usb_connected">USB connected in Charging mode</string>
+    <string name="txt_setup_usb_requires_connected">USB apps connection requires BMW/Mini Connected to be installed</string>
     <string name="txt_setup_enable_usbmtp">Switch the phone\'s USB mode to File Transfer</string>
     <string name="txt_setup_enable_usbacc">Enable the USB Accessory Mode or Apps option in the car for this %s</string>
     <string name="txt_setup_usbmtp_connected">USB connected in Storage mode</string>
@@ -165,7 +168,8 @@
     <string name="txt_setup_enable_bcl_mode">Enable the Apps option in the car for this %s</string>
     <string name="txt_setup_bcl_disconnected">Apps Connection is not ready:</string>
     <string name="txt_setup_bcl_waiting">Waiting for Apps Connection to start</string>
-    <string name="txt_setup_enable_bclspp">Try toggling Bluetooth Music or connecting over USB</string>
+    <string name="txt_setup_enable_bclspp_bt">Try toggling Bluetooth Music</string>
+    <string name="txt_setup_enable_bclspp_usb">Try toggling Bluetooth Music or connecting over USB</string>
     <string name="txt_setup_bcl_connecting">Apps Connection is connecting</string>
     <string name="txt_setup_bcl_connected">Apps Connection is running</string>
     <string name="txt_setup_bcl_connected_transport">Apps Connection is running over %s</string>
