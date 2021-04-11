@@ -147,6 +147,7 @@
     <string name="txt_setup_enable_bcl_mode">Abilita l\'opzione Apps nell\'auto per questo %s</string>
     <string name="txt_setup_bcl_disconnected">La connessione Apps non è pronta:</string>
     <string name="txt_setup_bcl_waiting">In attesa della connessione App</string>
+    <string name="txt_setup_enable_bclspp_usb">Prova ad attivare Bluetooth Music o connetterti via USB</string>
     <string name="txt_setup_bcl_connecting">La connessione Apps è in corso</string>
     <string name="txt_setup_bcl_connected">La connessione Apps è attiva</string>
     <string name="txt_setup_bcl_connected_transport">La connessione Apps è attiva via %s</string>
