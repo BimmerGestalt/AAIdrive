@@ -141,6 +141,7 @@
     <string name="txt_setup_spp_connected">Bluetooth appar stöds</string>
     <string name="txt_setup_usb_disconnected">Bilen ej ansluten via USB</string>
     <string name="txt_setup_usb_connected">USB ansluten i laddläge</string>
+    <string name="txt_setup_usb_requires_connected">USB-appanslutning kräver att \"BMW eller Mini connected\" är installerade för att kunna installeras</string>
     <string name="txt_setup_enable_usbmtp">Växla till telefonens USB-läge för filöverföring</string>
     <string name="txt_setup_enable_usbacc">Aktivera USB Accessory Mode eller Apps-alternativet i bilen för denna %s</string>
     <string name="txt_setup_usbmtp_connected">USB ansluten i lagringsläge</string>
@@ -149,6 +150,8 @@
     <string name="txt_setup_enable_bcl_mode">Aktivera alternativet Appar i bilen för denna %s</string>
     <string name="txt_setup_bcl_disconnected">Appanslutning ej redo:</string>
     <string name="txt_setup_bcl_waiting">Väntar på att App-anslutningen ska startas</string>
+    <string name="txt_setup_enable_bclspp_bt">Försök att växla Bluetoothmusik anslutning</string>
+    <string name="txt_setup_enable_bclspp_usb">Försök växla mellan Bluetooth Music eller ansluta via USB</string>
     <string name="txt_setup_bcl_connecting">Appanslutning ansluter</string>
     <string name="txt_setup_bcl_connected">Appanslutning körs</string>
     <string name="txt_setup_bcl_connected_transport">Appanslutning körs över %s</string>
