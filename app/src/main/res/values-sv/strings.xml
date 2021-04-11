@@ -124,6 +124,8 @@
     <string name="txt_setup_mini_missing">Ej redo att ansluta till Mini:</string>
     <string name="txt_setup_bmw_mine_detected">Appen \"My BMW\" är installerad, vilket kan orsaka problem med \"BMW Connected\" och stöds ej</string>
     <string name="txt_setup_mini_mine_detected">Appen \"MINI\" är installerad, vilket kan orsaka problem med \"MINI Connected\" och stöds ej</string>
+    <string name="txt_setup_bmw_mine_conflict">Både \"BMW Connected\" och \"My BMW\" appen är installerade, vilket kan orsaka instabilitet I anslutningar om det inte ansluts via USB</string>
+    <string name="txt_setup_mini_mine_conflict">Både \"Mini connected\" och \"My Mini\" appar är installerade, vilket kan orsaka instabilitet i anslutning om du inte ansluter via USB</string>
     <string name="txt_setup_security_missing">Säkerhetstjänsten kan ej nås:</string>
     <string name="btn_install">Installera</string>
     <string name="btn_install_bmw">Installera BMW Connected appen</string>
