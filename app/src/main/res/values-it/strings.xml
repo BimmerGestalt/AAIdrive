@@ -124,6 +124,8 @@
     <string name="txt_setup_mini_missing">Non pronta a connettersi con una Mini:</string>
     <string name="txt_setup_bmw_mine_detected">La nuova app My BMW è installata, può causare problemi con l\'app BMW Connected e non è supportata</string>
     <string name="txt_setup_mini_mine_detected">La nuova app MINI è installata, può causare problemi con l\'app MINI Connected e non è supportata</string>
+    <string name="txt_setup_bmw_mine_conflict">Entrambe le applicazioni BMW Connected e My BMW sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non si connetta tramite USB</string>
+    <string name="txt_setup_mini_mine_conflict">Entrambe le app MINI Connected e My MINI sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non si connetta tramite USB</string>
     <string name="txt_setup_security_missing">Il Security Service non è raggiungibile:</string>
     <string name="btn_install">Installa</string>
     <string name="btn_install_bmw">Installa BMW Connected</string>
