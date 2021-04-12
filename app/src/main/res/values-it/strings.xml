@@ -141,6 +141,7 @@
     <string name="txt_setup_spp_connected">Le app Bluetooth sono supportate</string>
     <string name="txt_setup_usb_disconnected">Non è presente un\'auto connessa via USB</string>
     <string name="txt_setup_usb_connected">USB connesso in modalità ricarica</string>
+    <string name="txt_setup_usb_requires_connected">La connessione alle app tramite USB richiede l\'installazione di BMW/Mini Connected</string>
     <string name="txt_setup_enable_usbmtp">Cambia la modalità USB del telefono in Trasferimento file</string>
     <string name="txt_setup_enable_usbacc">Abilita la modalita Accessorio USB o l\'opzione Apps nell\'auto per questo %s</string>
     <string name="txt_setup_usbmtp_connected">USB connesso in modalità Memoria di massa</string>
@@ -149,6 +150,7 @@
     <string name="txt_setup_enable_bcl_mode">Abilita l\'opzione Apps nell\'auto per questo %s</string>
     <string name="txt_setup_bcl_disconnected">La connessione Apps non è pronta:</string>
     <string name="txt_setup_bcl_waiting">In attesa della connessione App</string>
+    <string name="txt_setup_enable_bclspp_bt">Prova a attivare/disattivare Bluetooth Music</string>
     <string name="txt_setup_enable_bclspp_usb">Prova ad attivare Bluetooth Music o connetterti via USB</string>
     <string name="txt_setup_bcl_connecting">La connessione Apps è in corso</string>
     <string name="txt_setup_bcl_connected">La connessione Apps è attiva</string>
