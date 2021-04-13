@@ -124,6 +124,8 @@
     <string name="txt_setup_mini_missing">Ej redo att ansluta till Mini:</string>
     <string name="txt_setup_bmw_mine_detected">Appen \"My BMW\" är installerad, vilket kan orsaka problem med \"BMW Connected\" och stöds ej</string>
     <string name="txt_setup_mini_mine_detected">Appen \"MINI\" är installerad, vilket kan orsaka problem med \"MINI Connected\" och stöds ej</string>
+    <string name="txt_setup_bmw_mine_conflict">Både \"BMW Connected\" och \"My BMW\" appen är installerade, vilket kan orsaka instabilitet I anslutningar om det inte ansluts via USB</string>
+    <string name="txt_setup_mini_mine_conflict">Både \"Mini connected\" och \"My Mini\" appar är installerade, vilket kan orsaka instabilitet i anslutning om du inte ansluter via USB</string>
     <string name="txt_setup_security_missing">Säkerhetstjänsten kan ej nås:</string>
     <string name="btn_install">Installera</string>
     <string name="btn_install_bmw">Installera BMW Connected appen</string>
@@ -139,6 +141,7 @@
     <string name="txt_setup_spp_connected">Bluetooth appar stöds</string>
     <string name="txt_setup_usb_disconnected">Bilen ej ansluten via USB</string>
     <string name="txt_setup_usb_connected">USB ansluten i laddläge</string>
+    <string name="txt_setup_usb_requires_connected">USB-appanslutning kräver att \"BMW eller Mini connected\" är installerade för att kunna installeras</string>
     <string name="txt_setup_enable_usbmtp">Växla till telefonens USB-läge för filöverföring</string>
     <string name="txt_setup_enable_usbacc">Aktivera USB Accessory Mode eller Apps-alternativet i bilen för denna %s</string>
     <string name="txt_setup_usbmtp_connected">USB ansluten i lagringsläge</string>
@@ -147,6 +150,7 @@
     <string name="txt_setup_enable_bcl_mode">Aktivera alternativet Appar i bilen för denna %s</string>
     <string name="txt_setup_bcl_disconnected">Appanslutning ej redo:</string>
     <string name="txt_setup_bcl_waiting">Väntar på att App-anslutningen ska startas</string>
+    <string name="txt_setup_enable_bclspp_bt">Försök att växla Bluetoothmusik anslutning</string>
     <string name="txt_setup_enable_bclspp_usb">Försök växla mellan Bluetooth Music eller ansluta via USB</string>
     <string name="txt_setup_bcl_connecting">Appanslutning ansluter</string>
     <string name="txt_setup_bcl_connected">Appanslutning körs</string>
