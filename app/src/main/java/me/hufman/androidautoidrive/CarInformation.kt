@@ -159,3 +159,22 @@ class CarInformationObserver(var callback: (Map<String, String>) -> Unit = {}): 
 		callback.invoke(capabilities)
 	}
 }
+
+class CarCapabilitiesSummarized(val carInformation: CarInformation) {
+	val isId4: Boolean
+		get() = carInformation.capabilities["hmi.type"]?.contains("ID4") == true
+	val isId5: Boolean
+		get() = carInformation.capabilities["hmi.type"]?.contains("ID5") == true
+	val isPopupSupported = true
+	val isPopupNotSupported = false
+
+	val isTtsSupported: Boolean
+		get() = carInformation.capabilities["tts"]?.toLowerCase(Locale.ROOT) == "true"
+	val isTtsNotSupported: Boolean
+		get() = carInformation.capabilities["tts"]?.toLowerCase(Locale.ROOT) == "false"
+
+	val isNaviSupported: Boolean
+		get() = carInformation.capabilities["navi"]?.toLowerCase(Locale.ROOT) == "true"
+	val isNaviNotSupported: Boolean
+		get() = carInformation.capabilities["navi"]?.toLowerCase(Locale.ROOT) == "false"
+}
