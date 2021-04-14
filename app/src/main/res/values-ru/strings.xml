@@ -37,7 +37,7 @@
     <string name="menu_navigation">Навигация</string>
     <string name="menu_settings">Настройки</string>
     <string name="menu_support">Поддержка</string>
-    <string name="lbl_overviewpage">AndroidAutoIdrive интегрирует некоторые музыкальные приложения вашего телефона и уведомления вашего телефона в ваш автомобиль через пользовательский протокол приложений BMW</string>
+    <string name="lbl_overviewpage">AndroidAutoIdrive интегрирует некоторые музыкальные приложения и уведомления вашего телефона в автомобиль через пользовательский протокол приложений BMW</string>
     <string name="lbl_connectionpage">Подключение приложений к автомобилю зависит от нескольких деталей, и вот подсказки, чтобы убедиться, что все в порядке</string>
     <string name="lbl_notificationpage">Возможность просмотра и взаимодействия с вашими входящими уведомлениями</string>
     <string name="spawn_test_notification">Тест уведомлений</string>
@@ -72,7 +72,7 @@
     <string name="musicAppSearchable">Доступные для поиска</string>
     <string name="musicAppUnavailable">Недоступные</string>
     <string name="musicAppHidden">Скрывать</string>
-    <string name="enable_audio_context">Включить аудио связь</string>
+    <string name="enable_audio_context">Принудительно воспроизводить аудио через USB соединение</string>
     <string name="enable_spotify_layout">Всегда отображаться как приложение Spotify в IDrive5+</string>
     <string name="lbl_grant_sessions">Контроль над активными музыкальными приложениями</string>
     <string name="lbl_grant_spotify_control">Возможность просматривать вашу библиотеку Spotify</string>
@@ -119,6 +119,8 @@
     <string name="txt_setup_mini_missing">Не готово к подключению к Mini:</string>
     <string name="txt_setup_bmw_mine_detected">Установлено новое приложение My BMW, которое может быть причиной проблем с BMW Connected и не поддерживается</string>
     <string name="txt_setup_mini_mine_detected">Установлено новое приложение MINI, которое может быть причиной проблем с MINI Connected и не поддерживается</string>
+    <string name="txt_setup_bmw_mine_conflict">BMW Connected и My BMW установлены одновременно. Соединение может быть нестабильно, если оно выполняется не через USB</string>
+    <string name="txt_setup_mini_mine_conflict">Both the MINI Connected and My MINI apps are installed, which might cause connection instability unless connecting over USB</string>
     <string name="txt_setup_security_missing">Служба безопасности недоступна:</string>
     <string name="btn_install">Установить</string>
     <string name="btn_install_bmw">Установить BMW Connected</string>
@@ -134,6 +136,7 @@
     <string name="txt_setup_spp_connected">Приложения Bluetooth поддерживаются</string>
     <string name="txt_setup_usb_disconnected">Автомобиль не подключен по USB</string>
     <string name="txt_setup_usb_connected">USB-соединение в режиме зарядки</string>
+    <string name="txt_setup_usb_requires_connected">Для соединения через USB нужно установить BMW/Mini Connected</string>
     <string name="txt_setup_enable_usbmtp">Переключить режим USB телефона на Передачу файлов</string>
     <string name="txt_setup_enable_usbacc">Включите опцию Режим USB-аксессуаров или Приложений в автомобиле для %s</string>
     <string name="txt_setup_usbmtp_connected">USB соединение в режиме накопителя</string>
@@ -142,6 +145,7 @@
     <string name="txt_setup_enable_bcl_mode">Включить опцию Приложения в автомобиле для этого %s</string>
     <string name="txt_setup_bcl_disconnected">Подключение к приложениям не готово:</string>
     <string name="txt_setup_bcl_waiting">Ожидание подключения к приложениям для запуска</string>
+    <string name="txt_setup_enable_bclspp_bt">Попробуйте переключить Bluetooth Music</string>
     <string name="txt_setup_enable_bclspp_usb">Попробуйте переключить Bluetooth Music или подключитесь через USB</string>
     <string name="txt_setup_bcl_connecting">Соединение с приложениями подключено</string>
     <string name="txt_setup_bcl_connected">Выполняется подключение к приложениям</string>
