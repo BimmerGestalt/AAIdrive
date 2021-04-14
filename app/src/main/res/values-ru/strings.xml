@@ -72,7 +72,7 @@
     <string name="musicAppSearchable">Доступные для поиска</string>
     <string name="musicAppUnavailable">Недоступные</string>
     <string name="musicAppHidden">Скрывать</string>
-    <string name="enable_audio_context">Включить аудио связь</string>
+    <string name="enable_audio_context">Принудительно воспроизводить аудио через USB соединение</string>
     <string name="enable_spotify_layout">Всегда отображаться как приложение Spotify в IDrive5+</string>
     <string name="lbl_grant_sessions">Контроль над активными музыкальными приложениями</string>
     <string name="lbl_grant_spotify_control">Возможность просматривать вашу библиотеку Spotify</string>
