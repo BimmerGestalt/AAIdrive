@@ -6,6 +6,7 @@ import android.provider.Settings
 import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
 import me.hufman.idriveconnectionkit.android.security.KnownSecurityServices
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import java.lang.Exception
 
 /**
  * Assists in determining prerequisites and difficulties in the car connection
@@ -52,6 +53,26 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 		get() = SecurityAccess.installedSecurityServices.any {
 			it.name.startsWith("MiniC")
 		}
+
+	val isBMWConnected65Installed: Boolean
+		get() = try {
+			SecurityAccess.installedSecurityServices.filter {
+				it.name.startsWith("BMWC")
+			}.any {
+				val version = context.packageManager.getPackageInfo(it.packageName, 0).versionName
+				version.startsWith("6.5")
+			}
+		} catch (e: Exception) { false }
+
+	val isMiniConnected65Installed: Boolean
+		get() = try {
+			SecurityAccess.installedSecurityServices.filter {
+				it.name.startsWith("MiniC")
+			}.any {
+				val version = context.packageManager.getPackageInfo(it.packageName, 0).versionName
+				version.startsWith("6.5")
+			}
+		} catch (e: Exception) { false }
 
 	val isBMWMineInstalled
 		get() = SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.BMWMine)

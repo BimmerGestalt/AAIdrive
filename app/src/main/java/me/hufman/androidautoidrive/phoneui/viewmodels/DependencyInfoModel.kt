@@ -29,6 +29,10 @@ class DependencyInfoModel(val connection: CarConnectionDebugging): ViewModel() {
 	val isBmwConnectedInstalled: LiveData<Boolean> = _isBmwConnectedInstalled
 	private val _isMiniConnectedInstalled = MutableLiveData<Boolean>()
 	val isMiniConnectedInstalled: LiveData<Boolean> = _isMiniConnectedInstalled
+	private val _isBmwConnected65Installed = MutableLiveData<Boolean>()
+	val isBmwConnected65Installed: LiveData<Boolean> = _isBmwConnected65Installed
+	private val _isMiniConnected65Installed = MutableLiveData<Boolean>()
+	val isMiniConnected65Installed: LiveData<Boolean> = _isMiniConnected65Installed
 	private val _isBmwMineInstalled = MutableLiveData<Boolean>()
 	val isBmwMineInstalled: LiveData<Boolean> = _isBmwMineInstalled
 	private val _isMiniMineInstalled = MutableLiveData<Boolean>()
@@ -51,6 +55,8 @@ class DependencyInfoModel(val connection: CarConnectionDebugging): ViewModel() {
 	fun update() {
 		_isBmwConnectedInstalled.value = connection.isBMWConnectedInstalled
 		_isMiniConnectedInstalled.value = connection.isMiniConnectedInstalled
+		_isBmwConnected65Installed.value = connection.isBMWConnected65Installed
+		_isMiniConnected65Installed.value = connection.isMiniConnected65Installed
 		_isBmwMineInstalled.value = connection.isBMWMineInstalled
 		_isMiniMineInstalled.value = connection.isMiniMineInstalled
 		_isBmwInstalled.value = connection.isBMWInstalled

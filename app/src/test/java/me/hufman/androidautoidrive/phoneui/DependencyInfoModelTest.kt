@@ -19,8 +19,10 @@ class DependencyInfoModelTest {
 		return mock<CarConnectionDebugging> {
 			on { isBMWInstalled } doReturn (bmwConnected || bmwMine)
 			on { isBMWConnectedInstalled } doReturn bmwConnected
+			on { isBMWConnected65Installed} doReturn false
 			on { isBMWMineInstalled } doReturn bmwMine
 			on { isMiniInstalled } doReturn (miniConnected || miniMine)
+			on { isMiniConnected65Installed} doReturn false
 			on { isMiniConnectedInstalled } doReturn miniConnected
 			on { isMiniMineInstalled } doReturn miniMine
 			on { isConnectedSecurityInstalled } doReturn (bmwConnected || bmwMine || miniConnected || miniMine)
