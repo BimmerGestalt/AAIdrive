@@ -34,7 +34,7 @@ class CarCapabilitiesModelTest {
 		val viewModel = CarCapabilitiesViewModel(carInfo, musicAppMode).apply { update() }
 		assertEquals(false, viewModel.isAudioContextSupported.value)
 		assertEquals(false, viewModel.isAudioStateSupported.value)
-		assertEquals(false, viewModel.isPopupSupported.value)
+		assertEquals(true, viewModel.isPopupSupported.value)
 		assertEquals(false, viewModel.isPopupNotSupported.value)
 		assertEquals(false, viewModel.isTtsSupported.value)
 		assertEquals(false, viewModel.isTtsNotSupported.value)
