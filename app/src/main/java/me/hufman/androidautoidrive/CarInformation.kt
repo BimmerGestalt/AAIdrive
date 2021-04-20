@@ -165,6 +165,11 @@ class CarCapabilitiesSummarized(val carInformation: CarInformation) {
 		get() = carInformation.capabilities["hmi.type"]?.contains("ID4") == true
 	val isId5: Boolean
 		get() = carInformation.capabilities["hmi.type"]?.contains("ID5") == true
+	val isBmw: Boolean
+		get() = carInformation.capabilities["hmi.type"]?.startsWith("BMW") == true
+	val isMini: Boolean
+		get() = carInformation.capabilities["hmi.type"]?.startsWith("MINI") == true
+
 	val isPopupSupported = true
 	val isPopupNotSupported = false
 

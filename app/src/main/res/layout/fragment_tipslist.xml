@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/tips_pane_height"
+    android:layout_height="wrap_content"
     android:clipChildren="false"
     android:clipToPadding="false">
 
@@ -13,10 +14,19 @@
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/pgrTipsList"
+        android:layout_height="@dimen/tips_pane_height"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:clipChildren="false"
         android:clipToPadding="false">
+
+        <com.google.android.material.tabs.TabLayout
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_weight="0"
+            android:layout_gravity="bottom"
+            app:tabBackground="@drawable/tab_selector"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp"/>
 
     </androidx.viewpager.widget.ViewPager>
 </LinearLayout>

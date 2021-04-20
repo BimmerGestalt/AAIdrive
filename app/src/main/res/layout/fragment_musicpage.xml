@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pane_scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
@@ -37,7 +38,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="match_parent"
             android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:id="@+id/fragmentMusicAppList"
             android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicAppsListFragment"/>
@@ -45,6 +46,7 @@
         <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:id="@+id/fragmentTipsList"

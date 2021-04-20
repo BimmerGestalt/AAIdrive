@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:width="480dp" android:height="180dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#000" />
+        </shape>
+    </item>
+    <item android:width="480dp" android:height="180dp">
+        <bitmap android:src="@drawable/pic_news_ambutton_bmw_id5" />
+
+    </item>
+    <item android:drawable="@drawable/tip_bmw_bookmark_hand"
+        android:width="480dp" android:height="180dp"
+        android:top="180dp">
+    </item>
+</layer-list>
