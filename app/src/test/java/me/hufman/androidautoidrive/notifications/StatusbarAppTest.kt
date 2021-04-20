@@ -72,7 +72,7 @@ class StatusbarAppTest {
 		assertTrue(visiblePopupComponents[1] is RHMIComponent.Button)
 		assertEquals(app.popupView.imageId, (mockServer.data[visiblePopupComponents[1].asButton()?.imageModel] as BMWRemoting.RHMIResourceIdentifier).id)
 
-		app.onDestroy()
+		app.disconnect()
 	}
 
 	@Test

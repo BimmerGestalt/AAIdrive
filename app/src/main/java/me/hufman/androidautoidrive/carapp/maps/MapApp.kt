@@ -130,10 +130,12 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 		try {
 			context.unregisterReceiver(mapResultsUpdater)
 		} catch (e: IllegalArgumentException) {}
+		frameUpdater.shutDown()
+	}
+	fun disconnect() {
 		try {
 			IDriveConnection.disconnectEtchConnection(carConnection)
 		} catch (e: java.lang.Exception) {}
-		frameUpdater.shutDown()
 	}
 
 	inner class CarAppListener: BaseBMWRemotingClient() {

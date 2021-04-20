@@ -318,6 +318,8 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 				context.unregisterReceiver(notificationReceiver)
 			} catch (e: IllegalArgumentException) {}
 		}
+	}
+	fun disconnect() {
 		try {
 			Log.i(TAG, "Trying to shut down etch connection")
 			IDriveConnection.disconnectEtchConnection(carConnection)

@@ -15,6 +15,7 @@ import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import java.lang.Exception
 
 class NotificationService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carInformationObserver: CarInformationObserver) {
 	var threadNotifications: CarThread? = null
@@ -97,22 +98,28 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 		running = false
 		// post it to the thread to run after initialization finishes
 		threadNotifications?.post {
-			if (!running) { // check that we do actually intend to shut down
-				carappNotifications?.notificationSettings?.btStatus?.unregister()
-				carappNotifications?.onDestroy(context)
-				carappNotifications = null
-				carappReadout?.onDestroy()
-				carappReadout = null
-				carappStatusbar?.onDestroy()
-				carappStatusbar = null
-				threadNotifications?.quit()
-				threadNotifications = null
+			carappNotifications?.onDestroy(context)
+			carappNotifications?.disconnect()
+			carappNotifications = null
+			carappReadout?.disconnect()
+			carappReadout = null
+			carappStatusbar?.disconnect()
+			carappStatusbar = null
+			threadNotifications?.quit()
+			threadNotifications = null
 
-				// if we started up again during shutdown
-				if (running) {
-					start()
-				}
+			// if we started up again during shutdown
+			if (running) {
+				start()
 			}
+		}
+		// unregister in the main thread
+		// when the car disconnects, the threadNotifications handler shuts down
+		try {
+			carappNotifications?.notificationSettings?.btStatus?.unregister()
+			carappNotifications?.onDestroy(context)
+		} catch (e: Exception) {
+			Log.w(TAG, "Encountered an exception while shutting down", e)
 		}
 	}
 }
