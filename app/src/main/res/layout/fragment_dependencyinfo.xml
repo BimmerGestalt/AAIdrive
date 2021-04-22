@@ -66,7 +66,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:visibility="@{viewModel.isBmwConnected65Installed()}"
+            android:visibility="@{viewModel.isBmwConnected65Installed() &amp;&amp; !viewModel.isBmwMineInstalled()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -158,7 +158,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:visibility="@{viewModel.isMiniConnected65Installed()}"
+            android:visibility="@{viewModel.isMiniConnected65Installed() &amp;&amp; !viewModel.isMiniMineInstalled()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
