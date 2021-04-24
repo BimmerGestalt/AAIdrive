@@ -124,6 +124,7 @@
     <string name="txt_setup_bmw_missing">Ej redo att ansluta till BMW:</string>
     <string name="txt_setup_mini_missing">Ej redo att ansluta till Mini:</string>
     <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 är installerad, vilket ibland inte startar bilanslutningen. Prova att nedgradera till 6.4 eller uppgradera till nya appen MyBMW om du stöter på problem</string>
+    <string name="txt_setup_mini_connected_65">Mini Connected 6.5 är installerad, vilket ibland inte startar bilanslutningen. Försök nedgradera till 6.4 eller uppgradera till den nya appen \"Mini\" om du stöter på problem</string>
     <string name="txt_setup_bmw_mine_detected">Appen \"My BMW\" är installerad, vilket kan orsaka problem med \"BMW Connected\" och stöds ej</string>
     <string name="txt_setup_mini_mine_detected">Appen \"MINI\" är installerad, vilket kan orsaka problem med \"MINI Connected\" och stöds ej</string>
     <string name="txt_setup_bmw_mine_conflict">Både \"BMW Connected\" och \"My BMW\" appen är installerade, vilket kan orsaka instabilitet I anslutningar om det inte ansluts via USB</string>
