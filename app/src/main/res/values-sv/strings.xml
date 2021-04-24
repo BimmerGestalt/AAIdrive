@@ -43,6 +43,7 @@
         <item quantity="one">Telefonens röstassistent läggs till som en \"Connected app\", om bilens röstingång inte utlöser den</item>
         <item quantity="other">Telefonens röstassistenter läggs till som \"Connected appar\", om bilens röstingång inte utlöser dem</item>
     </plurals>
+    <string name="lbl_assistantpage_tip">Dessa appar är separerade från bilens röstassistentknapp på ratten, som bara utlöser telefonens standardassistent och konfigureras separat</string>
     <string name="lbl_notificationpage">Inkommande aviseringar kan ses och integreras i bilen</string>
     <string name="spawn_test_notification">Testa avisering</string>
     <string name="message_notifications">Meddelandeaviseringar</string>
