@@ -48,6 +48,7 @@
         <item quantity="one">Your phone\'s voice assistant is added as a Connected app, in case the car\'s voice input doesn\'t trigger it</item>
         <item quantity="other">Your phone\'s voice assistants are added as a Connected app, in case the car\'s voice input doesn\'t trigger it</item>
     </plurals>
+    <string name="lbl_assistantpage_tip">These apps are separate from the car\'s Voice Assistant steering wheel button, which only triggers your phone\'s default assistant and is configured separately</string>
 
     <string name="lbl_notificationpage">Your incoming notifications can be viewed and interacted with from the car</string>
     <string name="spawn_test_notification">Test Notification</string>

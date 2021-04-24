@@ -16,6 +16,12 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/pane_vertical_margin" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
+            android:text="@string/lbl_assistantpage_tip" />
+
         <View style="@style/Divider"
             android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
