@@ -33,11 +33,13 @@ Download the APK of the latest stable release from the [Releases page](https://g
 Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-sentry-release.apk) to automatically report crashes.
 The [nonalytics](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-nonalytics-release.apk) build is available too.
 Some of the new features include:
+  - Brand new simpler phone UI with clearer setup instructions
   - Supports logging in as Spotify to set the global coverart in ID5+
-  - Adds Spotify browse and playlist coverart
-  - Reads out notifications
+  - Adds Spotify browse and playlist coverart, as well as searching Spotify
+  - Reads out notifications, and adds popup and statusbar support in ID5+
   - Supports replying to notifications
   - Starts car navigation to handle certain phone navigation buttons
+  - Supports the new MyBMW app
 
 Check out the [FAQ](https://hufman.github.io/AndroidAutoIdrive/faq.html) if you run into problems.
 
