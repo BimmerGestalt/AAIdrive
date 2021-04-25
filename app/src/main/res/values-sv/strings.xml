@@ -43,6 +43,7 @@
         <item quantity="one">Telefonens röstassistent läggs till som en \"Connected app\", om bilens röstingång inte utlöser den</item>
         <item quantity="other">Telefonens röstassistenter läggs till som \"Connected appar\", om bilens röstingång inte utlöser dem</item>
     </plurals>
+    <string name="lbl_assistantpage_tip">Dessa appar är separerade från bilens röstassistentknapp på ratten, som bara utlöser telefonens standardassistent och konfigureras separat</string>
     <string name="lbl_notificationpage">Inkommande aviseringar kan ses och integreras i bilen</string>
     <string name="spawn_test_notification">Testa avisering</string>
     <string name="message_notifications">Meddelandeaviseringar</string>
@@ -122,6 +123,8 @@
     <string name="txt_setup_mini_ready">Appen är klar att ansluta till en Mini</string>
     <string name="txt_setup_bmw_missing">Ej redo att ansluta till BMW:</string>
     <string name="txt_setup_mini_missing">Ej redo att ansluta till Mini:</string>
+    <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 är installerad, vilket ibland inte startar bilanslutningen. Prova att nedgradera till 6.4 eller uppgradera till nya appen MyBMW om du stöter på problem</string>
+    <string name="txt_setup_mini_connected_65">Mini Connected 6.5 är installerad, vilket ibland inte startar bilanslutningen. Försök nedgradera till 6.4 eller uppgradera till den nya appen \"Mini\" om du stöter på problem</string>
     <string name="txt_setup_bmw_mine_detected">Appen \"My BMW\" är installerad, vilket kan orsaka problem med \"BMW Connected\" och stöds ej</string>
     <string name="txt_setup_mini_mine_detected">Appen \"MINI\" är installerad, vilket kan orsaka problem med \"MINI Connected\" och stöds ej</string>
     <string name="txt_setup_bmw_mine_conflict">Både \"BMW Connected\" och \"My BMW\" appen är installerade, vilket kan orsaka instabilitet I anslutningar om det inte ansluts via USB</string>
