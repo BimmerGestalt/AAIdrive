@@ -39,6 +39,12 @@
     <string name="menu_support">Поддержка</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive интегрирует некоторые музыкальные приложения и уведомления вашего телефона в автомобиль через пользовательский протокол приложений BMW</string>
     <string name="lbl_connectionpage">Подключение приложений к автомобилю зависит от нескольких деталей, и вот подсказки, чтобы убедиться, что все в порядке</string>
+    <plurals name="lbl_assistantpage">
+        <item quantity="one">Голосовой помощник Вашего телефона добавлен в приложение Connected, на случай если он не запускается с помощью клавиши управления голосом в автомобиле</item>
+        <item quantity="few">Голосовые помощники Вашего телефона добавлены в приложение Connected, на случай если они не запускаются с помощью клавиши управления голосом в автомобиле</item>
+        <item quantity="many">Голосовые помощники Вашего телефона добавлены в приложение Connected, на случай если они не запускаются с помощью клавиши управления голосом в автомобиле</item>
+        <item quantity="other">Голосовые помощники Вашего телефона добавлены в приложение Connected, на случай если они не запускаются с помощью клавиши управления голосом в автомобиле</item>
+    </plurals>
     <string name="lbl_assistantpage_tip">Эти приложения настраиваются отдельно от голосового помощника по умолчанию, запускаемого клавишей на руле</string>
     <string name="lbl_notificationpage">Возможность просмотра и взаимодействия с вашими входящими уведомлениями</string>
     <string name="spawn_test_notification">Тест уведомлений</string>
@@ -60,6 +66,7 @@
     <string name="enable_google_maps">Включить Google Maps</string>
     <string name="lbl_widescreen_map">Широкоэкранные карты</string>
     <string name="lbl_map_invert_zoom">Инвертировать масштаб</string>
+    <string name="lbl_map_tilt">Наклонить карту</string>
     <string name="lbl_map_traffic">Показывать пробки</string>
     <string name="lbl_gmap_buildings">Включить 3D здания</string>
     <string name="gmapStyleLabel">Стиль карты</string>
@@ -118,7 +125,8 @@
     <string name="txt_setup_mini_ready">Приложение готово для подключения к Mini</string>
     <string name="txt_setup_bmw_missing">Не готово к подключению к BMW:</string>
     <string name="txt_setup_mini_missing">Не готово к подключению к Mini:</string>
-    <string name="txt_setup_bmw_connected_65">Установлено приложение BMW Connected 6.5, что может создавать проблемы запуску приложений. Установите BMW Connected 6.4 или перейдите на MyBMW, чтобы избежать проблем</string>
+    <string name="txt_setup_bmw_connected_65">Установлено приложение BMW Connected 6.5, что может создавать проблемы запуску приложений Установлено приложение BMW Connected 6.5, что может создавать проблемы запуску приложений. Установите BMW Connected 6.4 или перейдите на MyBMW, чтобы избежать проблем. Установите BMW Connected 6.4 или перейдите на MyBMW, чтобы избежать проблем</string>
+    <string name="txt_setup_mini_connected_65">Установлено приложение Mini Connected 6.5, что может создавать проблемы запуску приложений в автомобиле. Установите Mini Connected 6.4 или перейдите на новое приложение Mini, чтобы избежать проблем</string>
     <string name="txt_setup_bmw_mine_detected">Установлено новое приложение My BMW, которое может быть причиной проблем с BMW Connected и не поддерживается</string>
     <string name="txt_setup_mini_mine_detected">Установлено новое приложение MINI, которое может быть причиной проблем с MINI Connected и не поддерживается</string>
     <string name="txt_setup_bmw_mine_conflict">BMW Connected и My BMW установлены одновременно. Соединение может быть нестабильно, если оно выполняется не через USB</string>
@@ -235,6 +243,18 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Повторить все</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Повторить одну</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Выключить повтор</string>
+    <plurals name="MUSIC_ACTION_SEEK_BACK">
+        <item quantity="one">Назад на %s секунд</item>
+        <item quantity="few">Назад на %s секунд</item>
+        <item quantity="many">Назад на %s секунд</item>
+        <item quantity="other">Назад на %s секунд</item>
+    </plurals>
+    <plurals name="MUSIC_ACTION_SEEK_FORWARD">
+        <item quantity="one">Вперёд на %s секунду</item>
+        <item quantity="few">Вперёд на %s секунд</item>
+        <item quantity="many">Вперёд на %s секунд</item>
+        <item quantity="other">Вперёд на %s секунд</item>
+    </plurals>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Удалить</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Создать радиостанцию</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Добавить</string>
