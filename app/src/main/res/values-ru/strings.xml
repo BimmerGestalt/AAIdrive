@@ -39,6 +39,7 @@
     <string name="menu_support">Поддержка</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive интегрирует некоторые музыкальные приложения и уведомления вашего телефона в автомобиль через пользовательский протокол приложений BMW</string>
     <string name="lbl_connectionpage">Подключение приложений к автомобилю зависит от нескольких деталей, и вот подсказки, чтобы убедиться, что все в порядке</string>
+    <string name="lbl_assistantpage_tip">Эти приложения настраиваются отдельно от голосового помощника по умолчанию, запускаемого клавишей на руле</string>
     <string name="lbl_notificationpage">Возможность просмотра и взаимодействия с вашими входящими уведомлениями</string>
     <string name="spawn_test_notification">Тест уведомлений</string>
     <string name="message_notifications">Уведомления о сообщениях</string>
@@ -117,6 +118,7 @@
     <string name="txt_setup_mini_ready">Приложение готово для подключения к Mini</string>
     <string name="txt_setup_bmw_missing">Не готово к подключению к BMW:</string>
     <string name="txt_setup_mini_missing">Не готово к подключению к Mini:</string>
+    <string name="txt_setup_bmw_connected_65">Установлено приложение BMW Connected 6.5, что может создавать проблемы запуску приложений. Установите BMW Connected 6.4 или перейдите на MyBMW, чтобы избежать проблем</string>
     <string name="txt_setup_bmw_mine_detected">Установлено новое приложение My BMW, которое может быть причиной проблем с BMW Connected и не поддерживается</string>
     <string name="txt_setup_mini_mine_detected">Установлено новое приложение MINI, которое может быть причиной проблем с MINI Connected и не поддерживается</string>
     <string name="txt_setup_bmw_mine_conflict">BMW Connected и My BMW установлены одновременно. Соединение может быть нестабильно, если оно выполняется не через USB</string>
