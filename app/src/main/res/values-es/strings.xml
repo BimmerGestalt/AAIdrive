@@ -93,7 +93,7 @@
     <string name="txt_setup_bcl_init_stuck">La conexión de la aplicación no está disponible:</string>
     <string name="txt_setup_enable_bcl_mode">Habilite la opción de la aplicación en el automóvil para este %s</string>
     <string name="txt_setup_bcl_disconnected">La conexión de la aplicación está desconectado:</string>
-    <string name="txt_setup_enable_bclspp">Trate de alternar la música de Bluetooth o conecte por USB</string>
+    <string name="txt_setup_enable_bclspp_usb">Trate de alternar la música de Bluetooth o conecte por USB</string>
     <string name="txt_setup_bcl_connecting">La conexión de la aplicación se está conectando</string>
     <string name="txt_setup_bcl_connected">La conexión de la aplicación esta operando</string>
     <string name="txt_setup_bcl_connected_transport">La conexión de la aplicación esta funcionando al %s</string>

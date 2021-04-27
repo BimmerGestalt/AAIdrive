@@ -43,6 +43,7 @@
         <item quantity="one">L\'assistente vocale del tuo telefono viene aggiunto come app Connected, nel caso in cui l\'input vocale dell\'auto non lo attivi</item>
         <item quantity="other">Gli assistenti vocali del tuo telefono vengono aggiunti come app Connected, nel caso in cui l\'input vocale dell\'auto non li attivi</item>
     </plurals>
+    <string name="lbl_assistantpage_tip">Queste app sono distinte da quella gestita dal pulsante sul volante dell\'auto, che attiva solo l\'assistente predefinito del telefono che è configurato separatamente</string>
     <string name="lbl_notificationpage">Le tue notifiche in arrivo possono essere visualizzate e interagite dall\'auto</string>
     <string name="spawn_test_notification">Notifica di prova</string>
     <string name="message_notifications">Notifica messaggi</string>
@@ -122,8 +123,12 @@
     <string name="txt_setup_mini_ready">L\'app è pronta a connettersi con una Mini</string>
     <string name="txt_setup_bmw_missing">Non pronta a connettersi con una BMW:</string>
     <string name="txt_setup_mini_missing">Non pronta a connettersi con una Mini:</string>
+    <string name="txt_setup_bmw_connected_65">È installata la versione 6.5 di BMW Connected che qualche volta non fa partire la connessione con l\'auto. Prova a fare un downgrade alla versione 6.4 o un upgrade a MyBMW se riscontri problemi</string>
+    <string name="txt_setup_mini_connected_65">È installata la versione 6.5 di Mini Connected che qualche volta non fa partire la connessione con l\'auto. Prova a fare un downgrade alla versione 6.4 o un upgrade alla nuova app Mini se riscontri problemi</string>
     <string name="txt_setup_bmw_mine_detected">La nuova app My BMW è installata, può causare problemi con l\'app BMW Connected e non è supportata</string>
     <string name="txt_setup_mini_mine_detected">La nuova app MINI è installata, può causare problemi con l\'app MINI Connected e non è supportata</string>
+    <string name="txt_setup_bmw_mine_conflict">Entrambe le applicazioni BMW Connected e My BMW sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non si connetta tramite USB</string>
+    <string name="txt_setup_mini_mine_conflict">Entrambe le app MINI Connected e My MINI sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non si connetta tramite USB</string>
     <string name="txt_setup_security_missing">Il Security Service non è raggiungibile:</string>
     <string name="btn_install">Installa</string>
     <string name="btn_install_bmw">Installa BMW Connected</string>
@@ -139,6 +144,7 @@
     <string name="txt_setup_spp_connected">Le app Bluetooth sono supportate</string>
     <string name="txt_setup_usb_disconnected">Non è presente un\'auto connessa via USB</string>
     <string name="txt_setup_usb_connected">USB connesso in modalità ricarica</string>
+    <string name="txt_setup_usb_requires_connected">La connessione alle app tramite USB richiede l\'installazione di BMW/Mini Connected</string>
     <string name="txt_setup_enable_usbmtp">Cambia la modalità USB del telefono in Trasferimento file</string>
     <string name="txt_setup_enable_usbacc">Abilita la modalita Accessorio USB o l\'opzione Apps nell\'auto per questo %s</string>
     <string name="txt_setup_usbmtp_connected">USB connesso in modalità Memoria di massa</string>
@@ -147,7 +153,8 @@
     <string name="txt_setup_enable_bcl_mode">Abilita l\'opzione Apps nell\'auto per questo %s</string>
     <string name="txt_setup_bcl_disconnected">La connessione Apps non è pronta:</string>
     <string name="txt_setup_bcl_waiting">In attesa della connessione App</string>
-    <string name="txt_setup_enable_bclspp">Prova ad attivare Bluetooth Music o connetterti via USB</string>
+    <string name="txt_setup_enable_bclspp_bt">Prova a attivare/disattivare Bluetooth Music</string>
+    <string name="txt_setup_enable_bclspp_usb">Prova ad attivare Bluetooth Music o connetterti via USB</string>
     <string name="txt_setup_bcl_connecting">La connessione Apps è in corso</string>
     <string name="txt_setup_bcl_connected">La connessione Apps è attiva</string>
     <string name="txt_setup_bcl_connected_transport">La connessione Apps è attiva via %s</string>

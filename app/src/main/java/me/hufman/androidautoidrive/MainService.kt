@@ -4,6 +4,7 @@ import android.app.*
 import android.content.*
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -29,7 +30,11 @@ class MainService: Service() {
 
 		const val ACTION_START = "me.hufman.androidautoidrive.MainService.start"
 		const val ACTION_STOP = "me.hufman.androidautoidrive.MainService.stop"
+		const val EXTRA_FOREGROUND = "EXTRA_FOREGROUND"
+
+		const val PROBE_TIMEOUT: Long = 2 * 60 * 1000
 	}
+
 	val ONGOING_NOTIFICATION_ID = 20503
 	val NOTIFICATION_CHANNEL_ID = "ConnectionNotification"
 
@@ -49,13 +54,19 @@ class MainService: Service() {
 	var carappCapabilities: CarInformationDiscovery? = null
 
 	var notificationService: NotificationService? = null
-
 	var mapService: MapService? = null
-
 	var musicService: MusicService? = null
 
 	var threadAssistant: CarThread? = null
 	var carappAssistant: AssistantApp? = null
+
+	// shut down probing after a timeout
+	val handler = Handler()
+	val shutdownTimeout = Runnable {
+		if (!iDriveConnectionReceiver.isConnected || !securityAccess.isConnected()) {
+			stopSelf()
+		}
+	}
 
 	override fun onCreate() {
 		super.onCreate()
@@ -123,7 +134,9 @@ class MainService: Service() {
 	 */
 	private fun handleActionStart() {
 		Log.i(TAG, "Starting up service")
+		// show the notification, so we can be startForegroundService'd
 		createNotificationChannel()
+		startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
 		// try connecting to the security service
 		if (!securityServiceThread.isAlive) {
 			securityServiceThread.start()
@@ -185,11 +198,18 @@ class MainService: Service() {
 				.setPriority(NotificationCompat.PRIORITY_LOW)
 				.setContentIntent(PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT))
 
-		if (brand?.toLowerCase(Locale.ROOT) == "bmw") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_bmw))
-		if (brand?.toLowerCase(Locale.ROOT) == "mini") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_mini))
+		if (!iDriveConnectionReceiver.isConnected) {
+			// show a notification even if we aren't connected, in case we were called with startForegroundService
+			// the combinedCallback will hide it right away, but it's probably enough
+			foregroundNotificationBuilder.setContentText(getString(R.string.connectionStatusWaiting))
+			foregroundNotificationBuilder.setOngoing(false) // able to swipe away if we aren't currently connected
+		} else {
+			if (brand?.toLowerCase(Locale.ROOT) == "bmw") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_bmw))
+			if (brand?.toLowerCase(Locale.ROOT) == "mini") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_mini))
 
-		if (chassisCode != null) {
-			foregroundNotificationBuilder.setContentText(resources.getString(R.string.notification_description_chassiscode, chassisCode.toString()))
+			if (chassisCode != null) {
+				foregroundNotificationBuilder.setContentText(resources.getString(R.string.notification_description_chassiscode, chassisCode.toString()))
+			}
 		}
 
 		val foregroundNotification = foregroundNotificationBuilder.build()
@@ -202,6 +222,7 @@ class MainService: Service() {
 
 	fun combinedCallback() {
 		synchronized(MainService::class.java) {
+			handler.removeCallbacks(shutdownTimeout)
 			if (iDriveConnectionReceiver.isConnected && securityAccess.isConnected()) {
 				var startAny = false
 
@@ -243,9 +264,7 @@ class MainService: Service() {
 				}
 
 				// check if we are idle and should shut down
-				if (startAny ){
-					startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
-				} else {
+				if (!startAny) {
 					Log.i(TAG, "No apps are enabled, skipping the service start")
 					stopServiceNotification()
 					stopSelf()
@@ -256,6 +275,7 @@ class MainService: Service() {
 			} else {
 				Log.d(TAG, "Not fully connected: IDrive:${iDriveConnectionReceiver.isConnected} SecurityService:${securityAccess.isConnected()}")
 				stopCarApps()
+				handler.postDelayed(shutdownTimeout, PROBE_TIMEOUT)
 			}
 		}
 		carInformationUpdater.isConnected = iDriveConnectionReceiver.isConnected && securityAccess.isConnected()
