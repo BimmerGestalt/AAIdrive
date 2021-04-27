@@ -7,15 +7,29 @@
     android:clipChildren="false"
     android:clipToPadding="false">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/pane_tiplist_expand"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/lbl_tiplist" />
-
+        android:gravity="center_vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:text="@string/lbl_tiplist" />
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_error_outline_black_24dp"
+            app:tint="?android:attr/textColorSecondary"
+            android:contentDescription="@string/lbl_tip_expand" />
+    </LinearLayout>
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/pgrTipsList"
         android:layout_height="@dimen/tips_pane_height"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:clipChildren="false"
         android:clipToPadding="false">
 

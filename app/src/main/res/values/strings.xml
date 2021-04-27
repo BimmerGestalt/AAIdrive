@@ -202,6 +202,7 @@
     <!-- tips -->
     <string name="lbl_tip_image">Tip demonstration image</string>
     <string name="lbl_tiplist">Tips and tricks</string>
+    <string name="lbl_tip_expand">Expand tips</string>
 
     <string name="tip_usb_chargingmode">Switch the phone\'s USB mode to File Transfer if it defaults to Charging Only mode</string>
     <string name="tip_connassistant">Use the Connection Wizard to enable the USB Accessory Mode in IDrive4 cars</string>

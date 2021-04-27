@@ -38,13 +38,6 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/pane_vertical_margin"
-            android:id="@+id/fragmentMusicAppList"
-            android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicAppsListFragment"/>
-
-        <androidx.fragment.app.FragmentContainerView
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:clipChildren="false"
@@ -52,5 +45,11 @@
             android:id="@+id/fragmentTipsList"
             android:name="me.hufman.androidautoidrive.phoneui.fragments.TipsListFragment"
             app:tipsMode="music"/>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/fragmentMusicAppList"
+            android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicAppsListFragment"/>
     </LinearLayout>
 </ScrollView>

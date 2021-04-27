@@ -95,7 +95,7 @@ class MusicAppsListFragment: Fragment() {
 		val view = this.view ?: return
 		val scrollView = view.findParent { it is ScrollView } as? ScrollView ?: return
 		val scrollHeight = scrollView.height
-		val height = max(300, scrollHeight - view.scrollTop - 128)
+		val height = max(300, scrollHeight - view.scrollTop)
 
 		val layoutParams = view.layoutParams
 		layoutParams.height = height
