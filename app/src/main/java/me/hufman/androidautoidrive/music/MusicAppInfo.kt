@@ -51,7 +51,7 @@ data class MusicAppInfo(override val name: String, override val icon: Drawable,
 
 			// any names which are Radio
 			val RADIO_NAMES = setOf(
-					"cast", "fm", "news", "radio", "live", "show",  // general keywords
+					"antenna", "antenne", "cast", "fm", "news", "radio", "live", "show",  // general keywords
 					"sirius", "tunein",     // the big ones
 					"ard", "audials", "audioaddict", "mnn", "nhl", "ntv", "rtl",   // some manual package names
 					"it.mediaset", "it.froggy",                         // Froggy Media

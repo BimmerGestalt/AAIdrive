@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import java.lang.Exception
 
 class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val mapAppMode: MapAppMode) {
 	var threadGMaps: CarThread? = null
@@ -69,27 +70,34 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 		running = false
 		// post it to the thread to run after initialization finishes
 		threadGMaps?.post {
-			if (!running) { // check that we do actually intend to shut down
-				mapScreenCapture?.onDestroy()
-				virtualDisplay?.release()
-				// nothing to stop in mapController
-				mapListener?.onDestroy()
-				mapApp?.onDestroy(context)
+			// finish shutting down, if we were cancelled during startup
+			mapApp?.onDestroy(context)
+			mapApp?.disconnect()
+			mapApp = null
 
-				mapScreenCapture = null
-				virtualDisplay = null
-				mapController = null
-				mapListener = null
-				mapApp = null
+			threadGMaps?.quit()
+			threadGMaps = null
 
-				threadGMaps?.quit()
-				threadGMaps = null
-
-				// if we started up again during shutdown
-				if (running) {
-					start()
-				}
+			// if we started up again during shutdown
+			if (running) {
+				start()
 			}
+		}
+		// shut down maps functionality right away
+		// when the car disconnects, the threadGMaps handler shuts down
+		try {
+			mapScreenCapture?.onDestroy()
+			virtualDisplay?.release()
+			// nothing to stop in mapController
+			mapListener?.onDestroy()
+			mapApp?.onDestroy(context)
+
+			mapScreenCapture = null
+			virtualDisplay = null
+			mapController = null
+			mapListener = null
+		} catch (e: Exception) {
+			Log.w(TAG, "Encountered an exception while shutting down", e)
 		}
 	}
 }

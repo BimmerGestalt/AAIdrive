@@ -124,6 +124,7 @@ class ConnectionStatusModelTest {
 			on {isUsbConnected} doReturn true
 			on {isUsbTransferConnected} doReturn false
 			on {isUsbAccessoryConnected} doReturn false
+			on {isBMWConnectedInstalled} doReturn true
 		}
 		val carInfo = mock<CarInformation>()
 		val model = ConnectionStatusModel(connection, carInfo).apply { update() }
@@ -148,6 +149,7 @@ class ConnectionStatusModelTest {
 			on {isUsbConnected} doReturn true
 			on {isUsbTransferConnected} doReturn true
 			on {isUsbAccessoryConnected} doReturn false
+			on {isBMWConnectedInstalled} doReturn true
 		}
 		val carInfo = mock<CarInformation>()
 		val model = ConnectionStatusModel(connection, carInfo).apply { update() }
@@ -193,6 +195,7 @@ class ConnectionStatusModelTest {
 	@Test
 	fun testBclDisconnected() = testCoroutineRule.runBlockingTest {
 		val connection = mock<CarConnectionDebugging> {
+			on {isBMWConnectedInstalled} doReturn true  // usb is supported
 			on {isBTConnected} doReturn true
 			on {isSPPAvailable} doReturn true
 			on {isBCLConnecting} doReturn false
@@ -214,16 +217,53 @@ class ConnectionStatusModelTest {
 		// empty hint
 		assertEquals("", context.run(model.hintBclDisconnected.value!!))
 
-		delay(5500L)
+		delay(10500L)
 		// flips to show a hint after a timeout
 		context.run(model.hintBclDisconnected.value!!)
-		verify(context).getString(eq(R.string.txt_setup_enable_bclspp))
+		verify(context).getString(eq(R.string.txt_setup_enable_bclspp_usb))
 
 		// main connection status shows the hint too
 		context.run(model.carConnectionText.value!!)
 		verify(context, times(2)).getString(eq(R.string.txt_setup_bcl_waiting))
 		context.run(model.carConnectionHint.value!!)
-		verify(context, times(2)).getString(eq(R.string.txt_setup_enable_bclspp))
+		verify(context, times(2)).getString(eq(R.string.txt_setup_enable_bclspp_usb))
+	}
+
+	@Test
+	fun testBclDisconnectedBMWMine() = testCoroutineRule.runBlockingTest {
+		val connection = mock<CarConnectionDebugging> {
+			on {isBMWConnectedInstalled} doReturn false  // usb is not supported
+			on {isBTConnected} doReturn true
+			on {isSPPAvailable} doReturn true
+			on {isBCLConnecting} doReturn false
+			on {isBCLConnected} doReturn false
+		}
+		val carInfo = mock<CarInformation>()
+		val model = ConnectionStatusModel(connection, carInfo).apply { update() }
+
+		assertEquals(true, model.isBtConnected.value)
+		assertEquals(false, model.isUsbConnected.value)
+		assertEquals(true, model.isBclReady.value)
+		assertEquals(true, model.isBclDisconnected.value)
+		assertEquals(false, model.isBclConnecting.value)
+		assertEquals(false, model.isBclConnected.value)
+
+		context.run(model.carConnectionText.value!!)
+		verify(context).getString(eq(R.string.txt_setup_bcl_waiting))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
+		// empty hint
+		assertEquals("", context.run(model.hintBclDisconnected.value!!))
+
+		delay(10500L)
+		// flips to show a hint after a timeout
+		context.run(model.hintBclDisconnected.value!!)
+		verify(context).getString(eq(R.string.txt_setup_enable_bclspp_bt))
+
+		// main connection status shows the hint too
+		context.run(model.carConnectionText.value!!)
+		verify(context, times(2)).getString(eq(R.string.txt_setup_bcl_waiting))
+		context.run(model.carConnectionHint.value!!)
+		verify(context, times(2)).getString(eq(R.string.txt_setup_enable_bclspp_bt))
 	}
 
 	@Test
@@ -404,6 +444,23 @@ class ConnectionStatusModelTest {
 		verify(context).getColor(R.color.connectionConnected)
 		context.run(model.carLogo.value!!)
 		verify(context).getDrawable(R.drawable.logo_mini)
+	}
+
+	@Test
+	fun testDisconnectedBrand() {
+		val connection = mock<CarConnectionDebugging>{
+			on {isConnectedSecurityConnected} doReturn true
+			on {isBCLConnected} doReturn false      // we've disconnected after a previous branded connection
+			on {carBrand} doReturn "Mini"
+		}
+		val carInfo = mock<CarInformation>()
+		val model = ConnectionStatusModel(connection, carInfo).apply { update() }
+
+		assertEquals("", context.run(model.carConnectionText.value!!))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
+		context.run(model.carConnectionColor.value!!)
+		verify(context).getColor(R.color.connectionWaiting)
+		assertEquals(null, context.run(model.carLogo.value!!))
 	}
 
 	@Test

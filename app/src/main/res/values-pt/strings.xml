@@ -75,7 +75,7 @@
     <string name="txt_setup_bcl_init_stuck">Ligação às Apps indisponível</string>
     <string name="txt_setup_enable_bcl_mode">Active a opção Apps na viatura para este %s</string>
     <string name="txt_setup_bcl_disconnected">Ligação às Apps não está pronta:</string>
-    <string name="txt_setup_enable_bclspp">Tente religar Musica Bluetooth ou ligar por USB</string>
+    <string name="txt_setup_enable_bclspp_usb">Tente religar Musica Bluetooth ou ligar por USB</string>
     <string name="txt_setup_bcl_connecting">Ligação às Apps em execução</string>
     <string name="txt_setup_bcl_connected">Ligação às Apps em execução</string>
     <string name="txt_setup_bcl_connected_transport">Ligação às Apps em execução em %s</string>

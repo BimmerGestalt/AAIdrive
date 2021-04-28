@@ -122,6 +122,8 @@
     <string name="txt_setup_mini_ready">Diese App ist bereit für die Verbindung mit einem Mini</string>
     <string name="txt_setup_bmw_missing">Nicht bereit für die Verbindung mit einem BMW:</string>
     <string name="txt_setup_mini_missing">Nicht bereit für die Verbindung mit einem Mini:</string>
+    <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 ist installiert. Diese Version stellt manchmal die Verbindung zum Fahrzeug nicht zuverlässig her. Ein downgrade zur Version 6.4 oder Upgrade zur MyBMW App kann hier Abhilfe schaffen</string>
+    <string name="txt_setup_mini_connected_65">Mini Connected 6.5 ist installiert. Diese Version stellt manchmal die Verbindung zum Fahrzeug nicht zuverlässig her. Ein downgrade zur Version 6.4 oder Upgrade zur neuen Mini App kann hier Abhilfe schaffen</string>
     <string name="txt_setup_bmw_mine_detected">Die neue My BMW App ist installiert, was Probleme mit BMW Connected verursachen kann und nicht unterstützt wird</string>
     <string name="txt_setup_mini_mine_detected">Die neue MINI-App ist installiert, was Probleme mit Mini Connected verursachen kann und nicht unterstützt wird</string>
     <string name="txt_setup_security_missing">Security Service ist nicht erreichbar:</string>
@@ -147,7 +149,7 @@
     <string name="txt_setup_enable_bcl_mode">Aktiviere die Apps Option im Fahrzug für %s</string>
     <string name="txt_setup_bcl_disconnected">Apps Verbindung ist nicht bereit:</string>
     <string name="txt_setup_bcl_waiting">Wartet auf das Starten der Apps Verbindung</string>
-    <string name="txt_setup_enable_bclspp">Versuche Bluetooth Audio an- und auszuschalten oder mit USB-Kabel zu verbinden</string>
+    <string name="txt_setup_enable_bclspp_usb">Versuche Bluetooth Audio an- und auszuschalten oder mit USB-Kabel zu verbinden</string>
     <string name="txt_setup_bcl_connecting">Apps-Verbindung wird hergestellt</string>
     <string name="txt_setup_bcl_connected">Apps-Verbindung aktiv</string>
     <string name="txt_setup_bcl_connected_transport">Apps-Verbindung läuft über %s</string>

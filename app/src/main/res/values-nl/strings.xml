@@ -43,6 +43,7 @@
         <item quantity="one">Spraakassistent van uw telefoon is toegevoegd als een Connected app, in het geval dat de spraakinvoer van de auto het niet activeert</item>
         <item quantity="other">Spraakassistenten van je telefoon worden toegevoegd als een Connected app, in het geval dat de spraakinvoer van de auto het niet activeert</item>
     </plurals>
+    <string name="lbl_assistantpage_tip">Deze apps staan los van de Voice Assistant stuurwiel knop van uw auto, die alleen de standaard assistent van uw telefoon activeert en is apart geconfigureerd</string>
     <string name="lbl_notificationpage">Uw inkomende meldingen kunnen worden bekeken en in behandeld worden vanuit de auto</string>
     <string name="spawn_test_notification">Test bericht</string>
     <string name="message_notifications">Meldingen</string>
@@ -122,8 +123,12 @@
     <string name="txt_setup_mini_ready">De app is klaar om verbinding te maken met uw Mini</string>
     <string name="txt_setup_bmw_missing">Niet klaar om met uw BMW te verbinden:</string>
     <string name="txt_setup_mini_missing">Niet klaar om met uw Mini te verbinden:</string>
+    <string name="txt_setup_bmw_connected_65">BMW Verbonden 6.5 is geïnstalleerd, die soms geen verbinding met de auto kan maken. Probeer te downgraden naar 6.4 of upgrade naar MyBMW als u problemen ondervindt</string>
+    <string name="txt_setup_mini_connected_65">BMW Verbonden 6.5 is geïnstalleerd, die soms geen verbinding met de auto kan maken. Probeer te downgraden naar 6.4 of upgrade naar MyBMW als u problemen ondervindt</string>
     <string name="txt_setup_bmw_mine_detected">De nieuwe My BMW-app is geïnstalleerd, dit kan problemen veroorzaken met BMW verbonden en wordt niet ondersteund</string>
     <string name="txt_setup_mini_mine_detected">De nieuwe MINI-app is geïnstalleerd, dit kan problemen veroorzaken met Mini Connected en wordt niet ondersteund</string>
+    <string name="txt_setup_bmw_mine_conflict">Zowel de BMW Connected en Mijn BMW apps zijn geïnstalleerd, dit kan verbindingsinstabiliteit veroorzaken tenzij u via USB aangesloten bent</string>
+    <string name="txt_setup_mini_mine_conflict">Zowel de BMW Connected en Mijn BMW apps zijn geïnstalleerd, dit kan verbindingsinstabiliteit veroorzaken tenzij u via USB aangesloten bent</string>
     <string name="txt_setup_security_missing">Security Service is onbereikbaar:</string>
     <string name="btn_install">Installeren</string>
     <string name="btn_install_bmw">Installeer BMW Connected</string>
@@ -139,6 +144,7 @@
     <string name="txt_setup_spp_connected">Bluetooth Apps zijn ondersteund</string>
     <string name="txt_setup_usb_disconnected">Auto is niet verbonden via USB</string>
     <string name="txt_setup_usb_connected">USB verbonden in oplaad modus</string>
+    <string name="txt_setup_usb_requires_connected">Verbinding met USB-apps vereist dat BMW/Mini verbonden is om te worden geïnstalleerd</string>
     <string name="txt_setup_enable_usbmtp">Schakel de USB mode van uw GSM naar bestandsoverdracht</string>
     <string name="txt_setup_enable_usbacc">Schakel de USB Accessoire of de Apps optie in de auto %s</string>
     <string name="txt_setup_usbmtp_connected">USB aangesloten in opslag mode</string>
@@ -147,7 +153,8 @@
     <string name="txt_setup_enable_bcl_mode">Schakel de Apps optie in om gerbuik te maken van %s</string>
     <string name="txt_setup_bcl_disconnected">Apps verbinding is niet beschikbaar:</string>
     <string name="txt_setup_bcl_waiting">Wachten op een app-verbinding om te starten</string>
-    <string name="txt_setup_enable_bclspp">Herstart de Bluetooth verbinding of maak verbinding via USB</string>
+    <string name="txt_setup_enable_bclspp_bt">Probeer Bluetooth Music te in/uitschakelen</string>
+    <string name="txt_setup_enable_bclspp_usb">Herstart de Bluetooth verbinding of maak verbinding via USB</string>
     <string name="txt_setup_bcl_connecting">Apps maakt verbinding</string>
     <string name="txt_setup_bcl_connected">Apps is verbonden</string>
     <string name="txt_setup_bcl_connected_transport">Apps is verbonden via %s</string>

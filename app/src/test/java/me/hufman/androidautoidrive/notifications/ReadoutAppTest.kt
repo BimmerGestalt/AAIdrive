@@ -42,7 +42,7 @@ class ReadoutAppTest {
 
 		assertTrue(mockServer.cdsSubscriptions.contains("hmi.tts"))
 
-		app.onDestroy()
+		app.disconnect()
 	}
 
 	@Test

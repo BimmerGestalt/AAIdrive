@@ -108,7 +108,7 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 			}
 		}
 
-		_isPopupSupported.value = capabilities["hmi.type"]?.contains("ID") == true
+		_isPopupSupported.value = true
 		_isPopupNotSupported.value = false
 		_popupStatus.value = { getString(R.string.txt_capabilities_popup_yes) }
 		_popupHint.value = { "" }

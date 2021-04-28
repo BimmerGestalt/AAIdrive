@@ -145,7 +145,7 @@
     <string name="txt_setup_enable_bcl_mode">この%sの車でアプリオプションを有効にする</string>
     <string name="txt_setup_bcl_disconnected">アプリ接続の準備ができていません：</string>
     <string name="txt_setup_bcl_waiting">アプリ接続の開始を待機しています</string>
-    <string name="txt_setup_enable_bclspp">Bluetoothミュージックを切り替えるか、USB経由で接続してみてください</string>
+    <string name="txt_setup_enable_bclspp_usb">Bluetoothミュージックを切り替えるか、USB経由で接続してみてください</string>
     <string name="txt_setup_bcl_connecting">アプリ接続が接続されています</string>
     <string name="txt_setup_bcl_connected">アプリ接続が実行されています</string>
     <string name="txt_setup_bcl_connected_transport">アプリ接続は%sで実行されています</string>

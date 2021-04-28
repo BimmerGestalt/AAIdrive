@@ -38,7 +38,7 @@
                     android:text="@string/txt_setup_bmw_missing" />
             </LinearLayout>
             <Button
-                android:visibility="@{!viewModel.isBmwConnectedInstalled()}"
+                android:visibility="@{!viewModel.isBmwInstalled()}"
                 android:onClick="@{() -> controller.installBMWConnected()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:visibility="@{viewModel.isBmwMineInstalled()}"
+            android:visibility="@{viewModel.isBmwConnected65Installed() &amp;&amp; !viewModel.isBmwMineInstalled()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -82,7 +82,27 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/txt_setup_bmw_mine_detected" />
+                android:text="@string/txt_setup_bmw_connected_65" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="@{viewModel.isBmwConnectedInstalled() &amp;&amp; !viewModel.isBmwConnected65Installed() &amp;&amp; viewModel.isBmwMineInstalled()}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:src="@drawable/ic_error_outline_black_24dp" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/txt_setup_bmw_mine_conflict" />
         </LinearLayout>
 
         <!-- MINI Connection -->
@@ -110,7 +130,7 @@
                     android:text="@string/txt_setup_mini_missing" />
             </LinearLayout>
             <Button
-                android:visibility="@{!viewModel.isMiniConnectedInstalled()}"
+                android:visibility="@{!viewModel.isMiniInstalled()}"
                 android:onClick="@{() -> controller.installMiniConnected()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -138,7 +158,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:visibility="@{viewModel.isMiniMineInstalled()}"
+            android:visibility="@{viewModel.isMiniConnected65Installed() &amp;&amp; !viewModel.isMiniMineInstalled()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -154,7 +174,27 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/txt_setup_mini_mine_detected" />
+                android:text="@string/txt_setup_mini_connected_65" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="@{viewModel.isMiniConnectedInstalled() &amp;&amp; !viewModel.isMiniConnected65Installed() &amp;&amp; viewModel.isMiniMineInstalled()}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:src="@drawable/ic_error_outline_black_24dp" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/txt_setup_mini_mine_conflict" />
         </LinearLayout>
 
         <!-- Security Service -->
@@ -183,13 +223,13 @@
                     android:text="@string/txt_setup_security_missing" />
             </LinearLayout>
             <Button
-                android:visibility="@{viewModel.isMiniConnectedInstalled()}"
+                android:visibility="@{viewModel.isMiniInstalled()}"
                 android:onClick="@{() -> controller.installBMWConnectedClassic()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/btn_install_bmwclassic"/>
             <Button
-                android:visibility="@{!viewModel.isMiniConnectedInstalled()}"
+                android:visibility="@{!viewModel.isMiniInstalled()}"
                 android:onClick="@{() -> controller.installMiniConnectedClassic()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

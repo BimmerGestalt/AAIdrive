@@ -73,7 +73,7 @@
     <string name="txt_setup_bcl_init_stuck">Apps Connection n\'est pas activée:</string>
     <string name="txt_setup_enable_bcl_mode">Activer l\'option Apps dans la voiture pour ce/cette %s</string>
     <string name="txt_setup_bcl_disconnected">Apps Connection n\'est pas prêt:</string>
-    <string name="txt_setup_enable_bclspp">Essayer de lancer Bluetooth Music ou de brancher un cable USB</string>
+    <string name="txt_setup_enable_bclspp_usb">Essayer de lancer Bluetooth Music ou de brancher un cable USB</string>
     <string name="txt_setup_bcl_connecting">Apps Connection est connectée</string>
     <string name="txt_setup_bcl_connected">Apps Connection est lancée</string>
     <string name="txt_setup_bcl_connected_transport">Apps Connection est lancée en %s</string>

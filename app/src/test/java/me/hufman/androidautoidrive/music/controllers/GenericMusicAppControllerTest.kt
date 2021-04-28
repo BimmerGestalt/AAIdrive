@@ -3,7 +3,9 @@ package me.hufman.androidautoidrive.music.controllers
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.os.Bundle
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -222,15 +224,76 @@ class GenericMusicAppControllerTest {
 
 	@Test
 	fun testMetadata() {
+		val mockMetadata = mock<Bundle> {
+			on { getString(any()) } doReturn null as String?
+		}
 		whenever(mediaController.metadata) doAnswer {
 			mock {
-				on { getString(any()) } doReturn null as String?
-				on { getString("android.media.metadata.TITLE") } doReturn "test title"
-				on { bundle } doAnswer { mock() }
+				on { getBitmap(any()) } doAnswer { mockMetadata.getParcelable(it.getArgument(0)) }
+				on { getLong(any()) } doAnswer { mockMetadata.getLong(it.getArgument(0)) }
+				on { getString(any()) } doAnswer { mockMetadata.getString(it.getArgument(0)) }
+				on { bundle } doReturn mockMetadata
 			}
 		}
-		val metadata = controller.getMetadata()
-		assertEquals("test title", metadata?.title)
+
+		// mediaId
+		for (key in listOf("MEDIA_ID")) {
+			reset(mockMetadata)
+			whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "MediaId-$key"
+			val metadata = controller.getMetadata()
+			assertEquals("MediaId-$key", metadata?.mediaId)
+		}
+
+		// artist
+		for (key in listOf("ALBUM_ARTIST", "ARTIST")) {
+			reset(mockMetadata)
+			whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "Artist-$key"
+			val metadata = controller.getMetadata()
+			assertEquals("Artist-$key", metadata?.artist)
+		}
+
+		// artist
+		for (key in listOf("ALBUM")) {
+			reset(mockMetadata)
+			whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "Album-$key"
+			val metadata = controller.getMetadata()
+			assertEquals("Album-$key", metadata?.album)
+		}
+
+		// title
+		for (key in listOf("DISPLAY_TITLE", "TITLE")) {
+			reset(mockMetadata)
+			whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "testTitle-$key"
+			val metadata = controller.getMetadata()
+			assertEquals("testTitle-$key", metadata?.title)
+		}
+
+		// longs
+		for (item in mapOf("DURATION" to "getDuration", "TRACK_NUMBER" to  "getTrackNumber", "NUM_TRACKS" to "getTrackCount")) {
+			reset(mockMetadata)
+			val expected = item.key.length.toLong()
+			whenever(mockMetadata.getLong("android.media.metadata.${item.key}")) doReturn expected
+			val metadata = controller.getMetadata()
+			val found = metadata?.javaClass?.getMethod(item.value)?.invoke(metadata)
+			assertEquals(expected, found)
+		}
+
+		// coverart
+		for (key in listOf("ART", "ALBUM_ART", "DISPLAY_ICON")) {
+			reset(mockMetadata)
+			val coverArt = mock<Bitmap>()
+			whenever(mockMetadata.getParcelable<Bitmap>("android.media.metadata.$key")) doReturn coverArt
+			val metadata = controller.getMetadata()
+			assertEquals(coverArt, metadata?.coverArt)
+		}
+
+		// coverartUri
+		for (key in listOf("ART_URI", "ALBUM_ART_URI", "DISPLAY_ICON_URI")) {
+			reset(mockMetadata)
+			whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "uri-$key"
+			val metadata = controller.getMetadata()
+			assertEquals("uri-$key", metadata?.coverArtUri)
+		}
 	}
 
 	@Test
