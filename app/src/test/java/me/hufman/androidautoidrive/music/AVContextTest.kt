@@ -157,6 +157,7 @@ class AVContextTest {
 			"Spotify" to "com.spotify.music"
 		)
 		val RADIO_APPS = mapOf(
+			"Antenne Bayern" to "de.antenne.android",
 			"DI.FM Radio" to "com.audioaddict.di",
 			"RMC" to "it.froggy.android.rmc",
 			"SiriusXM" to "com.sirius"
