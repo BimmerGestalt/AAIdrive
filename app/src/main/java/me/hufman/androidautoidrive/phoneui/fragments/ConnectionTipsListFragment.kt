@@ -9,9 +9,10 @@ import android.view.ViewGroup
 import android.widget.ScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.viewpager.widget.ViewPager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.phoneui.adapters.DataBoundPagerAdapter
+import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
 import me.hufman.androidautoidrive.phoneui.scrollBottom
 import me.hufman.androidautoidrive.phoneui.scrollTop
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionTipsModel
@@ -20,7 +21,7 @@ import me.hufman.androidautoidrive.phoneui.visible
 class ConnectionTipsListFragment: Fragment() {
 	var mode = ""
 	val viewModel by viewModels<ConnectionTipsModel> { ConnectionTipsModel.Factory(requireContext().applicationContext) }
-	val adapter by lazy { DataBoundPagerAdapter(parentFragmentManager, viewModel.currentTips, R.layout.fragment_tip, null) }
+	val adapter by lazy { DataBoundListAdapter(viewModel.currentTips, R.layout.fragment_tip, null) }
 
 	override fun onInflate(context: Context, attrs: AttributeSet, savedInstanceState: Bundle?) {
 		super.onInflate(context, attrs, savedInstanceState)
@@ -33,8 +34,12 @@ class ConnectionTipsListFragment: Fragment() {
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 		val view = inflater.inflate(R.layout.fragment_tipslist, container, false)
-		val pane = view.findViewById<ViewPager>(R.id.pgrTipsList)
+		val pane = view.findViewById<ViewPager2>(R.id.pgrTipsList)
 		pane.adapter = adapter
+		pane.offscreenPageLimit = 1
+		(pane.getChildAt(0) as? RecyclerView)?.apply {
+			clipToPadding = false
+		}
 		view.findViewById<View>(R.id.pane_tiplist_expand).setOnClickListener {
 			val visible = !pane.visible
 			pane.visible = visible

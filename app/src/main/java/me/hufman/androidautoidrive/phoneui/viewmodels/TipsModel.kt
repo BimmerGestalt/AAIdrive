@@ -3,19 +3,31 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import me.hufman.androidautoidrive.CarCapabilitiesSummarized
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.R
 
 open class Tip(val text: Context.() -> String, val drawable: Context.() -> Drawable?)
 
+abstract class TipsModel: ViewModel() {
+	val currentTips: MutableList<Tip> = ArrayList()
+	var mode = ""
+	abstract fun update()
+}
+
 class CapabilitiesTip(text: Context.() -> String, drawable: Context.() -> Drawable?, val condition: CarCapabilitiesSummarized.() -> Boolean): Tip(text, drawable)
 
-class TipsModel: ViewModel() {
-	var mode = ""
+class CapabilitiesTipsModel: TipsModel() {
+	class Factory() : ViewModelProvider.Factory {
+		@Suppress("UNCHECKED_CAST")
+		override fun <T : ViewModel> create(modelClass: Class<T>): T {
+			return CapabilitiesTipsModel().apply {
+				update()
+			} as T
+		}
+	}
 	val carInformation = CarInformation()
 
 	val MUSIC_TIPS = listOf(
@@ -41,17 +53,12 @@ class TipsModel: ViewModel() {
 		CapabilitiesTip({getString(R.string.tip_input_emoji)}, {ContextCompat.getDrawable(this, R.drawable.tip_input_emoji_mini)}) { isMini },
 	)
 
-	private val _hasCarConnected = MutableLiveData<Boolean>()
-	val hasCarConnnected: LiveData<Boolean> = _hasCarConnected
-
-	val currentTips: MutableList<Tip> = ArrayList()
 
 	init {
 		update()
 	}
 
-	fun update() {
-		_hasCarConnected.value = carInformation.capabilities.isNotEmpty()
+	override fun update() {
 		val summarized = CarCapabilitiesSummarized(carInformation)
 		currentTips.clear()
 		val sourceTips = when(mode) {

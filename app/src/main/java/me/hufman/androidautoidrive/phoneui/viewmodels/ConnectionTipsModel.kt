@@ -11,7 +11,7 @@ import me.hufman.androidautoidrive.connections.CarConnectionDebugging
 
 class ConnectionTip(text: Context.() -> String, drawable: Context.() -> Drawable?, val condition: CarConnectionDebugging.() -> Boolean): Tip(text, drawable)
 
-class ConnectionTipsModel(val connection: CarConnectionDebugging): ViewModel() {
+class ConnectionTipsModel(val connection: CarConnectionDebugging): TipsModel() {
 	class Factory(val appContext: Context) : ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -48,9 +48,7 @@ class ConnectionTipsModel(val connection: CarConnectionDebugging): ViewModel() {
 		}
 	)
 
-	val currentTips: MutableList<ConnectionTip> = ArrayList()
-
-	fun update() {
+	override fun update() {
 		currentTips.clear()
 		currentTips.addAll(TIPS.filter { connection.run(it.condition) })
 	}

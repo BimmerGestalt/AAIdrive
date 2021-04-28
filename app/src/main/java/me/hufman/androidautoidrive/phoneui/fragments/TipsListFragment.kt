@@ -9,18 +9,30 @@ import android.view.ViewGroup
 import android.widget.ScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.viewpager.widget.ViewPager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.phoneui.adapters.DataBoundPagerAdapter
+import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
 import me.hufman.androidautoidrive.phoneui.scrollBottom
 import me.hufman.androidautoidrive.phoneui.scrollTop
+import me.hufman.androidautoidrive.phoneui.viewmodels.CapabilitiesTipsModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionTipsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.TipsModel
 import me.hufman.androidautoidrive.phoneui.visible
 
 class TipsListFragment: Fragment() {
-	var mode = ""
-	val viewModel by viewModels<TipsModel>()
-	val adapter by lazy { DataBoundPagerAdapter(parentFragmentManager, viewModel.currentTips, R.layout.fragment_tip, null) }
+	var mode = "UNKNOWN"
+	val viewModel by viewModels<TipsModel>
+	{
+		if (mode == "connection") {
+			ConnectionTipsModel.Factory(requireContext().applicationContext)
+		} else {
+			CapabilitiesTipsModel.Factory()
+		}
+	}
+	val adapter by lazy { DataBoundListAdapter(viewModel.currentTips, R.layout.fragment_tip, null) }
 
 	override fun onInflate(context: Context, attrs: AttributeSet, savedInstanceState: Bundle?) {
 		super.onInflate(context, attrs, savedInstanceState)
@@ -34,11 +46,23 @@ class TipsListFragment: Fragment() {
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 		viewModel.mode = mode
 		val view = inflater.inflate(R.layout.fragment_tipslist, container, false)
-		val pane = view.findViewById<ViewPager>(R.id.pgrTipsList)
+		val pane = view.findViewById<ViewPager2>(R.id.pgrTipsList)
 		pane.adapter = adapter
+
+		// show the offscreen pages
+		pane.offscreenPageLimit = 1
+		(pane.getChildAt(0) as? RecyclerView)?.apply {
+			clipToPadding = false
+		}
+
+		// set up the tab bar
+		val tabLayout = view.findViewById<TabLayout>(R.id.pgrTipsListTabs)
+		TabLayoutMediator(tabLayout, pane) { _, _ -> }.attach()
+
 		view.findViewById<View>(R.id.pane_tiplist_expand).setOnClickListener {
 			val visible = !pane.visible
 			pane.visible = visible
+			tabLayout.visible = visible
 			update()
 			pane.post {
 				if (visible) {
@@ -46,9 +70,6 @@ class TipsListFragment: Fragment() {
 					requireActivity().findViewById<ScrollView>(R.id.pane_scrollView)?.smoothScrollTo(0, position)
 				}
 			}
-		}
-		viewModel.hasCarConnnected.observe(viewLifecycleOwner) {
-			view.visible = it
 		}
 		return view
 	}
@@ -60,6 +81,7 @@ class TipsListFragment: Fragment() {
 
 	fun update() {
 		viewModel.update()
+		view?.visible = viewModel.currentTips.isNotEmpty()
 		adapter.notifyDataSetChanged()
 		view?.invalidate()
 	}
