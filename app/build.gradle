@@ -1,7 +1,6 @@
 plugins {
     id 'com.github.kt3k.coveralls' version '2.8.2'
     id 'com.gladed.androidgitversion' version '0.4.9'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.4.30'
 }
 
 apply plugin: 'com.android.application'
@@ -396,7 +395,6 @@ dependencies {
     implementation ('com.adamratzman:spotify-api-kotlin-android:3.5.02') {
         exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-core'
     }
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

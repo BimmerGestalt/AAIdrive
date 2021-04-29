@@ -7,14 +7,12 @@ import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.util.Log
 import android.util.LruCache
+import com.google.gson.Gson
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.*
 import kotlinx.coroutines.*
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.music.*
@@ -178,6 +176,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	var createQueueMetadataJob: Job? = null
 	var defaultDispatcher = Dispatchers.Default
 	var onQueueLoaded: (() -> Unit)? = null
+	val gson: Gson = Gson()
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -275,7 +274,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 					saveLikedSongsState(likedSongsState)
 				} else {
 					Log.d(TAG, "Found previous liked songs state.")
-					likedSongsState = Json.decodeFromString(likedSongsStateJson)
+					likedSongsState = gson.fromJson(likedSongsStateJson, LikedSongsState::class.java)
 
 					if (hashCode != likedSongsState.hashCode) {
 						Log.d(TAG, "Previous liked songs state is no longer valid, updating liked songs playlist and writing new hash.")
@@ -319,7 +318,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	 * Saves the provided [LikedSongsState] to the [AppSettings].
 	 */
 	private fun saveLikedSongsState(likedSongsState: LikedSongsState) {
-		appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = Json.encodeToString(likedSongsState)
+		appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = gson.toJson(likedSongsState)
 	}
 
 	/**
