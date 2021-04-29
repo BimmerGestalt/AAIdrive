@@ -45,12 +45,13 @@ val View.scrollTop: Int
 	get() {
 		val parent = this.parent ?: return 0
 		if (parent is View && parent !is ScrollView) {
-			return parent.top + this.top
+			return parent.scrollTop + this.top
 		}
 		return this.top
 	}
 val View.scrollBottom: Int
 	get() {
+		println("Finding scrollBottom with scrollTop ${this.scrollTop} and height ${this.height}")
 		return this.scrollTop + this.height
 	}
 

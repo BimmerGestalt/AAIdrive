@@ -77,6 +77,11 @@ class MusicAppsListFragment: Fragment() {
 			}
 		}
 		ItemTouchHelper(swipeCallback).attachToRecyclerView(listMusicApps)
+
+		// set the actual scrollview size
+		view.post {
+			setHeightInScrollview()
+		}
 	}
 
 	override fun onResume() {
@@ -84,13 +89,9 @@ class MusicAppsListFragment: Fragment() {
 
 		// build list of discovered music apps
 		appDiscoveryThread.discovery()
-
-		this.view?.post {
-			setHeightInScrollview()
-		}
 	}
 
-	fun setHeightInScrollview() {
+	private fun setHeightInScrollview() {
 		// set height based on parent scrollview size
 		val view = this.view ?: return
 		val scrollView = view.findParent { it is ScrollView } as? ScrollView ?: return

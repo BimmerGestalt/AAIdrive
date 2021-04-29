@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ScrollView
+import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +16,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
+import me.hufman.androidautoidrive.phoneui.findParent
 import me.hufman.androidautoidrive.phoneui.scrollBottom
 import me.hufman.androidautoidrive.phoneui.scrollTop
 import me.hufman.androidautoidrive.phoneui.viewmodels.CapabilitiesTipsModel
@@ -50,7 +52,7 @@ class TipsListFragment: Fragment() {
 		pane.adapter = adapter
 
 		// show the offscreen pages
-		pane.offscreenPageLimit = 1
+		pane.offscreenPageLimit = 2
 		(pane.getChildAt(0) as? RecyclerView)?.apply {
 			clipToPadding = false
 		}
@@ -59,15 +61,47 @@ class TipsListFragment: Fragment() {
 		val tabLayout = view.findViewById<TabLayout>(R.id.pgrTipsListTabs)
 		TabLayoutMediator(tabLayout, pane) { _, _ -> }.attach()
 
+		// automatic pager height measurement https://stackoverflow.com/a/67104270/169035
+		val pageCallback = object: ViewPager2.OnPageChangeCallback() {
+			override fun onPageSelected(position: Int) {
+				super.onPageSelected(position)
+
+				val recyclerView = (pane.getChildAt(0) as? RecyclerView)
+				recyclerView?.getChildAt(position)?.let {
+					updatePagerHeightForChild(it, pane)
+				}
+			}
+
+			fun updatePagerHeightForChild(view: View, pager: ViewPager2) {
+				view.post {
+					val widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(
+							view.width, View.MeasureSpec.EXACTLY
+					)
+					val heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(
+							0, View.MeasureSpec.UNSPECIFIED
+					)
+					view.measure(widthMeasureSpec, heightMeasureSpec)
+					if (pager.layoutParams.height < view.measuredHeight) {
+						pager.layoutParams = (pager.layoutParams).also {
+							it.height = view.measuredHeight
+						}
+					}
+				}
+			}
+		}
+		pane.registerOnPageChangeCallback(pageCallback)
+		pageCallback.onPageSelected(0)
+
+		// support toggling
 		view.findViewById<View>(R.id.pane_tiplist_expand).setOnClickListener {
 			val visible = !pane.visible
 			pane.visible = visible
 			tabLayout.visible = visible
 			update()
-			pane.post {
+			pane.postDelayed(200) {
 				if (visible) {
-					val position = (pane.scrollTop + pane.scrollBottom) / 2
-					requireActivity().findViewById<ScrollView>(R.id.pane_scrollView)?.smoothScrollTo(0, position)
+					val position = pane.scrollTop
+					(pane.findParent { it is ScrollView } as ScrollView).smoothScrollTo(0, position)
 				}
 			}
 		}

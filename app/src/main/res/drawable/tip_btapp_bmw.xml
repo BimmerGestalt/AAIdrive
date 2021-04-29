@@ -8,7 +8,7 @@
         android:top="180dp">
     </item>
     <item android:drawable="@drawable/tip_hand"
-        android:height="150dp" android:width="170dp"
+        android:height="84dp" android:width="84dp"
         android:top="90dp" android:left="190dp">
     </item>
 </layer-list>

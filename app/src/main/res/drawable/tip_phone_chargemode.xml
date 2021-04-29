@@ -4,7 +4,7 @@
         <bitmap android:src="@drawable/pic_phone_chargemode" />
     </item>
     <item android:drawable="@drawable/tip_hand"
-        android:height="150dp" android:width="170dp"
+        android:height="84dp" android:width="84dp"
         android:top="260dp" android:left="250dp">
     </item>
 </layer-list>

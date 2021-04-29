@@ -5,7 +5,7 @@
         <bitmap android:src="@drawable/pic_mini_bookmarks" />
     </item>
     <item android:drawable="@drawable/tip_hand"
-        android:height="170dp" android:width="170dp"
+        android:height="84dp" android:width="84dp"
         android:top="90dp" android:left="150dp">
     </item>
 </layer-list>
