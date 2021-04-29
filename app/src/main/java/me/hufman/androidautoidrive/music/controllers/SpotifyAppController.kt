@@ -177,6 +177,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	var defaultDispatcher = Dispatchers.Default
 	var onQueueLoaded: (() -> Unit)? = null
 	val gson: Gson = Gson()
+	var queueTitle: String? = null
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -224,6 +225,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			if (queueUri != uri) {
 				queueUri = uri
 				queueItems = emptyList()
+				queueTitle = playerContext.title
 
 				val isLikedSongsPlaylist = playerContext.type == "your_library" || playerContext.type == "your_library_tracks"
 				if (isLikedSongsPlaylist || playerContext.title == SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME) {
@@ -255,7 +257,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
 
 			if (queueItems.isNotEmpty()) {
-				queueMetadata = QueueMetadata(L.MUSIC_LIKED_SONGS_PLAYLIST_NAME, null, queueItems)
+				queueMetadata = QueueMetadata(queueTitle, null, queueItems)
 
 				val hashCode = queueItems.hashCode().toString()
 				val likedSongsStateJson = appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE]
@@ -266,7 +268,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 					if (uri == null) {
 						Log.e(TAG, "Error creating liked songs playlist, falling back to app remote API")
 						queueItems = emptyList()
-						createQueueMetadata(PlayerContext(queueUri, L.MUSIC_LIKED_SONGS_PLAYLIST_NAME, null, null))
+						createQueueMetadata(PlayerContext(queueUri, queueTitle, null, null))
 						return@launch
 					}
 					webApi.addSongsToPlaylist(uri.id, queueItems)
@@ -309,7 +311,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 
 				callback?.invoke(this@SpotifyAppController)
 			} else {
-				createQueueMetadata(PlayerContext(queueUri, L.MUSIC_LIKED_SONGS_PLAYLIST_NAME, null, null))
+				createQueueMetadata(PlayerContext(queueUri, queueTitle, null, null))
 			}
 		}
 	}

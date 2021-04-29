@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.music.controllers
 
 import android.graphics.Bitmap
 import com.adamratzman.spotify.models.PlaylistUri
+import com.google.gson.Gson
 import com.nhaarman.mockito_kotlin.*
 import com.spotify.android.appremote.api.*
 import com.spotify.protocol.client.CallResult
@@ -11,8 +12,6 @@ import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MockAppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
@@ -94,6 +93,7 @@ class SpotifyMusicAppControllerTest {
 	lateinit var controller: SpotifyAppController
 	lateinit var appSettings: MutableAppSettings
 	private val testDispatcher = TestCoroutineDispatcher()
+	private val gson: Gson = Gson()
 
 	@Before
 	fun setup() {
@@ -634,7 +634,7 @@ class SpotifyMusicAppControllerTest {
 
 	@Test
 	fun testQueue_LikedSongsPlaylist_WebAPILoaded_NoCachedContent() = runBlockingTest {
-		val queueTitle = L.MUSIC_LIKED_SONGS_PLAYLIST_NAME
+		val queueTitle = "Liked Songs"
 		val queueSubtitle = null
 		val queueImageUriStr = "imageUri"
 		val queueImageUri = ImageUri(queueImageUriStr)
@@ -659,7 +659,7 @@ class SpotifyMusicAppControllerTest {
 		verify(webApi).addSongsToPlaylist(playlistId, likedSongs)
 
 		val likedSongsState = LikedSongsState(likedSongs.hashCode().toString(), playlistUriStr, playlistId, null)
-		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], Json.encodeToString(likedSongsState))
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsState))
 
 		assertEquals(controller.queueUri, playlistUriStr)
 
@@ -674,7 +674,7 @@ class SpotifyMusicAppControllerTest {
 		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
 
 		likedSongsState.queueCoverArtUri = queueImageUriStr
-		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], Json.encodeToString(likedSongsState))
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsState))
 
 		val queue = controller.getQueue()
 		assertNotNull(queue)
@@ -693,7 +693,7 @@ class SpotifyMusicAppControllerTest {
 
 	@Test
 	fun testQueue_LikedSongsPlaylist_WebAPILoaded_NoCachedContent_PlaylistCreationFailure() = runBlockingTest {
-		val queueTitle = L.MUSIC_LIKED_SONGS_PLAYLIST_NAME
+		val queueTitle = "Liked Songs"
 		val queueSubtitle = null
 		val queueImageUri = ImageUri("imageUri")
 		val queueCoverArtBitmap: Bitmap = mock()
@@ -742,7 +742,7 @@ class SpotifyMusicAppControllerTest {
 
 	@Test
 	fun testQueue_LikedSongsPlaylist_WebAPILoaded_CachedContent_PlaylistDataInvalid() = runBlockingTest {
-		val queueTitle = L.MUSIC_LIKED_SONGS_PLAYLIST_NAME
+		val queueTitle = "Liked Songs"
 		val queueSubtitle = null
 		val queueImageUriStr = "imageUri"
 		val queueImageUri = ImageUri(queueImageUriStr)
@@ -762,7 +762,7 @@ class SpotifyMusicAppControllerTest {
 		whenever(webApi.replacePlaylistSongs(playlistId, likedSongs)) doAnswer { }
 
 		val likedSongsState = LikedSongsState(arrayOf("bad", "data").hashCode().toString(), playlistUriStr, playlistId, null)
-		appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = Json.encodeToString(likedSongsState)
+		appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = gson.toJson(likedSongsState)
 
 		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "your_library_tracks"))
 
@@ -771,7 +771,7 @@ class SpotifyMusicAppControllerTest {
 		verify(webApi).replacePlaylistSongs(playlistId, likedSongs)
 
 		likedSongsState.hashCode = likedSongs.hashCode().toString()
-		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], Json.encodeToString(likedSongsState))
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsState))
 
 		assertEquals(controller.queueUri, playlistUriStr)
 
@@ -786,7 +786,7 @@ class SpotifyMusicAppControllerTest {
 		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
 
 		likedSongsState.queueCoverArtUri = queueImageUriStr
-		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], Json.encodeToString(likedSongsState))
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsState))
 
 		val queue = controller.getQueue()
 		assertNotNull(queue)
@@ -805,7 +805,7 @@ class SpotifyMusicAppControllerTest {
 
 	@Test
 	fun testQueue_LikedSongsPlaylist_WebAPILoaded_CachedQueueCoverArtUri() = runBlockingTest {
-		val queueTitle = L.MUSIC_LIKED_SONGS_PLAYLIST_NAME
+		val queueTitle = "Liked Songs"
 		val queueSubtitle = null
 		val queueImageUriStr = "imageUri"
 		val queueImageUri = ImageUri(queueImageUriStr)
@@ -825,7 +825,7 @@ class SpotifyMusicAppControllerTest {
 		whenever(webApi.replacePlaylistSongs(playlistId, likedSongs)) doAnswer { }
 
 		val likedSongsState = LikedSongsState(likedSongs.hashCode().toString(), playlistUriStr, playlistId, queueImageUriStr)
-		appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = Json.encodeToString(likedSongsState)
+		appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = gson.toJson(likedSongsState)
 
 		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "your_library_tracks"))
 
@@ -834,7 +834,7 @@ class SpotifyMusicAppControllerTest {
 		verify(webApi, never()).replacePlaylistSongs(playlistId, likedSongs)
 
 		likedSongsState.hashCode = likedSongs.hashCode().toString()
-		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], Json.encodeToString(likedSongsState))
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsState))
 
 		assertEquals(controller.queueUri, playlistUriStr)
 
@@ -846,7 +846,7 @@ class SpotifyMusicAppControllerTest {
 		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
 
 		likedSongsState.queueCoverArtUri = queueImageUriStr
-		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], Json.encodeToString(likedSongsState))
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsState))
 
 		val queue = controller.getQueue()
 		assertNotNull(queue)
