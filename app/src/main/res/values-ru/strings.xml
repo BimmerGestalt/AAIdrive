@@ -186,6 +186,7 @@
     <string name="lbl_advanced_settings">Показать расширенные настройки</string>
     <string name="lbl_assistant">Голосовой помощник (бета)</string>
     <string name="lbl_assistant_empty">Не найдено</string>
+    <!-- tips -->
     <string name="notification_assistant_tap">Нажмите, чтобы запустить %s</string>
     <string name="notification_assistant_description">Работают только с включенным экраном</string>
     <string name="donation_title">Понравилось приложение?</string>
