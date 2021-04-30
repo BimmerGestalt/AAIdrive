@@ -85,6 +85,7 @@
     <string name="lbl_advanced_settings">Afficher les Paramètres Avancés</string>
     <string name="lbl_assistant">Assistant Vocal (Beta)</string>
     <string name="lbl_assistant_empty">Aucun résultat trouvé</string>
+    <!-- tips -->
     <string name="notification_assistant_tap">Appuyer pour lancer %s</string>
     <string name="notification_assistant_description">Nécessaire uniquement car l\'écran est</string>
     <string name="donation_title">Vous aimez cette app?</string>
