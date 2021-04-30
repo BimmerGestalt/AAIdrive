@@ -73,9 +73,9 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 	val naviStatus: LiveData<Context.() -> String> = _naviStatus
 
 	fun update() {
-		val capabilities = carInformation.capabilities
+		val summarized = CarCapabilitiesSummarized(carInformation)
 
-		_isCarConnected.value = capabilities.isNotEmpty()
+		_isCarConnected.value = carInformation.capabilities.isNotEmpty()
 
 		_isAudioContextSupported.value = musicAppMode.heuristicAudioContext()
 		if (musicAppMode.heuristicAudioContext()) {
@@ -108,22 +108,22 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 			}
 		}
 
-		_isPopupSupported.value = true
-		_isPopupNotSupported.value = false
+		_isPopupSupported.value = summarized.isPopupSupported
+		_isPopupNotSupported.value = summarized.isPopupNotSupported
 		_popupStatus.value = { getString(R.string.txt_capabilities_popup_yes) }
 		_popupHint.value = { "" }
 
-		_isTtsSupported.value = capabilities["tts"]?.toLowerCase(Locale.ROOT) == "true"
-		_isTtsNotSupported.value = capabilities["tts"]?.toLowerCase(Locale.ROOT) == "false"
-		if (capabilities["tts"]?.toLowerCase(Locale.ROOT) == "true") {
+		_isTtsSupported.value = summarized.isTtsSupported
+		_isTtsNotSupported.value = summarized.isTtsNotSupported
+		if (summarized.isTtsSupported) {
 			_ttsStatus.value = { getString(R.string.txt_capabilities_tts_yes) }
 		} else {
 			_ttsStatus.value = { getString(R.string.txt_capabilities_tts_no) }
 		}
 
-		_isNaviSupported.value = capabilities["navi"]?.toLowerCase(Locale.ROOT) == "true"
-		_isNaviNotSupported.value = capabilities["navi"]?.toLowerCase(Locale.ROOT) == "false"
-		if (capabilities["navi"]?.toLowerCase(Locale.ROOT) == "true") {
+		_isNaviSupported.value = summarized.isNaviSupported
+		_isNaviNotSupported.value = summarized.isNaviNotSupported
+		if (summarized.isNaviSupported) {
 			_naviStatus.value = { getString(R.string.txt_capabilities_navi_yes) }
 		} else {
 			_naviStatus.value = { getString(R.string.txt_capabilities_navi_no) }
