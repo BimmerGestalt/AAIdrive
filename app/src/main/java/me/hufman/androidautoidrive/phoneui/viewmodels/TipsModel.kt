@@ -36,6 +36,7 @@ class CapabilitiesTipsModel: TipsModel() {
 		CapabilitiesTip({getString(R.string.tip_audioplayer_nowplaying_bookmark)}, {ContextCompat.getDrawable(this, R.drawable.tip_bookmark_music_queuebutton_bmw_id5)}) { isBmw },
 		CapabilitiesTip({getString(R.string.tip_audioplayer_nowplaying_bookmark)}, {ContextCompat.getDrawable(this, R.drawable.tip_bookmark_music_queuebutton_mini_id5)}) { isMini },
 		CapabilitiesTip({getString(R.string.tip_music_hide)}, {ContextCompat.getDrawable(this, R.drawable.pic_phone_music_swipe)}) {true},
+		CapabilitiesTip({getString(R.string.tip_batterymode_music)}, {ContextCompat.getDrawable(this, R.drawable.tip_batterymode_music)}) { true }
 	)
 	val NOTIFICATIONS_TIPS = listOf(
 		CapabilitiesTip({getString(R.string.tip_popup_suppress_id5)}, {ContextCompat.getDrawable(this, R.drawable.tip_input_emoji_bmw)}) { isId5 && isBmw },

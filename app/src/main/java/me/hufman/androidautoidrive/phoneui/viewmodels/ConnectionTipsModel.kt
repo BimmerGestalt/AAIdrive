@@ -45,6 +45,12 @@ class ConnectionTipsModel(val connection: CarConnectionDebugging): TipsModel() {
 		ConnectionTip({getString(R.string.tip_btapp)}, {ContextCompat.getDrawable(this, R.drawable.tip_btapp_mini)}) {
 			val btApps = !isBTConnected || (isBTConnected && !isSPPAvailable)
 			(isMiniConnectedInstalled || isMiniMineInstalled) && btApps
+		},
+		ConnectionTip({getString(R.string.tip_batterymode_mybmw)}, {ContextCompat.getDrawable(this, R.drawable.tip_batterymode_mybmw)}) {
+			isBMWMineInstalled
+		},
+		ConnectionTip({getString(R.string.tip_batterymode_mymini)}, {ContextCompat.getDrawable(this, R.drawable.tip_batterymode_mymini)}) {
+			isMiniMineInstalled
 		}
 	)
 
