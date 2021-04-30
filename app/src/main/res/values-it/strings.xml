@@ -43,7 +43,7 @@
         <item quantity="one">L\'assistente vocale del tuo telefono viene aggiunto come app Connected, nel caso in cui l\'input vocale dell\'auto non lo attivi</item>
         <item quantity="other">Gli assistenti vocali del tuo telefono vengono aggiunti come app Connected, nel caso in cui l\'input vocale dell\'auto non li attivi</item>
     </plurals>
-    <string name="lbl_assistantpage_tip">Queste app sono distinte da quella gestita dal pulsante sul volante dell\'auto, che attiva solo l\'assistente predefinito del telefono che è configurato separatamente</string>
+    <string name="lbl_assistantpage_tip">Queste app sono distinte da quella attivata dal pulsante Assistente Vocale sul volante che attiva solo l\'assistente predefinito del telefono e che è configurato separatamente</string>
     <string name="lbl_notificationpage">Le tue notifiche in arrivo possono essere visualizzate e interagite dall\'auto</string>
     <string name="spawn_test_notification">Notifica di prova</string>
     <string name="message_notifications">Notifica messaggi</string>
