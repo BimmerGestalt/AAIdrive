@@ -184,6 +184,7 @@
     <string name="lbl_advanced_settings">Toon geavanceerde instellingen</string>
     <string name="lbl_assistant">Stem assistant (Beta)</string>
     <string name="lbl_assistant_empty">None found</string>
+    <!-- tips -->
     <string name="notification_assistant_tap">Druk om te starten %s</string>
     <string name="notification_assistant_description">Enkel nodig omdat het scherm aan is</string>
     <string name="donation_title">Vindt je deze app leuk?</string>
