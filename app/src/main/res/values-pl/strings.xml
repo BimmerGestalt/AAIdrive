@@ -150,6 +150,7 @@
     <string name="lbl_advanced_settings">Pokaż ustawienia zaawansowane</string>
     <string name="lbl_assistant">Asystent głosowy (beta)</string>
     <string name="lbl_assistant_empty">Nic nie znaleziono</string>
+    <!-- tips -->
     <string name="notification_assistant_tap">Dotknij, aby uruchomić %s</string>
     <string name="notification_assistant_description">Konieczne tylko dlatego, że ekran jest włączony</string>
     <string name="donation_title">Podoba Ci się ta aplikacja?</string>
