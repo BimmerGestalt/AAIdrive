@@ -184,6 +184,7 @@
     <string name="lbl_advanced_settings">Avancerade inställningar</string>
     <string name="lbl_assistant">Röstassistent (Beta)</string>
     <string name="lbl_assistant_empty">Inget hittades</string>
+    <!-- tips -->
     <string name="notification_assistant_tap">Tryck för att starta %s</string>
     <string name="notification_assistant_description">Endast nödvändigt eftersom skärmen är på</string>
     <string name="donation_title">Gillar du denna app?</string>
