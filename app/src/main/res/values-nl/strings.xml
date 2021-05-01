@@ -203,6 +203,7 @@
     <string name="tip_notification_bookmark">Sla een snelkoppeling knop op naar de Book app voor snelle toegang tot uw notificaties</string>
     <string name="tip_notification_bookmark_ambutton">Sla een snelkoppeling knop op naar de Notificaties app voor snelle toegang tot uw notificaties</string>
     <string name="tip_notification_bookmark_details">Sla een snelkoppeling knop op tijdens het bekijken van de lijst met meldingen voor snelle toegang tot de meest recente melding</string>
+    <string name="tip_notification_quickaccess">Door de Notificatie app snel te starten na het ontvangen van een nieuwe melding wordt deze melding direct geopend</string>
     <string name="notification_assistant_tap">Druk om te starten %s</string>
     <string name="notification_assistant_description">Enkel nodig omdat het scherm aan is</string>
     <string name="donation_title">Vindt je deze app leuk?</string>
