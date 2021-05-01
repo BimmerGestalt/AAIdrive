@@ -1,5 +1,8 @@
 package me.hufman.androidautoidrive
 
+import androidx.activity.viewModels
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.DrawerActions
@@ -9,10 +12,14 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.screenshot.Screenshot
+import com.nhaarman.mockito_kotlin.doAnswer
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.mock
 import me.hufman.androidautoidrive.phoneui.NavHostActivity
+import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.sql.Connection
 
 
 class MainScreenshotTest {
@@ -22,6 +29,19 @@ class MainScreenshotTest {
 	@get:Rule
 	val activityScenario = activityScenarioRule<NavHostActivity>()
 
+	val connectionStatusModel = mock<ConnectionStatusModel> {
+		on {isBclConnected} doAnswer { MutableLiveData(true) }
+	}
+	val factory = mock<ViewModelProvider.Factory> {
+		on { create(ConnectionStatusModel::class.java) } doReturn connectionStatusModel
+	}
+
+	@Before
+	fun setUp() {
+		activityScenario.scenario.onActivity {
+			it.viewModels<ConnectionStatusModel> { factory }
+		}
+	}
 	fun screenshot(name: String) {
 		activityScenario.scenario.onActivity {
 			Screenshot.capture(it).apply {
@@ -33,6 +53,7 @@ class MainScreenshotTest {
 
 	@Test
 	fun homeScreenshot() {
+
 		onView(withId(R.id.drawer_layout)).check(matches(isOpen()))
 		screenshot("home_sidebar")
 		onView(withId(R.id.drawer_layout)).perform(DrawerActions.close())

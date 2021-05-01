@@ -31,7 +31,8 @@ android {
         targetSdkVersion 28
         versionCode androidGitVersion.code() + 1
         versionName androidGitVersion.name()
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner'
         archivesBaseName = "androidautoidrive-${androidGitVersion.name()}"
         buildConfigField "long", "BUILD_TIME", System.currentTimeMillis() + "L"
 
@@ -414,6 +415,7 @@ dependencies {
     testImplementation 'org.awaitility:awaitility-scala:3.1.5'
     androidTestImplementation "org.mockito:mockito-android:3.4.4"
     androidTestImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
+    androidTestImplementation 'com.github.tmurakami:dexopener:2.0.5'
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
     implementation project(path: ':IDriveConnectKitAndroid')
     implementation project(path: ':IDriveConnectKit')
