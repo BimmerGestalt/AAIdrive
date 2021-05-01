@@ -187,6 +187,8 @@
     <string name="lbl_assistant">Голосовой помощник (бета)</string>
     <string name="lbl_assistant_empty">Не найдено</string>
     <!-- tips -->
+    <string name="tip_batterymode_mybmw">Попробуйте отключить оптимизацию батареи для приложения My BMW, иногда это помогает подключиться к автомобилю</string>
+    <string name="tip_batterymode_mymini">Попробуйте отключить оптимизацию батареи для приложения Mini, иногда это помогает подключиться к автомобилю</string>
     <string name="notification_assistant_tap">Нажмите, чтобы запустить %s</string>
     <string name="notification_assistant_description">Работают только с включенным экраном</string>
     <string name="donation_title">Понравилось приложение?</string>
