@@ -196,6 +196,14 @@
     <string name="tip_audioplayer_bookmark">Associa un pulsante scorciatoia all\'app Audioplayer per accedere rapidamente ai controlli musicali</string>
     <string name="tip_bluetooth_music">Assicurati di impostare l\'auto per ascoltare musica Bluetooth dal tuo telefono</string>
     <string name="tip_audioplayer_nowplaying_bookmark">Associa un pulsante scorciatoia mentre il pulsante Now Playing è selezionato per accedere rapidamente alla coda</string>
+    <string name="tip_input_emoji">Digita i \"due punti\" per iniziare a inserire una emoji, poi sceglila dalla lista delle emoji suggerite</string>
+    <string name="tip_music_hide">Fai uno swype a destra sul nome di un\'app musicale per nasconderla dalla lista delle app disponibili sull\'auto</string>
+    <string name="tip_batterymode_music">Prova a disabilitare le ottimizzazioni della batteria per le tue applicazioni musicali, cosa che potrebbe essere necessaria per avviare le applicazioni in background su alcuni telefoni come gli Xiaomi</string>
+    <string name="tip_popup_suppress_id5">I popup di notifica vengono inibiti durante l\'interazione con l\'auto o durante l\'immissione del testo</string>
+    <string name="tip_notification_bookmark">Associa un pulsante scorciatoia all\'app con l\'icona \"libro\" ma senza nome per accedere rapidamente alle notifiche</string>
+    <string name="tip_notification_bookmark_ambutton">Associa un pulsante scorciatoia all\'app Notifiche per accedere rapidamente alle stesse</string>
+    <string name="tip_notification_bookmark_details">Associa un pulsante scorciatoia mentre si sta visualizzando la lista Notifiche per accedere rapidamente alla notifica più recente</string>
+    <string name="tip_notification_quickaccess">Entrare rapidamente nell\'app Notifiche dopo aver ricevuto una nuova notifica aprirà questa notifica direttamente</string>
     <string name="notification_assistant_tap">Fai tap per lanciare %s</string>
     <string name="notification_assistant_description">Necessario solo se lo schermo è attivo</string>
     <string name="donation_title">Ti piace questa app?</string>
