@@ -185,6 +185,13 @@
     <string name="lbl_assistant">Röstassistent (Beta)</string>
     <string name="lbl_assistant_empty">Inget hittades</string>
     <!-- tips -->
+    <string name="lbl_tiplist">Tips och tricks</string>
+    <string name="lbl_tip_expand">Expandera tipsen</string>
+    <string name="tip_usb_chargingmode">Växla telefonens USB-läge till filöverföring om den är standardinställd för att endast laddning</string>
+    <string name="tip_connassistant">Använd anslutningsguiden för att aktivera USB-tillbehörsläget i IDrive4-bilar</string>
+    <string name="tip_btapp">Se till att IDrive5 Bluetooth-anslutningen har alternativet App ibockad. Prova att koppla från Bluetooth Audio och återansluta om anslutningen har fastnat</string>
+    <string name="tip_batterymode_mybmw">Prova att inaktivera batterioptimeringar för appen MyBMW som ibland hjälper till att ansluta till bilen</string>
+    <string name="tip_batterymode_mymini">Försök att inaktivera batterioptimeringar för Mini-appen, vilket ibland hjälper till att ansluta till bilen</string>
     <string name="notification_assistant_tap">Tryck för att starta %s</string>
     <string name="notification_assistant_description">Endast nödvändigt eftersom skärmen är på</string>
     <string name="donation_title">Gillar du denna app?</string>
