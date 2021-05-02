@@ -185,6 +185,7 @@
     <string name="lbl_assistant">Röstassistent (Beta)</string>
     <string name="lbl_assistant_empty">Inget hittades</string>
     <!-- tips -->
+    <string name="lbl_tip_image">Exempelbild</string>
     <string name="lbl_tiplist">Tips och tricks</string>
     <string name="lbl_tip_expand">Expandera tipsen</string>
     <string name="tip_usb_chargingmode">Växla telefonens USB-läge till filöverföring om den är standardinställd för att endast laddning</string>
@@ -192,6 +193,17 @@
     <string name="tip_btapp">Se till att IDrive5 Bluetooth-anslutningen har alternativet App ibockad. Prova att koppla från Bluetooth Audio och återansluta om anslutningen har fastnat</string>
     <string name="tip_batterymode_mybmw">Prova att inaktivera batterioptimeringar för appen MyBMW som ibland hjälper till att ansluta till bilen</string>
     <string name="tip_batterymode_mymini">Försök att inaktivera batterioptimeringar för Mini-appen, vilket ibland hjälper till att ansluta till bilen</string>
+    <string name="tip_audioplayer_bookmark">Spara en genvägsknapp till appen Audioplayer för snabb åtkomst till musikkontrollerna</string>
+    <string name="tip_bluetooth_music">Se till att välja \"Bluetooth musik\" från önskad telefon i mediamenyn i bilen</string>
+    <string name="tip_audioplayer_nowplaying_bookmark">Spara en genvägsknapp medan knappen Nu spelas är vald för snabb åtkomst till din kö</string>
+    <string name="tip_input_emoji">Skriv in ett kolon för att skriva in en emoji och välj därefter från förslagslistan</string>
+    <string name="tip_music_hide">Svep en bort musikapp från listan för att dölja den från menyn</string>
+    <string name="tip_batterymode_music">Prova att inaktivera batterioptimeringar för dina musikappar, som kan behövas för att starta appar från bakgrunden på vissa telefonvarumärken som t. ex. Xiaomi</string>
+    <string name="tip_popup_suppress_id5">Aviseringspopups undertrycks när du interagerar med bilen eller när du matar in text</string>
+    <string name="tip_notification_bookmark">Spara en genvägsknapp till \"bokappen utan namn\" för snabb åtkomst till dina aviseringar</string>
+    <string name="tip_notification_bookmark_ambutton">Spara en genvägsknapp till Aviseringsappen för snabb åtkomst till dina aviseringar</string>
+    <string name="tip_notification_bookmark_details">Spara en genvägsknapp medan du tittar på listan över aviseringar för snabb åtkomst till den senaste aviseringen</string>
+    <string name="tip_notification_quickaccess">Genom att snabbt välja aviseringsappen efter att du fått en ny avisering öppnas denna avisering direkt</string>
     <string name="notification_assistant_tap">Tryck för att starta %s</string>
     <string name="notification_assistant_description">Endast nödvändigt eftersom skärmen är på</string>
     <string name="donation_title">Gillar du denna app?</string>
