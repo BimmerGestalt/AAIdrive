@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.music.controllers
 
 import android.graphics.Bitmap
 import com.adamratzman.spotify.models.PlaylistUri
+import com.adamratzman.spotify.models.SpotifyUri
 import com.google.gson.Gson
 import com.nhaarman.mockito_kotlin.*
 import com.spotify.android.appremote.api.*
@@ -633,7 +634,7 @@ class SpotifyMusicAppControllerTest {
 	}
 
 	@Test
-	fun testQueue_LikedSongsPlaylist_WebAPILoaded_NoCachedContent() = runBlockingTest {
+	fun testQueue_LikedSongsPlaylist_WebAPILoaded_NoCachedContent_NoExistingPlaylist() = runBlockingTest {
 		val queueTitle = "Liked Songs"
 		val queueSubtitle = null
 		val queueImageUriStr = "imageUri"
@@ -651,12 +652,70 @@ class SpotifyMusicAppControllerTest {
 				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
 		)
 		whenever(webApi.getLikedSongs(controller)) doAnswer { likedSongs }
+		whenever(webApi.getPlaylistUri(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)) doAnswer { null }
 		whenever(webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)) doAnswer { playlistUri }
 		whenever(webApi.addSongsToPlaylist(playlistId, likedSongs)) doAnswer { }
 
 		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "your_library_tracks"))
 
 		verify(webApi).addSongsToPlaylist(playlistId, likedSongs)
+
+		val likedSongsState = LikedSongsState(likedSongs.hashCode().toString(), playlistUriStr, playlistId, null)
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsState))
+
+		assertEquals(controller.queueUri, playlistUriStr)
+
+		// it should get the QueueMetadata information
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, queueTitle, queueSubtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		likedSongsState.queueCoverArtUri = queueImageUriStr
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsState))
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(queueTitle, queue!!.title)
+		assertEquals(queueSubtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_LikedSongsPlaylist_WebAPILoaded_NoCachedContent_ExistingPlaylist() = runBlockingTest {
+		val queueTitle = "Liked Songs"
+		val queueSubtitle = null
+		val queueImageUriStr = "imageUri"
+		val queueImageUri = ImageUri(queueImageUriStr)
+		val queueCoverArtBitmap: Bitmap = mock()
+
+		val playlistUriStr = "playlistUri"
+		val playlistId = "playlistId"
+		val playlistUri: SpotifyUri = mock()
+		whenever(playlistUri.id) doAnswer { playlistId }
+		whenever(playlistUri.uri) doAnswer { playlistUriStr }
+
+		val likedSongs = listOf(
+				SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
+				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
+		)
+		whenever(webApi.getLikedSongs(controller)) doAnswer { likedSongs }
+		whenever(webApi.getPlaylistUri(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)) doAnswer { playlistUri }
+		whenever(webApi.addSongsToPlaylist(playlistId, likedSongs)) doAnswer { }
+
+		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "your_library_tracks"))
 
 		val likedSongsState = LikedSongsState(likedSongs.hashCode().toString(), playlistUriStr, playlistId, null)
 		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsState))

@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
 import com.adamratzman.spotify.models.PlaylistUri
 import com.adamratzman.spotify.models.SpotifyImage
+import com.adamratzman.spotify.models.SpotifyUri
 import com.adamratzman.spotify.models.Token
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
@@ -123,6 +124,29 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		} catch (e: Exception) {
 			Log.e(TAG, "Exception occurred when trying to replace playlist $playlistId songs with the message: ${e.message}")
 		}
+	}
+
+	/**
+	 * Returns the [SpotifyUri] associated to the provided playlist name or null if it is not found.
+	 */
+	suspend fun getPlaylistUri(playlistName: String): SpotifyUri? {
+		try {
+			val playlists = webApi?.playlists?.getClientPlaylists(15,0)
+			val matchingPlaylist = playlists?.items?.filter { it.name == playlistName }
+			return if (matchingPlaylist.isNullOrEmpty()) {
+				null
+			} else {
+				matchingPlaylist[0].uri
+			}
+		} catch (e:SpotifyException.AuthenticationException) {
+			Log.e(TAG, "Failed to find playlist with name $playlistName due to authentication error with the message: ${e.message}")
+			authStateManager.addAccessTokenAuthorizationException(e)
+			createNotAuthorizedNotification()
+			webApi = null
+		} catch (e: Exception) {
+			Log.e(TAG, "Exception occurred when trying to find playlist with name $playlistName with the message: ${e.message}")
+		}
+		return null
 	}
 
 	suspend fun getLikedSongs(spotifyAppController: SpotifyAppController): List<SpotifyMusicMetadata>?  {
@@ -253,7 +277,6 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		if (webApi != null) {
 			authStateManager.updateTokenResponseWithToken(webApi!!.token, clientId)
 
-			//TODO: this needs to be revisited and a better approach figured out
 			if (getLikedSongsAttempted) {
 				getLikedSongsAttempted = false
 				spotifyAppControllerCaller?.createLikedSongsQueueMetadata()

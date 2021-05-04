@@ -263,16 +263,28 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				val likedSongsStateJson = appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE]
 				val likedSongsState: LikedSongsState
 				if (likedSongsStateJson.isBlank()) {
-					Log.d(TAG, "No previous liked songs state found.")
-					val uri = webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)
-					if (uri == null) {
-						Log.e(TAG, "Error creating liked songs playlist, falling back to app remote API")
-						queueItems = emptyList()
-						createQueueMetadata(PlayerContext(queueUri, queueTitle, null, null))
-						return@launch
+					Log.d(TAG, "No previous liked songs state found, checking user playlists.")
+					val existingPlaylistUri = webApi.getPlaylistUri(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)
+					val playlistUri: String
+					val playlistId: String
+					if (existingPlaylistUri == null) {
+						Log.d(TAG, "No user playlist for ${SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME} found, creating a new one.")
+						val uri = webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)
+						if (uri == null) {
+							Log.e(TAG, "Error creating liked songs playlist, falling back to app remote API")
+							queueItems = emptyList()
+							createQueueMetadata(PlayerContext(queueUri, queueTitle, null, null))
+							return@launch
+						}
+						webApi.addSongsToPlaylist(uri.id, queueItems)
+						playlistUri = uri.uri
+						playlistId = uri.id
+					} else {
+						Log.d(TAG, "User playlist for ${SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME} found, using existing playlist.")
+						playlistUri = existingPlaylistUri.uri
+						playlistId = existingPlaylistUri.id
 					}
-					webApi.addSongsToPlaylist(uri.id, queueItems)
-					likedSongsState = LikedSongsState(hashCode, uri.uri, uri.id, null)
+					likedSongsState = LikedSongsState(hashCode, playlistUri, playlistId, null)
 					saveLikedSongsState(likedSongsState)
 				} else {
 					Log.d(TAG, "Found previous liked songs state.")
