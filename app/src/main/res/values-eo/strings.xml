@@ -36,6 +36,7 @@
     <!-- connection status -->
     <!-- capabilities -->
     <!-- debug status -->
+    <!-- tips -->
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Novaĵoj</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Neniuj Novaĵoj</string>

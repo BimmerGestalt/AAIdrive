@@ -87,6 +87,7 @@
     <string name="lbl_advanced_settings">Mostrar Opçoes Avançadas</string>
     <string name="lbl_assistant">Assistante de Voz (Beta)</string>
     <string name="lbl_assistant_empty">Não encontrado</string>
+    <!-- tips -->
     <string name="notification_assistant_tap">Click para correr %s</string>
     <string name="notification_assistant_description">Apenas necessário quando ecrã ligado</string>
     <string name="donation_title">Gosta desta app?</string>
