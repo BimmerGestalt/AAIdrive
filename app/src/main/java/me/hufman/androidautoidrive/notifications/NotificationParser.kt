@@ -36,6 +36,8 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 	/** Any notification levels that should not show popups */
 	val SUPPRESSED_POPUP_IMPORTANCES = setOf(IMPORTANCE_LOW, IMPORTANCE_MIN, IMPORTANCE_NONE)
 
+	val TAG = "NotificationParser"
+
 	companion object {
 		fun getInstance(context: Context): NotificationParser {
 			val notificationManager = context.getSystemService(NotificationManager::class.java)
@@ -193,7 +195,15 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
 
 		val customViewTemplate = sbn.notification.getContentView() ?: return null
-		val customView = remoteViewInflater.invoke(customViewTemplate)
+		val customView = try {
+			remoteViewInflater.invoke(customViewTemplate)
+		} catch (e: SecurityException) {
+			// Can't inflate the Custom View
+			Log.e(TAG, "Could not inflate custom view for notification $appName $title", e)
+			return null
+		}
+
+		// find elements from the custom view
 		val images = customView.collectChildren().filterIsInstance<ImageView>().toList()
 		val drawable = images.sortedByDescending { it.width * it.height }
 			.getOrNull(0)?.drawable
