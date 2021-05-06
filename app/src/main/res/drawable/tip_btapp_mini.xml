@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:width="480dp" android:height="180dp">
+        <bitmap android:src="@drawable/pic_btapp_mini" />
+    </item>
+    <item android:drawable="@drawable/pic_mini_bookmarks"
+        android:width="480dp" android:height="180dp"
+        android:top="180dp">
+    </item>
+    <item android:drawable="@drawable/tip_hand"
+        android:height="84dp" android:width="84dp"
+        android:top="120dp" android:left="260dp">
+    </item>
+</layer-list>

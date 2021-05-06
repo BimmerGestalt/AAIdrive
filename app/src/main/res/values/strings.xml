@@ -206,6 +206,28 @@
     <string name="lbl_assistant">Voice Assistant (Beta)</string>
     <string name="lbl_assistant_empty">None found</string>
 
+    <!-- tips -->
+    <string name="lbl_tip_image">Tip demonstration image</string>
+    <string name="lbl_tiplist">Tips and tricks</string>
+    <string name="lbl_tip_expand">Expand tips</string>
+
+    <string name="tip_usb_chargingmode">Switch the phone\'s USB mode to File Transfer if it defaults to Charging Only mode</string>
+    <string name="tip_connassistant">Use the Connection Wizard to enable the USB Accessory Mode in IDrive4 cars</string>
+    <string name="tip_btapp">Make sure the IDrive5 Bluetooth connection has the Apps option. Try disconnecting Bluetooth Audio and reconnecting if the connection is stuck</string>
+    <string name="tip_batterymode_mybmw">Try disabling battery optimizations for the MyBMW app, which sometimes helps connect to the car</string>
+    <string name="tip_batterymode_mymini">Try disabling battery optimizations for the Mini app, which sometimes helps connect to the car</string>
+    <string name="tip_audioplayer_bookmark">Save a shortcut button to the Audioplayer app for quick access to the music controls</string>
+    <string name="tip_bluetooth_music">Make sure to set your car to listen to Bluetooth Music from your phone</string>
+    <string name="tip_audioplayer_nowplaying_bookmark">Save a shortcut button while the Now Playing button is selected for quick access to your queue</string>
+    <string name="tip_input_emoji">Input a colon to start typing an emoji, then pick from the suggestion list</string>
+    <string name="tip_music_hide">Swipe a music app away from the list to hide it from the car</string>
+    <string name="tip_batterymode_music">Try disabling battery optimizations for your music apps, which might be needed to start the apps from the background on some phone brands such as Xiaomi</string>
+    <string name="tip_popup_suppress_id5">Notification popups are suppressed while interacting with the car or while inputting text</string>
+    <string name="tip_notification_bookmark">Save a shortcut button to the unlabeled Book app for quick access to your notifications</string>
+    <string name="tip_notification_bookmark_ambutton">Save a shortcut button to the Notifications app for quick access to your notifications</string>
+    <string name="tip_notification_bookmark_details">Save a shortcut button while viewing the list of notifications for quick access to the most recent notification</string>
+    <string name="tip_notification_quickaccess">Entering the Notifications app quickly after receiving a new notification will open this notification directly</string>
+
     <string name="notification_assistant_tap">Tap to launch %s</string>
     <string name="notification_assistant_description">Only necessary because the screen is on</string>
     <string name="donation_title">Like this app?</string>

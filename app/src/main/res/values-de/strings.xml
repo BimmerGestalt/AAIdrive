@@ -179,6 +179,7 @@
     <string name="lbl_advanced_settings">Zeige erweiterte Einstellungen</string>
     <string name="lbl_assistant">Sprachassistent (Beta)</string>
     <string name="lbl_assistant_empty">Nichts gefunden</string>
+    <!-- tips -->
     <string name="notification_assistant_tap">Drücke um %s zu starten</string>
     <string name="notification_assistant_description">Nur nötig, weil der Bildschirm an ist</string>
     <string name="donation_title">Gefällt Dir diese App?</string>

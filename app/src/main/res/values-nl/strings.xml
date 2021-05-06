@@ -43,6 +43,7 @@
         <item quantity="one">Spraakassistent van uw telefoon is toegevoegd als een Connected app, in het geval dat de spraakinvoer van de auto het niet activeert</item>
         <item quantity="other">Spraakassistenten van je telefoon worden toegevoegd als een Connected app, in het geval dat de spraakinvoer van de auto het niet activeert</item>
     </plurals>
+    <string name="lbl_assistantpage_tip">Deze apps staan los van de Voice Assistant stuurwiel knop van uw auto, die alleen de standaard assistent van uw telefoon activeert en is apart geconfigureerd</string>
     <string name="lbl_notificationpage">Uw inkomende meldingen kunnen worden bekeken en in behandeld worden vanuit de auto</string>
     <string name="spawn_test_notification">Test bericht</string>
     <string name="message_notifications">Meldingen</string>
@@ -122,8 +123,12 @@
     <string name="txt_setup_mini_ready">De app is klaar om verbinding te maken met uw Mini</string>
     <string name="txt_setup_bmw_missing">Niet klaar om met uw BMW te verbinden:</string>
     <string name="txt_setup_mini_missing">Niet klaar om met uw Mini te verbinden:</string>
+    <string name="txt_setup_bmw_connected_65">BMW Verbonden 6.5 is geïnstalleerd, die soms geen verbinding met de auto kan maken. Probeer te downgraden naar 6.4 of upgrade naar MyBMW als u problemen ondervindt</string>
+    <string name="txt_setup_mini_connected_65">BMW Verbonden 6.5 is geïnstalleerd, die soms geen verbinding met de auto kan maken. Probeer te downgraden naar 6.4 of upgrade naar MyBMW als u problemen ondervindt</string>
     <string name="txt_setup_bmw_mine_detected">De nieuwe My BMW-app is geïnstalleerd, dit kan problemen veroorzaken met BMW verbonden en wordt niet ondersteund</string>
     <string name="txt_setup_mini_mine_detected">De nieuwe MINI-app is geïnstalleerd, dit kan problemen veroorzaken met Mini Connected en wordt niet ondersteund</string>
+    <string name="txt_setup_bmw_mine_conflict">Zowel de BMW Connected en Mijn BMW apps zijn geïnstalleerd, dit kan verbindingsinstabiliteit veroorzaken tenzij u via USB aangesloten bent</string>
+    <string name="txt_setup_mini_mine_conflict">Zowel de BMW Connected en Mijn BMW apps zijn geïnstalleerd, dit kan verbindingsinstabiliteit veroorzaken tenzij u via USB aangesloten bent</string>
     <string name="txt_setup_security_missing">Security Service is onbereikbaar:</string>
     <string name="btn_install">Installeren</string>
     <string name="btn_install_bmw">Installeer BMW Connected</string>
@@ -139,6 +144,7 @@
     <string name="txt_setup_spp_connected">Bluetooth Apps zijn ondersteund</string>
     <string name="txt_setup_usb_disconnected">Auto is niet verbonden via USB</string>
     <string name="txt_setup_usb_connected">USB verbonden in oplaad modus</string>
+    <string name="txt_setup_usb_requires_connected">Verbinding met USB-apps vereist dat BMW/Mini verbonden is om te worden geïnstalleerd</string>
     <string name="txt_setup_enable_usbmtp">Schakel de USB mode van uw GSM naar bestandsoverdracht</string>
     <string name="txt_setup_enable_usbacc">Schakel de USB Accessoire of de Apps optie in de auto %s</string>
     <string name="txt_setup_usbmtp_connected">USB aangesloten in opslag mode</string>
@@ -147,6 +153,7 @@
     <string name="txt_setup_enable_bcl_mode">Schakel de Apps optie in om gerbuik te maken van %s</string>
     <string name="txt_setup_bcl_disconnected">Apps verbinding is niet beschikbaar:</string>
     <string name="txt_setup_bcl_waiting">Wachten op een app-verbinding om te starten</string>
+    <string name="txt_setup_enable_bclspp_bt">Probeer Bluetooth Music te in/uitschakelen</string>
     <string name="txt_setup_enable_bclspp_usb">Herstart de Bluetooth verbinding of maak verbinding via USB</string>
     <string name="txt_setup_bcl_connecting">Apps maakt verbinding</string>
     <string name="txt_setup_bcl_connected">Apps is verbonden</string>
@@ -177,6 +184,26 @@
     <string name="lbl_advanced_settings">Toon geavanceerde instellingen</string>
     <string name="lbl_assistant">Stem assistant (Beta)</string>
     <string name="lbl_assistant_empty">None found</string>
+    <!-- tips -->
+    <string name="lbl_tip_image">Tip demonstratie afbeelding</string>
+    <string name="lbl_tiplist">Tips en trucs</string>
+    <string name="lbl_tip_expand">Tips uitklappen</string>
+    <string name="tip_usb_chargingmode">Zet de telefoon\'s USB mode op Bestandsoverdracht wanneer standaard op Opladen staat</string>
+    <string name="tip_connassistant">Gebruik de verbindingswizard om de USB-accessoire modus in te schakelen in IDrive4 auto\'s</string>
+    <string name="tip_btapp">Zorg ervoor dat de IDrive5 Bluetooth-verbinding de optie Apps heeft. Probeer Bluetooth Audio los te koppelen en opnieuw te verbinden als de verbinding vastzit</string>
+    <string name="tip_batterymode_mybmw">Probeer accuoptimalisaties voor de MyBMW-app uit te schakelen, wat soms helpt om verbinding te maken met de auto</string>
+    <string name="tip_batterymode_mymini">Probeer accuoptimalisaties voor de Mini-app uit te schakelen, wat soms helpt om verbinding te maken met de auto</string>
+    <string name="tip_audioplayer_bookmark">Sla een snelkoppeling knop op naar de Audioplayer app voor snelle toegang tot de muziek besturing</string>
+    <string name="tip_bluetooth_music">Stel uw auto in om naar Bluetooth Music te luisteren op uw telefoon</string>
+    <string name="tip_audioplayer_nowplaying_bookmark">Sla een snelkoppeling knop op terwijl de knop \'Nu afspelen\' is geselecteerd voor snelle toegang tot uw wachtrij</string>
+    <string name="tip_input_emoji">Voer een dubbele punt in om te beginnen met het typen van een emoji, en kies dan uit de suggestielijst</string>
+    <string name="tip_music_hide">Veeg een muziek-app weg van de lijst om deze te verbergen voor de auto</string>
+    <string name="tip_batterymode_music">Probeer accuoptimalisaties voor je muziekapps uit te schakelen, welke nodig kan zijn om de apps op de achtergrond te starten op sommige telefoonmerken zoals Xiaomi</string>
+    <string name="tip_popup_suppress_id5">Notificatie pop-ups worden onderdrukt tijdens interactie met de auto of tijdens het invoeren van tekst</string>
+    <string name="tip_notification_bookmark">Sla een snelkoppeling knop op naar de Book app voor snelle toegang tot uw notificaties</string>
+    <string name="tip_notification_bookmark_ambutton">Sla een snelkoppeling knop op naar de Notificaties app voor snelle toegang tot uw notificaties</string>
+    <string name="tip_notification_bookmark_details">Sla een snelkoppeling knop op tijdens het bekijken van de lijst met meldingen voor snelle toegang tot de meest recente melding</string>
+    <string name="tip_notification_quickaccess">Door de Notificatie app snel te starten na het ontvangen van een nieuwe melding wordt deze melding direct geopend</string>
     <string name="notification_assistant_tap">Druk om te starten %s</string>
     <string name="notification_assistant_description">Enkel nodig omdat het scherm aan is</string>
     <string name="donation_title">Vindt je deze app leuk?</string>

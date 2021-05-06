@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:width="480dp" android:height="460dp">
+        <bitmap android:src="@drawable/pic_batterymode_mybmw" />
+    </item>
+    <item android:drawable="@drawable/tip_hand"
+        android:height="64dp" android:width="64dp"
+        android:top="400dp" android:left="340dp">
+    </item>
+</layer-list>

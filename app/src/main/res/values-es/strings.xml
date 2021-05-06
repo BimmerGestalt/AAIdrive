@@ -105,6 +105,7 @@
     <string name="lbl_advanced_settings">Mostrar configuración avanzada</string>
     <string name="lbl_assistant">Asistente de voz (Beta)</string>
     <string name="lbl_assistant_empty">No se encontró</string>
+    <!-- tips -->
     <string name="notification_assistant_tap">Toque para iniciar %s</string>
     <string name="notification_assistant_description">Solo es necesario porque la pantalla está prendida</string>
     <string name="donation_title">Te gusta esta aplicación?</string>

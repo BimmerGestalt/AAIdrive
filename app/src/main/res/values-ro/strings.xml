@@ -173,6 +173,7 @@
     <string name="lbl_advanced_settings">Arată setări avansate</string>
     <string name="lbl_assistant">Asistent vocal (Beta)</string>
     <string name="lbl_assistant_empty">Nu am găsit asistenți</string>
+    <!-- tips -->
     <string name="notification_assistant_tap">Apasă pentru a lansa %s</string>
     <string name="notification_assistant_description">Necesar pentru că ecranul este pornit</string>
     <string name="donation_title">Îți place aplicația ?</string>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:width="480dp" android:height="180dp" >
+        <bitmap android:src="@drawable/pic_bmw_bookmarks" />
+    </item>
+    <item android:drawable="@drawable/tip_hand"
+        android:height="84dp" android:width="84dp"
+        android:top="90dp" android:left="160dp">
+    </item>
+</layer-list>

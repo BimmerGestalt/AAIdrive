@@ -10,4 +10,5 @@
 
     <dimen name="pane_vertical_margin">16dp</dimen>
     <dimen name="settings_vertical_margin">10dp</dimen>
+    <dimen name="tips_pane_height">350dp</dimen>
 </resources>
