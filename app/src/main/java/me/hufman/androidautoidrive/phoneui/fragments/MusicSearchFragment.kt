@@ -101,11 +101,11 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 
 	private fun redraw() {
 		if (contents.isEmpty()) {
-			txtSearchResultsEmpty.text = getString(R.string.MUSIC_SEARCH_EMPTY)
+			txtSearchResultsEmpty?.text = getString(R.string.MUSIC_SEARCH_EMPTY)
 		} else {
-			txtSearchResultsEmpty.text = ""
+			txtSearchResultsEmpty?.text = ""
 		}
-		listSearchResult.adapter?.notifyDataSetChanged()
+		listSearchResult?.adapter?.notifyDataSetChanged()
 	}
 
 	class SearchResultsAdapter(val context: Context, val iconsModel: MusicActivityIconsModel, val contents: ArrayList<MusicMetadata>, val clickListener: (MusicMetadata?) -> Unit): RecyclerView.Adapter<SearchResultsAdapter.ViewHolder>() {
