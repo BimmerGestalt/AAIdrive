@@ -42,6 +42,9 @@ class MusicAppsListFragment: Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		listMusicApps.setHasFixedSize(true)
 		listMusicApps.layoutManager = LinearLayoutManager(requireActivity())
+		view.post {
+			appsChangedCallback.onChanged(null)
+		}
 
 		appsViewModel.validApps.addOnListChangedCallback(appsChangedCallback)
 

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.MenuInflater
 import android.view.View
 import android.widget.PopupMenu
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -18,6 +17,7 @@ import kotlinx.android.synthetic.main.activity_navhost.*
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.databinding.NavHeaderBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 import java.lang.IllegalStateException
 
 class NavHostActivity: AppCompatActivity() {
