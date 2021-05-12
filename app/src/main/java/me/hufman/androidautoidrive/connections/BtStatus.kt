@@ -59,6 +59,9 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			this.profile = profile
 			Log.d(TAG, "$profileName is loaded")
 			val cars = profile?.connectedDevices?.filter { it.isCar() } ?: listOf()
+			cars.forEach {
+				it.fetchUuidsWithSdp()
+			}
 			callback()
 		}
 	}
