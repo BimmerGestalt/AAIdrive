@@ -1,37 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginEnd="@dimen/default_margin"
-    android:layout_marginStart="@dimen/default_margin"
-    android:layout_marginTop="@dimen/default_margin">
-
-    <TextView
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pane_scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/pane_vertical_margin"
-        android:text="@string/lbl_musicpage" />
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/default_margin"
+        android:paddingStart="@dimen/default_margin"
+        android:paddingTop="@dimen/default_margin"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
-    <View style="@style/Divider"
-        android:layout_marginBottom="@dimen/pane_vertical_margin"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
+            android:text="@string/lbl_musicpage" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/lbl_music_apps"
-        android:layout_marginBottom="4dp" />
+        <View style="@style/Divider"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/pane_vertical_margin"
-        android:id="@+id/fragmentMusicPermissions"
-        android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicPermissionsFragment"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lbl_music_apps"
+            android:layout_marginBottom="4dp" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/fragmentMusicAppList"
-        android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicAppsListFragment"/>
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
+            android:id="@+id/fragmentMusicPermissions"
+            android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicPermissionsFragment"/>
 
-</LinearLayout>
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/pane_vertical_margin"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:id="@+id/fragmentTipsList"
+            android:name="me.hufman.androidautoidrive.phoneui.fragments.TipsListFragment"
+            app:tipsMode="music"/>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/fragmentMusicAppList"
+            android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicAppsListFragment"/>
+    </LinearLayout>
+</ScrollView>

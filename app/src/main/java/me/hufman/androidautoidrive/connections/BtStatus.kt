@@ -59,6 +59,9 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			this.profile = profile
 			Log.d(TAG, "$profileName is loaded")
 			val cars = profile?.connectedDevices?.filter { it.isCar() } ?: listOf()
+			cars.forEach {
+				it.fetchUuidsWithSdp()
+			}
 			callback()
 		}
 	}
@@ -69,6 +72,7 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			if (intent?.action == BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED &&
 					intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1) == BluetoothProfile.STATE_CONNECTED) {
 				val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+				device.fetchUuidsWithSdp()
 			}
 			callback()
 		}

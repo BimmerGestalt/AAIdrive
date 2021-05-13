@@ -175,6 +175,7 @@
     <string name="lbl_advanced_settings">詳細設定を表示</string>
     <string name="lbl_assistant">音声アシスタント（ベータ版）</string>
     <string name="lbl_assistant_empty">見つかりません</string>
+    <!-- tips -->
     <string name="notification_assistant_tap">タップして%sを起動します</string>
     <string name="notification_assistant_description">画面がオンになっているためにのみ必要</string>
     <string name="donation_title">このアプリが好きですか？</string>

@@ -186,6 +186,20 @@
     <string name="lbl_advanced_settings">Показать расширенные настройки</string>
     <string name="lbl_assistant">Голосовой помощник (бета)</string>
     <string name="lbl_assistant_empty">Не найдено</string>
+    <!-- tips -->
+    <string name="lbl_tip_image">Картинка, демонстрирующая подсказку</string>
+    <string name="lbl_tiplist">Подсказки</string>
+    <string name="lbl_tip_expand">Показать подсказки</string>
+    <string name="tip_usb_chargingmode">Переключить режим USB телефона в \"Передачу файлов\", если по умолчанию используется \"Только зарядка\"</string>
+    <string name="tip_connassistant">Используйте Мастер подключения для включения USB Accessory Mode в автомобилях с IDrive4</string>
+    <string name="tip_btapp">Убедитесь, что в настройках Bluetooth подключения активна опция \"Приложения\". Попробуйте отсоединить Bluetooth Audio и попробовать снова, если подключение зависло</string>
+    <string name="tip_batterymode_mybmw">Попробуйте отключить оптимизацию батареи для приложения My BMW, иногда это помогает подключиться к автомобилю</string>
+    <string name="tip_batterymode_mymini">Попробуйте отключить оптимизацию батареи для приложения Mini, иногда это помогает подключиться к автомобилю</string>
+    <string name="tip_bluetooth_music">Убедитесь, что в автомобиле подключен Bluetooth Music (а не, например, радио)</string>
+    <string name="tip_input_emoji">Чтобы отправить эмодзи, введите двоеточие, а затем выберите из списка</string>
+    <string name="tip_music_hide">Смахните приложение, чтобы оно не отображалось на экране автомобиля</string>
+    <string name="tip_batterymode_music">Попробуйте отключить оптимизацию расхода для музыкальных приложений, это может помочь при их запуске в фоне на некоторых смартфонах, таких как Xiaomi</string>
+    <string name="tip_popup_suppress_id5">Всплывающие уведомления отключаются во время взаимодействия с автомобилем или во время ввода текста</string>
     <string name="notification_assistant_tap">Нажмите, чтобы запустить %s</string>
     <string name="notification_assistant_description">Работают только с включенным экраном</string>
     <string name="donation_title">Понравилось приложение?</string>

@@ -6,6 +6,7 @@
             type="me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel" />
     </data>
     <ScrollView
+        android:id="@+id/pane_scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -14,7 +15,9 @@
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/default_margin"
             android:paddingEnd="@dimen/default_margin"
-            android:paddingTop="@dimen/default_margin">
+            android:paddingTop="@dimen/default_margin"
+            android:clipChildren="false"
+            android:clipToPadding="false">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,6 +45,8 @@
             <androidx.fragment.app.FragmentContainerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
                 android:id="@+id/paneOverviewConnecting"
                 android:visibility="@{!viewModel.isCarConnected()}"
                 android:name="me.hufman.androidautoidrive.phoneui.fragments.OverviewConnectingFragment"/>
