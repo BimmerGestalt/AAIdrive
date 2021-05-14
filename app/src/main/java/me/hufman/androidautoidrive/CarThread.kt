@@ -13,7 +13,7 @@ const val TAG = "CarThread"
  * A thread subclass that swallows errors when the car disconnects
  * It also sets up an Android Looper
  */
-class CarThread(name: String, val runnable: () -> (Unit)): Thread(name) {
+class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 	var handler: Handler? = null
 	val iDriveConnectionObserver = IDriveConnectionObserver()
 
@@ -26,6 +26,7 @@ class CarThread(name: String, val runnable: () -> (Unit)): Thread(name) {
 			Looper.prepare()
 			handler = Handler(Looper.myLooper())
 			runnable()
+			runnable = {}
 			Log.i(TAG, "Successfully finished runnable for thread $name, starting Handler loop")
 			Looper.loop()
 			Log.i(TAG, "Successfully finished tasks for thread $name")
@@ -46,6 +47,9 @@ class CarThread(name: String, val runnable: () -> (Unit)): Thread(name) {
 			} else {
 				throw(e)
 			}
+		} finally {
+			// if we fail during init, make sure to forget the runnable
+			runnable = {}
 		}
 	}
 

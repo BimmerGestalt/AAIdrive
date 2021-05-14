@@ -136,6 +136,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 						scheduleRedraw()
 					}
 					currentAppController = controller
+					Log.i(TAG, "Successful connection to $currentAppController")
 					saveDesiredApp(app)
 				}
 			}

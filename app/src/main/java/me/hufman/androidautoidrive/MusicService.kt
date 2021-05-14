@@ -113,8 +113,23 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 
 	fun stop() {
 		running = false
-		// post it to the thread to run after initialization finishes
+
+		// disconnect from music apps right away
+		// when the car disconnects, the threadMusic handler shuts down
+		try {
+			btConnectionCallback.unregister()
+			navigationTriggerReceiver?.unregister(context)
+			navigationTriggerReceiver = null
+			carappMusic?.musicController?.disconnectApp(pause = false)
+			carappMusic?.musicAppDiscovery?.cancelDiscovery()
+		} catch (e: Exception) {
+			Log.w(TAG, "Encountered an exception while shutting down", e)
+		}
+
+		// post cleanup actions to the thread to run after initialization finishes
+		// if the car is already disconnected, the Handler loop will have stopped
 		threadMusic?.post {
+			// carappMusic doesn't support manual disconnection
 			carappMusic = null
 			threadMusic?.quit()
 			threadMusic = null
@@ -124,18 +139,5 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 				start()
 			}
 		}
-		// disconnect from music apps right away
-		// when the car disconnects, the threadMusic handler shuts down
-		try {
-			btConnectionCallback.unregister()
-			navigationTriggerReceiver?.unregister(context)
-			carappMusic?.musicController?.disconnectApp(pause = false)
-			carappMusic?.musicAppDiscovery?.cancelDiscovery()
-		} catch (e: Exception) {
-			Log.w(TAG, "Encountered an exception while shutting down", e)
-		}
 	}
-
-
-
 }

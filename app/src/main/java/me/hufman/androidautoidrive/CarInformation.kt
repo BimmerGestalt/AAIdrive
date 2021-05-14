@@ -7,7 +7,6 @@ import com.google.gson.JsonSyntaxException
 import me.hufman.androidautoidrive.carapp.CDSConnection
 import me.hufman.androidautoidrive.carapp.CDSData
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
-import me.hufman.androidautoidrive.carapp.CDSEventHandler
 import me.hufman.idriveconnectionkit.CDS
 import me.hufman.idriveconnectionkit.CDSProperty
 import java.util.*
@@ -138,7 +137,7 @@ open class CarInformationUpdater(val appSettings: MutableAppSettings): CarInform
 	override val cdsData: CDSDataProvider = CarInformation.cdsData
 	override val cachedCdsData: CDSDataProvider = CarInformation.cachedCdsData
 
-	override fun onCdsConnection(connection: CDSConnection) {
+	override fun onCdsConnection(connection: CDSConnection?) {
 		cdsData.setConnection(connection)
 	}
 

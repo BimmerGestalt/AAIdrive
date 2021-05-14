@@ -66,10 +66,11 @@ class CarInformationDiscovery(iDriveConnectionStatus: IDriveConnectionStatus, se
 		try {
 			IDriveConnection.disconnectEtchConnection(carConnection)
 		} catch (e: Exception) {}
+		listener.onCdsConnection(null)
 	}
 }
 
 interface CarInformationDiscoveryListener: CDSEventHandler {
 	fun onCapabilities(capabilities: Map<String, String?>)
-	fun onCdsConnection(connection: CDSConnection)
+	fun onCdsConnection(connection: CDSConnection?)
 }
