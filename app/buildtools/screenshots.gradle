@@ -20,7 +20,7 @@ project.afterEvaluate {
     }
 
     tasks.whenTaskAdded { task ->
-        if (task.name == 'connectedDebugAndroidTest') {
+        if (task.name == 'connectedDebugAndroidTest' || task.name == 'connectedNomapNonalyticsDebugAndroidTest' || task.name == 'connectedGmapNonalyticsDebugAndroidTest') {
             task.finalizedBy {
                 fetchScreenshotsTask
             }
