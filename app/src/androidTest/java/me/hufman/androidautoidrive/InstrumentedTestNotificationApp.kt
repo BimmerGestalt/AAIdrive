@@ -74,7 +74,7 @@ class InstrumentedTestNotificationApp {
 
 		// prepare a notification
 		val icon = Icon.createWithResource(appContext, R.mipmap.ic_launcher).loadDrawable(appContext)
-		val notification = CarNotification(appContext.packageName, "test", icon, true, listOf(),
+		val notification = CarNotification(appContext.packageName, "test", "App", icon, true, listOf(),
 				"Test", "Test Text", icon, null, null, null, null)
 
 		val carController = CarNotificationControllerIntent(appContext)

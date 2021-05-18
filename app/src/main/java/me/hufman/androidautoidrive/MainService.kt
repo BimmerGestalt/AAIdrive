@@ -40,15 +40,15 @@ class MainService: Service() {
 
 	var foregroundNotification: Notification? = null
 
-	val appSettings = MutableAppSettingsReceiver(this)
-	val securityAccess by lazy { SecurityAccess.getInstance(this) }
+	val appSettings by lazy { MutableAppSettingsReceiver(applicationContext) }
+	val securityAccess by lazy { SecurityAccess.getInstance(applicationContext) }
 	val iDriveConnectionReceiver = IDriveConnectionReceiver()   // start listening to car connection, if the AndroidManifest listener didn't start
 	var carProberThread: CarProber? = null
 
 	val securityServiceThread by lazy { SecurityServiceThread(securityAccess) }
 
 	val carInformationObserver = CarInformationObserver()
-	var carInformationUpdater = CarInformationUpdater(appSettings)
+	val carInformationUpdater by lazy { CarInformationUpdater(appSettings) }
 	val cdsObserver = CDSEventHandler { _, _ -> combinedCallback() }
 	var threadCapabilities: CarThread? = null
 	var carappCapabilities: CarInformationDiscovery? = null
@@ -97,10 +97,10 @@ class MainService: Service() {
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-		Analytics.init(this)
+		Analytics.init(applicationContext)
 
 		// load the emoji dictionary
-		UnicodeCleaner.init(this)
+		UnicodeCleaner.init(applicationContext)
 
 		val action = intent?.action ?: ""
 		if (action == ACTION_START) {
@@ -118,7 +118,7 @@ class MainService: Service() {
 		carInformationObserver.callback = { }
 		iDriveConnectionReceiver.callback = { }
 		try {
-			iDriveConnectionReceiver.unsubscribe(this)
+			iDriveConnectionReceiver.unsubscribe(applicationContext)
 		} catch (e: IllegalArgumentException) {
 			// never started?
 		}
@@ -144,7 +144,7 @@ class MainService: Service() {
 		securityServiceThread.connect()
 		// start up car connection listener
 		announceCarAPI()
-		iDriveConnectionReceiver.subscribe(this)
+		iDriveConnectionReceiver.subscribe(applicationContext)
 		startCarProber()
 	}
 
@@ -171,14 +171,14 @@ class MainService: Service() {
 				disconnectIntentName = "me.hufman.androidautoidrive.CarConnectionListener_STOP",
 				appIcon = null
 		)
-		CarAPIDiscovery.announceApp(this, myApp)
+		CarAPIDiscovery.announceApp(applicationContext, myApp)
 	}
 
 	private fun startCarProber() {
 		if (carProberThread?.isAlive != true) {
 			carProberThread = CarProber(securityAccess,
-				CarAppAssetManager(this, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
-				CarAppAssetManager(this, "smartthings").getAppCertificateRaw("mini")!!.readBytes()
+				CarAppAssetManager(applicationContext, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
+				CarAppAssetManager(applicationContext, "smartthings").getAppCertificateRaw("mini")!!.readBytes()
 			).apply { start() }
 		} else {
 			carProberThread?.schedule(1000)
@@ -187,7 +187,7 @@ class MainService: Service() {
 
 	private fun startServiceNotification(brand: String?, chassisCode: ChassisCode?) {
 		Log.i(TAG, "Creating foreground notification")
-		val notifyIntent = Intent(this, NavHostActivity::class.java).apply {
+		val notifyIntent = Intent(applicationContext, NavHostActivity::class.java).apply {
 			flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 		}
 		val foregroundNotificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
@@ -196,7 +196,7 @@ class MainService: Service() {
 				.setContentText(getText(R.string.notification_description))
 				.setSmallIcon(R.drawable.ic_notify)
 				.setPriority(NotificationCompat.PRIORITY_LOW)
-				.setContentIntent(PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+				.setContentIntent(PendingIntent.getActivity(applicationContext, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT))
 
 		if (!iDriveConnectionReceiver.isConnected) {
 			// show a notification even if we aren't connected, in case we were called with startForegroundService
@@ -226,7 +226,7 @@ class MainService: Service() {
 			if (iDriveConnectionReceiver.isConnected && securityAccess.isConnected()) {
 				var startAny = false
 
-				AppSettings.loadSettings(this)
+				AppSettings.loadSettings(applicationContext)
 
 				// set the car app languages
 				val locale = if (appSettings[AppSettings.KEYS.FORCE_CAR_LANGUAGE].isNotBlank()) {
@@ -237,7 +237,7 @@ class MainService: Service() {
 				} else {
 					null
 				}
-				L.loadResources(this, locale)
+				L.loadResources(applicationContext, locale)
 
 				// report car capabilities
 				// also loads the car language
@@ -292,13 +292,13 @@ class MainService: Service() {
 					// receiver to receive capabilities and cds properties
 					// wraps the CDSConnection with a Handler async wrapper
 					val carInformationUpdater = object: CarInformationUpdater(appSettings) {
-						override fun onCdsConnection(connection: CDSConnection) {
-							super.onCdsConnection(CDSConnectionAsync(handler, connection))
+						override fun onCdsConnection(connection: CDSConnection?) {
+							super.onCdsConnection(connection?.let { CDSConnectionAsync(handler, connection) })
 						}
 					}
 
 					carappCapabilities = CarInformationDiscovery(iDriveConnectionReceiver, securityAccess,
-							CarAppAssetManager(this, "smartthings"), carInformationUpdater)
+							CarAppAssetManager(applicationContext, "smartthings"), carInformationUpdater)
 					carappCapabilities?.onCreate()
 				}
 				threadCapabilities?.start()
@@ -316,7 +316,7 @@ class MainService: Service() {
 
 	fun startNotifications(): Boolean {
 		if (carInformationObserver.capabilities.isNotEmpty() && notificationService == null) {
-			notificationService = NotificationService(this, iDriveConnectionReceiver, securityAccess, carInformationObserver)
+			notificationService = NotificationService(applicationContext, iDriveConnectionReceiver, securityAccess, carInformationObserver)
 		}
 		return notificationService?.start() ?: false
 	}
@@ -327,7 +327,7 @@ class MainService: Service() {
 
 	fun startMaps(): Boolean {
 		if (carInformationObserver.capabilities.isNotEmpty() && mapService == null) {
-			mapService = MapService(this, iDriveConnectionReceiver, securityAccess,
+			mapService = MapService(applicationContext, iDriveConnectionReceiver, securityAccess,
 					MapAppMode(RHMIDimensions.create(carInformationObserver.capabilities), AppSettingsViewer()))
 		}
 		return mapService?.start() ?: false
@@ -356,8 +356,8 @@ class MainService: Service() {
 					Log.i(TAG, "Starting to discover car capabilities")
 
 					carappAssistant = AssistantApp(iDriveConnectionReceiver, securityAccess,
-							CarAppAssetManager(this, "basecoreOnlineServices"),
-							AssistantControllerAndroid(this, PhoneAppResourcesAndroid(this)),
+							CarAppAssetManager(applicationContext, "basecoreOnlineServices"),
+							AssistantControllerAndroid(applicationContext, PhoneAppResourcesAndroid(applicationContext)),
 							GraphicsHelpersAndroid())
 					carappAssistant?.onCreate()
 				}
