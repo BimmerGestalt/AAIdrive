@@ -103,9 +103,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 					}
 					// disconnect an existing session, if any
 					pendingController.value?.disconnect()
-					if (pendingController.pending) {
-						pendingController.value = null
-					}
+					pendingController.value = null
 				}
 
 				override fun onConnected(remote: SpotifyAppRemote?) {

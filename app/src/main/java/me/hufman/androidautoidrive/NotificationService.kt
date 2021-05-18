@@ -96,7 +96,17 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 
 	fun stop() {
 		running = false
-		// post it to the thread to run after initialization finishes
+		// unregister in the main thread
+		// when the car disconnects, the threadNotifications handler shuts down
+		try {
+			carappNotifications?.notificationSettings?.btStatus?.unregister()
+			carappNotifications?.onDestroy(context)
+		} catch (e: Exception) {
+			Log.w(TAG, "Encountered an exception while shutting down", e)
+		}
+
+		// post cleanup actions to the thread to run after initialization finishes
+		// if the car is already disconnected, this Handler loop will have crashed
 		threadNotifications?.post {
 			carappNotifications?.onDestroy(context)
 			carappNotifications?.disconnect()
@@ -112,14 +122,6 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 			if (running) {
 				start()
 			}
-		}
-		// unregister in the main thread
-		// when the car disconnects, the threadNotifications handler shuts down
-		try {
-			carappNotifications?.notificationSettings?.btStatus?.unregister()
-			carappNotifications?.onDestroy(context)
-		} catch (e: Exception) {
-			Log.w(TAG, "Encountered an exception while shutting down", e)
 		}
 	}
 }

@@ -190,7 +190,7 @@
     <string name="lbl_tip_expand">Espandi suggerimenti</string>
     <string name="tip_usb_chargingmode">Cambia la modalità USB del telefono in Trasferimento file se il valore predefinito è la modalità Solo ricarica</string>
     <string name="tip_connassistant">Usa la procedura guidata di connessione per abilitare la modalità accessorio USB nelle auto IDrive4</string>
-    <string name="tip_btapp">Assicurati che la connessione Bluetooth IDrive5 abbia l\'opzione App. Prova a scollegare l\'Audio Bluetooth e riconnetter, in caso la connessione fosse bloccata</string>
+    <string name="tip_btapp">Assicurati che la connessione Bluetooth IDrive5 abbia l\'opzione App. Prova a scollegare l\'Audio Bluetooth e riconnetterla, in caso la connessione fosse bloccata</string>
     <string name="tip_batterymode_mybmw">Prova a disabilitare le ottimizzazioni della batteria per l\'app MyBMW, cosa che a volte aiuta a connettersi all\'auto</string>
     <string name="tip_batterymode_mymini">Prova a disabilitare le ottimizzazioni della batteria per l\'app Mini, cosa che a volte aiuta a connettersi all\'auto</string>
     <string name="tip_audioplayer_bookmark">Associa un pulsante scorciatoia all\'app Audioplayer per accedere rapidamente ai controlli musicali</string>
