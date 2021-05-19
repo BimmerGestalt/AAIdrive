@@ -30,6 +30,13 @@
     <string name="lbl_navigation_listener_success">Success</string>
     <string name="lbl_navigation_listener_unsuccess">Unsuccessful</string>
 
+    <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Let\'s get you connected</string>
+    <string name="lbl_welcome_intro">AndroidAutoIdrive adds your phone\'s music apps and other features to your car through the native BMW Apps protocol</string>
+    <string name="lbl_welcome_compatible">Most MY2014 or newer BMWs or MINIs equipped with NBT or NBT Evo (based on IDrive 4–6) and an active ConnectedDrive or BMW Online subscription should be compatible</string>
+    <string name="lbl_welcome_dependencies">The apps connection to the car depends on the BMW/MINI Connected app or the new MyBMW or Mini app to connect to your car</string>
+    <string name="lbl_welcome_complete">AndroidAutoIdrive also adds a variety of other features to your car, check it out!</string>
+
     <!-- Menu Titles -->
     <string name="menu_overview">Overview</string>
     <string name="menu_setup">Setup</string>
