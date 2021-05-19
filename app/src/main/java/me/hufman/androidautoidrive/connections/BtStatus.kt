@@ -32,8 +32,10 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 	private val a2dpListener = ProfileListener(BluetoothProfile.A2DP)
 
 	val isSPPAvailable
-		get() = (a2dpListener.profile?.connectedDevices?.filter { it.isCar() } ?: listOf()).any {
-			uuidListener.isSPPAvailable(it)
+		get() = (a2dpListener.profile?.connectedDevices?.filter { it.isCar() } ?: listOf()).any { device ->
+			device.uuids?.any {
+				it?.uuid == UUID_SPP
+			} ?: false
 		}
 
 	val isBTConnected
@@ -58,7 +60,7 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			Log.d(TAG, "$profileName is loaded")
 			val cars = profile?.connectedDevices?.filter { it.isCar() } ?: listOf()
 			cars.forEach {
-				uuidListener.discover(it)
+				it.fetchUuidsWithSdp()
 			}
 			callback()
 		}
@@ -70,40 +72,9 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			if (intent?.action == BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED &&
 					intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1) == BluetoothProfile.STATE_CONNECTED) {
 				val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-				uuidListener.discover(device)
+				device.fetchUuidsWithSdp()
 			}
 			callback()
-		}
-	}
-
-	/**
-	 * Listen for any SDP updates, to watch for the SPP device (Bluetooth BCL connection) showing up
-	 */
-	private val uuidListener = object: BroadcastReceiver() {
-		fun discover(device: BluetoothDevice) {
-			val successfulSdp = device.fetchUuidsWithSdp()
-			Log.d(TAG, "Triggering a discovery: $successfulSdp")
-		}
-
-		fun isSPPAvailable(device: BluetoothDevice): Boolean {
-			return device.uuids?.any {
-				(it)?.uuid == UUID_SPP
-			} ?: false
-		}
-
-		override fun onReceive(p0: Context?, intent: Intent?) {
-			Log.d(TAG, "Received notification of BT discovery: ${intent?.action}")
-			if (intent?.action == BluetoothDevice.ACTION_UUID) {
-				val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
-				Log.d(TAG, "Found BT endpoints on ${device.name}")
-				if (device.isCar()) {
-					val uuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID) ?: return
-					uuids.forEach {
-						Log.d(TAG, "  - $it")
-					}
-					callback()
-				}
-			}
 		}
 	}
 
@@ -121,18 +92,13 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 		val uuidFilter = IntentFilter().apply {
 			addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
 			addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
-			addAction(BluetoothDevice.ACTION_UUID)
 		}
 		context.registerReceiver(bluetoothListener, btFilter)
-		context.registerReceiver(uuidListener, uuidFilter)
 	}
 
 	fun unregister() {
 		try {
 			context.unregisterReceiver(bluetoothListener)
-		} catch (e: IllegalArgumentException) {}
-		try {
-			context.unregisterReceiver(uuidListener)
 		} catch (e: IllegalArgumentException) {}
 		BluetoothAdapter.getDefaultAdapter()?.apply {
 			val hfProfile = hfListener.profile

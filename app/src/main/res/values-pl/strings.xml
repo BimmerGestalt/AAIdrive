@@ -121,7 +121,7 @@
     <string name="txt_setup_enable_bcl_mode">Włącz usługę Aplikacje w samochodzie dla tego %s</string>
     <string name="txt_setup_bcl_disconnected">Połączenie w trybie Aplikacji nie jest gotowe:</string>
     <string name="txt_setup_bcl_waiting">Czekam na rozpoczęcie połączenia z aplikacjami</string>
-    <string name="txt_setup_enable_bclspp">Spróbuj przełączyć na Muzykę Bluetooth lub podłącz kabel USB</string>
+    <string name="txt_setup_enable_bclspp_usb">Spróbuj przełączyć na Muzykę Bluetooth lub podłącz kabel USB</string>
     <string name="txt_setup_bcl_connecting">Połączenie w trybie Aplikacji łączenie …</string>
     <string name="txt_setup_bcl_connected">Połączenie w trybie Aplikacji działa</string>
     <string name="txt_setup_bcl_connected_transport">Połączenie w trybie Aplikacji przez %s</string>
@@ -150,6 +150,7 @@
     <string name="lbl_advanced_settings">Pokaż ustawienia zaawansowane</string>
     <string name="lbl_assistant">Asystent głosowy (beta)</string>
     <string name="lbl_assistant_empty">Nic nie znaleziono</string>
+    <!-- tips -->
     <string name="notification_assistant_tap">Dotknij, aby uruchomić %s</string>
     <string name="notification_assistant_description">Konieczne tylko dlatego, że ekran jest włączony</string>
     <string name="donation_title">Podoba Ci się ta aplikacja?</string>

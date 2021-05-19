@@ -2389,7 +2389,7 @@ class MusicAppTest {
 			}
 		}
 		discoveryListenerCapture.lastValue.run()
-		verify(musicController).connectAppAutomatically(same(nowPlayingApp))
+		verify(musicController, times(2)).connectAppAutomatically(same(nowPlayingApp))
 		// async sets the musicBrowser to the correct connection
 		whenever(musicController.currentAppInfo).doReturn(nowPlayingApp)
 		whenever(musicAppDiscovery.validApps) doAnswer {

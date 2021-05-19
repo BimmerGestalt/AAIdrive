@@ -3,16 +3,13 @@ package me.hufman.androidautoidrive
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
-import android.media.ImageReader
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.core.content.ContextCompat
 import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import java.lang.Exception
 
 class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val mapAppMode: MapAppMode) {
 	var threadGMaps: CarThread? = null
@@ -21,13 +18,15 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 	var virtualDisplay: VirtualDisplay? = null
 	var mapController: GMapsController? = null
 	var mapListener: MapsInteractionControllerListener? = null
+	var running = false
 
 	fun start(): Boolean {
 		if (AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean() &&
 				ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
 				== PackageManager.PERMISSION_GRANTED) {
+			running = true
 			synchronized(this) {
-				if (threadGMaps == null) {
+				if (threadGMaps?.isAlive != true) {
 					threadGMaps = CarThread("GMaps") {
 						Log.i(MainService.TAG, "Starting GMaps")
 						val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.fullDimensions.visibleWidth, mapAppMode.fullDimensions.visibleHeight)
@@ -64,28 +63,39 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 	}
 
 	fun stop() {
-		mapScreenCapture?.onDestroy()
-		virtualDisplay?.release()
-		// nothing to stop in mapController
-		mapListener?.onDestroy()
-		mapApp?.onDestroy(context)
+		running = false
+		// shut down maps functionality right away
+		// when the car disconnects, the threadGMaps handler shuts down
+		try {
+			mapScreenCapture?.onDestroy()
+			virtualDisplay?.release()
+			// nothing to stop in mapController
+			mapListener?.onDestroy()
+			mapApp?.onDestroy(context)
 
-		mapScreenCapture = null
-		virtualDisplay = null
-		mapController = null
-		mapListener = null
-
-		// if we caught it during initialization, kill it again
-		val thread = threadGMaps
-		if (thread?.isAlive == true) {
-			thread.post {
-				stop()
-				mapApp = null
-			}
-		} else {
-			mapApp = null
+			mapScreenCapture = null
+			virtualDisplay = null
+			mapController = null
+			mapListener = null
+		} catch (e: Exception) {
+			Log.w(TAG, "Encountered an exception while shutting down", e)
 		}
-		threadGMaps?.quitSafely()
-		threadGMaps = null
+
+		// post cleanup actions to the thread to run after initialization finishes
+		// if the car is already disconnected, the Handler loop will have stopped
+		threadGMaps?.post {
+			// finish shutting down, if we were cancelled during startup
+			mapApp?.onDestroy(context)
+			mapApp?.disconnect()
+			mapApp = null
+
+			threadGMaps?.quit()
+			threadGMaps = null
+
+			// if we started up again during shutdown
+			if (running) {
+				start()
+			}
+		}
 	}
 }

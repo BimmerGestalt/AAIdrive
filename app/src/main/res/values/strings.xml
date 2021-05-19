@@ -55,6 +55,7 @@
         <item quantity="one">Your phone\'s voice assistant is added as a Connected app, in case the car\'s voice input doesn\'t trigger it</item>
         <item quantity="other">Your phone\'s voice assistants are added as a Connected app, in case the car\'s voice input doesn\'t trigger it</item>
     </plurals>
+    <string name="lbl_assistantpage_tip">These apps are separate from the car\'s Voice Assistant steering wheel button, which only triggers your phone\'s default assistant and is configured separately</string>
 
     <string name="lbl_notificationpage">Your incoming notifications can be viewed and interacted with from the car</string>
     <string name="spawn_test_notification">Test Notification</string>
@@ -145,8 +146,12 @@
     <string name="txt_setup_mini_ready">The app is ready to connect to a Mini</string>
     <string name="txt_setup_bmw_missing">Not ready to connect to a BMW:</string>
     <string name="txt_setup_mini_missing">Not ready to connect to a Mini:</string>
+    <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 is installed, which sometimes doesn\'t start the car connection. Try downgrading to 6.4 or upgrading to MyBMW if you encounter problems</string>
+    <string name="txt_setup_mini_connected_65">Mini Connected 6.5 is installed, which sometimes doesn\'t start the car connection. Try downgrading to 6.4 or upgrading to the new Mini app if you encounter problems</string>
     <string name="txt_setup_bmw_mine_detected">The new My BMW app is installed, which might cause problems with BMW Connected and is not supported</string>
     <string name="txt_setup_mini_mine_detected">The new MINI app is installed, which might cause problems with Mini Connected and is not supported</string>
+    <string name="txt_setup_bmw_mine_conflict">Both the BMW Connected and My BMW apps are installed, which might cause connection instability unless connecting over USB</string>
+    <string name="txt_setup_mini_mine_conflict">Both the MINI Connected and My MINI apps are installed, which might cause connection instability unless connecting over USB</string>
     <string name="txt_setup_security_missing">Security Service is unreachable:</string>
 
     <string name="btn_install">Install</string>
@@ -164,6 +169,7 @@
     <string name="txt_setup_spp_connected">Bluetooth Apps are supported</string>
     <string name="txt_setup_usb_disconnected">No car connected over USB</string>
     <string name="txt_setup_usb_connected">USB connected in Charging mode</string>
+    <string name="txt_setup_usb_requires_connected">USB apps connection requires BMW/Mini Connected to be installed</string>
     <string name="txt_setup_enable_usbmtp">Switch the phone\'s USB mode to File Transfer</string>
     <string name="txt_setup_enable_usbacc">Enable the USB Accessory Mode or Apps option in the car for this %s</string>
     <string name="txt_setup_usbmtp_connected">USB connected in Storage mode</string>
@@ -172,7 +178,8 @@
     <string name="txt_setup_enable_bcl_mode">Enable the Apps option in the car for this %s</string>
     <string name="txt_setup_bcl_disconnected">Apps Connection is not ready:</string>
     <string name="txt_setup_bcl_waiting">Waiting for Apps Connection to start</string>
-    <string name="txt_setup_enable_bclspp">Try toggling Bluetooth Music or connecting over USB</string>
+    <string name="txt_setup_enable_bclspp_bt">Try toggling Bluetooth Music</string>
+    <string name="txt_setup_enable_bclspp_usb">Try toggling Bluetooth Music or connecting over USB</string>
     <string name="txt_setup_bcl_connecting">Apps Connection is connecting</string>
     <string name="txt_setup_bcl_connected">Apps Connection is running</string>
     <string name="txt_setup_bcl_connected_transport">Apps Connection is running over %s</string>
@@ -206,6 +213,28 @@
     <string name="lbl_assistant">Voice Assistant (Beta)</string>
     <string name="lbl_assistant_empty">None found</string>
 
+    <!-- tips -->
+    <string name="lbl_tip_image">Tip demonstration image</string>
+    <string name="lbl_tiplist">Tips and tricks</string>
+    <string name="lbl_tip_expand">Expand tips</string>
+
+    <string name="tip_usb_chargingmode">Switch the phone\'s USB mode to File Transfer if it defaults to Charging Only mode</string>
+    <string name="tip_connassistant">Use the Connection Wizard to enable the USB Accessory Mode in IDrive4 cars</string>
+    <string name="tip_btapp">Make sure the IDrive5 Bluetooth connection has the Apps option. Try disconnecting Bluetooth Audio and reconnecting if the connection is stuck</string>
+    <string name="tip_batterymode_mybmw">Try disabling battery optimizations for the MyBMW app, which sometimes helps connect to the car</string>
+    <string name="tip_batterymode_mymini">Try disabling battery optimizations for the Mini app, which sometimes helps connect to the car</string>
+    <string name="tip_audioplayer_bookmark">Save a shortcut button to the Audioplayer app for quick access to the music controls</string>
+    <string name="tip_bluetooth_music">Make sure to set your car to listen to Bluetooth Music from your phone</string>
+    <string name="tip_audioplayer_nowplaying_bookmark">Save a shortcut button while the Now Playing button is selected for quick access to your queue</string>
+    <string name="tip_input_emoji">Input a colon to start typing an emoji, then pick from the suggestion list</string>
+    <string name="tip_music_hide">Swipe a music app away from the list to hide it from the car</string>
+    <string name="tip_batterymode_music">Try disabling battery optimizations for your music apps, which might be needed to start the apps from the background on some phone brands such as Xiaomi</string>
+    <string name="tip_popup_suppress_id5">Notification popups are suppressed while interacting with the car or while inputting text</string>
+    <string name="tip_notification_bookmark">Save a shortcut button to the unlabeled Book app for quick access to your notifications</string>
+    <string name="tip_notification_bookmark_ambutton">Save a shortcut button to the Notifications app for quick access to your notifications</string>
+    <string name="tip_notification_bookmark_details">Save a shortcut button while viewing the list of notifications for quick access to the most recent notification</string>
+    <string name="tip_notification_quickaccess">Entering the Notifications app quickly after receiving a new notification will open this notification directly</string>
+
     <string name="notification_assistant_tap">Tap to launch %s</string>
     <string name="notification_assistant_description">Only necessary because the screen is on</string>
     <string name="donation_title">Like this app?</string>
@@ -233,6 +262,7 @@
     <string name="NOTIFICATION_READOUT_POPUP">Speak new notifications</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … with a passenger</string>
     <string name="NOTIFICATION_PERMISSION_NEEDED">This app needs to be granted Notification Access</string>
+    <string name="NOTIFICATION_CENTER_APP">This app is used to push to the car\'s Notification Center</string>
     <string name="READOUT_DESCRIPTION">This app is used for readout purposes</string>
 
     <string name="MAP_ACTION_VIEWMAP">View Full Map</string>

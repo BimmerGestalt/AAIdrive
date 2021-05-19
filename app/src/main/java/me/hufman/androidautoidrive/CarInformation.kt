@@ -7,7 +7,6 @@ import com.google.gson.JsonSyntaxException
 import me.hufman.androidautoidrive.carapp.CDSConnection
 import me.hufman.androidautoidrive.carapp.CDSData
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
-import me.hufman.androidautoidrive.carapp.CDSEventHandler
 import me.hufman.idriveconnectionkit.CDS
 import me.hufman.idriveconnectionkit.CDSProperty
 import java.util.*
@@ -138,7 +137,7 @@ open class CarInformationUpdater(val appSettings: MutableAppSettings): CarInform
 	override val cdsData: CDSDataProvider = CarInformation.cdsData
 	override val cachedCdsData: CDSDataProvider = CarInformation.cachedCdsData
 
-	override fun onCdsConnection(connection: CDSConnection) {
+	override fun onCdsConnection(connection: CDSConnection?) {
 		cdsData.setConnection(connection)
 	}
 
@@ -158,4 +157,28 @@ class CarInformationObserver(var callback: (Map<String, String>) -> Unit = {}): 
 	fun onCarCapabilities(capabilities: Map<String, String>) {
 		callback.invoke(capabilities)
 	}
+}
+
+class CarCapabilitiesSummarized(val carInformation: CarInformation) {
+	val isId4: Boolean
+		get() = carInformation.capabilities["hmi.type"]?.contains("ID4") == true
+	val isId5: Boolean
+		get() = carInformation.capabilities["hmi.type"]?.contains("ID5") == true
+	val isBmw: Boolean
+		get() = carInformation.capabilities["hmi.type"]?.startsWith("BMW") == true
+	val isMini: Boolean
+		get() = carInformation.capabilities["hmi.type"]?.startsWith("MINI") == true
+
+	val isPopupSupported = true
+	val isPopupNotSupported = false
+
+	val isTtsSupported: Boolean
+		get() = carInformation.capabilities["tts"]?.toLowerCase(Locale.ROOT) == "true"
+	val isTtsNotSupported: Boolean
+		get() = carInformation.capabilities["tts"]?.toLowerCase(Locale.ROOT) == "false"
+
+	val isNaviSupported: Boolean
+		get() = carInformation.capabilities["navi"]?.toLowerCase(Locale.ROOT) == "true"
+	val isNaviNotSupported: Boolean
+		get() = carInformation.capabilities["navi"]?.toLowerCase(Locale.ROOT) == "false"
 }

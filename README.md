@@ -33,11 +33,13 @@ Download the APK of the latest stable release from the [Releases page](https://g
 Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-sentry-release.apk) to automatically report crashes.
 The [nonalytics](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-nonalytics-release.apk) build is available too.
 Some of the new features include:
+  - Brand new simpler phone UI with clearer setup instructions
   - Supports logging in as Spotify to set the global coverart in ID5+
-  - Adds Spotify browse and playlist coverart
-  - Reads out notifications
+  - Adds Spotify browse and playlist coverart, as well as searching Spotify
+  - Reads out notifications, and adds popup and statusbar support in ID5+
   - Supports replying to notifications
   - Starts car navigation to handle certain phone navigation buttons
+  - Supports the new MyBMW app
 
 Check out the [FAQ](https://hufman.github.io/AndroidAutoIdrive/faq.html) if you run into problems.
 
@@ -92,16 +94,19 @@ Implemented Features
         - [Listen Audiobook Player](https://play.google.com/store/apps/details?id=com.acmeandroid.listen)
         - [Player FM](https://play.google.com/store/apps/details?id=fm.player)
         - [Podcast Addict](https://play.google.com/store/apps/details?id=com.bambuna.podcastaddict)
+        - [Stitcher](https://play.google.com/store/apps/details?id=com.stitcher.app)
         - [Voice Audiobook Player](https://play.google.com/store/apps/details?id=de.ph1b.audiobook)
       - Music Library
         - [AIMP](https://play.google.com/store/apps/details?id=com.aimp.player)
         - [Black Player](https://play.google.com/store/apps/details?id=com.musicplayer.blackplayerfree)
         - [DSub](https://play.google.com/store/apps/details?id=github.daneren2005.dsub)
+        - [HiBy Music](https://play.google.com/store/apps/details?id=com.hiby.music)
         - [jetAudio HD](https://play.google.com/store/apps/details?id=com.jetappfactory.jetaudio)
         - [Media Monkey](https://play.google.com/store/apps/details?id=com.ventismedia.android.mediamonkey)
         - [Musicolet Music Player](https://play.google.com/store/apps/details?id=in.krosbits.musicolet)
         - [Neutron Music Player](https://play.google.com/store/apps/details?id=com.neutroncode.mp)
         - [Plex](https://play.google.com/store/apps/details?id=com.plexapp.android) (only music and podcasts)
+        - [PlayerPro](https://play.google.com/store/apps/details?id=com.tbig.playerprotrial)
         - [PowerAmp](https://play.google.com/store/apps/details?id=com.maxmpz.audioplayer)
         - [Retro Music Player](https://play.google.com/store/apps/details?id=code.name.monkey.retromusic)
         - [Rocket Player](https://play.google.com/store/apps/details?id=com.jrtstudio.AnotherMusicPlayer)
@@ -109,6 +114,7 @@ Implemented Features
         - [VLC For Android](https://play.google.com/store/apps/details?id=org.videolan.vlc)
       - Radio
         - [AP News](https://play.google.com/store/apps/details?id=mnn.Android)
+        - [Antenne Bayern](https://play.google.com/store/apps/details?id=de.antenne.android)
         - [ARD Audiothek](https://play.google.com/store/apps/details?id=de.ard.audiothek)
         - [Audials Radio](https://play.google.com/store/apps/details?id=com.audials)
         - [BFM](https://play.google.com/store/apps/details?id=my.bfm.app)
@@ -126,6 +132,7 @@ Implemented Features
         - [Radio Bob](https://play.google.com/store/apps/details?id=de.radiobob.radio)
         - [Radio FM](https://play.google.com/store/apps/details?id=com.radio.fmradio)
         - [Radio Monte Carlo](https://play.google.com/store/apps/details?id=it.froggy.android.rmc)
+        - [Radio Nowy Swiat](https://play.google.com/store/apps/details?id=com.thehouseofcode.radio_nowy_swiat)
         - [RTL 102.5](https://play.google.com/store/apps/details?id=com.rtl.rtlapp)
         - [Scanner Radio](https://play.google.com/store/apps/details?id=com.scannerradio)
         - [SiriusXM](https://play.google.com/store/apps/details?id=com.sirius)
@@ -204,11 +211,16 @@ Instead, install the Connected Classic app of the other brand that is not intend
 Build Instructions
 ------------------
 
-  - (Optional) Add a [Google Maps API key](https://developers.google.com/maps/documentation/android-sdk/signup) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_GmapsApiKey`. This key should have access to Maps SDK for Android, Places API, and Directions API.
+  - (Optional) Add a [Google Maps API key](https://developers.google.com/maps/documentation/android-sdk/signup) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_GmapsApiKey`.
+    - No spaces or quotes are needed around the property value: `AndroidAutoIdrive_GmapsApiKey=AIza`
+    - This key should have access to Maps SDK for Android, Places API, and Directions API.
+    - Billing is needed for the Places API to return search results.
   - (Optional) Add a [Spotify API Client ID](https://developer.spotify.com/dashboard/) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_SpotifyApiKey`.
-    - The client secret is not needed, and no spaces or quotes are needed around the property value
+    - The client secret is not needed, and no spaces or quotes are needed around the property value: `AndroidAutoIdrive_SpotifyApiKey=36b6...`
     - It needs the Redirect URI set to `me.hufman.androidautoidrive://spotify_callback`
     - It may also need the package fingerprint added, [follow these instructions](https://developer.spotify.com/documentation/android/quick-start/) to configure it
+  - (Optional) Add a Sentry DSN to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_SentryDsn` to capture crash reports.
+    - No spaces or quotes are needed around the DSN: `AndroidAutoIdrive_SentryDsn=https://e40...@sentry.io/0123...`
   - After downloading the source code, follow the instructions in [external/README.md](external/README.md) to prepare the needed APK files from official apps.
   - Android Studio makes it easy to build this project:
     - File > New > Project From Version Control > Git

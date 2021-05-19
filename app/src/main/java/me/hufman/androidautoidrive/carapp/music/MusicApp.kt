@@ -115,8 +115,10 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 
 			// connect to the previous app, if we aren't currently connected
 			if (musicController.currentAppController == null) {
-				val appName = musicController.loadDesiredApp()
-				val appInfo = musicAppDiscovery.validApps.firstOrNull { it.packageName == appName }
+				val appInfo = musicController.currentAppInfo ?: nowPlaying ?:
+					musicController.loadDesiredApp().let { appName ->
+						musicAppDiscovery.validApps.firstOrNull { it.packageName == appName }
+					}
 				if (appInfo != null) {
 					musicController.connectAppAutomatically(appInfo)
 				}

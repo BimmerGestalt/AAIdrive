@@ -5,6 +5,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,9 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.phoneui.MusicAppDiscoveryThread
 import me.hufman.androidautoidrive.phoneui.adapters.MusicAppListAdapter
+import me.hufman.androidautoidrive.phoneui.findParent
+import me.hufman.androidautoidrive.phoneui.scrollTop
+import kotlin.math.max
 
 class MusicAppsListFragment: Fragment() {
 	val handler = Handler()
@@ -73,6 +77,11 @@ class MusicAppsListFragment: Fragment() {
 			}
 		}
 		ItemTouchHelper(swipeCallback).attachToRecyclerView(listMusicApps)
+
+		// set the actual scrollview size
+		view.post {
+			setHeightInScrollview()
+		}
 	}
 
 	override fun onResume() {
@@ -80,6 +89,19 @@ class MusicAppsListFragment: Fragment() {
 
 		// build list of discovered music apps
 		appDiscoveryThread.discovery()
+	}
+
+	private fun setHeightInScrollview() {
+		// set height based on parent scrollview size
+		val view = this.view ?: return
+		val scrollView = view.findParent { it is ScrollView } as? ScrollView ?: return
+		val scrollHeight = scrollView.height
+		val height = max(400, scrollHeight - view.scrollTop)
+
+		val layoutParams = view.layoutParams
+		layoutParams.height = height
+		view.layoutParams = layoutParams
+		view.requestLayout()
 	}
 
 	override fun onDestroy() {

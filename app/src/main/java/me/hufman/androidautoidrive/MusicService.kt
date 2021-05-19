@@ -17,11 +17,13 @@ import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import java.lang.Exception
 
 class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val musicAppMode: MusicAppMode) {
 	var threadMusic: CarThread? = null
 	var carappMusic: MusicApp? = null
 	var navigationTriggerReceiver: NavigationTriggerReceiver? = null
+	var running = false
 
 	// watch for bluetooth audio connection changes
 	private val btConnectionCallback = BtStatus(context) {
@@ -36,7 +38,7 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 	}
 
 	fun start(): Boolean {
-
+		running = true
 		synchronized(this) {
 			if (threadMusic?.isAlive != true) {
 				threadMusic = CarThread("Music") {
@@ -110,18 +112,32 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 	}
 
 	fun stop() {
-		btConnectionCallback.unregister()
+		running = false
 
-		threadMusic?.post {
+		// disconnect from music apps right away
+		// when the car disconnects, the threadMusic handler shuts down
+		try {
+			btConnectionCallback.unregister()
 			navigationTriggerReceiver?.unregister(context)
-			carappMusic?.musicController?.disconnectApp(pause=false)
+			navigationTriggerReceiver = null
+			carappMusic?.musicController?.disconnectApp(pause = false)
 			carappMusic?.musicAppDiscovery?.cancelDiscovery()
-			carappMusic = null
+		} catch (e: Exception) {
+			Log.w(TAG, "Encountered an exception while shutting down", e)
 		}
-		threadMusic?.quitSafely()
-		threadMusic = null
+
+		// post cleanup actions to the thread to run after initialization finishes
+		// if the car is already disconnected, the Handler loop will have stopped
+		threadMusic?.post {
+			// carappMusic doesn't support manual disconnection
+			carappMusic = null
+			threadMusic?.quit()
+			threadMusic = null
+
+			// if we started up again during shutdown
+			if (running) {
+				start()
+			}
+		}
 	}
-
-
-
 }

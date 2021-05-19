@@ -136,6 +136,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 						scheduleRedraw()
 					}
 					currentAppController = controller
+					Log.i(TAG, "Successful connection to $currentAppController")
 					saveDesiredApp(app)
 				}
 			}
@@ -347,13 +348,16 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 
 	/** If the current app is playing, make sure the metadata is valid */
 	fun assertPlayingMetadata() = withController { controller ->
-		val metadata = controller.getMetadata()
 		val appInfo = currentAppInfo
-		if (appInfo?.packageName == "com.google.android.youtube" && metadata == null && System.currentTimeMillis() > lastConnectTime + RECONNECT_TIMEOUT) {
-			Log.w(TAG, "Detected NULL metadata for an app, reconnecting")
-			lastConnectTime = System.currentTimeMillis()
-			disconnectApp(false)
-			connectApp(appInfo)
+		// only check every so often, and only when Youtube is the app
+		if (System.currentTimeMillis() > lastConnectTime + RECONNECT_TIMEOUT && appInfo?.packageName == "com.google.android.youtube") {
+			val metadata = controller.getMetadata()
+			if (metadata == null) {
+				Log.w(TAG, "Detected NULL metadata for an app, reconnecting")
+				lastConnectTime = System.currentTimeMillis()
+				disconnectApp(false)
+				connectApp(appInfo)
+			}
 		}
 	}
 }

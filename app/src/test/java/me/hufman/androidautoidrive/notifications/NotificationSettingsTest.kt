@@ -27,7 +27,7 @@ class NotificationSettingsTest {
 
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5", "tts" to "true"), btStatus, appSettings)
-			assertEquals(listOf(AppSettings.KEYS.NOTIFICATIONS_SOUND,
+			assertEquals(listOf(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER, AppSettings.KEYS.NOTIFICATIONS_SOUND,
 					AppSettings.KEYS.NOTIFICATIONS_READOUT, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
 			), settings.getSettings())
 		}
@@ -42,7 +42,8 @@ class NotificationSettingsTest {
 
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5", "tts" to "false"), btStatus, appSettings)
-			assertEquals(listOf(AppSettings.KEYS.NOTIFICATIONS_SOUND), settings.getSettings())
+			assertEquals(listOf(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER,
+					AppSettings.KEYS.NOTIFICATIONS_SOUND), settings.getSettings())
 		}
 	}
 

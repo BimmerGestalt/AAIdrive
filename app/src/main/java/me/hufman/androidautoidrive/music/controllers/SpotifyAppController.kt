@@ -81,7 +81,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		}
 
 		fun connect(): Observable<SpotifyAppController> {
-			Log.w(TAG, "Attempting to connect to Spotify Remote")
+			Log.i(TAG, "Attempting to connect to Spotify Remote")
 			val params = ConnectionParams.Builder(getClientId(context))
 					.setRedirectUri(REDIRECT_URI)
 					.showAuthView(prompt)
@@ -101,9 +101,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 					}
 					// disconnect an existing session, if any
 					pendingController.value?.disconnect()
-					if (pendingController.pending) {
-						pendingController.value = null
-					}
+					pendingController.value = null
 				}
 
 				override fun onConnected(remote: SpotifyAppRemote?) {
@@ -518,8 +516,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			}
 		} else {
 			loadPaginatedItems(directory.toListItem(), { !deferred.isCancelled }) {
-				val items = removeShufflePlayButtonMetadata(it)
-				deferred.complete(items)
+				deferred.complete(it)
 			}
 		}
 		return deferred.await()

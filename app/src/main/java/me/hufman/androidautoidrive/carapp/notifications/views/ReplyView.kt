@@ -5,11 +5,11 @@ import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.notifications.ReplyController
 import me.hufman.idriveconnectionkit.rhmi.RHMIState
 
-class ReplyView(listStateId: Int, inputState: RHMIState, val replyController: ReplyController): InputState<CharSequence>(inputState) {
+class ReplyView(destState: RHMIState, inputState: RHMIState, val replyController: ReplyController): InputState<CharSequence>(inputState) {
 	// only send once
 	var sent = false
 	init {
-		inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listStateId
+		inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = destState.id
 	}
 	override fun onEntry(input: String) {
 		if (input == "") {

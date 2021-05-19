@@ -43,6 +43,7 @@
         <item quantity="one">L\'assistente vocale del tuo telefono viene aggiunto come app Connected, nel caso in cui l\'input vocale dell\'auto non lo attivi</item>
         <item quantity="other">Gli assistenti vocali del tuo telefono vengono aggiunti come app Connected, nel caso in cui l\'input vocale dell\'auto non li attivi</item>
     </plurals>
+    <string name="lbl_assistantpage_tip">Queste app sono distinte da quella attivata dal pulsante Assistente Vocale sul volante che attiva solo l\'assistente predefinito del telefono e che è configurato separatamente</string>
     <string name="lbl_notificationpage">Le tue notifiche in arrivo possono essere visualizzate e interagite dall\'auto</string>
     <string name="spawn_test_notification">Notifica di prova</string>
     <string name="message_notifications">Notifica messaggi</string>
@@ -122,8 +123,12 @@
     <string name="txt_setup_mini_ready">L\'app è pronta a connettersi con una Mini</string>
     <string name="txt_setup_bmw_missing">Non pronta a connettersi con una BMW:</string>
     <string name="txt_setup_mini_missing">Non pronta a connettersi con una Mini:</string>
+    <string name="txt_setup_bmw_connected_65">È installata la versione 6.5 di BMW Connected che qualche volta non fa partire la connessione con l\'auto. Prova a fare un downgrade alla versione 6.4 o un upgrade a MyBMW se riscontri problemi</string>
+    <string name="txt_setup_mini_connected_65">È installata la versione 6.5 di Mini Connected che qualche volta non fa partire la connessione con l\'auto. Prova a fare un downgrade alla versione 6.4 o un upgrade alla nuova app Mini se riscontri problemi</string>
     <string name="txt_setup_bmw_mine_detected">La nuova app My BMW è installata, può causare problemi con l\'app BMW Connected e non è supportata</string>
     <string name="txt_setup_mini_mine_detected">La nuova app MINI è installata, può causare problemi con l\'app MINI Connected e non è supportata</string>
+    <string name="txt_setup_bmw_mine_conflict">Entrambe le applicazioni BMW Connected e My BMW sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non si connetta tramite USB</string>
+    <string name="txt_setup_mini_mine_conflict">Entrambe le app MINI Connected e My MINI sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non si connetta tramite USB</string>
     <string name="txt_setup_security_missing">Il Security Service non è raggiungibile:</string>
     <string name="btn_install">Installa</string>
     <string name="btn_install_bmw">Installa BMW Connected</string>
@@ -139,6 +144,7 @@
     <string name="txt_setup_spp_connected">Le app Bluetooth sono supportate</string>
     <string name="txt_setup_usb_disconnected">Non è presente un\'auto connessa via USB</string>
     <string name="txt_setup_usb_connected">USB connesso in modalità ricarica</string>
+    <string name="txt_setup_usb_requires_connected">La connessione alle app tramite USB richiede l\'installazione di BMW/Mini Connected</string>
     <string name="txt_setup_enable_usbmtp">Cambia la modalità USB del telefono in Trasferimento file</string>
     <string name="txt_setup_enable_usbacc">Abilita la modalita Accessorio USB o l\'opzione Apps nell\'auto per questo %s</string>
     <string name="txt_setup_usbmtp_connected">USB connesso in modalità Memoria di massa</string>
@@ -147,7 +153,8 @@
     <string name="txt_setup_enable_bcl_mode">Abilita l\'opzione Apps nell\'auto per questo %s</string>
     <string name="txt_setup_bcl_disconnected">La connessione Apps non è pronta:</string>
     <string name="txt_setup_bcl_waiting">In attesa della connessione App</string>
-    <string name="txt_setup_enable_bclspp">Prova ad attivare Bluetooth Music o connetterti via USB</string>
+    <string name="txt_setup_enable_bclspp_bt">Prova a attivare/disattivare Bluetooth Music</string>
+    <string name="txt_setup_enable_bclspp_usb">Prova ad attivare Bluetooth Music o connetterti via USB</string>
     <string name="txt_setup_bcl_connecting">La connessione Apps è in corso</string>
     <string name="txt_setup_bcl_connected">La connessione Apps è attiva</string>
     <string name="txt_setup_bcl_connected_transport">La connessione Apps è attiva via %s</string>
@@ -177,6 +184,26 @@
     <string name="lbl_advanced_settings">Mostra le impostazioni avanzate</string>
     <string name="lbl_assistant">Assistente vocale (Beta)</string>
     <string name="lbl_assistant_empty">Non trovato</string>
+    <!-- tips -->
+    <string name="lbl_tip_image">Immagine dimostrativa del suggerimento</string>
+    <string name="lbl_tiplist">Consigli e suggerimenti</string>
+    <string name="lbl_tip_expand">Espandi suggerimenti</string>
+    <string name="tip_usb_chargingmode">Cambia la modalità USB del telefono in Trasferimento file se il valore predefinito è la modalità Solo ricarica</string>
+    <string name="tip_connassistant">Usa la procedura guidata di connessione per abilitare la modalità accessorio USB nelle auto IDrive4</string>
+    <string name="tip_btapp">Assicurati che la connessione Bluetooth IDrive5 abbia l\'opzione App. Prova a scollegare l\'Audio Bluetooth e riconnetter, in caso la connessione fosse bloccata</string>
+    <string name="tip_batterymode_mybmw">Prova a disabilitare le ottimizzazioni della batteria per l\'app MyBMW, cosa che a volte aiuta a connettersi all\'auto</string>
+    <string name="tip_batterymode_mymini">Prova a disabilitare le ottimizzazioni della batteria per l\'app Mini, cosa che a volte aiuta a connettersi all\'auto</string>
+    <string name="tip_audioplayer_bookmark">Associa un pulsante scorciatoia all\'app Audioplayer per accedere rapidamente ai controlli musicali</string>
+    <string name="tip_bluetooth_music">Assicurati di impostare l\'auto per ascoltare musica Bluetooth dal tuo telefono</string>
+    <string name="tip_audioplayer_nowplaying_bookmark">Associa un pulsante scorciatoia mentre il pulsante Now Playing è selezionato per accedere rapidamente alla coda</string>
+    <string name="tip_input_emoji">Digita i \"due punti\" per iniziare a inserire una emoji, poi sceglila dalla lista delle emoji suggerite</string>
+    <string name="tip_music_hide">Fai uno swype a destra sul nome di un\'app musicale per nasconderla dalla lista delle app disponibili sull\'auto</string>
+    <string name="tip_batterymode_music">Prova a disabilitare le ottimizzazioni della batteria per le tue applicazioni musicali, cosa che potrebbe essere necessaria per avviare le applicazioni in background su alcuni telefoni come gli Xiaomi</string>
+    <string name="tip_popup_suppress_id5">I popup di notifica vengono inibiti durante l\'interazione con l\'auto o durante l\'immissione del testo</string>
+    <string name="tip_notification_bookmark">Associa un pulsante scorciatoia all\'app con l\'icona \"libro\" ma senza nome per accedere rapidamente alle notifiche</string>
+    <string name="tip_notification_bookmark_ambutton">Associa un pulsante scorciatoia all\'app Notifiche per accedere rapidamente alle stesse</string>
+    <string name="tip_notification_bookmark_details">Associa un pulsante scorciatoia mentre si sta visualizzando la lista Notifiche per accedere rapidamente alla notifica più recente</string>
+    <string name="tip_notification_quickaccess">Entrare rapidamente nell\'app Notifiche dopo aver ricevuto una nuova notifica aprirà questa notifica direttamente</string>
     <string name="notification_assistant_tap">Fai tap per lanciare %s</string>
     <string name="notification_assistant_description">Necessario solo se lo schermo è attivo</string>
     <string name="donation_title">Ti piace questa app?</string>
@@ -188,6 +215,7 @@
     <string name="txt_spotify_api_authorization_canceled">Autorizzazione API Web Spotify annullata.</string>
     <string name="txt_spotify_api_authorization_failed">Autorizzazione delle API Web Spotify non riuscita. Riprova.</string>
     <string name="lbl_spotify_api_authorized">API Web Di Spotify Autorizzata</string>
+    <string name="lbl_spotify_api_authorized_user_friendly">Possibilità di cercare in Spotify</string>
     <string name="btn_authorize">Autorizza</string>
     <!-- car app strings -->
     <string name="NOTIFICATIONS_TITLE">Notifiche</string>
@@ -201,6 +229,7 @@
     <string name="NOTIFICATION_READOUT_POPUP">Leggi\Pronuncia le nuove notifiche</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … con un passeggero</string>
     <string name="NOTIFICATION_PERMISSION_NEEDED">Questa app ha bisogno di ottenere l\'accesso alle notifiche</string>
+    <string name="NOTIFICATION_CENTER_APP">Questa applicazione viene utilizzata per comunicare con il Centro Notifiche dell\'auto</string>
     <string name="READOUT_DESCRIPTION">Questa app è utilizzata per scopi di lettura</string>
     <string name="MAP_ACTION_VIEWMAP">Visualizza la mappa fullscreen</string>
     <string name="MAP_ACTION_SEARCH">Cerca un luogo</string>
@@ -217,8 +246,12 @@
     <string name="MUSIC_BROWSE_ACTION_FILTER">Filtra</string>
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Cerca</string>
     <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Fai play dalla ricerca</string>
+    <string name="MUSIC_SEARCH_RESULTS_LABEL">Risultati di ricerca</string>
+    <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Visualizza risultati completi</string>
+    <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">In ascolto</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;La coda è vuota&gt;</string>
+    <string name="MUSIC_SEARCH_EMPTY">&lt;Nessun risultato trovato&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Precedente</string>
     <string name="MUSIC_SKIP_NEXT">Successivo</string>
     <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Esecuzione casuale non disponibile</string>

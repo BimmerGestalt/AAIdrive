@@ -29,10 +29,7 @@ import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
-import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
-import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
+import me.hufman.idriveconnectionkit.rhmi.*
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -128,7 +125,7 @@ class NotificationAppTest {
 			assertEquals("androidautoidrive.notifications", mockServer.amApps[0])
 
 			mockClient.am_onAppEvent(1, "1", mockServer.amApps[0], BMWRemoting.AMEvent.AM_APP_START)
-			assertEquals(app.viewList.state.id, mockServer.triggeredEvents[app.focusEvent.id]?.get(0.toByte()))
+			assertEquals(app.viewList.state.id, mockServer.triggeredEvents[app.focusTriggerController.focusEvent.id]?.get(0.toByte()))
 		}
 		// test entry button
 		run {
@@ -458,8 +455,32 @@ class NotificationAppTest {
 				"Custom Action", false, emptyList()
 		))
 
-		return CarNotification("me.hufman.androidautoidrive", "test$title", mock(), clearable, usedNotifications,
+		return CarNotification("me.hufman.androidautoidrive", "test$title", "Test AppName", mock(), clearable, usedNotifications,
 				title, text, mock(), sidePicture, picture, pictureUri, mock())
+	}
+
+	@Test
+	fun testPopupStatusbar() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+		app.readoutInteractions.readoutController = readoutController
+
+		val bundle = createNotificationObject("Chat: Title", "Title: FirstLine\nTitle: Text")
+
+		// show the statusbar icon when not popping
+		whenever(notificationSettings.shouldPopup(any())) doReturn false
+		app.notificationListener.onNotification(bundle)
+		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
+		assertEquals(157, (mockServer.data[551] as BMWRemoting.RHMIResourceIdentifier).id)
+
+		// plays the ringtone when showing statusbar icon
+		verify(audioPlayer).playRingtone(any())
+
+		// reads out the new notification
+		verify(readoutController).readout(listOf("Chat: ", "Title: Text"))
+		whenever(readoutController.isActive) doReturn true
+		assertEquals(bundle, app.readoutInteractions.currentNotification)
 	}
 
 	@Test
@@ -471,10 +492,9 @@ class NotificationAppTest {
 
 		val bundle = createNotificationObject("Chat: Title", "Title: FirstLine\nTitle: Text")
 
+		// don't show the statusbar icon when popping
 		app.notificationListener.onNotification(bundle)
-
-		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
-		assertEquals(157, (mockServer.data[551] as BMWRemoting.RHMIResourceIdentifier).id)
+		assertEquals(null, mockServer.triggeredEvents[4])       // does not trigger the notificationIconEvent
 
 		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent
 		val expectedHeader = "Test AppName"
@@ -484,18 +504,77 @@ class NotificationAppTest {
 		assertEquals(expectedLabel1, mockServer.data[405])
 		assertEquals(expectedLabel2, mockServer.data[406])
 
+		// plays the ringtone with the popup
 		verify(audioPlayer).playRingtone(any())
 
+		// reads out the popup
 		verify(readoutController).readout(listOf("Chat: ", "Title: Text"))
 		whenever(readoutController.isActive) doReturn true
 		assertEquals(bundle, app.readoutInteractions.currentNotification)
 	}
 
 	/**
-	 * Don't popup if we are currently reading the relevant notification
+	 * Update the popup of the same notification
+	 */
+	@Test
+	fun testPopupUpdatedNotification() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+
+		// posting the notification
+		val bundle = createNotificationObject("Title", "Text")
+		app.notificationListener.onNotification(bundle)
+		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popup
+		assertNull(mockServer.triggeredEvents[4])    // does not trigger the notificationIconEvent
+
+		// system tells us that the screen is shown
+		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "114", "hmi.graphicalContext",
+				"{\"graphicalContext\": { \"widgetType\": \"LT_Button_1Row_1CheckLeft_1IconLeft\" }}")
+
+		// updating it should update the popup
+		mockServer.triggeredEvents.clear()
+		val bundle2 = createNotificationObject("Title", "Text\nLine2")
+		app.notificationListener.onNotification(bundle2)
+		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popup
+		assertNull(mockServer.triggeredEvents[4])    // does not trigger the notificationIconEvent
+
+		// system tells us that the screen is shown
+		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "114", "hmi.graphicalContext",
+				"{\"graphicalContext\": { \"widgetType\": \"LT_Button_1Row_1CheckLeft_1IconLeft\" }}")
+
+		// another notification should not update
+		mockServer.triggeredEvents.clear()
+		val bundle3 = createNotificationObject("A different", "Text")
+		app.notificationListener.onNotification(bundle3)
+		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
+
+	}
+
+	/**
+	 * Don't popup if the phone was already showing the notification
 	 */
 	@Test
 	fun testPopupExistingNotification() {
+		val bundle = createNotificationObject("Title", "Text")
+		NotificationsState.replaceNotifications(listOf(bundle))
+
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+
+		// it should not popup
+		val bundle2 = createNotificationObject("Title", "Text")
+		app.notificationListener.onNotification(bundle2)
+		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+	}
+
+	/**
+	 * Don't popup if we are currently reading the relevant notification
+	 */
+	@Test
+	fun testPopupReadingNotification() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
@@ -504,6 +583,7 @@ class NotificationAppTest {
 
 		// read the notification
 		app.viewDetails.selectedNotification = bundle
+		app.viewDetails.state.focusCallback?.onFocus(true)
 
 		// it should not popup
 		val bundle2 = createNotificationObject("Title", "Text\nNext Message")
@@ -514,6 +594,93 @@ class NotificationAppTest {
 		app.viewDetails.state.focusCallback?.onFocus(false)
 		app.notificationListener.onNotification(bundle2)
 		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup that we just read
+	}
+
+	/**
+	 * Don't popup if we are currently inputting text
+	 */
+	@Test
+	fun testPopupInputSuppress() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+
+		val bundle = createNotificationObject("Title", "Text")
+
+		// focus the Notification Reply input
+		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(app.rhmiHandle, "test", app.stateInput.id, 1, mapOf(4.toByte() to true))
+		// new message
+		app.notificationListener.onNotification(bundle)
+
+		// it should not popup
+		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
+
+		// leave the Input
+		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(app.rhmiHandle, "test", app.stateInput.id, 1, mapOf(4.toByte() to false))
+
+		// confirm that it does show afterward
+		mockServer.triggeredEvents.clear()
+		app.readHistory.retainAll(emptyList())
+		app.notificationListener.onNotification(bundle)
+
+		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popup
+		assertNull(mockServer.triggeredEvents[4])    // does not trigger the notificationIconEvent
+
+		// now try suppressing on system-wide input events
+		mockServer.triggeredEvents.clear()
+		app.readHistory.retainAll(emptyList())
+		// user hides the popup
+		IDriveConnection.mockRemotingClient?.rhmi_onHmiEvent(app.rhmiHandle, "test", app.carApp.events.values.filterIsInstance<RHMIEvent.PopupEvent>().first().target, 1, mapOf(4.toByte() to false))
+
+		// a system-wide input
+		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "114", "hmi.graphicalContext",
+		"{\"graphicalContext\": { \"widgetType\": \"LT_Speller_Normal\" }}")
+		assertTrue(app.hmiContextChangedTime > 0)
+		assertEquals("LT_Speller_Normal", app.hmiContextWidgetType)
+		app.hmiContextChangedTime = 0       // don't rely on this to suppress, in this test
+
+		// new message
+		app.notificationListener.onNotification(bundle)
+
+		// it should not popup
+		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
+	}
+
+	/**
+	 * Don't popup if we are currently interacting
+	 */
+	@Test
+	fun testPopupInteractionSuppress() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+
+		val bundle = createNotificationObject("Title", "Text")
+
+		// a system-wide window update
+		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "114", "hmi.graphicalContext",
+				"{\"graphicalContext\": { \"widgetType\": \"LT_Button_1Row_1CheckLeft_1IconLeft\" }}")
+		assertTrue(app.hmiContextChangedTime > 0)
+
+		// new message
+		app.notificationListener.onNotification(bundle)
+
+		// it should not popup
+		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+		assertTrue(mockServer.triggeredEvents[4]?.get(0) as Boolean)    // triggers the notificationIconEvent
+
+		// interaction times out
+		app.hmiContextChangedTime -= 10000
+
+		// try showing the notification now
+		mockServer.triggeredEvents.clear()
+		app.readHistory.retainAll(emptyList())
+		app.notificationListener.onNotification(bundle)
+
+		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popup
+		assertNull(mockServer.triggeredEvents[4])    // does not trigger the notificationIconEvent
 	}
 
 	/**
@@ -605,7 +772,7 @@ class NotificationAppTest {
 
 		// on viewing the state, it should skip to the permissions view
 		app.viewList.state.focusCallback!!.onFocus(true)
-		assertEquals(app.viewPermission.state.id, mockServer.triggeredEvents[app.focusEvent.id]?.get(0.toByte()))
+		assertEquals(app.viewPermission.state.id, mockServer.triggeredEvents[app.focusTriggerController.focusEvent.id]?.get(0.toByte()))
 		assertNull(mockServer.data[386])
 
 		// doing it again should not skip through, and should draw the list like normal
@@ -644,7 +811,6 @@ class NotificationAppTest {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
-		app.viewList.initWidgets(app.viewDetails, app.viewPermission)
 
 		val item1 = createNotificationObject("Title", "Text")
 		val item2 = createNotificationObject("Title2", "Text2\nLine2")
@@ -690,7 +856,7 @@ class NotificationAppTest {
 
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++", "tts" to "true"), mock(), appSettings)
-			val id4Menu = NotificationListView(state, graphicsHelpers, settings, mock())
+			val id4Menu = NotificationListView(state, graphicsHelpers, settings, mock(), mock(), mock())
 			id4Menu.initWidgets(mock(), mock())
 			id4Menu.redrawNotificationList()
 			id4Menu.redrawSettingsList()
@@ -706,7 +872,7 @@ class NotificationAppTest {
 		rhmiApp.modelData.clear()
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5", "tts" to "true"), mock(), appSettings)
-			val id5Menu = NotificationListView(state, graphicsHelpers, settings, mock())
+			val id5Menu = NotificationListView(state, graphicsHelpers, settings, mock(), mock(), mock())
 			id5Menu.initWidgets(mock(), mock())
 			id5Menu.redrawNotificationList()
 			id5Menu.redrawSettingsList()
@@ -715,13 +881,14 @@ class NotificationAppTest {
 			assertEquals("Options", label)
 			assertEquals(true, rhmiApp.propertyData[id5Menu.settingsListView.id]!![RHMIProperty.PropertyId.VISIBLE.id])
 			val menu = rhmiApp.modelData[394] as BMWRemoting.RHMIDataTable
-			assertEquals(listOf(L.NOTIFICATION_SOUND, L.NOTIFICATION_READOUT, L.NOTIFICATION_READOUT_POPUP, L.NOTIFICATION_READOUT_POPUP_PASSENGER), menu.data.map { it[2] })
+			assertEquals(listOf(L.NOTIFICATION_POPUPS, L.NOTIFICATION_POPUPS_PASSENGER,
+					L.NOTIFICATION_SOUND, L.NOTIFICATION_READOUT, L.NOTIFICATION_READOUT_POPUP, L.NOTIFICATION_READOUT_POPUP_PASSENGER), menu.data.map { it[2] })
 		}
 
 		rhmiApp.modelData.clear()
 		run {
 			val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID5", "tts" to "false"), mock(), appSettings)
-			val id5Menu = NotificationListView(state, graphicsHelpers, settings, mock())
+			val id5Menu = NotificationListView(state, graphicsHelpers, settings, mock(), mock(), mock())
 			id5Menu.initWidgets(mock(), mock())
 			id5Menu.redrawNotificationList()
 			id5Menu.redrawSettingsList()
@@ -730,7 +897,7 @@ class NotificationAppTest {
 			assertEquals("Options", label)
 			assertEquals(true, rhmiApp.propertyData[id5Menu.settingsListView.id]!![RHMIProperty.PropertyId.VISIBLE.id])
 			val menu = rhmiApp.modelData[394] as BMWRemoting.RHMIDataTable
-			assertEquals(listOf(L.NOTIFICATION_SOUND), menu.data.map { it[2] })
+			assertEquals(listOf(L.NOTIFICATION_POPUPS, L.NOTIFICATION_POPUPS_PASSENGER, L.NOTIFICATION_SOUND), menu.data.map { it[2] })
 		}
 	}
 
@@ -775,7 +942,7 @@ class NotificationAppTest {
 		app.readoutInteractions.currentNotification = statusbarNotification2
 		whenever(readoutController.isActive) doReturn true
 		mockClient.rhmi_onHmiEvent(0, "don't care", 8, 1, mapOf(4.toByte() to true))
-		assertEquals(app.viewDetails.state.id, mockServer.triggeredEvents[5]?.get(0))
+		assertEquals(app.viewDetails.state.id, mockServer.triggeredEvents[5]?.get(0.toByte()))
 
 		// check that it cancels the reading-out when pushing back
 		mockServer.triggeredEvents.remove(5)
@@ -822,7 +989,7 @@ class NotificationAppTest {
 		callbacks.rhmi_onHmiEvent(1, "unused", 20, 1, mapOf(4.toByte() to true))
 
 		// it should set the focus to the first button
-		assertEquals(app.viewDetails.state.asToolbarState()?.toolbarComponentsList!![1].id, mockServer.triggeredEvents[5]!![0])
+		assertEquals(app.viewDetails.state.asToolbarState()?.toolbarComponentsList!![1].id, mockServer.triggeredEvents[5]!![0.toByte()])
 
 		// verify that the right information is shown
 		val appTitleList = mockServer.data[519] as BMWRemoting.RHMIDataTable
@@ -1068,7 +1235,6 @@ class NotificationAppTest {
 		IDriveConnection.mockRemotingServer = mockServer
 
 		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
-		app.viewList.initWidgets(app.viewDetails, mock())
 
 		whenever(notificationSettings.isChecked(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP)) doReturn true
 		whenever(notificationSettings.isChecked(AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER)) doReturn false
@@ -1163,7 +1329,7 @@ class NotificationAppTest {
 			assertEquals("Text", bodyList.data[0][0])
 		}
 		// it should trigger a transition to the main list
-		assertEquals(app.viewList.state.id, mockServer.triggeredEvents[5]?.get(0))
+		assertEquals(app.viewList.state.id, mockServer.triggeredEvents[5]?.get(0.toByte()))
 	}
 
 	@Test
