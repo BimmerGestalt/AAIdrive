@@ -17,8 +17,10 @@ open class CarInformation {
 		@JvmStatic
 		protected val CACHED_CAPABILITY_KEYS = setOf(
 				"hmi.type",
+				"hmi.version",
 				"navi",
-				"tts"
+				"tts",
+				"vehicle.type",
 		)
 
 		private val CACHED_CDS_INTERVAL = 10000
