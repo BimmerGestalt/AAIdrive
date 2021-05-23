@@ -103,6 +103,11 @@ jobs:
           KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
           AndroidAutoIdrive_SpotifyApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_SPOTIFYAPIKEY }}
           AndroidAutoIdrive_SentryDsn: ${{ secrets.ANDROIDAUTOIDRIVE_SENTRYDSN }}
+
+      - name: Calculate APK hashes
+        run: "find app/build/outputs/apk -name '*.apk' -execdir sha1sum {} \\;"
+      - name: Confirm APK hashes
+        run: "find app/build/outputs/apk -name '*.sha1' -exec cat {} \\; -execdir sha1sum -c {} \\;"
       - name: Upload APKs
         uses: actions/upload-artifact@v2
         with:
