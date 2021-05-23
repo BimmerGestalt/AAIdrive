@@ -12,6 +12,11 @@
             android:id="@+id/nav_connection"
             android:icon="@drawable/ic_radio_feather"
             android:title="@string/menu_connection" />
+
+        <item
+            android:id="@+id/nav_carinfo"
+            android:icon="@drawable/ic_baseline_directions_car_24"
+            android:title="@string/menu_carinfo" />
     </group>
     <group android:id="@+id/menugroup_apps">
         <item
