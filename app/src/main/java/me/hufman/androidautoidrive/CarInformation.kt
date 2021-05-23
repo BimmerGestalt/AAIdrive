@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException
 import me.hufman.androidautoidrive.carapp.CDSConnection
 import me.hufman.androidautoidrive.carapp.CDSData
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
+import me.hufman.androidautoidrive.phoneui.viewmodels.CarDrivingStatsModel
 import me.hufman.idriveconnectionkit.CDS
 import me.hufman.idriveconnectionkit.CDSProperty
 import java.util.*
@@ -24,7 +25,7 @@ open class CarInformation {
 		@JvmStatic
 		protected val CACHED_CDS_KEYS = setOf(
 				CDS.VEHICLE.LANGUAGE
-		)
+		) + CarDrivingStatsModel.CACHED_KEYS   // also register for the CarStatusPage's properties
 
 		private val _listeners = Collections.synchronizedMap(WeakHashMap<CarInformationObserver, Boolean>())
 		val listeners: Map<CarInformationObserver, Boolean> = _listeners

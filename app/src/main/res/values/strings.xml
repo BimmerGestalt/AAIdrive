@@ -34,6 +34,7 @@
     <string name="menu_overview">Overview</string>
     <string name="menu_setup">Setup</string>
     <string name="menu_connection">Connection</string>
+    <string name="menu_carinfo">Car Information</string>
     <string name="menu_music">Music</string>
     <string name="menu_notifications">Notifications</string>
     <string name="menu_assistants">Assistants</string>
@@ -205,6 +206,40 @@
 
     <string name="lbl_assistant">Voice Assistant (Beta)</string>
     <string name="lbl_assistant_empty">None found</string>
+
+    <!-- car status -->
+    <string name="lbl_carinfopage_disconnected">After your first connection, information about your car will be shown here</string>
+    <string name="lbl_carinfopage">Quick information about your car is available here</string>
+    <string name="lbl_carinfo_efficiency">Efficiency Stats</string>
+    <string name="lbl_carinfo_ev">EV Consumption Stats</string>
+    <string name="lbl_carinfo_style">Efficient Driving Style</string>
+    <string name="lbl_carinfo_lastchecked">Last checked:</string>
+    <string name="lbl_carinfo_vin">VIN:</string>
+    <string name="lbl_carinfo_odo">Odometer:</string>
+    <string name="lbl_carinfo_averageSpeed">Average Speed:</string>
+    <string name="lbl_carinfo_averageConsumption">Average Consumption:</string>
+    <string name="lbl_carinfo_ecoRangeWon">Eco Range Won:</string>
+    <string name="lbl_carinfo_evLevel">Electric Charge:</string>
+    <string name="lbl_carinfo_evRange">Electric Range:</string>
+    <string name="lbl_carinfo_fuelLevel">Fuel Level:</string>
+    <string name="lbl_carinfo_fuelRange">Fuel Range:</string>
+    <string name="lbl_carinfo_totalRange">Total Range:</string>
+    <string name="lbl_carinfo_style_accel">Acceleration:</string>
+    <string name="lbl_carinfo_style_brake">Braking:</string>
+    <string name="lbl_carinfo_style_shift">Shifting:</string>
+
+    <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">km</string>
+    <string name="lbl_carinfo_units_mi">mi</string>
+    <string name="lbl_carinfo_units_gal_uk">gal (UK)</string>
+    <string name="lbl_carinfo_units_gal_us">gal (US)</string>
+    <string name="lbl_carinfo_units_liter">L</string>
+    <string name="lbl_carinfo_units_L100km">L/100km</string>
+    <string name="lbl_carinfo_units_mpg">mpg</string>
+    <string name="lbl_carinfo_units_kmL">km/L</string>
+    <string name="lbl_carinfo_units_mph">mph</string>
+    <string name="lbl_carinfo_units_kmph">kmph</string>
+
 
     <!-- tips -->
     <string name="lbl_tip_image">Tip demonstration image</string>
