@@ -8,12 +8,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import me.hufman.androidautoidrive.CarInformation
-import me.hufman.androidautoidrive.CarInformationObserver
-import me.hufman.androidautoidrive.ChassisCode
-import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.phoneui.LiveDateHelpers.map
 
-class CarSummaryModel(carInfoOverride: CarInformation? = null): ViewModel() {
+class CarSummaryModel(carInfoOverride: CarInformation? = null, val showAdvancedSettings: BooleanLiveSetting): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -22,7 +20,7 @@ class CarSummaryModel(carInfoOverride: CarInformation? = null): ViewModel() {
 			val carInfo = CarInformationObserver {
 				handler.post { model?.update() }
 			}
-			model = CarSummaryModel(carInfo)
+			model = CarSummaryModel(carInfo, BooleanLiveSetting(appContext, AppSettings.KEYS.SHOW_ADVANCED_SETTINGS))
 			model.update()
 			return model as T
 		}
@@ -41,6 +39,8 @@ class CarSummaryModel(carInfoOverride: CarInformation? = null): ViewModel() {
 	private val hmiMatcher = Regex("^[A-Za-z0-9]*(?=_)")        // fallback to split on the first underscore
 	private val _hmiVersion = MutableLiveData<String>(null)
 	val hmiVersion: LiveData<String> = _hmiVersion
+
+	val hasConnected = _carBrand.map(false) { true }
 
 	fun update() {
 		// current car overview
