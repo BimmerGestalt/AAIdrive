@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.fragment_settingspage.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.phoneui.visible
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 
 class SettingsPageFragment: Fragment() {
 	val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }

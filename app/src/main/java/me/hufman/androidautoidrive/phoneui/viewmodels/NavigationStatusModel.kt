@@ -10,7 +10,7 @@ import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.liveData
-import me.hufman.androidautoidrive.phoneui.map
+import me.hufman.androidautoidrive.phoneui.LiveDateHelpers.map
 import me.hufman.idriveconnectionkit.CDS
 import java.util.*
 

@@ -2,13 +2,12 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.CDSVehicleLanguage
 import me.hufman.androidautoidrive.carapp.liveData
-import me.hufman.androidautoidrive.phoneui.map
+import me.hufman.androidautoidrive.phoneui.LiveDateHelpers.map
 import me.hufman.idriveconnectionkit.CDS
 import java.lang.Exception
 

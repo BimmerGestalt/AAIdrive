@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_notificationpage.swMessageNotific
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
-import me.hufman.androidautoidrive.phoneui.visible
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 
 class NotificationPageFragment: Fragment() {
 	companion object {

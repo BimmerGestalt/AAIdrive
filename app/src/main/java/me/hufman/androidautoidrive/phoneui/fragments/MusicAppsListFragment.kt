@@ -19,8 +19,8 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.phoneui.MusicAppDiscoveryThread
 import me.hufman.androidautoidrive.phoneui.adapters.MusicAppListAdapter
-import me.hufman.androidautoidrive.phoneui.findParent
-import me.hufman.androidautoidrive.phoneui.scrollTop
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.findParent
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.scrollTop
 import kotlin.math.max
 
 class MusicAppsListFragment: Fragment() {

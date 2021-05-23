@@ -13,7 +13,7 @@ import me.hufman.androidautoidrive.PhoneAppResourcesAndroid
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.assistant.AssistantAppInfo
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
-import me.hufman.androidautoidrive.phoneui.visible
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 
 class AssistantAppsListFragment: Fragment() {
 	val assistantController by lazy { AssistantControllerAndroid(requireContext(), PhoneAppResourcesAndroid(requireContext())) }
