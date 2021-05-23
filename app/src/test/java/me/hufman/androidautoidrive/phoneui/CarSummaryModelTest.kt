@@ -40,7 +40,7 @@ class CarSummaryModelTest {
 	@Test
 	fun testConnectedNoBrand() {
 		val carInfo = mock<CarInformation>()
-		val model = CarSummaryModel(carInfo).apply { update() }
+		val model = CarSummaryModel(carInfo, mock()).apply { update() }
 
 		context.run(model.carLogo.value!!)
 		verify(context, never()).getDrawable(R.drawable.logo_bmw)
@@ -56,7 +56,7 @@ class CarSummaryModelTest {
 		val carInfo = mock<CarInformation> {
 			on {capabilities} doReturn carCapabilities
 		}
-		val model = CarSummaryModel(carInfo).apply { update() }
+		val model = CarSummaryModel(carInfo, mock()).apply { update() }
 
 		assertEquals("BMW", model.carBrand.value)
 		context.run(model.carLogo.value!!)
@@ -72,7 +72,7 @@ class CarSummaryModelTest {
 		val carInfo = mock<CarInformation> {
 			on {capabilities} doReturn carCapabilities
 		}
-		val model = CarSummaryModel(carInfo).apply { update() }
+		val model = CarSummaryModel(carInfo, mock()).apply { update() }
 
 		assertEquals("MINI", model.carBrand.value)
 		context.run(model.carLogo.value!!)
@@ -87,7 +87,7 @@ class CarSummaryModelTest {
 		val carInfo = mock<CarInformation> {
 			on {capabilities} doReturn carCapabilities
 		}
-		val model = CarSummaryModel(carInfo).apply { update() }
+		val model = CarSummaryModel(carInfo, mock()).apply { update() }
 
 		assertEquals(ChassisCode.F56, model.carChassisCode.value)
 	}

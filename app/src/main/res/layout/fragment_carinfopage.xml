@@ -3,7 +3,7 @@
     <data class="CarInfoPageBinding">
         <variable
             name="viewModel"
-            type="me.hufman.androidautoidrive.phoneui.viewmodels.CarDrivingStatsModel" />
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.CarSummaryModel" />
     </data>
 
     <ScrollView
@@ -49,6 +49,13 @@
                 android:layout_height="wrap_content"
                 android:visibility="@{viewModel.hasConnected}"
                 android:name="me.hufman.androidautoidrive.phoneui.fragments.CarDrivingStatsFragment"/>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/paneCarAdvancedInfo"
+                android:visibility="@{viewModel.showAdvancedSettings}"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.CarAdvancedInfoFragment"/>
         </LinearLayout>
     </ScrollView>
 </layout>
