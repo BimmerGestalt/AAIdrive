@@ -13,7 +13,7 @@ import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.liveData
 import me.hufman.androidautoidrive.connections.BclStatusListener
-import me.hufman.androidautoidrive.phoneui.visible
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 import me.hufman.idriveconnectionkit.CDS
 
 class CarAdvancedInfoFragment: Fragment() {

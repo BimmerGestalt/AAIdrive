@@ -12,7 +12,7 @@ import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
-import me.hufman.androidautoidrive.phoneui.visible
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 
 class MapsPageFragment: Fragment() {
 	val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }

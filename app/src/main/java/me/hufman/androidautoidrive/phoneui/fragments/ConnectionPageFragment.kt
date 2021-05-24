@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.fragment_connectionpage.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.AppSettingsViewer
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.phoneui.visible
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 
 class ConnectionPageFragment: Fragment() {
 	val appSettings by lazy { AppSettingsViewer() }
