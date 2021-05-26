@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import me.hufman.androidautoidrive.*
-import me.hufman.androidautoidrive.phoneui.LiveDateHelpers.map
+import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 
 class CarSummaryModel(carInfoOverride: CarInformation? = null, val showAdvancedSettings: BooleanLiveSetting): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {

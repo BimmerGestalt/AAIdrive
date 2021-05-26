@@ -142,6 +142,9 @@ open class CarInformationUpdater(val appSettings: MutableAppSettings): CarInform
 
 	override fun onCdsConnection(connection: CDSConnection?) {
 		cdsData.setConnection(connection)
+
+		// this enables cachedCdsData liveData to register for faster updates when on-screen
+		cachedCdsData.setConnection(connection)
 	}
 
 	override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
