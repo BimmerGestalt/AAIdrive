@@ -35,15 +35,15 @@ class CarAdvancedInfoFragment: Fragment() {
 		*/
 		/*   https://github.com/hufman/IDriveConnectAddons#car-data-service   */
 		val CDS_KEYS = mapOf(
-				CDS.DRIVING.ODOMETER to "odometer",
-				CDS.SENSORS.FUEL to "fuel",
-				CDS.SENSORS.BATTERY to "battery",
+				// CDS.DRIVING.ODOMETER to "odometer",
+				//CDS.SENSORS.FUEL to "fuel",
+				//CDS.SENSORS.BATTERY to "battery",
 				CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO to "currentPositionDetailedInfo",
 				CDS.NAVIGATION.GPSPOSITION to "GPSPosition",
 				CDS.NAVIGATION.GPSEXTENDEDINFO to "GPSExtendedInfo",
-				CDS.ENGINE.TEMPERATURE to "temperature",
+				//CDS.ENGINE.TEMPERATURE to "temperature",
 				CDS.DRIVING.PARKINGBRAKE to "ParkingBrake",
-				CDS.DRIVING.AVERAGECONSUMPTION to "averageConsumption",
+				//CDS.DRIVING.AVERAGECONSUMPTION to "averageConsumption",
 				/* --- */
 				CDS.ENGINE.TORQUE to "torque",
 				CDS.ENGINE.RPMSPEED to "RPMSpeed",
@@ -54,7 +54,7 @@ class CarAdvancedInfoFragment: Fragment() {
 				// CDS.DRIVING.BRAKECONTACT to "Brake",
 				CDS.DRIVING.SPEEDACTUAL to "speedActual",
 				CDS.DRIVING.SPEEDDISPLAYED to "speedDisplayed",
-				CDS.DRIVING.DRIVINGSTYLE to "drivingStyle",
+				//CDS.DRIVING.DRIVINGSTYLE to "drivingStyle",
 				// CDS.SENSORS.BATTERYTEMP to "batteryTemp",
 				CDS.SENSORS.TEMPERATUREINTERIOR to "temperatureInterior",
 				CDS.SENSORS.TEMPERATUREEXTERIOR to "temperatureExterior",
@@ -67,7 +67,7 @@ class CarAdvancedInfoFragment: Fragment() {
 				// CDS.CONTROLS.LIGHTS to "Lights",
 				// CDS.CONTROLS.STARTSTOPSTATUS to "StartStop_Status",
 				// CDS.CONTROLS.SUNROOF to "Sunroof",
-				CDS.NAVIGATION.UNITS to "Units",
+				CDS.VEHICLE.UNITS to "Units",
 		)
 	}
 

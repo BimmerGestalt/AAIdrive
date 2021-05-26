@@ -229,15 +229,15 @@
     <string name="lbl_carinfo_style_shift">Shifting:</string>
 
     <!-- unit suffixes -->
-    <string name="lbl_carinfo_units_km">km</string>
+    <string name="lbl_carinfo_units_km" translatable="false">km</string>
     <string name="lbl_carinfo_units_mi">mi</string>
-    <string name="lbl_carinfo_units_gal_uk">gal (UK)</string>
-    <string name="lbl_carinfo_units_gal_us">gal (US)</string>
+    <string name="lbl_carinfo_units_gal_uk" translatable="false">gal (UK)</string>
+    <string name="lbl_carinfo_units_gal_us" translatable="false">gal (US)</string>
     <string name="lbl_carinfo_units_liter">L</string>
     <string name="lbl_carinfo_units_L100km">L/100km</string>
-    <string name="lbl_carinfo_units_mpg">mpg</string>
+    <string name="lbl_carinfo_units_mpg" translatable="false">mpg</string>
     <string name="lbl_carinfo_units_kmL">km/L</string>
-    <string name="lbl_carinfo_units_mph">mph</string>
+    <string name="lbl_carinfo_units_mph" translatable="false">mph</string>
     <string name="lbl_carinfo_units_kmph">kmph</string>
 
 
@@ -341,4 +341,7 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Thumb Down</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Thumbed Down</string>
+    <string name="lbl_carinfo_units_temp">Temperature</string>
+    <string name="lbl_carinfo_units_c">C</string>
+    <string name="lbl_carinfo_units_f">F</string>
 </resources>

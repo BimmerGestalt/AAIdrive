@@ -39,6 +39,11 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null): ViewModel()
 				CDS.SENSORS.FUEL,
 				CDS.SENSORS.SOCBATTERYHYBRID,
 				CDS.VEHICLE.TIME,
+				CDS.SENSORS.BATTERY,
+				CDS.ENGINE.TEMPERATURE,
+				CDS.NAVIGATION.GPSPOSITION,
+				CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO
+
 		)
 	}
 
@@ -81,6 +86,15 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null): ViewModel()
 			CDSVehicleUnits.Fuel.Gallons_US -> {{ getString(R.string.lbl_carinfo_units_gal_us) }}
 		}
 	}
+
+	/*
+	val unitsTemperatureLabel: LiveData<Context.() -> String> = units.map({getString(R.string.lbl_carinfo_units_temp)}) {
+		when (it.distanceUnits) {
+			CDSVehicleUnits.Temperature.Fahrenheit -> {{ getString(R.string.lbl_carinfo_units_f) }}
+			CDSVehicleUnits.Temperature.Celcius  -> {{ getString(R.string.lbl_carinfo_units_c) }}
+		}
+	}
+	*/
 
 	// the visible LiveData objects
 	val vin = carInfo.cachedCdsData.liveData[CDS.VEHICLE.VIN].map {
@@ -156,6 +170,14 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null): ViewModel()
 		it.tryAsJsonObject("averageSpeed")?.tryAsJsonPrimitive("averageSpeed1")?.tryAsDouble
 	}.format("%.1f").addUnit(unitsAverageSpeedLabel)
 
+	val averageConsumption2 = carInfo.cachedCdsData.liveData[CDS.DRIVING.AVERAGECONSUMPTION].map {
+		it.tryAsJsonObject("averageConsumption")?.tryAsJsonPrimitive("averageConsumption2")?.tryAsDouble
+	}.format("%.1f").addUnit(unitsAverageConsumptionLabel)
+
+	val averageSpeed2 = carInfo.cachedCdsData.liveData[CDS.DRIVING.AVERAGESPEED].map {
+		it.tryAsJsonObject("averageSpeed")?.tryAsJsonPrimitive("averageSpeed2")?.tryAsDouble
+	}.format("%.1f").addUnit(unitsAverageSpeedLabel)
+
 	val drivingStyleAccel = carInfo.cachedCdsData.liveData[CDS.DRIVING.DRIVINGSTYLE].map {
 		it.tryAsJsonObject("drivingStyle")?.tryAsJsonPrimitive("accelerate")?.tryAsInt
 	}
@@ -171,4 +193,49 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null): ViewModel()
 	}.combine(units) { value, units ->
 		units.distanceUnits.fromCarUnit(value)
 	}.format("%.1f").addUnit(unitsDistanceLabel)
+
+	/* JEZIKK additions */
+	val carBattery = carInfo.cachedCdsData.liveData[CDS.SENSORS.BATTERY].map {
+		it.tryAsJsonPrimitive("battery")?.tryAsDouble
+	}.format("%.0f")
+	val engineTemp = carInfo.cachedCdsData.liveData[CDS.ENGINE.TEMPERATURE].map {
+		it.tryAsJsonObject("temperature")?.tryAsJsonPrimitive("engine")?.tryAsDouble
+	}.format("%.0f") //.addUnit(unitsAverageSpeedLabel)
+	val oilTemp = carInfo.cachedCdsData.liveData[CDS.ENGINE.TEMPERATURE].map {
+		it.tryAsJsonObject("temperature")?.tryAsJsonPrimitive("oil")?.tryAsDouble
+	}.format("%.0f") //.addUnit(unitsAverageSpeedLabel)
+	val speedActual = carInfo.cdsData.liveData[CDS.DRIVING.SPEEDACTUAL].map {
+		it.tryAsJsonPrimitive("speedActual")?.tryAsDouble
+	}.format("%.0f").addUnit(unitsAverageSpeedLabel)
+	val speedDisplayed = carInfo.cdsData.liveData[CDS.DRIVING.SPEEDDISPLAYED].map {
+		it.tryAsJsonPrimitive("speedDisplayed")?.tryAsDouble
+	}.format("%.0f").addUnit(unitsAverageSpeedLabel)
+
+	val GPSPosition = carInfo.cachedCdsData.liveData[CDS.NAVIGATION.GPSPOSITION].map {
+		val GPSPos = it.getAsJsonObject("GPSPosition")
+		val Latitude = GPSPos.getAsJsonPrimitive("latitude")?.tryAsString
+		val Longitude = GPSPos.getAsJsonPrimitive("longitude")?.tryAsString
+		//"Latitude: "+ Latitude + " Longitude: " + Longitude
+		Pair(
+		"Latitude: "+ Latitude + " Longitude: " + Longitude,
+		Latitude + "," + Longitude
+		);
+	}
+
+	val GPSLocation = carInfo.cachedCdsData.liveData[CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO].map {
+		val Location = it.getAsJsonObject("currentPositionDetailedInfo")
+		val street = Location.getAsJsonPrimitive("street")?.tryAsString
+		val houseNumber = Location.getAsJsonPrimitive("houseNumber")?.tryAsString
+		val city = Location.getAsJsonPrimitive("city")?.tryAsString
+		val country = Location.getAsJsonPrimitive("country")?.tryAsString
+		street + " " + houseNumber + ", " + city + " " + country
+	}
+
+	val tempInterior = carInfo.cdsData.liveData[CDS.SENSORS.TEMPERATUREINTERIOR].map {
+		it.tryAsJsonPrimitive("temperatureInterior")?.tryAsDouble
+	}.format("%.1f") //.addUnit(unitsAverageSpeedLabel)
+	val tempExterior = carInfo.cdsData.liveData[CDS.SENSORS.TEMPERATUREEXTERIOR].map {
+		it.tryAsJsonPrimitive("temperatureExterior")?.tryAsDouble
+	}.format("%.1f") //.addUnit(unitsAverageSpeedLabel)
+
 }
