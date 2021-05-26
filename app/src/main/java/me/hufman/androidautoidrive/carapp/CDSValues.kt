@@ -55,7 +55,8 @@ enum class CDSVehicleLanguage(val value: Int, val locale: Locale) {
 	}
 }
 
-class CDSVehicleUnits(val consumptionUnits: Consumption, val distanceUnits: Distance, val fuelUnits: Fuel) {
+class CDSVehicleUnits(val consumptionUnits: Consumption, val distanceUnits: Distance, val fuelUnits: Fuel,
+                      val temperatureUnits: Temperature) {
 	enum class Consumption {
 		L_100km,
 		MPG_UK,
@@ -149,18 +150,42 @@ class CDSVehicleUnits(val consumptionUnits: Consumption, val distanceUnits: Dist
 			}
 		}
 	}
+
+	enum class Temperature {
+		CELCIUS,
+		FAHRENHEIT;
+
+		fun fromCarUnit(value: Number): Double {
+			return when (this) {
+				CELCIUS -> value.toDouble()
+				FAHRENHEIT -> value.toDouble() * 1.8 + 32
+			}
+		}
+
+		companion object {
+			fun fromValue(value: Int?): Temperature {
+				return when (value) {
+					2 -> FAHRENHEIT
+					else -> CELCIUS
+				}
+			}
+		}
+	}
+
 	companion object {
 		val UNKNOWN = CDSVehicleUnits(
 				Consumption.fromValue(null),
 				Distance.fromValue(null),
-				Fuel.fromValue(null)
+				Fuel.fromValue(null),
+				Temperature.fromValue(null)
 		)
 		fun fromCdsProperty(value: JsonObject?): CDSVehicleUnits {
 			val units = value?.tryAsJsonObject("units")
 			return CDSVehicleUnits(
 					Consumption.fromValue(units?.tryAsJsonPrimitive("consumption")?.tryAsInt),
 					Distance.fromValue(units?.tryAsJsonPrimitive("distance")?.tryAsInt),
-					Fuel.fromValue(units?.tryAsJsonPrimitive("fuel")?.tryAsInt)
+					Fuel.fromValue(units?.tryAsJsonPrimitive("fuel")?.tryAsInt),
+					Temperature.fromValue(units?.tryAsJsonPrimitive("temperature")?.tryAsInt)
 			)
 		}
 	}

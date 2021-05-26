@@ -7,15 +7,18 @@ import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsString
 
 import android.content.Context
+import android.net.Uri
+import android.os.Handler
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import me.hufman.androidautoidrive.CarInformation
-import me.hufman.androidautoidrive.R
+import androidx.lifecycle.ViewModelProvider
+import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.liveData
-import me.hufman.androidautoidrive.phoneui.LiveDateHelpers.addUnit
-import me.hufman.androidautoidrive.phoneui.LiveDateHelpers.combine
-import me.hufman.androidautoidrive.phoneui.LiveDateHelpers.format
-import me.hufman.androidautoidrive.phoneui.LiveDateHelpers.map
+import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.addUnit
+import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.combine
+import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.format
+import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsInt
 import me.hufman.idriveconnectionkit.CDS
 import java.lang.Exception
@@ -23,7 +26,7 @@ import java.text.DateFormat
 import java.util.*
 import kotlin.math.max
 
-class CarDrivingStatsModel(carInfoOverride: CarInformation? = null): ViewModel() {
+class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdvancedSettings: BooleanLiveSetting): ViewModel() {
 	companion object {
 		val CACHED_KEYS = setOf(
 				CDS.VEHICLE.VIN,
@@ -36,18 +39,36 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null): ViewModel()
 				CDS.DRIVING.DRIVINGSTYLE,
 				CDS.DRIVING.ECORANGEWON,
 				CDS.ENGINE.RANGECALC,
+				CDS.NAVIGATION.GPSPOSITION,
+				CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO,
+				CDS.SENSORS.BATTERY,
 				CDS.SENSORS.FUEL,
 				CDS.SENSORS.SOCBATTERYHYBRID,
 				CDS.VEHICLE.TIME,
-				CDS.SENSORS.BATTERY,
 				CDS.ENGINE.TEMPERATURE,
-				CDS.NAVIGATION.GPSPOSITION,
-				CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO
+
 
 		)
 	}
 
+	class Factory(val appContext: Context): ViewModelProvider.Factory {
+		@Suppress("UNCHECKED_CAST")
+		override fun <T : ViewModel> create(modelClass: Class<T>): T {
+			val handler = Handler()
+			var model: CarDrivingStatsModel? = null
+			val carInfo = CarInformationObserver {
+				handler.post { model?.update() }
+			}
+			model = CarDrivingStatsModel(carInfo, BooleanLiveSetting(appContext, AppSettings.KEYS.SHOW_ADVANCED_SETTINGS))
+			model.update()
+			return model as T
+		}
+	}
+
 	private val carInfo = carInfoOverride ?: CarInformation()
+
+	private val _idriveVersion = MutableLiveData<String>(null)
+	val idriveVersion: LiveData<String> = _idriveVersion
 
 	// unit conversions
 	val units: LiveData<CDSVehicleUnits> = carInfo.cachedCdsData.liveData[CDS.VEHICLE.UNITS].map(CDSVehicleUnits.UNKNOWN) {
@@ -87,15 +108,6 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null): ViewModel()
 		}
 	}
 
-	/*
-	val unitsTemperatureLabel: LiveData<Context.() -> String> = units.map({getString(R.string.lbl_carinfo_units_temp)}) {
-		when (it.distanceUnits) {
-			CDSVehicleUnits.Temperature.Fahrenheit -> {{ getString(R.string.lbl_carinfo_units_f) }}
-			CDSVehicleUnits.Temperature.Celcius  -> {{ getString(R.string.lbl_carinfo_units_c) }}
-		}
-	}
-	*/
-
 	// the visible LiveData objects
 	val vin = carInfo.cachedCdsData.liveData[CDS.VEHICLE.VIN].map {
 		it.tryAsJsonPrimitive("VIN")?.tryAsString
@@ -124,6 +136,43 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null): ViewModel()
 		} catch (e: Exception) { null }
 	}
 
+	val positionName = carInfo.cachedCdsData.liveData[CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO].map {
+		val num = it.tryAsJsonObject("currentPositionDetailedInfo")?.tryAsJsonPrimitive("houseNumber")?.tryAsString ?: ""
+		val street = it.tryAsJsonObject("currentPositionDetailedInfo")?.tryAsJsonPrimitive("street")?.tryAsString ?: ""
+		val crossStreet = it.tryAsJsonObject("currentPositionDetailedInfo")?.tryAsJsonPrimitive("crossStreet")?.tryAsString ?: ""
+		val city = it.tryAsJsonObject("currentPositionDetailedInfo")?.tryAsJsonPrimitive("city")?.tryAsString ?: ""
+		if (num.isNotBlank() && street.isNotBlank() && city.isNotBlank()) {
+			"$num $street, $city"
+		} else if (street.isNotBlank() && crossStreet.isNotBlank() && city.isNotBlank()) {
+			"$street & $crossStreet, $city"
+		} else if (street.isNotBlank() && crossStreet.isNotBlank() && city.isBlank()) {
+			"$street & $crossStreet"
+		} else if (num.isBlank() && street.isNotBlank() && city.isNotBlank()) {
+			"$street, $city"
+		} else {
+			city
+		}
+	}
+	val positionGeoName = carInfo.cachedCdsData.liveData[CDS.NAVIGATION.GPSPOSITION].map {
+		val lat = it.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("latitude")?.tryAsDouble
+		val long = it.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("longitude")?.tryAsDouble
+		if (lat != null && long != null) {
+			"$lat,$long"
+		} else {
+			null
+		}
+	}
+	val positionGeoUri = carInfo.cachedCdsData.liveData[CDS.NAVIGATION.GPSPOSITION].combine(positionName) { it, name ->
+		val lat = it.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("latitude")?.tryAsDouble
+		val long = it.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("longitude")?.tryAsDouble
+		if (lat != null && long != null) {
+			val quotedName = Uri.encode(name)
+			Uri.parse("geo:$lat,$long?q=$lat,$long($quotedName)")
+		} else {
+			null
+		}
+	}
+
 	val evLevel = carInfo.cachedCdsData.liveData[CDS.SENSORS.SOCBATTERYHYBRID].map {
 		it.tryAsJsonPrimitive("SOCBatteryHybrid")?.tryAsDouble?.takeIf { it < 255 }
 	}
@@ -136,6 +185,11 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null): ViewModel()
 	}
 	val fuelLevelLabel = fuelLevel.format("%.1f").addUnit(unitsFuelLabel)
 
+	val accBatteryLevel = carInfo.cachedCdsData.liveData[CDS.SENSORS.BATTERY].map {
+		it.tryAsJsonPrimitive("battery")?.tryAsDouble?.takeIf { it < 255 }
+	}
+	val accBatteryLevelLabel = accBatteryLevel.format("%.0f %%")
+
 	val evRange = carInfo.cachedCdsData.liveData[CDS.DRIVING.DISPLAYRANGEELECTRICVEHICLE].map {
 		it.tryAsJsonPrimitive("displayRangeElectricVehicle")?.tryAsDouble?.takeIf { it < 4095 }
 	}
@@ -143,7 +197,7 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null): ViewModel()
 
 	// a non-nullable evRange for calculating the gas-only fuelRange
 	private val _evRange = carInfo.cachedCdsData.liveData[CDS.DRIVING.DISPLAYRANGEELECTRICVEHICLE].map(0.0) {
-		it.tryAsJsonPrimitive("displayRangeElectricVehicle")?.tryAsDouble?.takeIf { it < 4095 }
+		it.tryAsJsonPrimitive("displayRangeElectricVehicle")?.tryAsDouble?.takeIf { it < 4095 } ?: 0.0
 	}
 
 	val fuelRange = carInfo.cachedCdsData.liveData[CDS.SENSORS.FUEL].map {
@@ -171,11 +225,11 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null): ViewModel()
 	}.format("%.1f").addUnit(unitsAverageSpeedLabel)
 
 	val averageConsumption2 = carInfo.cachedCdsData.liveData[CDS.DRIVING.AVERAGECONSUMPTION].map {
-		it.tryAsJsonObject("averageConsumption")?.tryAsJsonPrimitive("averageConsumption2")?.tryAsDouble
+		it.tryAsJsonObject("averageConsumption")?.tryAsJsonPrimitive("averageConsumption2")?.tryAsDouble?.takeIf { it < 2093 }
 	}.format("%.1f").addUnit(unitsAverageConsumptionLabel)
 
 	val averageSpeed2 = carInfo.cachedCdsData.liveData[CDS.DRIVING.AVERAGESPEED].map {
-		it.tryAsJsonObject("averageSpeed")?.tryAsJsonPrimitive("averageSpeed2")?.tryAsDouble
+		it.tryAsJsonObject("averageSpeed")?.tryAsJsonPrimitive("averageSpeed2")?.tryAsDouble?.takeIf { it < 2093 }
 	}.format("%.1f").addUnit(unitsAverageSpeedLabel)
 
 	val drivingStyleAccel = carInfo.cachedCdsData.liveData[CDS.DRIVING.DRIVINGSTYLE].map {
@@ -193,6 +247,11 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null): ViewModel()
 	}.combine(units) { value, units ->
 		units.distanceUnits.fromCarUnit(value)
 	}.format("%.1f").addUnit(unitsDistanceLabel)
+
+	fun update() {
+		// any other updates
+		_idriveVersion.value = carInfo.capabilities["hmi.version"]
+	}
 
 	/* JEZIKK additions */
 	val carBattery = carInfo.cachedCdsData.liveData[CDS.SENSORS.BATTERY].map {

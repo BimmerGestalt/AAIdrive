@@ -76,7 +76,7 @@ object ViewHelpers {
 	}
 }
 
-object LiveDateHelpers {
+object LiveDataHelpers {
 	// Inspired by https://github.com/tmurakami/aackt/blob/master/lifecycle-livedata/src/main/java/com/github/tmurakami/aackt/lifecycle/Transformations.kt
 	/** Like Transformations.map(LiveData), except supports an initial value */
 	inline fun <T, R : Any> LiveData<T>.map(initialValue: R? = null, crossinline block: (T) -> R?): LiveData<R> {
@@ -145,5 +145,15 @@ object LiveDateHelpers {
 			}
 		}
 		return result
+	}
+}
+
+/**
+ * A LiveData that sets its value to the producer output whenever it becomes active
+ */
+class FunctionalLiveData<T>(val producer: () -> T?): LiveData<T>() {
+	override fun onActive() {
+		super.onActive()
+		value = producer()
 	}
 }

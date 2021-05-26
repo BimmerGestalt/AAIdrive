@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.CDSVehicleLanguage
 import me.hufman.androidautoidrive.carapp.liveData
-import me.hufman.androidautoidrive.phoneui.LiveDateHelpers.map
+import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 import me.hufman.idriveconnectionkit.CDS
 import java.lang.Exception
 
