@@ -26,6 +26,7 @@
     <string name="lbl_navigation_listener_pending">Startar navigering</string>
     <string name="lbl_navigation_listener_success">Slutförd</string>
     <string name="lbl_navigation_listener_unsuccess">Lyckades ej</string>
+    <!-- Welcome pages -->
     <!-- Menu Titles -->
     <string name="menu_overview">Översikt</string>
     <string name="menu_setup">Inställningar</string>
@@ -37,6 +38,7 @@
     <string name="menu_navigation">Navigering</string>
     <string name="menu_settings">Inställningar</string>
     <string name="menu_support">Hjälp</string>
+    <string name="btn_next">Nästa</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integrerar några av din telefons musikappar och aviseringar till bilen via BMW-protokollet</string>
     <string name="lbl_connectionpage">Apparnas anslutning till bilen beror på ett par saker. Här är några tips för att säkerställa bra funktion</string>
     <plurals name="lbl_assistantpage">
