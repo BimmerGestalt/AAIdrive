@@ -13,7 +13,9 @@
     <!-- notification channel names -->
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <!-- Labels on the navigation trigger activity -->
+    <!-- Welcome pages -->
     <!-- Menu Titles -->
+    <string name="btn_next">Suivant</string>
     <string name="spawn_test_notification">Tester les Notifications</string>
     <string name="message_notifications">Notifications de Message</string>
     <string name="notification_popups">Popups de Notification</string>
