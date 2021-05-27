@@ -14,7 +14,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/pane_vertical_margin"
+        >
         <!-- speed / gear -->
         <LinearLayout
             android:orientation="horizontal"
@@ -93,6 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/pane_vertical_margin"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -192,8 +195,7 @@
                             android:text="@{viewModel.positionName}"
                             app:layout_constraintEnd_toStartOf="@+id/icMapPin"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            />
+                            app:layout_constraintTop_toTopOf="parent"/>
 
                         <TextView
                             android:id="@+id/txtGeoName"
@@ -205,6 +207,16 @@
                             app:layout_constraintEnd_toStartOf="@+id/icMapPin"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/txtPositionName"/>
+                        <TextView
+                            android:id="@+id/txtGeoAltitude"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text='@{viewModel.altitude + " mnpm"}'
+                            android:textSize="12sp"
+                            android:visibility="@{viewModel.showAdvancedSettings}"
+                            app:layout_constraintEnd_toStartOf="@+id/icMapPin"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/txtGeoName"/>
 
                         <ImageView
                             android:id="@+id/icMapPin"
@@ -611,26 +623,6 @@
                     android:layout_weight="1"
                     android:text="@{viewModel.drivingMode}"/>
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="@{viewModel.drivingGear != null}">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:text="Driving Gear"/>
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:text="@{viewModel.drivingGear}"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_width="60dp" />
-            </LinearLayout>
-
 <!--
             <LinearLayout
                 android:layout_width="match_parent"

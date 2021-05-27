@@ -322,27 +322,42 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 			}
 	}
 
+	val altitude = carInfo.cdsData.liveData[CDS.NAVIGATION.GPSEXTENDEDINFO].map {
+		it.tryAsJsonObject("GPSExtendedInfo")?.tryAsJsonPrimitive("altitude")?.tryAsInt
+	}
+
 	val headingGPS = carInfo.cdsData.liveData[CDS.NAVIGATION.GPSEXTENDEDINFO].map {
 		var heading = it.tryAsJsonObject("GPSExtendedInfo")?.tryAsJsonPrimitive("heading")?.tryAsDouble
 		var direction = ""
 		if (heading != null) {
-			heading.roundToInt()
-			if (heading < 0) {
-				heading += 360;
-				//heading = -100 + 360  = 260;
-			}
+			// heading defined in CCW manner, so we ned to inver to CW neutral direction weel.
+			heading *= -1
+			heading += 360
+			//heading = -100 + 360  = 260;
 
-			if((heading>=0 && heading<45) || (heading>=315 && heading<=359) ) {
+			if((heading>=0 && heading<22.5) || (heading>=347.5 && heading<=359.99) ) {
 				direction = "N"
 			}
-			else if (heading>=45 && heading<135) {
+			else if (heading >= 22.5 && heading < 67.5) {
+				direction = "NNE"
+			}
+			else if (heading>=67.5 && heading<112.5) {
 				direction = "E"
 			}
-			else if (heading>=135 && heading<225) {
+			else if (heading>=112.5 && heading < 157.5) {
+				direction = "SE"
+			}
+			else if (heading>=157.5 && heading<202.5) {
 				direction = "S"
 			}
-			else if (heading>=225 && heading<315){
+			else if (heading>=202.5 && heading<247.5) {
+				direction = "SW"
+			}
+			else if (heading>=247.5 && heading<302.5){
 				direction = "W"
+			}
+			else if (heading>=302.5 && heading<347.5) {
+				direction = "S"
 			}
 			else {
 				direction = "-"

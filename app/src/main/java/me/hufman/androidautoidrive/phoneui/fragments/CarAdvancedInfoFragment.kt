@@ -36,14 +36,14 @@ class CarAdvancedInfoFragment: Fragment() {
 		/*   https://github.com/hufman/IDriveConnectAddons#car-data-service   */
 		val CDS_KEYS = mapOf(
 				CDS.NAVIGATION.GPSEXTENDEDINFO to "GPSExtendedInfo",
-				CDS.DRIVING.MODE to "Mode",
+				//CDS.DRIVING.MODE to "Mode",
 				CDS.ENGINE.TORQUE to "torque",
 				CDS.ENGINE.RPMSPEED to "RPMSpeed",
-				CDS.DRIVING.GEAR to "gear",
+				//CDS.DRIVING.GEAR to "gear",
 				CDS.DRIVING.ACCELERATION to "acceleration",
 				CDS.DRIVING.ACCELERATORPEDAL to "acceleratorPedal",
-				 CDS.SENSORS.PDCRANGEFRONT2 to "PDCRangeFront",
-				 CDS.SENSORS.PDCRANGEREAR2 to "PDCRangeRear",
+				//CDS.SENSORS.PDCRANGEFRONT2 to "PDCRangeFront",
+				//CDS.SENSORS.PDCRANGEREAR2 to "PDCRangeRear",
 				// CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR to "ACCompressor",
 				CDS.CLIMATE.ACMODE to "ACMode",
 				// CDS.CLIMATE.ACCOMPRESSOR to "ACCompressor2",
@@ -52,9 +52,6 @@ class CarAdvancedInfoFragment: Fragment() {
 				// CDS.CONTROLS.STARTSTOPSTATUS to "StartStop_Status",
 				CDS.DRIVING.PARKINGBRAKE to "ParkingBrake",
 				CDS.CONTROLS.SUNROOF to "Sunroof",
-				CDS.VEHICLE.UNITS to "Units",
-				CDS.DRIVING.SPEEDDISPLAYED to "SpeedDisplayed",
-				CDS.DRIVING.SPEEDACTUAL to "SpeedActual",
 
 		)
 	}
