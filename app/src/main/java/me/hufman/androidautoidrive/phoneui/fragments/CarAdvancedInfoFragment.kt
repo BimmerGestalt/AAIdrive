@@ -35,39 +35,27 @@ class CarAdvancedInfoFragment: Fragment() {
 		*/
 		/*   https://github.com/hufman/IDriveConnectAddons#car-data-service   */
 		val CDS_KEYS = mapOf(
-				// CDS.DRIVING.ODOMETER to "odometer",
-				//CDS.SENSORS.FUEL to "fuel",
-				//CDS.SENSORS.BATTERY to "battery",
-				CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO to "currentPositionDetailedInfo",
-				CDS.NAVIGATION.GPSPOSITION to "GPSPosition",
 				CDS.NAVIGATION.GPSEXTENDEDINFO to "GPSExtendedInfo",
-				//CDS.ENGINE.TEMPERATURE to "temperature",
-				CDS.DRIVING.PARKINGBRAKE to "ParkingBrake",
-				//CDS.DRIVING.AVERAGECONSUMPTION to "averageConsumption",
-				/* --- */
+				CDS.DRIVING.MODE to "Mode",
 				CDS.ENGINE.TORQUE to "torque",
 				CDS.ENGINE.RPMSPEED to "RPMSpeed",
-				// CDS.ENGINE.RANGECALC to "RangeCalc",
 				CDS.DRIVING.GEAR to "gear",
 				CDS.DRIVING.ACCELERATION to "acceleration",
 				CDS.DRIVING.ACCELERATORPEDAL to "acceleratorPedal",
-				// CDS.DRIVING.BRAKECONTACT to "Brake",
-				CDS.DRIVING.SPEEDACTUAL to "speedActual",
-				CDS.DRIVING.SPEEDDISPLAYED to "speedDisplayed",
-				//CDS.DRIVING.DRIVINGSTYLE to "drivingStyle",
-				// CDS.SENSORS.BATTERYTEMP to "batteryTemp",
-				CDS.SENSORS.TEMPERATUREINTERIOR to "temperatureInterior",
-				CDS.SENSORS.TEMPERATUREEXTERIOR to "temperatureExterior",
-				// CDS.SENSORS.PDCRANGEFRONT to "PDCRangeFront",
-				// CDS.SENSORS.PDCRANGEREAR to "PDCRangeRear",
+				 CDS.SENSORS.PDCRANGEFRONT2 to "PDCRangeFront",
+				 CDS.SENSORS.PDCRANGEREAR2 to "PDCRangeRear",
 				// CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR to "ACCompressor",
 				CDS.CLIMATE.ACMODE to "ACMode",
 				// CDS.CLIMATE.ACCOMPRESSOR to "ACCompressor2",
 				CDS.CLIMATE.ACSYSTEMTEMPERATURES to "ACSystemTemperatures",
 				// CDS.CONTROLS.LIGHTS to "Lights",
 				// CDS.CONTROLS.STARTSTOPSTATUS to "StartStop_Status",
-				// CDS.CONTROLS.SUNROOF to "Sunroof",
+				CDS.DRIVING.PARKINGBRAKE to "ParkingBrake",
+				CDS.CONTROLS.SUNROOF to "Sunroof",
 				CDS.VEHICLE.UNITS to "Units",
+				CDS.DRIVING.SPEEDDISPLAYED to "SpeedDisplayed",
+				CDS.DRIVING.SPEEDACTUAL to "SpeedActual",
+
 		)
 	}
 

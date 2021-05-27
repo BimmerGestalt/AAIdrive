@@ -17,7 +17,7 @@
             android:paddingStart="@dimen/default_margin"
             android:paddingTop="@dimen/default_margin"
             android:animateLayoutChanges="true">
-
+            <!--
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
 
             <View style="@style/Divider"
                 android:layout_marginBottom="@dimen/pane_vertical_margin"/>
-
+            -->
             <androidx.fragment.app.FragmentContainerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -25,7 +25,7 @@ enum class CDSVehicleLanguage(val value: Int, val locale: Locale) {
 	FR_CA(15, Locale("FR", "CA")),
 	ES_MX(16, Locale("ES", "MX")),
 	PT(17, Locale("PT", "")),
-	PL(18, Locale("PL", "")),
+	PL(18, Locale("PL", "PL")),
 	EL(19, Locale("EL", "")),
 	TR(20, Locale("TR", "")),
 	HU(21, Locale("HU", "")),

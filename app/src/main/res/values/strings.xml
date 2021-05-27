@@ -356,6 +356,8 @@
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Thumb Down</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Thumbed Down</string>
     <string name="lbl_carinfo_units_temp">Temperature</string>
-    <string name="lbl_carinfo_units_c">C</string>
-    <string name="lbl_carinfo_units_f">F</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
+    <string name="lbl_engine_temp">Engine Temp</string>
+    <string name="lbl_oil_temp">Oil Temp</string>
 </resources>

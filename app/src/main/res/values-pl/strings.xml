@@ -291,8 +291,17 @@
     <string name="lbl_carinfo_totalRange">Zasięg całkowity:</string>
     <string name="lbl_carinfo_style_accel">Przyśpieszenie:</string>
     <string name="lbl_carinfo_style_brake">Hamowanie:</string>
-    <string name="lbl_carinfo_style_shift">Zmiana:</string>
+    <string name="lbl_carinfo_style_shift">Zmiana biegów:</string>
     <string name="lbl_carinfo_ecoRangeWon">Zyska z jazdy Eco:</string>
-    <string name="lbl_carinfo_units_temp">Temperature</string>
-    <string name="lbl_carinfo_units_c">C</string>
+    <string name="lbl_carinfo_units_temp">Temperatura</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit" >\u2109</string>
+    <string name="lbl_carinfo_lastPosition">Ostatnia pozycja pojazdu:</string>
+    <string name="lbl_carinfo_idriveVersion">Wersja IDrive</string>
+    <string name="lbl_carinfo_accBatteryLevel">Akumulator:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">Średnie zużycie paliwa 2:</string>
+    <string name="lbl_carinfo_averageSpeedAlt">Średnia prędkość 2:</string>
+    <string name="lbl_carinfo_evLevel">Poziom baterii:</string>
+    <string name="lbl_engine_temp">Temperatura silnika:</string>
+    <string name="lbl_oil_temp">Temperatura oleju:</string>
 </resources>
