@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data class="DependencyInfoBinding">
         <variable
             name="viewModel"
@@ -77,6 +78,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:paddingEnd="5dp"
+                app:tint="?android:attr/textColorSecondary"
                 android:src="@drawable/ic_error_outline_black_24dp" />
             <TextView
                 android:layout_width="0dp"
@@ -97,6 +99,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:paddingEnd="5dp"
+                app:tint="?android:attr/textColorSecondary"
                 android:src="@drawable/ic_error_outline_black_24dp" />
             <TextView
                 android:layout_width="0dp"
@@ -169,6 +172,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:paddingEnd="5dp"
+                app:tint="?android:attr/textColorSecondary"
                 android:src="@drawable/ic_error_outline_black_24dp" />
             <TextView
                 android:layout_width="0dp"
@@ -189,6 +193,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:paddingEnd="5dp"
+                app:tint="?android:attr/textColorSecondary"
                 android:src="@drawable/ic_error_outline_black_24dp" />
             <TextView
                 android:layout_width="0dp"
