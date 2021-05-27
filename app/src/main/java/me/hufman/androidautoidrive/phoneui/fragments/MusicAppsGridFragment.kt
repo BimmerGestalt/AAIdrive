@@ -40,9 +40,6 @@ class MusicAppsGridFragment: Fragment() {
 		return inflater.inflate(R.layout.fragment_music_appgrid, container, false)
 	}
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		// build list of discovered music apps
-		appDiscoveryThread.discovery()
-
 		listMusicApps.setOnItemClickListener { _, _, _, _ ->
 			findNavController().navigate(R.id.nav_music)
 		}

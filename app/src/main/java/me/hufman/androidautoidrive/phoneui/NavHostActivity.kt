@@ -31,6 +31,12 @@ class NavHostActivity: AppCompatActivity() {
 		L.loadResources(this)
 		CarInformation.loadCache(MutableAppSettingsReceiver(applicationContext))
 
+		if (!AppSettings[AppSettings.KEYS.FIRST_START_DONE].toBoolean()) {
+			val intent = Intent(this, WelcomeActivity::class.java)
+			startActivity(intent)
+			finish()
+		}
+
 		setContentView(R.layout.activity_navhost)
 		val navToolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.nav_toolbar)!!
 		setSupportActionBar(navToolbar)
