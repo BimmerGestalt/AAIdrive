@@ -30,6 +30,8 @@
     <string name="lbl_welcome_heading">Lass uns eine Verbindung herstellen</string>
     <string name="lbl_welcome_intro">AndroidAutoIdrive ist eine inoffizielle App, welche es Erlaubt die Musik-Apps am Telefon und andere Features zu deinem Auto hinzuzufügen. Es wird hierbei das native \"BMW Apps\" Protokoll verwendet</string>
     <string name="lbl_welcome_compatible">Es sollten die meisten neueren BMW und Mini Modelle (BJ 2014 oder neuer), welche mit einem NBT oder NBT Evo (basierend auf IDrive 4-6) ausgestattet sind und über ConnectedDrive oder einem BMW Online Abo verfügen kompatibel sein</string>
+    <string name="lbl_welcome_dependencies">Die App Verbindung zum Auto hängt von der BMW/MINI Connected App oder der neuen MyBMW oder Mini App ab</string>
+    <string name="lbl_welcome_complete">AndroidAutoIdrive fügt auch eine viel zahl weiterer Features zum Auto hinzu. Probiere es aus!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Überblick</string>
     <string name="menu_setup">Einrichtung</string>
