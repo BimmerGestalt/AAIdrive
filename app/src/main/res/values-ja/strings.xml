@@ -26,6 +26,7 @@
     <string name="lbl_navigation_listener_pending">ナビゲーションを開始する</string>
     <string name="lbl_navigation_listener_success">成功</string>
     <string name="lbl_navigation_listener_unsuccess">失敗</string>
+    <!-- Welcome pages -->
     <!-- Menu Titles -->
     <string name="menu_overview">概要</string>
     <string name="menu_setup">セットアップ</string>
@@ -37,6 +38,7 @@
     <string name="menu_navigation">ナビゲーション</string>
     <string name="menu_settings">設定</string>
     <string name="menu_support">サポート</string>
+    <string name="btn_next">次へ</string>
     <string name="lbl_overviewpage">AndroidAutoIdriveは、カスタムBMWアプリプロトコルを介して、携帯電話の音楽アプリと携帯電話の通知の一部を車に統合します</string>
     <string name="lbl_connectionpage">車へのアプリの接続はいくつかの要素に依存します。ここでは、車が正常に機能していることを確認するためのヒントをいくつか紹介します。</string>
     <plurals name="lbl_assistantpage">
