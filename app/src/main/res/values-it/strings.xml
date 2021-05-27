@@ -26,6 +26,7 @@
     <string name="lbl_navigation_listener_pending">Avvio della navigazione</string>
     <string name="lbl_navigation_listener_success">Completato</string>
     <string name="lbl_navigation_listener_unsuccess">Operazione non riuscita</string>
+    <!-- Welcome pages -->
     <!-- Menu Titles -->
     <string name="menu_overview">Panoramica</string>
     <string name="menu_setup">Configurazione</string>
@@ -37,6 +38,7 @@
     <string name="menu_navigation">Navigazione</string>
     <string name="menu_settings">Impostazioni</string>
     <string name="menu_support">Supporto</string>
+    <string name="btn_next">Successivo</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integra nella tua auto alcune delle applicazioni musicali e le notifiche del tuo telefono tramite il protocollo proprietario BMW Apps</string>
     <string name="lbl_connectionpage">La connessione delle app all\'auto dipende da alcuni fattori e qui ci sono alcuni suggerimenti per assicurarsi che tutto funzioni bene</string>
     <plurals name="lbl_assistantpage">
@@ -127,7 +129,7 @@
     <string name="txt_setup_mini_connected_65">È installata la versione 6.5 di Mini Connected che qualche volta non fa partire la connessione con l\'auto. Prova a fare un downgrade alla versione 6.4 o un upgrade alla nuova app Mini se riscontri problemi</string>
     <string name="txt_setup_bmw_mine_detected">La nuova app My BMW è installata, può causare problemi con l\'app BMW Connected e non è supportata</string>
     <string name="txt_setup_mini_mine_detected">La nuova app MINI è installata, può causare problemi con l\'app MINI Connected e non è supportata</string>
-    <string name="txt_setup_bmw_mine_conflict">Entrambe le applicazioni BMW Connected e My BMW sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non si connetta tramite USB</string>
+    <string name="txt_setup_bmw_mine_conflict">Entrambe le applicazioni BMW Connected e My BMW sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non ci si connetta tramite USB</string>
     <string name="txt_setup_mini_mine_conflict">Entrambe le app MINI Connected e My MINI sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non si connetta tramite USB</string>
     <string name="txt_setup_security_missing">Il Security Service non è raggiungibile:</string>
     <string name="btn_install">Installa</string>
@@ -190,7 +192,7 @@
     <string name="lbl_tip_expand">Espandi suggerimenti</string>
     <string name="tip_usb_chargingmode">Cambia la modalità USB del telefono in Trasferimento file se il valore predefinito è la modalità Solo ricarica</string>
     <string name="tip_connassistant">Usa la procedura guidata di connessione per abilitare la modalità accessorio USB nelle auto IDrive4</string>
-    <string name="tip_btapp">Assicurati che la connessione Bluetooth IDrive5 abbia l\'opzione App. Prova a scollegare l\'Audio Bluetooth e riconnetterla, in caso la connessione fosse bloccata</string>
+    <string name="tip_btapp">Assicurati che la connessione Bluetooth IDrive5 abbia l\'opzione App. Prova a scollegare la connessione Audio Bluetooth e a riconnetterla, in caso la stessa fosse bloccata</string>
     <string name="tip_batterymode_mybmw">Prova a disabilitare le ottimizzazioni della batteria per l\'app MyBMW, cosa che a volte aiuta a connettersi all\'auto</string>
     <string name="tip_batterymode_mymini">Prova a disabilitare le ottimizzazioni della batteria per l\'app Mini, cosa che a volte aiuta a connettersi all\'auto</string>
     <string name="tip_audioplayer_bookmark">Associa un pulsante scorciatoia all\'app Audioplayer per accedere rapidamente ai controlli musicali</string>
