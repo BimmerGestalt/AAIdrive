@@ -27,10 +27,10 @@
     <string name="lbl_navigation_listener_success">Готово</string>
     <string name="lbl_navigation_listener_unsuccess">Сбой</string>
     <!-- Welcome pages -->
-    <string name="lbl_welcome_heading">Давайте подсоединимся</string>
-    <string name="lbl_welcome_intro">AndroidAutoIdrive — это неофициальное приложение, которое добавляет музыкальные приложения и другие функции в ваш автомобиль через стандартный протокол BMW</string>
-    <string name="lbl_welcome_compatible">Большинство автомобилей BMW или MINI 2014 года и новее оснащены NBT или NBT Evo (на основе IDrive 4–6) и активная подписка ConnectedDrive или BMW Online должна быть совместима</string>
-    <string name="lbl_welcome_dependencies">Подключение приложений зависит от того, соединилось ли приложение BMW/MINI Connected (или новое приложение MyBMW/Mini) с автомобилем</string>
+    <string name="lbl_welcome_heading">Давайте подключимся</string>
+    <string name="lbl_welcome_intro">AndroidAutoIdrive — это неофициальное приложение, которое добавляет музыкальные приложения и другие полезные функции в ваш автомобиль через стандартный протокол приложений BMW</string>
+    <string name="lbl_welcome_compatible">Большинство автомобилей BMW или MINI 2014 года и новее, оснащенных NBT или NBT Evo (на основе IDrive 4–6) имеющих активную подписку ConnectedDrive или BMW Online должны быть совместимы</string>
+    <string name="lbl_welcome_dependencies">Подключение приложений зависит от того, соединилось ли приложение BMW/MINI Connected или новое приложение MyBMW/Mini с автомобилем</string>
     <string name="lbl_welcome_complete">AndroidAutoIdrive также добавляет множество других функций в ваш автомобиль, проверьте!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Обзор</string>
