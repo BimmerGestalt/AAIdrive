@@ -36,6 +36,7 @@
     <string name="menu_overview">Обзор</string>
     <string name="menu_setup">Настройки</string>
     <string name="menu_connection">Соединение</string>
+    <string name="menu_carinfo">Информация об автомобиле</string>
     <string name="menu_music">Музыка</string>
     <string name="menu_notifications">Уведомления</string>
     <string name="menu_assistants">Помощник</string>
@@ -194,7 +195,32 @@
     <string name="lbl_assistant">Голосовой помощник (бета)</string>
     <string name="lbl_assistant_empty">Не найдено</string>
     <!-- car status -->
+    <string name="lbl_carinfopage_disconnected">После первого подключения здесь будет отображена информация о вашем автомобиле</string>
+    <string name="lbl_carinfopage">Краткая информация о вашем автомобиле</string>
+    <string name="lbl_carinfo_efficiency">Статистика эффективности</string>
+    <string name="lbl_carinfo_style">Эффективный стиль вождения</string>
+    <string name="lbl_carinfo_lastchecked">Последняя проверка:</string>
+    <string name="lbl_carinfo_lastPosition">Последняя позиция:</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%s и %s</string>
+    <string name="lbl_carinfo_lastPosition_openMap">Открыть карту</string>
+    <string name="lbl_carinfo_vin">VIN:</string>
+    <string name="lbl_carinfo_odo">Одометр:</string>
+    <string name="lbl_carinfo_idriveVersion">Версия IDrive:</string>
+    <string name="lbl_carinfo_averageSpeed">Средняя скорость:</string>
+    <string name="lbl_carinfo_averageSpeedAlt">Средняя скорость (alt):</string>
+    <string name="lbl_carinfo_fuelLevel">Уровень топлива:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Уровень заряда аккумулятора:</string>
+    <string name="lbl_carinfo_style_accel">Разгон:</string>
     <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">км</string>
+    <string name="lbl_carinfo_units_gal_uk">гал (UK)</string>
+    <string name="lbl_carinfo_units_gal_us">гал (US)</string>
+    <string name="lbl_carinfo_units_liter">л</string>
+    <string name="lbl_carinfo_units_L100km">л/100км</string>
+    <string name="lbl_carinfo_units_mpg">миль/галлон</string>
+    <string name="lbl_carinfo_units_kmL">км/л</string>
+    <string name="lbl_carinfo_units_mph">миль/ч</string>
+    <string name="lbl_carinfo_units_kmph">км/ч</string>
     <!-- tips -->
     <string name="lbl_tip_image">Картинка, демонстрирующая подсказку</string>
     <string name="lbl_tiplist">Подсказки</string>
