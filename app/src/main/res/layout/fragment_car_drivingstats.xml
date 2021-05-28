@@ -22,13 +22,12 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="bottom">
+            android:gravity="top">
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp">
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -43,6 +42,14 @@
                     android:ellipsize="none"
                     android:textStyle="bold|italic"
                     android:textSize="32sp" />
+                <TextView
+                    android:text="@{viewModel.unitsAverageSpeedLabel}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="none"
+                    android:textStyle="bold|italic"
+                    android:textSize="16sp" />
             </LinearLayout>
             <LinearLayout
                 android:orientation="vertical"
@@ -65,6 +72,34 @@
                     android:textStyle="bold|italic"
                     android:textSize="32sp"/>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="none"
+                    android:singleLine="true"
+                    android:text="Mode:" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="none"
+                    android:text="" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="none"
+                    android:singleLine="true"
+                    android:text="@{viewModel.drivingMode}"
+                    android:textSize="20sp"
+                    android:textStyle="bold|italic" />
+            </LinearLayout>
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
@@ -77,13 +112,21 @@
                     android:ellipsize="none"
                     android:text="Compass:" />
                 <TextView
-                    android:text="@{viewModel.headingGPS}"
+                    android:text="@{viewModel.headingGPS.first}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:ellipsize="none"
                     android:textStyle="bold|italic"
                     android:textSize="32sp"/>
+                <TextView
+                    android:text="@{viewModel.headingGPS.second}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="none"
+                    android:textStyle="bold|italic"
+                    android:textSize="16sp"/>
             </LinearLayout>
             <View style="@style/Divider"
                 android:layout_marginTop="@dimen/pane_vertical_margin"/>
@@ -381,6 +424,21 @@
                 android:layout_weight="1"
                 android:text="@{viewModel.oilTemp}"/>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SunRoof"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@{viewModel.sunRoof}"/>
+        </LinearLayout>
         <View style="@style/Divider"
             android:layout_marginTop="@dimen/pane_vertical_margin"
             android:layout_marginBottom="@dimen/pane_vertical_margin"/>
@@ -611,7 +669,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                >
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -623,11 +682,12 @@
                     android:layout_weight="1"
                     android:text="@{viewModel.drivingMode}"/>
             </LinearLayout>
-<!--
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility='@{viewModel.parkingBrake !=""}'>
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -638,22 +698,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@{viewModel.parkingBrake}"/>
-            </LinearLayout>
--->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="SunRoof"/>
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@{viewModel.sunRoof}"/>
             </LinearLayout>
             <View style="@style/Divider"
                 android:layout_marginTop="@dimen/pane_vertical_margin"/>

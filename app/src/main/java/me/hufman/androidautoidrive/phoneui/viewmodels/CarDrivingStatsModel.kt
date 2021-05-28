@@ -33,7 +33,6 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 				CDS.VEHICLE.VIN,
 				CDS.VEHICLE.UNITS,
 				CDS.DRIVING.ODOMETER,
-
 				CDS.DRIVING.AVERAGECONSUMPTION,
 				CDS.DRIVING.AVERAGESPEED,
 				CDS.DRIVING.DISPLAYRANGEELECTRICVEHICLE,        // doesn't need unit conversion
@@ -42,6 +41,7 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 				CDS.ENGINE.RANGECALC,
 				CDS.NAVIGATION.GPSPOSITION,
 				CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO,
+				CDS.NAVIGATION.GPSEXTENDEDINFO,
 				CDS.SENSORS.BATTERY,
 				CDS.SENSORS.FUEL,
 				CDS.SENSORS.SOCBATTERYHYBRID,
@@ -50,6 +50,7 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 				CDS.CONTROLS.SUNROOF,
 				CDS.DRIVING.MODE,
 				CDS.DRIVING.PARKINGBRAKE,
+
 		)
 	}
 
@@ -271,7 +272,7 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 	}.format("%.0f").addUnit(unitsTemperatureLabel)
 	val speedActual = carInfo.cdsData.liveData[CDS.DRIVING.SPEEDACTUAL].map {
 		it.tryAsJsonPrimitive("speedActual")?.tryAsDouble
-	}.format("%.0f").addUnit(unitsAverageSpeedLabel)
+	}.format("%.0f") //.addUnit(unitsAverageSpeedLabel)
 	val speedDisplayed = carInfo.cdsData.liveData[CDS.DRIVING.SPEEDDISPLAYED].map {
 		it.tryAsJsonPrimitive("speedDisplayed")?.tryAsDouble
 	}.format("%.0f").addUnit(unitsAverageSpeedLabel)
@@ -282,33 +283,119 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 		it.tryAsJsonPrimitive("temperatureExterior")?.tryAsDouble
 	}.format("%.1f").addUnit(unitsTemperatureLabel)
 
+	/*
+		0 - Initialisierung -> initialization
+		1 - Tractionmodus -> Traction mode
+		2 - Komfortmodus -> Comfort mode
+		3 - Basismodus -> Basic mode
+		4 - Sportmodus -> Sports mode
+		5 - Sportmodusplus -> Sport+
+		6 - Racemodus -> Race
+		7 - Ecopro ->EcoPro
+		8 - Ecoproplus -> EcoPro+
+		9 - Komfortmoduserweitert -> Comfort mode extended
+		xx - Adaptive Mode
+		15 - Unknown
+
+		Some cars have "+" modes (sport+, comfort+) and some other the same modes are called "Individual".
+	 */
 	//val drivingMode = carInfo.cdsData.liveData[CDS.DRIVING.MODE].map {
 	val drivingMode = carInfo.cachedCdsData.liveData[CDS.DRIVING.MODE].map {
-		val a = it.tryAsJsonObject("mode")?.tryAsJsonPrimitive("mode")?.tryAsInt
-		val b = it.tryAsJsonPrimitive("mode")?.tryAsInt
-		"DEBUG: $a - $b"
+		val a = it.tryAsJsonPrimitive("mode")?.tryAsInt
+		if (a != null){
+			if(a == 2)
+				"Comfort"
+			else if (a == 9)
+				"Comfort+"
+			else if (a == 4)
+				"Sport"
+			else if (a== 5)
+				"Sport+"
+			else if(a==6)
+				"Race"
+			else if(a==7)
+				"EcoPro"
+			else if(a==8)
+				"EcoPro+"
+			else
+				"-"
+		}
+		else
+			"-"
+		//"DEBUG: $a"
+
 	}
+	/*
+		2 - handbrake
+		0 - Bremsensymbol_AUS -> Brake symbol off
+		1 - Bremsensymbol_Gelb -> yellow
+		2 - Bremsensymbol_Rot -> red
+		3 - Bremsemsymbol_Gruen -> green
+		4 - PARK_Gelb
+		8 - PARK_Rot
+		12 - Park_Gruen
+		16 - AutoP_Gelb
+		32 - AutoP_Rot
+		48 - AutoP_Gruen
+		127 - Unknown
+	 */
 
 	val parkingBrake = carInfo.cachedCdsData.liveData[CDS.DRIVING.PARKINGBRAKE].map {
-		it.tryAsJsonPrimitive("parkingBrake")?.tryAsInt?.takeIf { it > 0 } ?: 255
+		val pB = it.tryAsJsonPrimitive("parkingBrake")?.tryAsInt
+		if (pB != null && pB == 2) {
+			"HandBrake ON"
+		}
+		else if (pB != null && (pB == 8 || pB == 32)) {
+			"AutoPark Brake ON"
+		}
+		else
+			""
+
+		//"$pB"
 	}
 
+	/*
+		status: 0 - closed
+		status: 1 - partially open  (not tilted)
+		status: 2 - fully open
+		tilt: 1->12 -> tilted (tilted degree)
+		open: 1-50 -> how far is open
 
+	 */
 	val sunRoof =carInfo.cachedCdsData.liveData[CDS.CONTROLS.SUNROOF].map {
-		val status = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("status")?.tryAsString?.takeIf { it !="" } ?: " "
-		val openPosition = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("openPosition")?.tryAsString?.takeIf { it !="" } ?: " "
-		val tiltPosition = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("tiltPosition")?.tryAsString?.takeIf { it !="" } ?: " "
-		"DEBUG: Status: $status | Open: $openPosition | Tilt: $tiltPosition"
+		val status = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("status")?.tryAsInt
+		val openPosition = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("openPosition")?.tryAsInt
+		val tiltPosition = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("tiltPosition")?.tryAsInt
+		var sunRoofString = ""
+		if (status == 0 && tiltPosition != null && tiltPosition>0)
+		{
+			sunRoofString = "Open, tilted"
+		}
+		if (status != null && status == 1 && openPosition != null && openPosition >0) {
+			val oP = openPosition*2
+			sunRoofString = "Partially open, ($oP %)"
+		}
+		if (status != null && status == 2)
+		{
+			sunRoofString = "Fully open"
+		}
+		if (status == 0 && tiltPosition == 0 && openPosition == 0) {
+			sunRoofString = "Closed"
+		}
+
+		sunRoofString
+		//"DEBUG: Status: $status | Open: $openPosition | Tilt: $tiltPosition"
 	}
+
 
 
 	val drivingGear = carInfo.cdsData.liveData[CDS.DRIVING.GEAR].map {
 		var gear = it.tryAsJsonPrimitive("gear")?.tryAsInt?.takeIf { it >0 } ?: 255
 			if (gear == 1) {
-				"R"
+				"N"
 			}
 			else if(gear == 2 ) {
-				"N"
+				"R"
 			}
 			else if(gear == 3) {
 				"P"
@@ -322,15 +409,15 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 			}
 	}
 
-	val altitude = carInfo.cdsData.liveData[CDS.NAVIGATION.GPSEXTENDEDINFO].map {
+	val altitude = carInfo.cachedCdsData.liveData[CDS.NAVIGATION.GPSEXTENDEDINFO].map {
 		it.tryAsJsonObject("GPSExtendedInfo")?.tryAsJsonPrimitive("altitude")?.tryAsInt
 	}
 
-	val headingGPS = carInfo.cdsData.liveData[CDS.NAVIGATION.GPSEXTENDEDINFO].map {
+	val headingGPS = carInfo.cachedCdsData.liveData[CDS.NAVIGATION.GPSEXTENDEDINFO].map {
 		var heading = it.tryAsJsonObject("GPSExtendedInfo")?.tryAsJsonPrimitive("heading")?.tryAsDouble
 		var direction = ""
 		if (heading != null) {
-			// heading defined in CCW manner, so we ned to inver to CW neutral direction weel.
+			// heading defined in CCW manner, so we ned to invert to CW neutral direction wheel.
 			heading *= -1
 			heading += 360
 			//heading = -100 + 360  = 260;
@@ -364,7 +451,7 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 			}
 
 		}
-		"$direction - $heading"
+		Pair("$direction", "$heading")
 	}
 
 }
