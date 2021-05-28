@@ -189,7 +189,42 @@
     <string name="lbl_assistant_empty">Inget hittades</string>
     <!-- car status -->
     <string name="lbl_carinfopage_disconnected">Efter din första anslutning visas information om din bil här</string>
+    <string name="lbl_carinfopage">Kort information om din bil finns här</string>
+    <string name="lbl_carinfo_efficiency">Effektivitetsstatistik</string>
+    <string name="lbl_carinfo_ev">EV Förbrukningsstatistik</string>
+    <string name="lbl_carinfo_style">Effektiv körstil</string>
+    <string name="lbl_carinfo_lastchecked">Senast granskad:</string>
+    <string name="lbl_carinfo_lastPosition">Senaste position:</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%s och %s</string>
+    <string name="lbl_carinfo_lastPosition_openMap">Öppna Karta</string>
+    <string name="lbl_carinfo_vin">VIN:</string>
+    <string name="lbl_carinfo_odo">Trippmätare:</string>
+    <string name="lbl_carinfo_idriveVersion">IDriveversion:</string>
+    <string name="lbl_carinfo_averageConsumption">Genomsnittlig förbrukning:</string>
+    <string name="lbl_carinfo_averageSpeed">Medelhastighet:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">Medelförbrukningb (alt):</string>
+    <string name="lbl_carinfo_averageSpeedAlt">Medelhastighet (alt):</string>
+    <string name="lbl_carinfo_ecoRangeWon">Eco Range sparad:</string>
+    <string name="lbl_carinfo_evLevel">Laddning:</string>
+    <string name="lbl_carinfo_evRange">Elektrisk räckvidd:</string>
+    <string name="lbl_carinfo_fuelLevel">Bränslenivå:</string>
+    <string name="lbl_carinfo_fuelRange">Bränsle räckvidd:</string>
+    <string name="lbl_carinfo_totalRange">Total räckvidd:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Akumulerad batterinivå:</string>
+    <string name="lbl_carinfo_style_accel">Acceleration:</string>
+    <string name="lbl_carinfo_style_brake">Inbromsning:</string>
+    <string name="lbl_carinfo_style_shift">Växla:</string>
     <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">km</string>
+    <string name="lbl_carinfo_units_mi">mile</string>
+    <string name="lbl_carinfo_units_gal_uk">gallon (Storbritannien)</string>
+    <string name="lbl_carinfo_units_gal_us">gal (US)</string>
+    <string name="lbl_carinfo_units_liter">L</string>
+    <string name="lbl_carinfo_units_L100km">L/100km</string>
+    <string name="lbl_carinfo_units_mpg">mpg</string>
+    <string name="lbl_carinfo_units_kmL">km/L</string>
+    <string name="lbl_carinfo_units_mph">mph</string>
+    <string name="lbl_carinfo_units_kmph">kmph</string>
     <!-- tips -->
     <string name="lbl_tip_image">Exempelbild</string>
     <string name="lbl_tiplist">Tips och tricks</string>
