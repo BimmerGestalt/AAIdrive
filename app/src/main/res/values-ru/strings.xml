@@ -26,6 +26,12 @@
     <string name="lbl_navigation_listener_pending">Запуск навигации</string>
     <string name="lbl_navigation_listener_success">Готово</string>
     <string name="lbl_navigation_listener_unsuccess">Сбой</string>
+    <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Давайте подключимся</string>
+    <string name="lbl_welcome_intro">AndroidAutoIdrive — это неофициальное приложение, которое добавляет музыкальные приложения и другие полезные функции в ваш автомобиль через стандартный протокол приложений BMW</string>
+    <string name="lbl_welcome_compatible">Большинство автомобилей BMW или MINI 2014 года и новее, оснащенных NBT или NBT Evo (на основе IDrive 4–6) имеющих активную подписку ConnectedDrive или BMW Online должны быть совместимы</string>
+    <string name="lbl_welcome_dependencies">Подключение приложений зависит от того, соединилось ли приложение BMW/MINI Connected или новое приложение MyBMW/Mini с автомобилем</string>
+    <string name="lbl_welcome_complete">AndroidAutoIdrive также добавляет множество других функций в ваш автомобиль, проверьте!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Обзор</string>
     <string name="menu_setup">Настройки</string>
@@ -37,6 +43,7 @@
     <string name="menu_navigation">Навигация</string>
     <string name="menu_settings">Настройки</string>
     <string name="menu_support">Поддержка</string>
+    <string name="btn_next">Следующий</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive интегрирует некоторые музыкальные приложения и уведомления вашего телефона в автомобиль через пользовательский протокол приложений BMW</string>
     <string name="lbl_connectionpage">Подключение приложений к автомобилю зависит от нескольких деталей, и вот подсказки, чтобы убедиться, что все в порядке</string>
     <plurals name="lbl_assistantpage">
@@ -186,6 +193,8 @@
     <string name="lbl_advanced_settings">Показать расширенные настройки</string>
     <string name="lbl_assistant">Голосовой помощник (бета)</string>
     <string name="lbl_assistant_empty">Не найдено</string>
+    <!-- car status -->
+    <!-- unit suffixes -->
     <!-- tips -->
     <string name="lbl_tip_image">Картинка, демонстрирующая подсказку</string>
     <string name="lbl_tiplist">Подсказки</string>
