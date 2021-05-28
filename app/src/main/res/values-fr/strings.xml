@@ -13,7 +13,9 @@
     <!-- notification channel names -->
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <!-- Labels on the navigation trigger activity -->
+    <!-- Welcome pages -->
     <!-- Menu Titles -->
+    <string name="btn_next">Suivant</string>
     <string name="spawn_test_notification">Tester les Notifications</string>
     <string name="message_notifications">Notifications de Message</string>
     <string name="notification_popups">Popups de Notification</string>
@@ -85,6 +87,8 @@
     <string name="lbl_advanced_settings">Afficher les Paramètres Avancés</string>
     <string name="lbl_assistant">Assistant Vocal (Beta)</string>
     <string name="lbl_assistant_empty">Aucun résultat trouvé</string>
+    <!-- car status -->
+    <!-- unit suffixes -->
     <!-- tips -->
     <string name="notification_assistant_tap">Appuyer pour lancer %s</string>
     <string name="notification_assistant_description">Nécessaire uniquement car l\'écran est</string>
