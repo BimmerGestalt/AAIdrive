@@ -26,6 +26,12 @@
     <string name="lbl_navigation_listener_pending">Navigation wird gestartet</string>
     <string name="lbl_navigation_listener_success">Erfolgreich</string>
     <string name="lbl_navigation_listener_unsuccess">Erfolglos</string>
+    <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Lass uns eine Verbindung herstellen</string>
+    <string name="lbl_welcome_intro">AndroidAutoIdrive ist eine inoffizielle App, welche es Erlaubt die Musik-Apps am Telefon und andere Features zu deinem Auto hinzuzufügen. Es wird hierbei das native \"BMW Apps\" Protokoll verwendet</string>
+    <string name="lbl_welcome_compatible">Es sollten die meisten neueren BMW und Mini Modelle (BJ 2014 oder neuer), welche mit einem NBT oder NBT Evo (basierend auf IDrive 4-6) ausgestattet sind und über ConnectedDrive oder einem BMW Online Abo verfügen kompatibel sein</string>
+    <string name="lbl_welcome_dependencies">Die App Verbindung zum Auto hängt von der BMW/MINI Connected App oder der neuen MyBMW oder Mini App ab</string>
+    <string name="lbl_welcome_complete">AndroidAutoIdrive fügt auch eine viel zahl weiterer Features zum Auto hinzu. Probiere es aus!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Überblick</string>
     <string name="menu_setup">Einrichtung</string>
@@ -37,6 +43,7 @@
     <string name="menu_navigation">Steuerung</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_support">Unterstützung</string>
+    <string name="btn_next">Nächster</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integriert einige der Musik-Apps Ihres Telefons und die Benachrichtigungen Ihres Telefons über das benutzerdefinierte BMW Apps-Protokoll in Ihr Auto</string>
     <string name="lbl_connectionpage">Die Verbindung der Apps zum Auto hängt von einigen Teilen ab. Hier einige Hinweise, um sicherzustellen, dass es gut funktioniert</string>
     <plurals name="lbl_assistantpage">
@@ -179,6 +186,8 @@
     <string name="lbl_advanced_settings">Zeige erweiterte Einstellungen</string>
     <string name="lbl_assistant">Sprachassistent (Beta)</string>
     <string name="lbl_assistant_empty">Nichts gefunden</string>
+    <!-- car status -->
+    <!-- unit suffixes -->
     <!-- tips -->
     <string name="notification_assistant_tap">Drücke um %s zu starten</string>
     <string name="notification_assistant_description">Nur nötig, weil der Bildschirm an ist</string>
