@@ -26,6 +26,7 @@
     <string name="lbl_navigation_listener_pending">Începere navigare</string>
     <string name="lbl_navigation_listener_success">Succes</string>
     <string name="lbl_navigation_listener_unsuccess">Eroare</string>
+    <!-- Welcome pages -->
     <!-- Menu Titles -->
     <string name="menu_overview">General</string>
     <string name="menu_setup">Configurare</string>
@@ -37,6 +38,7 @@
     <string name="menu_navigation">Navigare</string>
     <string name="menu_settings">Setări</string>
     <string name="menu_support">Suport</string>
+    <string name="btn_next">Următorul</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integrează unele aplicații de muzică și notificările din telefon via protocolul BMW Apps</string>
     <string name="lbl_connectionpage">Conecțiunea pentru aplicații a mașinii depinde de câteva piese, și aici aveți câteva sfaturi pentru a vă asigura că funcționează corect</string>
     <string name="lbl_notificationpage">Notificările telefonului pot fi afișate și interacționate din mașină</string>
@@ -173,6 +175,8 @@
     <string name="lbl_advanced_settings">Arată setări avansate</string>
     <string name="lbl_assistant">Asistent vocal (Beta)</string>
     <string name="lbl_assistant_empty">Nu am găsit asistenți</string>
+    <!-- car status -->
+    <!-- unit suffixes -->
     <!-- tips -->
     <string name="notification_assistant_tap">Apasă pentru a lansa %s</string>
     <string name="notification_assistant_description">Necesar pentru că ecranul este pornit</string>
