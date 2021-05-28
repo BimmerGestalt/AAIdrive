@@ -382,12 +382,9 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 		if (status == 0 && tiltPosition == 0 && openPosition == 0) {
 			sunRoofString = "Closed"
 		}
-
 		sunRoofString
 		//"DEBUG: Status: $status | Open: $openPosition | Tilt: $tiltPosition"
 	}
-
-
 
 	val drivingGear = carInfo.cdsData.liveData[CDS.DRIVING.GEAR].map {
 		var gear = it.tryAsJsonPrimitive("gear")?.tryAsInt?.takeIf { it >0 } ?: 255
