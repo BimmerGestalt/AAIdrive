@@ -36,6 +36,7 @@
     <string name="menu_overview">Überblick</string>
     <string name="menu_setup">Einrichtung</string>
     <string name="menu_connection">Verbindung</string>
+    <string name="menu_carinfo">Fahrzeuginformationen</string>
     <string name="menu_music">Musik</string>
     <string name="menu_notifications">Benachrichtigungen</string>
     <string name="menu_assistants">Assistenten</string>
@@ -187,7 +188,42 @@
     <string name="lbl_assistant">Sprachassistent (Beta)</string>
     <string name="lbl_assistant_empty">Nichts gefunden</string>
     <!-- car status -->
+    <string name="lbl_carinfopage_disconnected">Nach der ersten Verbindung werden hier Informationen über Ihr Fahrzeug angezeigt</string>
+    <string name="lbl_carinfopage">Kurzinfos zu Ihrem Auto sind hier verfügbar</string>
+    <string name="lbl_carinfo_efficiency">Effizienz-Statistik</string>
+    <string name="lbl_carinfo_ev">EV-Verbrauchswerte</string>
+    <string name="lbl_carinfo_style">Fahrmodus</string>
+    <string name="lbl_carinfo_lastchecked">Zuletzt aktualisiert:</string>
+    <string name="lbl_carinfo_lastPosition">Letzte Position:</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%s und %s</string>
+    <string name="lbl_carinfo_lastPosition_openMap">Position anzeigen</string>
+    <string name="lbl_carinfo_vin">Fahrgestellnummer (VIN):</string>
+    <string name="lbl_carinfo_odo">Kilometerstand:</string>
+    <string name="lbl_carinfo_idriveVersion">IDrive-Version:</string>
+    <string name="lbl_carinfo_averageConsumption">Durchschnittlicher Verbrauch:</string>
+    <string name="lbl_carinfo_averageSpeed">Durchschnittliche Geschwindigkeit:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">Durchschnittlicher Verbrauch (zuletzt):</string>
+    <string name="lbl_carinfo_averageSpeedAlt">Durchschnittliche Geschwindigkeit (zuletzt):</string>
+    <string name="lbl_carinfo_evLevel">Elektrische Ladung:</string>
+    <string name="lbl_carinfo_evRange">Elektrische Reichweite:</string>
+    <string name="lbl_carinfo_fuelLevel">Tankinhalt:</string>
+    <string name="lbl_carinfo_fuelRange">Tankreichweite:</string>
+    <string name="lbl_carinfo_totalRange">Gesamtreichweite:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Akkustand:</string>
+    <string name="lbl_carinfo_style_accel">Beschleunigung:</string>
+    <string name="lbl_carinfo_style_brake">Bremsleistung:</string>
+    <string name="lbl_carinfo_style_shift">Schaltung:</string>
     <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">km</string>
+    <string name="lbl_carinfo_units_mi">mi</string>
+    <string name="lbl_carinfo_units_gal_uk">gal (UK)</string>
+    <string name="lbl_carinfo_units_gal_us">gal (US)</string>
+    <string name="lbl_carinfo_units_liter">L</string>
+    <string name="lbl_carinfo_units_L100km">l/100km</string>
+    <string name="lbl_carinfo_units_mpg">mpg</string>
+    <string name="lbl_carinfo_units_kmL">km/l</string>
+    <string name="lbl_carinfo_units_mph">mph</string>
+    <string name="lbl_carinfo_units_kmph">km/h</string>
     <!-- tips -->
     <string name="notification_assistant_tap">Drücke um %s zu starten</string>
     <string name="notification_assistant_description">Nur nötig, weil der Bildschirm an ist</string>
