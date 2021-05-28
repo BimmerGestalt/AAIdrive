@@ -31,6 +31,7 @@
     <string name="menu_overview">Översikt</string>
     <string name="menu_setup">Inställningar</string>
     <string name="menu_connection">Anslutning</string>
+    <string name="menu_carinfo">Bilinformation</string>
     <string name="menu_music">Musik</string>
     <string name="menu_notifications">Aviseringar</string>
     <string name="menu_assistants">Röstassistenter</string>
@@ -187,6 +188,7 @@
     <string name="lbl_assistant">Röstassistent (Beta)</string>
     <string name="lbl_assistant_empty">Inget hittades</string>
     <!-- car status -->
+    <string name="lbl_carinfopage_disconnected">Efter din första anslutning visas information om din bil här</string>
     <!-- unit suffixes -->
     <!-- tips -->
     <string name="lbl_tip_image">Exempelbild</string>
