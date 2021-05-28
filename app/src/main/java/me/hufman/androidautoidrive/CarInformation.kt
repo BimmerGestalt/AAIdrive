@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException
 import me.hufman.androidautoidrive.carapp.CDSConnection
 import me.hufman.androidautoidrive.carapp.CDSData
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
+import me.hufman.androidautoidrive.phoneui.viewmodels.CarDrivingStatsModel
 import me.hufman.idriveconnectionkit.CDS
 import me.hufman.idriveconnectionkit.CDSProperty
 import java.util.*
@@ -16,15 +17,17 @@ open class CarInformation {
 		@JvmStatic
 		protected val CACHED_CAPABILITY_KEYS = setOf(
 				"hmi.type",
+				"hmi.version",
 				"navi",
-				"tts"
+				"tts",
+				"vehicle.type",
 		)
 
 		private val CACHED_CDS_INTERVAL = 10000
 		@JvmStatic
 		protected val CACHED_CDS_KEYS = setOf(
 				CDS.VEHICLE.LANGUAGE
-		)
+		) + CarDrivingStatsModel.CACHED_KEYS   // also register for the CarStatusPage's properties
 
 		private val _listeners = Collections.synchronizedMap(WeakHashMap<CarInformationObserver, Boolean>())
 		val listeners: Map<CarInformationObserver, Boolean> = _listeners
@@ -139,6 +142,9 @@ open class CarInformationUpdater(val appSettings: MutableAppSettings): CarInform
 
 	override fun onCdsConnection(connection: CDSConnection?) {
 		cdsData.setConnection(connection)
+
+		// this enables cachedCdsData liveData to register for faster updates when on-screen
+		cachedCdsData.setConnection(connection)
 	}
 
 	override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
