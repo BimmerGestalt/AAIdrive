@@ -19,6 +19,7 @@
     <string name="lbl_navigation_listener_parsefailure">Nie znaleziono miejsca docelowego</string>
     <string name="lbl_navigation_listener_pending">Uruchamianie nawigacji</string>
     <string name="lbl_navigation_listener_success">Sukces</string>
+    <!-- Welcome pages -->
     <!-- Menu Titles -->
     <string name="menu_overview">Przegląd</string>
     <string name="menu_setup">Ustawiać (setup)</string>
@@ -30,6 +31,7 @@
     <string name="menu_navigation">Nawigacja</string>
     <string name="menu_settings">Ustawienia</string>
     <string name="menu_support">Wsparcie</string>
+    <string name="btn_next">Aktualnie odtwarzane</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integruje niektóre aplikacje muzyczne i powiadomienia z telefonu z samochodem za pośrednictwem niestandardowego protokołu BMW Apps</string>
     <string name="lbl_connectionpage">Połączenie aplikacji z samochodem zależy od kilku elementów, a oto kilka wskazówek, aby upewnić się, że działa dobrze</string>
     <string name="lbl_notificationpage">Przychodzące powiadomienia można przeglądać i obsługiwać z poziomu samochodu</string>
@@ -121,7 +123,7 @@
     <string name="txt_setup_enable_bcl_mode">Włącz usługę Aplikacje w samochodzie dla tego %s</string>
     <string name="txt_setup_bcl_disconnected">Połączenie w trybie Aplikacji nie jest gotowe:</string>
     <string name="txt_setup_bcl_waiting">Czekam na rozpoczęcie połączenia z aplikacjami</string>
-    <string name="txt_setup_enable_bclspp_usb">Spróbuj przełączyć na muzykę przez Bluetooth lub podłącz kabel USB</string>
+    <string name="txt_setup_enable_bclspp_usb">Spróbuj przełączyć na Muzykę Bluetooth lub podłącz kabel USB</string>
     <string name="txt_setup_bcl_connecting">Połączenie w trybie Aplikacji łączenie …</string>
     <string name="txt_setup_bcl_connected">Połączenie w trybie Aplikacji działa</string>
     <string name="txt_setup_bcl_connected_transport">Połączenie w trybie Aplikacji przez %s</string>
@@ -150,6 +152,8 @@
     <string name="lbl_advanced_settings">Pokaż ustawienia zaawansowane</string>
     <string name="lbl_assistant">Asystent głosowy (beta)</string>
     <string name="lbl_assistant_empty">Nic nie znaleziono</string>
+    <!-- car status -->
+    <!-- unit suffixes -->
     <!-- tips -->
     <string name="notification_assistant_tap">Dotknij, aby uruchomić %s</string>
     <string name="notification_assistant_description">Konieczne tylko dlatego, że ekran jest włączony</string>
@@ -200,69 +204,4 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Kciuk w górę</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Kciuk w dół</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Kciuk w dół</string>
-    <string name="lbl_cds_data" />
-    <string name="lbl_navigation_listener_unsuccess">Niepowodzenie</string>
-    <string name="btn_search">Szukaj</string>
-    <string name="notification_channel_test">Testowe powiadomienie</string>
-    <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
-    <string name="MUSIC_SEARCH_EMPTY">&lt;Nic nie znaleziono&gt;</string>
-    <string name="lbl_spotify_api_authorized_user_friendly">Możliwość wyszukiwania w Spotify</string>
-    <string name="lbl_notification_permissions">Dostęp do powiadomień</string>
-    <string name="lbl_notification_sms_permissions">Dostęp do pokazywania obrazkow w SMS</string>
-    <string name="btn_add">Dodaj</string>
-    <string name="lbl_grant_background_music">Zezwól na uruchamianie aplikacji muzycznych w tle, jeśli samochód ma problemy z ich uruchamianiem</string>
-    <string name="notification_quickreplies_default">[\"👍\",\"Tak\",\"Nie\",\"Nie mogę teraz rozmawiać, oddzwonie\",\"Oddzwonie poźniej\",]</string>
-    <string name="btn_authorize">Autoryzacja</string>
-    <string name="txt_setup_bmw_connected_65">"Zainstalowane jest BMW Connected wersja 6.5, które czasami nie uruchamia połączenia z samochodem. Spróbuj obniżyć do wersji 6.4 lub zaktualizować do MyBMW, jeśli napotkasz problemy "</string>
-    <string name="txt_setup_bmw_mine_conflict">Zainstalowane masz zarówno aplikacje BMW Connected, jak i My BMW, co może powodować niestabilność połączenia (chyba że łączysz się przez USB)</string>
-    <string name="txt_setup_mini_mine_conflict">Zainstalowane masz zarówno aplikacje MINI Connected, jak i My MINI, co może powodować niestabilność połączenia (chyba że łączysz się przez USB)</string>
-    <string name="notification_channel_connection">Status połączanie z samochodem</string>
-    <string name="txt_cds_view">"Raport danych z samochodu: "</string>
-    <string name="lbl_navigationstatus_active">"Obecnie prowadzę do "</string>
-    <string name="notification_channel_donation">"Prośba o darowiznę "</string>
-    <string name="lbl_language_forcelanguage">"Wymuś określony język "</string>
-    <string name="lbl_language_carinterface">"Język wyświetlany w samochodzie "</string>
-    <string name="txt_setup_mini_connected_65">"Zainstalowane jest MINI Connected wersja 6.5, które czasami nie uruchamia połączenia z samochodem. Spróbuj obniżyć do wersji 6.4 lub zaktualizować do MyMini, jeśli napotkasz problemy "</string>
-    <string name="lbl_navigationstatus_inactive">Nawigacja nieaktywna</string>
-    <string name="lbl_navigationpage_address">Wklej dokadny adres, aby uruchomić system nawigacji w samochodzie</string>
-    <string name="lbl_language_prefercar_code">Preferuj język samochodowy (%s) a nie język telefonu</string>
-    <string name="lbl_language_prefercar">Preferuj język samochodowy a nie język telefonu</string>
-    <string name="notification_quickreplies">Szybkie odpowiedzi</string>
-    <string name="MUSIC_SEARCH_RESULTS_LABEL">Wyniki wyszukiwania</string>
-    <string name="lbl_navigationpage_intent">Po nawiązaniu połączenia z samochodem, system nawigacyjny pojawi się jako opcja</string>
-    <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Zobacz wszystkie wyniki</string>
-    <string name="txt_setup_usb_requires_connected">Połączenie USB wymaga zainstalowania aplikacji BMW/Mini Connected wersja 6.4</string>
-    <string name="lbl_ttsUnsupported">Twój samochód nie obsługuje funkcji TTS</string>
-    <string name="txt_setup_enable_bclspp_bt">"Spróbuj przełączyć na muzykę przez Bluetooth "</string>
-    <string name="NOTIFICATION_PERMISSION_NEEDED">Ta aplikacja musi mieć dostęp do powiadomień</string>
-    <string name="NOTIFICATION_CENTER_APP">Ta aplikacja służy do wysyłania powiadomień do centrum powiadomień samochodu</string>
-    <string name="lbl_assistantpage_tip">Te aplikacje są niezależne od przycisku na kierownicy z asystentem głosowym, który uruchamia tylko domyślnego asystenta i jest konfigurowany osobno</string>
-    <string name="txt_spotify_auth_notification">"Wymagana jest autoryzacja Spotify Web API. Kliknij tutaj, aby autoryzować. "</string>
-    <string name="txt_spotify_app_remote_last_error">"Ostatni błąd aplikacji Spotify App Remote: "</string>
-    <string name="notification_channel_spotify">"Autoryzacja Spotify "</string>
-    <string name="txt_spotify_api_authorization_canceled">"Anulowano autoryzację Spotify Web API. "</string>
-    <string name="txt_spotify_api_authorization_failed">Autoryzacja Spotify Web API nie powiodła się. Proszę spróbuj ponownie.</string>
-    <string name="txt_spotify_api_authorization_needed">Wymagana autoryzacja Spotify Web API.</string>
-    <string name="txt_spotify_api_authorization_success">Autoryzacja Spotify Web API zakończona powodzeniem!</string>
-    <string name="lbl_spotify_api_authorized">Spotify Web API zautoryzowane</string>
-    <string name="notification_channel_assistant">Asystenci głosowi</string>
-    <string name="lbl_tiplist">Porady i wskazówki</string>
-    <string name="lbl_tip_expand">"Rozwiń wskazówki "</string>
-    <string name="lbl_tip_image">Obraz demonstrujący wskazkę</string>
-    <string name="tip_usb_chargingmode">Przełącz tryb USB telefonu na Transfer plików, jeśli domyślnie jest ustawiony na tryb Tylko ładowanie</string>
-    <string name="tip_connassistant">Użyj Kreatora połączenia, aby włączyć tryb akcesoriów USB w samochodach z IDrive</string>
-    <string name="tip_btapp">Upewnij się, że połączenie Bluetooth z IDrive5 ma włączoną opcję Aplikacje. Spróbuj odłączyć Bluetooth Audio i połączyć się ponownie, jeśli połączenie nie działa</string>
-    <string name="tip_batterymode_mybmw">"Spróbuj wyłączyć optymalizację baterii dla aplikacji MyBMW, która czasami pomaga połączyć się z samochodem "</string>
-    <string name="tip_batterymode_mymini">"Spróbuj wyłączyć optymalizację baterii dla aplikacji MyMini, która czasami pomaga połączyć się z samochodem "</string>
-    <string name="tip_audioplayer_bookmark">Zapisz przycisk skrótu w aplikacji Audioplayer, aby uzyskać szybki dostęp do sterowania muzyką</string>
-    <string name="tip_bluetooth_music">"Upewnij się, że Twój samochód jest ustawiony na słuchanie muzyki Bluetooth z telefonu "</string>
-    <string name="tip_audioplayer_nowplaying_bookmark">"Zapisz przycisk skrótu, gdy wybrany jest przycisk Teraz odtwarzane, aby uzyskać szybki dostęp do kolejki "</string>
-    <string name="tip_input_emoji">"Wpisz dwukropek, aby zacząć pisać emoji, a następnie wybierz z listy sugestii "</string>
-    <string name="tip_music_hide">Przesuń w prawo na aplikacji muzycznej, aby ukryć ją w samochodzie</string>
-    <string name="tip_batterymode_music">"Spróbuj wyłączyć optymalizację baterii dla aplikacji muzycznych, co może być potrzebne do uruchamiania aplikacji w tle na niektórych markach telefonów, takich jak Xiaomi "</string>
-    <string name="tip_popup_suppress_id5">"Wyskakujące powiadomienia są pomijane podczas interakcji z samochodem lub podczas wprowadzania tekstu "</string>
-    <string name="tip_notification_bookmark">"Zapisz przycisk skrótu w nieoznaczonej aplikacji \"Book\", aby mieć szybki dostęp do powiadomień "</string>
-    <string name="tip_notification_bookmark_ambutton">Zapisz przycisk skrótu w aplikacji Powiadomienia, aby mieć szybki dostęp do powiadomień</string>
-    <string name="tip_notification_bookmark_details">Zapisz przycisk skrótu podczas przeglądania listy powiadomień, aby mieć szybki dostęp do ostatniego powiadomienia</string>
-    <string name="tip_notification_quickaccess">Szybkie wejście do aplikacji Powiadomienia po otrzymaniu nowego powiadomienia spowoduje bezpośrednie otwarcie tego powiadomienia</string>
 </resources>
