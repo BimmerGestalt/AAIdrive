@@ -28,10 +28,10 @@
     <string name="lbl_navigation_listener_unsuccess">Erfolglos</string>
     <!-- Welcome pages -->
     <string name="lbl_welcome_heading">Lass uns eine Verbindung herstellen</string>
-    <string name="lbl_welcome_intro">AndroidAutoIdrive ist eine inoffizielle App, welche es Erlaubt die Musik-Apps am Telefon und andere Features zu deinem Auto hinzuzufügen. Es wird hierbei das native \"BMW Apps\" Protokoll verwendet</string>
+    <string name="lbl_welcome_intro">AndroidAutoIdrive ist eine inoffizielle App, welche es erlaubt die Musik-Apps des Telefons und andere Features zu Ihrem Auto hinzuzufügen. Es wird hierbei das native \"BMW Apps\"-Protokoll verwendet</string>
     <string name="lbl_welcome_compatible">Es sollten die meisten neueren BMW und Mini Modelle (BJ 2014 oder neuer), welche mit einem NBT oder NBT Evo (basierend auf iDrive 4-6) ausgestattet sind und über ConnectedDrive oder einem BMW Online Abo verfügen kompatibel sein</string>
     <string name="lbl_welcome_dependencies">Die App Verbindung zum Auto hängt von der BMW/MINI Connected App oder der neuen My BMW oder Mini App ab</string>
-    <string name="lbl_welcome_complete">AndroidAutoIdrive fügt auch eine viel zahl weiterer Features zum Auto hinzu. Probiere es aus!</string>
+    <string name="lbl_welcome_complete">AndroidAutoIdrive fügt auch eine Vielzahl weiterer Features zum Auto hinzu. Probieren Sie es aus!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Überblick</string>
     <string name="menu_setup">Einrichtung</string>
@@ -194,22 +194,22 @@
     <string name="lbl_assistant_empty">Nichts gefunden</string>
     <!-- car status -->
     <string name="lbl_carinfopage_disconnected">Nach der ersten Verbindung werden hier Informationen über Ihr Fahrzeug angezeigt</string>
-    <string name="lbl_carinfopage">Kurzinfos zu Ihrem Auto sind hier verfügbar</string>
+    <string name="lbl_carinfopage">Hier sind Kurzinfos zu Ihrem Auto verfügbar</string>
     <string name="lbl_carinfo_efficiency">Effizienz-Statistik</string>
     <string name="lbl_carinfo_ev">EV-Verbrauchswerte</string>
     <string name="lbl_carinfo_style">Fahrmodus</string>
-    <string name="lbl_carinfo_lastchecked">Zuletzt aktualisiert:</string>
+    <string name="lbl_carinfo_lastchecked">Letzte Aktualisierung:</string>
     <string name="lbl_carinfo_lastPosition">Letzte Position:</string>
     <string name="lbl_carinfo_lastPosition_crossStreet">%s und %s</string>
     <string name="lbl_carinfo_lastPosition_openMap">Position anzeigen</string>
     <string name="lbl_carinfo_vin">Fahrgestellnummer (VIN):</string>
     <string name="lbl_carinfo_odo">Kilometerstand:</string>
     <string name="lbl_carinfo_idriveVersion">iDrive-Version:</string>
-    <string name="lbl_carinfo_averageConsumption">Durchschnittlicher Verbrauch:</string>
-    <string name="lbl_carinfo_averageSpeed">Durchschnittliche Geschwindigkeit:</string>
-    <string name="lbl_carinfo_averageConsumptionAlt">Durchschnittlicher Verbrauch (zuletzt):</string>
-    <string name="lbl_carinfo_averageSpeedAlt">Durchschnittliche Geschwindigkeit (zuletzt):</string>
-    <string name="lbl_carinfo_ecoRangeWon">ECO PRO Bonusreichweite:</string>
+    <string name="lbl_carinfo_averageConsumption">⌀-Verbrauch:</string>
+    <string name="lbl_carinfo_averageSpeed">⌀-Geschwindigkeit:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">⌀-Verbrauch (zuletzt):</string>
+    <string name="lbl_carinfo_averageSpeedAlt">⌀-Geschwindigkeit (zuletzt):</string>
+    <string name="lbl_carinfo_ecoRangeWon">Aktuelle Bonusreichweite:</string>
     <string name="lbl_carinfo_evLevel">Elektrische Ladung:</string>
     <string name="lbl_carinfo_evRange">Elektrische Reichweite:</string>
     <string name="lbl_carinfo_fuelLevel">Tankinhalt:</string>
