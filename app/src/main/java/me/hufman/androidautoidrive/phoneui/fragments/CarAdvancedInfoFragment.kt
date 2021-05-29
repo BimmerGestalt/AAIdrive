@@ -21,16 +21,34 @@ class CarAdvancedInfoFragment: Fragment() {
 		const val REDRAW_DEBOUNCE = 100
 
 		val CDS_KEYS = mapOf(
+			CDS.ENGINE.INFO to "info",
 			CDS.ENGINE.TEMPERATURE to "temperature",
+			CDS.ENGINE.CONSUMPTION to "consumption",
+			CDS.DRIVING.MODE to "mode",
 			CDS.ENGINE.TORQUE to "torque",
 			CDS.ENGINE.RPMSPEED to "RPMSpeed",
 			CDS.DRIVING.GEAR to "gear",
 			CDS.SENSORS.BATTERY to "battery",
 			CDS.SENSORS.BATTERYTEMP to "batteryTemp",
+			CDS.CONTROLS.HEADLIGHTS to "headlights",
+			CDS.CONTROLS.LIGHTS to "lights",
+			CDS.CONTROLS.CONVERTIBLETOP to "convertibleTop",
+			CDS.CONTROLS.SUNROOF to "sunroof",
+			CDS.CONTROLS.WINDOWDRIVERFRONT to "windowDriverFront",
+			CDS.CONTROLS.WINDOWPASSENGERFRONT to "windowPassengerFront",
+			CDS.CONTROLS.WINDOWDRIVERREAR to "windowDriverRear",
+			CDS.CONTROLS.WINDOWPASSENGERREAR to "windowPassengerRear",
 			CDS.SENSORS.FUEL to "fuel",
+			CDS.DRIVING.DISPLAYRANGEELECTRICVEHICLE to "displayRangeElectricVehicle",
+			CDS.ENGINE.ELECTRICVEHICLEMODE to "electricVehicleMode",
+			CDS.DRIVING.ELECTRICALPOWERDISTRIBUTION to "electricalPowerDistribution",
 			CDS.SENSORS.TEMPERATUREINTERIOR to "temperatureInterior",
 			CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR to "ACCompressor",
+			CDS.CLIMATE.ACMODE to "ACMode",
 			CDS.CLIMATE.ACSYSTEMTEMPERATURES to "ACSystemTemperatures",
+			CDS.ENTERTAINMENT.MULTIMEDIA to "multimedia",
+			CDS.ENTERTAINMENT.RADIOSTATION to "radioStation",
+			CDS.HMI.GRAPHICALCONTEXT to "graphicalContext",
 		)
 	}
 
