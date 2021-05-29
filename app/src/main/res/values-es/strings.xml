@@ -22,6 +22,7 @@
     <string name="lbl_navigation_listener_searching">Buscar destino</string>
     <string name="lbl_navigation_listener_parsefailure">Destino no encontrado</string>
     <string name="lbl_navigation_listener_pending">Comenzar guiado a destino</string>
+    <!-- Welcome pages -->
     <!-- Menu Titles -->
     <string name="menu_setup">Configuración</string>
     <string name="menu_connection">Conexión</string>
@@ -32,6 +33,7 @@
     <string name="menu_navigation">Navegación</string>
     <string name="menu_settings">Ajustes</string>
     <string name="menu_support">Soporte</string>
+    <string name="btn_next">Siguiente</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integra algunas de las aplicaciones de música de tu teléfono y las notificaciones de tu teléfono en tu coche a través del protocolo de aplicaciones BMW</string>
     <string name="lbl_connectionpage">La conexión de la aplicación con el coche depende de varios elementos, aquí puede encontrar una guía para asegurarse de que la conexión funcione correctamente</string>
     <string name="spawn_test_notification">Notificación de prueba</string>
@@ -105,6 +107,8 @@
     <string name="lbl_advanced_settings">Mostrar configuración avanzada</string>
     <string name="lbl_assistant">Asistente de voz (Beta)</string>
     <string name="lbl_assistant_empty">No se encontró</string>
+    <!-- car status -->
+    <!-- unit suffixes -->
     <!-- tips -->
     <string name="notification_assistant_tap">Toque para iniciar %s</string>
     <string name="notification_assistant_description">Solo es necesario porque la pantalla está prendida</string>
