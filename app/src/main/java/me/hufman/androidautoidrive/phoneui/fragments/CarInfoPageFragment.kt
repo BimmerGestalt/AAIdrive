@@ -10,7 +10,7 @@ import me.hufman.androidautoidrive.databinding.CarInfoPageBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.CarSummaryModel
 
 class CarInfoPageFragment: Fragment() {
-	val viewModel by activityViewModels<CarSummaryModel>()
+	val viewModel by activityViewModels<CarSummaryModel> { CarSummaryModel.Factory(requireContext().applicationContext) }
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 		val binding = CarInfoPageBinding.inflate(inflater, container, false)
