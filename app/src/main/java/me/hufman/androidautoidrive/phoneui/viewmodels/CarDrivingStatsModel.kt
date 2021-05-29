@@ -188,13 +188,13 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 	val accBatteryLevelLabel = accBatteryLevel.format("%.0f %%")
 
 	val evRange = carInfo.cachedCdsData.liveData[CDS.DRIVING.DISPLAYRANGEELECTRICVEHICLE].map {
-		it.tryAsJsonPrimitive("displayRangeElectricVehicle")?.tryAsDouble?.takeIf { it < 4095 }
+		it.tryAsJsonPrimitive("displayRangeElectricVehicle")?.tryAsDouble?.takeIf { it < 4093 }
 	}
 	val evRangeLabel = evRange.format("%.0f").addUnit(unitsDistanceLabel)
 
 	// a non-nullable evRange for calculating the gas-only fuelRange
 	private val _evRange = carInfo.cachedCdsData.liveData[CDS.DRIVING.DISPLAYRANGEELECTRICVEHICLE].map(0.0) {
-		it.tryAsJsonPrimitive("displayRangeElectricVehicle")?.tryAsDouble?.takeIf { it < 4095 } ?: 0.0
+		it.tryAsJsonPrimitive("displayRangeElectricVehicle")?.tryAsDouble?.takeIf { it < 4093 } ?: 0.0
 	}
 
 	val fuelRange = carInfo.cachedCdsData.liveData[CDS.SENSORS.FUEL].map {
