@@ -44,7 +44,6 @@
     <string name="menu_navigation">Навигация</string>
     <string name="menu_settings">Настройки</string>
     <string name="menu_support">Поддержка</string>
-    <string name="btn_next">Следующий</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive интегрирует некоторые музыкальные приложения и уведомления вашего телефона в автомобиль через пользовательский протокол приложений BMW</string>
     <string name="lbl_connectionpage">Подключение приложений к автомобилю зависит от нескольких деталей, и вот подсказки, чтобы убедиться, что все в порядке</string>
     <plurals name="lbl_assistantpage">
