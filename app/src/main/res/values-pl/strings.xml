@@ -38,6 +38,7 @@
     <string name="menu_navigation">Nawigacja</string>
     <string name="menu_settings">Ustawienia</string>
     <string name="menu_support">Wsparcie</string>
+    <string name="btn_next">Aktualnie odtwarzane</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integruje niektóre aplikacje muzyczne i powiadomienia z telefonu z samochodem za pośrednictwem niestandardowego protokołu BMW Apps</string>
     <string name="lbl_connectionpage">Połączenie aplikacji z samochodem zależy od kilku elementów, a oto kilka wskazówek, aby upewnić się, że działa dobrze</string>
     <string name="lbl_assistantpage_tip">Te aplikacje są niezależne od przycisku na kierownicy z asystentem głosowym, który uruchamia tylko domyślnego asystenta i jest konfigurowany osobno</string>
