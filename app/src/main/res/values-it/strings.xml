@@ -36,6 +36,7 @@
     <string name="menu_overview">Panoramica</string>
     <string name="menu_setup">Configurazione</string>
     <string name="menu_connection">Connessione</string>
+    <string name="menu_carinfo">Informazioni sul veicolo</string>
     <string name="menu_music">Musica</string>
     <string name="menu_notifications">Notifiche</string>
     <string name="menu_assistants">Assistente</string>
@@ -193,19 +194,36 @@
     <string name="lbl_assistant_empty">Non trovato</string>
     <!-- car status -->
     <string name="lbl_carinfopage_disconnected">Dopo la prima connessione, le informazioni sulla vostra auto saranno mostrate qui</string>
+    <string name="lbl_carinfopage">Qui puoi trovare informazioni rapide sulla tua auto</string>
+    <string name="lbl_carinfo_efficiency">Statistiche Di Efficienza</string>
+    <string name="lbl_carinfo_ev">Statistiche Di Consumo EV</string>
+    <string name="lbl_carinfo_style">Efficienza Stile di Guida</string>
+    <string name="lbl_carinfo_lastchecked">Ultimo Aggiornamento:</string>
     <string name="lbl_carinfo_lastPosition">Ultima Posizione:</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%s e %s</string>
+    <string name="lbl_carinfo_lastPosition_openMap">Apri la mappa</string>
     <string name="lbl_carinfo_vin">Telaio (VIN):</string>
+    <string name="lbl_carinfo_odo">Chilometraggio:</string>
+    <string name="lbl_carinfo_idriveVersion">Versione IDrive:</string>
     <string name="lbl_carinfo_averageConsumption">Consumo Medio:</string>
     <string name="lbl_carinfo_averageSpeed">Velocità Media:</string>
     <string name="lbl_carinfo_averageConsumptionAlt">Consumo Medio (alt):</string>
     <string name="lbl_carinfo_averageSpeedAlt">Velocità Media (alt):</string>
+    <string name="lbl_carinfo_ecoRangeWon">Guadagno Autonomia in Eco:</string>
+    <string name="lbl_carinfo_evLevel">Carica Elettrica:</string>
+    <string name="lbl_carinfo_evRange">Autonomia Elettrica:</string>
     <string name="lbl_carinfo_fuelLevel">Livello Carburante:</string>
     <string name="lbl_carinfo_fuelRange">Autonomia:</string>
+    <string name="lbl_carinfo_totalRange">Autonomia Totale:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Livello Batteria Accessoria:</string>
     <string name="lbl_carinfo_style_accel">Accelerazione:</string>
     <string name="lbl_carinfo_style_brake">Freno:</string>
     <string name="lbl_carinfo_style_shift">Marcia:</string>
     <!-- unit suffixes -->
     <string name="lbl_carinfo_units_km">km</string>
+    <string name="lbl_carinfo_units_mi">mi</string>
+    <string name="lbl_carinfo_units_gal_uk">gal (Regno Unito)</string>
+    <string name="lbl_carinfo_units_gal_us">gal (USA)</string>
     <string name="lbl_carinfo_units_liter">L</string>
     <string name="lbl_carinfo_units_L100km">L/100km</string>
     <string name="lbl_carinfo_units_mpg">mpg</string>
