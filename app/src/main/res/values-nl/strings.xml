@@ -36,6 +36,7 @@
     <string name="menu_overview">Overzicht</string>
     <string name="menu_setup">Installatie</string>
     <string name="menu_connection">Verbinding</string>
+    <string name="menu_carinfo">Auto informatie</string>
     <string name="menu_music">Muziek</string>
     <string name="menu_notifications">Meldingen</string>
     <string name="menu_assistants">Assistenten</string>
@@ -192,7 +193,43 @@
     <string name="lbl_assistant">Stem assistant (Beta)</string>
     <string name="lbl_assistant_empty">None found</string>
     <!-- car status -->
+    <string name="lbl_carinfopage_disconnected">Na uw eerste connectie wordt hier informatie over uw auto getoond</string>
+    <string name="lbl_carinfopage">Korte informatie over uw auto is hier beschikbaar</string>
+    <string name="lbl_carinfo_efficiency">Efficiëntie statistieken</string>
+    <string name="lbl_carinfo_ev">EV verbruik statistieken</string>
+    <string name="lbl_carinfo_style">Efficiënte rijstijl</string>
+    <string name="lbl_carinfo_lastchecked">Laatst gecontroleerd:</string>
+    <string name="lbl_carinfo_lastPosition">Laatste positie:</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%s en %s</string>
+    <string name="lbl_carinfo_lastPosition_openMap">Open kaart</string>
+    <string name="lbl_carinfo_vin">VIN:</string>
+    <string name="lbl_carinfo_odo">Kilometerteller:</string>
+    <string name="lbl_carinfo_idriveVersion">IDrive versie:</string>
+    <string name="lbl_carinfo_averageConsumption">Gemiddeld verbruik:</string>
+    <string name="lbl_carinfo_averageSpeed">Gemiddelde snelheid:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">Gemiddelde Cons (alt):</string>
+    <string name="lbl_carinfo_averageSpeedAlt">Gemiddelde snelheid (alt):</string>
+    <string name="lbl_carinfo_ecoRangeWon">Eco Range Won:</string>
+    <string name="lbl_carinfo_evLevel">Elektrische lading:</string>
+    <string name="lbl_carinfo_evRange">Elektrisch bereik:</string>
+    <string name="lbl_carinfo_fuelLevel">Brandstof niveau:</string>
+    <string name="lbl_carinfo_fuelRange">Brandstof bereik:</string>
+    <string name="lbl_carinfo_totalRange">Totale bereik:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Acc. Batterijniveau:</string>
+    <string name="lbl_carinfo_style_accel">Acceleratie:</string>
+    <string name="lbl_carinfo_style_brake">Remmen:</string>
+    <string name="lbl_carinfo_style_shift">Schakelen:</string>
     <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">km</string>
+    <string name="lbl_carinfo_units_mi">mi</string>
+    <string name="lbl_carinfo_units_gal_uk">gal (VK)</string>
+    <string name="lbl_carinfo_units_gal_us">gal (US)</string>
+    <string name="lbl_carinfo_units_liter">L</string>
+    <string name="lbl_carinfo_units_L100km">L/100km</string>
+    <string name="lbl_carinfo_units_mpg">mpg</string>
+    <string name="lbl_carinfo_units_kmL">km/L</string>
+    <string name="lbl_carinfo_units_mph">mph</string>
+    <string name="lbl_carinfo_units_kmph">km/h</string>
     <!-- tips -->
     <string name="lbl_tip_image">Tip demonstratie afbeelding</string>
     <string name="lbl_tiplist">Tips en trucs</string>
