@@ -15,6 +15,7 @@
     <!-- Labels on the navigation trigger activity -->
     <!-- Welcome pages -->
     <!-- Menu Titles -->
+    <string name="btn_next">Seguinte</string>
     <string name="spawn_test_notification">Teste de Notificação</string>
     <string name="message_notifications">Mensagem de Notificação</string>
     <string name="notification_popups">Popups de Notificação</string>
