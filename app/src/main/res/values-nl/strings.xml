@@ -26,10 +26,17 @@
     <string name="lbl_navigation_listener_pending">Navigatie starten</string>
     <string name="lbl_navigation_listener_success">Succes</string>
     <string name="lbl_navigation_listener_unsuccess">Mislukt</string>
+    <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Laten we verbinding maken</string>
+    <string name="lbl_welcome_intro">AndroidAutoIdrive is een onofficiële app om de muziek-apps en andere functies van uw telefoon aan uw auto toe te voegen via het BMW Apps-protocol</string>
+    <string name="lbl_welcome_compatible">Meeste MY2014 of nieuwere BMWs of MINI\'s uitgerust met NBT of NBT Evo (gebaseerd op IDrive 4–6) en een actieve ConnectedDrive of BMW Online abonnement moeten compatibel zijn</string>
+    <string name="lbl_welcome_dependencies">De verbinding met de auto is afhankelijk van de BMW/MINI Connected app of de nieuwe MyBMW of Mini app om verbinding te maken met uw auto</string>
+    <string name="lbl_welcome_complete">AndroidAutoIdrive voegt ook verschillende andere functies toe aan uw auto, check it out!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Overzicht</string>
     <string name="menu_setup">Installatie</string>
     <string name="menu_connection">Verbinding</string>
+    <string name="menu_carinfo">Auto informatie</string>
     <string name="menu_music">Muziek</string>
     <string name="menu_notifications">Meldingen</string>
     <string name="menu_assistants">Assistenten</string>
@@ -37,6 +44,7 @@
     <string name="menu_navigation">Navigatie</string>
     <string name="menu_settings">Instellingen</string>
     <string name="menu_support">Ondersteuning</string>
+    <string name="btn_next">Volgende</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integreert een aantal muziek-apps van uw telefoon en de meldingen van uw telefoon in uw auto via het aangepaste BMW Apps protocol</string>
     <string name="lbl_connectionpage">De verbinding met de auto is afhankelijk van een aantal onderdelen, en hier zijn enkele tips om ervoor te zorgen dat het goed werkt</string>
     <plurals name="lbl_assistantpage">
@@ -184,6 +192,44 @@
     <string name="lbl_advanced_settings">Toon geavanceerde instellingen</string>
     <string name="lbl_assistant">Stem assistant (Beta)</string>
     <string name="lbl_assistant_empty">None found</string>
+    <!-- car status -->
+    <string name="lbl_carinfopage_disconnected">Na uw eerste connectie wordt hier informatie over uw auto getoond</string>
+    <string name="lbl_carinfopage">Korte informatie over uw auto is hier beschikbaar</string>
+    <string name="lbl_carinfo_efficiency">Efficiëntie statistieken</string>
+    <string name="lbl_carinfo_ev">EV verbruik statistieken</string>
+    <string name="lbl_carinfo_style">Efficiënte rijstijl</string>
+    <string name="lbl_carinfo_lastchecked">Laatst gecontroleerd:</string>
+    <string name="lbl_carinfo_lastPosition">Laatste positie:</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%s en %s</string>
+    <string name="lbl_carinfo_lastPosition_openMap">Open kaart</string>
+    <string name="lbl_carinfo_vin">VIN:</string>
+    <string name="lbl_carinfo_odo">Kilometerteller:</string>
+    <string name="lbl_carinfo_idriveVersion">IDrive versie:</string>
+    <string name="lbl_carinfo_averageConsumption">Gemiddeld verbruik:</string>
+    <string name="lbl_carinfo_averageSpeed">Gemiddelde snelheid:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">Gemiddeld verbruik (alt):</string>
+    <string name="lbl_carinfo_averageSpeedAlt">Gemiddelde snelheid (alt):</string>
+    <string name="lbl_carinfo_ecoRangeWon">Eco Range winst:</string>
+    <string name="lbl_carinfo_evLevel">Elektrische lading:</string>
+    <string name="lbl_carinfo_evRange">Elektrisch bereik:</string>
+    <string name="lbl_carinfo_fuelLevel">Brandstof niveau:</string>
+    <string name="lbl_carinfo_fuelRange">Brandstof bereik:</string>
+    <string name="lbl_carinfo_totalRange">Totale bereik:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Acc. Batterijniveau:</string>
+    <string name="lbl_carinfo_style_accel">Acceleratie:</string>
+    <string name="lbl_carinfo_style_brake">Remmen:</string>
+    <string name="lbl_carinfo_style_shift">Schakelen:</string>
+    <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">km</string>
+    <string name="lbl_carinfo_units_mi">mi</string>
+    <string name="lbl_carinfo_units_gal_uk">gal (VK)</string>
+    <string name="lbl_carinfo_units_gal_us">gal (US)</string>
+    <string name="lbl_carinfo_units_liter">L</string>
+    <string name="lbl_carinfo_units_L100km">L/100km</string>
+    <string name="lbl_carinfo_units_mpg">mp/g</string>
+    <string name="lbl_carinfo_units_kmL">km/L</string>
+    <string name="lbl_carinfo_units_mph">mp/h</string>
+    <string name="lbl_carinfo_units_kmph">km/h</string>
     <!-- tips -->
     <string name="lbl_tip_image">Tip demonstratie afbeelding</string>
     <string name="lbl_tiplist">Tips en trucs</string>

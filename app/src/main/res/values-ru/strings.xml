@@ -26,10 +26,17 @@
     <string name="lbl_navigation_listener_pending">Запуск навигации</string>
     <string name="lbl_navigation_listener_success">Готово</string>
     <string name="lbl_navigation_listener_unsuccess">Сбой</string>
+    <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Давайте подключимся</string>
+    <string name="lbl_welcome_intro">AndroidAutoIdrive — это неофициальное приложение, которое добавляет музыкальные приложения и другие полезные функции в ваш автомобиль через стандартный протокол приложений BMW</string>
+    <string name="lbl_welcome_compatible">Большинство автомобилей BMW или MINI 2014 года и новее, оснащенных NBT или NBT Evo (на основе IDrive 4–6) имеющих активную подписку ConnectedDrive или BMW Online должны быть совместимы</string>
+    <string name="lbl_welcome_dependencies">Подключение приложений зависит от того, соединилось ли приложение BMW/MINI Connected или новое приложение MyBMW/Mini с автомобилем</string>
+    <string name="lbl_welcome_complete">AndroidAutoIdrive также добавляет множество других функций в ваш автомобиль, проверьте!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Обзор</string>
     <string name="menu_setup">Настройки</string>
     <string name="menu_connection">Соединение</string>
+    <string name="menu_carinfo">Информация об автомобиле</string>
     <string name="menu_music">Музыка</string>
     <string name="menu_notifications">Уведомления</string>
     <string name="menu_assistants">Помощник</string>
@@ -37,6 +44,7 @@
     <string name="menu_navigation">Навигация</string>
     <string name="menu_settings">Настройки</string>
     <string name="menu_support">Поддержка</string>
+    <string name="btn_next">Следующий</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive интегрирует некоторые музыкальные приложения и уведомления вашего телефона в автомобиль через пользовательский протокол приложений BMW</string>
     <string name="lbl_connectionpage">Подключение приложений к автомобилю зависит от нескольких деталей, и вот подсказки, чтобы убедиться, что все в порядке</string>
     <plurals name="lbl_assistantpage">
@@ -116,7 +124,7 @@
     <string name="connectionStatusMissingConnectedApp">Не найдено приложения Connected или Connected Classic</string>
     <string name="connectionStatusWaiting">Ожидание подключения к машине</string>
     <string name="connectionStatusConnected">Подключен к %s</string>
-    <string name="lblChassisCode">Серия</string>
+    <string name="lblChassisCode">Шасси</string>
     <string name="lblHmiVersion">Тип IDrive</string>
     <string name="nowplaying_notconnected">&lt;Не подключено&gt;</string>
     <string name="nowplaying_unknown">&lt;Неизвестный исполнитель&gt;</string>
@@ -186,6 +194,36 @@
     <string name="lbl_advanced_settings">Показать расширенные настройки</string>
     <string name="lbl_assistant">Голосовой помощник (бета)</string>
     <string name="lbl_assistant_empty">Не найдено</string>
+    <!-- car status -->
+    <string name="lbl_carinfopage_disconnected">После первого подключения здесь будет отображена информация о вашем автомобиле</string>
+    <string name="lbl_carinfopage">Краткая информация о вашем автомобиле</string>
+    <string name="lbl_carinfo_efficiency">Статистика эффективности</string>
+    <string name="lbl_carinfo_style">Эффективный стиль вождения</string>
+    <string name="lbl_carinfo_lastchecked">Последняя проверка:</string>
+    <string name="lbl_carinfo_lastPosition">Последняя позиция:</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%s и %s</string>
+    <string name="lbl_carinfo_lastPosition_openMap">Открыть карту</string>
+    <string name="lbl_carinfo_vin">VIN:</string>
+    <string name="lbl_carinfo_odo">Одометр:</string>
+    <string name="lbl_carinfo_idriveVersion">Версия IDrive:</string>
+    <string name="lbl_carinfo_averageConsumption">Расход топлива:</string>
+    <string name="lbl_carinfo_averageSpeed">Средняя скорость:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">Расход топлива (alt):</string>
+    <string name="lbl_carinfo_averageSpeedAlt">Средняя скорость (alt):</string>
+    <string name="lbl_carinfo_fuelLevel">Уровень топлива:</string>
+    <string name="lbl_carinfo_fuelRange">Запас хода:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Заряд аккумулятора:</string>
+    <string name="lbl_carinfo_style_accel">Разгон:</string>
+    <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">км</string>
+    <string name="lbl_carinfo_units_gal_uk">гал (UK)</string>
+    <string name="lbl_carinfo_units_gal_us">гал (US)</string>
+    <string name="lbl_carinfo_units_liter">л</string>
+    <string name="lbl_carinfo_units_L100km">л/100км</string>
+    <string name="lbl_carinfo_units_mpg">миль/галлон</string>
+    <string name="lbl_carinfo_units_kmL">км/л</string>
+    <string name="lbl_carinfo_units_mph">миль/ч</string>
+    <string name="lbl_carinfo_units_kmph">км/ч</string>
     <!-- tips -->
     <string name="lbl_tip_image">Картинка, демонстрирующая подсказку</string>
     <string name="lbl_tiplist">Подсказки</string>

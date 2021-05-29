@@ -26,10 +26,17 @@
     <string name="lbl_navigation_listener_pending">Avvio della navigazione</string>
     <string name="lbl_navigation_listener_success">Completato</string>
     <string name="lbl_navigation_listener_unsuccess">Operazione non riuscita</string>
+    <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Connettiamoci</string>
+    <string name="lbl_welcome_intro">AndroidAutoIdrive è un\'app non ufficiale per aggiungere app musicali del tuo telefono e altre funzionalità alla tua auto attraverso il protocollo nativo BMW Apps</string>
+    <string name="lbl_welcome_compatible">La maggior parte dei MY2014 o più recenti di BMW o MINI dotate di NBT o NBT Evo (basato su IDrive 4–6) e un ConnectedDrive attivo o un abbonamento BMW Online dovrebbe essere compatibile</string>
+    <string name="lbl_welcome_dependencies">La connessione delle app all\'auto dipende dalla connessione dell\'app BMW/MINI Connected o dalla nuova app MyBMW o Mini alla tua vettura</string>
+    <string name="lbl_welcome_complete">AndroidAutoIdrive aggiunge anche una varietà di altre caratteristiche alla tua auto, check it out!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Panoramica</string>
     <string name="menu_setup">Configurazione</string>
     <string name="menu_connection">Connessione</string>
+    <string name="menu_carinfo">Informazioni sul veicolo</string>
     <string name="menu_music">Musica</string>
     <string name="menu_notifications">Notifiche</string>
     <string name="menu_assistants">Assistente</string>
@@ -37,6 +44,7 @@
     <string name="menu_navigation">Navigazione</string>
     <string name="menu_settings">Impostazioni</string>
     <string name="menu_support">Supporto</string>
+    <string name="btn_next">Successivo</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integra nella tua auto alcune delle applicazioni musicali e le notifiche del tuo telefono tramite il protocollo proprietario BMW Apps</string>
     <string name="lbl_connectionpage">La connessione delle app all\'auto dipende da alcuni fattori e qui ci sono alcuni suggerimenti per assicurarsi che tutto funzioni bene</string>
     <plurals name="lbl_assistantpage">
@@ -127,7 +135,7 @@
     <string name="txt_setup_mini_connected_65">È installata la versione 6.5 di Mini Connected che qualche volta non fa partire la connessione con l\'auto. Prova a fare un downgrade alla versione 6.4 o un upgrade alla nuova app Mini se riscontri problemi</string>
     <string name="txt_setup_bmw_mine_detected">La nuova app My BMW è installata, può causare problemi con l\'app BMW Connected e non è supportata</string>
     <string name="txt_setup_mini_mine_detected">La nuova app MINI è installata, può causare problemi con l\'app MINI Connected e non è supportata</string>
-    <string name="txt_setup_bmw_mine_conflict">Entrambe le applicazioni BMW Connected e My BMW sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non si connetta tramite USB</string>
+    <string name="txt_setup_bmw_mine_conflict">Entrambe le applicazioni BMW Connected e My BMW sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non ci si connetta tramite USB</string>
     <string name="txt_setup_mini_mine_conflict">Entrambe le app MINI Connected e My MINI sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non si connetta tramite USB</string>
     <string name="txt_setup_security_missing">Il Security Service non è raggiungibile:</string>
     <string name="btn_install">Installa</string>
@@ -184,13 +192,51 @@
     <string name="lbl_advanced_settings">Mostra le impostazioni avanzate</string>
     <string name="lbl_assistant">Assistente vocale (Beta)</string>
     <string name="lbl_assistant_empty">Non trovato</string>
+    <!-- car status -->
+    <string name="lbl_carinfopage_disconnected">Dopo la prima connessione, le informazioni sulla vostra auto saranno mostrate qui</string>
+    <string name="lbl_carinfopage">Qui puoi trovare informazioni rapide sulla tua auto</string>
+    <string name="lbl_carinfo_efficiency">Statistiche Di Efficienza</string>
+    <string name="lbl_carinfo_ev">Statistiche Di Consumo EV</string>
+    <string name="lbl_carinfo_style">Efficienza Stile di Guida</string>
+    <string name="lbl_carinfo_lastchecked">Ultimo Aggiornamento:</string>
+    <string name="lbl_carinfo_lastPosition">Ultima Posizione:</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%s e %s</string>
+    <string name="lbl_carinfo_lastPosition_openMap">Apri la mappa</string>
+    <string name="lbl_carinfo_vin">Telaio (VIN):</string>
+    <string name="lbl_carinfo_odo">Chilometraggio:</string>
+    <string name="lbl_carinfo_idriveVersion">Versione IDrive:</string>
+    <string name="lbl_carinfo_averageConsumption">Consumo Medio:</string>
+    <string name="lbl_carinfo_averageSpeed">Velocità Media:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">Consumo Medio (alt):</string>
+    <string name="lbl_carinfo_averageSpeedAlt">Velocità Media (alt):</string>
+    <string name="lbl_carinfo_ecoRangeWon">Guadagno Autonomia in Eco:</string>
+    <string name="lbl_carinfo_evLevel">Carica Elettrica:</string>
+    <string name="lbl_carinfo_evRange">Autonomia Elettrica:</string>
+    <string name="lbl_carinfo_fuelLevel">Livello Carburante:</string>
+    <string name="lbl_carinfo_fuelRange">Autonomia:</string>
+    <string name="lbl_carinfo_totalRange">Autonomia Totale:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Livello Batteria Accessoria:</string>
+    <string name="lbl_carinfo_style_accel">Accelerazione:</string>
+    <string name="lbl_carinfo_style_brake">Freno:</string>
+    <string name="lbl_carinfo_style_shift">Marcia:</string>
+    <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">km</string>
+    <string name="lbl_carinfo_units_mi">mi</string>
+    <string name="lbl_carinfo_units_gal_uk">gal (Regno Unito)</string>
+    <string name="lbl_carinfo_units_gal_us">gal (USA)</string>
+    <string name="lbl_carinfo_units_liter">L</string>
+    <string name="lbl_carinfo_units_L100km">L/100km</string>
+    <string name="lbl_carinfo_units_mpg">mpg</string>
+    <string name="lbl_carinfo_units_kmL">km/l</string>
+    <string name="lbl_carinfo_units_mph">m/h</string>
+    <string name="lbl_carinfo_units_kmph">km/h</string>
     <!-- tips -->
     <string name="lbl_tip_image">Immagine dimostrativa del suggerimento</string>
     <string name="lbl_tiplist">Consigli e suggerimenti</string>
     <string name="lbl_tip_expand">Espandi suggerimenti</string>
     <string name="tip_usb_chargingmode">Cambia la modalità USB del telefono in Trasferimento file se il valore predefinito è la modalità Solo ricarica</string>
     <string name="tip_connassistant">Usa la procedura guidata di connessione per abilitare la modalità accessorio USB nelle auto IDrive4</string>
-    <string name="tip_btapp">Assicurati che la connessione Bluetooth IDrive5 abbia l\'opzione App. Prova a scollegare l\'Audio Bluetooth e riconnetterla, in caso la connessione fosse bloccata</string>
+    <string name="tip_btapp">Assicurati che la connessione Bluetooth IDrive5 abbia l\'opzione App. Prova a scollegare la connessione Audio Bluetooth e a riconnetterla, in caso la stessa fosse bloccata</string>
     <string name="tip_batterymode_mybmw">Prova a disabilitare le ottimizzazioni della batteria per l\'app MyBMW, cosa che a volte aiuta a connettersi all\'auto</string>
     <string name="tip_batterymode_mymini">Prova a disabilitare le ottimizzazioni della batteria per l\'app Mini, cosa che a volte aiuta a connettersi all\'auto</string>
     <string name="tip_audioplayer_bookmark">Associa un pulsante scorciatoia all\'app Audioplayer per accedere rapidamente ai controlli musicali</string>
