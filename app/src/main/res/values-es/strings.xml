@@ -33,6 +33,7 @@
     <string name="menu_navigation">Navegación</string>
     <string name="menu_settings">Ajustes</string>
     <string name="menu_support">Soporte</string>
+    <string name="btn_next">Siguiente</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integra algunas de las aplicaciones de música de tu teléfono y las notificaciones de tu teléfono en tu coche a través del protocolo de aplicaciones BMW</string>
     <string name="lbl_connectionpage">La conexión de la aplicación con el coche depende de varios elementos, aquí puede encontrar una guía para asegurarse de que la conexión funcione correctamente</string>
     <string name="spawn_test_notification">Notificación de prueba</string>
