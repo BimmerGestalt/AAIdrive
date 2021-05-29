@@ -192,7 +192,26 @@
     <string name="lbl_assistant">Assistente vocale (Beta)</string>
     <string name="lbl_assistant_empty">Non trovato</string>
     <!-- car status -->
+    <string name="lbl_carinfopage_disconnected">Dopo la prima connessione, le informazioni sulla vostra auto saranno mostrate qui</string>
+    <string name="lbl_carinfo_lastPosition">Ultima Posizione:</string>
+    <string name="lbl_carinfo_vin">Telaio (VIN):</string>
+    <string name="lbl_carinfo_averageConsumption">Consumo Medio:</string>
+    <string name="lbl_carinfo_averageSpeed">Velocità Media:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">Consumo Medio (alt):</string>
+    <string name="lbl_carinfo_averageSpeedAlt">Velocità Media (alt):</string>
+    <string name="lbl_carinfo_fuelLevel">Livello Carburante:</string>
+    <string name="lbl_carinfo_fuelRange">Autonomia:</string>
+    <string name="lbl_carinfo_style_accel">Accelerazione:</string>
+    <string name="lbl_carinfo_style_brake">Freno:</string>
+    <string name="lbl_carinfo_style_shift">Marcia:</string>
     <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">km</string>
+    <string name="lbl_carinfo_units_liter">L</string>
+    <string name="lbl_carinfo_units_L100km">L/100km</string>
+    <string name="lbl_carinfo_units_mpg">mpg</string>
+    <string name="lbl_carinfo_units_kmL">km/l</string>
+    <string name="lbl_carinfo_units_mph">m/h</string>
+    <string name="lbl_carinfo_units_kmph">km/h</string>
     <!-- tips -->
     <string name="lbl_tip_image">Immagine dimostrativa del suggerimento</string>
     <string name="lbl_tiplist">Consigli e suggerimenti</string>
