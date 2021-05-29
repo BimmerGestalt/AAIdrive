@@ -124,7 +124,7 @@
     <string name="connectionStatusMissingConnectedApp">Не найдено приложения Connected или Connected Classic</string>
     <string name="connectionStatusWaiting">Ожидание подключения к машине</string>
     <string name="connectionStatusConnected">Подключен к %s</string>
-    <string name="lblChassisCode">Серия</string>
+    <string name="lblChassisCode">Шасси</string>
     <string name="lblHmiVersion">Тип IDrive</string>
     <string name="nowplaying_notconnected">&lt;Не подключено&gt;</string>
     <string name="nowplaying_unknown">&lt;Неизвестный исполнитель&gt;</string>
@@ -206,9 +206,12 @@
     <string name="lbl_carinfo_vin">VIN:</string>
     <string name="lbl_carinfo_odo">Одометр:</string>
     <string name="lbl_carinfo_idriveVersion">Версия IDrive:</string>
+    <string name="lbl_carinfo_averageConsumption">Расход топлива:</string>
     <string name="lbl_carinfo_averageSpeed">Средняя скорость:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">Расход топлива (alt):</string>
     <string name="lbl_carinfo_averageSpeedAlt">Средняя скорость (alt):</string>
     <string name="lbl_carinfo_fuelLevel">Уровень топлива:</string>
+    <string name="lbl_carinfo_fuelRange">Запас хода:</string>
     <string name="lbl_carinfo_accBatteryLevel">Уровень заряда аккумулятора:</string>
     <string name="lbl_carinfo_style_accel">Разгон:</string>
     <!-- unit suffixes -->
