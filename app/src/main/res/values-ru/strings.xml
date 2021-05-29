@@ -212,7 +212,7 @@
     <string name="lbl_carinfo_averageSpeedAlt">Средняя скорость (alt):</string>
     <string name="lbl_carinfo_fuelLevel">Уровень топлива:</string>
     <string name="lbl_carinfo_fuelRange">Запас хода:</string>
-    <string name="lbl_carinfo_accBatteryLevel">Уровень заряда аккумулятора:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Заряд аккумулятора:</string>
     <string name="lbl_carinfo_style_accel">Разгон:</string>
     <!-- unit suffixes -->
     <string name="lbl_carinfo_units_km">км</string>
