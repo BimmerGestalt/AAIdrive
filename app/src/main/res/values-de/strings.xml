@@ -215,7 +215,7 @@
     <string name="lbl_carinfo_fuelLevel">Tankinhalt:</string>
     <string name="lbl_carinfo_fuelRange">Tankreichweite:</string>
     <string name="lbl_carinfo_totalRange">Gesamtreichweite:</string>
-    <string name="lbl_carinfo_accBatteryLevel">Akkustand:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Batterieladung:</string>
     <string name="lbl_carinfo_style_accel">Beschleunigung:</string>
     <string name="lbl_carinfo_style_brake">Bremsleistung:</string>
     <string name="lbl_carinfo_style_shift">Schaltung:</string>
@@ -240,7 +240,7 @@
     <string name="tip_batterymode_mybmw">Versuchen Sie, die Batterieoptimierung für die MyBMW App zu deaktivieren</string>
     <string name="tip_batterymode_mymini">Versuchen Sie, die Batterieoptimierung für die My MINI App zu deaktivieren</string>
     <string name="tip_audioplayer_bookmark">Legen Sie Funktionen in der Audioplayer-App auf eine Favoritentaste, für schnellen Zugriff auf die Musiksteuerungen</string>
-    <string name="tip_bluetooth_music">Stellen Sie Ihr Fahrzeug so ein, dass Sie Bluetooth-Musik von Ihrem Telefon hören</string>
+    <string name="tip_bluetooth_music">Stellen Sie Ihr Fahrzeug so ein, dass Sie Musik von Ihrem Telefon über Bluetooth hören</string>
     <string name="tip_audioplayer_nowplaying_bookmark">Favoritentaste belegen, während der Aktuelle Wiedergabe-Button ausgewählt ist, um schnell auf die Wiedergabeliste zugreifen zu können</string>
     <string name="tip_input_emoji">Geben Sie einen Doppelpunkt ein, um ein Emoji aus der Vorschlagsliste auszuwählen</string>
     <string name="tip_music_hide">Wische eine Musik-App aus der Liste, um sie im Auto zu verstecken</string>
