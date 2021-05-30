@@ -45,8 +45,8 @@ open class MusicMetadata(val mediaId: String? = null,
 							metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI) ?:
 							metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI),
 					icon = metadata.getBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON),
-					artist = metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST) ?:
-							metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST),
+					artist = metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST) ?:
+							metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST),
 					album = metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM),
 					title = metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE) ?:
 							metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE),
