@@ -36,7 +36,7 @@
     <string name="menu_overview">Обзор</string>
     <string name="menu_setup">Настройки</string>
     <string name="menu_connection">Соединение</string>
-    <string name="menu_carinfo">Информация об автомобиле</string>
+    <string name="menu_carinfo">Об автомобиле</string>
     <string name="menu_music">Музыка</string>
     <string name="menu_notifications">Уведомления</string>
     <string name="menu_assistants">Помощник</string>
@@ -190,7 +190,7 @@
     <string name="txt_build_info">Версия сборки: %1$s %2$s</string>
     <string name="txt_bcl_report">Производительность туннеля BCL:</string>
     <string name="txt_cds_view">Отчет об автомобиле:</string>
-    <string name="txt_car_capabilities">Автомобильные возможности:</string>
+    <string name="txt_car_capabilities">Возможности автомобиля:</string>
     <string name="lbl_advanced_settings">Показать расширенные настройки</string>
     <string name="lbl_assistant">Голосовой помощник (бета)</string>
     <string name="lbl_assistant_empty">Не найдено</string>
