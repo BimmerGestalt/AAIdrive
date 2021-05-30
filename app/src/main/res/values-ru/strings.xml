@@ -108,14 +108,14 @@
     <string name="lbl_language_prefercar">Предпочитать язык автомобиля языку на телефоне</string>
     <string name="lbl_language_prefercar_code">Предпочитать язык автомобиля (%s) языку на телефоне</string>
     <string name="lbl_language_forcelanguage">Принудительно указать язык</string>
-    <string name="lbl_donations_volunteer">AndroidAutoIdrive — добровольный проект</string>
+    <string name="lbl_donations_volunteer">AndroidAutoIdrive — волонтерский проект</string>
     <string name="lbl_donations_request">Если вам нравится этот проект и вы считаете его полезным, выразите поддержку пожертвованием:</string>
     <string name="btn_donations">Пожертвовать</string>
     <string name="lbl_support_other_ways">Вы также можете поддержать проект другими способами:</string>
     <string name="lbl_support_feedback">Предоставление обратной связи</string>
     <string name="lbl_support_issues">Известные проблемы</string>
     <string name="lbl_support_share">Рассказать о приложении</string>
-    <string name="lbl_support_thanks">Благодарим вас за использование AndroidAutoIdrive!</string>
+    <string name="lbl_support_thanks">Спасибо за использование AndroidAutoIdrive!</string>
     <string name="lbl_ok">Ок</string>
     <string name="lbl_cancel">Отмена</string>
     <string name="btn_configure">Настроить …</string>
@@ -210,12 +210,15 @@
     <string name="lbl_carinfo_averageSpeed">Средняя скорость:</string>
     <string name="lbl_carinfo_averageConsumptionAlt">Расход топлива (alt):</string>
     <string name="lbl_carinfo_averageSpeedAlt">Средняя скорость (alt):</string>
-    <string name="lbl_carinfo_fuelLevel">Уровень топлива:</string>
+    <string name="lbl_carinfo_ecoRangeWon">Экономия ECO Pro:</string>
+    <string name="lbl_carinfo_fuelLevel">Осталось топлива:</string>
     <string name="lbl_carinfo_fuelRange">Запас хода:</string>
     <string name="lbl_carinfo_accBatteryLevel">Заряд аккумулятора:</string>
     <string name="lbl_carinfo_style_accel">Разгон:</string>
+    <string name="lbl_carinfo_style_brake">Торможение:</string>
     <!-- unit suffixes -->
     <string name="lbl_carinfo_units_km">км</string>
+    <string name="lbl_carinfo_units_mi">миль</string>
     <string name="lbl_carinfo_units_gal_uk">гал (UK)</string>
     <string name="lbl_carinfo_units_gal_us">гал (US)</string>
     <string name="lbl_carinfo_units_liter">л</string>
