@@ -27,6 +27,11 @@
     <string name="lbl_navigation_listener_success">Slutförd</string>
     <string name="lbl_navigation_listener_unsuccess">Lyckades ej</string>
     <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Låt oss få dig ansluten</string>
+    <string name="lbl_welcome_intro">AndroidAutoIdrive är en inofficiell app för att lägga till telefonens musikappar och andra funktioner i din bil genom BMW Apps-protokollet</string>
+    <string name="lbl_welcome_compatible">De flesta MY2014 eller nyare BMW eller MINI utrustade med NBT eller NBT Evo (baserat på IDrive 4–6) och en aktiv ConnectedDrive eller BMW Online-prenumeration bör vara kompatibla</string>
+    <string name="lbl_welcome_dependencies">Apparnas anslutning till bilen beror på BMW/MINI Connected appen eller den nya appen MyBMW eller Mini för att ansluta till din bil</string>
+    <string name="lbl_welcome_complete">AndroidAutoIdrive lägger också till andra funktioner till din bil, så pröva och se!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Översikt</string>
     <string name="menu_setup">Inställningar</string>
