@@ -216,6 +216,7 @@
     <string name="lbl_carinfo_accBatteryLevel">Заряд аккумулятора:</string>
     <string name="lbl_carinfo_style_accel">Разгон:</string>
     <string name="lbl_carinfo_style_brake">Торможение:</string>
+    <string name="lbl_carinfo_style_shift">Работа КПП:</string>
     <!-- unit suffixes -->
     <string name="lbl_carinfo_units_km">км</string>
     <string name="lbl_carinfo_units_mi">миль</string>
