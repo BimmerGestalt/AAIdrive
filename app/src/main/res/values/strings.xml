@@ -224,6 +224,7 @@
     <string name="lbl_carinfo_lastchecked">Last Checked:</string>
     <string name="lbl_carinfo_lastPosition">Last Position:</string>
     <string name="lbl_carinfo_lastPosition_crossStreet">%s and %s</string>
+    <string name="lbl_carinfo_lastPosition_openMap">Open Map</string>
     <string name="lbl_carinfo_vin">VIN:</string>
     <string name="lbl_carinfo_odo">Odometer:</string>
     <string name="lbl_carinfo_idriveVersion">IDrive Version:</string>
@@ -243,15 +244,15 @@
     <string name="lbl_carinfo_style_shift">Shifting:</string>
 
     <!-- unit suffixes -->
-    <string name="lbl_carinfo_units_km" translatable="false">km</string>
+    <string name="lbl_carinfo_units_km">km</string>
     <string name="lbl_carinfo_units_mi">mi</string>
-    <string name="lbl_carinfo_units_gal_uk" translatable="false">gal (UK)</string>
-    <string name="lbl_carinfo_units_gal_us" translatable="false">gal (US)</string>
+    <string name="lbl_carinfo_units_gal_uk">gal (UK)</string>
+    <string name="lbl_carinfo_units_gal_us">gal (US)</string>
     <string name="lbl_carinfo_units_liter">L</string>
     <string name="lbl_carinfo_units_L100km">L/100km</string>
-    <string name="lbl_carinfo_units_mpg" translatable="false">mpg</string>
+    <string name="lbl_carinfo_units_mpg">mpg</string>
     <string name="lbl_carinfo_units_kmL">km/L</string>
-    <string name="lbl_carinfo_units_mph" translatable="false">mph</string>
+    <string name="lbl_carinfo_units_mph">mph</string>
     <string name="lbl_carinfo_units_kmph">kmph</string>
 
 
@@ -360,4 +361,14 @@
     <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
     <string name="lbl_engine_temp">Engine Temp</string>
     <string name="lbl_oil_temp">Oil Temp</string>
+    <string name="lbl_carinfo_speed">Speed:</string>
+    <string name="lbl_carinfo_gear">Gear:</string>
+    <string name="lbl_carinfo_drivingmode">Mode:</string>
+    <string name="lbl_carinfo_compass">Compass:</string>
+    <string name="lbl_carinfo_sunroof">SunRoof</string>
+    <string name="lbl_carinfo_displayedSpeed">Displayed Speed</string>
+    <string name="lbl_carinfo_temp_interior">Temp Interior</string>
+    <string name="lbl_carinfo_temp_exterior">Temp Exterior</string>
+    <string name="lbl_carinfo_parking_brake">Parking Brake</string>
+	<string name="lbl_carinfo_masl">m.a.s.l.</string>
 </resources>
