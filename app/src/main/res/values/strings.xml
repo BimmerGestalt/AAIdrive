@@ -356,4 +356,19 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Thumb Down</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Thumbed Down</string>
+    <string name="lbl_carinfo_units_temp">Temperature</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
+    <string name="lbl_engine_temp">Engine Temp</string>
+    <string name="lbl_oil_temp">Oil Temp</string>
+    <string name="lbl_carinfo_speed">Speed:</string>
+    <string name="lbl_carinfo_gear">Gear:</string>
+    <string name="lbl_carinfo_drivingmode">Mode:</string>
+    <string name="lbl_carinfo_compass">Compass:</string>
+    <string name="lbl_carinfo_sunroof">SunRoof</string>
+    <string name="lbl_carinfo_displayedSpeed">Displayed Speed</string>
+    <string name="lbl_carinfo_temp_interior">Temp Interior</string>
+    <string name="lbl_carinfo_temp_exterior">Temp Exterior</string>
+    <string name="lbl_carinfo_parking_brake">Parking Brake</string>
+	<string name="lbl_carinfo_masl">m.a.s.l.</string>
 </resources>
