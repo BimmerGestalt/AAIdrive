@@ -22,6 +22,7 @@ import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsInt
 import me.hufman.idriveconnectionkit.CDS
 import java.lang.Exception
+import java.lang.Math.round
 import java.text.DateFormat
 import java.util.*
 import kotlin.math.max
@@ -48,9 +49,7 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 				CDS.VEHICLE.TIME,
 				CDS.ENGINE.TEMPERATURE,
 				CDS.CONTROLS.SUNROOF,
-				CDS.DRIVING.MODE,
 				CDS.DRIVING.PARKINGBRAKE,
-
 		)
 	}
 
@@ -201,13 +200,13 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 	val accBatteryLevelLabel = accBatteryLevel.format("%.0f %%")
 
 	val evRange = carInfo.cachedCdsData.liveData[CDS.DRIVING.DISPLAYRANGEELECTRICVEHICLE].map {
-		it.tryAsJsonPrimitive("displayRangeElectricVehicle")?.tryAsDouble?.takeIf { it < 4095 }
+		it.tryAsJsonPrimitive("displayRangeElectricVehicle")?.tryAsDouble?.takeIf { it < 4093 }
 	}
 	val evRangeLabel = evRange.format("%.0f").addUnit(unitsDistanceLabel)
 
 	// a non-nullable evRange for calculating the gas-only fuelRange
 	private val _evRange = carInfo.cachedCdsData.liveData[CDS.DRIVING.DISPLAYRANGEELECTRICVEHICLE].map(0.0) {
-		it.tryAsJsonPrimitive("displayRangeElectricVehicle")?.tryAsDouble?.takeIf { it < 4095 } ?: 0.0
+		it.tryAsJsonPrimitive("displayRangeElectricVehicle")?.tryAsDouble?.takeIf { it < 4093 } ?: 0.0
 	}
 
 	val fuelRange = carInfo.cachedCdsData.liveData[CDS.SENSORS.FUEL].map {
@@ -300,30 +299,24 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 		Some cars have "+" modes (sport+, comfort+) and some other the same modes are called "Individual".
 	 */
 	//val drivingMode = carInfo.cdsData.liveData[CDS.DRIVING.MODE].map {
-	val drivingMode = carInfo.cachedCdsData.liveData[CDS.DRIVING.MODE].map {
+	val drivingMode = carInfo.cdsData.liveData[CDS.DRIVING.MODE].map {
 		val a = it.tryAsJsonPrimitive("mode")?.tryAsInt
-		if (a != null){
-			if(a == 2)
-				"Comfort"
-			else if (a == 9)
-				"Comfort+"
-			else if (a == 4)
-				"Sport"
-			else if (a== 5)
-				"Sport+"
-			else if(a==6)
-				"Race"
-			else if(a==7)
-				"EcoPro"
-			else if(a==8)
-				"EcoPro+"
-			else
-				"-"
+		if (a != null) {
+			when (a) {
+				2 -> "Comfort"
+				9 -> "Comfort+"
+				3 -> "Basic"
+				4 -> "Sport"
+				5 -> "Sport+"
+				6 -> "Race"
+				7 -> "EcoPro"
+				8 -> "EcoPro+"
+				else -> "-$a-"
+			}
 		}
-		else
-			"-"
-		//"DEBUG: $a"
-
+		else {
+			""
+		}
 	}
 	/*
 		2 - handbrake
@@ -342,16 +335,14 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 
 	val parkingBrake = carInfo.cachedCdsData.liveData[CDS.DRIVING.PARKINGBRAKE].map {
 		val pB = it.tryAsJsonPrimitive("parkingBrake")?.tryAsInt
-		if (pB != null && pB == 2) {
+		if (pB == 2) {
 			"HandBrake ON"
 		}
-		else if (pB != null && (pB == 8 || pB == 32)) {
+		else if (pB == 8 || pB == 32) {
 			"AutoPark Brake ON"
 		}
 		else
-			""
-
-		//"$pB"
+			"-$pB-"
 	}
 
 	/*
@@ -363,19 +354,19 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 
 	 */
 	val sunRoof =carInfo.cachedCdsData.liveData[CDS.CONTROLS.SUNROOF].map {
-		val status = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("status")?.tryAsInt
-		val openPosition = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("openPosition")?.tryAsInt
-		val tiltPosition = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("tiltPosition")?.tryAsInt
+		val status = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("status")?.tryAsInt ?: 0
+		val openPosition = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("openPosition")?.tryAsInt ?: 0
+		val tiltPosition = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("tiltPosition")?.tryAsInt ?: 0
 		var sunRoofString = ""
-		if (status == 0 && tiltPosition != null && tiltPosition>0)
+		if (status == 0 && tiltPosition>0)
 		{
 			sunRoofString = "Open, tilted"
 		}
-		if (status != null && status == 1 && openPosition != null && openPosition >0) {
+		if (status == 1 && openPosition >0) {
 			val oP = openPosition*2
 			sunRoofString = "Partially open, ($oP %)"
 		}
-		if (status != null && status == 2)
+		if (status == 2)
 		{
 			sunRoofString = "Fully open"
 		}
@@ -388,22 +379,22 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 
 	val drivingGear = carInfo.cdsData.liveData[CDS.DRIVING.GEAR].map {
 		var gear = it.tryAsJsonPrimitive("gear")?.tryAsInt?.takeIf { it >0 } ?: 255
-			if (gear == 1) {
-				"N"
-			}
-			else if(gear == 2 ) {
-				"R"
-			}
-			else if(gear == 3) {
-				"P"
-			}
-			else if(gear >= 5 ) {
-				gear -= 4
-				"D $gear"
-			}
-			else {
-				"-"
-			}
+		if (gear == 1) {
+			"N"
+		}
+		else if(gear == 2 ) {
+			"R"
+		}
+		else if(gear == 3) {
+			"P"
+		}
+		else if(gear >= 5 ) {
+			gear -= 4
+			"D $gear"
+		}
+		else {
+			"-"
+		}
 	}
 
 	val altitude = carInfo.cachedCdsData.liveData[CDS.NAVIGATION.GPSEXTENDEDINFO].map {
@@ -446,9 +437,8 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 			else {
 				direction = "-"
 			}
-
+			round(heading);
 		}
 		Pair("$direction", "$heading")
 	}
-
 }
