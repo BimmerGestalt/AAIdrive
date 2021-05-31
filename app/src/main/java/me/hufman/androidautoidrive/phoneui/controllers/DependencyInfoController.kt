@@ -14,6 +14,15 @@ class DependencyInfoController(val appContext: Context) {
 			appContext.resources.configuration.locale.country == "US"
 		}
 
+	fun installConnected20(brand: String = "bmw") {
+		val packageName = if (isUSA) "de.$brand.connected.mobile20.na" else "de.$brand.connected.mobile20.row"
+		val intent = Intent(Intent.ACTION_VIEW).apply {
+			data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+			flags = Intent.FLAG_ACTIVITY_NEW_TASK
+		}
+		appContext.startActivity(intent)
+	}
+
 	fun installConnected(brand: String = "bmw") {
 		val packageName = if (isUSA) "de.$brand.connected.na" else "de.$brand.connected"
 		val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -32,6 +41,8 @@ class DependencyInfoController(val appContext: Context) {
 		appContext.startActivity(intent)
 	}
 
+	fun installBMWMine() = installConnected20("bmw")
+	fun installMiniMine() = installConnected20("mini")
 	fun installBMWConnected() = installConnected("bmw")
 	fun installMiniConnected() = installConnected("mini")
 	fun installBMWConnectedClassic() = installConnectedClassic("bmw")

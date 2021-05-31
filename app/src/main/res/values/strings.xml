@@ -157,6 +157,8 @@
     <string name="txt_setup_security_missing">Security Service is unreachable:</string>
 
     <string name="btn_install">Install</string>
+    <string name="btn_install_bmwmine">Install the MyBMW app</string>
+    <string name="btn_install_minimine">Install the Mini app</string>
     <string name="btn_install_bmw">Install BMW Connected</string>
     <string name="btn_install_mini">Install Mini Connected</string>
     <string name="btn_install_bmwclassic">Install BMW Connected Classic</string>
