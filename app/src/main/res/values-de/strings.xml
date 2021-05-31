@@ -322,4 +322,19 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Hochgevoted</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Daumen runter</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Runtergevoted</string>
+    <string name="lbl_carinfo_units_temp">Temperatur</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
+    <string name="lbl_engine_temp">Motortemperatur</string>
+    <string name="lbl_oil_temp">Öltemperatur</string>
+    <string name="lbl_carinfo_speed">Geschwindigkeit:</string>
+    <string name="lbl_carinfo_gear">Gang:</string>
+    <string name="lbl_carinfo_drivingmode">Fahrmodus:</string>
+    <string name="lbl_carinfo_compass">Kompass:</string>
+    <string name="lbl_carinfo_sunroof">Schiebedach</string>
+    <string name="lbl_carinfo_displayedSpeed">Angezeigte Geschwindigkeit</string>
+    <string name="lbl_carinfo_temp_interior">Innentemperatur</string>
+    <string name="lbl_carinfo_temp_exterior">Außentemperatur</string>
+    <string name="lbl_carinfo_parking_brake">Parkbremse</string>
+    <string name="lbl_carinfo_masl" comment="abbreviation for Meters Above Sea Level">Seehöhe.</string>
 </resources>
