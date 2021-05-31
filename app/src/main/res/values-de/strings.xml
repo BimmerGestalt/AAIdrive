@@ -44,7 +44,7 @@
     <string name="menu_navigation">Steuerung</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_support">Unterstützung</string>
-    <string name="btn_next">Nächster</string>
+    <string name="btn_next">Weiter</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integriert einige der Musik-Apps Ihres Telefons und die Benachrichtigungen Ihres Telefons über das benutzerdefinierte BMW Apps-Protokoll in Ihr Auto</string>
     <string name="lbl_connectionpage">Die Verbindung der Apps zum Auto hängt von einigen Teilen ab. Hier einige Hinweise, um sicherzustellen, dass es gut funktioniert</string>
     <plurals name="lbl_assistantpage">
