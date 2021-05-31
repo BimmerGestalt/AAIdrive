@@ -322,4 +322,8 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Tummen upp</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Tumme Ned</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Tummen ner</string>
+    <string name="lbl_carinfo_units_temp">Temperatur</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
+    <string name="lbl_engine_temp">Motortemperatur</string>
 </resources>
