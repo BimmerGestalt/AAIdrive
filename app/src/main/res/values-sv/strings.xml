@@ -139,6 +139,8 @@
     <string name="txt_setup_mini_mine_conflict">Både \"Mini connected\" och \"My Mini\" appar är installerade, vilket kan orsaka instabilitet i anslutning om du inte ansluter via USB</string>
     <string name="txt_setup_security_missing">Säkerhetstjänsten kan ej nås:</string>
     <string name="btn_install">Installera</string>
+    <string name="btn_install_bmwmine">Installera appen MyBMW</string>
+    <string name="btn_install_minimine">Installera Mini appen</string>
     <string name="btn_install_bmw">Installera BMW Connected appen</string>
     <string name="btn_install_mini">Installera Mini Connected appen</string>
     <string name="btn_install_bmwclassic">Installera BMW Connected Classic app</string>
@@ -326,4 +328,15 @@
     <string name="lbl_carinfo_units_celcius">\u2103</string>
     <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
     <string name="lbl_engine_temp">Motortemperatur</string>
+    <string name="lbl_oil_temp">Oljetemperatur</string>
+    <string name="lbl_carinfo_speed">Hastighet:</string>
+    <string name="lbl_carinfo_gear">Växel:</string>
+    <string name="lbl_carinfo_drivingmode">Körläge:</string>
+    <string name="lbl_carinfo_compass">Kompass:</string>
+    <string name="lbl_carinfo_sunroof">Taklucka</string>
+    <string name="lbl_carinfo_displayedSpeed">Visad hastighet</string>
+    <string name="lbl_carinfo_temp_interior">Innertemperatur</string>
+    <string name="lbl_carinfo_temp_exterior">Yttertemperatur</string>
+    <string name="lbl_carinfo_parking_brake">Parkeringsbroms</string>
+    <string name="lbl_carinfo_masl">m ö.h.</string>
 </resources>
