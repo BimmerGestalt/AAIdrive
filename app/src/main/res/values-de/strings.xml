@@ -139,6 +139,8 @@
     <string name="txt_setup_mini_mine_conflict">Sowohl die MINI Connected als auch My MINI App sind installiert, was zu einer instabilen Verbindung führen kann, sofern keine USB-Verbindung besteht</string>
     <string name="txt_setup_security_missing">Security Service ist nicht erreichbar:</string>
     <string name="btn_install">Installieren</string>
+    <string name="btn_install_bmwmine">Installieren Sie die MyBMW-App</string>
+    <string name="btn_install_minimine">Installieren Sie die MINI-App</string>
     <string name="btn_install_bmw">BMW Connected installieren</string>
     <string name="btn_install_mini">Mini Connected installieren</string>
     <string name="btn_install_bmwclassic">BMW Connected Classic installieren</string>
@@ -336,5 +338,5 @@
     <string name="lbl_carinfo_temp_interior">Innentemperatur</string>
     <string name="lbl_carinfo_temp_exterior">Außentemperatur</string>
     <string name="lbl_carinfo_parking_brake">Parkbremse</string>
-    <string name="lbl_carinfo_masl" comment="abbreviation for Meters Above Sea Level">Seehöhe.</string>
+    <string name="lbl_carinfo_masl">Seehöhe.</string>
 </resources>
