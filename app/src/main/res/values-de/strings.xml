@@ -250,6 +250,7 @@
     <string name="lbl_carinfo_units_kmph">km/h</string>
     <string name="lbl_carinfo_units_celcius">\u2103</string>
     <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
+    <string name="lbl_carinfo_units_masl">Seehöhe</string>
     <!-- tips -->
     <string name="lbl_tip_image">Auf Demo-Bild tippen</string>
     <string name="lbl_tiplist">Tipps und Tricks</string>
