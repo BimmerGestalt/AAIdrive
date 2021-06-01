@@ -213,12 +213,28 @@
     <string name="lbl_carinfo_averageConsumptionAlt">Расход топлива (alt):</string>
     <string name="lbl_carinfo_averageSpeedAlt">Средняя скорость (alt):</string>
     <string name="lbl_carinfo_ecoRangeWon">Экономия ECO Pro:</string>
-    <string name="lbl_carinfo_fuelLevel">Осталось топлива:</string>
+    <string name="lbl_carinfo_fuelLevel">Топлива в баке:</string>
     <string name="lbl_carinfo_fuelRange">Запас хода:</string>
     <string name="lbl_carinfo_accBatteryLevel">Заряд аккумулятора:</string>
     <string name="lbl_carinfo_style_accel">Разгон:</string>
     <string name="lbl_carinfo_style_brake">Торможение:</string>
     <string name="lbl_carinfo_style_shift">Работа КПП:</string>
+    <string name="lbl_carinfo_temp">Температура:</string>
+    <string name="lbl_carinfo_engine_temp">Темп. двигателя:</string>
+    <string name="lbl_carinfo_oil_temp">Темп. масла:</string>
+    <string name="lbl_carinfo_speed">Скорость:</string>
+    <string name="lbl_carinfo_gear">Передача:</string>
+    <string name="lbl_carinfo_drivingmode">Режим:</string>
+    <string name="lbl_carinfo_compass">Компас:</string>
+    <string name="lbl_carinfo_sunroof">Люк:</string>
+    <string name="lbl_carinfo_sunroof_closed">Закрыт</string>
+    <string name="lbl_carinfo_sunroof_tilted">Открыть, наклонен</string>
+    <string name="lbl_carinfo_sunroof_partial">Частично открыт, %d %%</string>
+    <string name="lbl_carinfo_sunroof_open">Полностью открыт</string>
+    <string name="lbl_carinfo_displayedSpeed">Темп. на дисплее:</string>
+    <string name="lbl_carinfo_temp_interior">Темп. внутри:</string>
+    <string name="lbl_carinfo_temp_exterior">Темп. снаружи:</string>
+    <string name="lbl_carinfo_parking_brake">Парковочный тормоз:</string>
     <!-- unit suffixes -->
     <string name="lbl_carinfo_units_km">км</string>
     <string name="lbl_carinfo_units_mi">миль</string>
@@ -230,6 +246,7 @@
     <string name="lbl_carinfo_units_kmL">км/л</string>
     <string name="lbl_carinfo_units_mph">миль/ч</string>
     <string name="lbl_carinfo_units_kmph">км/ч</string>
+    <string name="lbl_carinfo_units_masl">над ур. моря</string>
     <!-- tips -->
     <string name="lbl_tip_image">Картинка, демонстрирующая подсказку</string>
     <string name="lbl_tiplist">Подсказки</string>
@@ -239,6 +256,7 @@
     <string name="tip_btapp">Убедитесь, что в настройках Bluetooth подключения активна опция \"Приложения\". Попробуйте отсоединить Bluetooth Audio и попробовать снова, если подключение зависло</string>
     <string name="tip_batterymode_mybmw">Попробуйте отключить оптимизацию батареи для приложения My BMW, иногда это помогает подключиться к автомобилю</string>
     <string name="tip_batterymode_mymini">Попробуйте отключить оптимизацию батареи для приложения Mini, иногда это помогает подключиться к автомобилю</string>
+    <string name="tip_audioplayer_bookmark">Сохраните ярлык приложения Audioplayer для быстрого доступа к музыке</string>
     <string name="tip_bluetooth_music">Убедитесь, что в автомобиле подключен Bluetooth Music (а не, например, радио)</string>
     <string name="tip_input_emoji">Чтобы отправить эмодзи, введите двоеточие, а затем выберите из списка</string>
     <string name="tip_music_hide">Смахните приложение, чтобы оно не отображалось на экране автомобиля</string>
@@ -320,16 +338,4 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Понравилась</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Удалить</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Не понравилась</string>
-    <string name="lbl_carinfo_units_temp">Температура</string>
-    <string name="lbl_engine_temp">Темп. двигателя</string>
-    <string name="lbl_oil_temp">Темп. масла</string>
-    <string name="lbl_carinfo_speed">Скорость:</string>
-    <string name="lbl_carinfo_drivingmode">Режим:</string>
-    <string name="lbl_carinfo_compass">Компас:</string>
-    <string name="lbl_carinfo_sunroof">Люк</string>
-    <string name="lbl_carinfo_displayedSpeed">Скорость на дисплее</string>
-    <string name="lbl_carinfo_temp_interior">Темп. внутри</string>
-    <string name="lbl_carinfo_temp_exterior">Темп. снаружи</string>
-    <string name="lbl_carinfo_parking_brake">Парковочный тормоз</string>
-    <string name="lbl_carinfo_masl">над ур. моря</string>
 </resources>
