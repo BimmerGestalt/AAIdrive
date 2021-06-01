@@ -221,6 +221,10 @@
     <string name="lbl_carinfo_style_accel">Acceleration:</string>
     <string name="lbl_carinfo_style_brake">Inbromsning:</string>
     <string name="lbl_carinfo_style_shift">Växla:</string>
+    <string name="lbl_carinfo_speed">Hastighet:</string>
+    <string name="lbl_carinfo_gear">Växel:</string>
+    <string name="lbl_carinfo_drivingmode">Körläge:</string>
+    <string name="lbl_carinfo_compass">Kompass:</string>
     <!-- unit suffixes -->
     <string name="lbl_carinfo_units_km">km</string>
     <string name="lbl_carinfo_units_mi">mile</string>
@@ -232,6 +236,8 @@
     <string name="lbl_carinfo_units_kmL">km/L</string>
     <string name="lbl_carinfo_units_mph">mph</string>
     <string name="lbl_carinfo_units_kmph">kmph</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
     <!-- tips -->
     <string name="lbl_tip_image">Exempelbild</string>
     <string name="lbl_tiplist">Tips och tricks</string>
@@ -324,19 +330,4 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Tummen upp</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Tumme Ned</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Tummen ner</string>
-    <string name="lbl_carinfo_units_temp">Temperatur</string>
-    <string name="lbl_carinfo_units_celcius">\u2103</string>
-    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
-    <string name="lbl_engine_temp">Motortemperatur</string>
-    <string name="lbl_oil_temp">Oljetemperatur</string>
-    <string name="lbl_carinfo_speed">Hastighet:</string>
-    <string name="lbl_carinfo_gear">Växel:</string>
-    <string name="lbl_carinfo_drivingmode">Körläge:</string>
-    <string name="lbl_carinfo_compass">Kompass:</string>
-    <string name="lbl_carinfo_sunroof">Taklucka</string>
-    <string name="lbl_carinfo_displayedSpeed">Visad hastighet</string>
-    <string name="lbl_carinfo_temp_interior">Innertemperatur</string>
-    <string name="lbl_carinfo_temp_exterior">Yttertemperatur</string>
-    <string name="lbl_carinfo_parking_brake">Parkeringsbroms</string>
-    <string name="lbl_carinfo_masl">m ö.h.</string>
 </resources>
