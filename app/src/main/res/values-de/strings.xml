@@ -44,7 +44,7 @@
     <string name="menu_navigation">Steuerung</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_support">Unterstützung</string>
-    <string name="btn_next">Nächster</string>
+    <string name="btn_next">Weiter</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integriert einige der Musik-Apps Ihres Telefons und die Benachrichtigungen Ihres Telefons über das benutzerdefinierte BMW Apps-Protokoll in Ihr Auto</string>
     <string name="lbl_connectionpage">Die Verbindung der Apps zum Auto hängt von einigen Teilen ab. Hier einige Hinweise, um sicherzustellen, dass es gut funktioniert</string>
     <plurals name="lbl_assistantpage">
@@ -139,6 +139,8 @@
     <string name="txt_setup_mini_mine_conflict">Sowohl die MINI Connected als auch My MINI App sind installiert, was zu einer instabilen Verbindung führen kann, sofern keine USB-Verbindung besteht</string>
     <string name="txt_setup_security_missing">Security Service ist nicht erreichbar:</string>
     <string name="btn_install">Installieren</string>
+    <string name="btn_install_bmwmine">Installieren Sie die MyBMW-App</string>
+    <string name="btn_install_minimine">Installieren Sie die MINI-App</string>
     <string name="btn_install_bmw">BMW Connected installieren</string>
     <string name="btn_install_mini">Mini Connected installieren</string>
     <string name="btn_install_bmwclassic">BMW Connected Classic installieren</string>
@@ -322,4 +324,19 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Hochgevoted</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Daumen runter</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Runtergevoted</string>
+    <string name="lbl_carinfo_units_temp">Temperatur</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
+    <string name="lbl_engine_temp">Motortemperatur</string>
+    <string name="lbl_oil_temp">Öltemperatur</string>
+    <string name="lbl_carinfo_speed">Geschwindigkeit:</string>
+    <string name="lbl_carinfo_gear">Gang:</string>
+    <string name="lbl_carinfo_drivingmode">Fahrmodus:</string>
+    <string name="lbl_carinfo_compass">Kompass:</string>
+    <string name="lbl_carinfo_sunroof">Schiebedach</string>
+    <string name="lbl_carinfo_displayedSpeed">Angezeigte Geschwindigkeit</string>
+    <string name="lbl_carinfo_temp_interior">Innentemperatur</string>
+    <string name="lbl_carinfo_temp_exterior">Außentemperatur</string>
+    <string name="lbl_carinfo_parking_brake">Parkbremse</string>
+    <string name="lbl_carinfo_masl">Seehöhe.</string>
 </resources>
