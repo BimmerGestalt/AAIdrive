@@ -142,7 +142,7 @@
     <string name="txt_setup_security_missing">Служба безопасности недоступна:</string>
     <string name="btn_install">Установить</string>
     <string name="btn_install_bmwmine">Установить MyBMW</string>
-    <string name="btn_install_minimine">Установить Mini</string>
+    <string name="btn_install_minimine">Установить приложение Mini</string>
     <string name="btn_install_bmw">Установить BMW Connected</string>
     <string name="btn_install_mini">Установить Mini Connected</string>
     <string name="btn_install_bmwclassic">Установить BMW Connected Classic</string>
@@ -226,15 +226,15 @@
     <string name="lbl_carinfo_gear">Передача:</string>
     <string name="lbl_carinfo_drivingmode">Режим:</string>
     <string name="lbl_carinfo_compass">Компас:</string>
-    <string name="lbl_carinfo_sunroof">Люк:</string>
+    <string name="lbl_carinfo_sunroof">Люк</string>
     <string name="lbl_carinfo_sunroof_closed">Закрыт</string>
     <string name="lbl_carinfo_sunroof_tilted">Открыть, наклонен</string>
     <string name="lbl_carinfo_sunroof_partial">Частично открыт, %d %%</string>
-    <string name="lbl_carinfo_sunroof_open">Полностью открыт</string>
-    <string name="lbl_carinfo_displayedSpeed">Темп. на дисплее:</string>
-    <string name="lbl_carinfo_temp_interior">Темп. внутри:</string>
-    <string name="lbl_carinfo_temp_exterior">Темп. снаружи:</string>
-    <string name="lbl_carinfo_parking_brake">Парковочный тормоз:</string>
+    <string name="lbl_carinfo_sunroof_open">Открыт полностью</string>
+    <string name="lbl_carinfo_displayedSpeed">Скорость на дисплее</string>
+    <string name="lbl_carinfo_temp_interior">Темп. внутри</string>
+    <string name="lbl_carinfo_temp_exterior">Темп. снаружи</string>
+    <string name="lbl_carinfo_parking_brake">Парковочный тормоз</string>
     <!-- unit suffixes -->
     <string name="lbl_carinfo_units_km">км</string>
     <string name="lbl_carinfo_units_mi">миль</string>
