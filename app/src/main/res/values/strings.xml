@@ -245,6 +245,23 @@
     <string name="lbl_carinfo_style_brake">Braking:</string>
     <string name="lbl_carinfo_style_shift">Shifting:</string>
 
+    <string name="lbl_carinfo_temp">Temperature:</string>
+    <string name="lbl_carinfo_engine_temp">Engine Temp:</string>
+    <string name="lbl_carinfo_oil_temp">Oil Temp:</string>
+    <string name="lbl_carinfo_speed">Speed:</string>
+    <string name="lbl_carinfo_gear">Gear:</string>
+    <string name="lbl_carinfo_drivingmode">Mode:</string>
+    <string name="lbl_carinfo_compass">Compass:</string>
+    <string name="lbl_carinfo_sunroof">Sun Roof:</string>
+    <string name="lbl_carinfo_sunroof_closed">Closed</string>
+    <string name="lbl_carinfo_sunroof_tilted">Open, tilted</string>
+    <string name="lbl_carinfo_sunroof_partial">Partially open, %d %%</string>
+    <string name="lbl_carinfo_sunroof_open">Fully open</string>
+    <string name="lbl_carinfo_displayedSpeed">Displayed Speed:</string>
+    <string name="lbl_carinfo_temp_interior">Temp Interior:</string>
+    <string name="lbl_carinfo_temp_exterior">Temp Exterior:</string>
+    <string name="lbl_carinfo_parking_brake">Parking Brake:</string>
+
     <!-- unit suffixes -->
     <string name="lbl_carinfo_units_km">km</string>
     <string name="lbl_carinfo_units_mi">mi</string>
@@ -256,7 +273,9 @@
     <string name="lbl_carinfo_units_kmL">km/L</string>
     <string name="lbl_carinfo_units_mph">mph</string>
     <string name="lbl_carinfo_units_kmph">kmph</string>
-
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
+    <string name="lbl_carinfo_units_masl">m.a.s.l.</string>
 
     <!-- tips -->
     <string name="lbl_tip_image">Tip demonstration image</string>
@@ -358,19 +377,4 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Thumb Down</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Thumbed Down</string>
-    <string name="lbl_carinfo_units_temp">Temperature</string>
-    <string name="lbl_carinfo_units_celcius">\u2103</string>
-    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
-    <string name="lbl_engine_temp">Engine Temp</string>
-    <string name="lbl_oil_temp">Oil Temp</string>
-    <string name="lbl_carinfo_speed">Speed:</string>
-    <string name="lbl_carinfo_gear">Gear:</string>
-    <string name="lbl_carinfo_drivingmode">Mode:</string>
-    <string name="lbl_carinfo_compass">Compass:</string>
-    <string name="lbl_carinfo_sunroof">SunRoof</string>
-    <string name="lbl_carinfo_displayedSpeed">Displayed Speed</string>
-    <string name="lbl_carinfo_temp_interior">Temp Interior</string>
-    <string name="lbl_carinfo_temp_exterior">Temp Exterior</string>
-    <string name="lbl_carinfo_parking_brake">Parking Brake</string>
-	<string name="lbl_carinfo_masl">m.a.s.l.</string>
 </resources>

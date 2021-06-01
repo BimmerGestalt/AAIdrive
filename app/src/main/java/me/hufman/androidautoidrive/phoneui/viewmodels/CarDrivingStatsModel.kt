@@ -346,32 +346,30 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 	}
 
 	/*
-		status: 0 - closed
+		status: 0 - closed or tilted
 		status: 1 - partially open  (not tilted)
 		status: 2 - fully open
 		tilt: 1->12 -> tilted (tilted degree)
 		open: 1-50 -> how far is open
 
 	 */
-	val sunRoof =carInfo.cachedCdsData.liveData[CDS.CONTROLS.SUNROOF].map {
+	val sunroofSupported = carInfo.cachedCdsData.liveData[CDS.CONTROLS.SUNROOF].map(false) {
+		it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("status")?.isNumber ?: false
+	}
+	val sunRoof = carInfo.cachedCdsData.liveData[CDS.CONTROLS.SUNROOF].map({""}) {
 		val status = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("status")?.tryAsInt ?: 0
 		val openPosition = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("openPosition")?.tryAsInt ?: 0
 		val tiltPosition = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("tiltPosition")?.tryAsInt ?: 0
-		var sunRoofString = ""
-		if (status == 0 && tiltPosition>0)
-		{
-			sunRoofString = "Open, tilted"
-		}
-		if (status == 1 && openPosition >0) {
-			val oP = openPosition*2
-			sunRoofString = "Partially open, ($oP %)"
-		}
-		if (status == 2)
-		{
-			sunRoofString = "Fully open"
-		}
-		if (status == 0 && tiltPosition == 0 && openPosition == 0) {
-			sunRoofString = "Closed"
+		val sunRoofString: Context.() -> String = if (status == 0 && tiltPosition == 0 && openPosition == 0) {
+			{ getString(R.string.lbl_carinfo_sunroof_closed) }
+		} else if (tiltPosition>0 && openPosition == 0) {
+			{ getString(R.string.lbl_carinfo_sunroof_tilted) }
+		} else if (status == 1 && openPosition >0) {
+			{ getString(R.string.lbl_carinfo_sunroof_partial, openPosition * 2) }
+		} else if (status == 2) {
+			{ getString(R.string.lbl_carinfo_sunroof_open) }
+		} else {
+			{ "" }
 		}
 		sunRoofString
 		//"DEBUG: Status: $status | Open: $openPosition | Tilt: $tiltPosition"

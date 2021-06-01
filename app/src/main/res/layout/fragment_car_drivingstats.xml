@@ -256,7 +256,7 @@
                             android:id="@+id/txtGeoAltitude"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text='@{viewModel.altitude + " " + @string/lbl_carinfo_masl}'
+                            android:text='@{viewModel.altitude + " " + @string/lbl_carinfo_units_masl}'
                             android:textSize="12sp"
                             android:visibility="@{viewModel.showAdvancedSettings}"
                             app:layout_constraintEnd_toStartOf="@+id/icMapPin"
@@ -415,7 +415,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/lbl_engine_temp"/>
+                android:text="@string/lbl_carinfo_engine_temp"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -430,7 +430,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/lbl_oil_temp"/>
+                android:text="@string/lbl_carinfo_oil_temp"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -441,7 +441,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility='@{viewModel.sunRoof != ""}'>
+            android:visibility='@{viewModel.sunroofSupported}'>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

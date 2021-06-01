@@ -297,7 +297,7 @@
     <string name="lbl_carinfo_style_brake">Hamowanie:</string>
     <string name="lbl_carinfo_style_shift">Zmiana biegów:</string>
     <string name="lbl_carinfo_ecoRangeWon">Zyska z jazdy Eco:</string>
-    <string name="lbl_carinfo_units_temp">Temperatura</string>
+    <string name="lbl_carinfo_temp">Temperatura</string>
     <string name="lbl_carinfo_units_celcius">\u2103</string>
     <string name="lbl_carinfo_units_fahrenheit" >\u2109</string>
     <string name="lbl_carinfo_lastPosition">Ostatnia pozycja pojazdu:</string>
@@ -306,8 +306,8 @@
     <string name="lbl_carinfo_averageConsumptionAlt">Średnie zużycie paliwa 2:</string>
     <string name="lbl_carinfo_averageSpeedAlt">Średnia prędkość 2:</string>
     <string name="lbl_carinfo_evLevel">Poziom baterii:</string>
-    <string name="lbl_engine_temp">Temperatura silnika:</string>
-    <string name="lbl_oil_temp">Temperatura oleju:</string>
+    <string name="lbl_carinfo_engine_temp">Temperatura silnika:</string>
+    <string name="lbl_carinfo_oil_temp">Temperatura oleju:</string>
     <string name="lbl_carinfo_speed">Prędkość:</string>
     <string name="lbl_carinfo_gear">Bieg:</string>
     <string name="lbl_carinfo_drivingmode">Tryb:</string>
@@ -317,5 +317,5 @@
     <string name="lbl_carinfo_temp_interior">Temp. wew.</string>
     <string name="lbl_carinfo_temp_exterior">Temp. zewn.</string>
     <string name="lbl_carinfo_parking_brake">Hamulec postojowy</string>
-	<string name="lbl_carinfo_masl">mnpm</string>
+	<string name="lbl_carinfo_units_masl">mnpm</string>
 </resources>
