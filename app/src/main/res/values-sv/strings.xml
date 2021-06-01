@@ -225,6 +225,11 @@
     <string name="lbl_carinfo_gear">Växel:</string>
     <string name="lbl_carinfo_drivingmode">Körläge:</string>
     <string name="lbl_carinfo_compass">Kompass:</string>
+    <string name="lbl_carinfo_sunroof">Taklucka</string>
+    <string name="lbl_carinfo_displayedSpeed">Visad hastighet</string>
+    <string name="lbl_carinfo_temp_interior">Innertemperatur</string>
+    <string name="lbl_carinfo_temp_exterior">Yttertemperatur</string>
+    <string name="lbl_carinfo_parking_brake">Parkeringsbroms</string>
     <!-- unit suffixes -->
     <string name="lbl_carinfo_units_km">km</string>
     <string name="lbl_carinfo_units_mi">mile</string>
