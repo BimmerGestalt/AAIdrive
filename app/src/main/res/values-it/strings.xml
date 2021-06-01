@@ -246,6 +246,8 @@
     <string name="lbl_carinfo_units_kmL">km/l</string>
     <string name="lbl_carinfo_units_mph">m/h</string>
     <string name="lbl_carinfo_units_kmph">km/h</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
     <!-- tips -->
     <string name="lbl_tip_image">Immagine dimostrativa del suggerimento</string>
     <string name="lbl_tiplist">Consigli e suggerimenti</string>
