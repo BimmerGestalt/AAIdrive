@@ -226,15 +226,15 @@
     <string name="lbl_carinfo_gear">Marcia:</string>
     <string name="lbl_carinfo_drivingmode">Modalità:</string>
     <string name="lbl_carinfo_compass">Bussola:</string>
-    <string name="lbl_carinfo_sunroof">Tetto Apribile:</string>
+    <string name="lbl_carinfo_sunroof">Tetto Apribile</string>
     <string name="lbl_carinfo_sunroof_closed">Chiuso</string>
     <string name="lbl_carinfo_sunroof_tilted">Aperto, inclinato</string>
     <string name="lbl_carinfo_sunroof_partial">Parzialmente aperto, %d %%</string>
     <string name="lbl_carinfo_sunroof_open">Completamente aperto</string>
-    <string name="lbl_carinfo_displayedSpeed">Velocità Visualizzata:</string>
-    <string name="lbl_carinfo_temp_interior">Temperatura Interna:</string>
-    <string name="lbl_carinfo_temp_exterior">Temperatura Esterna:</string>
-    <string name="lbl_carinfo_parking_brake">Freno Di Stazionamento:</string>
+    <string name="lbl_carinfo_displayedSpeed">Velocità Mostrata</string>
+    <string name="lbl_carinfo_temp_interior">Temperatura Interna</string>
+    <string name="lbl_carinfo_temp_exterior">Temperatura Esterna</string>
+    <string name="lbl_carinfo_parking_brake">Freno Di Stazionamento</string>
     <!-- unit suffixes -->
     <string name="lbl_carinfo_units_km">km</string>
     <string name="lbl_carinfo_units_mi">mi</string>
