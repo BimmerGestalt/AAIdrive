@@ -141,6 +141,8 @@
     <string name="txt_setup_mini_mine_conflict">Both the MINI Connected and My MINI apps are installed, which might cause connection instability unless connecting over USB</string>
     <string name="txt_setup_security_missing">Служба безопасности недоступна:</string>
     <string name="btn_install">Установить</string>
+    <string name="btn_install_bmwmine">Установить MyBMW</string>
+    <string name="btn_install_minimine">Установить Mini</string>
     <string name="btn_install_bmw">Установить BMW Connected</string>
     <string name="btn_install_mini">Установить Mini Connected</string>
     <string name="btn_install_bmwclassic">Установить BMW Connected Classic</string>
@@ -318,4 +320,16 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Понравилась</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Удалить</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Не понравилась</string>
+    <string name="lbl_carinfo_units_temp">Температура</string>
+    <string name="lbl_engine_temp">Темп. двигателя</string>
+    <string name="lbl_oil_temp">Темп. масла</string>
+    <string name="lbl_carinfo_speed">Скорость:</string>
+    <string name="lbl_carinfo_drivingmode">Режим:</string>
+    <string name="lbl_carinfo_compass">Компас:</string>
+    <string name="lbl_carinfo_sunroof">Люк</string>
+    <string name="lbl_carinfo_displayedSpeed">Скорость на дисплее</string>
+    <string name="lbl_carinfo_temp_interior">Темп. внутри</string>
+    <string name="lbl_carinfo_temp_exterior">Темп. снаружи</string>
+    <string name="lbl_carinfo_parking_brake">Парковочный тормоз</string>
+    <string name="lbl_carinfo_masl">над ур. моря</string>
 </resources>
