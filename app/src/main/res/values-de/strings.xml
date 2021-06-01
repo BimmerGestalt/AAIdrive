@@ -221,6 +221,22 @@
     <string name="lbl_carinfo_style_accel">Beschleunigung:</string>
     <string name="lbl_carinfo_style_brake">Bremsleistung:</string>
     <string name="lbl_carinfo_style_shift">Schaltung:</string>
+    <string name="lbl_carinfo_temp">Temperatur:</string>
+    <string name="lbl_carinfo_engine_temp">Motortemperatur:</string>
+    <string name="lbl_carinfo_oil_temp">Öltemperatur:</string>
+    <string name="lbl_carinfo_speed">Geschwindigkeit:</string>
+    <string name="lbl_carinfo_gear">Gang:</string>
+    <string name="lbl_carinfo_drivingmode">Fahrmodus:</string>
+    <string name="lbl_carinfo_compass">Kompass:</string>
+    <string name="lbl_carinfo_sunroof">Schiebedach:</string>
+    <string name="lbl_carinfo_sunroof_closed">Geschlossen</string>
+    <string name="lbl_carinfo_sunroof_tilted">Offen, angehoben</string>
+    <string name="lbl_carinfo_sunroof_partial">Teilweise geöffnet, %d %%</string>
+    <string name="lbl_carinfo_sunroof_open">Vollständig geöffnet</string>
+    <string name="lbl_carinfo_displayedSpeed">Angezeigte Geschwindigkeit:</string>
+    <string name="lbl_carinfo_temp_interior">Innentemperatur:</string>
+    <string name="lbl_carinfo_temp_exterior">Außentemperatur:</string>
+    <string name="lbl_carinfo_parking_brake">Parkbremse:</string>
     <!-- unit suffixes -->
     <string name="lbl_carinfo_units_km">km</string>
     <string name="lbl_carinfo_units_mi">mi</string>
@@ -232,6 +248,8 @@
     <string name="lbl_carinfo_units_kmL">km/l</string>
     <string name="lbl_carinfo_units_mph">mph</string>
     <string name="lbl_carinfo_units_kmph">km/h</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
     <!-- tips -->
     <string name="lbl_tip_image">Auf Demo-Bild tippen</string>
     <string name="lbl_tiplist">Tipps und Tricks</string>
@@ -324,19 +342,4 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Hochgevoted</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Daumen runter</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Runtergevoted</string>
-    <string name="lbl_carinfo_units_temp">Temperatur</string>
-    <string name="lbl_carinfo_units_celcius">\u2103</string>
-    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
-    <string name="lbl_engine_temp">Motortemperatur</string>
-    <string name="lbl_oil_temp">Öltemperatur</string>
-    <string name="lbl_carinfo_speed">Geschwindigkeit:</string>
-    <string name="lbl_carinfo_gear">Gang:</string>
-    <string name="lbl_carinfo_drivingmode">Fahrmodus:</string>
-    <string name="lbl_carinfo_compass">Kompass:</string>
-    <string name="lbl_carinfo_sunroof">Schiebedach</string>
-    <string name="lbl_carinfo_displayedSpeed">Angezeigte Geschwindigkeit</string>
-    <string name="lbl_carinfo_temp_interior">Innentemperatur</string>
-    <string name="lbl_carinfo_temp_exterior">Außentemperatur</string>
-    <string name="lbl_carinfo_parking_brake">Parkbremse</string>
-    <string name="lbl_carinfo_masl">Seehöhe.</string>
 </resources>
