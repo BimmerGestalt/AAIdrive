@@ -139,6 +139,8 @@
     <string name="txt_setup_mini_mine_conflict">Zowel de BMW Connected en Mijn BMW apps zijn geïnstalleerd, dit kan verbindingsinstabiliteit veroorzaken tenzij u via USB aangesloten bent</string>
     <string name="txt_setup_security_missing">Security Service is onbereikbaar:</string>
     <string name="btn_install">Installeren</string>
+    <string name="btn_install_bmwmine">Installeer de MyBMW app</string>
+    <string name="btn_install_minimine">Installeer de Mini app</string>
     <string name="btn_install_bmw">Installeer BMW Connected</string>
     <string name="btn_install_mini">Installeer Mini Connected</string>
     <string name="btn_install_bmwclassic">Installeer BMW Connected Classic</string>
@@ -219,6 +221,22 @@
     <string name="lbl_carinfo_style_accel">Acceleratie:</string>
     <string name="lbl_carinfo_style_brake">Remmen:</string>
     <string name="lbl_carinfo_style_shift">Schakelen:</string>
+    <string name="lbl_carinfo_temp">Temperatuur:</string>
+    <string name="lbl_carinfo_engine_temp">Motor temp:</string>
+    <string name="lbl_carinfo_oil_temp">Olie temp:</string>
+    <string name="lbl_carinfo_speed">Snelheid:</string>
+    <string name="lbl_carinfo_gear">Versnelling:</string>
+    <string name="lbl_carinfo_drivingmode">Modus:</string>
+    <string name="lbl_carinfo_compass">Kompas:</string>
+    <string name="lbl_carinfo_sunroof">Panoramadak:</string>
+    <string name="lbl_carinfo_sunroof_closed">Gesloten</string>
+    <string name="lbl_carinfo_sunroof_tilted">Open, gekanteld</string>
+    <string name="lbl_carinfo_sunroof_partial">Gedeeltelijk open, %d %%</string>
+    <string name="lbl_carinfo_sunroof_open">Volledig geopend</string>
+    <string name="lbl_carinfo_displayedSpeed">Weergegeven snelheid:</string>
+    <string name="lbl_carinfo_temp_interior">Binnen temp:</string>
+    <string name="lbl_carinfo_temp_exterior">Buiten temp:</string>
+    <string name="lbl_carinfo_parking_brake">Parkeer rem:</string>
     <!-- unit suffixes -->
     <string name="lbl_carinfo_units_km">km</string>
     <string name="lbl_carinfo_units_mi">mi</string>
@@ -230,6 +248,9 @@
     <string name="lbl_carinfo_units_kmL">km/L</string>
     <string name="lbl_carinfo_units_mph">mp/h</string>
     <string name="lbl_carinfo_units_kmph">km/h</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
+    <string name="lbl_carinfo_units_masl">Hoogte (NAP)</string>
     <!-- tips -->
     <string name="lbl_tip_image">Tip demonstratie afbeelding</string>
     <string name="lbl_tiplist">Tips en trucs</string>
