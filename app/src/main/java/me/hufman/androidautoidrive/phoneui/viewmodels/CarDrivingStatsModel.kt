@@ -26,7 +26,6 @@ import java.lang.Math.round
 import java.text.DateFormat
 import java.util.*
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdvancedSettings: BooleanLiveSetting): ViewModel() {
 	companion object {
@@ -354,7 +353,8 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 
 	 */
 	val sunroofSupported = carInfo.cachedCdsData.liveData[CDS.CONTROLS.SUNROOF].map(false) {
-		it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("status")?.isNumber ?: false
+		val status = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("status")?.tryAsInt
+		status == 0 || status == 1 || status == 2      // 3 and null would be false
 	}
 	val sunRoof = carInfo.cachedCdsData.liveData[CDS.CONTROLS.SUNROOF].map({""}) {
 		val status = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("status")?.tryAsInt ?: 0

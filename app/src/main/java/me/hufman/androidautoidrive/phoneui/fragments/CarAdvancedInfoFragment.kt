@@ -49,6 +49,9 @@ class CarAdvancedInfoFragment: Fragment() {
 			CDS.ENTERTAINMENT.MULTIMEDIA to "multimedia",
 			CDS.ENTERTAINMENT.RADIOSTATION to "radioStation",
 			CDS.HMI.GRAPHICALCONTEXT to "graphicalContext",
+			CDS.NAVIGATION.GPSPOSITION to "GPSPosition",
+			CDS.NAVIGATION.GPSEXTENDEDINFO to "GPSExtendedInfo",
+			CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO to "currentPositionDetailedInfo",
 		)
 	}
 

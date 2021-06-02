@@ -26,18 +26,18 @@
             android:layout_marginBottom="@dimen/pane_vertical_margin">
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp">
+                android:layout_weight="1">
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:ellipsize="none"
                     android:text="@string/lbl_carinfo_speed" />
                 <TextView
                     android:text="@{viewModel.speedActual}"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:ellipsize="none"
@@ -45,7 +45,7 @@
                     android:textSize="32sp" />
                 <TextView
                     android:text="@{viewModel.unitsAverageSpeedLabel}"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:ellipsize="none"
@@ -54,19 +54,19 @@
             </LinearLayout>
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp">
+                android:layout_weight="1">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:ellipsize="none"
                     android:text="@string/lbl_carinfo_gear" />
                 <TextView
                     android:text="@{viewModel.drivingGear}"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:ellipsize="none"
@@ -75,25 +75,25 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:orientation="vertical">
+                android:layout_weight="1">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="none"
                     android:singleLine="true"
                     android:text="@string/lbl_carinfo_drivingmode" />
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:ellipsize="none"
                     android:text="" />
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="none"
                     android:singleLine="true"
@@ -103,18 +103,18 @@
             </LinearLayout>
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp">
+                android:layout_weight="1">
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:ellipsize="none"
                     android:text="@string/lbl_carinfo_compass" />
                 <TextView
                     android:text="@{viewModel.headingGPS.first}"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:ellipsize="none"
@@ -122,7 +122,7 @@
                     android:textSize="32sp"/>
                 <TextView
                     android:text="@{viewModel.headingGPS.second}"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:ellipsize="none"
