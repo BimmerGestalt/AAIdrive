@@ -1,10 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="permlab_accessNotifications">IDrive hozzáférés az értesítésekhez</string>
+    <string name="permlab_bindNotificationListenerService">IDrive hozzáférés az értesítésekhez</string>
+    <string name="permdesc_accessNotifications">IDrive hozzáférés az értesítésekhez</string>
+    <string name="permdesc_bindNotificationListenerService">IDrive hozzáférés az értesítésekhez</string>
+    <string name="notification_title">Android Auto IDrive</string>
+    <string name="notification_description">Kapcsolódva az autóhoz</string>
+    <string name="notification_description_chassiscode">Csatlakozva a következőhöz: %s</string>
+    <string name="notification_description_bmw">BMW-hez kapcsolódva</string>
+    <string name="notification_description_mini">Mini-hez csatlakozva</string>
     <!-- notification channel names -->
+    <string name="notification_channel_connection">Kapcsolat állapota</string>
+    <string name="notification_channel_donation">Adomány kérése</string>
+    <string name="notification_channel_spotify">Spotify hitelesítése</string>
+    <string name="notification_channel_test">Teszt értesítés</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <string name="navigation_listener_bmw">BMW navigáció</string>
+    <string name="navigation_listener_mini">MINI navigáció</string>
     <!-- Labels on the navigation trigger activity -->
+    <string name="btn_search">Keresés</string>
+    <string name="lbl_navigation_listener_searching">Úti cél keresése</string>
+    <string name="lbl_navigation_listener_parsefailure">Nem sikerült az úticélt megtalálni</string>
+    <string name="lbl_navigation_listener_pending">Navigáció indítása</string>
+    <string name="lbl_navigation_listener_success">Siker</string>
+    <string name="lbl_navigation_listener_unsuccess">Sikertelen</string>
     <!-- Welcome pages -->
+    <string name="lbl_welcome_intro">Az AndroidAutoIdrive egy nem hivatalos aplikáció, amelyel autódhoz hozzá tudod adni a telefonodon lévő zenei alkalmazásokat, illetve egyéb tartalmakat a gyári \"BMW Apps\" protokollon keresztül</string>
+    <string name="lbl_welcome_dependencies">Az autóval való kapcsolat létesítéséhez a \"BMW/MINI Connected app\" vagy az új \"MyBMW\" / \"Mini app\" feltétlenül szükséges</string>
+    <string name="lbl_welcome_complete">Az AndroidAutoIdrive ezen kívül számos egyéb funkciót kínál az autódhoz. Próbáld ki!</string>
     <!-- Menu Titles -->
+    <string name="menu_overview">Áttekintés</string>
+    <string name="menu_setup">Beállítások</string>
+    <string name="menu_connection">Kapcsolat</string>
+    <string name="menu_carinfo">Autó információ</string>
+    <string name="menu_music">Zene</string>
+    <string name="menu_notifications">Értesítések</string>
+    <string name="menu_assistants">Asszisztensek</string>
+    <string name="menu_maps">Térképek</string>
+    <string name="menu_navigation">Navigáció</string>
+    <string name="menu_settings">Beállítások</string>
+    <string name="menu_support">Támogatás</string>
+    <string name="btn_next">Következő</string>
+    <string name="lbl_connectionpage">Az alkalmazás kapcsolódása számos dologtól függ, itt találsz néhány ötletet a biztos működéshez</string>
+    <string name="lbl_notificationpage">A beérkező értesítések megjeleníthetőek, és megválaszolhatóak az autó rendszeréből</string>
+    <string name="spawn_test_notification">Teszt értesítés</string>
+    <string name="message_notifications">Üzenet értesítések</string>
     <!-- connection setup -->
     <!-- connection status -->
     <!-- capabilities -->
