@@ -10,5 +10,6 @@
         android:strokeWidth="2.5"
         android:strokeColor="#2ef"
         android:strokeLineCap="round"
+        android:fillColor="@color/tip_hand_fill"
         />
 </vector>
