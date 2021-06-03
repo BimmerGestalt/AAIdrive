@@ -139,6 +139,8 @@
     <string name="txt_setup_mini_mine_conflict">Entrambe le app MINI Connected e My MINI sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non si connetta tramite USB</string>
     <string name="txt_setup_security_missing">Il Security Service non è raggiungibile:</string>
     <string name="btn_install">Installa</string>
+    <string name="btn_install_bmwmine">Installa l\'app MyBMW</string>
+    <string name="btn_install_minimine">Installa l\'app Mini</string>
     <string name="btn_install_bmw">Installa BMW Connected</string>
     <string name="btn_install_mini">Installa Mini Connected</string>
     <string name="btn_install_bmwclassic">Installa BMW Connected Classic</string>
@@ -248,6 +250,7 @@
     <string name="lbl_carinfo_units_kmph">km/h</string>
     <string name="lbl_carinfo_units_celcius">\u2103</string>
     <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
+    <string name="lbl_carinfo_units_masl">m.s.l.m.</string>
     <!-- tips -->
     <string name="lbl_tip_image">Immagine dimostrativa del suggerimento</string>
     <string name="lbl_tiplist">Consigli e suggerimenti</string>
