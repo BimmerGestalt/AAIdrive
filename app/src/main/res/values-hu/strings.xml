@@ -45,7 +45,39 @@
     <string name="lbl_notificationpage">A beérkező értesítések megjeleníthetőek, és megválaszolhatóak az autó rendszeréből</string>
     <string name="spawn_test_notification">Teszt értesítés</string>
     <string name="message_notifications">Üzenet értesítések</string>
+    <string name="notification_popups">Felugró értesítések</string>
+    <string name="notification_popups_passenger">Felugró értesítés utas esetén</string>
+    <string name="notification_sound">Értesítési hang</string>
+    <string name="notification_readout_popup_passenger">... utassal az autóban</string>
+    <string name="notification_quickreplies">Gyors válaszok</string>
+    <string name="notification_quickreplies_default">[\"👍\",\"Úton vagyok!\",\"Autóban vagyok\",\"Nem tudok írni, hívj inkább!\",\"Később visszahívlak!\"]</string>
+    <string name="lbl_notification_permissions">Hozzáférés az értesítésekhez</string>
+    <string name="lbl_notification_sms_permissions">Hozzáférés az SMS képek megjelenítéséhez</string>
+    <string name="lbl_popupVersion">Felugró értesítések megjelenítése csak IDrive4-en működik</string>
+    <string name="lbl_ttsUnsupported">TTS nem támogatott az autódban</string>
+    <string name="lbl_gmap_buildings">Épületek 3D megjelenítése</string>
+    <string name="gmapStyleLabel">Térkép stílus</string>
+    <string name="lbl_music_apps">Zene applikációk</string>
+    <string name="musicAppIcon">Applikáció ikon</string>
+    <string name="musicAppNowPlaying">Most játszott</string>
+    <string name="musicAppConnectable">Teljes vezérelhetőség</string>
+    <string name="musicAppBrowseable">Böngészhető</string>
+    <string name="musicAppSearchable">Kereshető</string>
+    <string name="musicAppUnavailable">Nem elérhető</string>
+    <string name="musicAppHidden">Rejtett</string>
+    <string name="lbl_error">Hiba</string>
+    <string name="connectionStatusMissingConnectedApp">Nem található MyBMW, Connected vagy Connected Classic app</string>
+    <string name="connectionStatusWaiting">Várakozás autóhoz való csatlakozásra</string>
+    <string name="connectionStatusConnected">Csatlakozva a következőhöz: %s</string>
+    <string name="lblChassisCode">Modell</string>
+    <string name="lblHmiVersion">IDrive típusa</string>
+    <string name="nowplaying_notconnected">&lt;Nincs kapcsolódva&gt;</string>
+    <string name="nowplaying_unknown">&lt;Ismeretlen&gt;</string>
     <!-- connection setup -->
+    <string name="txt_setup_bmw_ready">Az alkalmazás készenáll BMW-hez való kapcsolódásra</string>
+    <string name="txt_setup_mini_ready">Az alkalmazás készenáll Mini-hez való kapcsolódásra</string>
+    <string name="txt_setup_bmw_missing">Az alkalmazás nem áll készen BMW-hez való kapcsolódásra:</string>
+    <string name="txt_setup_mini_missing">Az alkalmazás nem áll készen Mini-hez való kapcsolódásra:</string>
     <!-- connection status -->
     <!-- capabilities -->
     <!-- debug status -->
