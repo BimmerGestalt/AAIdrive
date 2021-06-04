@@ -70,12 +70,16 @@
     <string name="lbl_music_apps">Zene applikációk</string>
     <string name="musicAppIcon">Applikáció ikon</string>
     <string name="musicAppNowPlaying">Most játszott</string>
+    <string name="musicAppControllable">Vezérelhető futás alatt</string>
     <string name="musicAppConnectable">Teljes vezérelhetőség</string>
     <string name="musicAppBrowseable">Böngészhető</string>
     <string name="musicAppSearchable">Kereshető</string>
     <string name="musicAppUnavailable">Nem elérhető</string>
     <string name="musicAppHidden">Rejtett</string>
+    <string name="lbl_grant_sessions">Aktív zene alkalmazás vezérlése</string>
+    <string name="lbl_grant_spotify_control">Spotify könyvtár tallózásának lehetősége</string>
     <string name="lbl_grant">Engedélyez</string>
+    <string name="musicAppNotes_unauthorizedSpotify">Nyomj ide Spotify kapcsolat hitelesítéséhez</string>
     <string name="lbl_language_forcelanguage">Meghatározott nyelv kényszerítése</string>
     <string name="lbl_donations_volunteer">AndroidAutoIdrive egy önkéntes projekt</string>
     <string name="lbl_donations_request">Amennyiben kedveled ezt a projektet és hasznosnak találod, gondold meg, hogy támogassad azt:</string>
