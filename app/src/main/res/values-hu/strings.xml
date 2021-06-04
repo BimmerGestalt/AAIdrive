@@ -133,7 +133,18 @@
     <string name="btn_install_bmwclassic">BMW Connected Classic telepítése</string>
     <string name="btn_install_miniclassic">Mini Connected Classic telepítése</string>
     <!-- connection status -->
+    <string name="txt_setup_bt_disconnected">Nincs kapcsolat az autóval Bluetoothon keresztül</string>
+    <string name="txt_setup_bt_connected">Az autó Bluetoothon keresztül csatlakozva van</string>
+    <string name="txt_setup_a2dp_disconnected">Bluetooth Zene nincs csatlakozva</string>
+    <string name="txt_setup_a2dp_connected">Bluetooth Zene csatlakozva van</string>
+    <string name="txt_setup_spp_disconnected">Bluetooth alkalmazások nem támogatottak</string>
+    <string name="txt_setup_spp_connected">Bluetooth alkalmazások támogatottak</string>
+    <string name="txt_setup_usb_disconnected">Nincs kapcsolat az autóval USB-n keresztül</string>
+    <string name="txt_setup_enable_usbmtp">Állítsd át a telefon USB módját Adatátvitelre</string>
+    <string name="txt_setup_enable_bclspp_bt">Próbáld meg ki/be kapcsolni a Bluetooth Zenét</string>
+    <string name="txt_setup_enable_bclspp_usb">Próbáld meg ki/be kapcsolni a Bluetooth Zenét vagy csatlakozz USB-n keresztül</string>
     <!-- capabilities -->
+    <string name="lbl_capabilities_detected">Az autó felismert képességei:</string>
     <string name="txt_capabilities_audiostate_id4">ID4 nem támogatja ezt a funkciót</string>
     <string name="txt_capabilities_audiostate_spotify">Telepítsd a legfissebb Spotify alkalmazást a funkció bekapcsolásához</string>
     <string name="txt_capabilities_popup_yes">Felugró értesítések támogatva</string>
@@ -145,6 +156,11 @@
     <string name="txt_capabilities_navi_no">Nem támogatott autó navigáció</string>
     <!-- debug status -->
     <string name="txt_build_info">Build verziószáma: %1$s %2$s</string>
+    <string name="txt_bcl_report">BCL csatorna teljesítménye:</string>
+    <string name="txt_cds_view">Autó adat riport:</string>
+    <string name="txt_car_capabilities">Az autó képességei részletesen:</string>
+    <string name="lbl_advanced_settings">Haladó beállítások mutatása</string>
+    <string name="lbl_assistant">Hang asszisztens (Béta)</string>
     <!-- car status -->
     <string name="lbl_carinfo_lastPosition_openMap">Térkép megnyitása</string>
     <string name="lbl_carinfo_vin">VIN:</string>
@@ -185,6 +201,9 @@
     <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
     <string name="lbl_carinfo_units_masl">m.a.s.l.</string>
     <!-- tips -->
+    <string name="lbl_tip_expand">Tippek kinyitása</string>
+    <string name="tip_connassistant">Használd a Kapcsolati Varázslót az USB tartozék mód bekapcsolásához, az IDrive4 autókban</string>
+    <string name="tip_batterymode_mybmw">Próbáld meg kikapcsolni az akku optimalizációt a MyBMW alkalmazás esetében, ami néha segít kapcsolódni az autóhoz</string>
     <!-- car app strings -->
     <string name="NOTIFICATION_POPUPS_PASSENGER"> … utassal az autóban</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … utassal az autóban</string>
