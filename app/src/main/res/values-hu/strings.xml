@@ -67,6 +67,7 @@
     <string name="lbl_map_traffic">Forgalom mutatása</string>
     <string name="lbl_gmap_buildings">Épületek 3D megjelenítése</string>
     <string name="gmapStyleLabel">Térkép stílus</string>
+    <string name="lbl_musicpage">A telefonodon lévő zene alkalmazások kiválaszthatóak mint média forrás az autóban</string>
     <string name="lbl_music_apps">Zene applikációk</string>
     <string name="musicAppIcon">Applikáció ikon</string>
     <string name="musicAppNowPlaying">Most játszott</string>
@@ -80,6 +81,9 @@
     <string name="lbl_grant_spotify_control">Spotify könyvtár tallózásának lehetősége</string>
     <string name="lbl_grant">Engedélyez</string>
     <string name="musicAppNotes_unauthorizedSpotify">Nyomj ide Spotify kapcsolat hitelesítéséhez</string>
+    <string name="musicAppNotes_oldSpotify">Régebbi Spotify verzió telepítése szükséges a teljes funkcionalitáshoz (Keresés)</string>
+    <string name="musicAppNotes_spotify_apiNotFound">Kérlek telepítsd a hivatalos Spotify alkalmazást</string>
+    <string name="musicAppNotes_spotify_apiUnavailable">Kérlek ellenőrizd az internet kapcsolatot, illetve kapcsolj ki minden reklámblokkolót</string>
     <string name="lbl_language_forcelanguage">Meghatározott nyelv kényszerítése</string>
     <string name="lbl_donations_volunteer">AndroidAutoIdrive egy önkéntes projekt</string>
     <string name="lbl_donations_request">Amennyiben kedveled ezt a projektet és hasznosnak találod, gondold meg, hogy támogassad azt:</string>
