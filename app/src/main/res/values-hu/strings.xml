@@ -85,10 +85,82 @@
     <string name="txt_setup_mini_missing">Az alkalmazás nem áll készen Mini-hez való kapcsolódásra:</string>
     <!-- connection status -->
     <!-- capabilities -->
+    <string name="txt_capabilities_audiostate_id4">ID4 nem támogatja ezt a funkciót</string>
+    <string name="txt_capabilities_audiostate_spotify">Telepítsd a legfissebb Spotify alkalmazást a funkció bekapcsolásához</string>
+    <string name="txt_capabilities_popup_yes">Felugró értesítések támogatva</string>
+    <string name="txt_capabilities_popup_no">Felugró értesítések nincsenek támogatva</string>
+    <string name="txt_capabilities_popup_hint">Felugró értesítések cak ID4-en vannak támogatva</string>
+    <string name="txt_capabilities_tts_yes">Értesítések szövegfelolvasása támogatva</string>
+    <string name="txt_capabilities_tts_no">Értesítések szövegfelolvasása nincsen támogatva</string>
+    <string name="txt_capabilities_navi_yes">Támogatott autó navigáció</string>
+    <string name="txt_capabilities_navi_no">Nem támogatott autó navigáció</string>
     <!-- debug status -->
     <string name="txt_build_info">Build verziószáma: %1$s %2$s</string>
     <!-- car status -->
+    <string name="lbl_carinfo_lastPosition_openMap">Térkép megnyitása</string>
+    <string name="lbl_carinfo_vin">VIN:</string>
+    <string name="lbl_carinfo_odo">Futásteljesítmény:</string>
+    <string name="lbl_carinfo_idriveVersion">IDrive verzió:</string>
+    <string name="lbl_carinfo_averageConsumption">Átlagos fogyasztás:</string>
+    <string name="lbl_carinfo_averageSpeed">Átlagsebesség:</string>
+    <string name="lbl_carinfo_fuelLevel">Üzemanyagszint:</string>
+    <string name="lbl_carinfo_style_accel">Gyorsulás:</string>
+    <string name="lbl_carinfo_style_brake">Fékezés:</string>
+    <string name="lbl_carinfo_style_shift">Váltás:</string>
+    <string name="lbl_carinfo_temp">Hőmérésklet:</string>
+    <string name="lbl_carinfo_engine_temp">Motor hőmérésklet:</string>
+    <string name="lbl_carinfo_oil_temp">Olaj hőmérséklet:</string>
+    <string name="lbl_carinfo_speed">Sebesség:</string>
+    <string name="lbl_carinfo_drivingmode">Üzemmód:</string>
+    <string name="lbl_carinfo_compass">Iránytű:</string>
+    <string name="lbl_carinfo_sunroof">Napfénytető:</string>
+    <string name="lbl_carinfo_sunroof_closed">Zárva</string>
+    <string name="lbl_carinfo_sunroof_tilted">Nyitva, döntve</string>
+    <string name="lbl_carinfo_sunroof_partial">Részben nyitva, %d %%</string>
+    <string name="lbl_carinfo_sunroof_open">Teljesen nyitva</string>
+    <string name="lbl_carinfo_temp_interior">Belső hőmérséklet:</string>
+    <string name="lbl_carinfo_temp_exterior">Külső hőmérséklet:</string>
+    <string name="lbl_carinfo_parking_brake">Kézifék:</string>
     <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">km</string>
+    <string name="lbl_carinfo_units_mi">mi</string>
+    <string name="lbl_carinfo_units_gal_uk">gal (UK)</string>
+    <string name="lbl_carinfo_units_gal_us">gal (US)</string>
+    <string name="lbl_carinfo_units_liter">L</string>
+    <string name="lbl_carinfo_units_L100km">L/100km</string>
+    <string name="lbl_carinfo_units_mpg">mpg</string>
+    <string name="lbl_carinfo_units_kmL">km/L</string>
+    <string name="lbl_carinfo_units_mph">mph</string>
+    <string name="lbl_carinfo_units_kmph">kmph</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
+    <string name="lbl_carinfo_units_masl">m.a.s.l.</string>
     <!-- tips -->
     <!-- car app strings -->
+    <string name="NOTIFICATION_POPUPS_PASSENGER"> … utassal az autóban</string>
+    <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … utassal az autóban</string>
+    <string name="MAP_ACTION_SEARCH">Hely keresése</string>
+    <string name="MUSIC_APPLIST_TITLE">Alkalmazások</string>
+    <string name="MUSIC_APPLIST_EMPTY">&lt;Nincs alkalmazás&gt;</string>
+    <string name="MUSIC_CUSTOMACTIONS_TITLE">Műveletek</string>
+    <string name="MUSIC_DISCONNECTED">&lt;Nincs kapcsolódva&gt;</string>
+    <string name="MUSIC_BROWSE_TITLE">Tallózás</string>
+    <string name="MUSIC_BROWSE_EMPTY">&lt;üres&gt;</string>
+    <string name="MUSIC_BROWSE_LOADING">&lt;Betöltés&gt;</string>
+    <string name="MUSIC_BROWSE_SEARCHING">&lt;Keresés&gt;</string>
+    <string name="MUSIC_BROWSE_ACTION_JUMPBACK">Visszalépés</string>
+    <string name="MUSIC_BROWSE_ACTION_FILTER">Szűrés</string>
+    <string name="MUSIC_BROWSE_ACTION_SEARCH">Keresés</string>
+    <string name="MUSIC_QUEUE_TITLE">Most játszott</string>
+    <string name="MUSIC_SKIP_PREVIOUS">Vissza</string>
+    <string name="MUSIC_SKIP_NEXT">Következő</string>
+    <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Véletlenszerű lejátszás nem elérhető</string>
+    <string name="MUSIC_TURN_SHUFFLE_ON">Véletlanszerű lejátszás bekapcsolása</string>
+    <string name="MUSIC_TURN_SHUFFLE_OFF">Véletlanszerű lejátszás kikapcsolása</string>
+    <string name="MUSIC_TURN_REPEAT_UNAVAILABLE">Ismétlés nem elérhető</string>
+    <string name="MUSIC_TURN_REPEAT_ALL_ON">Összes ismétlése</string>
+    <string name="MUSIC_TURN_REPEAT_ONE_ON">Ugyanaz ismétlésének bekapcsolása</string>
+    <string name="MUSIC_TURN_REPEAT_OFF">Ismétlés kikapcsolása</string>
+    <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Nem kedvel</string>
+    <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Kedvel</string>
 </resources>
