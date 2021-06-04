@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">AndroidAutoIdrive</string>
     <string name="permlab_accessNotifications">IDrive hozzáférés az értesítésekhez</string>
     <string name="permlab_bindNotificationListenerService">IDrive hozzáférés az értesítésekhez</string>
     <string name="permdesc_accessNotifications">IDrive hozzáférés az értesítésekhez</string>
@@ -65,6 +66,10 @@
     <string name="musicAppSearchable">Kereshető</string>
     <string name="musicAppUnavailable">Nem elérhető</string>
     <string name="musicAppHidden">Rejtett</string>
+    <string name="lbl_ok">OK</string>
+    <string name="lbl_cancel">Mégsem</string>
+    <string name="btn_configure">Beállítás …</string>
+    <string name="btn_add">Hozzáad</string>
     <string name="lbl_error">Hiba</string>
     <string name="connectionStatusMissingConnectedApp">Nem található MyBMW, Connected vagy Connected Classic app</string>
     <string name="connectionStatusWaiting">Várakozás autóhoz való csatlakozásra</string>
@@ -81,6 +86,7 @@
     <!-- connection status -->
     <!-- capabilities -->
     <!-- debug status -->
+    <string name="txt_build_info">Build verziószáma: %1$s %2$s</string>
     <!-- car status -->
     <!-- unit suffixes -->
     <!-- tips -->
