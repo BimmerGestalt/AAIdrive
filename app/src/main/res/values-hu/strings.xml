@@ -26,6 +26,7 @@
     <string name="lbl_navigation_listener_success">Siker</string>
     <string name="lbl_navigation_listener_unsuccess">Sikertelen</string>
     <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Kapcsolódjunk!</string>
     <string name="lbl_welcome_intro">Az AndroidAutoIdrive egy nem hivatalos aplikáció, amelyel autódhoz hozzá tudod adni a telefonodon lévő zenei alkalmazásokat, illetve egyéb tartalmakat a gyári \"BMW Apps\" protokollon keresztül</string>
     <string name="lbl_welcome_dependencies">Az autóval való kapcsolat létesítéséhez a \"BMW/MINI Connected app\" vagy az új \"MyBMW\" / \"Mini app\" feltétlenül szükséges</string>
     <string name="lbl_welcome_complete">Az AndroidAutoIdrive ezen kívül számos egyéb funkciót kínál az autódhoz. Próbáld ki!</string>
@@ -43,6 +44,7 @@
     <string name="menu_support">Támogatás</string>
     <string name="btn_next">Következő</string>
     <string name="lbl_connectionpage">Az alkalmazás kapcsolódása számos dologtól függ, itt találsz néhány ötletet a biztos működéshez</string>
+    <string name="lbl_assistantpage_tip">Ezek az applikációk különállóak az autó kormányán lévő hang asszisztens gombtól, amely gomb a telefon alapértelmezett asszisztensét indítja</string>
     <string name="lbl_notificationpage">A beérkező értesítések megjeleníthetőek, és megválaszolhatóak az autó rendszeréből</string>
     <string name="spawn_test_notification">Teszt értesítés</string>
     <string name="message_notifications">Üzenet értesítések</string>
@@ -56,9 +58,11 @@
     <string name="lbl_notification_sms_permissions">Hozzáférés az SMS képek megjelenítéséhez</string>
     <string name="lbl_popupVersion">Felugró értesítések megjelenítése csak IDrive4-en működik</string>
     <string name="lbl_ttsUnsupported">TTS nem támogatott az autódban</string>
+    <string name="lbl_smsPermission">Engedélyezés a beérkező SMS üzenetekben lévő képeknek az autóban történő megjelenítésre. A szöveg állandóan látható.</string>
     <string name="lbl_mapspage">Alapvető Google Térkép megjelenítése az autóban</string>
     <string name="enable_google_maps">Google Térkép bekapcsolása</string>
     <string name="lbl_widescreen_map">Szélesképernyős térkép</string>
+    <string name="lbl_map_invert_zoom">Nagyítás irányának megfordítása</string>
     <string name="lbl_map_tilt">Térkép döntése</string>
     <string name="lbl_map_traffic">Forgalom mutatása</string>
     <string name="lbl_gmap_buildings">Épületek 3D megjelenítése</string>
