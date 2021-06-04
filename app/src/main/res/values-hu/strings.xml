@@ -84,6 +84,9 @@
     <string name="musicAppNotes_oldSpotify">Régebbi Spotify verzió telepítése szükséges a teljes funkcionalitáshoz (Keresés)</string>
     <string name="musicAppNotes_spotify_apiNotFound">Kérlek telepítsd a hivatalos Spotify alkalmazást</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Kérlek ellenőrizd az internet kapcsolatot, illetve kapcsolj ki minden reklámblokkolót</string>
+    <string name="lbl_navigationstatus_active">Jelenleg navigálas</string>
+    <string name="lbl_navigationstatus_inactive">Jelenleg nincs navigálás</string>
+    <string name="lbl_language_prefercar">Az autó nyelve előnyben részesítve az telefon nyelvével szemben</string>
     <string name="lbl_language_forcelanguage">Meghatározott nyelv kényszerítése</string>
     <string name="lbl_donations_volunteer">AndroidAutoIdrive egy önkéntes projekt</string>
     <string name="lbl_donations_request">Amennyiben kedveled ezt a projektet és hasznosnak találod, gondold meg, hogy támogassad azt:</string>
@@ -110,6 +113,20 @@
     <string name="txt_setup_mini_ready">Az alkalmazás készenáll Mini-hez való kapcsolódásra</string>
     <string name="txt_setup_bmw_missing">Az alkalmazás nem áll készen BMW-hez való kapcsolódásra:</string>
     <string name="txt_setup_mini_missing">Az alkalmazás nem áll készen Mini-hez való kapcsolódásra:</string>
+    <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 van telepítve, ami néha nem kapcsolódik az autóhoz. Amennyiben problémát tapasztalsz, próbáld meg telepíteni a 6.4 verziót, vagy frissíts a MyBMW alkalmazásra</string>
+    <string name="txt_setup_mini_connected_65">Mini Connected 6.5 van telepítve, ami néha nem kapcsolódik az autóhoz. Amennyiben problémát tapasztalsz, próbáld meg telepíteni a 6.4 verziót, vagy frissíts az új Mini alkalmazásra</string>
+    <string name="txt_setup_bmw_mine_detected">Az új MyBMW alkalmazás van telepítve, amely problémát okozhat a BMW Connected alkalmazással, és ez nem támogatott</string>
+    <string name="txt_setup_mini_mine_detected">Az új Mini alkalmazás van telepítve, amely problémát okozhat a Mini Connected alkalmazással, és ez nem támogatott</string>
+    <string name="txt_setup_bmw_mine_conflict">A BMW Connected és MyBMW alkalmazások telepítve vannak, ami instabilitást okozhat a kapcsolatban, kivéve ha USB-n keresztül kapcsolódsz</string>
+    <string name="txt_setup_mini_mine_conflict">A Mini Connected és Mini alkalmazások telepítve vannak, ami instabilitást okozhat a kapcsolatban, kivéve ha USB-n keresztül kapcsolódsz</string>
+    <string name="txt_setup_security_missing">Biztonsági szolgáltatás nem elérhető:</string>
+    <string name="btn_install">Telepítés</string>
+    <string name="btn_install_bmwmine">Telepítsd a MyBMW alkalmazást</string>
+    <string name="btn_install_minimine">Telepítsd a Mini alkalmazást</string>
+    <string name="btn_install_bmw">BMW Connected telepítése</string>
+    <string name="btn_install_mini">Mini Connected telepítése</string>
+    <string name="btn_install_bmwclassic">BMW Connected Classic telepítése</string>
+    <string name="btn_install_miniclassic">Mini Connected Classic telepítése</string>
     <!-- connection status -->
     <!-- capabilities -->
     <string name="txt_capabilities_audiostate_id4">ID4 nem támogatja ezt a funkciót</string>
