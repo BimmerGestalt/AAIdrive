@@ -29,13 +29,43 @@ open class MusicMetadata(val mediaId: String? = null,
 	companion object {
 		var lastLoggedMetadata: MediaMetadataCompat? = null
 		fun fromMediaMetadata(metadata: MediaMetadataCompat, playbackState: PlaybackStateCompat? = null): MusicMetadata {
-			if (lastLoggedMetadata?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID) != metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)) {
+			val changed = lastLoggedMetadata?.mediaId != metadata.mediaId ||
+					lastLoggedMetadata?.title != metadata.title ||
+					lastLoggedMetadata?.displayTitle != metadata.displayTitle ||
+					lastLoggedMetadata?.displaySubtitle != metadata.displaySubtitle
+			if (changed) {
 				Log.i(TAG, "Parsing MediaMetadata ${metadata.bundle.dumpToString()}")
 				Log.i(TAG, "Playback state: queueId:${playbackState?.activeQueueItemId}")
 				lastLoggedMetadata = metadata
 			}
+			// some apps only set DISPLAY_TITLE and DISPLAY_SUBTITLE
+			// so use those for artist/title fields, because that matches the car widget display order
+			// prefer the artist field if the DISPLAY_TITLE is the same as the COLLECTION
+			var artist: String? = null
+			var album: String? = null
+			var title: String? = null
+			if (metadata.compilation != null && metadata.compilation == metadata.displayTitle &&
+					metadata.artist != metadata.displaySubtitle) {
+				// radio station is used as the Display Title, try not to prefer the Display fields
+				// Except ignore when artist == displaySubtitle scenario from SomaFM
+				artist = metadata.artist ?:
+						metadata.albumArtist ?:
+						metadata.displayTitle
+				title = metadata.title ?:
+						metadata.displaySubtitle ?:
+						metadata.displayTitle
+			} else {
+				artist = metadata.displayTitle ?:
+						metadata.artist ?:
+						metadata.albumArtist
+				title = metadata.displaySubtitle ?:
+						metadata.displayTitle ?:
+						metadata.title
+			}
+			album = metadata.album
+
 			return MusicMetadata(
-					mediaId = metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID),
+					mediaId = metadata.mediaId,
 					queueId = playbackState?.activeQueueItemId,
 					duration = metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION),
 					coverArt = metadata.getBitmap(MediaMetadataCompat.METADATA_KEY_ART) ?:
@@ -45,11 +75,9 @@ open class MusicMetadata(val mediaId: String? = null,
 							metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI) ?:
 							metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI),
 					icon = metadata.getBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON),
-					artist = metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST) ?:
-							metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST),
-					album = metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM),
-					title = metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE) ?:
-							metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE),
+					artist = artist,
+					album = album,
+					title = title,
 					trackNumber = metadata.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER),
 					trackCount = metadata.getLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS)
 			)
@@ -132,3 +160,21 @@ open class MusicMetadata(val mediaId: String? = null,
 		return title ?: mediaId ?: ""
 	}
 }
+
+// Helper functions for convenient access to common metadata fields
+val MediaMetadataCompat.mediaId: String?
+	get() = getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)
+val MediaMetadataCompat.artist: String?
+	get() = getString(MediaMetadataCompat.METADATA_KEY_ARTIST)
+val MediaMetadataCompat.albumArtist: String?
+	get() = getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST)
+val MediaMetadataCompat.album: String?
+	get() = getString(MediaMetadataCompat.METADATA_KEY_ALBUM)
+val MediaMetadataCompat.compilation: String?
+	get() = getString(MediaMetadataCompat.METADATA_KEY_COMPILATION)
+val MediaMetadataCompat.title: String?
+	get() = getString(MediaMetadataCompat.METADATA_KEY_TITLE)
+val MediaMetadataCompat.displayTitle: String?
+	get() = getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE)
+val MediaMetadataCompat.displaySubtitle: String?
+	get() = getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE)
