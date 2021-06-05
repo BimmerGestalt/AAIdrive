@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.activity_musicplayer.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
@@ -70,22 +71,24 @@ class MusicPlayerActivity: AppCompatActivity() {
 	}
 
 	override fun onBackPressed() {
-		if (pgrMusicPlayer.currentItem == 0) {
+		val currentItem = findViewById<ViewPager>(R.id.pgrMusicPlayer)?.currentItem ?: 0
+		if (currentItem == 0) {
 			// pass through default behavior, to close the Activity
 			super.onBackPressed()
+			return
 		}
-		if (pgrMusicPlayer.currentItem == 1) {
+		if (currentItem == 1) {
 			val container = (pgrMusicPlayer.adapter as MusicPlayerPagerAdapter).getItem(1) as MusicBrowseFragment
 			val popped = container.onBackPressed()
 			if (!popped) {
 				pgrMusicPlayer.currentItem = 0
 			}
 		}
-		if (pgrMusicPlayer.currentItem == 2) {
+		if (currentItem == 2) {
 			// go back to the main playback page
 			pgrMusicPlayer.currentItem = 0
 		}
-		if (pgrMusicPlayer.currentItem == 3) {
+		if (currentItem == 3) {
 			// go back to the main playback page
 			pgrMusicPlayer.currentItem = 0
 		}
@@ -104,7 +107,7 @@ class MusicPlayerPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm
 		return tabs.size
 	}
 
-	override fun getPageTitle(position: Int): CharSequence? {
+	override fun getPageTitle(position: Int): CharSequence {
 		return tabs.keys.elementAt(position)
 	}
 
