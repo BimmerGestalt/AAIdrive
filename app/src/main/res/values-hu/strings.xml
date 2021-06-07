@@ -11,6 +11,7 @@
     <string name="notification_description_bmw">BMW-hez kapcsolódva</string>
     <string name="notification_description_mini">Mini-hez csatlakozva</string>
     <!-- notification channel names -->
+    <string name="notification_channel_assistant">Asszisztens indító</string>
     <string name="notification_channel_connection">Kapcsolat állapota</string>
     <string name="notification_channel_donation">Adomány kérése</string>
     <string name="notification_channel_spotify">Spotify hitelesítése</string>
@@ -28,6 +29,7 @@
     <!-- Welcome pages -->
     <string name="lbl_welcome_heading">Kapcsolódjunk!</string>
     <string name="lbl_welcome_intro">Az AndroidAutoIdrive egy nem hivatalos aplikáció, amelyel autódhoz hozzá tudod adni a telefonodon lévő zenei alkalmazásokat, illetve egyéb tartalmakat a gyári \"BMW Apps\" protokollon keresztül</string>
+    <string name="lbl_welcome_compatible">A legtöbb MY2014 vagy az újabb BMW-k és MINI-k, amelyek NBT vagy NBT Evo (IDive 4-6 alapon) egységgel vannak felszerelve, továbbá rendelkeznek aktív ConnectedDrive vagy BMW Online szolgáltatással, azok kompatibilisek kell legyenek</string>
     <string name="lbl_welcome_dependencies">Az autóval való kapcsolat létesítéséhez a \"BMW/MINI Connected app\" vagy az új \"MyBMW\" / \"Mini app\" feltétlenül szükséges</string>
     <string name="lbl_welcome_complete">Az AndroidAutoIdrive ezen kívül számos egyéb funkciót kínál az autódhoz. Próbáld ki!</string>
     <!-- Menu Titles -->
@@ -140,11 +142,14 @@
     <string name="txt_setup_spp_disconnected">Bluetooth alkalmazások nem támogatottak</string>
     <string name="txt_setup_spp_connected">Bluetooth alkalmazások támogatottak</string>
     <string name="txt_setup_usb_disconnected">Nincs kapcsolat az autóval USB-n keresztül</string>
+    <string name="txt_setup_usb_connected">USB töltés módban csatlakoztatva</string>
     <string name="txt_setup_enable_usbmtp">Állítsd át a telefon USB módját Adatátvitelre</string>
     <string name="txt_setup_enable_bclspp_bt">Próbáld meg ki/be kapcsolni a Bluetooth Zenét</string>
     <string name="txt_setup_enable_bclspp_usb">Próbáld meg ki/be kapcsolni a Bluetooth Zenét vagy csatlakozz USB-n keresztül</string>
     <!-- capabilities -->
     <string name="lbl_capabilities_detected">Az autó felismert képességei:</string>
+    <string name="txt_capabilities_audiostate_yes">Album borító megjelenítése támogatva</string>
+    <string name="txt_capabilities_audiostate_no">Album borító megjelenítése nincs támogatva</string>
     <string name="txt_capabilities_audiostate_id4">ID4 nem támogatja ezt a funkciót</string>
     <string name="txt_capabilities_audiostate_spotify">Telepítsd a legfissebb Spotify alkalmazást a funkció bekapcsolásához</string>
     <string name="txt_capabilities_popup_yes">Felugró értesítések támogatva</string>
@@ -161,14 +166,29 @@
     <string name="txt_car_capabilities">Az autó képességei részletesen:</string>
     <string name="lbl_advanced_settings">Haladó beállítások mutatása</string>
     <string name="lbl_assistant">Hang asszisztens (Béta)</string>
+    <string name="lbl_assistant_empty">Nincs találat</string>
     <!-- car status -->
+    <string name="lbl_carinfopage">Itt rövid információ található az autódról</string>
+    <string name="lbl_carinfo_efficiency">Hatékonyságstatisztika</string>
+    <string name="lbl_carinfo_ev">EV fogyasztás statisztika</string>
+    <string name="lbl_carinfo_style">Efficient Driving Stílus</string>
+    <string name="lbl_carinfo_lastchecked">Utoljára ellenőrizve:</string>
+    <string name="lbl_carinfo_lastPosition">Utolsó pozíció:</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%s és %s</string>
     <string name="lbl_carinfo_lastPosition_openMap">Térkép megnyitása</string>
     <string name="lbl_carinfo_vin">VIN:</string>
     <string name="lbl_carinfo_odo">Futásteljesítmény:</string>
     <string name="lbl_carinfo_idriveVersion">IDrive verzió:</string>
     <string name="lbl_carinfo_averageConsumption">Átlagos fogyasztás:</string>
     <string name="lbl_carinfo_averageSpeed">Átlagsebesség:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">Átlagfogyasztás (alt):</string>
+    <string name="lbl_carinfo_averageSpeedAlt">Átlagsebesség (alt):</string>
+    <string name="lbl_carinfo_evLevel">Elektromos töltés:</string>
+    <string name="lbl_carinfo_evRange">Elektromos hatótáv:</string>
     <string name="lbl_carinfo_fuelLevel">Üzemanyagszint:</string>
+    <string name="lbl_carinfo_fuelRange">Üzemanyag hatótáv:</string>
+    <string name="lbl_carinfo_totalRange">Teljes hatótáv:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Acc. Akkumulátor töltés szintje:</string>
     <string name="lbl_carinfo_style_accel">Gyorsulás:</string>
     <string name="lbl_carinfo_style_brake">Fékezés:</string>
     <string name="lbl_carinfo_style_shift">Váltás:</string>
@@ -176,6 +196,7 @@
     <string name="lbl_carinfo_engine_temp">Motor hőmérésklet:</string>
     <string name="lbl_carinfo_oil_temp">Olaj hőmérséklet:</string>
     <string name="lbl_carinfo_speed">Sebesség:</string>
+    <string name="lbl_carinfo_gear">Váltó:</string>
     <string name="lbl_carinfo_drivingmode">Üzemmód:</string>
     <string name="lbl_carinfo_compass">Iránytű:</string>
     <string name="lbl_carinfo_sunroof">Napfénytető:</string>
@@ -183,6 +204,7 @@
     <string name="lbl_carinfo_sunroof_tilted">Nyitva, döntve</string>
     <string name="lbl_carinfo_sunroof_partial">Részben nyitva, %d %%</string>
     <string name="lbl_carinfo_sunroof_open">Teljesen nyitva</string>
+    <string name="lbl_carinfo_displayedSpeed">Megjelenített sebesség:</string>
     <string name="lbl_carinfo_temp_interior">Belső hőmérséklet:</string>
     <string name="lbl_carinfo_temp_exterior">Külső hőmérséklet:</string>
     <string name="lbl_carinfo_parking_brake">Kézifék:</string>
@@ -201,12 +223,33 @@
     <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
     <string name="lbl_carinfo_units_masl">m.a.s.l.</string>
     <!-- tips -->
+    <string name="lbl_tiplist">Tippek és trükkök</string>
     <string name="lbl_tip_expand">Tippek kinyitása</string>
     <string name="tip_connassistant">Használd a Kapcsolati Varázslót az USB tartozék mód bekapcsolásához, az IDrive4 autókban</string>
     <string name="tip_batterymode_mybmw">Próbáld meg kikapcsolni az akku optimalizációt a MyBMW alkalmazás esetében, ami néha segít kapcsolódni az autóhoz</string>
+    <string name="notification_assistant_tap">Koppints az indításhoz %s</string>
+    <string name="notification_assistant_description">Csak azért szükséges, mert a képernyő be van kapcsolva</string>
+    <string name="donation_title">Kedveled az alkalmazást?</string>
+    <string name="donation_text">Fontold meg támogatásodat egy kis adománnyal</string>
+    <string name="txt_spotify_auth_notification">A Spotify Web API-t engedélyezni kell. Kattints ide az engedélyezéshez.</string>
+    <string name="txt_spotify_api_authorization_needed">A Spotify Web API engedélyezése szükséges.</string>
+    <string name="txt_spotify_api_authorization_success">A Spotify Web API-t engedélyezve!</string>
+    <string name="txt_spotify_api_authorization_canceled">A Spotify Web API engedélyezése megszakítva.</string>
+    <string name="txt_spotify_api_authorization_failed">A Spotify Web API engedélyezése sikertelen. Kérlek próbáld újra.</string>
+    <string name="lbl_spotify_api_authorized">A Spotify Web API engedélyezve</string>
+    <string name="lbl_spotify_api_authorized_user_friendly">Képes keresni a Spotify-ban</string>
+    <string name="btn_authorize">Engedélyez</string>
     <!-- car app strings -->
+    <string name="NOTIFICATIONS_TITLE">Értesítések</string>
+    <string name="NOTIFICATIONS_EMPTY_LIST">Nincsenek értesítések</string>
+    <string name="NOTIFICATION_CLEAR_ACTION">Törlés</string>
+    <string name="NOTIFICATION_OPTIONS">Beállítások</string>
+    <string name="NOTIFICATION_POPUPS">Felugró értesítések</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER"> … utassal az autóban</string>
+    <string name="NOTIFICATION_SOUND">Értesítési hang lejátszása</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … utassal az autóban</string>
+    <string name="NOTIFICATION_PERMISSION_NEEDED">Az alkalmazásnak hozzáférést kell biztosítsani az értesítésekhez</string>
+    <string name="MAP_ACTION_VIEWMAP">Teljes térkép méret</string>
     <string name="MAP_ACTION_SEARCH">Hely keresése</string>
     <string name="MUSIC_APPLIST_TITLE">Alkalmazások</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Nincs alkalmazás&gt;</string>
@@ -219,7 +262,12 @@
     <string name="MUSIC_BROWSE_ACTION_JUMPBACK">Visszalépés</string>
     <string name="MUSIC_BROWSE_ACTION_FILTER">Szűrés</string>
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Keresés</string>
+    <string name="MUSIC_SEARCH_RESULTS_LABEL">Találatok</string>
+    <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Eredmények megtekintése</string>
+    <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">Most játszott</string>
+    <string name="MUSIC_QUEUE_EMPTY">&lt;Üres lejátszási lista&gt;</string>
+    <string name="MUSIC_SEARCH_EMPTY">&lt;Nincs találat&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Vissza</string>
     <string name="MUSIC_SKIP_NEXT">Következő</string>
     <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Véletlenszerű lejátszás nem elérhető</string>
@@ -229,6 +277,18 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Összes ismétlése</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Ugyanaz ismétlésének bekapcsolása</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Ismétlés kikapcsolása</string>
+    <plurals name="MUSIC_ACTION_SEEK_BACK">
+        <item quantity="one">%s másodperc visszatekerése</item>
+        <item quantity="other">%s másodperc visszatekerése</item>
+    </plurals>
+    <plurals name="MUSIC_ACTION_SEEK_FORWARD">
+        <item quantity="one">%s másodperc előre tekerése</item>
+        <item quantity="other">%s másodperc előre tekerése</item>
+    </plurals>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Nem kedvel</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Kedvel</string>
+    <string name="MUSIC_SPOTIFY_THUMB_UP">Tetszik</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Tetszik</string>
+    <string name="MUSIC_SPOTIFY_THUMB_DOWN">Nem tetszik</string>
+    <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Nem tetszik</string>
 </resources>
