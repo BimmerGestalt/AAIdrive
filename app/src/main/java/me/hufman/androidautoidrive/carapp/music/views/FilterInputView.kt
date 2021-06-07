@@ -62,7 +62,7 @@ class FilterInputView(val state: RHMIState,
 							} + it.filter { meta ->
 								meta.second.contains(inputLower)
 							}
-						}.take(15).map { it.first }.distinct().toList()
+						}.map { it.first }.distinct().take(15).toList()
 					}
 					if (results.isEmpty()) {
 						sendSuggestions(listOf(FILTERRESULT_EMPTY))
