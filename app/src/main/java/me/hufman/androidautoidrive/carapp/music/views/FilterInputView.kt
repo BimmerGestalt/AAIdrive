@@ -51,15 +51,19 @@ class FilterInputView(val state: RHMIState,
 					sendSuggestions(listOf(FILTERRESULT_LOADING))
 				} else {
 					val results = input.toLowerCase(Locale.ROOT).let { inputLower ->
-						musicList.asSequence().filter { meta ->
-							UnicodeCleaner.clean((meta.title ?: "") + " " + (meta.artist
-									?: "")).toLowerCase(Locale.ROOT).let {
-								it.split(Regex("\\s+")).any { word ->
+						musicList.asSequence().map {
+							Pair(it, UnicodeCleaner.clean((it.title ?: "") + " " + (it.artist
+									?: "")).toLowerCase(Locale.ROOT))
+						}.let {
+							it.filter { meta ->
+								meta.second.split(Regex("\\s+")).any { word ->
 									word.startsWith(inputLower)
-								} || it.contains(inputLower)
+								}
+							} + it.filter { meta ->
+								meta.second.contains(inputLower)
 							}
-						}
-					}.distinct().take(15).toList()
+						}.take(15).map { it.first }.distinct().toList()
+					}
 					if (results.isEmpty()) {
 						sendSuggestions(listOf(FILTERRESULT_EMPTY))
 					} else {
