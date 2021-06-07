@@ -11,6 +11,7 @@
     <string name="notification_description_bmw">BMW-hez kapcsolódva</string>
     <string name="notification_description_mini">Mini-hez csatlakozva</string>
     <!-- notification channel names -->
+    <string name="notification_channel_assistant">Asszisztens indító</string>
     <string name="notification_channel_connection">Kapcsolat állapota</string>
     <string name="notification_channel_donation">Adomány kérése</string>
     <string name="notification_channel_spotify">Spotify hitelesítése</string>
@@ -28,6 +29,7 @@
     <!-- Welcome pages -->
     <string name="lbl_welcome_heading">Kapcsolódjunk!</string>
     <string name="lbl_welcome_intro">Az AndroidAutoIdrive egy nem hivatalos aplikáció, amelyel autódhoz hozzá tudod adni a telefonodon lévő zenei alkalmazásokat, illetve egyéb tartalmakat a gyári \"BMW Apps\" protokollon keresztül</string>
+    <string name="lbl_welcome_compatible">A legtöbb MY2014 vagy az újabb BMW-k és MINI-k, amelyek NBT vagy NBT Evo (IDive 4-6 alapon) egységgel vannak felszerelve, továbbá rendelkeznek aktív ConnectedDrive vagy BMW Online szolgáltatással, azok kompatibilisek kell legyenek</string>
     <string name="lbl_welcome_dependencies">Az autóval való kapcsolat létesítéséhez a \"BMW/MINI Connected app\" vagy az új \"MyBMW\" / \"Mini app\" feltétlenül szükséges</string>
     <string name="lbl_welcome_complete">Az AndroidAutoIdrive ezen kívül számos egyéb funkciót kínál az autódhoz. Próbáld ki!</string>
     <!-- Menu Titles -->
@@ -162,13 +164,26 @@
     <string name="lbl_advanced_settings">Haladó beállítások mutatása</string>
     <string name="lbl_assistant">Hang asszisztens (Béta)</string>
     <!-- car status -->
+    <string name="lbl_carinfo_efficiency">Hatékonyságstatisztika</string>
+    <string name="lbl_carinfo_ev">EV fogyasztás statisztika</string>
+    <string name="lbl_carinfo_style">Efficient Driving Stílus</string>
+    <string name="lbl_carinfo_lastchecked">Utoljára ellenőrizve:</string>
+    <string name="lbl_carinfo_lastPosition">Utolsó pozíció:</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%s és %s</string>
     <string name="lbl_carinfo_lastPosition_openMap">Térkép megnyitása</string>
     <string name="lbl_carinfo_vin">VIN:</string>
     <string name="lbl_carinfo_odo">Futásteljesítmény:</string>
     <string name="lbl_carinfo_idriveVersion">IDrive verzió:</string>
     <string name="lbl_carinfo_averageConsumption">Átlagos fogyasztás:</string>
     <string name="lbl_carinfo_averageSpeed">Átlagsebesség:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">Átlagfogyasztás (alt):</string>
+    <string name="lbl_carinfo_averageSpeedAlt">Átlagsebesség (alt):</string>
+    <string name="lbl_carinfo_evLevel">Elektromos töltés:</string>
+    <string name="lbl_carinfo_evRange">Elektromos hatótáv:</string>
     <string name="lbl_carinfo_fuelLevel">Üzemanyagszint:</string>
+    <string name="lbl_carinfo_fuelRange">Üzemanyag hatótáv:</string>
+    <string name="lbl_carinfo_totalRange">Teljes hatótáv:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Acc. Akkumulátor töltés szintje:</string>
     <string name="lbl_carinfo_style_accel">Gyorsulás:</string>
     <string name="lbl_carinfo_style_brake">Fékezés:</string>
     <string name="lbl_carinfo_style_shift">Váltás:</string>
@@ -176,6 +191,7 @@
     <string name="lbl_carinfo_engine_temp">Motor hőmérésklet:</string>
     <string name="lbl_carinfo_oil_temp">Olaj hőmérséklet:</string>
     <string name="lbl_carinfo_speed">Sebesség:</string>
+    <string name="lbl_carinfo_gear">Váltó:</string>
     <string name="lbl_carinfo_drivingmode">Üzemmód:</string>
     <string name="lbl_carinfo_compass">Iránytű:</string>
     <string name="lbl_carinfo_sunroof">Napfénytető:</string>
@@ -183,6 +199,7 @@
     <string name="lbl_carinfo_sunroof_tilted">Nyitva, döntve</string>
     <string name="lbl_carinfo_sunroof_partial">Részben nyitva, %d %%</string>
     <string name="lbl_carinfo_sunroof_open">Teljesen nyitva</string>
+    <string name="lbl_carinfo_displayedSpeed">Megjelenített sebesség:</string>
     <string name="lbl_carinfo_temp_interior">Belső hőmérséklet:</string>
     <string name="lbl_carinfo_temp_exterior">Külső hőmérséklet:</string>
     <string name="lbl_carinfo_parking_brake">Kézifék:</string>
@@ -201,9 +218,16 @@
     <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
     <string name="lbl_carinfo_units_masl">m.a.s.l.</string>
     <!-- tips -->
+    <string name="lbl_tiplist">Tippek és trükkök</string>
     <string name="lbl_tip_expand">Tippek kinyitása</string>
     <string name="tip_connassistant">Használd a Kapcsolati Varázslót az USB tartozék mód bekapcsolásához, az IDrive4 autókban</string>
     <string name="tip_batterymode_mybmw">Próbáld meg kikapcsolni az akku optimalizációt a MyBMW alkalmazás esetében, ami néha segít kapcsolódni az autóhoz</string>
+    <string name="txt_spotify_auth_notification">A Spotify Web API-t engedélyezni kell. Kattints ide az engedélyezéshez.</string>
+    <string name="txt_spotify_api_authorization_needed">A Spotify Web API engedélyezése szükséges.</string>
+    <string name="txt_spotify_api_authorization_success">A Spotify Web API-t engedélyezve!</string>
+    <string name="txt_spotify_api_authorization_canceled">A Spotify Web API engedélyezése megszakítva.</string>
+    <string name="txt_spotify_api_authorization_failed">A Spotify Web API engedélyezése sikertelen. Kérlek próbáld újra.</string>
+    <string name="lbl_spotify_api_authorized">A Spotify Web API engedélyezve</string>
     <!-- car app strings -->
     <string name="NOTIFICATION_POPUPS_PASSENGER"> … utassal az autóban</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … utassal az autóban</string>
