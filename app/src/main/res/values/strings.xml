@@ -257,6 +257,14 @@
     <string name="lbl_carinfo_sunroof_tilted">Open, tilted</string>
     <string name="lbl_carinfo_sunroof_partial">Partially open, %d %%</string>
     <string name="lbl_carinfo_sunroof_open">Fully open</string>
+    <string name="lbl_carinfo_windows">Windows:</string>
+    <string name="lbl_carinfo_window_driverfront">Driver Front</string>
+    <string name="lbl_carinfo_window_passengerfront">Passenger Front</string>
+    <string name="lbl_carinfo_window_driverrear">Driver Rear</string>
+    <string name="lbl_carinfo_window_passengerrear">Passenger Rear</string>
+    <string name="lbl_carinfo_window_closed">Closed</string>
+    <string name="lbl_carinfo_window_partial">Open %d%%</string>
+    <string name="lbl_carinfo_window_open">Fully open</string>
     <string name="lbl_carinfo_displayedSpeed">Displayed Speed:</string>
     <string name="lbl_carinfo_temp_interior">Temp Interior:</string>
     <string name="lbl_carinfo_temp_exterior">Temp Exterior:</string>

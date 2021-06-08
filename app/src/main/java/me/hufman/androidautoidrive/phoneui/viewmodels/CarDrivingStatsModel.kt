@@ -13,6 +13,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.gson.JsonObject
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.liveData
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.addUnit
@@ -48,6 +49,10 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 				CDS.VEHICLE.TIME,
 				CDS.ENGINE.TEMPERATURE,
 				CDS.CONTROLS.SUNROOF,
+				CDS.CONTROLS.WINDOWDRIVERFRONT,
+				CDS.CONTROLS.WINDOWPASSENGERFRONT,
+				CDS.CONTROLS.WINDOWDRIVERREAR,
+				CDS.CONTROLS.WINDOWPASSENGERREAR,
 				CDS.DRIVING.PARKINGBRAKE,
 		)
 	}
@@ -373,6 +378,53 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 		}
 		sunRoofString
 		//"DEBUG: Status: $status | Open: $openPosition | Tilt: $tiltPosition"
+	}
+
+	private fun parseWindowOpen(data: JsonObject?): Boolean {
+		val status = data?.tryAsJsonPrimitive("status")?.tryAsInt ?: 0
+		return status == 1 || status == 2
+	}
+	private fun parseWindowStatus(nameString: Int, data: JsonObject?): Context.() -> String {
+		val status = data?.tryAsJsonPrimitive("status")?.tryAsInt ?: 0
+		val position = data?.tryAsJsonPrimitive("position")?.tryAsInt ?: 0
+		return if (status == 0) {
+			{ getString(nameString) + ": " + getString(R.string.lbl_carinfo_window_closed) }
+		} else if (status == 1) {
+			{ getString(nameString) + ": " + getString(R.string.lbl_carinfo_window_partial, position * 2)}
+		} else {
+			{ getString(nameString) + ": " + getString(R.string.lbl_carinfo_window_open) }
+		}
+	}
+	val windowDriverFrontOpen = carInfo.cachedCdsData.liveData[CDS.CONTROLS.WINDOWDRIVERFRONT].map(false) {
+		parseWindowOpen(it.tryAsJsonObject("windowDriverFront"))
+	}
+	val windowDriverFrontState = carInfo.cachedCdsData.liveData[CDS.CONTROLS.WINDOWDRIVERFRONT].map({""}) {
+		parseWindowStatus(R.string.lbl_carinfo_window_driverfront, it.tryAsJsonObject("windowDriverFront"))
+	}
+	val windowPassengerFrontOpen = carInfo.cachedCdsData.liveData[CDS.CONTROLS.WINDOWPASSENGERFRONT].map(false) {
+		parseWindowOpen(it.tryAsJsonObject("windowPassengerFront"))
+	}
+	val windowPassengerFrontState = carInfo.cachedCdsData.liveData[CDS.CONTROLS.WINDOWPASSENGERFRONT].map({""}) {
+		parseWindowStatus(R.string.lbl_carinfo_window_passengerfront, it.tryAsJsonObject("windowPassengerFront"))
+	}
+	val windowDriverRearOpen = carInfo.cachedCdsData.liveData[CDS.CONTROLS.WINDOWDRIVERREAR].map(false) {
+		parseWindowOpen(it.tryAsJsonObject("windowDriverRear"))
+	}
+	val windowDriverRearState = carInfo.cachedCdsData.liveData[CDS.CONTROLS.WINDOWDRIVERREAR].map({""}) {
+		parseWindowStatus(R.string.lbl_carinfo_window_driverrear, it.tryAsJsonObject("windowDriverRear"))
+	}
+	val windowPassengerRearOpen = carInfo.cachedCdsData.liveData[CDS.CONTROLS.WINDOWPASSENGERREAR].map(false) {
+		parseWindowOpen(it.tryAsJsonObject("windowPassengerRear"))
+	}
+	val windowPassengerRearState = carInfo.cachedCdsData.liveData[CDS.CONTROLS.WINDOWPASSENGERREAR].map({""}) {
+		parseWindowStatus(R.string.lbl_carinfo_window_passengerrear, it.tryAsJsonObject("windowPassengerRear"))
+	}
+	val windowsAnyOpen = windowDriverFrontOpen.combine(windowPassengerFrontOpen) { acc, i ->
+		acc || i
+	}.combine(windowDriverRearOpen) { acc, i ->
+		acc || i
+	}.combine(windowPassengerRearOpen) { acc, i ->
+		acc || i
 	}
 
 	val drivingGear = carInfo.cdsData.liveData[CDS.DRIVING.GEAR].map {

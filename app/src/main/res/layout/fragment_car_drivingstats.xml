@@ -453,6 +453,48 @@
                 android:layout_weight="1"
                 android:text="@{viewModel.sunRoof}"/>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/lbl_carinfo_windows"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{!viewModel.windowsAnyOpen &amp;&amp; !viewModel.showAdvancedSettings}"
+                    android:text="@string/lbl_carinfo_window_closed"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{viewModel.windowDriverFrontOpen || viewModel.showAdvancedSettings}"
+                    android:text="@{viewModel.windowDriverFrontState}"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{viewModel.windowPassengerFrontOpen || viewModel.showAdvancedSettings}"
+                    android:text="@{viewModel.windowPassengerFrontState}"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{viewModel.windowDriverRearOpen || viewModel.showAdvancedSettings}"
+                    android:text="@{viewModel.windowDriverRearState}"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{viewModel.windowPassengerRearOpen || viewModel.showAdvancedSettings}"
+                    android:text="@{viewModel.windowPassengerRearState}"/>
+            </LinearLayout>
+        </LinearLayout>
         <View style="@style/Divider"
             android:layout_marginTop="@dimen/pane_vertical_margin"
             android:layout_marginBottom="@dimen/pane_vertical_margin"/>
