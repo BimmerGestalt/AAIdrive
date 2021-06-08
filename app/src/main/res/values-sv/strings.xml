@@ -233,6 +233,14 @@
     <string name="lbl_carinfo_sunroof_tilted">Öppen, lutad</string>
     <string name="lbl_carinfo_sunroof_partial">Delvis öppen, %d %%</string>
     <string name="lbl_carinfo_sunroof_open">Helt öppen</string>
+    <string name="lbl_carinfo_windows">Fönster:</string>
+    <string name="lbl_carinfo_window_driverfront">Förardörren</string>
+    <string name="lbl_carinfo_window_passengerfront">Passagerare höger framdörr</string>
+    <string name="lbl_carinfo_window_driverrear">Förarsidans bakdörr</string>
+    <string name="lbl_carinfo_window_passengerrear">Bakdörr höger sida</string>
+    <string name="lbl_carinfo_window_closed">Stängd</string>
+    <string name="lbl_carinfo_window_partial">Öppen %d%%</string>
+    <string name="lbl_carinfo_window_open">Helt öppen</string>
     <string name="lbl_carinfo_displayedSpeed">Visad hastighet</string>
     <string name="lbl_carinfo_temp_interior">Innertemperatur</string>
     <string name="lbl_carinfo_temp_exterior">Yttertemperatur</string>
