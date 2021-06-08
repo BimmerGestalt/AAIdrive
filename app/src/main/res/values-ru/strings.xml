@@ -231,6 +231,14 @@
     <string name="lbl_carinfo_sunroof_tilted">Открыть, наклонен</string>
     <string name="lbl_carinfo_sunroof_partial">Частично открыт, %d %%</string>
     <string name="lbl_carinfo_sunroof_open">Открыт полностью</string>
+    <string name="lbl_carinfo_windows">Окна:</string>
+    <string name="lbl_carinfo_window_driverfront">Переднее левое</string>
+    <string name="lbl_carinfo_window_passengerfront">Переднее правое</string>
+    <string name="lbl_carinfo_window_driverrear">Заднее левое</string>
+    <string name="lbl_carinfo_window_passengerrear">Заднее правое</string>
+    <string name="lbl_carinfo_window_closed">Закрыто</string>
+    <string name="lbl_carinfo_window_partial">Открыто %d%%</string>
+    <string name="lbl_carinfo_window_open">Открыто полностью</string>
     <string name="lbl_carinfo_displayedSpeed">Скорость на дисплее</string>
     <string name="lbl_carinfo_temp_interior">Темп. внутри</string>
     <string name="lbl_carinfo_temp_exterior">Темп. снаружи</string>
