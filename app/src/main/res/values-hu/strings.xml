@@ -205,6 +205,13 @@
     <string name="lbl_carinfo_sunroof_partial">Részben nyitva, %d %%</string>
     <string name="lbl_carinfo_sunroof_open">Teljesen nyitva</string>
     <string name="lbl_carinfo_windows">Ablakok:</string>
+    <string name="lbl_carinfo_window_driverfront">Bal első</string>
+    <string name="lbl_carinfo_window_passengerfront">Jobb első</string>
+    <string name="lbl_carinfo_window_driverrear">Bal hátsó</string>
+    <string name="lbl_carinfo_window_passengerrear">Jobb első</string>
+    <string name="lbl_carinfo_window_closed">Zárva</string>
+    <string name="lbl_carinfo_window_partial">Nyitva %d%%</string>
+    <string name="lbl_carinfo_window_open">Teljesen nyitva</string>
     <string name="lbl_carinfo_displayedSpeed">Megjelenített sebesség:</string>
     <string name="lbl_carinfo_temp_interior">Belső hőmérséklet:</string>
     <string name="lbl_carinfo_temp_exterior">Külső hőmérséklet:</string>
