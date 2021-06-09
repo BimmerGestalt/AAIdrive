@@ -145,6 +145,9 @@
     <string name="txt_setup_usb_disconnected">Nincs kapcsolat az autóval USB-n keresztül</string>
     <string name="txt_setup_usb_connected">USB töltés módban csatlakoztatva</string>
     <string name="txt_setup_enable_usbmtp">Állítsd át a telefon USB módját Adatátvitelre</string>
+    <string name="txt_setup_usbmtp_connected">USB tárhely módban csatlakoztatva</string>
+    <string name="txt_setup_usbacc_connected">USB tartozék módban csatlakoztatva</string>
+    <string name="txt_setup_bcl_init_stuck">Alkalmazás kapcsolat nincs bekapcsolva:</string>
     <string name="txt_setup_bcl_disconnected">Alkalmazás kapcsolat nem áll készen:</string>
     <string name="txt_setup_bcl_waiting">Várakozás alkalmazás kapcsolat indítására</string>
     <string name="txt_setup_enable_bclspp_bt">Próbáld meg ki/be kapcsolni a Bluetooth Zenét</string>
@@ -154,6 +157,7 @@
     <string name="txt_setup_bcl_connected_transport">Alkalmazás kapcsolat %s-on keresztül fut</string>
     <!-- capabilities -->
     <string name="lbl_capabilities_detected">Az autó felismert képességei:</string>
+    <string name="txt_capabilities_audiocontext_hint">Zenelejátszás Bluetooth kapcsolaton keresztül</string>
     <string name="txt_capabilities_audiostate_yes">Album borító megjelenítése támogatva</string>
     <string name="txt_capabilities_audiostate_no">Album borító megjelenítése nincs támogatva</string>
     <string name="txt_capabilities_audiostate_id4">ID4 nem támogatja ezt a funkciót</string>
@@ -189,6 +193,7 @@
     <string name="lbl_carinfo_averageSpeed">Átlagsebesség:</string>
     <string name="lbl_carinfo_averageConsumptionAlt">Átlagfogyasztás (alt):</string>
     <string name="lbl_carinfo_averageSpeedAlt">Átlagsebesség (alt):</string>
+    <string name="lbl_carinfo_ecoRangeWon">Eco hatótáv megtakarítás:</string>
     <string name="lbl_carinfo_evLevel">Elektromos töltés:</string>
     <string name="lbl_carinfo_evRange">Elektromos hatótáv:</string>
     <string name="lbl_carinfo_fuelLevel">Üzemanyagszint:</string>
