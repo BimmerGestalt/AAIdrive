@@ -233,6 +233,14 @@
     <string name="lbl_carinfo_sunroof_tilted">Open, gekanteld</string>
     <string name="lbl_carinfo_sunroof_partial">Gedeeltelijk open, %d %%</string>
     <string name="lbl_carinfo_sunroof_open">Volledig geopend</string>
+    <string name="lbl_carinfo_windows">Ramen:</string>
+    <string name="lbl_carinfo_window_driverfront">Bestuurder voor</string>
+    <string name="lbl_carinfo_window_passengerfront">Passagier voor</string>
+    <string name="lbl_carinfo_window_driverrear">Bestuurder achter</string>
+    <string name="lbl_carinfo_window_passengerrear">Passagier achter</string>
+    <string name="lbl_carinfo_window_closed">Gesloten</string>
+    <string name="lbl_carinfo_window_partial">Open %d%%</string>
+    <string name="lbl_carinfo_window_open">Volledig geopend</string>
     <string name="lbl_carinfo_displayedSpeed">Weergegeven snelheid:</string>
     <string name="lbl_carinfo_temp_interior">Binnen temp:</string>
     <string name="lbl_carinfo_temp_exterior">Buiten temp:</string>
