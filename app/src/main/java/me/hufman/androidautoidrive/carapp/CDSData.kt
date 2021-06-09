@@ -59,7 +59,7 @@ class CDSConnectionAsync(val handler: Handler, val connection: CDSConnection): C
 	}
 
 	override fun unsubscribeProperty(property: CDSProperty) {
-		handler.post { unsubscribeProperty(property) }
+		handler.post { connection.unsubscribeProperty(property) }
 	}
 }
 
