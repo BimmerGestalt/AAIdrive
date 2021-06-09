@@ -302,6 +302,8 @@ class CDSMutableLiveData(private val cdsData: CDSData, val property: CDSProperty
 
 	override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
 		// postValue because CDSEventHandler might be coming from the Etch connection
-		this.postValue(propertyValue)
+		if (this.value != propertyValue) {
+			this.postValue(propertyValue)
+		}
 	}
 }

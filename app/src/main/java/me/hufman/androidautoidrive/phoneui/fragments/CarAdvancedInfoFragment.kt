@@ -18,7 +18,7 @@ import me.hufman.idriveconnectionkit.CDS
 
 class CarAdvancedInfoFragment: Fragment() {
 	companion object {
-		const val REDRAW_DEBOUNCE = 100
+		const val REDRAW_DEBOUNCE = 500
 
 		val CDS_KEYS = mapOf(
 			CDS.ENGINE.INFO to "info",
@@ -68,6 +68,13 @@ class CarAdvancedInfoFragment: Fragment() {
 	val carInformationObserver = CarInformationObserver {
 		activity?.runOnUiThread { redraw() }
 	}
+	var cdsNextRedraw: Long = 0
+	val redrawCdsObserver = Observer<JsonObject> {
+		if (cdsNextRedraw < SystemClock.uptimeMillis()) {
+			redrawCds()
+			cdsNextRedraw = SystemClock.uptimeMillis() + REDRAW_DEBOUNCE
+		}
+	}
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.fragment_car_advancedinfo, container, false)
@@ -76,9 +83,6 @@ class CarAdvancedInfoFragment: Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
-		val redrawCdsObserver = Observer<JsonObject> {
-			redrawCds()
-		}
 		CDS_KEYS.keys.forEach {
 			carInformationObserver.cdsData.liveData[it].observe(viewLifecycleOwner, redrawCdsObserver)
 		}
@@ -113,6 +117,7 @@ class CarAdvancedInfoFragment: Fragment() {
 	}
 
 	fun redrawCds() {
+		if (!isResumed) return      // CDS Listener calls us directly, check isResumed here too
 		val cdsView = CDS_KEYS.map {
 			"${it.key.propertyName}: ${carInformationObserver.cdsData[it.key]?.get(it.value)}"
 		}.joinToString("\n").trim()
