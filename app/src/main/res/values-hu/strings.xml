@@ -45,6 +45,7 @@
     <string name="menu_settings">Beállítások</string>
     <string name="menu_support">Támogatás</string>
     <string name="btn_next">Következő</string>
+    <string name="lbl_overviewpage">Az AndroidAutoIdrive a telefonondon lévő támogatott zenei alkalmazást és a telefonra érkező értesítéseket integrálja az autódba, melyet az egyedi BMW Apps protokollon keresztül valósít meg</string>
     <string name="lbl_connectionpage">Az alkalmazás kapcsolódása számos dologtól függ, itt találsz néhány ötletet a biztos működéshez</string>
     <string name="lbl_assistantpage_tip">Ezek az applikációk különállóak az autó kormányán lévő hang asszisztens gombtól, amely gomb a telefon alapértelmezett asszisztensét indítja</string>
     <string name="lbl_notificationpage">A beérkező értesítések megjeleníthetőek, és megválaszolhatóak az autó rendszeréből</string>
