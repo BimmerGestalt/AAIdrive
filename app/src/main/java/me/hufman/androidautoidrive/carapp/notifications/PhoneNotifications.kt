@@ -382,7 +382,8 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			}
 
 			// cancel the notification readout if it goes away
-			if (currentNotifications.find { it.key == readoutInteractions.currentNotification?.key } == null) {
+			val currentReadout = readoutInteractions.currentNotification
+			if (currentNotifications.find { it.key == currentReadout?.key } == null) {
 				readoutInteractions.cancel()
 			}
 
