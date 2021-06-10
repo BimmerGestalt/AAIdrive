@@ -45,6 +45,7 @@
     <string name="menu_settings">Beállítások</string>
     <string name="menu_support">Támogatás</string>
     <string name="btn_next">Következő</string>
+    <string name="lbl_overviewpage">Az AndroidAutoIdrive a telefonondon lévő támogatott zenei alkalmazást és a telefonra érkező értesítéseket integrálja az autódba, melyet az egyedi BMW Apps protokollon keresztül valósít meg</string>
     <string name="lbl_connectionpage">Az alkalmazás kapcsolódása számos dologtól függ, itt találsz néhány ötletet a biztos működéshez</string>
     <string name="lbl_assistantpage_tip">Ezek az applikációk különállóak az autó kormányán lévő hang asszisztens gombtól, amely gomb a telefon alapértelmezett asszisztensét indítja</string>
     <string name="lbl_notificationpage">A beérkező értesítések megjeleníthetőek, és megválaszolhatóak az autó rendszeréből</string>
@@ -144,10 +145,19 @@
     <string name="txt_setup_usb_disconnected">Nincs kapcsolat az autóval USB-n keresztül</string>
     <string name="txt_setup_usb_connected">USB töltés módban csatlakoztatva</string>
     <string name="txt_setup_enable_usbmtp">Állítsd át a telefon USB módját Adatátvitelre</string>
+    <string name="txt_setup_usbmtp_connected">USB tárhely módban csatlakoztatva</string>
+    <string name="txt_setup_usbacc_connected">USB tartozék módban csatlakoztatva</string>
+    <string name="txt_setup_bcl_init_stuck">Alkalmazás kapcsolat nincs bekapcsolva:</string>
+    <string name="txt_setup_bcl_disconnected">Alkalmazás kapcsolat nem áll készen:</string>
+    <string name="txt_setup_bcl_waiting">Várakozás alkalmazás kapcsolat indítására</string>
     <string name="txt_setup_enable_bclspp_bt">Próbáld meg ki/be kapcsolni a Bluetooth Zenét</string>
     <string name="txt_setup_enable_bclspp_usb">Próbáld meg ki/be kapcsolni a Bluetooth Zenét vagy csatlakozz USB-n keresztül</string>
+    <string name="txt_setup_bcl_connecting">Alkalmazás kapcsolat létrehozása</string>
+    <string name="txt_setup_bcl_connected">Alkalmazás kapcsolat fut</string>
+    <string name="txt_setup_bcl_connected_transport">Alkalmazás kapcsolat %s-on keresztül fut</string>
     <!-- capabilities -->
     <string name="lbl_capabilities_detected">Az autó felismert képességei:</string>
+    <string name="txt_capabilities_audiocontext_hint">Zenelejátszás Bluetooth kapcsolaton keresztül</string>
     <string name="txt_capabilities_audiostate_yes">Album borító megjelenítése támogatva</string>
     <string name="txt_capabilities_audiostate_no">Album borító megjelenítése nincs támogatva</string>
     <string name="txt_capabilities_audiostate_id4">ID4 nem támogatja ezt a funkciót</string>
@@ -183,6 +193,7 @@
     <string name="lbl_carinfo_averageSpeed">Átlagsebesség:</string>
     <string name="lbl_carinfo_averageConsumptionAlt">Átlagfogyasztás (alt):</string>
     <string name="lbl_carinfo_averageSpeedAlt">Átlagsebesség (alt):</string>
+    <string name="lbl_carinfo_ecoRangeWon">Eco hatótáv megtakarítás:</string>
     <string name="lbl_carinfo_evLevel">Elektromos töltés:</string>
     <string name="lbl_carinfo_evRange">Elektromos hatótáv:</string>
     <string name="lbl_carinfo_fuelLevel">Üzemanyagszint:</string>
@@ -235,6 +246,7 @@
     <string name="lbl_tip_expand">Tippek kinyitása</string>
     <string name="tip_connassistant">Használd a Kapcsolati Varázslót az USB tartozék mód bekapcsolásához, az IDrive4 autókban</string>
     <string name="tip_batterymode_mybmw">Próbáld meg kikapcsolni az akku optimalizációt a MyBMW alkalmazás esetében, ami néha segít kapcsolódni az autóhoz</string>
+    <string name="tip_batterymode_mymini">Próbáld meg kikapcsolni az akku optimalizációt a Mini alkalmazás esetében, ami néha segít kapcsolódni az autóhoz</string>
     <string name="notification_assistant_tap">Koppints az indításhoz %s</string>
     <string name="notification_assistant_description">Csak azért szükséges, mert a képernyő be van kapcsolva</string>
     <string name="donation_title">Kedveled az alkalmazást?</string>
@@ -259,6 +271,7 @@
     <string name="NOTIFICATION_PERMISSION_NEEDED">Az alkalmazásnak hozzáférést kell biztosítsani az értesítésekhez</string>
     <string name="MAP_ACTION_VIEWMAP">Teljes térkép méret</string>
     <string name="MAP_ACTION_SEARCH">Hely keresése</string>
+    <string name="MAP_ACTION_CLEARNAV">Navigáció törlése</string>
     <string name="MUSIC_APPLIST_TITLE">Alkalmazások</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Nincs alkalmazás&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Műveletek</string>
@@ -270,6 +283,7 @@
     <string name="MUSIC_BROWSE_ACTION_JUMPBACK">Visszalépés</string>
     <string name="MUSIC_BROWSE_ACTION_FILTER">Szűrés</string>
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Keresés</string>
+    <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Lejátszás keresőből</string>
     <string name="MUSIC_SEARCH_RESULTS_LABEL">Találatok</string>
     <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Eredmények megtekintése</string>
     <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>

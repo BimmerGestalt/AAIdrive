@@ -47,6 +47,12 @@
     <string name="btn_next">Aktualnie odtwarzane</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integruje niektóre aplikacje muzyczne i powiadomienia z telefonu z samochodem za pośrednictwem niestandardowego protokołu BMW Apps</string>
     <string name="lbl_connectionpage">Połączenie aplikacji z samochodem zależy od kilku elementów, a oto kilka wskazówek, aby upewnić się, że działa dobrze</string>
+    <plurals name="lbl_assistantpage">
+        <item quantity="one">Asystent głosowy z Twojego telefonu zostanie dodany jako aplikacja w samochodzie, na wypadek gdyby wprowadzanie głosowe w samochodzie nie wywołało go</item>
+        <item quantity="few">Asystenci głosowi z Twojego telefonu zostaną dodani jako aplikacje w samochodzie, na wypadek gdyby wprowadzanie głosowe w samochodzie nie wywołało domyślnego</item>
+        <item quantity="many">Asystenci głosowi z Twojego telefonu zostaną dodani jako aplikacje w samochodzie, na wypadek gdyby wprowadzanie głosowe w samochodzie nie wywołało domyślnego</item>
+        <item quantity="other">Asystent głosowy z Twojego telefonu zostanie dodany jako aplikacja w samochodzie, na wypadek gdyby wprowadzanie głosowe w samochodzie nie wywołało go</item>
+    </plurals>
     <string name="lbl_assistantpage_tip">Te aplikacje są niezależne od przycisku na kierownicy z asystentem głosowym, który uruchamia tylko domyślnego asystenta i jest konfigurowany osobno</string>
     <string name="lbl_notificationpage">Przychodzące powiadomienia można przeglądać i obsługiwać z poziomu samochodu</string>
     <string name="spawn_test_notification">Testowe powiadomienie</string>
@@ -135,6 +141,8 @@
     <string name="txt_setup_mini_mine_conflict">Zainstalowane masz zarówno aplikacje MINI Connected, jak i My MINI, co może powodować niestabilność połączenia (chyba że łączysz się przez USB)</string>
     <string name="txt_setup_security_missing">Usługa bezpieczeństwa jest nieosiągalna:</string>
     <string name="btn_install">Instalacja</string>
+    <string name="btn_install_bmwmine">Zainstaluj aplikacji MyBMW</string>
+    <string name="btn_install_minimine">Zainstaluj aplikacji Mini</string>
     <string name="btn_install_bmw">Zainstaluj BMW Connected</string>
     <string name="btn_install_mini">Zainstaluj Mini Connected</string>
     <string name="btn_install_bmwclassic">Zainstaluj BMW Connected Classic</string>
@@ -196,6 +204,9 @@
     <string name="lbl_carinfo_style">Efektywny styl jazdy (ECO PRO)</string>
     <string name="lbl_carinfo_lastchecked">Ostatnio sprawdzane:</string>
     <string name="lbl_carinfo_lastPosition">Ostatnia pozycja pojazdu:</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%s z %s</string>
+    <string name="lbl_carinfo_lastPosition_openMap">Otworz mapę</string>
+    <string name="lbl_carinfo_vin">VIN:</string>
     <string name="lbl_carinfo_odo">Przebieg:</string>
     <string name="lbl_carinfo_idriveVersion">Wersja IDrive</string>
     <string name="lbl_carinfo_averageConsumption">Średnie zużycie paliwa:</string>
@@ -220,15 +231,35 @@
     <string name="lbl_carinfo_drivingmode">Tryb:</string>
     <string name="lbl_carinfo_compass">Kompas:</string>
     <string name="lbl_carinfo_sunroof">Szyber dach:</string>
+    <string name="lbl_carinfo_sunroof_closed">zamknięty</string>
+    <string name="lbl_carinfo_sunroof_tilted">uchylony</string>
+    <string name="lbl_carinfo_sunroof_partial">częściowo otwarty, %d %%</string>
+    <string name="lbl_carinfo_sunroof_open">całkowicie otwarty</string>
+    <string name="lbl_carinfo_windows">Okna:</string>
+    <string name="lbl_carinfo_window_driverfront">Przód kierowcy</string>
+    <string name="lbl_carinfo_window_passengerfront">Przód pasażera</string>
+    <string name="lbl_carinfo_window_driverrear">Tył kierowcy</string>
+    <string name="lbl_carinfo_window_passengerrear">Tył pasażera</string>
+    <string name="lbl_carinfo_window_closed">Zamknięty</string>
+    <string name="lbl_carinfo_window_partial">Otwarty %d%%</string>
+    <string name="lbl_carinfo_window_open">W pełni otwarty</string>
     <string name="lbl_carinfo_displayedSpeed">Wyświetlana prędkość</string>
     <string name="lbl_carinfo_temp_interior">Temp. wew.</string>
     <string name="lbl_carinfo_temp_exterior">Temp. zewn.</string>
     <string name="lbl_carinfo_parking_brake">Hamulec postojowy</string>
     <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">km</string>
     <string name="lbl_carinfo_units_mi">mil</string>
+    <string name="lbl_carinfo_units_gal_uk">gal (UK)</string>
+    <string name="lbl_carinfo_units_gal_us">gal (US)</string>
+    <string name="lbl_carinfo_units_liter">L</string>
     <string name="lbl_carinfo_units_L100km">l/100km</string>
+    <string name="lbl_carinfo_units_mpg">mil/gal</string>
     <string name="lbl_carinfo_units_kmL">km/l</string>
+    <string name="lbl_carinfo_units_mph">mil/h</string>
     <string name="lbl_carinfo_units_kmph">km/h</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
     <string name="lbl_carinfo_units_masl">mnpm</string>
     <!-- tips -->
     <string name="lbl_tip_image">Obraz demonstrujący wskazkę</string>
@@ -294,6 +325,7 @@
     <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Odtwórz z wyszukiwania</string>
     <string name="MUSIC_SEARCH_RESULTS_LABEL">Wyniki wyszukiwania</string>
     <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Zobacz wszystkie wyniki</string>
+    <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">Aktualnie odtwarzane</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;Pusta kolejka&gt;</string>
     <string name="MUSIC_SEARCH_EMPTY">&lt;Nic nie znaleziono&gt;</string>
@@ -306,6 +338,18 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Powtarzaj wszystkie</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Powtarzaj pojedynczo </string>
     <string name="MUSIC_TURN_REPEAT_OFF">Wyłącz powtarzanie</string>
+    <plurals name="MUSIC_ACTION_SEEK_BACK">
+        <item quantity="one">Przewiń do tyłu o %s sekund</item>
+        <item quantity="few">Przewiń do przodu o %s sekund</item>
+        <item quantity="many">Przewiń do tyłu o %s sekund</item>
+        <item quantity="other">Przewiń do tyłu o %s sekund</item>
+    </plurals>
+    <plurals name="MUSIC_ACTION_SEEK_FORWARD">
+        <item quantity="one">Przewiń do przodu o %s sekund</item>
+        <item quantity="few">Przewiń do przodu o %s sekund</item>
+        <item quantity="many">Przewiń do przodu o %s sekund</item>
+        <item quantity="other">Przewiń do przodu o %s sekund</item>
+    </plurals>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Usuń z kolekcji</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Radio</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Polub</string>
