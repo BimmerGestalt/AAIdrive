@@ -11,7 +11,14 @@
     <string name="notification_description_bmw">Connecté à votre BMW</string>
     <string name="notification_description_mini">Connecté à votre Mini</string>
     <!-- notification channel names -->
+    <string name="notification_channel_assistant">Lanceur d\'assistant</string>
+    <string name="notification_channel_connection">Status de connexion à la voiture</string>
+    <string name="notification_channel_donation">Demande de don</string>
+    <string name="notification_channel_spotify">Autorisation Spotify</string>
+    <string name="notification_channel_test">Notification de test</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <string name="navigation_listener_bmw">Navigation BMW</string>
+    <string name="navigation_listener_mini">Navigation MINI</string>
     <!-- Labels on the navigation trigger activity -->
     <!-- Welcome pages -->
     <!-- Menu Titles -->
