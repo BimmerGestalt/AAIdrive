@@ -114,13 +114,15 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	}
 
 	private fun connectApp(app: MusicAppInfo) {
-		val previousAppInfo = currentAppInfo
-		currentAppInfo = app
-		asyncRpc {
-			val switchApp = currentAppInfo != previousAppInfo
-			val needsReconnect = !isConnected()
+		asyncRpc {      // only handle one connection request at a time
+			val previousAppInfo = currentAppInfo
+			currentAppInfo = app
+			val switchApp = previousAppInfo != app
+			val needsReconnect = !isConnected() && System.currentTimeMillis() > lastConnectTime + RECONNECT_TIMEOUT
+			Log.i(TAG, "connectApp wants to reconnect: switchApp=$switchApp needsReconnect=$needsReconnect (isConnected=${isConnected()})")
 			if (switchApp || needsReconnect) {
-				Log.i(TAG, "Switching current app connection from $currentAppInfo to $app")
+				lastConnectTime = System.currentTimeMillis()
+				Log.i(TAG, "Switching current app connection from $previousAppInfo to $app")
 				disconnectApp(pause = switchApp)
 
 				triggeredPlayback = false
@@ -129,9 +131,12 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 					Log.e(TAG, "Unable to connect to CombinedMusicAppController, this should never happen")
 				} else {
 					controller.subscribe {
-						if (controller.isConnected() && desiredPlayback && !triggeredPlayback) {
-							controller.play()
-							triggeredPlayback = true
+						if (controller.isConnected() && !triggeredPlayback) {
+							Log.i(TAG, "Freshly connected to $app, checking to resume playback: $desiredPlayback")
+							if (desiredPlayback) {
+								controller.play()
+								triggeredPlayback = true
+							}
 						}
 						scheduleRedraw()
 					}
@@ -354,7 +359,6 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 			val metadata = controller.getMetadata()
 			if (metadata == null) {
 				Log.w(TAG, "Detected NULL metadata for an app, reconnecting")
-				lastConnectTime = System.currentTimeMillis()
 				disconnectApp(false)
 				connectApp(appInfo)
 			}
