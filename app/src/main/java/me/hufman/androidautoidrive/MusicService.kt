@@ -120,6 +120,9 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 			btConnectionCallback.unregister()
 			navigationTriggerReceiver?.unregister(context)
 			navigationTriggerReceiver = null
+			if (carappMusic?.avContext?.currentContext == true) {
+				carappMusic?.musicController?.pauseSync()
+			}
 			carappMusic?.musicController?.disconnectApp(pause = false)
 			carappMusic?.musicAppDiscovery?.cancelDiscovery()
 		} catch (e: Exception) {
