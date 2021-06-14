@@ -269,21 +269,32 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 	/* JEZIKK additions */
 	val engineTemp = carInfo.cachedCdsData.liveData[CDS.ENGINE.TEMPERATURE].map {
 		it.tryAsJsonObject("temperature")?.tryAsJsonPrimitive("engine")?.tryAsDouble
+	}.combine(units) { value, units ->
+		units.temperatureUnits.fromCarUnit(value)
 	}.format("%.0f").addUnit(unitsTemperatureLabel)
 	val oilTemp = carInfo.cachedCdsData.liveData[CDS.ENGINE.TEMPERATURE].map {
 		it.tryAsJsonObject("temperature")?.tryAsJsonPrimitive("oil")?.tryAsDouble
+	}.combine(units) { value, units ->
+		units.temperatureUnits.fromCarUnit(value)
 	}.format("%.0f").addUnit(unitsTemperatureLabel)
 	val speedActual = carInfo.cdsData.liveData[CDS.DRIVING.SPEEDACTUAL].map {
 		it.tryAsJsonPrimitive("speedActual")?.tryAsDouble
+	}.combine(units) { value, units ->
+		units.distanceUnits.fromCarUnit(value)
 	}.format("%.0f") //.addUnit(unitsAverageSpeedLabel)
 	val speedDisplayed = carInfo.cdsData.liveData[CDS.DRIVING.SPEEDDISPLAYED].map {
 		it.tryAsJsonPrimitive("speedDisplayed")?.tryAsDouble
+		// probably doesn't need unit conversion
 	}.format("%.0f").addUnit(unitsAverageSpeedLabel)
 	val tempInterior = carInfo.cdsData.liveData[CDS.SENSORS.TEMPERATUREINTERIOR].map {
 		it.tryAsJsonPrimitive("temperatureInterior")?.tryAsDouble
+	}.combine(units) { value, units ->
+		units.temperatureUnits.fromCarUnit(value)
 	}.format("%.1f").addUnit(unitsTemperatureLabel)
 	val tempExterior = carInfo.cdsData.liveData[CDS.SENSORS.TEMPERATUREEXTERIOR].map {
 		it.tryAsJsonPrimitive("temperatureExterior")?.tryAsDouble
+	}.combine(units) { value, units ->
+		units.temperatureUnits.fromCarUnit(value)
 	}.format("%.1f").addUnit(unitsTemperatureLabel)
 
 	/*

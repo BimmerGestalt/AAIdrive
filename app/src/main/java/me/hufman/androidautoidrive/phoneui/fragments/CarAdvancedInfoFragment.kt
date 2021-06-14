@@ -28,6 +28,7 @@ class CarAdvancedInfoFragment: Fragment() {
 			CDS.ENGINE.TORQUE to "torque",
 			CDS.ENGINE.RPMSPEED to "RPMSpeed",
 			CDS.DRIVING.GEAR to "gear",
+			CDS.DRIVING.DRIVINGSTYLE to "drivingStyle",
 			CDS.SENSORS.BATTERY to "battery",
 			CDS.SENSORS.BATTERYTEMP to "batteryTemp",
 			CDS.CONTROLS.HEADLIGHTS to "headlights",
