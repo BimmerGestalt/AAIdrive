@@ -86,6 +86,7 @@
     <string name="lbl_grant">Engedélyez</string>
     <string name="musicAppNotes_unauthorizedSpotify">Nyomj ide Spotify kapcsolat hitelesítéséhez</string>
     <string name="musicAppNotes_oldSpotify">Régebbi Spotify verzió telepítése szükséges a teljes funkcionalitáshoz (Keresés)</string>
+    <string name="musicAppNotes_oldSpotifyInstructions">Az alkalmazás csak a Spotify 8.4.96.953 verzióig ad teljes vezérlésre lehetőséget, például a keresés támogatását. A teljes vezérléshez tölts le egy régebbi verziót az APKPure-ról vagy máshonnan.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Kérlek telepítsd a hivatalos Spotify alkalmazást</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Kérlek ellenőrizd az internet kapcsolatot, illetve kapcsolj ki minden reklámblokkolót</string>
     <string name="lbl_navigationpage_address">Illessz be egy címet az autó navigációjának a telefonodról történő indításához</string>
