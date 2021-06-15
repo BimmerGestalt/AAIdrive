@@ -166,6 +166,7 @@
     <string name="txt_capabilities_audiostate_yes">Album borító megjelenítése támogatva</string>
     <string name="txt_capabilities_audiostate_no">Album borító megjelenítése nincs támogatva</string>
     <string name="txt_capabilities_audiostate_id4">ID4 nem támogatja ezt a funkciót</string>
+    <string name="txt_capabilities_audiostate_audiocontext">Ehhez a funkcióhoz Audio Context szükséges</string>
     <string name="txt_capabilities_audiostate_spotify">Telepítsd a legfissebb Spotify alkalmazást a funkció bekapcsolásához</string>
     <string name="txt_capabilities_popup_yes">Felugró értesítések támogatva</string>
     <string name="txt_capabilities_popup_no">Felugró értesítések nincsenek támogatva</string>
@@ -183,6 +184,7 @@
     <string name="lbl_assistant">Hang asszisztens (Béta)</string>
     <string name="lbl_assistant_empty">Nincs találat</string>
     <!-- car status -->
+    <string name="lbl_carinfopage_disconnected">Az első kapcsolódást követően itt információk jelennek meg az autódról</string>
     <string name="lbl_carinfopage">Itt rövid információ található az autódról</string>
     <string name="lbl_carinfo_efficiency">Hatékonyságstatisztika</string>
     <string name="lbl_carinfo_ev">EV fogyasztás statisztika</string>
@@ -252,6 +254,7 @@
     <string name="tip_connassistant">Használd a Kapcsolati Varázslót az USB tartozék mód bekapcsolásához, az IDrive4 autókban</string>
     <string name="tip_batterymode_mybmw">Próbáld meg kikapcsolni az akku optimalizációt a MyBMW alkalmazás esetében, ami néha segít kapcsolódni az autóhoz</string>
     <string name="tip_batterymode_mymini">Próbáld meg kikapcsolni az akku optimalizációt a Mini alkalmazás esetében, ami néha segít kapcsolódni az autóhoz</string>
+    <string name="tip_music_hide">Húzd el a zenei alkalmazást a listából, ezzel elrejted az autó menüjéből azt</string>
     <string name="notification_assistant_tap">Koppints az indításhoz %s</string>
     <string name="notification_assistant_description">Csak azért szükséges, mert a képernyő be van kapcsolva</string>
     <string name="donation_title">Kedveled az alkalmazást?</string>
