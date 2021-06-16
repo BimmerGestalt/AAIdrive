@@ -19,9 +19,8 @@ import kotlinx.android.synthetic.main.fragment_music_appgrid.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.phoneui.MusicAppDiscoveryThread
-import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
 import me.hufman.androidautoidrive.phoneui.NestedGridView
-import me.hufman.androidautoidrive.phoneui.UIState
+import java.lang.IllegalStateException
 
 class MusicAppsGridFragment: Fragment() {
 	val handler = Handler()
@@ -41,7 +40,11 @@ class MusicAppsGridFragment: Fragment() {
 	}
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		listMusicApps.setOnItemClickListener { _, _, _, _ ->
-			findNavController().navigate(R.id.nav_music)
+			try {
+				findNavController().navigate(R.id.nav_music)
+			} catch (e: IllegalStateException) {
+				// this is rare and unusual, but swallow the exception to not crash the app
+			}
 		}
 
 		listMusicApps.adapter = object : ArrayAdapter<MusicAppInfo>(requireContext(), R.layout.musicapp_listitem, displayedMusicApps) {
