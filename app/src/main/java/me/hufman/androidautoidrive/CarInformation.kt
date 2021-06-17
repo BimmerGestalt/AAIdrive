@@ -48,8 +48,8 @@ open class CarInformation {
 		}
 
 		fun onCarCapabilities() {
-			listeners.keys.toList().forEach {
-				it.onCarCapabilities(currentCapabilities)
+			listeners.keys.forEach { listener ->
+				listener.onCarCapabilities(currentCapabilities)
 			}
 		}
 
