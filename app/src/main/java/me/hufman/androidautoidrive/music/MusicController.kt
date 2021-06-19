@@ -131,10 +131,13 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 					Log.e(TAG, "Unable to connect to CombinedMusicAppController, this should never happen")
 				} else {
 					controller.subscribe {
-						if (controller.isConnected() && !triggeredPlayback) {
-							Log.i(TAG, "Freshly connected to $app, checking to resume playback: $desiredPlayback")
-							if (desiredPlayback) {
+						if (controller.isConnected() && desiredPlayback && !triggeredPlayback) {
+							if (controller.getPlaybackPosition().isPaused) {
+								Log.i(TAG, "Freshly connected to $app, asking to resume playback $desiredPlayback")
 								controller.play()
+							} else {
+								// trigger worked!
+								Log.i(TAG, "Noticed that $app has resumed playback, great success")
 								triggeredPlayback = true
 							}
 						}
