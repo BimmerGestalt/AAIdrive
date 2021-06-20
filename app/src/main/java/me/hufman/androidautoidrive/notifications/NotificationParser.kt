@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.Person
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
@@ -202,11 +203,15 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 			// Can't inflate the Custom View
 			Log.e(TAG, "Could not inflate custom view for notification $appName $title", e)
 			return null
-		}  catch (e: RemoteViews.ActionException) {
+		} catch (e: RemoteViews.ActionException) {
 			// Can't inflate the Custom View
 			Log.e(TAG, "Could not inflate custom view for notification $appName $title", e)
 			return null
-		}  catch (e: ClassCastException) {
+		} catch (e: ClassCastException) {
+			// Can't inflate the Custom View
+			Log.e(TAG, "Could not inflate custom view for notification $appName $title", e)
+			return null
+		} catch (e: Resources.NotFoundException) {
 			// Can't inflate the Custom View
 			Log.e(TAG, "Could not inflate custom view for notification $appName $title", e)
 			return null
