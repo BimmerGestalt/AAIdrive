@@ -20,7 +20,7 @@ jobs:
           SENTRY_ISSUE_ID: ${{ secrets.SENTRY_ISSUE_ID }}
 
       - name: Copy to output dir
-        run: cd usage && mkdir dist && cp *.json dist
+        run: cd usage && mkdir dist && cp *.json *.html dist
 
       - name: Upload to S3
         uses: shallwefootball/s3-upload-action@v1.1.3

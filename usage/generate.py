@@ -53,6 +53,19 @@ def collect_week_events():
             break
 
 
+def tags_dict(tags_list):
+    output = {}
+    for tag in tags_list:
+        output[tag['key']] = tag['value']
+    output['vehicle_brand'] = output['hmi_type'].split()[0]
+    return output
+
+
+def car_identifier(event):
+    tags = tags_dict(event['tags'])
+    return "{user}-{vehicle_type}".format_map(tags)
+
+
 def format_number(i):
     """
     Formats this number to a simple human readable version
@@ -91,6 +104,13 @@ def format_number(i):
 
 
 REPORTS = {
+    "cars.json": ReportGenerator(
+        dict(),
+        lambda d, e: d.update({car_identifier(e): {k:v
+            for (k,v) in tags_dict(e['tags']).items()
+            if k in ('vehicle_country', 'vehicle_brand', 'vehicle_type')}}),
+        lambda s: json.dumps(list(s.values()))
+    ),
     "weekly_users.json": ReportGenerator(
         set(),
         lambda s, e: s.add(e['user']['id']),

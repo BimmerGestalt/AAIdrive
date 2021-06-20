@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<div>
+  Vehicle Brands
+  <div>
+    <canvas id="chartVehicleBrand"></canvas>
+  </div>
+  Vehicle Types
+  <div>
+    <canvas id="chartVehicleType"></canvas>
+  </div>
+  Vehicle Countries
+  <div>
+    <canvas id="chartVehicleCountry"></canvas>
+  </div>
+</div>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2"></script>
+<!--
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chartjs-plugin-colorschemes">
+-->
+<script>
+
+(function() {
+    // https://stackoverflow.com/a/34890276/169035
+    function groupBy(arr, key) {
+        return arr.reduce(function(acc, i) {
+            (acc[i[key]] = acc[i[key]] || []).push(i);
+            return acc;
+        }, {});
+    }
+
+    function groupByCount(arr, key) {
+        return Object.fromEntries(
+            Object.entries(groupBy(arr, key))
+            .map(([k, v], i) => [k, v.length])
+            .sort(([,a],[,b]) => b-a)
+        );
+    }
+
+// https://github.com/nagix/chartjs-plugin-colorschemes/blob/master/src/colorschemes/colorschemes.tableau.js
+    const ColorScheme = {
+        Classic20: ['#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf', '#9edae5'],
+        Tableau20: ['#4E79A7', '#A0CBE8', '#F28E2B', '#FFBE7D', '#59A14F', '#8CD17D', '#B6992D', '#F1CE63', '#499894', '#86BCB6', '#E15759', '#FF9D9A', '#79706E', '#BAB0AC', '#D37295', '#FABFD2', '#B07AA1', '#D4A6C8', '#9D7660', '#D7B5A6'],
+        HueCircle19: ['#1ba3c6', '#2cb5c0', '#30bcad', '#21B087', '#33a65c', '#57a337', '#a2b627', '#d5bb21', '#f8b620', '#f89217', '#f06719', '#e03426', '#f64971', '#fc719e', '#eb73b3', '#ce69be', '#a26dc2', '#7873c0', '#4f7cba'],
+    }
+
+    function initializeGraphs(data) {
+        const vehicleBrands = groupByCount(data, 'vehicle_brand');
+        const vehicleBrandData = {
+            labels: ['BMW', 'BMWi', 'BMWM', 'MINI'],
+            datasets: [{
+                label: "Vehicle Brands",
+                data: [vehicleBrands['BMW'], vehicleBrands['BMWi'], vehicleBrands['BMWM'], vehicleBrands['MINI']],
+                backgroundColor: ['#009ADA', '#0066B1', '#EE0405', '#9F2F00']
+            }]
+        }
+        var vehicleBrand = new Chart(
+            document.getElementById("chartVehicleBrand").getContext('2d'),
+            { type: 'doughnut', data: vehicleBrandData, options: {} }
+        );
+
+        const vehicleTypes = groupByCount(data, 'vehicle_type');
+        console.log(vehicleTypes);
+        const vehicleTypeData = {
+            labels: Object.keys(vehicleTypes),
+            datasets: [{
+                label: "Vehicle Types",
+                data: Object.values(vehicleTypes),
+                backgroundColor: ColorScheme.Classic20.concat(ColorScheme.Tableau20).concat(ColorScheme.HueCircle19)
+            }]
+        }
+        var vehicleType = new Chart(
+            document.getElementById("chartVehicleType").getContext('2d'),
+            { type: 'doughnut', data: vehicleTypeData, options: {} }
+        );
+
+        const vehicleCountries = groupByCount(data, 'vehicle_country');
+        console.log(vehicleCountries);
+        const vehicleCountryData = {
+            labels: Object.keys(vehicleCountries),
+            datasets: [{
+                label: "Vehicle Countries",
+                data: Object.values(vehicleCountries),
+                backgroundColor: ColorScheme.Classic20.concat(ColorScheme.Tableau20).concat(ColorScheme.HueCircle19)
+            }]
+        }
+        var vehicleCountry = new Chart(
+            document.getElementById("chartVehicleCountry").getContext('2d'),
+            { type: 'doughnut', data: vehicleCountryData, options: {} }
+        );
+    }
+
+    fetch('cars.json')
+        .then(response => response.json())
+        .then(data => initializeGraphs(data));
+})();
+</script>
+</html>

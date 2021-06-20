@@ -6,7 +6,7 @@ Android Auto for IDrive
 [![Crowdin](https://badges.crowdin.net/androidautoidrive/localized.svg)](https://crowdin.com/project/androidautoidrive)
 [![Release Download](https://img.shields.io/github/release/hufman/AndroidAutoIdrive.svg)](https://github.com/hufman/AndroidAutoIdrive/releases/latest)
 [![Download Counter](https://img.shields.io/github/downloads/hufman/AndroidAutoIdrive/total.svg)](https://tooomm.github.io/github-release-stats/?username=hufman&repository=AndroidAutoIdrive)
-![Weekly Users](https://img.shields.io/endpoint?url=https://androidautoidrive.s3.amazonaws.com/usage/weekly_users.json)
+[![Weekly Users](https://img.shields.io/endpoint?url=https://androidautoidrive.s3.amazonaws.com/usage/weekly_users.json)](https://androidautoidrive.s3.amazonaws.com/usage/car_report.html)
 [![Gitter](https://badges.gitter.im/AndroidAutoIdrive/community.svg)](https://gitter.im/AndroidAutoIdrive/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Buy Me A Coffee](https://img.shields.io/badge/support-buymeacoffee-5f7fff)](https://www.buymeacoffee.com/q4JVoxz)
 ![MIT Licensed](https://img.shields.io/github/license/hufman/AndroidAutoIdrive)
@@ -248,7 +248,7 @@ This project contains no advertising or user tracking, and is developed entirely
 
 The app uses the Internet Permission to make a TCP connection to the car, which is reachable through a localhost socket on the main Connected app. Additionally, some cover art and incoming picture notifications (such as from Hangouts) may be fetched from Internet URLs. No other Internet access is required for the app's functionality.
 
-The analytics-enabled version automatically reports some information to [Sentry](https://www.sentry.io) to assist with development and debugging. Besides any rare and unfortunate crashes, the app reports any [installed music apps](https://github.com/hufman/AndroidAutoIdrive/blob/master/app/src/sentry/java/me/hufman/androidautoidrive/Analytics.kt) and the capabilities each app provides, as well as the [model and capabilities](https://github.com/hufman/AndroidAutoIdrive/blob/master/app/src/main/java/me/hufman/androidautoidrive/CarInformationDiscovery.kt#L33) of any connected car.
+The analytics-enabled version automatically reports some anonymized information to [Sentry](https://www.sentry.io) to assist with debugging and development: Besides any rare and unfortunate crashes, the app reports any [installed music apps](https://github.com/hufman/AndroidAutoIdrive/blob/master/app/src/sentry/java/me/hufman/androidautoidrive/Analytics.kt) and the capabilities each app provides, as well as the [model and capabilities](https://github.com/hufman/AndroidAutoIdrive/blob/master/app/src/main/java/me/hufman/androidautoidrive/CarInformationDiscovery.kt#L33) of any connected car for usage statistics and feature prioritization.
 
 Each release provides both an analytics-enabled and analytics-disabled option.
 
