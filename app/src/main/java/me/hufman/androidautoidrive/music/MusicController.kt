@@ -50,6 +50,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	var listener: Runnable? = null
 	var desiredPlayback = false  // if we should start playback as soon as connected
 	var triggeredPlayback = false   // whether we have triggered playback on a fresh connection
+	var triggeredAttempts = 0     // only try to trigger playback a certain number of times
 
 	// handles manual rewinding/fastforwarding
 	val seekingController = SeekingController(context, handler, this)
@@ -126,18 +127,25 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 				disconnectApp(pause = switchApp)
 
 				triggeredPlayback = false
+				triggeredAttempts = 0
 				val controller = connector.connect(app).value
 				if (controller == null) {
 					Log.e(TAG, "Unable to connect to CombinedMusicAppController, this should never happen")
 				} else {
 					controller.subscribe {
 						if (controller.isConnected() && desiredPlayback && !triggeredPlayback) {
-							if (controller.getPlaybackPosition().isPaused) {
-								Log.i(TAG, "Freshly connected to $app, asking to resume playback $desiredPlayback")
-								controller.play()
+							if (triggeredAttempts < 10) {
+								if (controller.getPlaybackPosition().isPaused) {
+									Log.i(TAG, "Freshly connected to $app, asking to resume playback $desiredPlayback")
+									controller.play()
+									triggeredAttempts += 1
+								} else {
+									// trigger worked!
+									Log.i(TAG, "Noticed that $app has resumed playback after $triggeredAttempts attempts, great success")
+									triggeredPlayback = true
+								}
 							} else {
-								// trigger worked!
-								Log.i(TAG, "Noticed that $app has resumed playback, great success")
+								Log.w(TAG, "Failed to resume playback on $app after $triggeredAttempts, giving up")
 								triggeredPlayback = true
 							}
 						}
