@@ -48,7 +48,8 @@ open class CarInformation {
 		}
 
 		fun onCarCapabilities() {
-			listeners.keys.forEach { listener ->
+			val listeners = ArrayList(listeners.keys)
+			listeners.forEach { listener ->
 				listener.onCarCapabilities(currentCapabilities)
 			}
 		}
