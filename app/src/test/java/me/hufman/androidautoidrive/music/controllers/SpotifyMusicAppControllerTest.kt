@@ -653,7 +653,7 @@ class SpotifyMusicAppControllerTest {
 		)
 		whenever(webApi.getLikedSongs(controller)) doAnswer { likedSongs }
 		whenever(webApi.getPlaylistUri(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)) doAnswer { null }
-		whenever(webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)) doAnswer { playlistUri }
+		whenever(webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)) doAnswer { playlistUri }
 		whenever(webApi.addSongsToPlaylist(playlistId, likedSongs)) doAnswer { }
 
 		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "your_library_tracks"))
@@ -762,7 +762,7 @@ class SpotifyMusicAppControllerTest {
 				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
 		)
 		whenever(webApi.getLikedSongs(controller)) doAnswer { likedSongs }
-		whenever(webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)) doAnswer { null }
+		whenever(webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)) doAnswer { null }
 
 		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "your_library_tracks"))
 
@@ -826,7 +826,7 @@ class SpotifyMusicAppControllerTest {
 		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "your_library_tracks"))
 
 		verify(webApi, never()).addSongsToPlaylist(playlistId, likedSongs)
-		verify(webApi, never()).createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)
+		verify(webApi, never()).createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)
 		verify(webApi).replacePlaylistSongs(playlistId, likedSongs)
 
 		likedSongsState.hashCode = likedSongs.hashCode().toString()
@@ -889,7 +889,7 @@ class SpotifyMusicAppControllerTest {
 		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "your_library_tracks"))
 
 		verify(webApi, never()).addSongsToPlaylist(playlistId, likedSongs)
-		verify(webApi, never()).createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)
+		verify(webApi, never()).createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)
 		verify(webApi, never()).replacePlaylistSongs(playlistId, likedSongs)
 
 		likedSongsState.hashCode = likedSongs.hashCode().toString()

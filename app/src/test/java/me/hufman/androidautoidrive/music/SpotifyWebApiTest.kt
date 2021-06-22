@@ -966,7 +966,7 @@ class SpotifyWebApiTest {
 		whenever(playlist.uri) doAnswer { playlistUri }
 
 		val clientPlaylistApi: ClientPlaylistApi = mock()
-		whenever(clientPlaylistApi.createClientPlaylist(name = playlistName, description = L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION, public = false)).doAnswer { playlist }
+		whenever(clientPlaylistApi.createClientPlaylist(name = playlistName, description = null, public = false)).doAnswer { playlist }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
@@ -988,7 +988,7 @@ class SpotifyWebApiTest {
 		whenever(context.getSystemService(NotificationManager::class.java)).thenReturn(notificationManager)
 
 		val clientPlaylistApi: ClientPlaylistApi = mock()
-		whenever(clientPlaylistApi.createClientPlaylist(name = playlistName, description = L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION, public = false)).doAnswer { throw exception }
+		whenever(clientPlaylistApi.createClientPlaylist(name = playlistName, description = null, public = false)).doAnswer { throw exception }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
@@ -1010,7 +1010,7 @@ class SpotifyWebApiTest {
 		val exception = SpotifyException.BadRequestException("message")
 
 		val clientPlaylistApi: ClientPlaylistApi = mock()
-		whenever(clientPlaylistApi.createClientPlaylist(name = playlistName, description = L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION, public = false)).doAnswer { throw exception }
+		whenever(clientPlaylistApi.createClientPlaylist(name = playlistName, description = null, public = false)).doAnswer { throw exception }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)

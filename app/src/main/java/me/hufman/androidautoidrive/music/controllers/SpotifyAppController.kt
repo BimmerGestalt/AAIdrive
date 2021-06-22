@@ -267,7 +267,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 					val playlistId: String
 					if (existingPlaylistUri == null) {
 						Log.d(TAG, "No user playlist for ${SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME} found, creating a new one.")
-						val uri = webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)
+						val uri = webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)
 						if (uri == null) {
 							Log.e(TAG, "Error creating liked songs playlist, falling back to app remote API")
 							queueItems = emptyList()

@@ -77,12 +77,12 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	}
 
 	/**
-	 * Creates a private playlist with the provided name. The newly created playlist's [PlaylistUri]
-	 * is returned.
+	 * Creates a private playlist with the provided name and optionally provided description. The
+	 * newly created playlist's [PlaylistUri] is returned.
 	 */
-	suspend fun createPlaylist(playlistName: String): PlaylistUri? {
+	suspend fun createPlaylist(playlistName: String, playlistDescription: String? = null): PlaylistUri? {
 		try {
-			return webApi?.playlists?.createClientPlaylist(name = playlistName, description = L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION, public = false)?.uri
+			return webApi?.playlists?.createClientPlaylist(name = playlistName, description = playlistDescription, public = false)?.uri
 		} catch (e: SpotifyException.AuthenticationException) {
 			Log.e(TAG, "Failed to create playlist $playlistName due to authentication error with the message: ${e.message}")
 			authStateManager.addAccessTokenAuthorizationException(e)
