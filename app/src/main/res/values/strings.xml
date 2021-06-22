@@ -30,10 +30,18 @@
     <string name="lbl_navigation_listener_success">Success</string>
     <string name="lbl_navigation_listener_unsuccess">Unsuccessful</string>
 
+    <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Let\'s get you connected</string>
+    <string name="lbl_welcome_intro">AndroidAutoIdrive is an unofficial app to add your phone\'s music apps and other features to your car through the native BMW Apps protocol</string>
+    <string name="lbl_welcome_compatible">Most MY2014 or newer BMWs or MINIs equipped with NBT or NBT Evo (based on IDrive 4–6) and an active ConnectedDrive or BMW Online subscription should be compatible</string>
+    <string name="lbl_welcome_dependencies">The apps connection to the car depends on the BMW/MINI Connected app or the new MyBMW or Mini app to connect to your car</string>
+    <string name="lbl_welcome_complete">AndroidAutoIdrive also adds a variety of other features to your car, check it out!</string>
+
     <!-- Menu Titles -->
     <string name="menu_overview">Overview</string>
     <string name="menu_setup">Setup</string>
     <string name="menu_connection">Connection</string>
+    <string name="menu_carinfo">Car Information</string>
     <string name="menu_music">Music</string>
     <string name="menu_notifications">Notifications</string>
     <string name="menu_assistants">Assistants</string>
@@ -42,6 +50,7 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_support">Support</string>
 
+    <string name="btn_next">Next</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integrates some of your phone\'s music apps and your phone\'s notifications into your car over the custom BMW Apps protocol</string>
     <string name="lbl_connectionpage">The apps connection to the car depends on a few pieces, and here are some hints to make sure it\'s working well</string>
     <plurals name="lbl_assistantpage">
@@ -148,6 +157,8 @@
     <string name="txt_setup_security_missing">Security Service is unreachable:</string>
 
     <string name="btn_install">Install</string>
+    <string name="btn_install_bmwmine">Install the MyBMW app</string>
+    <string name="btn_install_minimine">Install the Mini app</string>
     <string name="btn_install_bmw">Install BMW Connected</string>
     <string name="btn_install_mini">Install Mini Connected</string>
     <string name="btn_install_bmwclassic">Install BMW Connected Classic</string>
@@ -205,6 +216,74 @@
 
     <string name="lbl_assistant">Voice Assistant (Beta)</string>
     <string name="lbl_assistant_empty">None found</string>
+
+    <!-- car status -->
+    <string name="lbl_carinfopage_disconnected">After your first connection, information about your car will be shown here</string>
+    <string name="lbl_carinfopage">Quick information about your car is available here</string>
+    <string name="lbl_carinfo_efficiency">Efficiency Stats</string>
+    <string name="lbl_carinfo_ev">EV Consumption Stats</string>
+    <string name="lbl_carinfo_style">Efficient Driving Style</string>
+    <string name="lbl_carinfo_lastchecked">Last Checked:</string>
+    <string name="lbl_carinfo_lastPosition">Last Position:</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%s and %s</string>
+    <string name="lbl_carinfo_lastPosition_openMap">Open Map</string>
+    <string name="lbl_carinfo_vin">VIN:</string>
+    <string name="lbl_carinfo_odo">Odometer:</string>
+    <string name="lbl_carinfo_idriveVersion">IDrive Version:</string>
+    <string name="lbl_carinfo_averageConsumption">Average Consumption:</string>
+    <string name="lbl_carinfo_averageSpeed">Average Speed:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">Average Cons (alt):</string>
+    <string name="lbl_carinfo_averageSpeedAlt">Average Speed (alt):</string>
+    <string name="lbl_carinfo_ecoRangeWon">Eco Range Won:</string>
+    <string name="lbl_carinfo_evLevel">Electric Charge:</string>
+    <string name="lbl_carinfo_evRange">Electric Range:</string>
+    <string name="lbl_carinfo_fuelLevel">Fuel Level:</string>
+    <string name="lbl_carinfo_fuelRange">Fuel Range:</string>
+    <string name="lbl_carinfo_totalRange">Total Range:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Acc. Battery Level:</string>
+    <string name="lbl_carinfo_style_accel">Acceleration:</string>
+    <string name="lbl_carinfo_style_brake">Braking:</string>
+    <string name="lbl_carinfo_style_shift">Shifting:</string>
+
+    <string name="lbl_carinfo_temp">Temperature:</string>
+    <string name="lbl_carinfo_engine_temp">Engine Temp:</string>
+    <string name="lbl_carinfo_oil_temp">Oil Temp:</string>
+    <string name="lbl_carinfo_speed">Speed:</string>
+    <string name="lbl_carinfo_gear">Gear:</string>
+    <string name="lbl_carinfo_drivingmode">Mode:</string>
+    <string name="lbl_carinfo_compass">Compass:</string>
+    <string name="lbl_carinfo_sunroof">Sun Roof:</string>
+    <string name="lbl_carinfo_sunroof_closed">Closed</string>
+    <string name="lbl_carinfo_sunroof_tilted">Open, tilted</string>
+    <string name="lbl_carinfo_sunroof_partial">Partially open, %d %%</string>
+    <string name="lbl_carinfo_sunroof_open">Fully open</string>
+    <string name="lbl_carinfo_windows">Windows:</string>
+    <string name="lbl_carinfo_window_driverfront">Driver Front</string>
+    <string name="lbl_carinfo_window_passengerfront">Passenger Front</string>
+    <string name="lbl_carinfo_window_driverrear">Driver Rear</string>
+    <string name="lbl_carinfo_window_passengerrear">Passenger Rear</string>
+    <string name="lbl_carinfo_window_closed">Closed</string>
+    <string name="lbl_carinfo_window_partial">Open %d%%</string>
+    <string name="lbl_carinfo_window_open">Fully open</string>
+    <string name="lbl_carinfo_displayedSpeed">Displayed Speed:</string>
+    <string name="lbl_carinfo_temp_interior">Temp Interior:</string>
+    <string name="lbl_carinfo_temp_exterior">Temp Exterior:</string>
+    <string name="lbl_carinfo_parking_brake">Parking Brake:</string>
+
+    <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">km</string>
+    <string name="lbl_carinfo_units_mi">mi</string>
+    <string name="lbl_carinfo_units_gal_uk">gal (UK)</string>
+    <string name="lbl_carinfo_units_gal_us">gal (US)</string>
+    <string name="lbl_carinfo_units_liter">L</string>
+    <string name="lbl_carinfo_units_L100km">L/100km</string>
+    <string name="lbl_carinfo_units_mpg">mpg</string>
+    <string name="lbl_carinfo_units_kmL">km/L</string>
+    <string name="lbl_carinfo_units_mph">mph</string>
+    <string name="lbl_carinfo_units_kmph">kmph</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
+    <string name="lbl_carinfo_units_masl">m.a.s.l.</string>
 
     <!-- tips -->
     <string name="lbl_tip_image">Tip demonstration image</string>

@@ -25,8 +25,10 @@ enum class ChassisCode(val brand: String, val chassis: String) {
     E26("BMW","M1"),
     E25("BMW","Concept"),
     F48("BMW","X1"),
+    F39("BMW","X2"),
     F47("BMW","X2"),
     F26("BMW","X4"),
+    F16("BMW","X6"),
     F86("BMW","X6"),
     F85("BMW","X5"),
     G02("BMW","X4"),
@@ -53,7 +55,14 @@ enum class ChassisCode(val brand: String, val chassis: String) {
     G38("BMW","5 Series"),
     G31("BMW","5 Series"),
     G30("BMW","5 Series"),
-    F87("BMW","2 Series"),
+    F90("BMW","5 Series"),      // M5
+    F91("BMW","8 Series"),      // M8
+    F92("BMW","8 Series"),      // M8
+    F93("BMW","8 Series"),      // M8
+    F96("BMW","X6M"),      // X6M
+    F97("BMW","X3M"),      // X3M
+    F98("BMW","X4M"),      // X4M
+    F87("BMW","2 Series"),      // 2 competition
     F83("BMW","4 Series"),
     F82("BMW","4 Series"),
     F36("BMW","4 Series"),
@@ -68,6 +77,7 @@ enum class ChassisCode(val brand: String, val chassis: String) {
     F23("BMW","2 Series"),
     F46("BMW","2 Series"),
     F45("BMW","2 Series"),
+    F44("BMW","2 Series"),
     F21("BMW","1 Series"),
     F20("BMW","1 Series"),
     F18("BMW","5 Series"),

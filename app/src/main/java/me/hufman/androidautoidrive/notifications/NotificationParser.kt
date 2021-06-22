@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.Person
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
@@ -26,6 +27,7 @@ import androidx.core.app.NotificationManagerCompat.*
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.PhoneAppResourcesAndroid
 import me.hufman.androidautoidrive.UnicodeCleaner
+import java.lang.ClassCastException
 
 class NotificationParser(val notificationManager: NotificationManager, val phoneAppResources: PhoneAppResources, val remoteViewInflater: (RemoteViews) -> View) {
 	/**
@@ -198,6 +200,18 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		val customView = try {
 			remoteViewInflater.invoke(customViewTemplate)
 		} catch (e: SecurityException) {
+			// Can't inflate the Custom View
+			Log.e(TAG, "Could not inflate custom view for notification $appName $title", e)
+			return null
+		} catch (e: RemoteViews.ActionException) {
+			// Can't inflate the Custom View
+			Log.e(TAG, "Could not inflate custom view for notification $appName $title", e)
+			return null
+		} catch (e: ClassCastException) {
+			// Can't inflate the Custom View
+			Log.e(TAG, "Could not inflate custom view for notification $appName $title", e)
+			return null
+		} catch (e: Resources.NotFoundException) {
 			// Can't inflate the Custom View
 			Log.e(TAG, "Could not inflate custom view for notification $appName $title", e)
 			return null

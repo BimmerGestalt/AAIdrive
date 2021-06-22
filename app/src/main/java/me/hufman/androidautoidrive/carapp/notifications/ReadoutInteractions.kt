@@ -1,6 +1,8 @@
 package me.hufman.androidautoidrive.carapp.notifications
 
 import me.hufman.androidautoidrive.carapp.ReadoutController
+import me.hufman.androidautoidrive.carapp.ReadoutState
+import me.hufman.androidautoidrive.carapp.TTSState
 import me.hufman.androidautoidrive.notifications.CarNotification
 
 /**
@@ -54,6 +56,8 @@ class ReadoutInteractions(val settings: NotificationSettings) {
 				lines.add(0, title)
 			}
 			readoutController?.readout(lines)
+			// mark the tts state as busy, in case the Notification app checks the state before CDS updates
+			readoutController?.onTTSEvent(TTSState(ReadoutState.BUSY.value, -1, -1, readoutController?.name ?: "", null))
 		}
 	}
 
@@ -65,6 +69,8 @@ class ReadoutInteractions(val settings: NotificationSettings) {
 			}
 			currentNotification = carNotification
 			readoutController?.readout(carNotification.text.split("\n"))
+			// mark the tts state as busy, in case the Notification app checks the state before CDS updates
+			readoutController?.onTTSEvent(TTSState(ReadoutState.BUSY.value, -1, -1, readoutController?.name ?: "", null))
 		}
 	}
 

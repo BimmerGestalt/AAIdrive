@@ -51,6 +51,7 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 		val focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().minByOrNull { it.id }!!
 		focusTriggerController = FocusTriggerController(focusEvent) {}
 
+		listener.server = carConnection
 		listener.app = carApp
 
 		// set up statusbar controller

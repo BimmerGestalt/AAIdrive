@@ -50,6 +50,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	var listener: Runnable? = null
 	var desiredPlayback = false  // if we should start playback as soon as connected
 	var triggeredPlayback = false   // whether we have triggered playback on a fresh connection
+	var triggeredAttempts = 0     // only try to trigger playback a certain number of times
 
 	// handles manual rewinding/fastforwarding
 	val seekingController = SeekingController(context, handler, this)
@@ -114,24 +115,39 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	}
 
 	private fun connectApp(app: MusicAppInfo) {
-		val previousAppInfo = currentAppInfo
-		currentAppInfo = app
-		asyncRpc {
-			val switchApp = currentAppInfo != previousAppInfo
-			val needsReconnect = !isConnected()
+		asyncRpc {      // only handle one connection request at a time
+			val previousAppInfo = currentAppInfo
+			currentAppInfo = app
+			val switchApp = previousAppInfo != app
+			val needsReconnect = !isConnected() && System.currentTimeMillis() > lastConnectTime + RECONNECT_TIMEOUT
+			Log.i(TAG, "connectApp wants to reconnect: switchApp=$switchApp needsReconnect=$needsReconnect (isConnected=${isConnected()})")
 			if (switchApp || needsReconnect) {
-				Log.i(TAG, "Switching current app connection from $currentAppInfo to $app")
+				lastConnectTime = System.currentTimeMillis()
+				Log.i(TAG, "Switching current app connection from $previousAppInfo to $app")
 				disconnectApp(pause = switchApp)
 
 				triggeredPlayback = false
+				triggeredAttempts = 0
 				val controller = connector.connect(app).value
 				if (controller == null) {
 					Log.e(TAG, "Unable to connect to CombinedMusicAppController, this should never happen")
 				} else {
 					controller.subscribe {
 						if (controller.isConnected() && desiredPlayback && !triggeredPlayback) {
-							controller.play()
-							triggeredPlayback = true
+							if (triggeredAttempts < 10) {
+								if (controller.getPlaybackPosition().isPaused) {
+									Log.i(TAG, "Freshly connected to $app, asking to resume playback $desiredPlayback")
+									controller.play()
+									triggeredAttempts += 1
+								} else {
+									// trigger worked!
+									Log.i(TAG, "Noticed that $app has resumed playback after $triggeredAttempts attempts, great success")
+									triggeredPlayback = true
+								}
+							} else {
+								Log.w(TAG, "Failed to resume playback on $app after $triggeredAttempts, giving up")
+								triggeredPlayback = true
+							}
 						}
 						scheduleRedraw()
 					}
@@ -354,7 +370,6 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 			val metadata = controller.getMetadata()
 			if (metadata == null) {
 				Log.w(TAG, "Detected NULL metadata for an app, reconnecting")
-				lastConnectTime = System.currentTimeMillis()
 				disconnectApp(false)
 				connectApp(appInfo)
 			}

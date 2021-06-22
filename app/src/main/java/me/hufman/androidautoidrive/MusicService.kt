@@ -105,6 +105,9 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 			try {
 				val max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 				audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, max, 0)
+
+				// once we set the volume, unregister the BtStatus listener from future updates
+				btConnectionCallback.unregister()
 			} catch (e: SecurityException) {
 				Log.w(TAG, "Unable to set Bluetooth volume", e)
 			}
@@ -120,6 +123,9 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 			btConnectionCallback.unregister()
 			navigationTriggerReceiver?.unregister(context)
 			navigationTriggerReceiver = null
+			if (carappMusic?.avContext?.currentContext == true) {
+				carappMusic?.musicController?.pauseSync()
+			}
 			carappMusic?.musicController?.disconnectApp(pause = false)
 			carappMusic?.musicAppDiscovery?.cancelDiscovery()
 		} catch (e: Exception) {

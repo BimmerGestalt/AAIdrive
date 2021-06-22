@@ -12,6 +12,10 @@
         android:name="me.hufman.androidautoidrive.phoneui.fragments.ConnectionPageFragment"
         android:label="@string/menu_connection" />
     <fragment
+        android:id="@+id/nav_carinfo"
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.CarInfoPageFragment"
+        android:label="@string/menu_carinfo" />
+    <fragment
         android:id="@+id/nav_music"
         android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicPageFragment"
         android:label="@string/menu_music" />

@@ -13,7 +13,7 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
-import me.hufman.androidautoidrive.phoneui.visible
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 
 class SpotifyApiErrorDialog: DialogFragment() {
 	companion object {
@@ -37,7 +37,7 @@ class SpotifyApiErrorDialog: DialogFragment() {
 		updateAppRemoteErrorComponents(view)
 		updateWebApiAuthorizationComponents()
 
-		view.findViewById<Button>(R.id.btnOk)?.setOnClickListener { dismiss() }
+		view.findViewById<Button>(R.id.btnOk)?.setOnClickListener { dismissAllowingStateLoss() }
 
 		return builder.create()
 	}
@@ -60,7 +60,7 @@ class SpotifyApiErrorDialog: DialogFragment() {
 						authorizeButton.visible = false
 
 						// close the dialog after 2 seconds automatically
-						Handler().postDelayed({ dismiss() }, 2000)
+						Handler().postDelayed({ dismissAllowingStateLoss() }, 2000)
 					}
 
 					else -> {

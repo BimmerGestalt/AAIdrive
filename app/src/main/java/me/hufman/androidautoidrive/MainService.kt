@@ -14,6 +14,7 @@ import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
 import me.hufman.idriveconnectionkit.CDS
@@ -67,6 +68,21 @@ class MainService: Service() {
 			stopSelf()
 		}
 	}
+
+	// triggers repeated BLUETOOTH_UUID responses to the Connected app
+	// which should trigger it to connect to the car
+	val btStatus by lazy { BtStatus(applicationContext, {}).apply { register() } }
+	val btfetchUuidsWithSdp: Runnable by lazy { Runnable {
+		handler.removeCallbacks(btfetchUuidsWithSdp)
+		if (!iDriveConnectionReceiver.isConnected) {
+			btStatus.fetchUuidsWithSdp()
+
+			// schedule as long as the car is connected
+			if (btStatus.isA2dpConnected) {
+				handler.postDelayed(btfetchUuidsWithSdp, 5000)
+			}
+		}
+	} }
 
 	override fun onCreate() {
 		super.onCreate()
@@ -126,6 +142,7 @@ class MainService: Service() {
 		appSettings.callback = null
 
 		carProberThread?.quitSafely()
+		btStatus.unregister()
 		super.onDestroy()
 	}
 
@@ -276,6 +293,7 @@ class MainService: Service() {
 				Log.d(TAG, "Not fully connected: IDrive:${iDriveConnectionReceiver.isConnected} SecurityService:${securityAccess.isConnected()}")
 				stopCarApps()
 				handler.postDelayed(shutdownTimeout, PROBE_TIMEOUT)
+				handler.post(btfetchUuidsWithSdp)
 			}
 		}
 		carInformationUpdater.isConnected = iDriveConnectionReceiver.isConnected && securityAccess.isConnected()

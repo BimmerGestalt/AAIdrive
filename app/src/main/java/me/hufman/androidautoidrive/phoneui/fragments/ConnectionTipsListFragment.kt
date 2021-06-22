@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
-import me.hufman.androidautoidrive.phoneui.scrollBottom
-import me.hufman.androidautoidrive.phoneui.scrollTop
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.scrollBottom
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.scrollTop
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionTipsModel
-import me.hufman.androidautoidrive.phoneui.visible
 
 class ConnectionTipsListFragment: Fragment() {
 	var mode = ""

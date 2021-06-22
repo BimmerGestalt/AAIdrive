@@ -58,11 +58,15 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 		override fun onServiceConnected(p0: Int, profile: BluetoothProfile?) {
 			this.profile = profile
 			Log.d(TAG, "$profileName is loaded")
+			fetchUuidsWithSdp()
+			callback()
+		}
+
+		fun fetchUuidsWithSdp() {
 			val cars = profile?.connectedDevices?.filter { it.isCar() } ?: listOf()
 			cars.forEach {
 				it.fetchUuidsWithSdp()
 			}
-			callback()
 		}
 	}
 
@@ -76,6 +80,10 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			}
 			callback()
 		}
+	}
+
+	fun fetchUuidsWithSdp() {
+		a2dpListener.fetchUuidsWithSdp()
 	}
 
 	fun register() {
