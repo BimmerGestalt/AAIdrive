@@ -28,18 +28,7 @@ class MusicAppsListFragment: Fragment() {
 
 	val displayedApps = ArrayList<MusicAppInfo>()
 	val appDiscoveryThread by lazy {
-		MusicAppDiscoveryThread(requireActivity().applicationContext) { appDiscovery ->
-			handler.post {
-				displayedApps.clear()
-				displayedApps.addAll(appDiscovery.allApps)
-
-				val listView = view?.findViewById<RecyclerView>(R.id.listMusicApps)
-				if (listView != null && listView.adapter == null) {
-					listView.adapter = MusicAppListAdapter(requireActivity(), handler, requireActivity().supportFragmentManager, displayedApps, appDiscovery.musicSessions)
-				}
-				listView?.adapter?.notifyDataSetChanged() // redraw the app list
-			}
-		}.apply { start() }
+		MusicAppDiscoveryThread(requireActivity().applicationContext).apply { start() }
 	}
 	val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }
 	val hiddenApps by lazy { StoredSet(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS) }
@@ -88,6 +77,18 @@ class MusicAppsListFragment: Fragment() {
 		super.onResume()
 
 		// build list of discovered music apps
+		appDiscoveryThread.callback =  { appDiscovery ->
+			handler.post {
+				displayedApps.clear()
+				displayedApps.addAll(appDiscovery.allApps)
+
+				val listView = view?.findViewById<RecyclerView>(R.id.listMusicApps)
+				if (listView != null && listView.adapter == null) {
+					listView.adapter = MusicAppListAdapter(requireActivity(), handler, requireActivity().supportFragmentManager, displayedApps, appDiscovery.musicSessions)
+				}
+				listView?.adapter?.notifyDataSetChanged() // redraw the app list
+			}
+		}
 		appDiscoveryThread.discovery()
 	}
 
@@ -106,6 +107,7 @@ class MusicAppsListFragment: Fragment() {
 
 	override fun onDestroy() {
 		super.onDestroy()
+		appDiscoveryThread.callback = null
 		appDiscoveryThread.stopDiscovery()
 	}
 }

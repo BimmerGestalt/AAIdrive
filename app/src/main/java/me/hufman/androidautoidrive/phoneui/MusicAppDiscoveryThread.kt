@@ -6,7 +6,7 @@ import android.os.HandlerThread
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 
 
-class MusicAppDiscoveryThread(val context: Context, val callback: (MusicAppDiscovery) -> Unit): HandlerThread("MusicAppDiscovery UI") {
+class MusicAppDiscoveryThread(val context: Context, var callback: ((MusicAppDiscovery) -> Unit)? = null): HandlerThread("MusicAppDiscovery UI") {
 	private var handler: Handler? = null
 	var discovery: MusicAppDiscovery? = null
 		private set
@@ -26,7 +26,7 @@ class MusicAppDiscoveryThread(val context: Context, val callback: (MusicAppDisco
 	private val redrawRunnable = Runnable {
 		val discovery = discovery
 		if (discovery != null) {
-			callback(discovery)
+			callback?.invoke(discovery)
 		}
 	}
 

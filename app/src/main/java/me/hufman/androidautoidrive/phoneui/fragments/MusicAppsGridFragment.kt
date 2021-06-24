@@ -26,13 +26,7 @@ class MusicAppsGridFragment: Fragment() {
 	val handler = Handler()
 	val displayedMusicApps = ArrayList<MusicAppInfo>()
 	val appDiscoveryThread by lazy {
-		MusicAppDiscoveryThread(requireActivity().applicationContext) { appDiscovery ->
-			handler.post {
-				displayedMusicApps.clear()
-				displayedMusicApps.addAll(appDiscovery.validApps)
-				view?.findViewById<NestedGridView>(R.id.listMusicApps)?.invalidateViews() // redraw the app list
-			}
-		}.apply { start() }
+		MusicAppDiscoveryThread(requireActivity().applicationContext).apply { start() }
 	}
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -87,11 +81,19 @@ class MusicAppsGridFragment: Fragment() {
 		super.onResume()
 
 		// update the music apps list, including any music sessions
+		appDiscoveryThread.callback = { appDiscovery ->
+			handler.post {
+				displayedMusicApps.clear()
+				displayedMusicApps.addAll(appDiscovery.validApps)
+				view?.findViewById<NestedGridView>(R.id.listMusicApps)?.invalidateViews() // redraw the app list
+			}
+		}
 		appDiscoveryThread.discovery()
 	}
 
 	override fun onDestroy() {
 		super.onDestroy()
+		appDiscoveryThread.callback = null
 		appDiscoveryThread.stopDiscovery()
 	}
 }
