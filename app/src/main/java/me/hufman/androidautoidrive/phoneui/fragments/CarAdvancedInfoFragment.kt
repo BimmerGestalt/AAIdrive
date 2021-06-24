@@ -12,7 +12,6 @@ import kotlinx.android.synthetic.main.fragment_car_advancedinfo.*
 import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.liveData
-import me.hufman.androidautoidrive.connections.BclStatusListener
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 import me.hufman.idriveconnectionkit.CDS
 
@@ -56,16 +55,6 @@ class CarAdvancedInfoFragment: Fragment() {
 		)
 	}
 
-	// listen for debug BCL reports
-	var bclNextRedraw: Long = 0
-	val bclStatusListener by lazy {
-		BclStatusListener(requireContext()) {
-			if (bclNextRedraw < SystemClock.uptimeMillis()) {
-				redraw()
-				bclNextRedraw = SystemClock.uptimeMillis() + REDRAW_DEBOUNCE
-			}
-		}
-	}
 	val carInformationObserver = CarInformationObserver {
 		activity?.runOnUiThread { redraw() }
 	}
@@ -93,21 +82,10 @@ class CarAdvancedInfoFragment: Fragment() {
 		super.onResume()
 
 		redraw()
-
-		bclStatusListener.subscribe()
-	}
-
-	override fun onPause() {
-		super.onPause()
-
-		bclStatusListener.unsubscribe()
 	}
 
 	fun redraw() {
 		if (!isResumed) return
-		txtBclReport.text = bclStatusListener.toString()
-		paneBclReport.visible = bclStatusListener.state != "UNKNOWN" && bclStatusListener.staleness < 30000
-
 		redrawCds()
 
 		val carCapabilities = carInformationObserver.capabilities.map {
