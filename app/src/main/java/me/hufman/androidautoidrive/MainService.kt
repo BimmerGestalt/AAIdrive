@@ -14,7 +14,6 @@ import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
-import me.hufman.androidautoidrive.connections.BclStatusListener
 import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
@@ -249,6 +248,12 @@ class MainService: Service() {
 		synchronized(MainService::class.java) {
 			handler.removeCallbacks(shutdownTimeout)
 			if (iDriveConnectionReceiver.isConnected && securityAccess.isConnected()) {
+				// make sure we are subscribed for an instance id
+				if ((iDriveConnectionReceiver.instanceId ?: -1) <= 0) {
+					iDriveConnectionReceiver.subscribe(applicationContext)
+				}
+
+				// record when we first see the connection
 				if (connectionTime == null) {
 					connectionTime = System.currentTimeMillis()
 				}
