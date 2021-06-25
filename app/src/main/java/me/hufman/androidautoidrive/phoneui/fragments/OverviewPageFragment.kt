@@ -13,10 +13,9 @@ import me.hufman.androidautoidrive.databinding.OverviewBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel
 
 class OverviewPageFragment: Fragment() {
-	private val connectionViewModel by activityViewModels<ConnectionStatusModel> { ConnectionStatusModel.Factory(requireContext().applicationContext) }
+	private val viewModel by activityViewModels<ConnectionStatusModel> { ConnectionStatusModel.Factory(requireContext().applicationContext) }
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-		val viewModel by activityViewModels<ConnectionStatusModel> { ConnectionStatusModel.Factory(requireContext().applicationContext) }
 		val binding = OverviewBinding.inflate(inflater, container, false)
 		binding.lifecycleOwner = viewLifecycleOwner
 		binding.viewModel = viewModel

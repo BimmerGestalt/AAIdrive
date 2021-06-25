@@ -134,6 +134,13 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 		bclListener.subscribe()
 	}
 
+	fun _registerBtStatus() {
+		btStatus.register()
+	}
+	fun _registerUsbStatus() {
+		usbStatus.register()
+	}
+
 	fun unregister() {
 		idriveListener.callback = {}
 		btStatus.unregister()
