@@ -42,6 +42,9 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 		synchronized(this) {
 			if (threadMusic?.isAlive != true) {
 				threadMusic = CarThread("Music") {
+					// load the emoji dictionary, used by music app
+					UnicodeCleaner.init(context)
+
 					// make sure bluetooth volume is set to max
 					btConnectionCallback.register()
 					btConnectionCallback.callback.invoke()
