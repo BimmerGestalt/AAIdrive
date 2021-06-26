@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.notifications
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.Person
@@ -34,9 +35,11 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 	 * Any package names that should not trigger popups
 	 * Spotify, for example, shows a notification that another app is controlling it
 	 */
-	val SUPPRESSED_POPUP_PACKAGES = setOf("com.spotify.music")
+	val POPUP_SUPPRESSED_PACKAGES = setOf("com.spotify.music")
 	/** Any notification levels that should not show popups */
-	val SUPPRESSED_POPUP_IMPORTANCES = setOf(IMPORTANCE_LOW, IMPORTANCE_MIN, IMPORTANCE_NONE)
+	val POPUP_SUPPRESSED_IMPORTANCES = setOf(IMPORTANCE_LOW, IMPORTANCE_MIN, IMPORTANCE_NONE)
+	/** Any notification levels that should definitely show popups */
+	val POPUP_HIGH_IMPORTANCES = setOf(IMPORTANCE_HIGH, IMPORTANCE_MAX)
 
 	val TAG = "NotificationParser"
 
@@ -48,32 +51,41 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 			return NotificationParser(notificationManager, phoneAppResources, remoteViewInflater)
 		}
 
-		fun dumpNotification(title: String, sbn: StatusBarNotification, ranking: NotificationListenerService.Ranking?) {
+		@Suppress("DEPRECATION")
+		fun dumpNotification(notificationManager: NotificationManager, title: String, sbn: StatusBarNotification, ranking: NotificationListenerService.Ranking?) {
 			val extras = sbn.notification.extras
 			val details = extras?.keySet()?.map { "  ${it}=>${extras.get(it)}" }?.joinToString("\n") ?: ""
 			Log.i(NotificationListenerServiceImpl.TAG, "$title from ${sbn.packageName}: ${extras?.get("android.title")} with the keys:\n$details")
-			Log.i(NotificationListenerServiceImpl.TAG, "Ranking: isAmbient:${ranking?.isAmbient} matchesFilter:${ranking?.matchesInterruptionFilter()}")
+			Log.i(NotificationListenerServiceImpl.TAG, "Notification: isGroupSummary:${sbn.notification.isGroupSummary()} priority:${sbn.notification.priority} sound:${sbn.notification.sound}")
+			ifOreo {
+				val channelId = sbn.notification.channelId
+				val channel = notificationManager.getNotificationChannel(channelId)
+				Log.i(NotificationListenerServiceImpl.TAG, "Channel: name:${channel?.name} importance:${channel?.importance} lockscreenVisibility:${channel?.lockscreenVisibility} sound:${channel?.sound}")
+			}
+			val importance = ifOreo { ranking?.importance}
+			Log.i(NotificationListenerServiceImpl.TAG, "Ranking: isAmbient:${ranking?.isAmbient} matchesFilter:${ranking?.matchesInterruptionFilter()} importance:${importance}")
 		}
 		fun dumpMessage(title: String, bundle: Bundle) {
 			val details = bundle.keySet()?.map { key -> "  ${key}=>${bundle.get(key)}" }?.joinToString("\n") ?: ""
 			Log.i(NotificationListenerServiceImpl.TAG, "$title $details")
 		}
-	}
-	/**
-	 * Runs this block if the phone is Oreo or newer
-	 */
-	inline fun <R> ifOreo(callable: () -> R): R? {
-		return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			callable()
-		} else {
-			null
+
+		/**
+		 * Runs this block if the phone is Oreo or newer
+		 */
+		inline fun <R> ifOreo(callable: () -> R): R? {
+			return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				callable()
+			} else {
+				null
+			}
 		}
 	}
 
 	/**
 	 * Summarize an Android Notification into what should be shown in the car
 	 */
-	fun summarizeNotification(sbn: StatusBarNotification): CarNotification {
+	fun summarizeNotification(sbn: StatusBarNotification, ranking: NotificationListenerService.Ranking?): CarNotification {
 		var title:String? = null
 		var text:String? = null
 		var summary:String? = null
@@ -162,7 +174,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 
 		val summarized = CarNotification(sbn.packageName, sbn.key, appName, icon, sbn.isClearable, actions,
 				title ?: "", text?.trim() ?: "",
-				appIcon, sidePicture, picture, pictureUri, soundUri)
+				appIcon, sidePicture, picture, pictureUri, soundUri, getNotificationImportance(sbn.notification, ranking))
 		return summarized
 	}
 
@@ -235,7 +247,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 
 		return CarNotification(sbn.packageName, sbn.key, appName, smallIcon, sbn.isClearable,
 				actions, title, lines.joinToString("\n"), appIcon, sidePicture, picture, null,
-				getNotificationSound(sbn.notification))
+				getNotificationSound(sbn.notification), getNotificationImportance(sbn.notification, null))
 	}
 
 	@Suppress("DEPRECATION")
@@ -251,13 +263,22 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		return channel?.sound
 	}
 
+	@Suppress("DEPRECATION")
+	fun getNotificationImportance(notification: Notification, ranking: NotificationListenerService.Ranking?): Int {
+		return ifOreo {
+			val channelId = notification.channelId
+			val channel = notificationManager.getNotificationChannel(channelId)
+			ranking?.importance ?: channel?.importance ?: 3
+		} ?: notification.priority
+	}
+
+	@SuppressLint("NewApi")
 	fun shouldPopupNotification(sbn: StatusBarNotification?, ranking: NotificationListenerService.Ranking?): Boolean {
 		if (sbn == null) return false
-		if (!sbn.isClearable) return false
 		if (sbn.notification.isGroupSummary()) return false
 		val isMusic = sbn.notification.extras.getString(Notification.EXTRA_TEMPLATE) == "android.app.Notification\$MediaStyle"
 		if (isMusic) return false
-		if (SUPPRESSED_POPUP_PACKAGES.contains(sbn.packageName)) return false
+		if (POPUP_SUPPRESSED_PACKAGES.contains(sbn.packageName)) return false
 
 		// The docs say rankingMap won't be null, but the signature isn't explicit, so check
 		if (ranking != null) {
@@ -265,9 +286,12 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 			if (!ranking.matchesInterruptionFilter()) return false
 
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-				if (SUPPRESSED_POPUP_IMPORTANCES.contains(ranking.importance)) return false
+				if (POPUP_SUPPRESSED_IMPORTANCES.contains(ranking.importance)) return false
+				if (POPUP_HIGH_IMPORTANCES.contains(ranking.importance)) return true
 			}
 		}
+
+		if (!sbn.isClearable) return false
 
 		return true
 

@@ -18,7 +18,11 @@ class PopupHistory(val maxSize: Int = POPPED_HISTORY_SIZE) {
 	})
 
 	fun contains(notification: CarNotification): Boolean = synchronized(poppedNotifications) {
-		poppedNotifications.contains(notification)
+		// Google Maps notifications change to a higher priority when they want to peek
+		// so we forget when a popup has been seen if the priority has been bumped
+		val previous = poppedNotifications.find { it == notification }
+		val bumpedImportance = (notification.importance ?: 0) > (previous?.importance ?: 0)
+		previous != null && !bumpedImportance
 	}
 
 	fun add(notification: CarNotification) = synchronized(poppedNotifications) {

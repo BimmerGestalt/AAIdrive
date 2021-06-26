@@ -14,7 +14,8 @@ class CarNotification(val packageName: String, val key: String,     // main iden
                       val appIcon: Drawable?,       // the icon next to the app name in Details
                       val sidePicture: Drawable?,   // an optional picture next to the title
                       val picture: Drawable?, val pictureUri: String?,    // a full picture
-                      val soundUri: Uri?            // any custom audio clip
+                      val soundUri: Uri?,           // any custom audio clip
+                      val importance: Int?         // the notification's importance value
 ) {
 	data class Action(val name: CharSequence, val supportsReply: Boolean, val suggestedReplies: List<CharSequence>) {
 		companion object {

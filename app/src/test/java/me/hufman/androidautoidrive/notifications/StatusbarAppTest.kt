@@ -97,7 +97,7 @@ class StatusbarAppTest {
 		// adds a notification to the car's Notification Center
 		val sbn = CarNotification("test", "test", "Test AppName", null, true, emptyList(),
 				"Title", "line1\nline2 yay",
-				null, null, null, null, null)
+				null, null, null, null, null, null)
 		controller.add(sbn)
 		assertEquals(true, mockServer.triggeredEvents[event.id]!![0.toByte()])
 		assertEquals(0, event.getIndexId()?.asRaIntModel()?.value)
@@ -108,7 +108,7 @@ class StatusbarAppTest {
 		// updates the notification to the car's Notification Center
 		val sbnUpdate = CarNotification("test", "test", "Test AppName",null, true, emptyList(),
 				"Title", "line1\nline2 yay\nline3",
-				null, null, null, null, null)
+				null, null, null, null, null, null)
 		controller.add(sbnUpdate)
 		assertEquals(true, mockServer.triggeredEvents[event.id]!![0.toByte()])
 		assertEquals(0, event.getIndexId()?.asRaIntModel()?.value)
@@ -119,7 +119,7 @@ class StatusbarAppTest {
 		// adds a new notification
 		val sbnSecond = CarNotification("test", "test2", "Test AppName", null, true, emptyList(),
 				"Title2", "more test",
-				null, null, null, null, null)
+				null, null, null, null, null, null)
 		controller.add(sbnSecond)
 		assertEquals(true, mockServer.triggeredEvents[event.id]!![0.toByte()])
 		assertEquals(1, event.getIndexId()?.asRaIntModel()?.value)
@@ -149,7 +149,7 @@ class StatusbarAppTest {
 
 		val sbn = CarNotification("test package", "asdf", "Test App Name", mock(),
 				true, emptyList(), "Title", "Body\nBody 2",
-				null, null, null, null, null)
+				null, null, null, null, null, null)
 		popupView.showNotification(sbn)
 
 		assertNotNull(mockServer.triggeredEvents[1])    // triggers the popupEvent

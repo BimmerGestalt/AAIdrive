@@ -110,18 +110,20 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	}
 
 	override fun onNotificationPosted(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
-		if (!iDriveConnectionReceiver.isConnected) return
+		if (!LOG_NOTIFICATIONS && !iDriveConnectionReceiver.isConnected) return
 		val ranking = if (sbn != null && rankingMap != null) {
 			rankingMap.getRanking(sbn.key, this.ranking)
 			ranking
 		} else null
 
 		if (LOG_NOTIFICATIONS && sbn != null) {
-			dumpNotification("Notification posted", sbn, ranking)
+			dumpNotification(notificationParser.notificationManager, "Notification posted", sbn, ranking)
 		}
+		val shouldPopup = notificationParser.shouldPopupNotification(sbn, ranking)
+
+		// this will modify the ranking object, so we check shouldPopup early
 		updateNotificationList()
 
-		val shouldPopup = notificationParser.shouldPopupNotification(sbn, ranking)
 		if (sbn != null && shouldPopup) {
 			carController.onNewNotification(sbn.key)
 		}
@@ -135,7 +137,9 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 			val current = this.activeNotifications.filter {
 				notificationParser.shouldShowNotification(it)
 			}.map {
-				notificationParser.summarizeNotification(it)
+				currentRanking.getRanking(it.key, this.ranking)
+				notificationParser.summarizeNotification(it, this.ranking)
+
 			}
 			NotificationsState.replaceNotifications(current)
 		} catch (e: SecurityException) {
