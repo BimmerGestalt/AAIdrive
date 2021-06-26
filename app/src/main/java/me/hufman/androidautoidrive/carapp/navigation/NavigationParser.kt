@@ -8,9 +8,7 @@ import com.google.openlocationcode.OpenLocationCode
 import me.hufman.androidautoidrive.carapp.maps.LatLong
 import java.io.IOException
 import java.lang.IllegalArgumentException
-import java.net.URI
-import java.net.URISyntaxException
-import java.net.URLEncoder
+import java.net.*
 
 
 interface AddressSearcher {
@@ -43,6 +41,7 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 		val GOOGLE_SEARCHPATHLL_MATCHER = Regex("/maps/search/+()([-0-9.]+\\s*,\\s*[-0-9.]+\\s*).*")
 		val GOOGLE_PLACEPATHLL_MATCHER = Regex("/maps/place/([^/]*)/+@([-0-9.]+\\s*,\\s*[-0-9.]+\\s*).*")
 		val GOOGLE_DIRPATHLL_MATCHER = Regex("/maps/dir/[^/]*/+()([-0-9.]+\\s*,\\s*[-0-9.]+\\s*).*")
+		val GOOGLE_PLACEPATH_MATCHER = Regex("/maps/place/+([^/]+).*")
 		val GOOGLE_SEARCHPATH_MATCHER = Regex("/maps/search/+([^/]+).*")
 		val GOOGLE_DIRPATH_MATCHER = Regex("/maps/dir/[^/]*/+([^/]+).*")
 		val GOOGLE_QUERYLL_MATCHER = Regex("^(.*[&?])?(q|query|daddr|destination)=(loc:\\s+)?([-0-9.]+\\s*,\\s*[-0-9.]+\\s*).*")
@@ -175,8 +174,22 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 		return null
 	}
 
+	/** Check a url's headers for any redirect */
+	private fun tryRedirect(url: String): String? {
+		val parsed = URL(url)
+		val connection = parsed.openConnection() as? HttpURLConnection
+		connection?.instanceFollowRedirects = false
+		Log.d(TAG, "Checking redirect for ${url} ${connection} ${connection?.getHeaderField("Location")}")
+		return connection?.getHeaderField("Location")
+	}
+
 	private fun parseGoogleUrl(url: String): String? {
-		val uri = parseUri(url)
+		val origUri = parseUri(url)
+		// try one level of redirect
+		val uri = if (origUri.authority == "maps.app.goo.gl") {
+			tryRedirect(url)?.let { parseUri(it) } ?: origUri
+		} else { origUri }
+
 		if (!uri.authority.contains("google")) return null
 
 		val path = uri.path?.replace('+', ' ') ?: ""
@@ -195,7 +208,7 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 
 		// https://www.google.com/maps/search/1970+Naglee+Ave+San+Jose,+CA
 		// https://www.google.com/maps/dir/Current+Location/1970+Naglee+Ave+San+Jose,+CA
-		val googlePath = GOOGLE_DIRPATH_MATCHER.matchEntire(path) ?: GOOGLE_SEARCHPATH_MATCHER.matchEntire(path)
+		val googlePath = GOOGLE_DIRPATH_MATCHER.matchEntire(path) ?: GOOGLE_PLACEPATH_MATCHER.matchEntire(path) ?: GOOGLE_SEARCHPATH_MATCHER.matchEntire(path)
 		if (googlePath != null) {
 			val result = addressSearcher.search(googlePath.groupValues[1])
 			if (result != null) {
