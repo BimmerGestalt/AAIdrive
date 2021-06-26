@@ -154,7 +154,7 @@ class MainService: Service() {
 	 * Start the service
 	 */
 	private fun handleActionStart() {
-		Log.i(TAG, "Starting up service")
+		Log.i(TAG, "Starting up service $this")
 		// show the notification, so we can be startForegroundService'd
 		createNotificationChannel()
 		startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
@@ -283,6 +283,7 @@ class MainService: Service() {
 				if (appSettings[AppSettings.KEYS.PREFER_CAR_LANGUAGE].toBoolean() &&
 						carInformationObserver.cdsData[CDS.VEHICLE.LANGUAGE] == null) {
 					// still waiting for language
+					Log.d(TAG, "Waiting for the car's language to be confirmed")
 				} else {
 					// start notifications
 					startAny = startAny or startNotifications()
@@ -322,7 +323,8 @@ class MainService: Service() {
 
 	fun startCarCapabilities(): Boolean {
 		synchronized(this) {
-			if (threadCapabilities == null) {
+			if (threadCapabilities?.isAlive != true) {
+				Log.d(TAG, "Starting CarCapabilities thread")
 				// clear the capabilities to not start dependent services until it's ready
 				threadCapabilities = CarThread("Capabilities") {
 					Log.i(TAG, "Starting to discover car capabilities")
