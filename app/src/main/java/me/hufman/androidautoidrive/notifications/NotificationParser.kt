@@ -239,9 +239,9 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 	}
 
 	@Suppress("DEPRECATION")
-	fun getNotificationSound(notification: Notification): Uri {
+	fun getNotificationSound(notification: Notification): Uri? {
 		val channelSoundUri = ifOreo { getChannelSound(notification) }
-		return notification.sound ?: channelSoundUri ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+		return notification.sound ?: channelSoundUri
 	}
 
 	@RequiresApi(Build.VERSION_CODES.O)
