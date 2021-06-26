@@ -743,6 +743,9 @@ class NotificationAppTest {
 		assertEquals(expectedLabel1, mockServer.data[405])
 		assertEquals(expectedLabel2, mockServer.data[406])
 
+		// close the popup
+		app.viewPopup.currentNotification = null
+
 		// verify that a second onNotification doesn't trigger
 		mockServer.triggeredEvents.remove(1)
 		app.notificationListener.onNotification(bundle)

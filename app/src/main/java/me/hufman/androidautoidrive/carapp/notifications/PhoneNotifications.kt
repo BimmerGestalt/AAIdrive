@@ -340,8 +340,8 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			// only show if we haven't popped it before
 			val alreadyShown = readHistory.contains(sbn)
 			readHistory.add(sbn)
-			if (!alreadyShown) {
-				val currentlyPopped = sbn.equalsKey(viewPopup.currentNotification)
+			val currentlyPopped = sbn.equalsKey(viewPopup.currentNotification)
+			if (!alreadyShown || currentlyPopped) {
 				val currentlyReading = viewDetails.visible && sbn.equalsKey(viewDetails.selectedNotification)
 				val currentlyInputing = hmiContextWidgetType.toLowerCase(Locale.ROOT).contains("speller") ||
 						hmiContextWidgetType.toLowerCase(Locale.ROOT).contains("keyboard") ||
