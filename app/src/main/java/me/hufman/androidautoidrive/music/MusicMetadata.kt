@@ -8,6 +8,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import me.hufman.androidautoidrive.utils.dumpToString
+import java.lang.ref.WeakReference
 
 private const val TAG = "MusicMetadata"
 open class MusicMetadata(val mediaId: String? = null,
@@ -27,8 +28,9 @@ open class MusicMetadata(val mediaId: String? = null,
                          val extras: Bundle? = null
                     ) {
 	companion object {
-		var lastLoggedMetadata: MediaMetadataCompat? = null
+		var lastLoggedMetadata: WeakReference<MediaMetadataCompat>? = null
 		fun fromMediaMetadata(metadata: MediaMetadataCompat, playbackState: PlaybackStateCompat? = null): MusicMetadata {
+			val lastLoggedMetadata = lastLoggedMetadata?.get()
 			val changed = lastLoggedMetadata?.mediaId != metadata.mediaId ||
 					lastLoggedMetadata?.title != metadata.title ||
 					lastLoggedMetadata?.displayTitle != metadata.displayTitle ||
@@ -36,7 +38,7 @@ open class MusicMetadata(val mediaId: String? = null,
 			if (changed) {
 				Log.i(TAG, "Parsing MediaMetadata ${metadata.bundle.dumpToString()}")
 				Log.i(TAG, "Playback state: queueId:${playbackState?.activeQueueItemId}")
-				lastLoggedMetadata = metadata
+				this.lastLoggedMetadata = WeakReference(metadata)
 			}
 			// some apps only set DISPLAY_TITLE and DISPLAY_SUBTITLE
 			// so use those for artist/title fields, because that matches the car widget display order
