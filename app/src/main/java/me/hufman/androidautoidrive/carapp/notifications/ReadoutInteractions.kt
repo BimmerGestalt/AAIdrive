@@ -62,7 +62,13 @@ class ReadoutInteractions(val settings: NotificationSettings) {
 	}
 
 	fun triggerDisplayReadout(carNotification: CarNotification) {
-		if (settings.shouldReadoutNotificationDetails() && carNotification != currentNotification) {
+		if (settings.shouldReadoutNotificationDetails()) {
+			triggerReadout(carNotification)
+		}
+	}
+
+	fun triggerReadout(carNotification: CarNotification) {
+		if (carNotification != currentNotification) {
 			if (currentNotification != null) {
 				readoutController?.cancel()
 				Thread.sleep(500)

@@ -326,6 +326,7 @@
     <string name="NOTIFICATIONS_TITLE">Notifications</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">No Notifications</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Clear</string>
+    <string name="NOTIFICATION_READOUT_ACTION">Speak</string>
     <string name="NOTIFICATION_OPTIONS">Options</string>
     <string name="NOTIFICATION_POPUPS">Notification Popups</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER"> … with a passenger</string>

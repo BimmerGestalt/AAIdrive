@@ -33,6 +33,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 	val listWidget: RHMIComponent.List     // the widget to display the text
 	val imageWidget: RHMIComponent.Image
 	lateinit var inputView: RHMIState
+	lateinit var listView: NotificationListView
 
 	var visible = false
 	var selectedNotification: CarNotification? = null
@@ -49,6 +50,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 	fun initWidgets(listView: NotificationListView, inputState: RHMIState) {
 		state as RHMIState.ToolbarState
 		this.inputView = inputState
+		this.listView = listView
 
 		state.focusCallback = FocusCallback { focused ->
 			visible = focused
@@ -229,10 +231,28 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			clearButton.setEnabled(false)
 		}
 
+		val hasReadoutAction = !notificationSettings.shouldReadoutNotificationDetails()
+		val readoutButton = buttons[1]
+		if (hasReadoutAction) {
+			readoutButton.apply {
+				setEnabled(true)
+				getTooltipModel()?.asRaDataModel()?.value = L.NOTIFICATION_READOUT_ACTION
+				getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+					getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = state.id
+					readoutInteractions.triggerReadout(notification)
+				}
+			}
+		} else {
+			readoutButton.apply {
+				setEnabled(false)
+				getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listView.state.id
+			}
+		}
 		// enable any custom actions
-		(0..4).forEach {i ->
+		val offset = if (hasReadoutAction) 2 else 1
+		(if (hasReadoutAction) (0..3) else (0..4)).forEach {i ->
 			val action = notification.actions.getOrNull(i)
-			val button = buttons[1+i]
+			val button = buttons[offset+i]
 			if (action == null) {
 				button.setEnabled(false)
 				button.setSelectable(false)
