@@ -234,7 +234,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			buttonIndex++
 		}
 		// enable any custom actions
-		buttons.subList(buttonIndex,5).forEachIndexed { index, button ->
+		buttons.subList(buttonIndex,6).forEachIndexed { index, button ->
 			button.apply {
 				notification.actions.getOrNull(index)?.also { action ->
 					setEnabled(true)
