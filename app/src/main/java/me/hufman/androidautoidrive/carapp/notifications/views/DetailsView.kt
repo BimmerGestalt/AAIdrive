@@ -234,9 +234,9 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			buttonIndex++
 		}
 		// enable any custom actions
-		(0..(5 - buttonIndex)).forEach { i ->
-			buttons[buttonIndex + i].apply {
-				notification.actions.getOrNull(i)?.also { action ->
+		buttons.subList(buttonIndex,5).forEachIndexed { index, button ->
+			button.apply {
+				notification.actions.getOrNull(index)?.also { action ->
 					setEnabled(true)
 					setSelectable(true)
 					getImageModel()?.asImageIdModel()?.imageId = 158
