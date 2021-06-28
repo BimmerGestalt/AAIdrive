@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ScrollView
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
@@ -22,6 +21,7 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.CapabilitiesTipsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionTipsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.TipsModel
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
+import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
 class TipsListFragment: Fragment() {
 	var mode = "UNKNOWN"
@@ -45,7 +45,6 @@ class TipsListFragment: Fragment() {
 	}
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-		viewModel.mode = mode
 		val view = inflater.inflate(R.layout.fragment_tipslist, container, false)
 		val pane = view.findViewById<ViewPager2>(R.id.pgrTipsList)
 		pane.adapter = adapter
@@ -94,6 +93,7 @@ class TipsListFragment: Fragment() {
 		// support toggling
 		view.findViewById<View>(R.id.pane_tiplist_expand).setOnClickListener {
 			val visible = !pane.visible
+			println("Toggling $mode tips to visible $visible")
 			pane.visible = visible
 			tabLayout.visible = visible
 			update()
@@ -109,11 +109,15 @@ class TipsListFragment: Fragment() {
 
 	override fun onResume() {
 		super.onResume()
+
+		println("Resuming $mode tips")
 		update()
 	}
 
 	fun update() {
+		viewModel.mode = mode
 		viewModel.update()
+		println("Checking visibility based on tips ${viewModel.currentTips.size} ${viewModel.currentTips.isNotEmpty()}")
 		view?.visible = viewModel.currentTips.isNotEmpty()
 		adapter.notifyDataSetChanged()
 		view?.invalidate()
