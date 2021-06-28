@@ -61,6 +61,10 @@ class NavigationTriggerReceiver(val trigger: NavigationTrigger): BroadcastReceiv
 	}
 
 	fun unregister(context: Context) {
-		context.unregisterReceiver(this)
+		try {
+			context.unregisterReceiver(this)
+		} catch (e: IllegalArgumentException) {
+			// duplicate unregister
+		}
 	}
 }

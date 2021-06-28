@@ -40,6 +40,9 @@
         </activity>
 
         <activity
+            android:name=".phoneui.WelcomeActivity" >
+        </activity>
+        <activity
             android:name=".phoneui.NavIntentActivity"
             >
         </activity>
@@ -949,6 +952,23 @@
         </receiver>
 
         <receiver android:name=".phoneui.fragments.NotificationPageFragment$CustomActionListener" />
+
+        <receiver
+            android:name=".A2DPBroadcastReceiver">
+
+            <intent-filter>
+                <action
+                    android:name="android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED" />
+            </intent-filter>
+            <intent-filter>
+                <action
+                    android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+            </intent-filter>
+            <intent-filter>
+                <action
+                    android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
 
         <service android:name=".notifications.NotificationListenerServiceImpl"
             android:label="@string/app_name"

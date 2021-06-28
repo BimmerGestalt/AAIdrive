@@ -71,7 +71,7 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 		list.getModel()?.setValue(data, 0, 1, 1)
 	}
 
-	fun onDestroy() {
+	fun disconnect() {
 		try {
 			IDriveConnection.disconnectEtchConnection(carConnection)
 		} catch ( e: java.io.IOError) {

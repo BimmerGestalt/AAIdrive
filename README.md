@@ -5,7 +5,8 @@ Android Auto for IDrive
 [![Code Coverage](https://img.shields.io/codecov/c/gh/hufman/AndroidAutoIdrive/master.svg)](https://codecov.io/gh/hufman/AndroidAutoIdrive)
 [![Crowdin](https://badges.crowdin.net/androidautoidrive/localized.svg)](https://crowdin.com/project/androidautoidrive)
 [![Release Download](https://img.shields.io/github/release/hufman/AndroidAutoIdrive.svg)](https://github.com/hufman/AndroidAutoIdrive/releases/latest)
-[![Download Counter](https://img.shields.io/github/downloads/hufman/AndroidAutoIdrive/total.svg)](https://github.com/hufman/AndroidAutoIdrive/releases/latest)
+[![Download Counter](https://img.shields.io/github/downloads/hufman/AndroidAutoIdrive/total.svg)](https://tooomm.github.io/github-release-stats/?username=hufman&repository=AndroidAutoIdrive)
+[![Weekly Users](https://img.shields.io/endpoint?url=https://androidautoidrive.s3.amazonaws.com/usage/weekly_users.json)](https://androidautoidrive.s3.amazonaws.com/usage/car_report.html)
 [![Gitter](https://badges.gitter.im/AndroidAutoIdrive/community.svg)](https://gitter.im/AndroidAutoIdrive/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Buy Me A Coffee](https://img.shields.io/badge/support-buymeacoffee-5f7fff)](https://www.buymeacoffee.com/q4JVoxz)
 ![MIT Licensed](https://img.shields.io/github/license/hufman/AndroidAutoIdrive)
@@ -33,11 +34,13 @@ Download the APK of the latest stable release from the [Releases page](https://g
 Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-sentry-release.apk) to automatically report crashes.
 The [nonalytics](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-nonalytics-release.apk) build is available too.
 Some of the new features include:
+  - Brand new simpler phone UI with clearer setup instructions
   - Supports logging in as Spotify to set the global coverart in ID5+
-  - Adds Spotify browse and playlist coverart
-  - Reads out notifications
+  - Adds Spotify browse and playlist coverart, as well as searching Spotify
+  - Reads out notifications, and adds popup and statusbar support in ID5+
   - Supports replying to notifications
   - Starts car navigation to handle certain phone navigation buttons
+  - Supports the new MyBMW app
 
 Check out the [FAQ](https://hufman.github.io/AndroidAutoIdrive/faq.html) if you run into problems.
 
@@ -92,6 +95,7 @@ Implemented Features
         - [Listen Audiobook Player](https://play.google.com/store/apps/details?id=com.acmeandroid.listen)
         - [Player FM](https://play.google.com/store/apps/details?id=fm.player)
         - [Podcast Addict](https://play.google.com/store/apps/details?id=com.bambuna.podcastaddict)
+        - [Podcast Republic](https://play.google.com/store/apps/details?id=com.itunestoppodcastplayer.app)
         - [Stitcher](https://play.google.com/store/apps/details?id=com.stitcher.app)
         - [Voice Audiobook Player](https://play.google.com/store/apps/details?id=de.ph1b.audiobook)
       - Music Library
@@ -121,6 +125,8 @@ Implemented Features
         - [Energy Radio](https://play.google.com/store/apps/details?id=radioenergy.app)
         - [Guardian](https://play.google.com/store/apps/details?id=com.guardian)
         - [HOT97 Official](https://play.google.com/store/apps/details?id=com.jacapps.whhl)
+        - [Manchester United](https://play.google.com/store/apps/details?id=com.mu.muclubapp)
+        - [myTuner](https://play.google.com/store/apps/details?id=com.appgeneration.itunerfree)
         - [Nederland.FM](https://play.google.com/store/apps/details?id=nl.nibbixsoft.app)
         - [NHL](https://play.google.com/store/apps/details?id=com.nhl.gc1112.free)
         - [ntv Nachrichten](https://play.google.com/store/apps/details?id=de.lineas.lit.ntv.android)
@@ -135,11 +141,13 @@ Implemented Features
         - [Scanner Radio](https://play.google.com/store/apps/details?id=com.scannerradio)
         - [SiriusXM](https://play.google.com/store/apps/details?id=com.sirius)
         - [Simple Radio](https://play.google.com/store/apps/details?id=com.streema.simpleradio)
+        - [SomaFM](https://play.google.com/store/apps/details?id=com.dgmltn.radiomg.somafm)
         - [sunshine live](https://play.google.com/store/apps/details?id=app.sunshinelive.de.sunshinelive)
         - [Versuz Radio](https://play.google.com/store/apps/details?id=com.versuzradio)
         - [Virgin Radio Italy](https://play.google.com/store/apps/details?id=it.froggy.android.virginradio)
       - Streaming Services
         - [Apple Music](https://play.google.com/store/apps/details?id=com.apple.android.music)
+        - [Anghami](https://play.google.com/store/apps/details?id=com.anghami)
         - [Gaana Music](https://play.google.com/store/apps/details?id=com.gaana)
         - [JioSaavn](https://play.google.com/store/apps/details?id=com.jio.media.jiobeats)
         - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android)
@@ -209,11 +217,16 @@ Instead, install the Connected Classic app of the other brand that is not intend
 Build Instructions
 ------------------
 
-  - (Optional) Add a [Google Maps API key](https://developers.google.com/maps/documentation/android-sdk/signup) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_GmapsApiKey`. This key should have access to Maps SDK for Android, Places API, and Directions API.
+  - (Optional) Add a [Google Maps API key](https://developers.google.com/maps/documentation/android-sdk/signup) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_GmapsApiKey`.
+    - No spaces or quotes are needed around the property value: `AndroidAutoIdrive_GmapsApiKey=AIza`
+    - This key should have access to Maps SDK for Android, Places API, and Directions API.
+    - Billing is needed for the Places API to return search results.
   - (Optional) Add a [Spotify API Client ID](https://developer.spotify.com/dashboard/) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_SpotifyApiKey`.
-    - The client secret is not needed, and no spaces or quotes are needed around the property value
+    - The client secret is not needed, and no spaces or quotes are needed around the property value: `AndroidAutoIdrive_SpotifyApiKey=36b6...`
     - It needs the Redirect URI set to `me.hufman.androidautoidrive://spotify_callback`
     - It may also need the package fingerprint added, [follow these instructions](https://developer.spotify.com/documentation/android/quick-start/) to configure it
+  - (Optional) Add a Sentry DSN to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_SentryDsn` to capture crash reports.
+    - No spaces or quotes are needed around the DSN: `AndroidAutoIdrive_SentryDsn=https://e40...@sentry.io/0123...`
   - After downloading the source code, follow the instructions in [external/README.md](external/README.md) to prepare the needed APK files from official apps.
   - Android Studio makes it easy to build this project:
     - File > New > Project From Version Control > Git
@@ -235,7 +248,7 @@ This project contains no advertising or user tracking, and is developed entirely
 
 The app uses the Internet Permission to make a TCP connection to the car, which is reachable through a localhost socket on the main Connected app. Additionally, some cover art and incoming picture notifications (such as from Hangouts) may be fetched from Internet URLs. No other Internet access is required for the app's functionality.
 
-The analytics-enabled version automatically reports some information to [Sentry](https://www.sentry.io) to assist with development and debugging. Besides any rare and unfortunate crashes, the app reports any [installed music apps](https://github.com/hufman/AndroidAutoIdrive/blob/master/app/src/sentry/java/me/hufman/androidautoidrive/Analytics.kt) and the capabilities each app provides, as well as the [model and capabilities](https://github.com/hufman/AndroidAutoIdrive/blob/master/app/src/main/java/me/hufman/androidautoidrive/CarInformationDiscovery.kt#L33) of any connected car.
+The analytics-enabled version automatically reports some anonymized information to [Sentry](https://www.sentry.io) to assist with debugging and development: Besides any rare and unfortunate crashes, the app reports any [installed music apps](https://github.com/hufman/AndroidAutoIdrive/blob/master/app/src/sentry/java/me/hufman/androidautoidrive/Analytics.kt) and the capabilities each app provides, as well as the [model and capabilities](https://github.com/hufman/AndroidAutoIdrive/blob/master/app/src/main/java/me/hufman/androidautoidrive/CarInformationDiscovery.kt#L33) of any connected car for usage statistics and feature prioritization.
 
 Each release provides both an analytics-enabled and analytics-disabled option.
 

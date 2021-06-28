@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.Person
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
@@ -26,6 +27,7 @@ import androidx.core.app.NotificationManagerCompat.*
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.PhoneAppResourcesAndroid
 import me.hufman.androidautoidrive.UnicodeCleaner
+import java.lang.ClassCastException
 
 class NotificationParser(val notificationManager: NotificationManager, val phoneAppResources: PhoneAppResources, val remoteViewInflater: (RemoteViews) -> View) {
 	/**
@@ -35,6 +37,8 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 	val SUPPRESSED_POPUP_PACKAGES = setOf("com.spotify.music")
 	/** Any notification levels that should not show popups */
 	val SUPPRESSED_POPUP_IMPORTANCES = setOf(IMPORTANCE_LOW, IMPORTANCE_MIN, IMPORTANCE_NONE)
+
+	val TAG = "NotificationParser"
 
 	companion object {
 		fun getInstance(context: Context): NotificationParser {
@@ -193,7 +197,27 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
 
 		val customViewTemplate = sbn.notification.getContentView() ?: return null
-		val customView = remoteViewInflater.invoke(customViewTemplate)
+		val customView = try {
+			remoteViewInflater.invoke(customViewTemplate)
+		} catch (e: SecurityException) {
+			// Can't inflate the Custom View
+			Log.e(TAG, "Could not inflate custom view for notification $appName $title", e)
+			return null
+		} catch (e: RemoteViews.ActionException) {
+			// Can't inflate the Custom View
+			Log.e(TAG, "Could not inflate custom view for notification $appName $title", e)
+			return null
+		} catch (e: ClassCastException) {
+			// Can't inflate the Custom View
+			Log.e(TAG, "Could not inflate custom view for notification $appName $title", e)
+			return null
+		} catch (e: Resources.NotFoundException) {
+			// Can't inflate the Custom View
+			Log.e(TAG, "Could not inflate custom view for notification $appName $title", e)
+			return null
+		}
+
+		// find elements from the custom view
 		val images = customView.collectChildren().filterIsInstance<ImageView>().toList()
 		val drawable = images.sortedByDescending { it.width * it.height }
 			.getOrNull(0)?.drawable

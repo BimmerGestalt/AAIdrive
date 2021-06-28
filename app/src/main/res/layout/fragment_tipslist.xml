@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <LinearLayout
+        android:id="@+id/pane_tiplist_expand"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:text="@string/lbl_tiplist" />
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_error_outline_black_24dp"
+            app:tint="?android:attr/textColorSecondary"
+            android:contentDescription="@string/lbl_tip_expand" />
+    </LinearLayout>
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/pgrTipsList"
+        android:layout_height="@dimen/tips_pane_height"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:clipChildren="false"
+        android:clipToPadding="false"/>
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/pgrTipsListTabs"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        app:tabGravity="center"
+        app:tabBackground="@drawable/tab_selector"
+        app:tabIndicatorHeight="0dp"/>
+</LinearLayout>

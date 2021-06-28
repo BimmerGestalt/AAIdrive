@@ -11,11 +11,23 @@ import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
+import java.lang.IllegalArgumentException
 
 class PermissionsController(val activity: Activity) {
 	companion object {
 		const val REQUEST_SMS = 20
 		const val REQUEST_LOCATION = 4000
+	}
+
+	private fun tryOpenActivity(intent: Intent): Boolean {
+		if (activity.packageManager.resolveActivity(intent, 0) != null) {
+			try {
+				activity.startActivity(intent)
+				return true
+			} catch (e: ActivityNotFoundException) {
+			} catch (e: IllegalArgumentException) {}
+		}
+		return false
 	}
 
 	fun openApplicationPermissions(packageName: String) {
@@ -25,37 +37,25 @@ class PermissionsController(val activity: Activity) {
 			intent.setClassName("com.miui.securitycenter",
 					"com.miui.permcenter.permissions.PermissionsEditorActivity")
 			intent.putExtra("extra_pkgname", packageName)
-			try {
-				activity.startActivity(intent)
-				return
-			} catch (e: ActivityNotFoundException) {}
+			if (tryOpenActivity(intent)) return
 		}
 		run {
 			val intent = Intent("miui.intent.action.APP_PERM_EDITOR")
 			intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 			// try an implicit intent without a classname
 			intent.putExtra("extra_pkgname", packageName)
-			try {
-				activity.startActivity(intent)
-				return
-			} catch (e: ActivityNotFoundException) {}
+			if (tryOpenActivity(intent)) return
 		}
 		run {
 			val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
 			intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 			intent.data = Uri.fromParts("package", packageName, null)
-			try {
-				activity.startActivity(intent)
-				return
-			} catch (e: ActivityNotFoundException) {}
+			if (tryOpenActivity(intent)) return
 		}
 		run {
 			val intent = Intent(Settings.ACTION_SETTINGS)
 			intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-			try {
-				activity.startActivity(intent)
-				return
-			} catch (e: ActivityNotFoundException) {}
+			if (tryOpenActivity(intent)) return
 		}
 	}
 

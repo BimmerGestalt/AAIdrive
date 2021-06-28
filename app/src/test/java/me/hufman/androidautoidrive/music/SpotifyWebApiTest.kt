@@ -29,6 +29,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.internal.util.reflection.FieldSetter
 import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
@@ -377,7 +378,7 @@ class SpotifyWebApiTest {
 		val notificationBuilder: NotificationCompat.Builder = mock()
 		whenever(notificationBuilder.setContentTitle(getStringText)).thenReturn(notificationBuilder)
 		whenever(notificationBuilder.setContentText(getStringText)).thenReturn(notificationBuilder)
-		whenever(notificationBuilder.setSmallIcon(any())).thenReturn(notificationBuilder)
+		whenever(notificationBuilder.setSmallIcon(anyInt())).thenReturn(notificationBuilder)
 		whenever(notificationBuilder.setContentIntent(contentIntent)).thenReturn(notificationBuilder)
 		whenever(notificationBuilder.build()).thenReturn(notification)
 		PowerMockito.whenNew(NotificationCompat.Builder::class.java).withArguments(context, SpotifyWebApi.NOTIFICATION_CHANNEL_ID).thenReturn(notificationBuilder)

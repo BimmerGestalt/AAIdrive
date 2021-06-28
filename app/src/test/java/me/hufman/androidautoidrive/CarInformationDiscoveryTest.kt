@@ -1,7 +1,6 @@
 package me.hufman.androidautoidrive
 
 import com.nhaarman.mockito_kotlin.*
-import me.hufman.idriveconnectionkit.CDS
 import me.hufman.idriveconnectionkit.IDriveConnection
 import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus

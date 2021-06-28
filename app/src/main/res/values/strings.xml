@@ -30,10 +30,18 @@
     <string name="lbl_navigation_listener_success">Success</string>
     <string name="lbl_navigation_listener_unsuccess">Unsuccessful</string>
 
+    <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Let\'s get you connected</string>
+    <string name="lbl_welcome_intro">AndroidAutoIdrive is an unofficial app to add your phone\'s music apps and other features to your car through the native BMW Apps protocol</string>
+    <string name="lbl_welcome_compatible">Most MY2014 or newer BMWs or MINIs equipped with NBT or NBT Evo (based on IDrive 4–6) and an active ConnectedDrive or BMW Online subscription should be compatible</string>
+    <string name="lbl_welcome_dependencies">The apps connection to the car depends on the BMW/MINI Connected app or the new MyBMW or Mini app to connect to your car</string>
+    <string name="lbl_welcome_complete">AndroidAutoIdrive also adds a variety of other features to your car, check it out!</string>
+
     <!-- Menu Titles -->
     <string name="menu_overview">Overview</string>
     <string name="menu_setup">Setup</string>
     <string name="menu_connection">Connection</string>
+    <string name="menu_carinfo">Car Information</string>
     <string name="menu_music">Music</string>
     <string name="menu_notifications">Notifications</string>
     <string name="menu_assistants">Assistants</string>
@@ -42,12 +50,14 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_support">Support</string>
 
+    <string name="btn_next">Next</string>
     <string name="lbl_overviewpage">AndroidAutoIdrive integrates some of your phone\'s music apps and your phone\'s notifications into your car over the custom BMW Apps protocol</string>
     <string name="lbl_connectionpage">The apps connection to the car depends on a few pieces, and here are some hints to make sure it\'s working well</string>
     <plurals name="lbl_assistantpage">
         <item quantity="one">Your phone\'s voice assistant is added as a Connected app, in case the car\'s voice input doesn\'t trigger it</item>
         <item quantity="other">Your phone\'s voice assistants are added as a Connected app, in case the car\'s voice input doesn\'t trigger it</item>
     </plurals>
+    <string name="lbl_assistantpage_tip">These apps are separate from the car\'s Voice Assistant steering wheel button, which only triggers your phone\'s default assistant and is configured separately</string>
 
     <string name="lbl_notificationpage">Your incoming notifications can be viewed and interacted with from the car</string>
     <string name="spawn_test_notification">Test Notification</string>
@@ -138,11 +148,17 @@
     <string name="txt_setup_mini_ready">The app is ready to connect to a Mini</string>
     <string name="txt_setup_bmw_missing">Not ready to connect to a BMW:</string>
     <string name="txt_setup_mini_missing">Not ready to connect to a Mini:</string>
+    <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 is installed, which sometimes doesn\'t start the car connection. Try downgrading to 6.4 or upgrading to MyBMW if you encounter problems</string>
+    <string name="txt_setup_mini_connected_65">Mini Connected 6.5 is installed, which sometimes doesn\'t start the car connection. Try downgrading to 6.4 or upgrading to the new Mini app if you encounter problems</string>
     <string name="txt_setup_bmw_mine_detected">The new My BMW app is installed, which might cause problems with BMW Connected and is not supported</string>
     <string name="txt_setup_mini_mine_detected">The new MINI app is installed, which might cause problems with Mini Connected and is not supported</string>
+    <string name="txt_setup_bmw_mine_conflict">Both the BMW Connected and My BMW apps are installed, which might cause connection instability unless connecting over USB</string>
+    <string name="txt_setup_mini_mine_conflict">Both the MINI Connected and My MINI apps are installed, which might cause connection instability unless connecting over USB</string>
     <string name="txt_setup_security_missing">Security Service is unreachable:</string>
 
     <string name="btn_install">Install</string>
+    <string name="btn_install_bmwmine">Install the MyBMW app</string>
+    <string name="btn_install_minimine">Install the Mini app</string>
     <string name="btn_install_bmw">Install BMW Connected</string>
     <string name="btn_install_mini">Install Mini Connected</string>
     <string name="btn_install_bmwclassic">Install BMW Connected Classic</string>
@@ -157,6 +173,7 @@
     <string name="txt_setup_spp_connected">Bluetooth Apps are supported</string>
     <string name="txt_setup_usb_disconnected">No car connected over USB</string>
     <string name="txt_setup_usb_connected">USB connected in Charging mode</string>
+    <string name="txt_setup_usb_requires_connected">USB apps connection requires BMW/Mini Connected to be installed</string>
     <string name="txt_setup_enable_usbmtp">Switch the phone\'s USB mode to File Transfer</string>
     <string name="txt_setup_enable_usbacc">Enable the USB Accessory Mode or Apps option in the car for this %s</string>
     <string name="txt_setup_usbmtp_connected">USB connected in Storage mode</string>
@@ -165,7 +182,8 @@
     <string name="txt_setup_enable_bcl_mode">Enable the Apps option in the car for this %s</string>
     <string name="txt_setup_bcl_disconnected">Apps Connection is not ready:</string>
     <string name="txt_setup_bcl_waiting">Waiting for Apps Connection to start</string>
-    <string name="txt_setup_enable_bclspp">Try toggling Bluetooth Music or connecting over USB</string>
+    <string name="txt_setup_enable_bclspp_bt">Try toggling Bluetooth Music</string>
+    <string name="txt_setup_enable_bclspp_usb">Try toggling Bluetooth Music or connecting over USB</string>
     <string name="txt_setup_bcl_connecting">Apps Connection is connecting</string>
     <string name="txt_setup_bcl_connected">Apps Connection is running</string>
     <string name="txt_setup_bcl_connected_transport">Apps Connection is running over %s</string>
@@ -198,6 +216,96 @@
 
     <string name="lbl_assistant">Voice Assistant (Beta)</string>
     <string name="lbl_assistant_empty">None found</string>
+
+    <!-- car status -->
+    <string name="lbl_carinfopage_disconnected">After your first connection, information about your car will be shown here</string>
+    <string name="lbl_carinfopage">Quick information about your car is available here</string>
+    <string name="lbl_carinfo_efficiency">Efficiency Stats</string>
+    <string name="lbl_carinfo_ev">EV Consumption Stats</string>
+    <string name="lbl_carinfo_style">Efficient Driving Style</string>
+    <string name="lbl_carinfo_lastchecked">Last Checked:</string>
+    <string name="lbl_carinfo_lastPosition">Last Position:</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%s and %s</string>
+    <string name="lbl_carinfo_lastPosition_openMap">Open Map</string>
+    <string name="lbl_carinfo_vin">VIN:</string>
+    <string name="lbl_carinfo_odo">Odometer:</string>
+    <string name="lbl_carinfo_idriveVersion">IDrive Version:</string>
+    <string name="lbl_carinfo_averageConsumption">Average Consumption:</string>
+    <string name="lbl_carinfo_averageSpeed">Average Speed:</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">Average Cons (alt):</string>
+    <string name="lbl_carinfo_averageSpeedAlt">Average Speed (alt):</string>
+    <string name="lbl_carinfo_ecoRangeWon">Eco Range Won:</string>
+    <string name="lbl_carinfo_evLevel">Electric Charge:</string>
+    <string name="lbl_carinfo_evRange">Electric Range:</string>
+    <string name="lbl_carinfo_fuelLevel">Fuel Level:</string>
+    <string name="lbl_carinfo_fuelRange">Fuel Range:</string>
+    <string name="lbl_carinfo_totalRange">Total Range:</string>
+    <string name="lbl_carinfo_accBatteryLevel">Acc. Battery Level:</string>
+    <string name="lbl_carinfo_style_accel">Acceleration:</string>
+    <string name="lbl_carinfo_style_brake">Braking:</string>
+    <string name="lbl_carinfo_style_shift">Shifting:</string>
+
+    <string name="lbl_carinfo_temp">Temperature:</string>
+    <string name="lbl_carinfo_engine_temp">Engine Temp:</string>
+    <string name="lbl_carinfo_oil_temp">Oil Temp:</string>
+    <string name="lbl_carinfo_speed">Speed:</string>
+    <string name="lbl_carinfo_gear">Gear:</string>
+    <string name="lbl_carinfo_drivingmode">Mode:</string>
+    <string name="lbl_carinfo_compass">Compass:</string>
+    <string name="lbl_carinfo_sunroof">Sun Roof:</string>
+    <string name="lbl_carinfo_sunroof_closed">Closed</string>
+    <string name="lbl_carinfo_sunroof_tilted">Open, tilted</string>
+    <string name="lbl_carinfo_sunroof_partial">Partially open, %d %%</string>
+    <string name="lbl_carinfo_sunroof_open">Fully open</string>
+    <string name="lbl_carinfo_windows">Windows:</string>
+    <string name="lbl_carinfo_window_driverfront">Driver Front</string>
+    <string name="lbl_carinfo_window_passengerfront">Passenger Front</string>
+    <string name="lbl_carinfo_window_driverrear">Driver Rear</string>
+    <string name="lbl_carinfo_window_passengerrear">Passenger Rear</string>
+    <string name="lbl_carinfo_window_closed">Closed</string>
+    <string name="lbl_carinfo_window_partial">Open %d%%</string>
+    <string name="lbl_carinfo_window_open">Fully open</string>
+    <string name="lbl_carinfo_displayedSpeed">Displayed Speed:</string>
+    <string name="lbl_carinfo_temp_interior">Temp Interior:</string>
+    <string name="lbl_carinfo_temp_exterior">Temp Exterior:</string>
+    <string name="lbl_carinfo_parking_brake">Parking Brake:</string>
+
+    <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">km</string>
+    <string name="lbl_carinfo_units_mi">mi</string>
+    <string name="lbl_carinfo_units_gal_uk">gal (UK)</string>
+    <string name="lbl_carinfo_units_gal_us">gal (US)</string>
+    <string name="lbl_carinfo_units_liter">L</string>
+    <string name="lbl_carinfo_units_L100km">L/100km</string>
+    <string name="lbl_carinfo_units_mpg">mpg</string>
+    <string name="lbl_carinfo_units_kmL">km/L</string>
+    <string name="lbl_carinfo_units_mph">mph</string>
+    <string name="lbl_carinfo_units_kmph">kmph</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
+    <string name="lbl_carinfo_units_masl">m.a.s.l.</string>
+
+    <!-- tips -->
+    <string name="lbl_tip_image">Tip demonstration image</string>
+    <string name="lbl_tiplist">Tips and tricks</string>
+    <string name="lbl_tip_expand">Expand tips</string>
+
+    <string name="tip_usb_chargingmode">Switch the phone\'s USB mode to File Transfer if it defaults to Charging Only mode</string>
+    <string name="tip_connassistant">Use the Connection Wizard to enable the USB Accessory Mode in IDrive4 cars</string>
+    <string name="tip_btapp">Make sure the IDrive5 Bluetooth connection has the Apps option. Try disconnecting Bluetooth Audio and reconnecting if the connection is stuck</string>
+    <string name="tip_batterymode_mybmw">Try disabling battery optimizations for the MyBMW app, which sometimes helps connect to the car</string>
+    <string name="tip_batterymode_mymini">Try disabling battery optimizations for the Mini app, which sometimes helps connect to the car</string>
+    <string name="tip_audioplayer_bookmark">Save a shortcut button to the Audioplayer app for quick access to the music controls</string>
+    <string name="tip_bluetooth_music">Make sure to set your car to listen to Bluetooth Music from your phone</string>
+    <string name="tip_audioplayer_nowplaying_bookmark">Save a shortcut button while the Now Playing button is selected for quick access to your queue</string>
+    <string name="tip_input_emoji">Input a colon to start typing an emoji, then pick from the suggestion list</string>
+    <string name="tip_music_hide">Swipe a music app away from the list to hide it from the car</string>
+    <string name="tip_batterymode_music">Try disabling battery optimizations for your music apps, which might be needed to start the apps from the background on some phone brands such as Xiaomi</string>
+    <string name="tip_popup_suppress_id5">Notification popups are suppressed while interacting with the car or while inputting text</string>
+    <string name="tip_notification_bookmark">Save a shortcut button to the unlabeled Book app for quick access to your notifications</string>
+    <string name="tip_notification_bookmark_ambutton">Save a shortcut button to the Notifications app for quick access to your notifications</string>
+    <string name="tip_notification_bookmark_details">Save a shortcut button while viewing the list of notifications for quick access to the most recent notification</string>
+    <string name="tip_notification_quickaccess">Entering the Notifications app quickly after receiving a new notification will open this notification directly</string>
 
     <string name="notification_assistant_tap">Tap to launch %s</string>
     <string name="notification_assistant_description">Only necessary because the screen is on</string>

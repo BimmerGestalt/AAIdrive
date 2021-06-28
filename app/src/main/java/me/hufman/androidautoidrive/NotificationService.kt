@@ -15,6 +15,7 @@ import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import java.lang.Exception
 
 class NotificationService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carInformationObserver: CarInformationObserver) {
 	var threadNotifications: CarThread? = null
@@ -95,23 +96,31 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 
 	fun stop() {
 		running = false
-		// post it to the thread to run after initialization finishes
-		threadNotifications?.post {
-			if (!running) { // check that we do actually intend to shut down
-				carappNotifications?.notificationSettings?.btStatus?.unregister()
-				carappNotifications?.onDestroy(context)
-				carappNotifications = null
-				carappReadout?.onDestroy()
-				carappReadout = null
-				carappStatusbar?.onDestroy()
-				carappStatusbar = null
-				threadNotifications?.quit()
-				threadNotifications = null
+		// unregister in the main thread
+		// when the car disconnects, the threadNotifications handler shuts down
+		try {
+			carappNotifications?.notificationSettings?.btStatus?.unregister()
+			carappNotifications?.onDestroy(context)
+		} catch (e: Exception) {
+			Log.w(TAG, "Encountered an exception while shutting down", e)
+		}
 
-				// if we started up again during shutdown
-				if (running) {
-					start()
-				}
+		// post cleanup actions to the thread to run after initialization finishes
+		// if the car is already disconnected, this Handler loop will have crashed
+		threadNotifications?.post {
+			carappNotifications?.onDestroy(context)
+			carappNotifications?.disconnect()
+			carappNotifications = null
+			carappReadout?.disconnect()
+			carappReadout = null
+			carappStatusbar?.disconnect()
+			carappStatusbar = null
+			threadNotifications?.quit()
+			threadNotifications = null
+
+			// if we started up again during shutdown
+			if (running) {
+				start()
 			}
 		}
 	}

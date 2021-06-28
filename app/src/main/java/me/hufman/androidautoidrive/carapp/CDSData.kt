@@ -59,7 +59,7 @@ class CDSConnectionAsync(val handler: Handler, val connection: CDSConnection): C
 	}
 
 	override fun unsubscribeProperty(property: CDSProperty) {
-		handler.post { unsubscribeProperty(property) }
+		handler.post { connection.unsubscribeProperty(property) }
 	}
 }
 
@@ -302,6 +302,8 @@ class CDSMutableLiveData(private val cdsData: CDSData, val property: CDSProperty
 
 	override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
 		// postValue because CDSEventHandler might be coming from the Etch connection
-		this.postValue(propertyValue)
+		if (this.value != propertyValue) {
+			this.postValue(propertyValue)
+		}
 	}
 }

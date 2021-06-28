@@ -17,6 +17,7 @@ import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import java.lang.Exception
 
 class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val musicAppMode: MusicAppMode) {
 	var threadMusic: CarThread? = null
@@ -104,6 +105,9 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 			try {
 				val max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 				audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, max, 0)
+
+				// once we set the volume, unregister the BtStatus listener from future updates
+				btConnectionCallback.unregister()
 			} catch (e: SecurityException) {
 				Log.w(TAG, "Unable to set Bluetooth volume", e)
 			}
@@ -112,25 +116,34 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 
 	fun stop() {
 		running = false
-		// post it to the thread to run after initialization finishes
-		threadMusic?.post {
-			if (!running) { // check that we do actually intend to shut down
-				btConnectionCallback.unregister()
-				navigationTriggerReceiver?.unregister(context)
-				carappMusic?.musicController?.disconnectApp(pause = false)
-				carappMusic?.musicAppDiscovery?.cancelDiscovery()
-				carappMusic = null
-				threadMusic?.quit()
-				threadMusic = null
 
-				// if we started up again during shutdown
-				if (running) {
-					start()
-				}
+		// disconnect from music apps right away
+		// when the car disconnects, the threadMusic handler shuts down
+		try {
+			btConnectionCallback.unregister()
+			navigationTriggerReceiver?.unregister(context)
+			navigationTriggerReceiver = null
+			if (carappMusic?.avContext?.currentContext == true) {
+				carappMusic?.musicController?.pauseSync()
+			}
+			carappMusic?.musicController?.disconnectApp(pause = false)
+			carappMusic?.musicAppDiscovery?.cancelDiscovery()
+		} catch (e: Exception) {
+			Log.w(TAG, "Encountered an exception while shutting down", e)
+		}
+
+		// post cleanup actions to the thread to run after initialization finishes
+		// if the car is already disconnected, the Handler loop will have stopped
+		threadMusic?.post {
+			// carappMusic doesn't support manual disconnection
+			carappMusic = null
+			threadMusic?.quit()
+			threadMusic = null
+
+			// if we started up again during shutdown
+			if (running) {
+				start()
 			}
 		}
 	}
-
-
-
 }

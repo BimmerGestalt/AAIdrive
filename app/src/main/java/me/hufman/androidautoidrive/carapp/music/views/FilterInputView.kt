@@ -50,15 +50,20 @@ class FilterInputView(val state: RHMIState,
 					// still loading
 					sendSuggestions(listOf(FILTERRESULT_LOADING))
 				} else {
-					val suggestions = musicList.asSequence().filter {
-						UnicodeCleaner.clean(it.title ?: "").split(Regex("\\s+")).any { word ->
-							word.toLowerCase(Locale.ROOT).startsWith(input.toLowerCase(Locale.ROOT))
-						}
-					} + musicList.asSequence().filter {
-						UnicodeCleaner.clean(it.title
-								?: "").toLowerCase(Locale.ROOT).contains(input.toLowerCase(Locale.ROOT))
+					val results = input.toLowerCase(Locale.ROOT).let { inputLower ->
+						musicList.asSequence().map {
+							Pair(it, UnicodeCleaner.clean((it.title ?: "") + " " + (it.artist
+									?: "")).toLowerCase(Locale.ROOT))
+						}.let {
+							it.filter { meta ->
+								meta.second.split(Regex("\\s+")).any { word ->
+									word.startsWith(inputLower)
+								}
+							} + it.filter { meta ->
+								meta.second.contains(inputLower)
+							}
+						}.map { it.first }.distinct().take(15).toList()
 					}
-					val results = suggestions.take(15).distinct().toList()
 					if (results.isEmpty()) {
 						sendSuggestions(listOf(FILTERRESULT_EMPTY))
 					} else {

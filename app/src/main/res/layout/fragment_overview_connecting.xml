@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
@@ -13,4 +17,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/paneConnectionStatus"
         android:name="me.hufman.androidautoidrive.phoneui.fragments.ConnectionSummaryFragment"/>
+    <androidx.fragment.app.FragmentContainerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/settings_vertical_margin"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:id="@+id/fragmentTipsList"
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.TipsListFragment"
+        app:tipsMode="connection"/>
 </LinearLayout>

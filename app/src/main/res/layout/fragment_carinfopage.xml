@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data class="CarInfoPageBinding">
+        <variable
+            name="viewModel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.CarSummaryModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/default_margin"
+            android:paddingStart="@dimen/default_margin"
+            android:paddingTop="@dimen/default_margin"
+            android:animateLayoutChanges="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="@{!viewModel.hasConnected}">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/pane_vertical_margin"
+                    android:text="@string/lbl_carinfopage_disconnected" />
+
+                <View style="@style/Divider"
+                    android:layout_marginBottom="@dimen/pane_vertical_margin"/>
+            </LinearLayout>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
+                android:id="@+id/fragmentCarSummary"
+                android:visibility="@{viewModel.hasConnected}"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.CarSummaryFragment"/>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/paneCarDrivingStats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="@{viewModel.hasConnected}"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.CarDrivingStatsFragment"/>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/paneCarAdvancedInfo"
+                android:visibility="@{viewModel.showAdvancedSettings}"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.CarAdvancedInfoFragment"/>
+        </LinearLayout>
+    </ScrollView>
+</layout>

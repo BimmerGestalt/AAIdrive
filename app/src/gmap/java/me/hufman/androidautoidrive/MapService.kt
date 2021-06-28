@@ -3,16 +3,13 @@ package me.hufman.androidautoidrive
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
-import android.media.ImageReader
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.core.content.ContextCompat
 import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import java.lang.Exception
 
 class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val mapAppMode: MapAppMode) {
 	var threadGMaps: CarThread? = null
@@ -67,28 +64,37 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 
 	fun stop() {
 		running = false
-		// post it to the thread to run after initialization finishes
+		// shut down maps functionality right away
+		// when the car disconnects, the threadGMaps handler shuts down
+		try {
+			mapScreenCapture?.onDestroy()
+			virtualDisplay?.release()
+			// nothing to stop in mapController
+			mapListener?.onDestroy()
+			mapApp?.onDestroy(context)
+
+			mapScreenCapture = null
+			virtualDisplay = null
+			mapController = null
+			mapListener = null
+		} catch (e: Exception) {
+			Log.w(TAG, "Encountered an exception while shutting down", e)
+		}
+
+		// post cleanup actions to the thread to run after initialization finishes
+		// if the car is already disconnected, the Handler loop will have stopped
 		threadGMaps?.post {
-			if (!running) { // check that we do actually intend to shut down
-				mapScreenCapture?.onDestroy()
-				virtualDisplay?.release()
-				// nothing to stop in mapController
-				mapListener?.onDestroy()
-				mapApp?.onDestroy(context)
+			// finish shutting down, if we were cancelled during startup
+			mapApp?.onDestroy(context)
+			mapApp?.disconnect()
+			mapApp = null
 
-				mapScreenCapture = null
-				virtualDisplay = null
-				mapController = null
-				mapListener = null
-				mapApp = null
+			threadGMaps?.quit()
+			threadGMaps = null
 
-				threadGMaps?.quit()
-				threadGMaps = null
-
-				// if we started up again during shutdown
-				if (running) {
-					start()
-				}
+			// if we started up again during shutdown
+			if (running) {
+				start()
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.carapp.assistant
 
 import android.app.*
+import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -113,7 +114,8 @@ open class AssistantControllerAndroid(val context: Context, val phoneAppResource
 					Intent(Intent.ACTION_MAIN).setPackage(assistant.packageName).setComponent(ComponentName(
 							assistant.packageName,
 							"com.google.android.apps.gsa.settingsui.VoiceSearchPreferences"
-					)))
+					)),
+					Intent(Intent.ACTION_MAIN).setPackage(assistant.packageName))
 			else -> listOf(
 					Intent(Intent.ACTION_MAIN).setPackage(assistant.packageName))
 		}
@@ -127,7 +129,11 @@ open class AssistantControllerAndroid(val context: Context, val phoneAppResource
 
 	override fun openSettings(assistant: AssistantAppInfo) {
 		getSettingsIntent(assistant)?.let {
-			context.startActivity(it)
+			try {
+				context.startActivity(it)
+			} catch (e: ActivityNotFoundException) {
+				Log.w(TAG, "Assistant Settings Intent failed", e)
+			}
 		}
 	}
 }

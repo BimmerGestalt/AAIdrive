@@ -21,6 +21,7 @@ import me.hufman.androidautoidrive.phoneui.NestedGridView
 import me.hufman.androidautoidrive.phoneui.adapters.ObservableListCallback
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicAppsViewModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
+import java.lang.IllegalStateException
 
 class MusicAppsGridFragment: Fragment() {
 	val handler = Handler()
@@ -33,12 +34,12 @@ class MusicAppsGridFragment: Fragment() {
 		return inflater.inflate(R.layout.fragment_music_appgrid, container, false)
 	}
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		// build list of discovered music apps
-		appsViewModel.validApps.addOnListChangedCallback(appsChangedCallback)
-		appsViewModel.musicAppDiscoveryThread.discovery()
-
 		listMusicApps.setOnItemClickListener { _, _, _, _ ->
-			findNavController().navigate(R.id.nav_music)
+			try {
+				findNavController().navigate(R.id.nav_music)
+			} catch (e: IllegalStateException) {
+				// this is rare and unusual, but swallow the exception to not crash the app
+			}
 		}
 
 		listMusicApps.adapter = object : ArrayAdapter<MusicAppInfo>(requireContext(), R.layout.musicapp_listitem, appsViewModel.validApps) {
