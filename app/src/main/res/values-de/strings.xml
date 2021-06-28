@@ -296,6 +296,7 @@
     <string name="NOTIFICATIONS_TITLE">Benachrichtigungen</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Keine Benachrichtigungen</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Leeren</string>
+    <string name="NOTIFICATION_READOUT_ACTION">Vorlesen</string>
     <string name="NOTIFICATION_OPTIONS">Optionen</string>
     <string name="NOTIFICATION_POPUPS">PopUp-Benachrichtigung</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">PopUps mit Beifahrer</string>

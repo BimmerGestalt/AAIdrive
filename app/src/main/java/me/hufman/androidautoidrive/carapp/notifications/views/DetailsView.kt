@@ -95,8 +95,6 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 			setEnabled(true)
 			setSelectable(true)
 		}
-
-		val buttons = ArrayList(state.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
 		state.toolbarComponentsList.forEach {
 			if (it.getAction() != null) {
 				it.setSelectable(false)
@@ -104,17 +102,6 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 				it.setVisible(true)
 			}
 		}
-		buttons[0].getImageModel()?.asImageIdModel()?.imageId = 150
-		buttons[0].setVisible(true)
-		buttons[0].setSelectable(true)
-		buttons.subList(1, 6).forEach {
-			it.getImageModel()?.asImageIdModel()?.imageId = 158
-		}
-		buttons.forEach {
-			// go back to the main list when an action is clicked
-			it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listView.state.id
-		}
-
 		this.listState = listView.state
 	}
 
@@ -218,41 +205,59 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 
 		// find and enable the clear button
 		val buttons = ArrayList(state.toolbarComponentsList).filterIsInstance<RHMIComponent.ToolbarButton>().filter { it.action > 0}
-		val clearButton = buttons[0]
+		var buttonIndex = 0
 		if (notification.isClearable) {
-			clearButton.setEnabled(true)
-			clearButton.getTooltipModel()?.asRaDataModel()?.value = L.NOTIFICATION_CLEAR_ACTION
-			clearButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-				controller.clear(notification.key)
+			buttons[buttonIndex].apply {
+				setEnabled(true)
+				setSelectable(true)
+				getImageModel()?.asImageIdModel()?.imageId = 150
+				getTooltipModel()?.asRaDataModel()?.value = L.NOTIFICATION_CLEAR_ACTION
+				getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+					controller.clear(notification.key)
+					getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listState.id
+				}
 			}
-		} else {
-			clearButton.setEnabled(false)
+			buttonIndex++
 		}
-
+		// add a readout-action in case automatic readout is not enabled
+		if (!notificationSettings.shouldReadoutNotificationDetails()) {
+			buttons[buttonIndex].apply {
+				setEnabled(true)
+				setSelectable(true)
+				getImageModel()?.asImageIdModel()?.imageId = 154
+				getTooltipModel()?.asRaDataModel()?.value = L.NOTIFICATION_READOUT_ACTION
+				getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+					readoutInteractions.triggerDisplayReadout(notification, ignoreSetting = true)
+					getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = state.id
+				}
+			}
+			buttonIndex++
+		}
 		// enable any custom actions
-		(0..4).forEach {i ->
-			val action = notification.actions.getOrNull(i)
-			val button = buttons[1+i]
-			if (action == null) {
-				button.setEnabled(false)
-				button.setSelectable(false)
-				button.getAction()?.asRAAction()?.rhmiActionCallback = null // don't leak memory
-			} else {
-				button.setEnabled(true)
-				button.setSelectable(true)
-				button.getTooltipModel()?.asRaDataModel()?.value = action.name.toString()
-				button.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-					if (action.supportsReply ) {
-						// show input to reply
-						button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputView.id
-						val replyController = ReplyControllerNotification(notification, action, controller, notificationSettings.quickReplies)
-						ReplyView(listState, inputView, replyController)
-						readoutInteractions.cancel()
-					} else {
-						// trigger the custom action
-						controller.action(notification.key, action.name.toString())
-						button.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listState.id
+		buttons.subList(buttonIndex,6).forEachIndexed { index, button ->
+			button.apply {
+				notification.actions.getOrNull(index)?.also { action ->
+					setEnabled(true)
+					setSelectable(true)
+					getImageModel()?.asImageIdModel()?.imageId = 158
+					getTooltipModel()?.asRaDataModel()?.value = action.name.toString()
+					getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+						if (action.supportsReply) {
+							// show input to reply
+							getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = inputView.id
+							val replyController = ReplyControllerNotification(notification, action, controller, notificationSettings.quickReplies)
+							ReplyView(listState, inputView, replyController)
+							readoutInteractions.cancel()
+						} else {
+							// trigger the custom action
+							controller.action(notification.key, action.name.toString())
+							getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = listState.id
+						}
 					}
+				} ?: run {
+					setEnabled(false)
+					setSelectable(false)
+					getAction()?.asRAAction()?.rhmiActionCallback = null // don't leak memory
 				}
 			}
 		}
