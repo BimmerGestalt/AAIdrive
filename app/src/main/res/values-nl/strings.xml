@@ -296,6 +296,7 @@
     <string name="NOTIFICATIONS_TITLE">Meldingen</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Geen meldingen</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Wis meldingen</string>
+    <string name="NOTIFICATION_READOUT_ACTION">Spreken</string>
     <string name="NOTIFICATION_OPTIONS">Options</string>
     <string name="NOTIFICATION_POPUPS">Popup meldingen</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">Popups meldingen met bijrijder</string>
