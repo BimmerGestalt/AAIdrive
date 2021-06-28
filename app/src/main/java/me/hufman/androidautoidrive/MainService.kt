@@ -82,10 +82,10 @@ class MainService: Service() {
 	val btfetchUuidsWithSdp: Runnable by lazy { Runnable {
 		handler.removeCallbacks(btfetchUuidsWithSdp)
 		if (!iDriveConnectionReceiver.isConnected) {
-			if (btStatus.isA2dpConnected) {
-				btStatus.fetchUuidsWithSdp()
+			btStatus.fetchUuidsWithSdp()
 
-				// schedule as long as the car is connected
+			// schedule as long as the car is connected
+			if (btStatus.isA2dpConnected) {
 				handler.postDelayed(btfetchUuidsWithSdp, 5000)
 			}
 		}
@@ -315,7 +315,7 @@ class MainService: Service() {
 				connectionTime = null
 				stopCarApps()
 				handler.postDelayed(shutdownTimeout, PROBE_TIMEOUT)
-				handler.postDelayed(btfetchUuidsWithSdp, 5000)
+				handler.post(btfetchUuidsWithSdp)
 			}
 		}
 		carInformationUpdater.isConnected = iDriveConnectionReceiver.isConnected && securityAccess.isConnected()
