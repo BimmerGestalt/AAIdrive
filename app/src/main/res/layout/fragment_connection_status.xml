@@ -107,7 +107,7 @@
 
             <!-- Bluetooth SPP available -->
             <LinearLayout
-                android:visibility="@{!viewModel.isSppAvailable()}"
+                android:visibility="@{viewModel.isA2dpConnected() &amp;&amp; !viewModel.isSppAvailable()}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
