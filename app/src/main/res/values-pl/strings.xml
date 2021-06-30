@@ -298,6 +298,7 @@
     <string name="NOTIFICATIONS_TITLE">Powiadomienia</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Brak powiadomień</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Wyczyść</string>
+    <string name="NOTIFICATION_READOUT_ACTION">Odczytaj</string>
     <string name="NOTIFICATION_OPTIONS">Opcje</string>
     <string name="NOTIFICATION_POPUPS">Wyskakujace okno powiadomień</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">Pokaż powiadomienia z siedzącym pasażerem</string>

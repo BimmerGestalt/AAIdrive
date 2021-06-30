@@ -271,6 +271,7 @@
     <string name="NOTIFICATIONS_TITLE">Értesítések</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Nincsenek értesítések</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Törlés</string>
+    <string name="NOTIFICATION_READOUT_ACTION">Mondd</string>
     <string name="NOTIFICATION_OPTIONS">Beállítások</string>
     <string name="NOTIFICATION_POPUPS">Felugró értesítések</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER"> … utassal az autóban</string>
