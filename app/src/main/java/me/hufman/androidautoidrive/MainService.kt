@@ -33,7 +33,8 @@ class MainService: Service() {
 		const val ACTION_STOP = "me.hufman.androidautoidrive.MainService.stop"
 		const val EXTRA_FOREGROUND = "EXTRA_FOREGROUND"
 
-		const val PROBE_TIMEOUT: Long = 2 * 60 * 1000
+		const val CONNECTED_PROBE_TIMEOUT: Long = 2 * 60 * 1000     // if Bluetooth is connected
+		const val DISCONNECTED_PROBE_TIMEOUT: Long = 20 * 1000      // if Bluetooth is not connected
 		const val STARTUP_DEBOUNCE = 1500
 	}
 
@@ -147,6 +148,9 @@ class MainService: Service() {
 
 		carProberThread?.quitSafely()
 		btStatus.unregister()
+
+		// close the notification
+		stopServiceNotification()
 		super.onDestroy()
 	}
 
@@ -314,7 +318,8 @@ class MainService: Service() {
 				Log.d(TAG, "Not fully connected: IDrive:${iDriveConnectionReceiver.isConnected} SecurityService:${securityAccess.isConnected()}")
 				connectionTime = null
 				stopCarApps()
-				handler.postDelayed(shutdownTimeout, PROBE_TIMEOUT)
+				val timeout = if (btStatus.isBTConnected) CONNECTED_PROBE_TIMEOUT else DISCONNECTED_PROBE_TIMEOUT
+				handler.postDelayed(shutdownTimeout, timeout)
 				handler.post(btfetchUuidsWithSdp)
 			}
 		}
@@ -449,14 +454,16 @@ class MainService: Service() {
 		stopMusic()
 		stopAssistant()
 		stopNavigationListener()
-		stopServiceNotification()
+
+		// revert notification to Waiting for Connection
+		startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
 	}
 
 	/**
 	 * Stop the service
 	 */
 	private fun handleActionStop() {
-		Log.i(TAG, "Shutting down service")
+		Log.i(TAG, "Shutting down apps")
 		synchronized(MainService::class.java) {
 			stopCarApps()
 		}
