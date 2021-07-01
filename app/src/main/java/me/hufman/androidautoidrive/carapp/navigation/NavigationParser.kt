@@ -8,9 +8,7 @@ import com.google.openlocationcode.OpenLocationCode
 import me.hufman.androidautoidrive.carapp.maps.LatLong
 import java.io.IOException
 import java.lang.IllegalArgumentException
-import java.net.URI
-import java.net.URISyntaxException
-import java.net.URLEncoder
+import java.net.*
 
 
 interface AddressSearcher {
@@ -177,7 +175,11 @@ class NavigationParser(val addressSearcher: AddressSearcher, val redirector: URL
 	}
 
 	private fun parseGoogleUrl(url: String): String? {
-		val uri = parseUri(url)
+		val origUri = parseUri(url)
+		// try one level of redirect
+		val uri = if (origUri.authority == "goo.gl" || origUri.authority == "maps.app.goo.gl") {
+			redirector.tryRedirect(url)?.let { parseUri(it) } ?: origUri
+		} else { origUri }
 		if (!uri.authority.contains("google")) return null
 
 		val path = uri.path?.replace('+', ' ') ?: ""
@@ -236,5 +238,14 @@ class NavigationParser(val addressSearcher: AddressSearcher, val redirector: URL
 		}
 
 		return null
+	}
+}
+
+class URLRedirector {
+	fun tryRedirect(url: String): String? {
+		val parsed = URL(url)
+		val connection = parsed.openConnection() as? HttpURLConnection
+		connection?.instanceFollowRedirects = false
+		return connection?.getHeaderField("Location")
 	}
 }
