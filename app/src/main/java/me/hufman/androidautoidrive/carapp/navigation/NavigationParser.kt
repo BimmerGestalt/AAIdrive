@@ -28,7 +28,7 @@ class AndroidGeocoderSearcher(context: Context): AddressSearcher {
 	}
 }
 
-class NavigationParser(val addressSearcher: AddressSearcher) {
+class NavigationParser(val addressSearcher: AddressSearcher, val redirector: URLRedirector) {
 	companion object {
 		val TAG = "NavigationParser"
 		val NUM_MATCHER = Regex("^([0-9]+)\\s+(.*)")
@@ -43,8 +43,9 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 		val GOOGLE_SEARCHPATHLL_MATCHER = Regex("/maps/search/+()([-0-9.]+\\s*,\\s*[-0-9.]+\\s*).*")
 		val GOOGLE_PLACEPATHLL_MATCHER = Regex("/maps/place/([^/]*)/+@([-0-9.]+\\s*,\\s*[-0-9.]+\\s*).*")
 		val GOOGLE_DIRPATHLL_MATCHER = Regex("/maps/dir/[^/]*/+()([-0-9.]+\\s*,\\s*[-0-9.]+\\s*).*")
-		val GOOGLE_SEARCHPATH_MATCHER = Regex("/maps/search/+([^/]+).*")
 		val GOOGLE_DIRPATH_MATCHER = Regex("/maps/dir/[^/]*/+([^/]+).*")
+		val GOOGLE_PLACEPATH_MATCHER = Regex("/maps/place/+([^/]+).*")
+		val GOOGLE_SEARCHPATH_MATCHER = Regex("/maps/search/+([^/]+).*")
 		val GOOGLE_QUERYLL_MATCHER = Regex("^(.*[&?])?(q|query|daddr|destination)=(loc:\\s+)?([-0-9.]+\\s*,\\s*[-0-9.]+\\s*).*")
 		val GOOGLE_QUERY_MATCHER = Regex("^(.*[&?])?(q|query|daddr|destination)=([^&]*).*")
 
@@ -195,7 +196,7 @@ class NavigationParser(val addressSearcher: AddressSearcher) {
 
 		// https://www.google.com/maps/search/1970+Naglee+Ave+San+Jose,+CA
 		// https://www.google.com/maps/dir/Current+Location/1970+Naglee+Ave+San+Jose,+CA
-		val googlePath = GOOGLE_DIRPATH_MATCHER.matchEntire(path) ?: GOOGLE_SEARCHPATH_MATCHER.matchEntire(path)
+		val googlePath = GOOGLE_DIRPATH_MATCHER.matchEntire(path) ?:GOOGLE_PLACEPATH_MATCHER.matchEntire(path) ?: GOOGLE_SEARCHPATH_MATCHER.matchEntire(path)
 		if (googlePath != null) {
 			val result = addressSearcher.search(googlePath.groupValues[1])
 			if (result != null) {
