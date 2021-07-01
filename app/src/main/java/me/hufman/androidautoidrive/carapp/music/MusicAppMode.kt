@@ -94,7 +94,7 @@ class MusicAppMode(val iDriveConnectionStatus: IDriveConnectionStatus, val capab
 		return capabilities["hmi.type"]?.contains("ID4") == true
 	}
 	fun isNewSpotifyInstalled(): Boolean {
-		val spotifySplits = spotifyVersion?.split('.')?.map { it.toInt() }
+		val spotifySplits = spotifyVersion?.split('.')?.map { it.toIntOrNull() ?: 0 }
 		return spotifySplits != null && spotifySplits.size >= 3 && (
 				spotifySplits[0] > 8 ||
 						(spotifySplits[0] == 8 && spotifySplits[1] > 5) ||
