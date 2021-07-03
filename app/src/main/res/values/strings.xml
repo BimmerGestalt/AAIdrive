@@ -144,6 +144,9 @@
     <string name="nowplaying_unknown">&lt;Unknown&gt;</string>
 
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">The app can run in the background</string>
+    <string name="txt_setup_background_impermission">The app can not run in the background</string>
+    <string name="txt_setup_background_hint">Automatic connections work better if background activity is allowed</string>
     <string name="txt_setup_bmw_ready">The app is ready to connect to a BMW</string>
     <string name="txt_setup_mini_ready">The app is ready to connect to a Mini</string>
     <string name="txt_setup_bmw_missing">Not ready to connect to a BMW:</string>

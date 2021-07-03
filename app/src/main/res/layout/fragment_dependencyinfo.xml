@@ -6,12 +6,71 @@
             name="viewModel"
             type="me.hufman.androidautoidrive.phoneui.viewmodels.DependencyInfoModel" />
         <variable
+            name="permissionsModel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel" />
+        <variable
             name="controller"
             type="me.hufman.androidautoidrive.phoneui.controllers.DependencyInfoController" />
+        <variable
+            name="permissionsController"
+            type="me.hufman.androidautoidrive.phoneui.controllers.PermissionsController" />
     </data>
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <!-- Background Execution -->
+        <LinearLayout
+            android:visibility="@{permissionsModel.hasBackgroundPermission}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:onClick="@{() -> permissionsController.openApplicationPermissions(&quot;me.hufman.androidautoidrive&quot;)}"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="5dp"
+                android:src="@android:drawable/checkbox_on_background" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/txt_setup_background_permission" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="@{!permissionsModel.hasBackgroundPermission}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:onClick="@{() -> permissionsController.openApplicationPermissions(&quot;me.hufman.androidautoidrive&quot;)}"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:paddingEnd="5dp"
+                    app:tint="?android:attr/textColorSecondary"
+                    android:src="@android:drawable/checkbox_off_background" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/txt_setup_background_impermission" />
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_setup_background_hint" />
+        </LinearLayout>
 
         <!-- BMW Connection -->
         <LinearLayout
