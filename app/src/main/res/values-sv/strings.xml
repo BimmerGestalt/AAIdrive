@@ -296,6 +296,7 @@
     <string name="NOTIFICATIONS_TITLE">Aviseringar</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Inga aviseringar</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Töm</string>
+    <string name="NOTIFICATION_READOUT_ACTION">Talar</string>
     <string name="NOTIFICATION_OPTIONS">Alternativ</string>
     <string name="NOTIFICATION_POPUPS">Popupfönster för aviseringar</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER"> … med passagerare</string>
