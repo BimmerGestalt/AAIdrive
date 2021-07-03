@@ -17,4 +17,5 @@ class MusicAdvancedSettingsModel(appContext: Context): ViewModel() {
 	val showAdvanced = BooleanLiveSetting(appContext, AppSettings.KEYS.SHOW_ADVANCED_SETTINGS)
 	val audioContext = BooleanLiveSetting(appContext, AppSettings.KEYS.AUDIO_FORCE_CONTEXT)
 	val spotifyLayout = BooleanLiveSetting(appContext, AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT)
+	val audioplayerLayout = BooleanLiveSetting(appContext, AppSettings.KEYS.FORCE_AUDIOPLAYER_LAYOUT)
 }

@@ -19,6 +19,7 @@ import me.hufman.idriveconnectionkit.rhmi.*
 
 class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {
+		const val INITIALIZATION_DEFERRED_TIMEOUT = 6000
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.AudioHmiState || (
 					state is RHMIState.ToolbarState &&
@@ -55,6 +56,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	val grayscaleNoteIcon: Any
 
 	var visible = false
+	var initialized = false
+	var initializationDeferredTime = System.currentTimeMillis() + INITIALIZATION_DEFERRED_TIMEOUT
 	var displayedApp: MusicAppInfo? = null  // the app that was last redrawn
 	var displayedSong: MusicMetadata? = null    // the song  that was last redrawn
 	var displayedConnected: Boolean = false     // whether the controller was connected during redraw
@@ -175,9 +178,11 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		}
 	}
 
+	/**
+	 * Link up the event handlers to the respective destination states
+	 */
 	fun initWidgets(appSwitcherView: AppSwitcherView, enqueuedView: EnqueuedView, browseView: BrowseView, customActionsView: CustomActionsView) {
 		state as RHMIState.ToolbarState
-
 		state.focusCallback = FocusCallback { focused ->
 			visible = focused
 			if (focused) {
@@ -185,26 +190,39 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			}
 		}
 
+		// link up the actions in the buttons
 		val buttons = state.toolbarComponentsList
-		buttons[0].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_APPLIST_TITLE
 		buttons[0].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
-
-		buttons[1].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_BROWSE_TITLE
 		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 			browseView.clearPages()
 			val page = browseView.pushBrowsePage(null)
 			buttons[1].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id
 		}
+		buttons[2].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = enqueuedView.state.id
+		customActionButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = customActionsView.state.id
+	}
 
+	/**
+	 * Apply the UI settings of the playback state
+	 * as a separate function that can be run later
+	 */
+	fun initWidgetsLater() {
+		state as RHMIState.ToolbarState
+
+		val buttons = state.toolbarComponentsList
+		// shortcuts to other windows
+		buttons[0].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_APPLIST_TITLE
+		buttons[1].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_BROWSE_TITLE
 		buttons[2].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_QUEUE_TITLE
 		buttons[2].setEnabled(false)
-		buttons[2].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = enqueuedView.state.id
 
+		// setting the actions button icon since the button has a book icon by default
 		customActionButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_CUSTOMACTIONS_TITLE
+		customActionButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.ACTIONS
 		customActionButton.setEnabled(false)
-		customActionButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = customActionsView.state.id
 
-		shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_ON
+		shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_UNAVAILABLE
+		shuffleButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.SHUFFLE_OFF
 		shuffleButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.toggleShuffle() }
 
 		skipBackButton?.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SKIP_PREVIOUS
@@ -234,12 +252,14 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 				state.getAlbumImageModel()?.asRaImageModel()?.value = Utils.convertPngToGrayscale(albumIcon)
 			}
 
-			// setting the actions button icon since the button has a book icon by default
-			customActionButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.ACTIONS
-
 			repeatButton?.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionCallback { controller.toggleRepeat() }
+			repeatButton?.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_REPEAT_UNAVAILABLE
+			repeatButton?.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.REPEAT_OFF
 
-			redrawAudiostatePlaylist("")
+			if (displayedSong == null) {
+				redrawAudiostatePlaylist("")
+			}
+
 			state.getPlayListFocusRowModel()?.asRaIntModel()?.value = 1
 			state.getPlayListAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
 				when (index) {
@@ -252,6 +272,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 		queueToolbarButton.setProperty(RHMIProperty.PropertyId.BOOKMARKABLE, true)
 		customActionButton.setProperty(RHMIProperty.PropertyId.BOOKMARKABLE, true)
+
+		initialized = true
 	}
 
 	fun show() {
@@ -269,7 +291,28 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		displayedSong = null
 	}
 
+	/** Any updates that should happen in the background */
+	fun backgroundRedraw() {
+		if (!initialized && initializationDeferredTime < System.currentTimeMillis()) {
+			initWidgetsLater()
+		}
+
+		// Redraw these in the background, for AudioHmiState's global metadata
+		if (state is RHMIState.AudioHmiState) {
+			if (displayedSong != controller.getMetadata() ||
+					displayedConnected != controller.isConnected()) {
+				redrawSong()
+			}
+			redrawPosition()
+		}
+	}
+
+	/** Any updates that should happen while the screen is displayed */
 	fun redraw() {
+		if (!initialized) {
+			initWidgetsLater()
+		}
+
 		if (displayedApp != controller.currentAppInfo) {
 			redrawApp()
 		}
@@ -277,11 +320,11 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 				displayedConnected != controller.isConnected()) {
 			redrawSong()
 		}
+		redrawPosition()
 		redrawQueueButton()
 		redrawShuffleButton()
 		redrawRepeatButton()
 		redrawActions()
-		redrawPosition()
 	}
 
 	private fun redrawApp() {

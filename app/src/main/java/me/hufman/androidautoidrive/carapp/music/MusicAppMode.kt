@@ -101,16 +101,20 @@ class MusicAppMode(val iDriveConnectionStatus: IDriveConnectionStatus, val capab
 						(spotifySplits[0] == 8 && spotifySplits[1] == 5 && spotifySplits[2] >= 68)
 				)
 	}
+	/** Whether to automatically start Spotify mode, ignoring from any advanced settings */
 	fun heuristicAudioState(): Boolean {
-		val idrive4 = capabilities["hmi.type"]?.contains("ID4") == true
-
-		return !idrive4 && isNewSpotifyInstalled() && shouldRequestAudioContext()
+		return !isId4() && isNewSpotifyInstalled() && shouldRequestAudioContext()
 	}
-	fun shouldId5Playback(): Boolean {
-		val idrive4 = capabilities["hmi.type"]?.contains("ID4") == true
-		val manualOverride = !idrive4 && appSettings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT].toBoolean()
+	/** Whether the current mode starts Spotify mode, including the forced advanced setting */
+	fun supportsId5Playback(): Boolean {
+		val manualOverride = !isId4() && appSettings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT].toBoolean()
 		val autodetect = heuristicAudioState()
 		return manualOverride || autodetect
+	}
+	/** Whether to show the Spotify playback view or Audioplayer mode, even if running in Spotify mode */
+	fun shouldId5Playback(): Boolean {
+		val preferOld = appSettings[AppSettings.KEYS.FORCE_AUDIOPLAYER_LAYOUT].toBoolean()
+		return !preferOld && supportsId5Playback()
 	}
 
 	/** If a single official Radio app is running, return that name */
