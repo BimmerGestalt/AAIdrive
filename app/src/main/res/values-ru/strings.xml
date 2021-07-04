@@ -129,6 +129,7 @@
     <string name="nowplaying_notconnected">&lt;Не подключено&gt;</string>
     <string name="nowplaying_unknown">&lt;Неизвестный исполнитель&gt;</string>
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">Приложение может работать в фоновом режиме</string>
     <string name="txt_setup_bmw_ready">Приложение готово для подключения к BMW</string>
     <string name="txt_setup_mini_ready">Приложение готово для подключения к Mini</string>
     <string name="txt_setup_bmw_missing">Не готово к подключению к BMW:</string>
