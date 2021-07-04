@@ -118,6 +118,9 @@
     <string name="nowplaying_notconnected">&lt;Nincs kapcsolódva&gt;</string>
     <string name="nowplaying_unknown">&lt;Ismeretlen&gt;</string>
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">Az alkalmazás futhat a háttérben</string>
+    <string name="txt_setup_background_impermission">Az alkalmazás nem futhat a háttérben</string>
+    <string name="txt_setup_background_hint">Automatikus kapcsolódás jobban működik, ha a háttérben való működés engedélyezve van</string>
     <string name="txt_setup_bmw_ready">Az alkalmazás készenáll BMW-hez való kapcsolódásra</string>
     <string name="txt_setup_mini_ready">Az alkalmazás készenáll Mini-hez való kapcsolódásra</string>
     <string name="txt_setup_bmw_missing">Az alkalmazás nem áll készen BMW-hez való kapcsolódásra:</string>
