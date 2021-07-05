@@ -127,6 +127,9 @@
     <string name="nowplaying_notconnected">&lt;Nicht Verbunden&gt;</string>
     <string name="nowplaying_unknown">&lt;Unbekannt&gt;</string>
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">Die App darf im Hintergrund weiterlaufen</string>
+    <string name="txt_setup_background_impermission">Die App darf im Hintergrund nicht laufen</string>
+    <string name="txt_setup_background_hint">Automatische Verbindungen funktionieren besser, wenn Hintergrundaktivität erlaubt ist</string>
     <string name="txt_setup_bmw_ready">Diese App ist bereit für die Verbindung mit einem BMW</string>
     <string name="txt_setup_mini_ready">Diese App ist bereit für die Verbindung mit einem Mini</string>
     <string name="txt_setup_bmw_missing">Nicht bereit für die Verbindung mit einem BMW:</string>
