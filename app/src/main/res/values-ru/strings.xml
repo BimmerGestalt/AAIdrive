@@ -90,6 +90,7 @@
     <string name="musicAppHidden">Скрывать</string>
     <string name="enable_audio_context">Принудительно воспроизводить аудио через USB соединение</string>
     <string name="enable_spotify_layout">Всегда отображаться как приложение Spotify в IDrive5+</string>
+    <string name="enable_audioplayer_layout">Предпочесть старый компактный музыкальный интерфейс в IDrive5+</string>
     <string name="lbl_grant_sessions">Контроль над активными музыкальными приложениями</string>
     <string name="lbl_grant_spotify_control">Возможность просматривать вашу библиотеку Spotify</string>
     <string name="lbl_grant_background_music">Разрешить фоновую работу ваших музыкальных приложений, если у автомобиля возникли проблемы с их запуском</string>
