@@ -88,6 +88,7 @@
     <string name="musicAppHidden">Dold</string>
     <string name="enable_audio_context">Tvinga audio via USB-anslutning</string>
     <string name="enable_spotify_layout">Visa alltid som Spotifyapp i IDrive5+</string>
+    <string name="enable_audioplayer_layout">Föredra äldre musikgränssnitt i IDrive5+</string>
     <string name="lbl_grant_sessions">Kontrollera aktiva musikappar</string>
     <string name="lbl_grant_spotify_control">Möjlighet att bläddra bland Spotify-bibliotek</string>
     <string name="lbl_grant_background_music">Tillåt bakgrundskörning för dina musikappar, om bilen har problem att starta dem</string>
