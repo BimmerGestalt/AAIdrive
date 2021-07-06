@@ -80,6 +80,7 @@
     <string name="musicAppSearchable">Kereshető</string>
     <string name="musicAppUnavailable">Nem elérhető</string>
     <string name="musicAppHidden">Rejtett</string>
+    <string name="enable_audioplayer_layout">A régi kompakt zenei felület előnyben részesítése az IDrive5+ -ban</string>
     <string name="lbl_grant_sessions">Aktív zene alkalmazás vezérlése</string>
     <string name="lbl_grant_spotify_control">Spotify könyvtár tallózásának lehetősége</string>
     <string name="lbl_grant_background_music">Zenei alkalmazások háttérbeli futtatásának engedélyezése, ha az autó problémába ütközik azok futtatása során</string>
