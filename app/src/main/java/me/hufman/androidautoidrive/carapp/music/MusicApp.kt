@@ -21,7 +21,7 @@ import me.hufman.idriveconnectionkit.android.CarAppResources
 import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
 import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
-import java.util.*
+import kotlin.collections.ArrayList
 
 const val TAG = "MusicApp"
 
@@ -36,12 +36,19 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 
 	val globalMetadata: GlobalMetadata
 	var hmiContextChangedTime = 0L
+	val playbackId5View: PlaybackView?
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
 	val enqueuedView: EnqueuedView
 	val browseView: BrowseView
 	val inputState: RHMIState
 	val customActionsView: CustomActionsView
+	val currentPlaybackView: PlaybackView
+		get() = if (musicAppMode.shouldId5Playback() && playbackId5View != null) {
+			playbackId5View
+		} else {
+			playbackView
+		}
 
 	init {
 		val cdsData = CDSDataProvider()
@@ -64,12 +71,11 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			// locate specific windows in the app
 			val carAppImages = loadZipfile(carAppAssets.getImagesDB(iDriveConnectionStatus.brand
 					?: "common"))
-			val unclaimedStates = LinkedList(carApp.states.values)
-			val playbackStates = LinkedList<RHMIState>().apply {
-				addAll(carApp.states.values.filterIsInstance<RHMIState.AudioHmiState>())
-				addAll(carApp.states.values.filterIsInstance<RHMIState.ToolbarState>())
+			val unclaimedStates = ArrayList(carApp.states.values)
+			playbackId5View =  carApp.states.values.filterIsInstance<RHMIState.AudioHmiState>().firstOrNull()?.let {
+				PlaybackView(it, musicController, carAppImages, phoneAppResources, graphicsHelpers, musicImageIDs)
 			}
-			playbackView = PlaybackView(playbackStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources, graphicsHelpers, musicImageIDs)
+			playbackView = PlaybackView(unclaimedStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources, graphicsHelpers, musicImageIDs)
 			appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, graphicsHelpers, musicImageIDs)
 			enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, graphicsHelpers, musicImageIDs)
 			browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController, musicImageIDs, graphicsHelpers)
@@ -79,6 +85,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 
 			Log.i(TAG, "Selected state ${appSwitcherView.state.id} for App Switcher")
 			Log.i(TAG, "Selected state ${playbackView.state.id} for Playback")
+			Log.i(TAG, "Selected state ${playbackId5View?.state?.id} for ID5 Playback")
 			Log.i(TAG, "Selected state ${enqueuedView.state.id} for Enqueued")
 			Log.i(TAG, "Selected state ${browseView.states[0].id} for Browse Page 1")
 			Log.i(TAG, "Selected state ${browseView.states[1].id} for Browse Page 2")
@@ -179,7 +186,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 		val amSpotifyAdjustment = AMAppInfo.getAppWeight("Spotify") - (800 - 500)
 
 		val amApps = musicAppDiscovery.validApps.filter {
-			!(it.packageName == "com.spotify.music" && playbackView.state is RHMIState.AudioHmiState)
+			!(it.packageName == "com.spotify.music" && playbackId5View != null)
 		}.map {
 			// enforce some AM settings
 			when {
@@ -187,7 +194,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 					// if we are in id4, don't show any Radio icons
 					it.clone(forcedCategory = AMCategory.MULTIMEDIA)
 				}
-				playbackView.state is RHMIState.AudioHmiState && it.category == AMCategory.MULTIMEDIA -> {
+				playbackId5View != null && it.category == AMCategory.MULTIMEDIA -> {
 					// if we are the Spotify icon, adjust the other Multimedia icons to sort properly
 					it.clone(weightAdjustment = amSpotifyAdjustment)
 				}
@@ -289,12 +296,12 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			avContext.av_requestContext(appInfo)
 			val focusEvent = app?.events?.values?.filterIsInstance<RHMIEvent.FocusEvent>()?.sortedBy { it.id }?.firstOrNull()
 			try {
-				focusEvent?.triggerEvent(mapOf(0.toByte() to playbackView.state.id))
+				focusEvent?.triggerEvent(mapOf(0.toByte() to currentPlaybackView.state.id))
 			} catch (e: Exception) {
 				Log.i(TAG, "Failed to trigger focus event for AM icon, recreating RHMI and trying again")
 				try {
 					recreateRhmiApp()
-					focusEvent?.triggerEvent(mapOf(0.toByte() to playbackView.state.id))
+					focusEvent?.triggerEvent(mapOf(0.toByte() to currentPlaybackView.state.id))
 				} catch (e: Exception) {
 					Log.e(TAG, "Received exception while handling am_onAppEvent", e)
 				}
@@ -315,13 +322,14 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 				if (musicController.currentAppController == null) {
 					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
 				} else {
-					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = playbackView.state.id
+					// set the destination state for the entrybutton
+					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = currentPlaybackView.state.id
 
 					// invoked manually, not by a shortcut button
 					// when the Media button is pressed, it shows the Media/Radio window for a short time
 					// and then selects the Entrybutton
 					val contextChangeDelay = System.currentTimeMillis() - hmiContextChangedTime
-					if (musicAppMode.shouldId5Playback() && contextChangeDelay > 1500) {
+					if (musicAppMode.supportsId5Playback() && contextChangeDelay > 1500) {
 						// there's no spotify AM icon for the user to push
 						// so handle this spotify icon push
 						// but only if the user has dwelled on a screen for a second
@@ -341,12 +349,14 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			}
 		}
 
+		val currentPlaybackView = currentPlaybackView
 		globalMetadata.initWidgets()
-		appSwitcherView.initWidgets(playbackView)
+		appSwitcherView.initWidgets(currentPlaybackView)
 		playbackView.initWidgets(appSwitcherView, enqueuedView, browseView, customActionsView)
-		enqueuedView.initWidgets(playbackView)
-		browseView.initWidgets(playbackView, inputState)
-		customActionsView.initWidgets(playbackView)
+		playbackId5View?.initWidgets(appSwitcherView, enqueuedView, browseView, customActionsView)
+		enqueuedView.initWidgets(currentPlaybackView)
+		browseView.initWidgets(currentPlaybackView, inputState)
+		customActionsView.initWidgets(currentPlaybackView)
 	}
 
 	fun redraw() {
@@ -355,9 +365,18 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 		if (appSwitcherView.visible) {
 			appSwitcherView.redraw()
 		}
-		if (playbackView.visible || playbackView.state is RHMIState.AudioHmiState) {
+		if (playbackView.visible) {
 			playbackView.redraw()
+		} else if (playbackId5View?.visible == true) {
+			playbackId5View.redraw()
+		} else {
+			val currentPlaybackView = currentPlaybackView       // slightly cache this dynamic variable
+			currentPlaybackView.backgroundRedraw()
+			if (playbackId5View != null && currentPlaybackView != playbackId5View) {
+				playbackId5View.backgroundRedraw()
+			}
 		}
+
 		if (enqueuedView.visible) {
 			enqueuedView.redraw()
 		}

@@ -1,9 +1,9 @@
 package me.hufman.androidautoidrive.phoneui
 
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.graphics.Point
 import android.os.Bundle
-import android.view.View
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import androidx.activity.viewModels
@@ -14,12 +14,16 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.navigation.AndroidGeocoderSearcher
 import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerSender
+import me.hufman.androidautoidrive.carapp.navigation.URLRedirector
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 import me.hufman.androidautoidrive.phoneui.controllers.NavigationSearchController
 import me.hufman.androidautoidrive.phoneui.viewmodels.NavigationStatusModel
 
 class NavIntentActivity: AppCompatActivity() {
 	companion object {
 		val TAG = "NavActivity"
+
+		val URL_MATCHER = Regex("(https?|geo|google.navigation)://[^ ]*")
 	}
 
 	val viewModel by viewModels<NavigationStatusModel> { NavigationStatusModel.Factory(this.applicationContext) }
@@ -58,11 +62,7 @@ class NavIntentActivity: AppCompatActivity() {
 			}
 		}
 		viewModel.searchFailed.observe(this) {
-			txtNavError.visibility = if (it) {
-				View.VISIBLE
-			} else {
-				View.INVISIBLE
-			}
+			txtNavError.visible = it
 		}
 		viewModel.searchStatus.observe(this) {
 			val oldText = txtNavLabel.text
@@ -82,15 +82,24 @@ class NavIntentActivity: AppCompatActivity() {
 		}
 	}
 
+	private fun decodeTextQuery(query: String?): String? {
+		query ?: return null
+		return URL_MATCHER.find(query)?.let { it.value }
+	}
+
 	override fun onResume() {
 		super.onResume()
-		val url = intent?.data
-		if (url != null) {
-			txtNavError.text = url.toString()       // in case we need to show it for parse errors
-			val navParser = NavigationParser(AndroidGeocoderSearcher(this.applicationContext))
+		val query = when(intent?.action) {
+			Intent.ACTION_VIEW -> intent?.dataString
+			Intent.ACTION_SEND -> decodeTextQuery(intent?.getStringExtra(Intent.EXTRA_TEXT))
+			else -> null
+		}
+		if (query != null) {
+			txtNavError.text = query.toString()       // in case we need to show it for parse errors
+			val navParser = NavigationParser(AndroidGeocoderSearcher(this.applicationContext), URLRedirector())
 			val navTrigger = NavigationTriggerSender(this.applicationContext)
 			val controller = NavigationSearchController(lifecycleScope, navParser, navTrigger, viewModel)
-			controller.startNavigation(url.toString())
+			controller.startNavigation(query.toString())
 		}
 	}
 }

@@ -5,6 +5,7 @@ import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
 import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerApp
+import me.hufman.androidautoidrive.carapp.navigation.URLRedirector
 import me.hufman.idriveconnectionkit.rhmi.RHMIAction
 import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
 import me.hufman.idriveconnectionkit.rhmi.RHMIEvent
@@ -15,12 +16,13 @@ import org.junit.Test
 
 class NavTriggerTest {
 	lateinit var addressSearcher: AddressSearcher
+	var redirector = mock<URLRedirector>()
 	lateinit var parser: NavigationParser
 
 	@Before
 	fun setUp() {
 		addressSearcher = mock()
-		parser = NavigationParser(addressSearcher)
+		parser = NavigationParser(addressSearcher, redirector)
 	}
 
 	@Test
@@ -180,8 +182,26 @@ class NavTriggerTest {
 		val pathDirQuery = "https://www.google.com/maps/dir//1970%20Naglee%20Ave%20San%20Jose,%20CA%2095126"
 		assertEquals(correctAnswer, parser.parseUrl(pathDirQuery))
 
+		val pathPlaceQuery = "https://www.google.com/maps/place/1970%20Naglee%20Ave%20San%20Jose,%20CA%2095126"
+		assertEquals(correctAnswer, parser.parseUrl(pathPlaceQuery))
+
 		val pathSearchQuery = "https://www.google.com/maps/search/1970%20Naglee%20Ave%20San%20Jose,%20CA%2095126"
 		assertEquals(correctAnswer, parser.parseUrl(pathSearchQuery))
+	}
+
+	@Test
+	fun testGoogleRedirect() {
+		// handle a maps.app.goo.gl redirect
+		whenever(redirector.tryRedirect("https://maps.app.goo.gl/test")) doReturn "https://maps.google.de/maps?q=47.5951518,-122.3316393&z=17&t=k"
+		whenever(redirector.tryRedirect("https://goo.gl/maps/test")) doReturn "https://maps.google.de/maps?q=47.5951518,-122.3316393&z=17&t=k"
+		val mapsShortener = "https://maps.app.goo.gl/test"
+		assertEquals(";;;;;;;567832278.7054589;-1459473305.041403;", parser.parseUrl(mapsShortener))
+		val googShortener = "https://goo.gl/maps/test"
+		assertEquals(";;;;;;;567832278.7054589;-1459473305.041403;", parser.parseUrl(googShortener))
+
+		// redirects to an unknown location
+		val otherwise = "https://somewhere.com/test"
+		assertEquals(null, parser.parseUrl(otherwise))
 	}
 
 	@Test

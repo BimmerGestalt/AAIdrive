@@ -1,6 +1,8 @@
 package me.hufman.androidautoidrive.phoneui
 
+import android.app.ActivityManager
 import android.content.Context
+import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import com.nhaarman.mockito_kotlin.doReturn
@@ -18,6 +20,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 
 class PermissionsModelTest {
 	@Rule
@@ -29,9 +33,23 @@ class PermissionsModelTest {
 	}
 	val notificationListenerState = mock<LiveData<Boolean>>()
 	val state = mock<PermissionsState>()
+	val activityManager = mock<ActivityManager>()
 	val spotifyConnector = mock<SpotifyAppController.Connector>()
 	val spotifyAuthStateManager = mock<SpotifyAuthStateManager>()
-	val viewModel = PermissionsModel(notificationListenerState, state, spotifyConnector, spotifyAuthStateManager)
+	val viewModel = PermissionsModel(notificationListenerState, state, activityManager, spotifyConnector, spotifyAuthStateManager)
+
+	/* A helper to set a constant value
+	* From https://proandroiddev.com/build-version-in-unit-testing-4e963940dae7
+	* */
+	fun setFinalStatic(field: Field, newValue: Any) {
+		field.setAccessible(true)
+
+		val modifiersField = Field::class.java.getDeclaredField("modifiers")
+		modifiersField.setAccessible(true)
+		modifiersField.setInt(field, field.getModifiers() and Modifier.FINAL.inv())
+
+		field.set(null, newValue)
+	}
 
 	@Test
 	fun testModelNotification() {
@@ -63,6 +81,24 @@ class PermissionsModelTest {
 			whenever(state.hasLocationPermission) doReturn it
 			viewModel.update()
 			assertEquals(it, viewModel.hasLocationPermission.value)
+		}
+	}
+
+	@Test
+	fun testBackgroundPermission() {
+		// old phone
+		setFinalStatic(Build.VERSION::class.java.getField("SDK_INT"), 16)
+		listOf(true, false).forEach {
+			whenever(activityManager.isBackgroundRestricted) doReturn it
+			viewModel.update()
+			assertEquals(true, viewModel.hasBackgroundPermission.value)
+		}
+		// new phone
+		setFinalStatic(Build.VERSION::class.java.getField("SDK_INT"), 28)
+		listOf(true, false).forEach {
+			whenever(activityManager.isBackgroundRestricted) doReturn it
+			viewModel.update()
+			assertEquals(!it, viewModel.hasBackgroundPermission.value)
 		}
 	}
 
@@ -196,7 +232,7 @@ class PermissionsModelTest {
 		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
 		whenever(spotifyConnector.hasSupport()) doReturn true
 		whenever(spotifyConnector.previousControlSuccess()) doReturn false
-		val viewModel = PermissionsModel(notificationListenerState, state, spotifyConnector, mock())
+		val viewModel = PermissionsModel(notificationListenerState, state, activityManager, spotifyConnector, mock())
 		assertEquals(false, viewModel.hasSpotifyControlPermission.value)
 	}
 
@@ -205,7 +241,7 @@ class PermissionsModelTest {
 		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
 		whenever(spotifyConnector.hasSupport()) doReturn true
 		whenever(spotifyConnector.previousControlSuccess()) doReturn true
-		val viewModel = PermissionsModel(notificationListenerState, state, spotifyConnector, mock())
+		val viewModel = PermissionsModel(notificationListenerState, state, activityManager, spotifyConnector, mock())
 		assertEquals(true, viewModel.hasSpotifyControlPermission.value)
 	}
 

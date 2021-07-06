@@ -287,6 +287,7 @@
     <string name="NOTIFICATIONS_TITLE">Уведомления</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Нет уведомлений</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Очистить </string>
+    <string name="NOTIFICATION_READOUT_ACTION">Озвучить</string>
     <string name="NOTIFICATION_OPTIONS">Параметры</string>
     <string name="NOTIFICATION_POPUPS">Всплывающие уведомления</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">Всплывающие уведомления с пассажиром</string>

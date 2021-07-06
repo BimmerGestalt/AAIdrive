@@ -17,6 +17,7 @@ import me.hufman.androidautoidrive.StoredSet
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
+import me.hufman.androidautoidrive.phoneui.MusicAppDiscoveryThread
 import me.hufman.androidautoidrive.phoneui.adapters.MusicAppListAdapter
 import me.hufman.androidautoidrive.phoneui.adapters.ObservableListCallback
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicAppsViewModel

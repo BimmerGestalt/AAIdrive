@@ -42,6 +42,11 @@ class MusicAppsGridFragment: Fragment() {
 			}
 		}
 
+		view.post {
+			appsChangedCallback.onChanged(null)
+		}
+		appsViewModel.validApps.addOnListChangedCallback(appsChangedCallback)
+
 		listMusicApps.adapter = object : ArrayAdapter<MusicAppInfo>(requireContext(), R.layout.musicapp_listitem, appsViewModel.validApps) {
 			val animationLoopCallback = object : Animatable2.AnimationCallback() {
 				override fun onAnimationEnd(drawable: Drawable?) {

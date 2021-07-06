@@ -90,8 +90,8 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 			_audioContextHint.value = { getString(R.string.txt_capabilities_audiocontext_hint) }
 		}
 
-		_isAudioStateSupported.value = musicAppMode.shouldId5Playback()
-		if (musicAppMode.shouldId5Playback()) {
+		_isAudioStateSupported.value = musicAppMode.supportsId5Playback()
+		if (musicAppMode.supportsId5Playback()) {
 			_audioStateStatus.value = { getString(R.string.txt_capabilities_audiostate_yes) }
 			_audioStateHint.value = { "" }
 		} else {

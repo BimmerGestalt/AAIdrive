@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.SystemClock
 import android.text.format.DateUtils
+import java.lang.IllegalArgumentException
 import java.lang.StringBuilder
 import java.text.NumberFormat
 
@@ -17,6 +18,8 @@ class BclStatusListener(val context: Context, val callback: () -> Unit = {}): Br
 
 	val stringBuilder = StringBuilder()
 	val numberFormatter = NumberFormat.getNumberInstance()
+
+	var subscribed = false
 
 	var lastUpdate: Long = -1
 	var initTimestamp: Long = -1
@@ -40,11 +43,17 @@ class BclStatusListener(val context: Context, val callback: () -> Unit = {}): Br
 		get() = SystemClock.uptimeMillis() - stateUpdate
 
 	fun subscribe() {
-		context.registerReceiver(this, IntentFilter(BCL_REPORT))
-		context.registerReceiver(this, IntentFilter(BCL_TRANSPORT))
+		if (!subscribed) {
+			context.registerReceiver(this, IntentFilter(BCL_REPORT))
+			context.registerReceiver(this, IntentFilter(BCL_TRANSPORT))
+			subscribed = true
+		}
 	}
 	fun unsubscribe() {
-		context.unregisterReceiver(this)
+		try {
+			subscribed = false
+			context.unregisterReceiver(this)
+		} catch (e: IllegalArgumentException) {}
 	}
 
 	override fun onReceive(context: Context?, intent: Intent?) {

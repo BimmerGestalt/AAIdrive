@@ -97,6 +97,7 @@
     <string name="musicAppHidden">Hidden</string>
     <string name="enable_audio_context">Force Audio Focus over USB connection</string>
     <string name="enable_spotify_layout">Always appear as Spotify app in IDrive5+</string>
+    <string name="enable_audioplayer_layout">Prefer legacy compact music interface in IDrive5+</string>
     <string name="lbl_grant_sessions">Control over active music apps</string>
     <string name="lbl_grant_spotify_control">Ability to browse your Spotify library</string>
     <string name="lbl_grant_background_music">Allow background execution for your music apps, if the car has troubles launching them</string>
@@ -144,6 +145,9 @@
     <string name="nowplaying_unknown">&lt;Unknown&gt;</string>
 
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">The app can run in the background</string>
+    <string name="txt_setup_background_impermission">The app can not run in the background</string>
+    <string name="txt_setup_background_hint">Automatic connections work better if background activity is allowed</string>
     <string name="txt_setup_bmw_ready">The app is ready to connect to a BMW</string>
     <string name="txt_setup_mini_ready">The app is ready to connect to a Mini</string>
     <string name="txt_setup_bmw_missing">Not ready to connect to a BMW:</string>
@@ -326,6 +330,7 @@
     <string name="NOTIFICATIONS_TITLE">Notifications</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">No Notifications</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Clear</string>
+    <string name="NOTIFICATION_READOUT_ACTION">Speak</string>
     <string name="NOTIFICATION_OPTIONS">Options</string>
     <string name="NOTIFICATION_POPUPS">Notification Popups</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER"> … with a passenger</string>

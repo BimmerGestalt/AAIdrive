@@ -22,6 +22,8 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 		val UUID_SPP: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 	}
 
+	private var subscribed = false
+
 	// the resulting state
 	val isHfConnected
 		get() = hfListener.profile?.connectedDevices?.any { it.isCar() } == true
@@ -88,6 +90,9 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 
 	fun register() {
 		Log.i(TAG, "Starting to watch for Bluetooth connection")
+		if (subscribed) {
+			return
+		}
 		BluetoothAdapter.getDefaultAdapter()?.apply {
 			this.getProfileProxy(context, hfListener, BluetoothProfile.HEADSET)
 			this.getProfileProxy(context, a2dpListener, BluetoothProfile.A2DP)
@@ -102,10 +107,12 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
 		}
 		context.registerReceiver(bluetoothListener, btFilter)
+		subscribed = true
 	}
 
 	fun unregister() {
 		try {
+			subscribed = false
 			context.unregisterReceiver(bluetoothListener)
 		} catch (e: IllegalArgumentException) {}
 		BluetoothAdapter.getDefaultAdapter()?.apply {

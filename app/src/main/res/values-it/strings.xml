@@ -296,6 +296,7 @@
     <string name="NOTIFICATIONS_TITLE">Notifiche</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Nessuna notifica</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Pulisci</string>
+    <string name="NOTIFICATION_READOUT_ACTION">Lettura vocale</string>
     <string name="NOTIFICATION_OPTIONS">Opzioni</string>
     <string name="NOTIFICATION_POPUPS">Popup notiifiche</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">Popup con passeggero</string>

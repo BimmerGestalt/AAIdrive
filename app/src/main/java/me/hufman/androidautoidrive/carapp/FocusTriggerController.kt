@@ -25,7 +25,7 @@ class FocusTriggerController(val focusEvent: RHMIEvent.FocusEvent, val recreateC
 		}
 	}
 
-	fun focusComponent(component: RHMIComponent, listIndex: Int? = 0) {
+	fun focusComponent(component: RHMIComponent, listIndex: Int? = null) {
 		val args = mutableMapOf<Any, Any?>(0.toByte() to component.id)
 		if (listIndex != null) {
 			args[41.toByte()] = listIndex

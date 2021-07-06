@@ -29,6 +29,7 @@ class CarCapabilitiesModelTest {
 		val musicAppMode = mock<MusicAppMode> {
 			on { heuristicAudioContext() } doReturn false
 			on { isId4() } doReturn false
+			on { supportsId5Playback() } doReturn false
 			on { shouldId5Playback() } doReturn false
 		}
 		val viewModel = CarCapabilitiesViewModel(carInfo, musicAppMode).apply { update() }
@@ -50,6 +51,7 @@ class CarCapabilitiesModelTest {
 		val musicAppMode = mock<MusicAppMode> {
 			on { heuristicAudioContext() } doReturn false
 			on { isId4() } doReturn true
+			on { supportsId5Playback() } doReturn false
 			on { shouldId5Playback() } doReturn false
 		}
 		val viewModel = CarCapabilitiesViewModel(carInfo, musicAppMode).apply { update() }
@@ -123,6 +125,7 @@ class CarCapabilitiesModelTest {
 		val musicAppMode = mock<MusicAppMode> {
 			on { heuristicAudioContext() } doReturn true
 			on { isId4() } doReturn false
+			on { supportsId5Playback() } doReturn true
 			on { shouldId5Playback() } doReturn true
 		}
 		val viewModel = CarCapabilitiesViewModel(carInfo, musicAppMode).apply { update() }
@@ -168,6 +171,7 @@ class CarCapabilitiesModelTest {
 			on { isBTConnection() } doReturn false
 			on { supportsUsbAudio() } doReturn false
 			on { isId4() } doReturn false
+			on { supportsId5Playback() } doReturn false
 			on { shouldId5Playback() } doReturn false
 		}
 		val viewModel = CarCapabilitiesViewModel(carInfo, musicAppMode).apply { update() }
@@ -200,6 +204,7 @@ class CarCapabilitiesModelTest {
 			on { heuristicAudioContext() } doReturn true
 			on { shouldRequestAudioContext() } doReturn true
 			on { isId4() } doReturn false
+			on { supportsId5Playback() } doReturn false
 			on { shouldId5Playback() } doReturn false
 			on { isNewSpotifyInstalled() } doReturn false
 		}
@@ -222,5 +227,31 @@ class CarCapabilitiesModelTest {
 		verify(context).getString(R.string.txt_capabilities_audiostate_no)
 		context.run(viewModel.audioStateHint.value!!)
 		verify(context).getString(R.string.txt_capabilities_audiostate_spotify)
+	}
+
+
+	@Test
+	fun testId5Classic() {
+		val carInfo = mock<CarInformation> {
+			on { capabilities } doReturn mapOf("hmi.type" to "ID5", "tts" to "false", "navi" to "true")
+		}
+		val musicAppMode = mock<MusicAppMode> {
+			on { heuristicAudioContext() } doReturn true
+			on { shouldRequestAudioContext() } doReturn true
+			on { isId4() } doReturn false
+			on { supportsId5Playback() } doReturn true
+			on { shouldId5Playback() } doReturn false
+			on { isNewSpotifyInstalled() } doReturn true
+		}
+		val viewModel = CarCapabilitiesViewModel(carInfo, musicAppMode).apply { update() }
+		assertEquals(true, viewModel.isAudioContextSupported.value)
+		assertEquals(true, viewModel.isAudioStateSupported.value)
+		assertEquals(true, viewModel.isPopupSupported.value)
+		assertEquals(false, viewModel.isPopupNotSupported.value)
+		assertEquals(false, viewModel.isTtsSupported.value)
+		assertEquals(true, viewModel.isTtsNotSupported.value)
+		assertEquals(true, viewModel.isNaviSupported.value)
+		assertEquals(false, viewModel.isNaviNotSupported.value)
+
 	}
 }

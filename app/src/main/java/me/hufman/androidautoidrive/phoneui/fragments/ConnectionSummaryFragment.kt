@@ -10,7 +10,7 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 
 class ConnectionSummaryFragment: Fragment() {
-	val viewModel by activityViewModels<ConnectionStatusModel> { ConnectionStatusModel.Factory(requireContext().applicationContext) }
+	private val viewModel by activityViewModels<ConnectionStatusModel> { ConnectionStatusModel.Factory(requireContext().applicationContext) }
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		val binding = ConnectionSummaryBinding.inflate(inflater, container, false)
 		binding.lifecycleOwner = viewLifecycleOwner
