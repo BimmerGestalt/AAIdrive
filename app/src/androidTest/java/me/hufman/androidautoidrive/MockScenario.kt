@@ -107,10 +107,18 @@ class MockScenario(context: Context) {
 		on {notificationSound} doReturn false
 	}
 
+	val languageSettingsModel = mock<LanguageSettingsModel> {
+		on { lblPreferCarLanguage } doReturnContexted { getString(R.string.lbl_language_prefercar) }
+		on { showAdvanced } doReturn true
+		on { preferCarLanguage } doReturn true
+		on { forceCarLanguage} doReturn ""
+	}
+
 	val viewModels = MockViewModels().also {
 		it[CarCapabilitiesViewModel::class.java] = carCapabilitiesViewModel
 		it[ConnectionStatusModel::class.java] = connectionStatusModel
 		it[DependencyInfoModel::class.java] = dependencyInfoModel
+		it[LanguageSettingsModel::class.java] = languageSettingsModel
 		it[MapSettingsModel::class.java] = mapSettingsModel
 		it[MusicAppsViewModel::class.java] = musicAppsModel
 		it[NavigationStatusModel::class.java] = navigationStatusModel
