@@ -167,6 +167,10 @@ def RHMISources = [
                 // spotify UI layout, newer versions of Spotify package don't include this file
                 "basecore/rhmi/multimedia/id5/v3/ui_description.xml": "spotify/rhmi/ui_description.xml",
         ],
+        "BMWMine": [
+                // MyBMW for J29 support
+                "cdsbaseapp/cdsbaseapp.p7b": "cdsbaseapp/cdsbaseapp.p7b",
+        ],
         "MINIClassic": [
                 "com.bmwgroup.connected.mini.usa/com.bmwgroup.connected.mini.usa.p7b": "multimedia/rhmi/mini/multimedia.p7b",
                 "com.bmwgroup.connected.mini.usa/rhmi/mini/images.zip": "multimedia/rhmi/mini/images.zip",
@@ -207,15 +211,19 @@ task extractRHMI(type: Copy) {
 
     def destRoot = "src/main/assets/carapplications"
 
+    def bmwMineFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected\.mobile20.*\.apk/)
+
     def bmwConnectedClassicFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*classic.*\.apk/)
 
     def bmwConnectedFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*\.apk/)
     bmwConnectedFound.removeAll(bmwConnectedClassicFound)
+    bmwConnectedFound.removeAll(bmwMineFound)
 
     def miniConnectedClassicFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*classic.*\.apk/)
 
     def miniConnectedFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*\.apk/)
     miniConnectedFound.removeAll(miniConnectedClassicFound)
+    miniConnectedFound.removeAll(bmwMineFound)      // in case MiniMine is placed
 
     def smartthingsFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)smartthings.*classic.*\.apk/)
 
@@ -224,6 +232,7 @@ task extractRHMI(type: Copy) {
     def sources = [
             "BMWClassic": bmwConnectedClassicFound[0] ?: new StopExecutionException("Could not locate BMW Connected Classic APK in external directory"),
             "BMW": bmwConnectedFound[0] ?: new StopExecutionException("Could not locate BMW Connected APK in external directory"),
+            "BMWMine": bmwMineFound[0] ?: new StopExecutionException("Could not locate MyBMW APK in external directory"),
             "MINIClassic": miniConnectedClassicFound[0] ?: new StopExecutionException("Could not locate MINI Connected Classic APK in external directory"),
             "MINI": miniConnectedFound[0] ?: new StopExecutionException("Could not locate MINI Connected APK in external directory"),
             "Smartthings": smartthingsFound[0] ?: new StopExecutionException("Could not locate Smartthings Classic APK in external directory"),
@@ -289,6 +298,7 @@ task extractRHMITest(type: Copy) {
     def connectedFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*\.apk/)
     def connectedClassicFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*\.apk/)
     connectedFound.removeAll {it.toLowerCase().contains("classic")}
+    connectedFound.removeAll {it.toLowerCase().contains("mobile20")}
     connectedClassicFound.retainAll {it.toLowerCase().contains("classic")}
 
     def missing = RHMISourcesTest.values().findAll {

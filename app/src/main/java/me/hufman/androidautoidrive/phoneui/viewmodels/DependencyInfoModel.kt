@@ -48,6 +48,8 @@ class DependencyInfoModel(val connection: CarConnectionDebugging): ViewModel() {
 	val isBmwReady: LiveData<Boolean> = _isBmwReady
 	private val _isMiniReady = MutableLiveData<Boolean>()
 	val isMiniReady: LiveData<Boolean> = _isMiniReady
+	private val _isToyotaReady = MutableLiveData<Boolean>()
+	val isToyotaReady: LiveData<Boolean> = _isToyotaReady
 
 	// Connected Security Service is installed but not connected
 	private val _isSecurityServiceDisconnected = MutableLiveData<Boolean>()
@@ -64,6 +66,7 @@ class DependencyInfoModel(val connection: CarConnectionDebugging): ViewModel() {
 		_isMiniInstalled.value = connection.isMiniInstalled
 		_isBmwReady.value = connection.isBMWInstalled && connection.isConnectedSecurityConnected
 		_isMiniReady.value = connection.isMiniInstalled && connection.isConnectedSecurityConnected
+		_isToyotaReady.value = connection.isJ29Installed && connection.isConnectedSecurityConnected
 		_isSecurityServiceDisconnected.value = connection.isConnectedSecurityInstalled && !connection.isConnectedSecurityConnected
 	}
 

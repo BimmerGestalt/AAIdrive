@@ -45,6 +45,11 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 			it.name.startsWith("Mini")
 		}
 
+	val isJ29Installed
+		get() = SecurityAccess.installedSecurityServices.any {
+			it.name.startsWith("J29")
+		}
+
 	val isBMWConnectedInstalled = SecurityAccess.installedSecurityServices.any {
 			it.name.startsWith("BMWC")
 		}

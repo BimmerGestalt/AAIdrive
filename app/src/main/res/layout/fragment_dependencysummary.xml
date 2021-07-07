@@ -177,12 +177,44 @@
                 android:text="@string/txt_setup_mini_mine_conflict" />
         </LinearLayout>
 
+        <!-- Toyota Connection -->
+        <LinearLayout
+            android:visibility="@{viewModel.isToyotaReady()}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:paddingEnd="5dp"
+                    android:src="@android:drawable/checkbox_on_background" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/txt_setup_toyota_ready" />
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="@string/txt_setup_toyota_hint" />
+        </LinearLayout>
+
+        <!-- No cars currently supported -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="@dimen/pane_vertical_margin"
-            android:visibility="@{!viewModel.isBmwReady() &amp;&amp; !viewModel.isMiniReady()}">
+            android:visibility="@{!viewModel.isBmwReady() &amp;&amp; !viewModel.isMiniReady() &amp;&amp; !viewModel.isToyotaReady()}">
 
             <Button
                 android:visibility="@{!viewModel.isBmwInstalled()}"
@@ -196,6 +228,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/btn_install_mini"/>
+            <!-- Don't suggest installing Supra Connect, it doesn't provide many features -->
         </LinearLayout>
 
         <!-- Security Service -->

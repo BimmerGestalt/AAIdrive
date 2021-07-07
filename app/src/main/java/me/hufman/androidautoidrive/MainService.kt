@@ -203,7 +203,8 @@ class MainService: Service() {
 		if (carProberThread?.isAlive != true) {
 			carProberThread = CarProber(securityAccess,
 				CarAppAssetManager(applicationContext, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
-				CarAppAssetManager(applicationContext, "smartthings").getAppCertificateRaw("mini")!!.readBytes()
+				CarAppAssetManager(applicationContext, "smartthings").getAppCertificateRaw("mini")!!.readBytes(),
+				CarAppAssetManager(applicationContext, "cdsbaseapp").getAppCertificateRaw("")!!.readBytes()
 			).apply { start() }
 		} else {
 			carProberThread?.schedule(1000)
@@ -288,7 +289,12 @@ class MainService: Service() {
 						carInformationObserver.cdsData[CDS.VEHICLE.LANGUAGE] == null) {
 					// still waiting for language
 					Log.d(TAG, "Waiting for the car's language to be confirmed")
-				} else {
+
+					// start assistant
+					startAny = startAny or startAssistant()
+				} else if (iDriveConnectionReceiver.brand == "bmw" || iDriveConnectionReceiver.brand == "mini") {
+					// RHMI apps are not supported in J29
+
 					// start notifications
 					startAny = startAny or startNotifications()
 
@@ -297,9 +303,6 @@ class MainService: Service() {
 
 					// start music
 					startAny = startAny or startMusic()
-
-					// start assistant
-					startAny = startAny or startAssistant()
 
 					// start navigation handler
 					startNavigationListener()
@@ -344,7 +347,7 @@ class MainService: Service() {
 					}
 
 					carappCapabilities = CarInformationDiscovery(iDriveConnectionReceiver, securityAccess,
-							CarAppAssetManager(applicationContext, "smartthings"), carInformationUpdater)
+							CarAppAssetManager(applicationContext, "cdsbaseapp"), carInformationUpdater)
 					carappCapabilities?.onCreate()
 				}
 				threadCapabilities?.start()
@@ -402,7 +405,7 @@ class MainService: Service() {
 					Log.i(TAG, "Starting to discover car capabilities")
 
 					carappAssistant = AssistantApp(iDriveConnectionReceiver, securityAccess,
-							CarAppAssetManager(applicationContext, "basecoreOnlineServices"),
+							CarAppAssetManager(applicationContext, "cdsbaseapp"),
 							AssistantControllerAndroid(applicationContext, PhoneAppResourcesAndroid(applicationContext)),
 							GraphicsHelpersAndroid())
 					carappAssistant?.onCreate()

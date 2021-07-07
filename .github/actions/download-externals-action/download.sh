@@ -6,3 +6,4 @@ wget --quiet -P external 'https://androidautoidrive.s3.amazonaws.com/external/BM
 wget --quiet -P external 'https://androidautoidrive.s3.amazonaws.com/external/MINI_Connected_v3.1.1.3078_apkpure.com.apk'
 wget --quiet -P external 'https://androidautoidrive.s3.amazonaws.com/external/SmartThings_Classic_v2.1.6_apkpure.com.apk'
 wget --quiet -P external 'https://androidautoidrive.s3.amazonaws.com/external/Spotify_Music_v8.4.32.623_apkpure.com.apk'
+wget --quiet -P external 'https://androidautoidrive.s3.amazonaws.com/external/de.bmw.connected.mobile20.row.apk'
