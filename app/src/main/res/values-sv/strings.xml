@@ -88,6 +88,7 @@
     <string name="musicAppHidden">Dold</string>
     <string name="enable_audio_context">Tvinga audio via USB-anslutning</string>
     <string name="enable_spotify_layout">Visa alltid som Spotifyapp i IDrive5+</string>
+    <string name="enable_audioplayer_layout">Föredra äldre musikgränssnitt i IDrive5+</string>
     <string name="lbl_grant_sessions">Kontrollera aktiva musikappar</string>
     <string name="lbl_grant_spotify_control">Möjlighet att bläddra bland Spotify-bibliotek</string>
     <string name="lbl_grant_background_music">Tillåt bakgrundskörning för dina musikappar, om bilen har problem att starta dem</string>
@@ -127,6 +128,9 @@
     <string name="nowplaying_notconnected">&lt;Ej uppkopplad&gt;</string>
     <string name="nowplaying_unknown">&lt;Okänd&gt;</string>
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">Appen kan köras i bakgrunden</string>
+    <string name="txt_setup_background_impermission">Appen kan ej köras i bakgrunden</string>
+    <string name="txt_setup_background_hint">Automatiska anslutningar fungerar bättre om bakgrundsaktivitet tillåts</string>
     <string name="txt_setup_bmw_ready">Appen är redo att ansluta till BMW</string>
     <string name="txt_setup_mini_ready">Appen är klar att ansluta till en Mini</string>
     <string name="txt_setup_bmw_missing">Ej redo att ansluta till BMW:</string>
@@ -296,6 +300,7 @@
     <string name="NOTIFICATIONS_TITLE">Aviseringar</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Inga aviseringar</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Töm</string>
+    <string name="NOTIFICATION_READOUT_ACTION">Talar</string>
     <string name="NOTIFICATION_OPTIONS">Alternativ</string>
     <string name="NOTIFICATION_POPUPS">Popupfönster för aviseringar</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER"> … med passagerare</string>

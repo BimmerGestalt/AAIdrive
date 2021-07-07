@@ -80,6 +80,7 @@
     <string name="musicAppSearchable">Kereshető</string>
     <string name="musicAppUnavailable">Nem elérhető</string>
     <string name="musicAppHidden">Rejtett</string>
+    <string name="enable_audioplayer_layout">A régi kompakt zenei felület előnyben részesítése az IDrive5+ -ban</string>
     <string name="lbl_grant_sessions">Aktív zene alkalmazás vezérlése</string>
     <string name="lbl_grant_spotify_control">Spotify könyvtár tallózásának lehetősége</string>
     <string name="lbl_grant_background_music">Zenei alkalmazások háttérbeli futtatásának engedélyezése, ha az autó problémába ütközik azok futtatása során</string>
@@ -118,6 +119,9 @@
     <string name="nowplaying_notconnected">&lt;Nincs kapcsolódva&gt;</string>
     <string name="nowplaying_unknown">&lt;Ismeretlen&gt;</string>
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">Az alkalmazás futhat a háttérben</string>
+    <string name="txt_setup_background_impermission">Az alkalmazás nem futhat a háttérben</string>
+    <string name="txt_setup_background_hint">Automatikus kapcsolódás jobban működik, ha a háttérben való működés engedélyezve van</string>
     <string name="txt_setup_bmw_ready">Az alkalmazás készenáll BMW-hez való kapcsolódásra</string>
     <string name="txt_setup_mini_ready">Az alkalmazás készenáll Mini-hez való kapcsolódásra</string>
     <string name="txt_setup_bmw_missing">Az alkalmazás nem áll készen BMW-hez való kapcsolódásra:</string>

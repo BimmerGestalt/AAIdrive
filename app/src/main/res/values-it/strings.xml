@@ -127,6 +127,9 @@
     <string name="nowplaying_notconnected">&lt;Non connessa&gt;</string>
     <string name="nowplaying_unknown">&lt;Sconosciuto&gt;</string>
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">L\'applicazione può essere eseguita in background</string>
+    <string name="txt_setup_background_impermission">Questa app non può essere eseguita in background</string>
+    <string name="txt_setup_background_hint">Le connessioni automatiche funzionano meglio se è consentita l\'attività in background</string>
     <string name="txt_setup_bmw_ready">L\'app è pronta a connettersi con una BMW</string>
     <string name="txt_setup_mini_ready">L\'app è pronta a connettersi con una Mini</string>
     <string name="txt_setup_bmw_missing">Non pronta a connettersi con una BMW:</string>

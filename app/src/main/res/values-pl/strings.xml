@@ -90,6 +90,7 @@
     <string name="musicAppHidden">Ukryta</string>
     <string name="enable_audio_context">Przełącz na audio z telefonu</string>
     <string name="enable_spotify_layout">Zawsze pojawiaj się jako Spotify w IDrive5+ (Okladki w całym Idrive)</string>
+    <string name="enable_audioplayer_layout">Preferuj kompaktowy (stary) interfejs muzyczny w IDrive5+</string>
     <string name="lbl_grant_sessions">Kontrola poprzez aktywną aplikacje muzyczną</string>
     <string name="lbl_grant_spotify_control">Możliwość przeglądania swojej biblioteki Spotify</string>
     <string name="lbl_grant_background_music">Zezwól na uruchamianie aplikacji muzycznych w tle, jeśli samochód ma problemy z ich uruchamianiem</string>
@@ -129,6 +130,9 @@
     <string name="nowplaying_notconnected">&lt;Nie połączony&gt;</string>
     <string name="nowplaying_unknown">&lt;Nieznany&gt;</string>
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">Aplikacja może działać w tle</string>
+    <string name="txt_setup_background_impermission">Aplikacja nie może działać w tle</string>
+    <string name="txt_setup_background_hint">Automatyczne połączanie działa lepiej, jeśli aplikacja może działać w tle</string>
     <string name="txt_setup_bmw_ready">Aplikacja gotowa do połączenia z BMW</string>
     <string name="txt_setup_mini_ready">Aplikacja gotowa do połączenia z Mini</string>
     <string name="txt_setup_bmw_missing">Nie gotowy do połączenia z BMW:</string>
