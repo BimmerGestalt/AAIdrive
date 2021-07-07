@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AndroidAutoIdrive</string>
-    <string name="permlab_accessNotifications">通知名</string>
+    <string name="permlab_accessNotifications">IDrive通知アクセス</string>
     <string name="permlab_bindNotificationListenerService">IDrive通知アクセス</string>
-    <string name="permdesc_accessNotifications">通知名</string>
-    <string name="permdesc_bindNotificationListenerService">通知への再</string>
-    <string name="notification_title">IDrive用のAndroidAuto</string>
-    <string name="notification_description">％@に継ぎ完了</string>
+    <string name="permdesc_accessNotifications">IDrive通知アクセス</string>
+    <string name="permdesc_bindNotificationListenerService">IDrive通知アクセス</string>
+    <string name="notification_title">Android Auto for IDrive</string>
+    <string name="notification_description">車に接続</string>
     <string name="notification_description_chassiscode">%sに接続</string>
     <string name="notification_description_bmw">BMWに接続</string>
     <string name="notification_description_mini">ミニに接続</string>
@@ -27,10 +27,16 @@
     <string name="lbl_navigation_listener_success">成功</string>
     <string name="lbl_navigation_listener_unsuccess">失敗</string>
     <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">接続しましょう</string>
+    <string name="lbl_welcome_intro">AndroidAutoIdriveは、ネイティブのBMWAppsプロトコルを介して携帯電話の音楽アプリやその他の機能を車に追加するための非公式アプリです</string>
+    <string name="lbl_welcome_compatible">ほとんどのMY2014以降のBMWまたはNBTまたはNBTEvo（IDrive 4–6に基づく）を搭載したMINIと、アクティブなConnectedDriveまたはBMWOnlineサブスクリプションは互換性があります</string>
+    <string name="lbl_welcome_dependencies">車へのアプリの接続は、BMW / MINI Connectedアプリ、または車に接続するための新しいMyBMWまたはMiniアプリによって異なります</string>
+    <string name="lbl_welcome_complete">AndroidAutoIdriveは、他にもさまざまな機能を車に追加します。ぜひチェックしてください！</string>
     <!-- Menu Titles -->
     <string name="menu_overview">概要</string>
     <string name="menu_setup">セットアップ</string>
     <string name="menu_connection">接続</string>
+    <string name="menu_carinfo">車の情報</string>
     <string name="menu_music">音楽</string>
     <string name="menu_notifications">通知</string>
     <string name="menu_assistants">アシスタント</string>
@@ -44,6 +50,7 @@
     <plurals name="lbl_assistantpage">
         <item quantity="other">車の音声入力でトリガーされない場合に備えて、スマートフォンの音声アシスタントが接続済みアプリとして追加されます</item>
     </plurals>
+    <string name="lbl_assistantpage_tip">これらのアプリは、車のVoice Assistantステアリングホイールボタンとは別のものです。このボタンは、スマートフォンのデフォルトアシスタントのみをトリガーし、個別に構成されます</string>
     <string name="lbl_notificationpage">受信通知は車から表示および操作できます</string>
     <string name="spawn_test_notification">テスト通知</string>
     <string name="message_notifications">メッセージ通知</string>
@@ -54,7 +61,7 @@
     <string name="notification_readout_popup">新しい通知を話す</string>
     <string name="notification_readout_popup_passenger">…乗客と一緒に</string>
     <string name="notification_quickreplies">クイック返信</string>
-    <string name="notification_quickreplies_default">[\"👍\",\"途中です！\",\"現在車内です\",\"テキストメッセージを送信できません。代わりに電話してください\",\"I後で電話します\"]</string>
+    <string name="notification_quickreplies_default">[\"👍\",\"途中です！\",\"現在車内にあります\",\"テキストメッセージを送信できません。代わりに電話してください\",\"I後で電話します\"]</string>
     <string name="lbl_notification_permissions">通知を表示するためのアクセス</string>
     <string name="lbl_notification_sms_permissions">SMS画像を表示するためのアクセス</string>
     <string name="lbl_popupVersion">ポップアップはIDrive4でのみ機能します</string>
@@ -80,12 +87,13 @@
     <string name="musicAppHidden">非表示</string>
     <string name="enable_audio_context">USB接続を介してオーディオフォーカスを強制する</string>
     <string name="enable_spotify_layout">IDrive5 +では常にSpotifyアプリとして表示されます</string>
+    <string name="enable_audioplayer_layout">IDrive5 +のレガシーコンパクトミュージックインターフェースを優先する</string>
     <string name="lbl_grant_sessions">アクティブな音楽アプリの制御</string>
     <string name="lbl_grant_spotify_control">Spotifyライブラリを閲覧する機能</string>
     <string name="lbl_grant_background_music">車の起動に問題がある場合は、音楽アプリのバックグラウンド実行を許可します</string>
     <string name="lbl_grant">付与</string>
     <string name="musicAppNotes_unauthorizedSpotify">ここをタップして、Spotifyアクセスを承認します</string>
-    <string name="musicAppNotes_oldSpotify">全機能を利用するには、Spotifyをダウングレードしてください（検索）</string>
+    <string name="musicAppNotes_oldSpotify">全機能を利用するにはSpotifyをダウングレードしてください（検索）</string>
     <string name="musicAppNotes_oldSpotifyInstructions">このアプリは、検索など、バージョン8.4.96.953までのSpotifyを完全に制御することしかできません。フルコントロールするには、APKPureなどから古いバージョンをダウンロードしてください。</string>
     <string name="musicAppNotes_spotify_apiNotFound">​​公式のSpotifyクライアントをインストールしてください</string>
     <string name="musicAppNotes_spotify_apiUnavailable">インターネット接続を確認し、広告のブロックを無効にしてください</string>
@@ -93,7 +101,7 @@
     <string name="lbl_navigationpage_intent">接続中、他のアプリのナビゲーションボタンでアプリチューザーを開くと、車のナビゲーションシステムがオプションとして表示されます</string>
     <string name="lbl_navigationstatus_active">現在ナビゲート中</string>
     <string name="lbl_navigationstatus_inactive">現在ナビゲートしていません</string>
-    <string name="lbl_settingspage">動作を微調整するための詳細設定。予期しない動作が発生する可能性があります</string>
+    <string name="lbl_settingspage">動作を微調整するための詳細設定。予期しない動作を引き起こす可能性があります</string>
     <string name="lbl_language_carinterface">車に表示する言語</string>
     <string name="lbl_language_prefercar">電話の言語よりも車の言語を優先する</string>
     <string name="lbl_language_prefercar_code">電話の言語よりも車の言語（%s）を優先する</string>
@@ -106,6 +114,7 @@
     <string name="lbl_support_issues">問題を開く</string>
     <string name="lbl_support_share">単語を広める</string>
     <string name="lbl_support_thanks">AndroidAutoIdriveをご利用いただきありがとうございます！</string>
+    <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">キャンセル</string>
     <string name="btn_configure">構成…</string>
     <string name="btn_add">追加</string>
@@ -118,14 +127,23 @@
     <string name="nowplaying_notconnected">&lt;接続されていません&gt;</string>
     <string name="nowplaying_unknown">&lt;不明&gt;</string>
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">アプリはバックグラウンドで実行できます</string>
+    <string name="txt_setup_background_impermission">アプリをバックグラウンドで実行することはできません</string>
+    <string name="txt_setup_background_hint">バックグラウンドアクティビティが許可されている場合、自動接続はより適切に機能します</string>
     <string name="txt_setup_bmw_ready">アプリはBMWに接続する準備ができています</string>
     <string name="txt_setup_mini_ready">アプリはMiniに接続する準備ができています</string>
     <string name="txt_setup_bmw_missing">BMWに接続する準備ができていません：</string>
-    <string name="txt_setup_mini_missing">ミニに接続する準備ができていません：</string>
+    <string name="txt_setup_mini_missing">Miniに接続する準備ができていません：</string>
+    <string name="txt_setup_bmw_connected_65">BMW Connected 6.5がインストールされているため、車の接続が開始されない場合があります。問題が発生した場合は、6.4にダウングレードするか、MyBMWにアップグレードしてみてください</string>
+    <string name="txt_setup_mini_connected_65">Mini Connected 6.5がインストールされているため、車の接続が開始されない場合があります。問題が発生した場合は、6.4にダウングレードするか、新しいMiniアプリにアップグレードしてみてください</string>
     <string name="txt_setup_bmw_mine_detected">新しいMyBMWアプリがインストールされているため、BMW Connectedで問題が発生する可能性があり、サポートされていません</string>
     <string name="txt_setup_mini_mine_detected">新しいMINIアプリがインストールされているため、Mini Connectedで問題が発生する可能性があり、サポートされていません</string>
+    <string name="txt_setup_bmw_mine_conflict">BMWConnectedアプリとMyBMWアプリの両方がインストールされているため、USB経由で接続しないと接続が不安定になる可能性があります</string>
+    <string name="txt_setup_mini_mine_conflict">MINIConnectedアプリとMyMINIアプリの両方がインストールされているため、USB経由で接続しないと接続が不安定になる可能性があります</string>
     <string name="txt_setup_security_missing">セキュリティサービスにアクセスできません：</string>
     <string name="btn_install">インストール</string>
+    <string name="btn_install_bmwmine">MyBMWアプリをインストールする</string>
+    <string name="btn_install_minimine">ミニアプリをインストールする</string>
     <string name="btn_install_bmw">BMWConnectedをインストールする</string>
     <string name="btn_install_mini">MiniConnectedをインストール</string>
     <string name="btn_install_bmwclassic">BMW ConnectedClassicをインストールする</string>
@@ -139,6 +157,7 @@
     <string name="txt_setup_spp_connected">Bluetoothアプリがサポートされています</string>
     <string name="txt_setup_usb_disconnected">USB経由で車が接続されていません</string>
     <string name="txt_setup_usb_connected">充電モードで接続されたUSB</string>
+    <string name="txt_setup_usb_requires_connected">USBアプリ接続には、BMW / MiniConnectedがインストールされている必要があります</string>
     <string name="txt_setup_enable_usbmtp">電話のUSBモードをファイル転送に切り替えます</string>
     <string name="txt_setup_enable_usbacc">この%sの車でUSBアクセサリモードまたはアプリオプションを有効にする</string>
     <string name="txt_setup_usbmtp_connected">ストレージモードで接続されたUSB</string>
@@ -147,6 +166,7 @@
     <string name="txt_setup_enable_bcl_mode">この%sの車でアプリオプションを有効にする</string>
     <string name="txt_setup_bcl_disconnected">アプリ接続の準備ができていません：</string>
     <string name="txt_setup_bcl_waiting">アプリ接続の開始を待機しています</string>
+    <string name="txt_setup_enable_bclspp_bt">Bluetoothミュージックを切り替えてみてください</string>
     <string name="txt_setup_enable_bclspp_usb">Bluetoothミュージックを切り替えるか、USB経由で接続してみてください</string>
     <string name="txt_setup_bcl_connecting">アプリ接続が接続されています</string>
     <string name="txt_setup_bcl_connected">アプリ接続が実行されています</string>
@@ -178,8 +198,90 @@
     <string name="lbl_assistant">音声アシスタント（ベータ版）</string>
     <string name="lbl_assistant_empty">見つかりません</string>
     <!-- car status -->
+    <string name="lbl_carinfopage_disconnected">最初の接続後、車に関する情報がここに表示されます</string>
+    <string name="lbl_carinfopage">車に関する簡単な情報はこちらから入手できます</string>
+    <string name="lbl_carinfo_efficiency">効率統計</string>
+    <string name="lbl_carinfo_ev">EV消費統計</string>
+    <string name="lbl_carinfo_style">効率的な運転スタイル</string>
+    <string name="lbl_carinfo_lastchecked">最終チェック：</string>
+    <string name="lbl_carinfo_lastPosition">最終位置：</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">$1%sおよび$1%s</string>
+    <string name="lbl_carinfo_lastPosition_openMap">マップを開く</string>
+    <string name="lbl_carinfo_vin">VIN：</string>
+    <string name="lbl_carinfo_odo">走行距離計：</string>
+    <string name="lbl_carinfo_idriveVersion">IDriveバージョン：</string>
+    <string name="lbl_carinfo_averageConsumption">平均消費量：</string>
+    <string name="lbl_carinfo_averageSpeed">平均速度：</string>
+    <string name="lbl_carinfo_averageConsumptionAlt">平均短所（alt）：</string>
+    <string name="lbl_carinfo_averageSpeedAlt">平均速度（alt）：</string>
+    <string name="lbl_carinfo_ecoRangeWon">エコレンジ獲得：</string>
+    <string name="lbl_carinfo_evLevel">電気料金：</string>
+    <string name="lbl_carinfo_evRange">電気範囲：</string>
+    <string name="lbl_carinfo_fuelLevel">燃料レベル：</string>
+    <string name="lbl_carinfo_fuelRange">燃料範囲：</string>
+    <string name="lbl_carinfo_totalRange">合計範囲：</string>
+    <string name="lbl_carinfo_accBatteryLevel">Acc。バッテリーレベル：</string>
+    <string name="lbl_carinfo_style_accel">加速：</string>
+    <string name="lbl_carinfo_style_brake">ブレーキング：</string>
+    <string name="lbl_carinfo_style_shift">シフト：</string>
+    <string name="lbl_carinfo_temp">温度：</string>
+    <string name="lbl_carinfo_engine_temp">エンジン温度：</string>
+    <string name="lbl_carinfo_oil_temp">油温：</string>
+    <string name="lbl_carinfo_speed">速度：</string>
+    <string name="lbl_carinfo_gear">ギア：</string>
+    <string name="lbl_carinfo_drivingmode">モード：</string>
+    <string name="lbl_carinfo_compass">コンパス：</string>
+    <string name="lbl_carinfo_sunroof">サンルーフ：</string>
+    <string name="lbl_carinfo_sunroof_closed">クローズ</string>
+    <string name="lbl_carinfo_sunroof_tilted">開いて、傾けて</string>
+    <string name="lbl_carinfo_sunroof_partial">部分的に開いています、%d %%</string>
+    <string name="lbl_carinfo_sunroof_open">完全に開いています</string>
+    <string name="lbl_carinfo_windows">Windows：</string>
+    <string name="lbl_carinfo_window_driverfront">ドライバーフロント</string>
+    <string name="lbl_carinfo_window_passengerfront">助手席フロント</string>
+    <string name="lbl_carinfo_window_driverrear">ドライバーリア</string>
+    <string name="lbl_carinfo_window_passengerrear">助手席後部</string>
+    <string name="lbl_carinfo_window_closed">クローズ</string>
+    <string name="lbl_carinfo_window_partial">%d %%を開く</string>
+    <string name="lbl_carinfo_window_open">完全に開いています</string>
+    <string name="lbl_carinfo_displayedSpeed">表示速度：</string>
+    <string name="lbl_carinfo_temp_interior">温度内部：</string>
+    <string name="lbl_carinfo_temp_exterior">一時的な外観：</string>
+    <string name="lbl_carinfo_parking_brake">パーキングブレーキ：</string>
     <!-- unit suffixes -->
+    <string name="lbl_carinfo_units_km">km</string>
+    <string name="lbl_carinfo_units_mi">mi</string>
+    <string name="lbl_carinfo_units_gal_uk">gal（UK）</string>
+    <string name="lbl_carinfo_units_gal_us">ガロン（米国）</string>
+    <string name="lbl_carinfo_units_liter">L</string>
+    <string name="lbl_carinfo_units_L100km">L / 100km</string>
+    <string name="lbl_carinfo_units_mpg">mpg</string>
+    <string name="lbl_carinfo_units_kmL">km / L</string>
+    <string name="lbl_carinfo_units_mph">mph</string>
+    <string name="lbl_carinfo_units_kmph">kmph</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
+    <string name="lbl_carinfo_units_masl">masl</string>
     <!-- tips -->
+    <string name="lbl_tip_image">ヒントのデモ画像</string>
+    <string name="lbl_tiplist">ヒントとコツ</string>
+    <string name="lbl_tip_expand">拡張のヒント</string>
+    <string name="tip_usb_chargingmode">デフォルトで充電専用モードになっている場合は、電話のUSBモードをファイル転送に切り替えます</string>
+    <string name="tip_connassistant">接続ウィザードを使用して、IDrive4車のUSBアクセサリモードを有効にします</string>
+    <string name="tip_btapp">IDrive5Bluetooth接続に[アプリ]オプションがあることを確認してください。Bluetoothオーディオを切断し、接続がスタックしている場合は再接続してみてください</string>
+    <string name="tip_batterymode_mybmw">MyBMWアプリのバッテリー最適化を無効にしてみてください。これは車への接続に役立つ場合があります</string>
+    <string name="tip_batterymode_mymini">Miniアプリのバッテリー最適化を無効にしてみてください。これにより、車への接続に役立つ場合があります</string>
+    <string name="tip_audioplayer_bookmark">オーディオプレーヤーアプリへのショートカットボタンを保存して、音楽コントロールにすばやくアクセスできるようにします</string>
+    <string name="tip_bluetooth_music">携帯電話からBluetooth音楽を聴くように車を設定してください</string>
+    <string name="tip_audioplayer_nowplaying_bookmark">キューにすばやくアクセスするには、[再生中]ボタンが選択されているときにショートカットボタンを保存します</string>
+    <string name="tip_input_emoji">コロンを入力して絵文字の入力を開始し、候補リストから選択します</string>
+    <string name="tip_music_hide">音楽アプリをリストからスワイプして車から非表示にします</string>
+    <string name="tip_batterymode_music">音楽アプリのバッテリー最適化を無効にしてみてください。これは、Xiaomiなどの一部の電話ブランドでアプリをバックグラウンドから起動するために必要になる場合があります</string>
+    <string name="tip_popup_suppress_id5">車の操作中、またはテキストの入力中は、通知ポップアップが抑制されます</string>
+    <string name="tip_notification_bookmark">通知にすばやくアクセスできるように、ラベルのないブックアプリへのショートカットボタンを保存します</string>
+    <string name="tip_notification_bookmark_ambutton">通知にすばやくアクセスできるように、通知アプリへのショートカットボタンを保存します</string>
+    <string name="tip_notification_bookmark_details">通知のリストを表示しているときにショートカットボタンを保存して、最新の通知にすばやくアクセスできるようにします</string>
+    <string name="tip_notification_quickaccess">新しい通知を受け取った後すぐに通知アプリに入ると、この通知が直接開かれます</string>
     <string name="notification_assistant_tap">タップして%sを起動します</string>
     <string name="notification_assistant_description">画面がオンになっているためにのみ必要</string>
     <string name="donation_title">このアプリが好きですか？</string>
@@ -197,6 +299,7 @@
     <string name="NOTIFICATIONS_TITLE">通知</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">通知なし</string>
     <string name="NOTIFICATION_CLEAR_ACTION">クリア</string>
+    <string name="NOTIFICATION_READOUT_ACTION">話す</string>
     <string name="NOTIFICATION_OPTIONS">オプション</string>
     <string name="NOTIFICATION_POPUPS">通知ポップアップ</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">…乗客と一緒に</string>
@@ -205,6 +308,7 @@
     <string name="NOTIFICATION_READOUT_POPUP">新しい通知を話す</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER">…乗客と一緒に</string>
     <string name="NOTIFICATION_PERMISSION_NEEDED">このアプリには通知アクセスを許可する必要があります</string>
+    <string name="NOTIFICATION_CENTER_APP">このアプリは車の通知センターにプッシュするために使用されます</string>
     <string name="READOUT_DESCRIPTION">このアプリは読み出しの目的で使用されます</string>
     <string name="MAP_ACTION_VIEWMAP">完全な地図を表示</string>
     <string name="MAP_ACTION_SEARCH">場所を検索</string>
@@ -215,7 +319,7 @@
     <string name="MUSIC_DISCONNECTED">&lt;接続されていません&gt;</string>
     <string name="MUSIC_BROWSE_TITLE">参照</string>
     <string name="MUSIC_BROWSE_EMPTY">&lt;空&gt;</string>
-    <string name="MUSIC_BROWSE_LOADING">&lt;読み込み中&gt;</string>
+    <string name="MUSIC_BROWSE_LOADING">&lt;Loading&gt;</string>
     <string name="MUSIC_BROWSE_SEARCHING">&lt;検索&gt;</string>
     <string name="MUSIC_BROWSE_ACTION_JUMPBACK">ジャンプバック</string>
     <string name="MUSIC_BROWSE_ACTION_FILTER">フィルター</string>
@@ -247,6 +351,6 @@
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">いいね</string>
     <string name="MUSIC_SPOTIFY_THUMB_UP">イマイチ</string>
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">親指を立てる</string>
-    <string name="MUSIC_SPOTIFY_THUMB_DOWN">イマイチ</string>
+    <string name="MUSIC_SPOTIFY_THUMB_DOWN">サムダウン</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">イマイチ</string>
 </resources>
