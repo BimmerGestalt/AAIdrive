@@ -9,7 +9,7 @@
     <string name="notification_description">車に接続</string>
     <string name="notification_description_chassiscode">%sに接続</string>
     <string name="notification_description_bmw">BMWに接続</string>
-    <string name="notification_description_mini">ミニに接続</string>
+    <string name="notification_description_mini">Miniに接続</string>
     <!-- notification channel names -->
     <string name="notification_channel_assistant">アシスタントランチャー</string>
     <string name="notification_channel_connection">車の接続ステータス</string>
@@ -236,7 +236,7 @@
     <string name="lbl_carinfo_sunroof_tilted">開いて、傾けて</string>
     <string name="lbl_carinfo_sunroof_partial">部分的に開いています、%d %%</string>
     <string name="lbl_carinfo_sunroof_open">完全に開いています</string>
-    <string name="lbl_carinfo_windows">Windows：</string>
+    <string name="lbl_carinfo_windows">ウィンドウズ:</string>
     <string name="lbl_carinfo_window_driverfront">ドライバーフロント</string>
     <string name="lbl_carinfo_window_passengerfront">助手席フロント</string>
     <string name="lbl_carinfo_window_driverrear">ドライバーリア</string>
@@ -319,7 +319,7 @@
     <string name="MUSIC_DISCONNECTED">&lt;接続されていません&gt;</string>
     <string name="MUSIC_BROWSE_TITLE">参照</string>
     <string name="MUSIC_BROWSE_EMPTY">&lt;空&gt;</string>
-    <string name="MUSIC_BROWSE_LOADING">&lt;Loading&gt;</string>
+    <string name="MUSIC_BROWSE_LOADING">&lt;読み込み中&gt;</string>
     <string name="MUSIC_BROWSE_SEARCHING">&lt;検索&gt;</string>
     <string name="MUSIC_BROWSE_ACTION_JUMPBACK">ジャンプバック</string>
     <string name="MUSIC_BROWSE_ACTION_FILTER">フィルター</string>

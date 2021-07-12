@@ -88,6 +88,7 @@
     <string name="musicAppHidden">Niet zichtbaar</string>
     <string name="enable_audio_context">Audio focus gevraagd</string>
     <string name="enable_spotify_layout">Altijd als Spotify app verschijnen in IDrive5+</string>
+    <string name="enable_audioplayer_layout">Voorkeur voor oude compacte muziekinterface in IDrive5+</string>
     <string name="lbl_grant_sessions">Controle over muziek-app</string>
     <string name="lbl_grant_spotify_control">Mogelijkheid om door uw Spotify bibliotheek te bladeren</string>
     <string name="lbl_grant_background_music">Op de achtergrond uitvoeren van de muziek-apps toestaan, als de auto problemen heeft met het starten ervan</string>
