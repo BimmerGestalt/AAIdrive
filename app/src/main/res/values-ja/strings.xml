@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AndroidAutoIdrive</string>
-    <string name="permlab_accessNotifications">通知名</string>
+    <string name="permlab_accessNotifications">IDrive通知アクセス</string>
     <string name="permlab_bindNotificationListenerService">IDrive通知アクセス</string>
-    <string name="permdesc_accessNotifications">通知名</string>
-    <string name="permdesc_bindNotificationListenerService">通知への再</string>
-    <string name="notification_title">IDrive用のAndroidAuto</string>
-    <string name="notification_description">％@に継ぎ完了</string>
+    <string name="permdesc_accessNotifications">IDrive通知アクセス</string>
+    <string name="permdesc_bindNotificationListenerService">IDrive通知アクセス</string>
+    <string name="notification_title">Android Auto for IDrive</string>
+    <string name="notification_description">車に接続</string>
     <string name="notification_description_chassiscode">%sに接続</string>
     <string name="notification_description_bmw">BMWに接続</string>
-    <string name="notification_description_mini">ミニに接続</string>
+    <string name="notification_description_mini">Miniに接続</string>
     <!-- notification channel names -->
     <string name="notification_channel_assistant">アシスタントランチャー</string>
     <string name="notification_channel_connection">車の接続ステータス</string>
@@ -61,7 +61,7 @@
     <string name="notification_readout_popup">新しい通知を話す</string>
     <string name="notification_readout_popup_passenger">…乗客と一緒に</string>
     <string name="notification_quickreplies">クイック返信</string>
-    <string name="notification_quickreplies_default">[\"👍\",\"途中です！\",\"現在車内です\",\"テキストメッセージを送信できません。代わりに電話してください\",\"I後で電話します\"]</string>
+    <string name="notification_quickreplies_default">[\"👍\",\"途中です！\",\"現在車内にあります\",\"テキストメッセージを送信できません。代わりに電話してください\",\"I後で電話します\"]</string>
     <string name="lbl_notification_permissions">通知を表示するためのアクセス</string>
     <string name="lbl_notification_sms_permissions">SMS画像を表示するためのアクセス</string>
     <string name="lbl_popupVersion">ポップアップはIDrive4でのみ機能します</string>
@@ -93,7 +93,7 @@
     <string name="lbl_grant_background_music">車の起動に問題がある場合は、音楽アプリのバックグラウンド実行を許可します</string>
     <string name="lbl_grant">付与</string>
     <string name="musicAppNotes_unauthorizedSpotify">ここをタップして、Spotifyアクセスを承認します</string>
-    <string name="musicAppNotes_oldSpotify">全機能を利用するには、Spotifyをダウングレードしてください（検索）</string>
+    <string name="musicAppNotes_oldSpotify">全機能を利用するにはSpotifyをダウングレードしてください（検索）</string>
     <string name="musicAppNotes_oldSpotifyInstructions">このアプリは、検索など、バージョン8.4.96.953までのSpotifyを完全に制御することしかできません。フルコントロールするには、APKPureなどから古いバージョンをダウンロードしてください。</string>
     <string name="musicAppNotes_spotify_apiNotFound">​​公式のSpotifyクライアントをインストールしてください</string>
     <string name="musicAppNotes_spotify_apiUnavailable">インターネット接続を確認し、広告のブロックを無効にしてください</string>
@@ -101,7 +101,7 @@
     <string name="lbl_navigationpage_intent">接続中、他のアプリのナビゲーションボタンでアプリチューザーを開くと、車のナビゲーションシステムがオプションとして表示されます</string>
     <string name="lbl_navigationstatus_active">現在ナビゲート中</string>
     <string name="lbl_navigationstatus_inactive">現在ナビゲートしていません</string>
-    <string name="lbl_settingspage">動作を微調整するための詳細設定。予期しない動作が発生する可能性があります</string>
+    <string name="lbl_settingspage">動作を微調整するための詳細設定。予期しない動作を引き起こす可能性があります</string>
     <string name="lbl_language_carinterface">車に表示する言語</string>
     <string name="lbl_language_prefercar">電話の言語よりも車の言語を優先する</string>
     <string name="lbl_language_prefercar_code">電話の言語よりも車の言語（%s）を優先する</string>
@@ -133,7 +133,7 @@
     <string name="txt_setup_bmw_ready">アプリはBMWに接続する準備ができています</string>
     <string name="txt_setup_mini_ready">アプリはMiniに接続する準備ができています</string>
     <string name="txt_setup_bmw_missing">BMWに接続する準備ができていません：</string>
-    <string name="txt_setup_mini_missing">ミニに接続する準備ができていません：</string>
+    <string name="txt_setup_mini_missing">Miniに接続する準備ができていません：</string>
     <string name="txt_setup_bmw_connected_65">BMW Connected 6.5がインストールされているため、車の接続が開始されない場合があります。問題が発生した場合は、6.4にダウングレードするか、MyBMWにアップグレードしてみてください</string>
     <string name="txt_setup_mini_connected_65">Mini Connected 6.5がインストールされているため、車の接続が開始されない場合があります。問題が発生した場合は、6.4にダウングレードするか、新しいMiniアプリにアップグレードしてみてください</string>
     <string name="txt_setup_bmw_mine_detected">新しいMyBMWアプリがインストールされているため、BMW Connectedで問題が発生する可能性があり、サポートされていません</string>
@@ -236,7 +236,7 @@
     <string name="lbl_carinfo_sunroof_tilted">開いて、傾けて</string>
     <string name="lbl_carinfo_sunroof_partial">部分的に開いています、%d %%</string>
     <string name="lbl_carinfo_sunroof_open">完全に開いています</string>
-    <string name="lbl_carinfo_windows">Windows：</string>
+    <string name="lbl_carinfo_windows">ウィンドウズ:</string>
     <string name="lbl_carinfo_window_driverfront">ドライバーフロント</string>
     <string name="lbl_carinfo_window_passengerfront">助手席フロント</string>
     <string name="lbl_carinfo_window_driverrear">ドライバーリア</string>
@@ -351,6 +351,6 @@
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">いいね</string>
     <string name="MUSIC_SPOTIFY_THUMB_UP">イマイチ</string>
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">親指を立てる</string>
-    <string name="MUSIC_SPOTIFY_THUMB_DOWN">イマイチ</string>
+    <string name="MUSIC_SPOTIFY_THUMB_DOWN">サムダウン</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">イマイチ</string>
 </resources>
