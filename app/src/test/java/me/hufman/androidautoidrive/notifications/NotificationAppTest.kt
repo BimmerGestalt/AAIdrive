@@ -567,6 +567,7 @@ class NotificationAppTest {
 		val bundle2 = createNotificationObject("Title", "Text")
 		app.notificationListener.onNotification(bundle2)
 		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+		assertNull(mockServer.triggeredEvents[4])    // did not trigger the statusbar icon
 	}
 
 	/**
@@ -584,15 +585,21 @@ class NotificationAppTest {
 		app.viewDetails.selectedNotification = bundle
 		app.viewDetails.state.focusCallback?.onFocus(true)
 
-		// it should not popup
+		// opening the viewDetails hides the statusbar icon, so clear the event history
+		mockServer.triggeredEvents.clear()
+
+		// it should not popup, because it's the same conversation
 		val bundle2 = createNotificationObject("Title", "Text\nNext Message")
 		app.notificationListener.onNotification(bundle2)
 		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+		assertNull(mockServer.triggeredEvents[4])    // did not trigger the statusbar icon
 
 		// now hide the notification, and try to popup again
+		// it should not popup because it's the same message
 		app.viewDetails.state.focusCallback?.onFocus(false)
 		app.notificationListener.onNotification(bundle2)
 		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup that we just read
+		assertNull(mockServer.triggeredEvents[4])    // did not trigger the statusbar icon
 	}
 
 	/**
