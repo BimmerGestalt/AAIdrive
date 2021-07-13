@@ -289,6 +289,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	fun forgetDisplayedInfo() {
 		displayedApp = null
 		displayedSong = null
+		initialized = false     // important for re-initializing the AudioHmiState artist/album icons
 	}
 
 	/** Any updates that should happen in the background */
