@@ -54,6 +54,8 @@
     <string name="notification_popups">Felugró értesítések</string>
     <string name="notification_popups_passenger">Felugró értesítés utas esetén</string>
     <string name="notification_sound">Értesítési hang</string>
+    <string name="notification_readout">Értesítések felolvasása azok megnézésekor</string>
+    <string name="notification_readout_popup">Új értesítések felolvasása</string>
     <string name="notification_readout_popup_passenger">... utassal az autóban</string>
     <string name="notification_quickreplies">Gyors válaszok</string>
     <string name="notification_quickreplies_default">[\"👍\",\"Úton vagyok!\",\"Autóban vagyok\",\"Nem tudok írni, hívj inkább!\",\"Később visszahívlak!\"]</string>
