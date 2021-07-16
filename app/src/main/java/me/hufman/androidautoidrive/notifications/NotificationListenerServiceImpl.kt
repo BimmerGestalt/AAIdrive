@@ -132,7 +132,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	fun updateNotificationList() {
 		if (!iDriveConnectionReceiver.isConnected) return
 		try {
-			val current = this.activeNotifications.filter {
+			val notifications = this.activeNotifications ?: emptyArray()
+			val current = notifications.filter {
 				notificationParser.shouldShowNotification(it)
 			}.map {
 				notificationParser.summarizeNotification(it)
@@ -151,7 +152,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		}
 		override fun action(key: String, actionName: String) {
 			try {
-				val notification = listenerService.activeNotifications.find { it.key == key }
+				val notifications = listenerService.activeNotifications ?: emptyArray()
+				val notification = notifications.find { it.key == key }
 				val customViewTemplate = notification?.notification?.getContentView()
 				if (customViewTemplate != null) {
 					val customView = customViewTemplate.apply(listenerService, null)
@@ -169,7 +171,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		@SuppressLint("WrongConstant")
 		override fun reply(key: String, actionName: String, reply: String) {
 			try {
-				val notification = listenerService.activeNotifications.find { it.key == key }
+				val notifications = listenerService.activeNotifications ?: emptyArray()
+				val notification = notifications.find { it.key == key }
 				val action = notification?.notification?.actions?.find { it.title == actionName }
 				if (action != null) {
 					val results = Bundle()
