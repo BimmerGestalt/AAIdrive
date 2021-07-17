@@ -108,12 +108,8 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 				// if we did not skip through, refresh:
 				redrawNotificationList()
 
-				// if we entered through the EntryButton, clear the statusbar icon
-				// the other way is to come from an action in the DetailsView
-				// and we want to keep the other messages in the Notification Center
-				if (didEntryButton) {
-					hideStatusBarIcon()
-				}
+				// viewing the entire list, so clear the statusbar icon
+				hideStatusBarIcon()
 
 				// if a notification is speaking, pre-select it
 				// otherwise pre-select the most recent notification that showed up or was selected
