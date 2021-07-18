@@ -44,6 +44,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	val currentTimeModel: RHMIModelMultiSetterData
 	val maximumTimeModel: RHMIModelMultiSetterData
 
+	val applistButton: RHMIComponent.ToolbarButton
+	val browseButton: RHMIComponent.ToolbarButton
 	val queueToolbarButton: RHMIComponent.ToolbarButton
 	val customActionButton: RHMIComponent.ToolbarButton
 	var skipBackButton: RHMIComponent.ToolbarButton? = null
@@ -87,6 +89,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 			// playlist model populates the back/title/next section
 
+			applistButton = state.toolbarComponentsList[0]
+			browseButton = state.toolbarComponentsList[1]
 			queueToolbarButton = state.toolbarComponentsList[2]
 			customActionButton = state.toolbarComponentsList[3]
 			shuffleButton = state.toolbarComponentsList[4]
@@ -159,6 +163,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			gaugeModel = ProgressGaugeToolbarState(RHMIModelMultiSetterInt(gauges.map { it.getModel()?.asRaIntModel() }))
 
 			// remember the toolbar buttons for convenient redrawing of their status
+			applistButton = state.toolbarComponentsList[0]
+			browseButton = state.toolbarComponentsList[1]
 			queueToolbarButton = state.toolbarComponentsList[2]
 			customActionButton = state.toolbarComponentsList[4]
 			shuffleButton = state.toolbarComponentsList[5]
@@ -191,14 +197,13 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		}
 
 		// link up the actions in the buttons
-		val buttons = state.toolbarComponentsList
-		buttons[0].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
-		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+		applistButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
+		browseButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 			browseView.clearPages()
 			val page = browseView.pushBrowsePage(null)
-			buttons[1].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id
+			browseButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id
 		}
-		buttons[2].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = enqueuedView.state.id
+		queueToolbarButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = enqueuedView.state.id
 		customActionButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = customActionsView.state.id
 	}
 
@@ -211,15 +216,17 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 		val buttons = state.toolbarComponentsList
 		// shortcuts to other windows
-		buttons[0].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_APPLIST_TITLE
-		buttons[1].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_BROWSE_TITLE
-		buttons[2].getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_QUEUE_TITLE
-		buttons[2].setEnabled(false)
+		applistButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_APPLIST_TITLE
+		browseButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_BROWSE_TITLE
+		queueToolbarButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_QUEUE_TITLE
+		queueToolbarButton.setEnabled(false)
+		queueToolbarButton.setProperty(RHMIProperty.PropertyId.BOOKMARKABLE, true)
 
 		// setting the actions button icon since the button has a book icon by default
 		customActionButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_CUSTOMACTIONS_TITLE
 		customActionButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.ACTIONS
 		customActionButton.setEnabled(false)
+		customActionButton.setProperty(RHMIProperty.PropertyId.BOOKMARKABLE, true)
 
 		shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_UNAVAILABLE
 		shuffleButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.SHUFFLE_OFF
@@ -270,9 +277,6 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			}
 		}
 
-		queueToolbarButton.setProperty(RHMIProperty.PropertyId.BOOKMARKABLE, true)
-		customActionButton.setProperty(RHMIProperty.PropertyId.BOOKMARKABLE, true)
-
 		initialized = true
 	}
 
@@ -306,6 +310,10 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			}
 			redrawPosition()
 		}
+
+		// enable the bookmarkable buttons
+		redrawQueueButton()
+		redrawActions()
 	}
 
 	/** Any updates that should happen while the screen is displayed */
