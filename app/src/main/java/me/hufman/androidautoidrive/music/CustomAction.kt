@@ -16,9 +16,9 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 			} catch (e: Exception) {
 				null
 			}
-			return formatCustomActionDisplay(
+			return enableDwellAction(formatCustomActionDisplay(
 					CustomAction(packageName, action.action, action.name.toString(), icon, action.extras)
-			)
+			))
 		}
 
 		fun formatCustomActionDisplay(ca: CustomAction): CustomAction {
@@ -77,6 +77,21 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 			}
 
 			return ca
+		}
+
+		/**
+		 * Heuristically upgrade some actions to be Dwell Actions
+		 * Such as Jump Back a certain time, or Change Playback Speed
+		 */
+		fun enableDwellAction(action: CustomAction): CustomAction {
+			val isSkipAction = action.action.contains("jump", true) ||      // jumpBack
+					action.action.contains("skip", true) ||
+					action.action.contains("seek", true)
+			val isChangeAction = action.action.contains("change", true)       // change speed, perhaps
+			if (isSkipAction || isChangeAction) {
+				return CustomActionDwell(action.packageName, action.action, action.name, action.icon, action.extras)
+			}
+			return action
 		}
 	}
 

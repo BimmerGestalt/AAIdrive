@@ -61,4 +61,18 @@ class CustomActionTest {
 		assertEquals(L.MUSIC_ACTION_SEEK_FORWARD_15,
 			caFormatted("SEEK_15_SECONDS_FORWARD").name)
 	}
+
+	@Test
+	fun podcastActions() {
+		val isDwellAction: (String) -> Boolean = {
+			CustomAction.enableDwellAction(caNamed("podcastaddicts", it)) is CustomActionDwell
+		}
+
+		assert(isDwellAction("jumpBack"))
+		assert(isDwellAction("JumpNext"))
+		assert(isDwellAction("skipBack"))
+		assert(isDwellAction("SEEK_FORWARD"))
+		assert(isDwellAction("changeSpeed"))
+		assert(!isDwellAction("THUMB_UP"))
+	}
 }
