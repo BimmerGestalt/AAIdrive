@@ -503,7 +503,7 @@ class MusicAppTest {
 		// don't enable the Custom Actions button for empty custom actions
 		assertEquals(false, mockServer.properties[IDs.TOOLBAR_ACTION_BUTTON]!![RHMIProperty.PropertyId.ENABLED.id])
 		// add an action
-		whenever(musicController.getCustomActions()).doAnswer { listOf(CustomAction("test", "test", "Name", null, null)) }
+		whenever(musicController.getCustomActions()).doAnswer { listOf(CustomAction("test", "test", "Name", 0, null, null)) }
 		// we should redraw even if the song hasn't changed, and the button should be enabled
 		playbackView.redraw()
 		assertEquals(true, mockServer.properties[IDs.TOOLBAR_ACTION_BUTTON]!![RHMIProperty.PropertyId.ENABLED.id])
@@ -2335,7 +2335,7 @@ class MusicAppTest {
 		actionView.initWidgets(playbackView)
 
 		whenever(musicController.getCustomActions()) doReturn listOf(CustomAction(
-				"packageName", "actionName", "Custom Name", null, null
+				"packageName", "actionName", "Custom Name", 0, null, null
 		))
 		actionView.show()
 		verify(musicController).getCustomActions()
@@ -2349,7 +2349,7 @@ class MusicAppTest {
 				1.toByte() to 0
 		))
 		verify(musicController).customAction(CustomAction(
-				"packageName", "actionName", "Custom Name", null, null
+				"packageName", "actionName", "Custom Name", 0, null, null
 		))
 	}
 

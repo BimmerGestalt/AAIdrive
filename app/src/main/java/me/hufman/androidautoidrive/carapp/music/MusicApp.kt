@@ -386,6 +386,9 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 		if (browseView.visible) {
 			browseView.redraw()
 		}
+		if (customActionsView.visible) {
+			customActionsView.redraw()
+		}
 
 		// if running over USB or audio context is granted, set the global metadata
 		if (!musicAppMode.shouldRequestAudioContext() || avContext.currentContext) {

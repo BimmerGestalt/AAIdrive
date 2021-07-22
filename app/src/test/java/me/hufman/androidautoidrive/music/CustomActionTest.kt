@@ -5,7 +5,7 @@ import org.junit.Test
 
 class CustomActionTest {
 	fun caNamed(packageName: String, action: String): CustomAction {
-		return CustomAction(packageName, action, action, null, null)
+		return CustomAction(packageName, action, action, 0, null, null)
 	}
 
 	@Test

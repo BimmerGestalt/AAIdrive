@@ -7,7 +7,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.content.res.ResourcesCompat
 import java.lang.Exception
 
-open class CustomAction(val packageName: String, val action: String, val name: String, val icon: Drawable?, val extras: Bundle?) {
+open class CustomAction(val packageName: String, val action: String, val name: String, private val _iconId: Int, val icon: Drawable?, val extras: Bundle?) {
 	companion object {
 		fun fromMediaCustomAction(context: Context, packageName: String, action: PlaybackStateCompat.CustomAction): CustomAction {
 			val icon = try {
@@ -17,7 +17,7 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 				null
 			}
 			return enableDwellAction(formatCustomActionDisplay(
-					CustomAction(packageName, action.action, action.name.toString(), icon, action.extras)
+					CustomAction(packageName, action.action, action.name.toString(), action.icon, icon, action.extras)
 			))
 		}
 
@@ -65,14 +65,14 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 						niceName = ca.name
 				}
 
-				return CustomAction(ca.packageName, ca.action, niceName, ca.icon, ca.extras)
+				return CustomAction(ca.packageName, ca.action, niceName, ca._iconId, ca.icon, ca.extras)
 			}
 
 			if (ca.packageName == "com.jrtstudio.AnotherMusicPlayer") {
 				val rocketPlayerActionPattern = Regex("([A-Za-z]+)[0-9]+")
 				val match = rocketPlayerActionPattern.matchEntire(ca.name)
 				if (match != null) {
-					return CustomAction(ca.packageName, ca.action, match.groupValues[1], ca.icon, ca.extras)
+					return CustomAction(ca.packageName, ca.action, match.groupValues[1], ca._iconId, ca.icon, ca.extras)
 				}
 			}
 
@@ -89,7 +89,7 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 					action.action.contains("seek", true)
 			val isChangeAction = action.action.contains("change", true)       // change speed, perhaps
 			if (isSkipAction || isChangeAction) {
-				return CustomActionDwell(action.packageName, action.action, action.name, action.icon, action.extras)
+				return CustomActionDwell(action.packageName, action.action, action.name, action._iconId, action.icon, action.extras)
 			}
 			return action
 		}
@@ -104,6 +104,7 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 		if (packageName != other.packageName) return false
 		if (action != other.action) return false
 		if (name != other.name) return false
+		if (_iconId != other._iconId) return false
 
 		return true
 	}
@@ -112,6 +113,7 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 		var result = packageName.hashCode()
 		result = 31 * result + action.hashCode()
 		result = 31 * result + name.hashCode()
+		result = 31 * result + _iconId
 		return result
 	}
 
@@ -123,4 +125,4 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 /**
  * A CustomAction that doesn't close the Actions window
  */
-class CustomActionDwell(packageName: String, action: String, name: String, icon: Drawable?, extras: Bundle?): CustomAction(packageName, action, name, icon, extras)
+class CustomActionDwell(packageName: String, action: String, name: String, _iconId: Int, icon: Drawable?, extras: Bundle?): CustomAction(packageName, action, name, _iconId, icon, extras)
