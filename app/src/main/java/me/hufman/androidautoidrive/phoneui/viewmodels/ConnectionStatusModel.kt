@@ -50,8 +50,6 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 	val isSppAvailable: LiveData<Boolean> = _isSppAvailable
 
 	// USB
-	private val _isUsbSupported = MutableLiveData<Boolean>()
-	val isUsbSupported: LiveData<Boolean> = _isUsbSupported
 	private val _isUsbConnected = MutableLiveData<Boolean>()
 	val isUsbConnected: LiveData<Boolean> = _isUsbConnected
 	private val _isUsbCharging = MutableLiveData<Boolean>()
@@ -118,20 +116,15 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		_isA2dpConnected.value = connection.isA2dpConnected
 		_isSppAvailable.value = connection.isSPPAvailable
 
-		_isUsbSupported.value = connection.isBMWConnectedInstalled || connection.isMiniConnectedInstalled
 		_isUsbConnected.value = connection.isUsbConnected
 		_isUsbCharging.value = connection.isUsbConnected && !connection.isUsbTransferConnected && !connection.isUsbAccessoryConnected
 		_isUsbTransfer.value = connection.isUsbConnected && connection.isUsbTransferConnected && !connection.isUsbAccessoryConnected
 		_isUsbAccessory.value = connection.isUsbConnected && connection.isUsbAccessoryConnected
 		_hintUsbAccessory.value = {getString(R.string.txt_setup_enable_usbacc, connection.deviceName)}
-		if (_isUsbConnected.value == true && _isUsbSupported.value == false) {
-			connectingHint = {getString(R.string.txt_setup_usb_requires_connected)}
-		} else {
-			if (_isUsbCharging.value == true) {
-				connectingHint = { getString(R.string.txt_setup_enable_usbmtp) }
-			} else if (_isUsbTransfer.value == true) {
-				connectingHint = { getString(R.string.txt_setup_enable_usbacc, connection.deviceName) }
-			}
+		if (_isUsbCharging.value == true) {
+			connectingHint = { getString(R.string.txt_setup_enable_usbmtp) }
+		} else if (_isUsbTransfer.value == true) {
+			connectingHint = { getString(R.string.txt_setup_enable_usbacc, connection.deviceName) }
 		}
 
 		val oldBclReady = _isBclReady.value ?: false
@@ -144,13 +137,8 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 			_bclReadyTimer = viewModelScope.launch {
 				delay(BCL_READY_THRESHOLD)
 				if (_isBclConnected.value != true) {
-					if (_isUsbSupported.value == true) {
-						_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bclspp_usb) }
-						_carConnectionHint.value = { getString(R.string.txt_setup_enable_bclspp_usb) }
-					} else {
-						_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bclspp_bt) }
-						_carConnectionHint.value = { getString(R.string.txt_setup_enable_bclspp_bt) }
-					}
+					_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bclspp_usb) }
+					_carConnectionHint.value = { getString(R.string.txt_setup_enable_bclspp_usb) }
 				}
 			}
 		}
