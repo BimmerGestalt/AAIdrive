@@ -27,20 +27,21 @@ Android Auto for IDrive, combined with the safety benefits of the tactile IDrive
 Getting Started
 ---------------
 
-This app requires that the BMW Connected or Mini Connected app for your car is installed and can successfully add the Connected and Calendar entries to your car's Connected Apps menu. The new My BMW app seems to interfere with BMW Connected and is not supported.
+This app requires that the MyBMW or MINI app for your car is installed and can successfully enable your ID5 car's [Apps checkbox](app/src/main/res/drawable/pic_btapp_bmw.jpg), or if your ID4 car has the [Connection Assistant option](app/src/main/res/drawable/pic_connassistant_bmw.jpg).
 
 Download the APK of the latest stable release from the [Releases page](https://github.com/hufman/AndroidAutoIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. After starting, the app should detect the Connected app and start waiting for the car connection.
 
 Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-sentry-release.apk) to automatically report crashes.
 The [nonalytics](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-nonalytics-release.apk) build is available too.
-Some of the new features include:
+Some of the new features being prepared for version 1.3 include:
   - Brand new simpler phone UI with clearer setup instructions
   - Supports logging in as Spotify to set the global coverart in ID5+
   - Adds Spotify browse and playlist coverart, as well as searching Spotify
   - Reads out notifications, and adds popup and statusbar support in ID5+
   - Supports replying to notifications
   - Starts car navigation to handle certain phone navigation buttons
-  - Supports the new MyBMW app
+  - Supports sharing destinations from GMaps to the car navigation
+  - Supports the new MyBMW/MINI app
 
 Check out the [FAQ](https://hufman.github.io/AndroidAutoIdrive/faq.html) if you run into problems.
 
