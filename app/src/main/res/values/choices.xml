@@ -26,5 +26,6 @@
         <item>ro</item>
         <item>ru</item>
         <item>sv</item>
+        <item>zh-Hans</item>
     </string-array>
 </resources>
