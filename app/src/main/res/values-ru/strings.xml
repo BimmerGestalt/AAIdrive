@@ -204,6 +204,7 @@
     <string name="lbl_carinfopage_disconnected">После первого подключения здесь будет отображена информация о вашем автомобиле</string>
     <string name="lbl_carinfopage">Краткая информация о вашем автомобиле</string>
     <string name="lbl_carinfo_efficiency">Статистика эффективности</string>
+    <string name="lbl_carinfo_ev">Статистика потребления электроэнергии</string>
     <string name="lbl_carinfo_style">Эффективный стиль вождения</string>
     <string name="lbl_carinfo_lastchecked">Последняя проверка:</string>
     <string name="lbl_carinfo_lastPosition">Последняя позиция:</string>
@@ -217,8 +218,11 @@
     <string name="lbl_carinfo_averageConsumptionAlt">Расход топлива (alt):</string>
     <string name="lbl_carinfo_averageSpeedAlt">Средняя скорость (alt):</string>
     <string name="lbl_carinfo_ecoRangeWon">Экономия ECO Pro:</string>
+    <string name="lbl_carinfo_evLevel">Уровень заряда:</string>
+    <string name="lbl_carinfo_evRange">Макс. пробег на электричестве:</string>
     <string name="lbl_carinfo_fuelLevel">Топлива в баке:</string>
     <string name="lbl_carinfo_fuelRange">Запас хода:</string>
+    <string name="lbl_carinfo_totalRange">Общий запас хода:</string>
     <string name="lbl_carinfo_accBatteryLevel">Заряд аккумулятора:</string>
     <string name="lbl_carinfo_style_accel">Разгон:</string>
     <string name="lbl_carinfo_style_brake">Торможение:</string>
