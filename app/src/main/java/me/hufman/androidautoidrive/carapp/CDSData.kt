@@ -182,12 +182,12 @@ class CDSDataProvider: CDSData, CDSEventHandler {
 
 	override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
 		_data[property] = propertyValue
-		_eventHandlers[property]?.forEach { it.onPropertyChangedEvent(property, propertyValue) }
+		_eventHandlers[property]?.toSet()?.forEach { it.onPropertyChangedEvent(property, propertyValue) }
 	}
 
 	/** Use this CDSData object as a CDSConnection */
-	fun asConnection(): CDSConnection {
-		return CDSDataConnectionWrapper(this, this)
+	fun asConnection(eventHandler: CDSEventHandler): CDSConnection {
+		return CDSDataConnectionWrapper(this, eventHandler)
 	}
 }
 

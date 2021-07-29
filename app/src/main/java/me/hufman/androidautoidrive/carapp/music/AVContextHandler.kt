@@ -25,7 +25,7 @@ class AVContextHandler(val iDriveConnectionStatus: IDriveConnectionStatus, val c
 		}
 		val instanceId = iDriveConnectionStatus.instanceId ?: 0
 		if (instanceId <= 0) {
-			Log.w(TAG, "instanceId is null! skipping av handle creation for now")
+//			Log.w(TAG, "instanceId is null! skipping av handle creation for now")
 		} else if (musicAppMode.shouldRequestAudioContext()) {
 			Log.d(TAG, "instanceId == ${iDriveConnectionStatus.instanceId}")
 			synchronized(carConnection) {

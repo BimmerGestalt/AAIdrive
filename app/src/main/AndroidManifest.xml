@@ -1029,11 +1029,9 @@
         </service>
 
         <provider
-            android:name="me.hufman.androidautoidrive.CarAPIAssetProvider"
-            android:exported="true"
-            android:authorities="me.hufman.androidautoidrive.provider"
-            android:grantUriPermissions="true" />
-
+            android:authorities="bimmergestalt.cardata.provider"
+            android:name="me.hufman.androidautoidrive.CDSContentProvider"
+            android:exported="true" />
 
         <meta-data
             android:name="com.spotify.music.API_KEY"
