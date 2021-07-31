@@ -88,6 +88,7 @@
     <string name="musicAppHidden">Niet zichtbaar</string>
     <string name="enable_audio_context">Audio focus gevraagd</string>
     <string name="enable_spotify_layout">Altijd als Spotify app verschijnen in IDrive5+</string>
+    <string name="enable_audioplayer_layout">Voorkeur voor oude compacte muziekinterface in IDrive5+</string>
     <string name="lbl_grant_sessions">Controle over muziek-app</string>
     <string name="lbl_grant_spotify_control">Mogelijkheid om door uw Spotify bibliotheek te bladeren</string>
     <string name="lbl_grant_background_music">Op de achtergrond uitvoeren van de muziek-apps toestaan, als de auto problemen heeft met het starten ervan</string>
@@ -127,6 +128,9 @@
     <string name="nowplaying_notconnected">&lt;Niet verdbonden&gt;</string>
     <string name="nowplaying_unknown">&lt;Onbekend&gt;</string>
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">De app kan in de achtergrond worden uitgevoerd</string>
+    <string name="txt_setup_background_impermission">De app kan niet op de achtergrond worden uitgevoerd</string>
+    <string name="txt_setup_background_hint">Automatische verbindingen werken beter als achtergrondactiviteit is toegestaan</string>
     <string name="txt_setup_bmw_ready">De app is klaar om verbinding te maken met uw BMW</string>
     <string name="txt_setup_mini_ready">De app is klaar om verbinding te maken met uw Mini</string>
     <string name="txt_setup_bmw_missing">Niet klaar om met uw BMW te verbinden:</string>

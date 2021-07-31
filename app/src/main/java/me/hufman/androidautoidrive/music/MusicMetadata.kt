@@ -46,22 +46,25 @@ open class MusicMetadata(val mediaId: String? = null,
 			var artist: String? = null
 			var album: String? = null
 			var title: String? = null
-			if (metadata.compilation != null && metadata.compilation == metadata.displayTitle &&
-					metadata.artist != metadata.displaySubtitle) {
-				// radio station is used as the Display Title, try not to prefer the Display fields
-				// Except ignore when artist == displaySubtitle scenario from SomaFM
+
+			// SomaFM has swapped artist/title fields, so prefer its title/subtitle fields
+			val isSomaFm = metadata.compilation != null && metadata.compilation == metadata.displayTitle && metadata.artist == metadata.displaySubtitle
+			val swappedDisplayFields = !isSomaFm && metadata.displayTitle == metadata.title && metadata.displaySubtitle == metadata.artist
+			val displayTitle = if (!swappedDisplayFields) metadata.displayTitle else metadata.displaySubtitle
+			val displaySubtitle = if (!swappedDisplayFields) metadata.displaySubtitle else metadata.displayTitle
+			if (!isSomaFm) {
 				artist = metadata.artist ?:
 						metadata.albumArtist ?:
-						metadata.displayTitle
+						displayTitle
 				title = metadata.title ?:
-						metadata.displaySubtitle ?:
-						metadata.displayTitle
+						displaySubtitle ?:
+						displayTitle
 			} else {
-				artist = metadata.displayTitle ?:
+				artist = displayTitle ?:
 						metadata.artist ?:
 						metadata.albumArtist
-				title = metadata.displaySubtitle ?:
-						metadata.displayTitle ?:
+				title = displaySubtitle ?:
+						displayTitle ?:
 						metadata.title
 			}
 			album = metadata.album

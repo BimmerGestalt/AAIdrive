@@ -54,6 +54,8 @@
     <string name="notification_popups">Felugró értesítések</string>
     <string name="notification_popups_passenger">Felugró értesítés utas esetén</string>
     <string name="notification_sound">Értesítési hang</string>
+    <string name="notification_readout">Értesítések felolvasása azok megnézésekor</string>
+    <string name="notification_readout_popup">Új értesítések felolvasása</string>
     <string name="notification_readout_popup_passenger">... utassal az autóban</string>
     <string name="notification_quickreplies">Gyors válaszok</string>
     <string name="notification_quickreplies_default">[\"👍\",\"Úton vagyok!\",\"Autóban vagyok\",\"Nem tudok írni, hívj inkább!\",\"Később visszahívlak!\"]</string>
@@ -80,6 +82,7 @@
     <string name="musicAppSearchable">Kereshető</string>
     <string name="musicAppUnavailable">Nem elérhető</string>
     <string name="musicAppHidden">Rejtett</string>
+    <string name="enable_audioplayer_layout">A régi kompakt zenei felület előnyben részesítése az IDrive5+ -ban</string>
     <string name="lbl_grant_sessions">Aktív zene alkalmazás vezérlése</string>
     <string name="lbl_grant_spotify_control">Spotify könyvtár tallózásának lehetősége</string>
     <string name="lbl_grant_background_music">Zenei alkalmazások háttérbeli futtatásának engedélyezése, ha az autó problémába ütközik azok futtatása során</string>
@@ -90,6 +93,7 @@
     <string name="musicAppNotes_spotify_apiNotFound">Kérlek telepítsd a hivatalos Spotify alkalmazást</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Kérlek ellenőrizd az internet kapcsolatot, illetve kapcsolj ki minden reklámblokkolót</string>
     <string name="lbl_navigationpage_address">Illessz be egy címet az autó navigációjának a telefonodról történő indításához</string>
+    <string name="lbl_navigationpage_intent">Meglévő kapcsolat esetén, az autód navigációs rendszere megjelenik egy opcióként, amikor az egyéb navigációs alkalmazások közül választhatsz a telefonodon</string>
     <string name="lbl_navigationstatus_active">Jelenleg navigálas</string>
     <string name="lbl_navigationstatus_inactive">Jelenleg nincs navigálás</string>
     <string name="lbl_settingspage">A haladó beállítások testre szabása váratlan működést eredményezhet</string>
@@ -118,6 +122,9 @@
     <string name="nowplaying_notconnected">&lt;Nincs kapcsolódva&gt;</string>
     <string name="nowplaying_unknown">&lt;Ismeretlen&gt;</string>
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">Az alkalmazás futhat a háttérben</string>
+    <string name="txt_setup_background_impermission">Az alkalmazás nem futhat a háttérben</string>
+    <string name="txt_setup_background_hint">Automatikus kapcsolódás jobban működik, ha a háttérben való működés engedélyezve van</string>
     <string name="txt_setup_bmw_ready">Az alkalmazás készenáll BMW-hez való kapcsolódásra</string>
     <string name="txt_setup_mini_ready">Az alkalmazás készenáll Mini-hez való kapcsolódásra</string>
     <string name="txt_setup_bmw_missing">Az alkalmazás nem áll készen BMW-hez való kapcsolódásra:</string>

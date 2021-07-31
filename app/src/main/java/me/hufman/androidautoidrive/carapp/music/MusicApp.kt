@@ -23,9 +23,11 @@ import me.hufman.idriveconnectionkit.android.security.SecurityAccess
 import me.hufman.idriveconnectionkit.rhmi.*
 import kotlin.collections.ArrayList
 
-const val TAG = "MusicApp"
 
 class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val musicImageIDs: MusicImageIDs, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController, val musicAppMode: MusicAppMode) {
+	companion object {
+		const val TAG = "MusicApp"
+	}
 	val carConnection: BMWRemotingServer
 	var rhmiHandle = -1
 	val carAppSwappable: RHMIApplicationSwappable
@@ -172,6 +174,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			// clear out the cached displayed values
 			globalMetadata.forgetDisplayedInfo()
 			playbackView.forgetDisplayedInfo()
+			playbackId5View?.forgetDisplayedInfo()
 			enqueuedView.forgetDisplayedInfo()
 
 			// create a new one
@@ -382,6 +385,9 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 		}
 		if (browseView.visible) {
 			browseView.redraw()
+		}
+		if (customActionsView.visible) {
+			customActionsView.redraw()
 		}
 
 		// if running over USB or audio context is granted, set the global metadata

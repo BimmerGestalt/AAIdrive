@@ -149,7 +149,7 @@ class CombinedMusicAppControllerTest {
 		verify(leftController).seekTo(100)
 		verify(rightController, never()).seekTo(any())
 
-		val customAction = CustomAction("com.musicapp", "action", "name", null, null)
+		val customAction = CustomAction("com.musicapp", "action", "name", 0, null, null)
 		whenever(rightController.getCustomActions()) doAnswer {listOf(customAction)}
 		controller.customAction(customAction)
 		verify(leftController, times(1)).getCustomActions()
@@ -247,8 +247,8 @@ class CombinedMusicAppControllerTest {
 	@Test
 	fun testCustomActions() {
 		// combine all of the available custom actions
-		val leftActions = listOf(CustomAction("test", "action1", "name1", null, null), CustomAction("test", "action2", "shared action", null, null))
-		val rightActions = listOf(CustomAction("test", "action3", "name3", null, null), CustomAction("test", "action2", "shared action", mock(), null))
+		val leftActions = listOf(CustomAction("test", "action1", "name1", 0, null, null), CustomAction("test", "action2", "shared action", 0, null, null))
+		val rightActions = listOf(CustomAction("test", "action3", "name3", 0, null, null), CustomAction("test", "action2", "shared action", 20, mock(), null))
 		leftObservable.value = leftController
 		rightObservable.value = rightController
 		whenever(leftController.getCustomActions()).doAnswer { leftActions }
@@ -272,7 +272,7 @@ class CombinedMusicAppControllerTest {
 		verify(rightController).customAction(rightActions[0])
 
 		// test for looser equality
-		val rebuiltAction = CustomAction("test", "action2", "shared action", mock(), null)
+		val rebuiltAction = CustomAction("test", "action2", "shared action", 0, mock(), null)
 		controller.customAction(rebuiltAction)
 		verify(leftController).customAction(rebuiltAction)
 	}

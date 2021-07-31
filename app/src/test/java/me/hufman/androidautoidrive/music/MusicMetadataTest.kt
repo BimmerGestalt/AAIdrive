@@ -31,9 +31,9 @@ class MusicMetadataTest {
 			on { getString(eq(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE)) } doReturn "Frank Chacksfield Orchestra - Holiday In Rhodes"
 		}
 		val parsed = MusicMetadata.fromMediaMetadata(metadata)
-		assertEquals("Illinois Street Lounge", parsed.artist)
-		assertEquals("Illinois Street Lounge", parsed.album)
-		assertEquals("Frank Chacksfield Orchestra - Holiday In Rhodes", parsed.title)
+		assertEquals("artist", "Illinois Street Lounge", parsed.artist)
+		assertEquals("album", "Illinois Street Lounge", parsed.album)
+		assertEquals("title", "Frank Chacksfield Orchestra - Holiday In Rhodes", parsed.title)
 	}
 
 	/**
@@ -55,9 +55,9 @@ class MusicMetadataTest {
 			on { getString(eq(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE)) } doReturn "Frank Chacksfield Orchestra - Holiday In Rhodes"
 		}
 		val parsed = MusicMetadata.fromMediaMetadata(metadata)
-		assertEquals("Frank Chacksfield Orchestra", parsed.artist)
-		assertEquals("Illinois Street Lounge", parsed.album)
-		assertEquals("Holiday In Rhodes", parsed.title)
+		assertEquals("artist", "Frank Chacksfield Orchestra", parsed.artist)
+		assertEquals("album", "Illinois Street Lounge", parsed.album)
+		assertEquals("title", "Holiday In Rhodes", parsed.title)
 	}
 
 	/**
@@ -75,9 +75,9 @@ class MusicMetadataTest {
 			on { getString(eq(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE)) } doReturn "Tout l'univers - Gjon's Tears"        // title and artist?
 		}
 		val parsed = MusicMetadata.fromMediaMetadata(metadata)
-		assertEquals("Energy Basel", parsed.artist)
-		assertEquals("Tout l'univers (EP)", parsed.album)
-		assertEquals("Tout l'univers - Gjon's Tears", parsed.title)
+		assertEquals("artist", "Energy Basel", parsed.artist)
+		assertEquals("album", "Tout l'univers (EP)", parsed.album)
+		assertEquals("title", "Tout l'univers - Gjon's Tears", parsed.title)
 	}
 
 	/**
@@ -97,8 +97,31 @@ class MusicMetadataTest {
 			on { getString(eq(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE)) } doReturn "Tout l'univers - Gjon's Tears"        // title and artist?
 		}
 		val parsed = MusicMetadata.fromMediaMetadata(metadata)
-		assertEquals("Gjon's Tears", parsed.artist)
-		assertEquals("Tout l'univers (EP)", parsed.album)
-		assertEquals("Tout l'univers", parsed.title)
+		assertEquals("artist", "Gjon's Tears", parsed.artist)
+		assertEquals("album", "Tout l'univers (EP)", parsed.album)
+		assertEquals("title", "Tout l'univers", parsed.title)
+	}
+
+	/**
+	 * Swapped DISPLAY fields
+	 */
+	@Test
+	fun testAimp() {
+		val metadata = mock<MediaMetadataCompat> {
+			on { bundle } doReturn fakeBundle
+			on { getString(any()) } doReturn null
+			on { getLong(any()) } doReturn 0
+			on { getString(eq(MediaMetadataCompat.METADATA_KEY_ARTIST)) } doReturn "dj TAKA"
+			on { getString(eq(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST)) } doReturn "dj TAKA"
+			on { getString(eq(MediaMetadataCompat.METADATA_KEY_ALBUM)) } doReturn "milestone"
+			on { getString(eq(MediaMetadataCompat.METADATA_KEY_TITLE)) } doReturn "Votum stellarum"
+			on { getString(eq(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE)) } doReturn "Votum stellarum"
+			on { getString(eq(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION)) } doReturn "milestone"
+			on { getString(eq(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE)) } doReturn "dj TAKA"
+		}
+		val parsed = MusicMetadata.fromMediaMetadata(metadata)
+		assertEquals("artist", "dj TAKA", parsed.artist)
+		assertEquals("album", "milestone", parsed.album)
+		assertEquals("title", "Votum stellarum", parsed.title)
 	}
 }

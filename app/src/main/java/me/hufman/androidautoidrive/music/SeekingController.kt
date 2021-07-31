@@ -32,13 +32,13 @@ class SeekingController(val context: Context, val handler: Handler, val controll
 
 	val seekingActions = listOf(
 		CustomActionDwell("me.hufman.androidautoidrive", "MUSIC_ACTION_SEEK_BACK_60", L.MUSIC_ACTION_SEEK_BACK_60,
-				context.getDrawable(R.drawable.music_seek_back_heavy) , null),
+				0, context.getDrawable(R.drawable.music_seek_back_heavy) , null),
 		CustomActionDwell("me.hufman.androidautoidrive", "MUSIC_ACTION_SEEK_BACK_10", L.MUSIC_ACTION_SEEK_BACK_10,
-				context.getDrawable(R.drawable.music_seek_back), null),
+				0, context.getDrawable(R.drawable.music_seek_back), null),
 		CustomActionDwell("me.hufman.androidautoidrive", "MUSIC_ACTION_SEEK_FORWARD_10", L.MUSIC_ACTION_SEEK_FORWARD_10,
-				context.getDrawable(R.drawable.music_seek_forward), null),
+				0, context.getDrawable(R.drawable.music_seek_forward), null),
 		CustomActionDwell("me.hufman.androidautoidrive", "MUSIC_ACTION_SEEK_FORWARD_60", L.MUSIC_ACTION_SEEK_FORWARD_60,
-				context.getDrawable(R.drawable.music_seek_forward_heavy), null)
+				0, context.getDrawable(R.drawable.music_seek_forward_heavy), null)
 	)
 
 	fun startRewind() {

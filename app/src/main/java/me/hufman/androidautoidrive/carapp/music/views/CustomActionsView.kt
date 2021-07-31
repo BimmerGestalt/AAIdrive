@@ -30,6 +30,7 @@ class CustomActionsView(val state: RHMIState, val graphicsHelpers: GraphicsHelpe
 			}
 		}
 	}
+	var visible = false
 
 	init {
 		listComponent = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
@@ -37,6 +38,7 @@ class CustomActionsView(val state: RHMIState, val graphicsHelpers: GraphicsHelpe
 
 	fun initWidgets(playbackView: PlaybackView) {
 		state.focusCallback = FocusCallback { focused ->
+			visible = focused
 			if (focused) {
 				show()
 			}
@@ -59,8 +61,17 @@ class CustomActionsView(val state: RHMIState, val graphicsHelpers: GraphicsHelpe
 
 	fun show() {
 		actionList.clear()
-		actionList.addAll(musicController.getCustomActions())
+		redraw()
+	}
 
-		listComponent.getModel()?.setValue(listAdapter, 0, listAdapter.height, listAdapter.height)
+	fun redraw() {
+		val newActions = musicController.getCustomActions()
+		synchronized(this) {
+			if (actionList != newActions) {
+				actionList.clear()
+				actionList.addAll(newActions)
+				listComponent.getModel()?.setValue(listAdapter, 0, listAdapter.height, listAdapter.height)
+			}
+		}
 	}
 }
