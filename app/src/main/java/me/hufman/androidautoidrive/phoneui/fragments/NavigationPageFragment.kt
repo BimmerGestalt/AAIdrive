@@ -16,7 +16,6 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.NavigationStatusModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
 class NavigationPageFragment: Fragment() {
-	val viewModel by viewModels<NavigationStatusModel> { NavigationStatusModel.Factory(requireContext().applicationContext) }
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 		val viewModel by viewModels<NavigationStatusModel> { NavigationStatusModel.Factory(requireContext().applicationContext) }

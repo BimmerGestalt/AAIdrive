@@ -68,8 +68,6 @@ class CapabilitiesTipsModel(overrideCarInformation: CarInformation? = null): Tip
 			"music" -> MUSIC_TIPS
 			else -> emptyList()
 		}
-		val applicableTips = sourceTips.filter { summarized.run(it.condition) }
-		println("Calculating TipsModel for mode $mode, found ${applicableTips.size}/${sourceTips.size} tips")
-		currentTips.addAll(applicableTips)
+		currentTips.addAll(sourceTips.filter { summarized.run(it.condition) })
 	}
 }

@@ -93,7 +93,6 @@ class TipsListFragment: Fragment() {
 		// support toggling
 		view.findViewById<View>(R.id.pane_tiplist_expand).setOnClickListener {
 			val visible = !pane.visible
-			println("Toggling $mode tips to visible $visible")
 			pane.visible = visible
 			tabLayout.visible = visible
 			update()
@@ -110,14 +109,12 @@ class TipsListFragment: Fragment() {
 	override fun onResume() {
 		super.onResume()
 
-		println("Resuming $mode tips")
 		update()
 	}
 
 	fun update() {
 		viewModel.mode = mode
 		viewModel.update()
-		println("Checking visibility based on tips ${viewModel.currentTips.size} ${viewModel.currentTips.isNotEmpty()}")
 		view?.visible = viewModel.currentTips.isNotEmpty()
 		adapter.notifyDataSetChanged()
 		view?.invalidate()
