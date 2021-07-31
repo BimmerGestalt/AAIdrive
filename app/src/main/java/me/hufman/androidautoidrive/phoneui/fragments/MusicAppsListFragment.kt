@@ -11,13 +11,11 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import kotlinx.android.synthetic.main.fragment_music_applist.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.StoredSet
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
-import me.hufman.androidautoidrive.phoneui.MusicAppDiscoveryThread
 import me.hufman.androidautoidrive.phoneui.adapters.MusicAppListAdapter
 import me.hufman.androidautoidrive.phoneui.adapters.ObservableListCallback
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicAppsViewModel
@@ -45,6 +43,7 @@ class MusicAppsListFragment: Fragment() {
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		val listMusicApps = view.findViewById<RecyclerView>(R.id.listMusicApps)
 		listMusicApps.setHasFixedSize(true)
 		listMusicApps.layoutManager = LinearLayoutManager(requireActivity())
 		view.post {
@@ -53,6 +52,7 @@ class MusicAppsListFragment: Fragment() {
 
 		appsViewModel.validApps.addOnListChangedCallback(appsChangedCallback)
 
+		val listMusicAppsRefresh = view.findViewById<SwipeRefreshLayout>(R.id.listMusicAppsRefresh)
 		listMusicAppsRefresh.setOnRefreshListener {
 			appsViewModel.musicAppDiscoveryThread.forceDiscovery()
 			handler.postDelayed({

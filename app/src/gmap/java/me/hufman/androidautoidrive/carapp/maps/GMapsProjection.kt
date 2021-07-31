@@ -11,9 +11,9 @@ import android.util.Log
 import android.view.Display
 import android.view.WindowManager
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
-import kotlinx.android.synthetic.gmap.gmaps_projection.*
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.SidebarRHMIDimensions
 import me.hufman.androidautoidrive.carapp.SubsetRHMIDimensions
@@ -42,6 +42,7 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 		window?.setType(WindowManager.LayoutParams.TYPE_PRIVATE_PRESENTATION)
 		setContentView(R.layout.gmaps_projection)
 
+		val gmapView = findViewById<MapView>(R.id.gmapView)
 		gmapView.onCreate(savedInstanceState)
 		gmapView.getMapAsync { map ->
 			this.map = map
@@ -67,6 +68,7 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 	override fun onStart() {
 		super.onStart()
 		Log.i(TAG, "Projection Start")
+		val gmapView = findViewById<MapView>(R.id.gmapView)
 		gmapView.onStart()
 		gmapView.onResume()
 
@@ -109,6 +111,7 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 	override fun onStop() {
 		super.onStop()
 		Log.i(TAG, "Projection Stopped")
+		val gmapView = findViewById<MapView>(R.id.gmapView)
 		gmapView.onPause()
 		gmapView.onStop()
 		gmapView.onDestroy()
@@ -117,6 +120,7 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 
 	override fun onSaveInstanceState(): Bundle {
 		val output = super.onSaveInstanceState()
+		val gmapView = findViewById<MapView>(R.id.gmapView)
 		gmapView.onSaveInstanceState(output)
 		return output
 	}

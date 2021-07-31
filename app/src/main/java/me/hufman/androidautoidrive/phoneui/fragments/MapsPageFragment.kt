@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_mapspage.*
 import me.hufman.androidautoidrive.databinding.MapPageSettingsBinding
+import me.hufman.androidautoidrive.phoneui.controllers.MapsPageController
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import me.hufman.androidautoidrive.phoneui.viewmodels.MapSettingsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
@@ -14,23 +14,23 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
 class MapsPageFragment: Fragment() {
 	val mapSettingsModel by viewModels<MapSettingsModel> { MapSettingsModel.Factory(requireContext().applicationContext) }
-	val permissionsController by lazy { PermissionsController(requireActivity()) }
 	val permissionsModel by viewModels<PermissionsModel> { PermissionsModel.Factory(requireContext().applicationContext) }
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+		val permissionsController by lazy { PermissionsController(requireActivity()) }
+		val mapsPageController by lazy { MapsPageController(mapSettingsModel, permissionsModel, permissionsController) }
+
 		val binding = MapPageSettingsBinding.inflate(inflater, container, false)
 		binding.lifecycleOwner = viewLifecycleOwner
 		binding.settings = mapSettingsModel
+		binding.controller = mapsPageController
 		return binding.root
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
-		swMapsEnabled.setOnCheckedChangeListener { _, isChecked ->
-			onChangedSwitchGMaps(isChecked)
-		}
-
+		// clear the checkbox if we don't yet have location permission
 		permissionsModel.hasLocationPermission.observe(viewLifecycleOwner) {
 			if (!it) {
 				mapSettingsModel.mapEnabled.setValue(false)
@@ -38,18 +38,9 @@ class MapsPageFragment: Fragment() {
 		}
 	}
 
-	fun onChangedSwitchGMaps(isChecked: Boolean) {
-		mapSettingsModel.mapEnabled.setValue(isChecked)
-		if (isChecked) {
-			// make sure we have permissions to show current location
-			if (permissionsModel.hasLocationPermission.value != true) {
-				permissionsController.promptLocation()
-			}
-		}
-	}
-
 	override fun onResume() {
 		super.onResume()
+		// update the model, used in the controller to know to show the prompt
 		permissionsModel.update()
 	}
 }

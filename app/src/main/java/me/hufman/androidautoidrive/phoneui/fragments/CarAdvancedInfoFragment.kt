@@ -5,10 +5,10 @@ import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.gson.JsonObject
-import kotlinx.android.synthetic.main.fragment_car_advancedinfo.*
 import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.liveData
@@ -91,8 +91,8 @@ class CarAdvancedInfoFragment: Fragment() {
 		val carCapabilities = carInformationObserver.capabilities.map {
 			"${it.key}: ${it.value}"
 		}.sorted().joinToString("\n")
-		txtCarCapabilities.text = carCapabilities
-		paneCarCapabilities.visible = carCapabilities.isNotBlank()
+		view?.findViewById<TextView>(R.id.txtCarCapabilities)?.text = carCapabilities
+		view?.findViewById<ViewGroup>(R.id.paneCarCapabilities)?.visible = carCapabilities.isNotBlank()
 	}
 
 	fun redrawCds() {
@@ -100,7 +100,7 @@ class CarAdvancedInfoFragment: Fragment() {
 		val cdsView = CDS_KEYS.map {
 			"${it.key.propertyName}: ${carInformationObserver.cdsData[it.key]?.get(it.value)}"
 		}.joinToString("\n").trim()
-		txtCdsView.text = cdsView
-		paneCdsView.visible = cdsView.isNotBlank()
+		view?.findViewById<TextView>(R.id.txtCdsView)?.text = cdsView
+		view?.findViewById<ViewGroup>(R.id.paneCdsView)?.visible = cdsView.isNotBlank()
 	}
 }

@@ -14,7 +14,6 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_music_appgrid.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.phoneui.NestedGridView
@@ -34,6 +33,7 @@ class MusicAppsGridFragment: Fragment() {
 		return inflater.inflate(R.layout.fragment_music_appgrid, container, false)
 	}
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		val listMusicApps = view.findViewById<NestedGridView>(R.id.listMusicApps)
 		listMusicApps.setOnItemClickListener { _, _, _, _ ->
 			try {
 				findNavController().navigate(R.id.nav_music)
