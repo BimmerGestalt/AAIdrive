@@ -9,13 +9,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlin.coroutines.CoroutineContext
-import kotlinx.android.synthetic.main.music_browsepage.*
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
@@ -25,6 +22,7 @@ import me.hufman.androidautoidrive.utils.Utils
 import me.hufman.androidautoidrive.phoneui.getThemeColor
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
+import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 
 class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 	override val coroutineContext: CoroutineContext
@@ -42,9 +40,12 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 		}
 	}
 
-	lateinit var iconsModel: MusicActivityIconsModel
-	lateinit var musicController: MusicController
 	var loaderJob: Job? = null
+
+	val viewModel by activityViewModels<MusicActivityModel>()
+	val iconsModel by activityViewModels<MusicActivityIconsModel>()
+	lateinit var musicController: MusicController
+
 	val contents = ArrayList<MusicMetadata>()
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -52,13 +53,13 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		val viewModel = ViewModelProvider(requireActivity()).get(MusicActivityModel::class.java)
 		musicController = viewModel.musicController
 
-		iconsModel = ViewModelProvider(requireActivity()).get(MusicActivityIconsModel::class.java)
+		val listBrowse = view.findViewById<RecyclerView>(R.id.listBrowse)
+		val listBrowseRefresh = view.findViewById<SwipeRefreshLayout>(R.id.listBrowseRefresh)
 
 		// redraw to catch any updated coverart
-		viewModel.redrawListener.observe(viewLifecycleOwner, Observer {
+		viewModel.redrawListener.observe(viewLifecycleOwner, {
 			listBrowse.adapter?.notifyDataSetChanged()
 		})
 
@@ -66,28 +67,28 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 		listBrowse.layoutManager = LinearLayoutManager(this.context)
 		listBrowse.adapter = BrowseAdapter(this.requireContext(), iconsModel, contents) { mediaEntry ->
 			if (mediaEntry != null) {
+				val musicPlayerController = (activity as MusicPlayerActivity).musicPlayerController
 				if (mediaEntry.browseable) {
-					(activity as MusicPlayerActivity).pushBrowse(mediaEntry)
+					musicPlayerController.pushBrowse(mediaEntry)
 				} else {
 					musicController.playSong(mediaEntry)
-					(activity as MusicPlayerActivity).showNowPlaying()
+					musicPlayerController.showNowPlaying()
 				}
 			}
 		}
 
+		val mediaId = arguments?.getString(ARG_MEDIA_ID)
 		listBrowseRefresh.setOnRefreshListener {
-			browseDirectory(arguments?.getString(ARG_MEDIA_ID))
+			browseDirectory(mediaId)
 			Handler(this.context?.mainLooper).postDelayed({
 				this.view?.findViewById<SwipeRefreshLayout>(R.id.listBrowseRefresh)?.isRefreshing = false
 			}, 1000)
 		}
-
-		val mediaId = arguments?.getString(ARG_MEDIA_ID)
 		browseDirectory(mediaId)
 	}
 
 	private fun browseDirectory(mediaId: String?) {
-		txtEmpty.text = getString(R.string.MUSIC_BROWSE_LOADING)
+		view?.findViewById<TextView>(R.id.txtEmpty)?.text = getString(R.string.MUSIC_BROWSE_LOADING)
 
 		if (loaderJob != null) {
 			loaderJob?.cancel()
@@ -109,14 +110,16 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 
 	fun redraw() {
 		if (isResumed) {
-			if (contents.isEmpty()) {
-				txtEmpty.text = getString(R.string.MUSIC_BROWSE_EMPTY)
+			val txtEmpty = view?.findViewById<TextView>(R.id.txtEmpty)
+			txtEmpty?.text = if (contents.isEmpty()) {
+				getString(R.string.MUSIC_BROWSE_EMPTY)
 			} else {
-				txtEmpty.text = ""
+				""
 			}
 
-			listBrowse.removeAllViews()
-			listBrowse.adapter?.notifyDataSetChanged()
+			val listBrowse = view?.findViewById<RecyclerView>(R.id.listBrowse)
+			listBrowse?.removeAllViews()
+			listBrowse?.adapter?.notifyDataSetChanged()
 		}
 	}
 }

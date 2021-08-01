@@ -9,13 +9,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.music_browsepage.*
-import kotlinx.android.synthetic.main.music_queuepage.*
-import kotlinx.android.synthetic.main.music_searchpage.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -27,6 +22,7 @@ import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
 import me.hufman.androidautoidrive.phoneui.getThemeColor
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 import me.hufman.androidautoidrive.utils.Utils
 import kotlin.coroutines.CoroutineContext
 
@@ -34,21 +30,22 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 	override val coroutineContext: CoroutineContext
 		get() = Dispatchers.Main
 
-	lateinit var musicController: MusicController
 	val contents = ArrayList<MusicMetadata>()
 	var searchJob: Job? = null
+
+	val viewModel by activityViewModels<MusicActivityModel>()
+	val iconsModel by activityViewModels<MusicActivityIconsModel>()
+	lateinit var musicController: MusicController
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.music_searchpage, container, false)
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		val viewModel = ViewModelProvider(requireActivity()).get(MusicActivityModel::class.java)
 		musicController = viewModel.musicController
 
-		val iconsModel = ViewModelProvider(requireActivity()).get(MusicActivityIconsModel::class.java)
-
-		viewModel.redrawListener.observe(viewLifecycleOwner, Observer {
+		val listSearchResult = view.findViewById<RecyclerView>(R.id.listSearchResult)
+		viewModel.redrawListener.observe(viewLifecycleOwner, {
 			listSearchResult.adapter?.notifyDataSetChanged()
 		})
 
@@ -56,17 +53,18 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 		listSearchResult.layoutManager = LinearLayoutManager(this.context)
 		listSearchResult.adapter = SearchResultsAdapter(this.requireContext(), iconsModel, contents) {
 			if (it != null) {
-				val musicPlayerActivity = (activity as MusicPlayerActivity)
+				val musicPlayerController = (activity as MusicPlayerActivity).musicPlayerController
 				if (it.browseable) {
-					musicPlayerActivity.pushBrowse(it)
-					musicPlayerActivity.showBrowse()
+					musicPlayerController.pushBrowse(it)
+					musicPlayerController.showBrowse()
 				} else if (it.playable) {
 					musicController.playSong(it)
-					musicPlayerActivity.showNowPlaying()
+					musicPlayerController.showNowPlaying()
 				}
 			}
 		}
 
+		val searchBar = view.findViewById<SearchView>(R.id.searchBar)
 		searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 			override fun onQueryTextSubmit(query: String?): Boolean {
 				return true
@@ -87,8 +85,11 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 		}
 
 		contents.clear()
-		listSearchResult.adapter?.notifyDataSetChanged()
-		txtSearchResultsEmpty.text = getString(R.string.MUSIC_BROWSE_LOADING)
+
+		val listSearchResult = view?.findViewById<RecyclerView>(R.id.listSearchResult)
+		listSearchResult?.adapter?.notifyDataSetChanged()
+		val txtSearchResultsEmpty = view?.findViewById<TextView>(R.id.txtSearchResultsEmpty)
+		txtSearchResultsEmpty?.text = getString(R.string.MUSIC_BROWSE_LOADING)
 
 		searchJob = launch {
 			val result = musicController.searchAsync(query)
@@ -100,11 +101,13 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 	}
 
 	private fun redraw() {
-		if (contents.isEmpty()) {
-			txtSearchResultsEmpty?.text = getString(R.string.MUSIC_SEARCH_EMPTY)
+		val txtSearchResultsEmpty = view?.findViewById<TextView>(R.id.txtSearchResultsEmpty)
+		txtSearchResultsEmpty?.text = if (contents.isEmpty()) {
+			getString(R.string.MUSIC_SEARCH_EMPTY)
 		} else {
-			txtSearchResultsEmpty?.text = ""
+			""
 		}
+		val listSearchResult = view?.findViewById<RecyclerView>(R.id.listSearchResult)
 		listSearchResult?.adapter?.notifyDataSetChanged()
 	}
 

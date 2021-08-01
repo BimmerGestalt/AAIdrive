@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Handler
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
@@ -15,7 +16,7 @@ import me.hufman.androidautoidrive.music.QueueMetadata
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 
-class MusicActivityModel(val musicController: MusicController, val spotifyWebApi: SpotifyWebApi): ViewModel() {
+class MusicActivityModel(val musicApp: MusicAppInfo, val musicController: MusicController, val spotifyWebApi: SpotifyWebApi): ViewModel() {
 	class Factory(val appContext: Context, val musicApp: MusicAppInfo): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -26,7 +27,7 @@ class MusicActivityModel(val musicController: MusicController, val spotifyWebApi
 			controller.listener = Runnable {
 				model?.update()
 			}
-			model = MusicActivityModel(controller, spotifyWebApi)
+			model = MusicActivityModel(musicApp, controller, spotifyWebApi)
 			// prepare initial data
 			model.update()
 			return model as T
@@ -37,13 +38,20 @@ class MusicActivityModel(val musicController: MusicController, val spotifyWebApi
 	private val _redrawListener = MutableLiveData<Long>()
 	val redrawListener: LiveData<Long> = _redrawListener
 
-	private val _connected = MutableLiveData<Boolean>(true)
+	// app information
+	private val _connected = MutableLiveData(true)
 	val connected: LiveData<Boolean> = _connected
-	private val _artist = MutableLiveData<String>("")
+	private val _appName = MutableLiveData(musicApp.name)
+	val appName: LiveData<String> = _appName
+	private val _appIcon = MutableLiveData(musicApp.icon)
+	val appIcon: LiveData<Drawable> = _appIcon
+
+	// music information
+	private val _artist = MutableLiveData("")
 	val artist: LiveData<String> = _artist
-	private val _album = MutableLiveData<String>("")
+	private val _album = MutableLiveData("")
 	val album: LiveData<String> = _album
-	private val _title = MutableLiveData<String?>("")
+	private val _title = MutableLiveData("")
 	val title: LiveData<String?> = _title
 	private val _coverArt = MutableLiveData<Bitmap?>()
 	val coverArt: LiveData<Bitmap?> = _coverArt

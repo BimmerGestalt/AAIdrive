@@ -14,12 +14,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlin.collections.ArrayList
-import kotlinx.android.synthetic.main.music_queuepage.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
@@ -27,26 +25,28 @@ import me.hufman.androidautoidrive.music.QueueMetadata
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
+import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 
 class MusicQueueFragment: Fragment() {
 	lateinit var musicController: MusicController
-	lateinit var placeholderCoverArt: Bitmap
 
 	private val contents = ArrayList<MusicMetadata>()
 	private var currentQueueMetadata: QueueMetadata? = null
 
 	val handler = Handler()
 
+	val viewModel by activityViewModels<MusicActivityModel>()
+	val iconsModel by activityViewModels<MusicActivityIconsModel>()
+
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.music_queuepage, container, false)
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		val viewModel = ViewModelProvider(requireActivity()).get(MusicActivityModel::class.java)
 		this.musicController = viewModel.musicController
 
-		val iconsModel = ViewModelProvider(requireActivity()).get(MusicActivityIconsModel::class.java)
-		placeholderCoverArt = iconsModel.placeholderCoverArt
+		val listQueue = view.findViewById<RecyclerView>(R.id.listQueue)
+		val listQueueRefresh = view.findViewById<SwipeRefreshLayout>(R.id.listQueueRefresh)
 
 		// redraw to catch any updated coverart
 		viewModel.redrawListener.observe(viewLifecycleOwner, Observer {
@@ -62,7 +62,8 @@ class MusicQueueFragment: Fragment() {
 		listQueue.adapter = QueueAdapter(this.requireContext(), contents) { mediaEntry ->
 			if (mediaEntry != null) {
 				musicController.playQueue(mediaEntry)
-				(activity as MusicPlayerActivity).showNowPlaying()
+				val musicPlayerController = (activity as MusicPlayerActivity).musicPlayerController
+				musicPlayerController.showNowPlaying()
 			}
 		}
 
@@ -72,13 +73,13 @@ class MusicQueueFragment: Fragment() {
 			}, 1000)
 		}
 
-		txtQueueEmpty.text = getString(R.string.MUSIC_QUEUE_EMPTY)
+		view?.findViewById<TextView>(R.id.txtQueueEmpty)?.text = getString(R.string.MUSIC_QUEUE_EMPTY)
 	}
 
 	fun redraw(metadata: QueueMetadata?) {
-		queueTitle.text = metadata?.title
-		queueSubtitle.text = metadata?.subtitle
-		queueCoverArt.setImageBitmap(metadata?.coverArt ?: placeholderCoverArt)
+		view?.findViewById<TextView>(R.id.queueTitle)?.text = metadata?.title
+		view?.findViewById<TextView>(R.id.queueSubtitle)?.text = metadata?.subtitle
+		view?.findViewById<ImageView>(R.id.queueCoverArt)?.setImageBitmap(metadata?.coverArt ?: iconsModel.placeholderCoverArt)
 
 		// The MusicMetadata objects may have their coverart filled in later
 		// so we don't need to clear the list and readd them just to get new coverart
@@ -87,14 +88,16 @@ class MusicQueueFragment: Fragment() {
 			contents.clear()
 			contents.addAll(metadata?.songs ?: emptyList())
 
-			listQueue.adapter?.notifyDataSetChanged()
+			val listQueue = view?.findViewById<RecyclerView>(R.id.listQueue)
+			listQueue?.adapter?.notifyDataSetChanged()
 			currentQueueMetadata = metadata
 		}
 
-		if (contents.isEmpty()) {
-			txtQueueEmpty.text = getString(R.string.MUSIC_BROWSE_EMPTY)
+		val txtQueueEmpty = view?.findViewById<TextView>(R.id.txtQueueEmpty)
+		txtQueueEmpty?.text = if (contents.isEmpty()) {
+			getString(R.string.MUSIC_BROWSE_EMPTY)
 		} else {
-			txtQueueEmpty.text = ""
+			""
 		}
 	}
 
