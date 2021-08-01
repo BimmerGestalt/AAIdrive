@@ -47,6 +47,7 @@
                 <ImageView
                     android:id="@+id/imgArtist"
                     android:src="@{iconsModel.artistIcon}"
+                    app:iconMaskColor="@{android.R.attr.textColorSecondary}"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:scaleType="centerCrop" />
@@ -92,6 +93,7 @@
                 <ImageView
                     android:id="@+id/imgAlbum"
                     android:src="@{iconsModel.albumIcon}"
+                    app:iconMaskColor="@{android.R.attr.textColorSecondary}"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:scaleType="centerCrop" />
@@ -116,6 +118,7 @@
                 <ImageView
                     android:id="@+id/imgSong"
                     android:src="@{iconsModel.songIcon}"
+                    app:iconMaskColor="@{android.R.attr.textColorSecondary}"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:scaleType="centerCrop" />

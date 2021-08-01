@@ -10,8 +10,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
+import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
+import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.QueueMetadata
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
@@ -58,6 +60,8 @@ class MusicActivityModel(val musicApp: MusicAppInfo, val musicController: MusicC
 
 	private val _queueMetadata = MutableLiveData<QueueMetadata?>()
 	val queueMetadata: LiveData<QueueMetadata?> = _queueMetadata
+	private val _queueEmptyText = MutableLiveData<Context.() -> String>{""}
+	val queueEmptyText: LiveData<Context.() -> String> = _queueEmptyText
 
 	private val _isPaused = MutableLiveData<Boolean>(false)
 	val isPaused: LiveData<Boolean> = _isPaused
@@ -84,6 +88,11 @@ class MusicActivityModel(val musicApp: MusicAppInfo, val musicController: MusicC
 		_coverArt.value = metadata?.coverArt
 
 		_queueMetadata.value = musicController.getQueue()
+		_queueEmptyText.value = if (_queueMetadata.value?.songs?.isEmpty() == true) {
+			{ getString(R.string.MUSIC_BROWSE_EMPTY) }
+		} else {
+			{ "" }
+		}
 
 		val playbackPosition = musicController.getPlaybackPosition()
 		_isPaused.value = playbackPosition.isPaused
@@ -113,4 +122,65 @@ class MusicActivityModel(val musicApp: MusicAppInfo, val musicController: MusicC
 		super.onCleared()
 		musicController.disconnectApp(pause=false)
 	}
+}
+
+/**
+ * Summaries of MusicMetadata to be displayed in various MusicPlayer views
+ * Notably, includes the MusicActivityIconsModel for browse/search pages
+ */
+interface MusicPlayerItem {
+	val musicMetadata: MusicMetadata    // the MusicMetadata to use for Browse and Play commands, not for display purposes
+	val icon: Bitmap?       // a monochrome icon, for the Browse list
+	val coverart: Bitmap?   // a full-color coverart
+	val title: String?      // first line of text
+	val subtitle: String?   // second line of text
+}
+
+class MusicPlayerBrowseItem(val musicActivityIconsModel: MusicActivityIconsModel, override val musicMetadata: MusicMetadata): MusicPlayerItem {
+	override val icon: Bitmap
+		get() = if (musicMetadata.browseable) {
+			musicActivityIconsModel.folderIcon
+		} else {
+			musicActivityIconsModel.songIcon
+		}
+	override val coverart: Bitmap?
+		get() = musicMetadata.coverArt
+	override val title: String?
+		get() = musicMetadata.title
+	override val subtitle: String?
+		get() = musicMetadata.subtitle
+}
+
+class MusicPlayerQueueItem(val musicActivityModel: MusicActivityModel, override val musicMetadata: MusicMetadata): MusicPlayerItem {
+	val nowPlaying: Boolean
+		get() = musicMetadata.queueId == musicActivityModel.musicController.getMetadata()?.queueId && !musicActivityModel.musicController.getPlaybackPosition().isPaused
+	override val icon: Bitmap?
+		get() = null
+	override val coverart: Bitmap?
+		get() = musicMetadata.coverArt
+	override val title: String?
+		get() = musicMetadata.title
+	override val subtitle: String?
+		get() = musicMetadata.artist
+}
+
+class MusicPlayerSearchItem(val musicActivityIconsModel: MusicActivityIconsModel, override val musicMetadata: MusicMetadata): MusicPlayerItem {
+	override val icon: Bitmap
+		get() = if (musicMetadata.browseable) {
+			musicActivityIconsModel.folderIcon
+		} else {
+			musicActivityIconsModel.songIcon
+		}
+	override val coverart: Bitmap?
+		get() = musicMetadata.coverArt
+	override val title: String?
+		get() = musicMetadata.title
+	override val subtitle: String
+		get() {
+			return if (musicMetadata.subtitle == "Artist" || musicMetadata.subtitle == "Episode") {
+				musicMetadata.subtitle
+			} else {
+				"${musicMetadata.subtitle} - ${musicMetadata.artist}"
+			}
+		}
 }

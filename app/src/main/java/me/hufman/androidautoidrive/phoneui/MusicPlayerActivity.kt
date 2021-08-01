@@ -27,7 +27,7 @@ class MusicPlayerActivity: AppCompatActivity() {
 	// the viewmodels used by the fragments
 	val musicActivityModel by viewModels<MusicActivityModel> { MusicActivityModel.Factory(applicationContext, UIState.selectedMusicApp!!) }
 	val musicActivityIconsModel by viewModels<MusicActivityIconsModel> { MusicActivityIconsModel.Factory(this) }
-	val musicPlayerController = MusicPlayerController(null)
+	val musicPlayerController by lazy { MusicPlayerController(null, musicActivityModel.musicController) }
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)

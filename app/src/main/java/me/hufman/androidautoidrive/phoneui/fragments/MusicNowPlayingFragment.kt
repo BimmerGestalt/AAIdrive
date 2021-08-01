@@ -8,9 +8,7 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.databinding.MusicNowPlayingBinding
-import me.hufman.androidautoidrive.utils.Utils
 import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
@@ -32,11 +30,6 @@ class MusicNowPlayingFragment: Fragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		musicController = viewModel.musicController
-
-		// tint the icons for the theme
-		view.findViewById<ImageView>(R.id.imgArtist).colorFilter = Utils.getIconMask(requireContext().getThemeColor(android.R.attr.textColorSecondary))
-		view.findViewById<ImageView>(R.id.imgAlbum).colorFilter = Utils.getIconMask(requireContext().getThemeColor(android.R.attr.textColorSecondary))
-		view.findViewById<ImageView>(R.id.imgSong).colorFilter = Utils.getIconMask(requireContext().getThemeColor(android.R.attr.textColorSecondary))
 
 		// handlers
 		view.findViewById<ImageView>(R.id.imgError).setOnClickListener {

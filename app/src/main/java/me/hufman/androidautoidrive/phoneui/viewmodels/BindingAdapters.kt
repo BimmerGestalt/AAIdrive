@@ -18,12 +18,14 @@ import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
+import me.hufman.androidautoidrive.phoneui.getThemeColor
+import me.hufman.androidautoidrive.utils.Utils.getIconMask
 import java.util.*
 import kotlin.math.max
 
 
 @BindingAdapter("android:src")
-fun setImageViewBitmap(view: ImageView, bitmap: Bitmap) {
+fun setImageViewBitmap(view: ImageView, bitmap: Bitmap?) {
 	view.setImageBitmap(bitmap)
 }
 @BindingAdapter("android:src")
@@ -119,6 +121,11 @@ fun setBackgroundTint(view: View, value: (Context.() -> Int)?) {
 	}
 }
 
+@BindingAdapter("iconMaskColor")
+fun setIconMaskColor(view: ImageView, colorResId: Int) {
+	val color = view.context.getThemeColor(colorResId)
+	view.colorFilter = getIconMask(color)
+}
 @BindingAdapter("app:saturation")
 fun setSaturation(view: ImageView, value: Float) {
 	val matrix = ColorMatrix().apply { setSaturation(value) }
