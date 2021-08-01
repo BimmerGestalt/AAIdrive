@@ -1191,6 +1191,38 @@ class SpotifyWebApiTest {
 	}
 
 	@Test
+	fun testGetPlaylistUri_Pagination_MatchingPlaylist() = runBlocking {
+		val playlistName = "playlistName"
+		val uriId = "uriId"
+		val playlistsNotContainingMatch = listOf(
+				createSimplePlaylist("badUriId", "notMatching")
+		)
+		val playlistsContainingMatch = listOf(
+				createSimplePlaylist(uriId, playlistName)
+		)
+
+		val nextPagingObject: PagingObject<SimplePlaylist> = mock()
+		whenever(nextPagingObject.items).doAnswer { playlistsContainingMatch }
+
+		val pagingObject: PagingObject<SimplePlaylist> = mock()
+		whenever(pagingObject.items).doAnswer { playlistsNotContainingMatch }
+		whenever(pagingObject.getNext()).doAnswer { nextPagingObject }
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.getClientPlaylists(any(), any())).doAnswer { pagingObject }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		val playlistUri = spotifyWebApi.getPlaylistUri(playlistName)
+
+		assertNotNull(playlistUri)
+		assertEquals(uriId, playlistUri!!.id)
+		assertEquals("spotify:playlist:${uriId}", playlistUri.uri)
+	}
+
+	@Test
 	fun testGetPlaylistUri_NoMatchingPlaylist() = runBlocking {
 		val playlistName = "playlistName"
 		val uriId = "uriId"
@@ -1200,6 +1232,34 @@ class SpotifyWebApiTest {
 
 		val pagingObject: PagingObject<SimplePlaylist> = mock()
 		whenever(pagingObject.items).doAnswer { playlists }
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.getClientPlaylists(any(), any())).doAnswer { pagingObject }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		val playlistUri = spotifyWebApi.getPlaylistUri("other playlist")
+
+		assertNull(playlistUri)
+	}
+
+	@Test
+	fun testGetPlaylistUri_Pagination_NoMatchingPlaylist() = runBlocking {
+		val playlist1 = listOf(
+				createSimplePlaylist("uriId1", "playlistName1")
+		)
+		val playlist2 = listOf(
+				createSimplePlaylist("uriId2", "playlistName2")
+		)
+
+		val nextPagingObject: PagingObject<SimplePlaylist> = mock()
+		whenever(nextPagingObject.items).doAnswer { playlist1 }
+
+		val pagingObject: PagingObject<SimplePlaylist> = mock()
+		whenever(pagingObject.items).doAnswer { playlist2 }
+		whenever(pagingObject.getNext()).doAnswer { nextPagingObject }
 
 		val clientPlaylistApi: ClientPlaylistApi = mock()
 		whenever(clientPlaylistApi.getClientPlaylists(any(), any())).doAnswer { pagingObject }

@@ -131,12 +131,13 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 */
 	suspend fun getPlaylistUri(playlistName: String): SpotifyUri? {
 		try {
-			val playlists = webApi?.playlists?.getClientPlaylists(15,0)
-			val matchingPlaylist = playlists?.items?.filter { it.name == playlistName }
-			return if (matchingPlaylist.isNullOrEmpty()) {
-				null
-			} else {
-				matchingPlaylist[0].uri
+			var playlists = webApi?.playlists?.getClientPlaylists(50,0)
+			while (playlists != null) {
+				val matchingPlaylist = playlists.items.find { it.name == playlistName }
+				if (matchingPlaylist != null) {
+					return matchingPlaylist.uri
+				}
+				playlists = playlists.getNext()
 			}
 		} catch (e:SpotifyException.AuthenticationException) {
 			Log.e(TAG, "Failed to find playlist with name $playlistName due to authentication error with the message: ${e.message}")
