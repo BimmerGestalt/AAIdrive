@@ -97,7 +97,7 @@ jobs:
           api-level: 28
           emulator-build: 6110076
           target: google_apis
-          script: ./gradlew install${{ matrix.map }}NonalyticsDebug && ./gradlew install${{ matrix.map }}NonalyticsDebugAndroidTest && adb shell am instrument -w me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner && ./gradlew fetchScreenshots
+          script: adb logcat -c && ./gradlew install${{ matrix.map }}NonalyticsDebug && ./gradlew install${{ matrix.map }}NonalyticsDebugAndroidTest && ( adb shell am instrument -w me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner || adb shell am instrument -w me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner ) && ./gradlew fetchScreenshots || adb logcat -d
       - name: Package screenshots
         uses: actions/upload-artifact@v2
         if: matrix.map == 'Nomap'
