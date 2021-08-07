@@ -42,6 +42,9 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 		synchronized(this) {
 			if (threadMusic?.isAlive != true) {
 				threadMusic = CarThread("Music") {
+					// load the emoji dictionary, used by music app
+					UnicodeCleaner.init(context)
+
 					// make sure bluetooth volume is set to max
 					btConnectionCallback.register()
 					btConnectionCallback.callback.invoke()
@@ -50,7 +53,7 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 					val musicAppDiscovery = MusicAppDiscovery(context, handler)
 					val musicController = MusicController(context, handler)
 					var carappMusic: MusicApp? = null
-					if (musicAppMode.shouldId5Playback()) {
+					if (musicAppMode.supportsId5Playback()) {
 						try {
 							carappMusic = MusicApp(iDriveConnectionStatus, securityAccess,
 									CarAppAssetManager(context, "spotify"),

@@ -18,7 +18,8 @@ class DependencyInfoModel(val connection: CarConnectionDebugging): ViewModel() {
 				handler.post { model?.update() }
 			}
 			// can't unittest CarConnectionDebugging registration
-			connection.register()
+			// don't actually need to subscribe to the connection status for devices or bcl
+			// the callback automatically provides SecurityService callbacks
 			model = DependencyInfoModel(connection)
 			model.update()
 			return model as T

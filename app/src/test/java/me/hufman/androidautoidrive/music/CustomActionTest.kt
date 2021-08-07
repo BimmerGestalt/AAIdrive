@@ -5,7 +5,7 @@ import org.junit.Test
 
 class CustomActionTest {
 	fun caNamed(packageName: String, action: String): CustomAction {
-		return CustomAction(packageName, action, action, null, null)
+		return CustomAction(packageName, action, action, 0, null, null)
 	}
 
 	@Test
@@ -60,5 +60,19 @@ class CustomActionTest {
 			caFormatted("SEEK_15_SECONDS_BACK").name)
 		assertEquals(L.MUSIC_ACTION_SEEK_FORWARD_15,
 			caFormatted("SEEK_15_SECONDS_FORWARD").name)
+	}
+
+	@Test
+	fun podcastActions() {
+		val isDwellAction: (String) -> Boolean = {
+			CustomAction.enableDwellAction(caNamed("podcastaddicts", it)) is CustomActionDwell
+		}
+
+		assert(isDwellAction("jumpBack"))
+		assert(isDwellAction("JumpNext"))
+		assert(isDwellAction("skipBack"))
+		assert(isDwellAction("SEEK_FORWARD"))
+		assert(isDwellAction("changeSpeed"))
+		assert(!isDwellAction("THUMB_UP"))
 	}
 }

@@ -41,5 +41,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/fragmentCarCapabilities"
             android:name="me.hufman.androidautoidrive.phoneui.fragments.CarCapabilitiesFragment"/>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragmentBclStatus"
+            android:name="me.hufman.androidautoidrive.phoneui.fragments.BclStatusFragment"/>
     </LinearLayout>
 </ScrollView>

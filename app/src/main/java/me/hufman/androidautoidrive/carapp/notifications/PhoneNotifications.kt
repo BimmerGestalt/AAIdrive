@@ -350,7 +350,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 				val userActivelyInteracting = timeSinceContextChange < HMI_CONTEXT_THRESHOLD
 				if (notificationSettings.shouldPopup(passengerSeated) && (currentlyPopped || (!currentlyReading && !currentlyInputing && !userActivelyInteracting))) {
 					viewPopup.showNotification(sbn)
-				} else {
+				} else if (!currentlyPopped && !currentlyReading) {
 					// only show the statusbar icon if we didn't pop it up
 					viewList.showNotification(sbn)
 				}

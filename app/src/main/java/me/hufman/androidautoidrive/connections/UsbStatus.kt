@@ -6,8 +6,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.hardware.usb.UsbManager
 import android.util.Log
+import java.lang.IllegalArgumentException
 
 class UsbStatus(val context: Context, val callback: () -> Unit) {
+
+	private var subscribed = false
+
 	val isUsbConnected
 		get() = usbListener.connectedProfiles["connected"] == true
 	val isUsbTransferConnected
@@ -48,7 +52,9 @@ class UsbStatus(val context: Context, val callback: () -> Unit) {
 		}
 
 		fun unsubscribe() {
-			context.unregisterReceiver(this)
+			try {
+				context.unregisterReceiver(this)
+			} catch (e: IllegalArgumentException) {}
 		}
 
 		fun isBMWConnected(): Boolean {
@@ -80,10 +86,16 @@ class UsbStatus(val context: Context, val callback: () -> Unit) {
 	}
 
 	fun register() {
-		usbListener.subscribe(context.getSystemService(UsbManager::class.java))
+		if (!subscribed) {
+			usbListener.subscribe(context.getSystemService(UsbManager::class.java))
+			subscribed = true
+		}
 	}
 
 	fun unregister() {
-		usbListener.unsubscribe()
+		if (subscribed) {
+			subscribed = false
+			usbListener.unsubscribe()
+		}
 	}
 }

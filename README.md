@@ -13,7 +13,7 @@ Android Auto for IDrive
 
 The BMW/Mini IDrive NBT does not offer native Android Auto integration, but does provide a very powerful Connected Apps convergence option with tight integration points into the car. This project is an effort to implement most of the features of Android Auto as unofficial BMW/Mini Connected Apps.
 
-By relying on the Connected Apps technology, this app greatly extends the functionality of the car without any modifications or hacks. Any MY2014 or newer BMW or Mini equipped with NBT or NBT Evo and the "BMW Apps (6NR)" feature, an active [BMW ConnectedDrive](https://www.bmwusa.com/explore/connecteddrive.html) subscription, or the "Mini Connected (SA6NM)" option should be compatible.
+By relying on the Connected Apps technology, this app greatly extends the functionality of the car without any modifications or hacks. Any MY2014 or newer BMW or Mini equipped with NBT or NBT Evo and the "BMW Apps (6NR)" feature, an active [BMW ConnectedDrive subscription](https://hufman.github.io/AndroidAutoIdrive/images/bmw-connected-subscription.png), or the "Mini Connected (SA6NM)" option should be compatible.
 
 [![App List](https://hufman.github.io/AndroidAutoIdrive/images/demo-applist.gif)<br />Gallery](https://hufman.github.io/AndroidAutoIdrive/gallery.html)
 
@@ -27,20 +27,12 @@ Android Auto for IDrive, combined with the safety benefits of the tactile IDrive
 Getting Started
 ---------------
 
-This app requires that the BMW Connected or Mini Connected app for your car is installed and can successfully add the Connected and Calendar entries to your car's Connected Apps menu. The new My BMW app seems to interfere with BMW Connected and is not supported.
+This app requires that the MyBMW or MINI app for your car is installed and that it can successfully enable your ID5 car's [Apps checkbox](app/src/main/res/drawable/pic_btapp_bmw.jpg), or if your ID4 car has the [Connection Assistant option](app/src/main/res/drawable/pic_connassistant_bmw.jpg).
 
-Download the APK of the latest stable release from the [Releases page](https://github.com/hufman/AndroidAutoIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. After starting, the app should detect the Connected app and start waiting for the car connection.
+Download the APK of the latest stable release from the [Releases page](https://github.com/hufman/AndroidAutoIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. After starting, the app should detect the MyBMW app and start waiting for the car connection.
 
 Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-sentry-release.apk) to automatically report crashes.
 The [nonalytics](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-nonalytics-release.apk) build is available too.
-Some of the new features include:
-  - Brand new simpler phone UI with clearer setup instructions
-  - Supports logging in as Spotify to set the global coverart in ID5+
-  - Adds Spotify browse and playlist coverart, as well as searching Spotify
-  - Reads out notifications, and adds popup and statusbar support in ID5+
-  - Supports replying to notifications
-  - Starts car navigation to handle certain phone navigation buttons
-  - Supports the new MyBMW app
 
 Check out the [FAQ](https://hufman.github.io/AndroidAutoIdrive/faq.html) if you run into problems.
 
@@ -49,37 +41,47 @@ User Guide
 
 ![Phone Connection](https://hufman.github.io/AndroidAutoIdrive/images/screenshot-connection.png)
 
-After connecting the phone to the car, the official Connected app should show this car icon in the status bar. When this icon appears, this app should connect and add its functionality to the car.
+After connecting the phone to the car, the official MyBMW app should show this car icon in the status bar. When this icon appears, this app should connect and add its functionality to the car.
 
-See [this guide](https://hufman.github.io/AndroidAutoIdrive/connection.html) for tips on improving the connection reliability of the Connected app.
+See [this guide](https://hufman.github.io/AndroidAutoIdrive/connection.html) for tips on improving the connection reliability of the MyBMW app.
 
 ![Phone App List](https://hufman.github.io/AndroidAutoIdrive/images/screenshot-phoneapps.jpg)
 
-After all the apps are connected, a bunch of new entries will show up in the car's Connected menu. Besides the official Calendar and Connected apps, there should be a new Audioplayer icon and a book icon with no label. This book icon is the Notifications app, if enabled.
+After all the apps are connected, a bunch of new entries will show up in the car's Connected menu. There should be a new Audioplayer or Spotify icon and a book icon with no label. This book icon is the Notifications app, if enabled.
 
 ![Music App List](https://hufman.github.io/AndroidAutoIdrive/images/screenshot-medialist.jpg)
 
-Several new entries will be added to the Media section of the control screen. The Audioplayer icon is the one with the main functionality, while the other displayed apps above the Audioplayer are quick shortcuts to switch playback to the respective apps. This screenshot also shows the official Spotify app at the bottom of the list.
+Several new entries will be added to the Media section of the control screen. The Audioplayer icon is the one with the main functionality, while the other displayed apps above the Audioplayer are quick shortcuts to switch playback to the respective apps. This screenshot also shows the legacy Spotify app at the bottom of the list.
 
 Implemented Features
 --------------------
 
+  - Car Information
+    - Remembers fuel level, window status, and car's location after parking
+    - Shows live-updating speed and compass while connected
+  - Car Navigation Integration
+    - Android Navigation Intents and buttons can be handled by the connected car's navigation
+    - Google Maps can share destinations to the connected car's navigation
+    - Addresses can be entered in the phone interface to start the car's navigation
   - Google Assistant
     - Any voice assistant installed on the phone is added as a Connected App entry
     - Google Assistant works the best, but Alexa, Bixby, and Cortana are also compatible
     - The voice assistant app can be set as a hardware shortcut button for convenience
   - Phone Notifications
     - Popup about new notifications
+    - Can play a notification sound through the car's speakers
     - Supports Dismiss, Mark As Read, or other notification actions
+    - Supports replying, including emoji input
   - Google Maps (proof-of-concept)
     - Basic search and routing
     - Includes some dark themes
     - Poor performance due to the nature of the protocol
     - Not compiled by default, because showing Google Maps in a car is against the Maps API license
   - Control of Android Auto compatible music apps
-    - Supports browsing and searching apps' music libraries
+    - Supports browsing and searching apps' music libraries, including a special Spotify integration
     - Supports selecting from a list of currently-queued songs, as well as basic back/next control
     - Integrates into the car's audio context, for automatic resume and hardware button control
+    - Supports the ID5 music layout, enabling global coverart integration
     - Supports controlling any active music session, even apps that aren't Android Auto compatible
     - Automatically updates the screen to follow the active app
     - Recommended compatible apps:
@@ -161,11 +163,14 @@ Besides showing a self-contained remote UI, the IDrive system offers many exciti
 
   - The UI widgets automatically take on the respective theme to fit the car
   - The Assistants, Map View, Notification List, and Music Playback screens can be assigned to the physical shortcut buttons in the dashboard
-  - New notifications trigger a statusbar icon in IDrive version 4
-  - New notifications can trigger a popup in IDrive version 4
+  - Car information is retained after disconnect, such as window status and parked location
+  - New notifications trigger a statusbar icon
+  - New notifications can trigger a popup
   - New notification popups can be disabled if a passenger is detected in the seat
+  - The car's navigation system is available to handle Android Navigation Intents
   - The currently-playing app is displayed along the top of the IDrive screen
-  - The currently-playing song title is shown in the Multimedia side panel of the IDrive
+  - The currently-playing song title is shown in the IDrive4 Multimedia side panel
+  - The currently-playing song coverart and progress is shown in the IDrive5 Multimedia side panel
   - On a MY2017+ car supporting Bluetooth Apps, audio focus will be enabled which grants the following extra features:
     - The Media shortcut button opens this app when it is in control of the music
     - Automatically resumes playback when reconnecting to the car
@@ -202,17 +207,11 @@ Due to the unofficial reverse-engineered nature of this project, it has some lim
     - Scribd
     - Smart Audiobook Player
     - YouTube Music
-  - Recent versions of Spotify block the standard Android MediaBrowserService connection, which is needed for the Search feature. Downgrading to [version 8.4.96.953](https://www.apkhere.com/down/com.spotify.music_8.4.96.953_free) will enable this feature.
 
 Requirements
 ------------
 
-To communicate to the car, this project relies on the proxy connection that is created by the main Connected app on the phone. Both of the brand-specific Connected and the Connected Classic apps have been tested as compatible for this purpose, but the new Connected app is more reliable. My BMW and the new MINI app are not compatible.
-
-Additionally, the car proposes a security challenge during the connection process, and this project asks the Security Service provided by the Connected apps for the correct response.
-The normal Connected app should be enough for this, but it might be necessary to also install the Connected Classic app to provide the Security Service.
-If this is needed, it is not recommended to install both the Connected and Connected Classic apps of the same brand, they may fight over the connection to the car and undefined results may happen.
-Instead, install the Connected Classic app of the other brand that is not intended to be used regularly, for example using BMW Connected and Mini Connected Classic.
+To communicate to the car, this project relies on the proxy connection that is created by the main MyBMW or Mini app on the phone. Additionally, the legacy Connected and the Connected Classic apps have been tested as compatible for this purpose, but the Connected app is more resilient against Android's memory management.
 
 Build Instructions
 ------------------

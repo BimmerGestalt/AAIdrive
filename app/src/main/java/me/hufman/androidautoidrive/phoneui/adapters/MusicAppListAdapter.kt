@@ -27,7 +27,7 @@ import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import me.hufman.androidautoidrive.phoneui.fragments.SpotifyDowngradeDialog
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 
-class MusicAppListAdapter(val activity: Activity, val handler: Handler, val supportFragmentManager: FragmentManager, val contents: ArrayList<MusicAppInfo>, val musicSessions: MusicSessions): RecyclerView.Adapter<MusicAppListAdapter.ViewHolder>() {
+class MusicAppListAdapter(val activity: Activity, val handler: Handler, val supportFragmentManager: FragmentManager, val contents: List<MusicAppInfo>, val musicSessions: MusicSessions): RecyclerView.Adapter<MusicAppListAdapter.ViewHolder>() {
 
 	// permissions controller for opening the app permissions screen
 	val permissionsController = PermissionsController(activity)

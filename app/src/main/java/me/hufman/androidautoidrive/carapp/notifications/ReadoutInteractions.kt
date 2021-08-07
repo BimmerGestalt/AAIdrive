@@ -61,16 +61,18 @@ class ReadoutInteractions(val settings: NotificationSettings) {
 		}
 	}
 
-	fun triggerDisplayReadout(carNotification: CarNotification) {
-		if (settings.shouldReadoutNotificationDetails() && carNotification != currentNotification) {
-			if (currentNotification != null) {
-				readoutController?.cancel()
-				Thread.sleep(500)
+	fun triggerDisplayReadout(carNotification: CarNotification, ignoreSetting: Boolean = false) {
+		if (ignoreSetting || settings.shouldReadoutNotificationDetails()) {
+			if (carNotification != currentNotification) {
+				if (currentNotification != null) {
+					readoutController?.cancel()
+					Thread.sleep(500)
+				}
+				currentNotification = carNotification
+				readoutController?.readout(carNotification.text.split("\n"))
+				// mark the tts state as busy, in case the Notification app checks the state before CDS updates
+				readoutController?.onTTSEvent(TTSState(ReadoutState.BUSY.value, -1, -1, readoutController?.name ?: "", null))
 			}
-			currentNotification = carNotification
-			readoutController?.readout(carNotification.text.split("\n"))
-			// mark the tts state as busy, in case the Notification app checks the state before CDS updates
-			readoutController?.onTTSEvent(TTSState(ReadoutState.BUSY.value, -1, -1, readoutController?.name ?: "", null))
 		}
 	}
 

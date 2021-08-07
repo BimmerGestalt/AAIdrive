@@ -149,9 +149,8 @@ class NotificationAppTest {
 			assertEquals("Richtext", visibleWidgets[3].asList()?.getModel()?.modelType)
 			assertEquals(true, mockServer.properties[visibleWidgets[3].id]?.get(RHMIProperty.PropertyId.SELECTABLE.id))
 			val state = app.viewDetails.state as RHMIState.ToolbarState
-			assertEquals( 150, state.toolbarComponentsList[1].getImageModel()?.asImageIdModel()?.imageId)
-			state.toolbarComponentsList.subList(2, 7).forEach {
-				assertEquals(158, it.getImageModel()?.asImageIdModel()?.imageId)
+			state.toolbarComponentsList.subList(1, 7).forEach {
+				assertEquals(true, it.properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
 			}
 		}
 		// test stateList setup
@@ -568,6 +567,7 @@ class NotificationAppTest {
 		val bundle2 = createNotificationObject("Title", "Text")
 		app.notificationListener.onNotification(bundle2)
 		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+		assertNull(mockServer.triggeredEvents[4])    // did not trigger the statusbar icon
 	}
 
 	/**
@@ -585,15 +585,21 @@ class NotificationAppTest {
 		app.viewDetails.selectedNotification = bundle
 		app.viewDetails.state.focusCallback?.onFocus(true)
 
-		// it should not popup
+		// opening the viewDetails hides the statusbar icon, so clear the event history
+		mockServer.triggeredEvents.clear()
+
+		// it should not popup, because it's the same conversation
 		val bundle2 = createNotificationObject("Title", "Text\nNext Message")
 		app.notificationListener.onNotification(bundle2)
 		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup
+		assertNull(mockServer.triggeredEvents[4])    // did not trigger the statusbar icon
 
 		// now hide the notification, and try to popup again
+		// it should not popup because it's the same message
 		app.viewDetails.state.focusCallback?.onFocus(false)
 		app.notificationListener.onNotification(bundle2)
 		assertNull(mockServer.triggeredEvents[1])    // did not trigger the popup that we just read
+		assertNull(mockServer.triggeredEvents[4])    // did not trigger the statusbar icon
 	}
 
 	/**
@@ -1174,15 +1180,17 @@ class NotificationAppTest {
 		assertEquals(true, buttons[0].properties[RHMIProperty.PropertyId.ENABLED.id]?.value)  // clear this notification button
 		assertEquals(true, buttons[0].properties[RHMIProperty.PropertyId.SELECTABLE.id]?.value)  // clear this notification button
 		assertEquals(true, buttons[0].properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
-		assertEquals(app.viewList.state.id, buttons[0].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
+		assertEquals( 150, buttons[0].getImageModel()?.asImageIdModel()?.imageId)
 		assertEquals("Clear", buttons[0].getTooltipModel()?.asRaDataModel()?.value)  // clear this notification button
 		assertEquals(true, buttons[1].properties[RHMIProperty.PropertyId.ENABLED.id]?.value)
 		assertEquals(true, buttons[1].properties[RHMIProperty.PropertyId.SELECTABLE.id]?.value)
 		assertEquals(true, buttons[1].properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
+		assertEquals( 158, buttons[1].getImageModel()?.asImageIdModel()?.imageId)
 		assertEquals("Reply", buttons[1].getTooltipModel()?.asRaDataModel()?.value)  // reply button
 		assertEquals(true, buttons[2].properties[RHMIProperty.PropertyId.ENABLED.id]?.value)
 		assertEquals(true, buttons[2].properties[RHMIProperty.PropertyId.SELECTABLE.id]?.value)
 		assertEquals(true, buttons[2].properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
+		assertEquals( 158, buttons[2].getImageModel()?.asImageIdModel()?.imageId)
 		assertEquals("Mark Read", buttons[2].getTooltipModel()?.asRaDataModel()?.value)  // custom action button
 		assertEquals(false, buttons[3].properties[RHMIProperty.PropertyId.ENABLED.id]?.value)  // empty button
 		assertEquals(false, buttons[3].properties[RHMIProperty.PropertyId.SELECTABLE.id]?.value)
@@ -1193,6 +1201,8 @@ class NotificationAppTest {
 		assertEquals(app.viewList.state.id, buttons[2].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
 		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(emptyMap<Int, Any>())
 		assertEquals(app.stateInput.id, buttons[1].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
+		buttons[0].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(emptyMap<Int, Any>())
+		assertEquals(app.viewList.state.id, buttons[0].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
 
 		val inputComponent = app.stateInput.componentsList[0] as RHMIComponent.Input
 
@@ -1227,6 +1237,56 @@ class NotificationAppTest {
 		assertEquals(listOf("Yes", "No", ":heart_eyes_cat:"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
 		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		verify(carNotificationController).reply(notification.key, notification.actions[0].name.toString(), "Yes")
+	}
+
+	@Test
+	fun testActionReadout() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
+		app.readoutInteractions.readoutController = readoutController
+
+		whenever(notificationSettings.shouldReadoutNotificationDetails()) doReturn false
+
+		val actions = listOf(
+				CarNotification.Action("Mark Read", false, emptyList())
+		)
+		val notification = createNotificationObject("Title", "Title: Text\nTest",true, actions = actions)
+		NotificationsState.notifications.add(0, notification)
+		app.viewDetails.selectedNotification = notification
+		app.viewDetails.visible = true
+		app.viewDetails.show()
+
+		// verify the right buttons are enabled
+		val buttons = app.viewDetails.state.asToolbarState()!!.toolbarComponentsList.subList(1, 7)
+		assertEquals(true, buttons[0].properties[RHMIProperty.PropertyId.ENABLED.id]?.value)  // clear this notification button
+		assertEquals(true, buttons[0].properties[RHMIProperty.PropertyId.SELECTABLE.id]?.value)  // clear this notification button
+		assertEquals(true, buttons[0].properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
+		assertEquals( 150, buttons[0].getImageModel()?.asImageIdModel()?.imageId)
+		assertEquals("Clear", buttons[0].getTooltipModel()?.asRaDataModel()?.value)  // clear this notification button
+		assertEquals(true, buttons[1].properties[RHMIProperty.PropertyId.ENABLED.id]?.value)  // clear this notification button
+		assertEquals(true, buttons[1].properties[RHMIProperty.PropertyId.SELECTABLE.id]?.value)  // clear this notification button
+		assertEquals(true, buttons[1].properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
+		assertEquals( 154, buttons[1].getImageModel()?.asImageIdModel()?.imageId)
+		assertEquals("Speak", buttons[1].getTooltipModel()?.asRaDataModel()?.value)  // clear this notification button
+		assertEquals(true, buttons[2].properties[RHMIProperty.PropertyId.ENABLED.id]?.value)
+		assertEquals(true, buttons[2].properties[RHMIProperty.PropertyId.SELECTABLE.id]?.value)
+		assertEquals(true, buttons[2].properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
+		assertEquals( 158, buttons[2].getImageModel()?.asImageIdModel()?.imageId)
+		assertEquals("Mark Read", buttons[2].getTooltipModel()?.asRaDataModel()?.value)  // custom action button
+		assertEquals(false, buttons[3].properties[RHMIProperty.PropertyId.ENABLED.id]?.value)  // empty button
+		assertEquals(false, buttons[3].properties[RHMIProperty.PropertyId.SELECTABLE.id]?.value)
+		assertEquals(true, buttons[3].properties[RHMIProperty.PropertyId.VISIBLE.id]?.value)
+		assertEquals("", buttons[3].getTooltipModel()?.asRaDataModel()?.value)    // empty button
+
+		buttons[2].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(emptyMap<Int, Any>())
+		assertEquals(app.viewList.state.id, buttons[2].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
+		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(emptyMap<Int, Any>())
+		assertEquals(app.viewDetails.state.id, buttons[1].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
+		buttons[0].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(emptyMap<Int, Any>())
+		assertEquals(app.viewList.state.id, buttons[0].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
+		// it should have start reading out the notification
+		verify(readoutController).readout(listOf("Title: Text", "Test"))
 	}
 
 	@Test

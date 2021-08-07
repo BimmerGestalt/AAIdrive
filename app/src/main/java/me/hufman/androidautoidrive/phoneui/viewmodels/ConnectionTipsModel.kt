@@ -21,7 +21,11 @@ class ConnectionTipsModel(val connection: CarConnectionDebugging): TipsModel() {
 //				handler.post { model?.update() }
 			}
 			// can't unittest CarConnectionDebugging registration
-			connection.register()
+
+			// only register to the device status specifically
+			// don't need to register to BCL updates
+			connection._registerBtStatus()
+			connection._registerUsbStatus()
 			model = ConnectionTipsModel(connection)
 			model.update()
 			return model as T

@@ -49,9 +49,13 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			val coverArt = item.coverArt
 			val coverArtImage = if (coverArt != null) graphicsHelpers.compress(coverArt, 90, 90, quality = 30) else ""
 
-			val title = UnicodeCleaner.clean(item.title ?: "").truncate(ROW_LINE_MAX_LENGTH)
-			val artist = UnicodeCleaner.clean(item.artist ?: "").truncate(ROW_LINE_MAX_LENGTH)
-			val songMetaDataText = "${title}\n${artist}"
+			val title = UnicodeCleaner.clean(item.title ?: "")
+			val artist = UnicodeCleaner.clean(item.artist ?: "")
+			val songMetaDataText = if (artist.isNotBlank()) {
+				"${title.truncate(ROW_LINE_MAX_LENGTH)}\n$artist"
+			} else {
+				title
+			}
 
 			return arrayOf(
 					checkmark,

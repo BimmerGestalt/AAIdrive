@@ -11,6 +11,7 @@ object L {
 	var NOTIFICATIONS_TITLE = "Notifications"
 	var NOTIFICATIONS_EMPTY_LIST = "No Notifications"
 	var NOTIFICATION_CLEAR_ACTION = "Clear"
+	var NOTIFICATION_READOUT_ACTION = "Speak"
 	var NOTIFICATION_OPTIONS = "Options"
 	var NOTIFICATION_POPUPS = "Notification Popups"
 	var NOTIFICATION_POPUPS_PASSENGER = "Popups with passenger"

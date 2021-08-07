@@ -21,7 +21,9 @@ import kotlinx.android.synthetic.main.fragment_notificationpage.*
 import kotlinx.android.synthetic.main.fragment_notificationpage.swMessageNotifications
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
+import me.hufman.androidautoidrive.phoneui.viewmodels.NotificationSettingsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 
 class NotificationPageFragment: Fragment() {
@@ -30,7 +32,8 @@ class NotificationPageFragment: Fragment() {
 	}
 
 	val permissionsController by lazy { PermissionsController(requireActivity()) }
-	val viewModel by lazy { PermissionsModel.Factory(requireContext().applicationContext).create(PermissionsModel::class.java) }
+	val notificationSettingsModel by viewModels<NotificationSettingsModel> {NotificationSettingsModel.Factory(requireContext().applicationContext)}
+	val permissionsModel by viewModels<PermissionsModel> {PermissionsModel.Factory(requireContext().applicationContext)}
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.fragment_notificationpage, container, false)
@@ -39,13 +42,12 @@ class NotificationPageFragment: Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
-		val notificationsEnabledSetting = BooleanLiveSetting(requireContext().applicationContext, AppSettings.KEYS.ENABLED_NOTIFICATIONS)
-		notificationsEnabledSetting.observe(viewLifecycleOwner) {
+		notificationSettingsModel.notificationEnabled.observe(viewLifecycleOwner) {
 			swMessageNotifications.isChecked = it
 			paneNotificationSettings.visible = it
 		}
 		swMessageNotifications.setOnCheckedChangeListener { _, isChecked ->
-			onChangedSwitchNotifications(notificationsEnabledSetting, isChecked)
+			onChangedSwitchNotifications(isChecked)
 		}
 
 		// spawn a Test notification
@@ -57,14 +59,14 @@ class NotificationPageFragment: Fragment() {
 	override fun onResume() {
 		super.onResume()
 
-		viewModel.update()
+		permissionsModel.update()
 	}
 
-	private fun onChangedSwitchNotifications(appSetting: BooleanLiveSetting, isChecked: Boolean) {
-		appSetting.setValue(isChecked)
+	private fun onChangedSwitchNotifications(isChecked: Boolean) {
+		notificationSettingsModel.notificationEnabled.setValue(isChecked)
 		if (isChecked) {
 			// make sure we have permissions to read the notifications
-			if (viewModel.hasNotificationPermission.value != true) {
+			if (permissionsModel.hasNotificationPermission.value != true) {
 				permissionsController.promptNotification()
 			}
 		}

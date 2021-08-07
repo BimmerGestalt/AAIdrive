@@ -19,7 +19,7 @@ abstract class TipsModel: ViewModel() {
 
 class CapabilitiesTip(text: Context.() -> String, drawable: Context.() -> Drawable?, val condition: CarCapabilitiesSummarized.() -> Boolean): Tip(text, drawable)
 
-class CapabilitiesTipsModel: TipsModel() {
+class CapabilitiesTipsModel(overrideCarInformation: CarInformation? = null): TipsModel() {
 	class Factory() : ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -28,7 +28,8 @@ class CapabilitiesTipsModel: TipsModel() {
 			} as T
 		}
 	}
-	val carInformation = CarInformation()
+
+	val carInformation = overrideCarInformation ?: CarInformation()
 
 	val MUSIC_TIPS = listOf(
 		CapabilitiesTip({getString(R.string.tip_audioplayer_bookmark)}, {ContextCompat.getDrawable(this, R.drawable.tip_bookmark_audioplayer_entrybutton_mini_id4)}) { isId4 },

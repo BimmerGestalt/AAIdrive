@@ -257,13 +257,13 @@ class ConnectionStatusModelTest {
 		delay(10500L)
 		// flips to show a hint after a timeout
 		context.run(model.hintBclDisconnected.value!!)
-		verify(context).getString(eq(R.string.txt_setup_enable_bclspp_bt))
+		verify(context).getString(eq(R.string.txt_setup_enable_bclspp_usb))
 
 		// main connection status shows the hint too
 		context.run(model.carConnectionText.value!!)
 		verify(context, times(2)).getString(eq(R.string.txt_setup_bcl_waiting))
 		context.run(model.carConnectionHint.value!!)
-		verify(context, times(2)).getString(eq(R.string.txt_setup_enable_bclspp_bt))
+		verify(context, times(2)).getString(eq(R.string.txt_setup_enable_bclspp_usb))
 	}
 
 	@Test

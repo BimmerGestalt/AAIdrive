@@ -78,20 +78,29 @@ fun getSelectedValue(spinner: Spinner): String {
 
 // Dynamic text
 @BindingAdapter("android:text")
-fun setText(view: TextView, value: Context.() -> String) {
-	view.text = view.context.run(value)
+fun setText(view: TextView, value: (Context.() -> String)?) {
+	view.text = if (value != null) {
+		view.context.run(value)
+	} else {
+		""
+	}
 }
 
 // Dynamic text
 @BindingAdapter("android:visibility")
-fun setVisibilityByTextGetter(view: View, value: Context.() -> String) {
-	val text = view.context.run(value)
+fun setVisibilityByTextGetter(view: View, value: (Context.() -> String)?) {
+	val text = if (value != null) {
+		view.context.run(value)
+	} else {
+		""
+	}
 	view.visible = text.isNotBlank()
 }
 
 // Dynamic color with a smooth transition
 @BindingAdapter("android:backgroundTint")
-fun setBackgroundTint(view: View, value: Context.() -> Int) {
+fun setBackgroundTint(view: View, value: (Context.() -> Int)?) {
+	value ?: return
 	val color = view.context.run(value)
 	val startColor = view.backgroundTintList?.defaultColor
 	if (startColor != color) {

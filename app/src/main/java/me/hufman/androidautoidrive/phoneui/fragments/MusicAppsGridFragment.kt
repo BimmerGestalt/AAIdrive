@@ -1,6 +1,5 @@
 package me.hufman.androidautoidrive.phoneui.fragments
 
-import android.content.Intent
 import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
@@ -18,21 +17,17 @@ import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_music_appgrid.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
-import me.hufman.androidautoidrive.phoneui.MusicAppDiscoveryThread
 import me.hufman.androidautoidrive.phoneui.NestedGridView
+import me.hufman.androidautoidrive.phoneui.adapters.ObservableListCallback
+import me.hufman.androidautoidrive.phoneui.viewmodels.MusicAppsViewModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 import java.lang.IllegalStateException
 
 class MusicAppsGridFragment: Fragment() {
 	val handler = Handler()
-	val displayedMusicApps = ArrayList<MusicAppInfo>()
-	val appDiscoveryThread by lazy {
-		MusicAppDiscoveryThread(requireActivity().applicationContext) { appDiscovery ->
-			handler.post {
-				displayedMusicApps.clear()
-				displayedMusicApps.addAll(appDiscovery.validApps)
-				view?.findViewById<NestedGridView>(R.id.listMusicApps)?.invalidateViews() // redraw the app list
-			}
-		}.apply { start() }
+	val appsViewModel by activityViewModels<MusicAppsViewModel> { MusicAppsViewModel.Factory(requireActivity().applicationContext) }
+	private val appsChangedCallback = ObservableListCallback<MusicAppInfo> {
+		view?.findViewById<NestedGridView>(R.id.listMusicApps)?.invalidateViews() // redraw the app list
 	}
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -47,7 +42,12 @@ class MusicAppsGridFragment: Fragment() {
 			}
 		}
 
-		listMusicApps.adapter = object : ArrayAdapter<MusicAppInfo>(requireContext(), R.layout.musicapp_listitem, displayedMusicApps) {
+		view.post {
+			appsChangedCallback.onChanged(null)
+		}
+		appsViewModel.validApps.addOnListChangedCallback(appsChangedCallback)
+
+		listMusicApps.adapter = object : ArrayAdapter<MusicAppInfo>(requireContext(), R.layout.musicapp_listitem, appsViewModel.validApps) {
 			val animationLoopCallback = object : Animatable2.AnimationCallback() {
 				override fun onAnimationEnd(drawable: Drawable?) {
 					handler.post { (drawable as? AnimatedVectorDrawable)?.start() }
@@ -66,7 +66,7 @@ class MusicAppsGridFragment: Fragment() {
 					layout.findViewById<ImageView>(R.id.imgMusicAppIcon).setImageDrawable(appInfo.icon)
 					layout.findViewById<ImageView>(R.id.imgMusicAppIcon).contentDescription = appInfo.name
 
-					if (appInfo.packageName == appDiscoveryThread.discovery?.musicSessions?.getPlayingApp()?.packageName) {
+					if (appInfo.packageName == appsViewModel.musicAppDiscoveryThread.discovery?.musicSessions?.getPlayingApp()?.packageName) {
 						layout.findViewById<ImageView>(R.id.imgNowPlaying).setImageDrawable(equalizerAnimated)
 						equalizerAnimated.start()
 						layout.findViewById<ImageView>(R.id.imgNowPlaying).visibility = View.VISIBLE
@@ -87,11 +87,11 @@ class MusicAppsGridFragment: Fragment() {
 		super.onResume()
 
 		// update the music apps list, including any music sessions
-		appDiscoveryThread.discovery()
+		appsViewModel.musicAppDiscoveryThread.discovery()
 	}
 
 	override fun onDestroy() {
 		super.onDestroy()
-		appDiscoveryThread.stopDiscovery()
+		appsViewModel.validApps.removeOnListChangedCallback(appsChangedCallback)
 	}
 }

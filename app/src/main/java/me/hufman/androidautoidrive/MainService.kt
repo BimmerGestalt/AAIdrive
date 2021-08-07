@@ -33,7 +33,9 @@ class MainService: Service() {
 		const val ACTION_STOP = "me.hufman.androidautoidrive.MainService.stop"
 		const val EXTRA_FOREGROUND = "EXTRA_FOREGROUND"
 
-		const val PROBE_TIMEOUT: Long = 2 * 60 * 1000
+		const val CONNECTED_PROBE_TIMEOUT: Long = 2 * 60 * 1000     // if Bluetooth is connected
+		const val DISCONNECTED_PROBE_TIMEOUT: Long = 20 * 1000      // if Bluetooth is not connected
+		const val STARTUP_DEBOUNCE = 1500
 	}
 
 	val ONGOING_NOTIFICATION_ID = 20503
@@ -60,6 +62,12 @@ class MainService: Service() {
 
 	var threadAssistant: CarThread? = null
 	var carappAssistant: AssistantApp? = null
+
+	// reschedule a combinedCallback to make sure enough time has passed
+	var connectionTime: Long? = null
+	val combinedCallbackRunnable = Runnable {
+		combinedCallback()
+	}
 
 	// shut down probing after a timeout
 	val handler = Handler()
@@ -115,9 +123,6 @@ class MainService: Service() {
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 		Analytics.init(applicationContext)
 
-		// load the emoji dictionary
-		UnicodeCleaner.init(applicationContext)
-
 		val action = intent?.action ?: ""
 		if (action == ACTION_START) {
 			handleActionStart()
@@ -143,6 +148,9 @@ class MainService: Service() {
 
 		carProberThread?.quitSafely()
 		btStatus.unregister()
+
+		// close the notification
+		stopServiceNotification()
 		super.onDestroy()
 	}
 
@@ -150,7 +158,7 @@ class MainService: Service() {
 	 * Start the service
 	 */
 	private fun handleActionStart() {
-		Log.i(TAG, "Starting up service")
+		Log.i(TAG, "Starting up service $this")
 		// show the notification, so we can be startForegroundService'd
 		createNotificationChannel()
 		startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
@@ -241,6 +249,22 @@ class MainService: Service() {
 		synchronized(MainService::class.java) {
 			handler.removeCallbacks(shutdownTimeout)
 			if (iDriveConnectionReceiver.isConnected && securityAccess.isConnected()) {
+				// make sure we are subscribed for an instance id
+				if ((iDriveConnectionReceiver.instanceId ?: -1) <= 0) {
+					iDriveConnectionReceiver.subscribe(applicationContext)
+				}
+
+				// record when we first see the connection
+				if (connectionTime == null) {
+					connectionTime = System.currentTimeMillis()
+				}
+				// wait until it's connected long enough
+				if (System.currentTimeMillis() - (connectionTime ?: 0) < STARTUP_DEBOUNCE) {
+					handler.removeCallbacks(combinedCallbackRunnable)
+					handler.postDelayed(combinedCallbackRunnable, 1000)
+					return
+				}
+
 				var startAny = false
 
 				AppSettings.loadSettings(applicationContext)
@@ -263,6 +287,7 @@ class MainService: Service() {
 				if (appSettings[AppSettings.KEYS.PREFER_CAR_LANGUAGE].toBoolean() &&
 						carInformationObserver.cdsData[CDS.VEHICLE.LANGUAGE] == null) {
 					// still waiting for language
+					Log.d(TAG, "Waiting for the car's language to be confirmed")
 				} else {
 					// start notifications
 					startAny = startAny or startNotifications()
@@ -291,8 +316,10 @@ class MainService: Service() {
 				DonationRequest(this).countUsage()
 			} else {
 				Log.d(TAG, "Not fully connected: IDrive:${iDriveConnectionReceiver.isConnected} SecurityService:${securityAccess.isConnected()}")
+				connectionTime = null
 				stopCarApps()
-				handler.postDelayed(shutdownTimeout, PROBE_TIMEOUT)
+				val timeout = if (btStatus.isBTConnected) CONNECTED_PROBE_TIMEOUT else DISCONNECTED_PROBE_TIMEOUT
+				handler.postDelayed(shutdownTimeout, timeout)
 				handler.post(btfetchUuidsWithSdp)
 			}
 		}
@@ -301,7 +328,8 @@ class MainService: Service() {
 
 	fun startCarCapabilities(): Boolean {
 		synchronized(this) {
-			if (threadCapabilities == null) {
+			if (threadCapabilities?.isAlive != true) {
+				Log.d(TAG, "Starting CarCapabilities thread")
 				// clear the capabilities to not start dependent services until it's ready
 				threadCapabilities = CarThread("Capabilities") {
 					Log.i(TAG, "Starting to discover car capabilities")
@@ -426,14 +454,16 @@ class MainService: Service() {
 		stopMusic()
 		stopAssistant()
 		stopNavigationListener()
-		stopServiceNotification()
+
+		// revert notification to Waiting for Connection
+		startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
 	}
 
 	/**
 	 * Stop the service
 	 */
 	private fun handleActionStop() {
-		Log.i(TAG, "Shutting down service")
+		Log.i(TAG, "Shutting down apps")
 		synchronized(MainService::class.java) {
 			stopCarApps()
 		}

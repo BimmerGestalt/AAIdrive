@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.databinding.MusicPermissionsBinding
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
 class MusicPermissionsFragment: Fragment() {
 	val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }

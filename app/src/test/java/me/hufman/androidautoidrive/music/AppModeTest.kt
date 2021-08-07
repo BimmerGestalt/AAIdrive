@@ -77,6 +77,16 @@ class AppModeTest {
 			val newerSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, null, null, "8.6.20")
 			assertTrue(newerSpotifyMode.shouldId5Playback())
 		}
+		// fake old spotify installed
+		run {
+			val newerSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, null, null, "8.2.536-dogfood-xmax")
+			assertFalse(newerSpotifyMode.shouldId5Playback())
+		}
+		// fake new spotify installed
+		run {
+			val newerSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, null, null, "8.6.536-dogfood-xmax")
+			assertTrue(newerSpotifyMode.shouldId5Playback())
+		}
 
 		// force spotify layout
 		settings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT] = "true"

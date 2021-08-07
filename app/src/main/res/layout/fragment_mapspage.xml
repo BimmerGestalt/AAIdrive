@@ -1,37 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="vertical"
+<layout xmlns:android="http://schemas.android.com/apk/res/android" >
+    <data class="MapPageSettingsBinding">
+        <variable
+            name="settings"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.MapSettingsModel" />
+    </data>
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingEnd="@dimen/default_margin"
-        android:paddingStart="@dimen/default_margin"
-        android:paddingTop="@dimen/default_margin"
-        android:animateLayoutChanges="true">
-
-        <TextView
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/pane_vertical_margin"
-            android:text="@string/lbl_mapspage" />
+            android:paddingEnd="@dimen/default_margin"
+            android:paddingStart="@dimen/default_margin"
+            android:paddingTop="@dimen/default_margin"
+            android:animateLayoutChanges="true">
 
-        <View style="@style/Divider"
-            android:layout_marginBottom="@dimen/pane_vertical_margin"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
+                android:text="@string/lbl_mapspage" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/swMapsEnabled"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/pane_vertical_margin"
-            android:text="@string/enable_google_maps" />
+            <View style="@style/Divider"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/paneMaps"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:name="me.hufman.androidautoidrive.phoneui.fragments.MapSettingsFragment"/>
-    </LinearLayout>
-</ScrollView>
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/swMapsEnabled"
+                android:checked="@={settings.mapEnabled}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
+                android:text="@string/enable_google_maps" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/paneMaps"
+                android:visibility="@{settings.mapEnabled}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.MapSettingsFragment"/>
+        </LinearLayout>
+    </ScrollView>
+</layout>

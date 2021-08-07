@@ -90,6 +90,7 @@
     <string name="musicAppHidden">Скрывать</string>
     <string name="enable_audio_context">Принудительно воспроизводить аудио через USB соединение</string>
     <string name="enable_spotify_layout">Всегда отображаться как приложение Spotify в IDrive5+</string>
+    <string name="enable_audioplayer_layout">Предпочесть старый компактный музыкальный интерфейс в IDrive5+</string>
     <string name="lbl_grant_sessions">Контроль над активными музыкальными приложениями</string>
     <string name="lbl_grant_spotify_control">Возможность просматривать вашу библиотеку Spotify</string>
     <string name="lbl_grant_background_music">Разрешить фоновую работу ваших музыкальных приложений, если у автомобиля возникли проблемы с их запуском</string>
@@ -129,6 +130,9 @@
     <string name="nowplaying_notconnected">&lt;Не подключено&gt;</string>
     <string name="nowplaying_unknown">&lt;Неизвестный исполнитель&gt;</string>
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">Приложение может работать в фоновом режиме</string>
+    <string name="txt_setup_background_impermission">Приложение не может работать в фоновом режиме</string>
+    <string name="txt_setup_background_hint">Автоматическое соединение работает лучше, если фоновая активность разрешена</string>
     <string name="txt_setup_bmw_ready">Приложение готово для подключения к BMW</string>
     <string name="txt_setup_mini_ready">Приложение готово для подключения к Mini</string>
     <string name="txt_setup_bmw_missing">Не готово к подключению к BMW:</string>
@@ -200,6 +204,7 @@
     <string name="lbl_carinfopage_disconnected">После первого подключения здесь будет отображена информация о вашем автомобиле</string>
     <string name="lbl_carinfopage">Краткая информация о вашем автомобиле</string>
     <string name="lbl_carinfo_efficiency">Статистика эффективности</string>
+    <string name="lbl_carinfo_ev">Статистика потребления электроэнергии</string>
     <string name="lbl_carinfo_style">Эффективный стиль вождения</string>
     <string name="lbl_carinfo_lastchecked">Последняя проверка:</string>
     <string name="lbl_carinfo_lastPosition">Последняя позиция:</string>
@@ -213,8 +218,11 @@
     <string name="lbl_carinfo_averageConsumptionAlt">Расход топлива (alt):</string>
     <string name="lbl_carinfo_averageSpeedAlt">Средняя скорость (alt):</string>
     <string name="lbl_carinfo_ecoRangeWon">Экономия ECO Pro:</string>
+    <string name="lbl_carinfo_evLevel">Уровень заряда:</string>
+    <string name="lbl_carinfo_evRange">Макс. пробег на электричестве:</string>
     <string name="lbl_carinfo_fuelLevel">Топлива в баке:</string>
     <string name="lbl_carinfo_fuelRange">Запас хода:</string>
+    <string name="lbl_carinfo_totalRange">Общий запас хода:</string>
     <string name="lbl_carinfo_accBatteryLevel">Заряд аккумулятора:</string>
     <string name="lbl_carinfo_style_accel">Разгон:</string>
     <string name="lbl_carinfo_style_brake">Торможение:</string>
@@ -236,7 +244,7 @@
     <string name="lbl_carinfo_window_passengerfront">Переднее правое</string>
     <string name="lbl_carinfo_window_driverrear">Заднее левое</string>
     <string name="lbl_carinfo_window_passengerrear">Заднее правое</string>
-    <string name="lbl_carinfo_window_closed">Закрыты</string>
+    <string name="lbl_carinfo_window_closed">закрыто</string>
     <string name="lbl_carinfo_window_partial">Открыто %d%%</string>
     <string name="lbl_carinfo_window_open">Открыто полностью</string>
     <string name="lbl_carinfo_displayedSpeed">Скорость на дисплее</string>
@@ -287,6 +295,7 @@
     <string name="NOTIFICATIONS_TITLE">Уведомления</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Нет уведомлений</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Очистить </string>
+    <string name="NOTIFICATION_READOUT_ACTION">Озвучить</string>
     <string name="NOTIFICATION_OPTIONS">Параметры</string>
     <string name="NOTIFICATION_POPUPS">Всплывающие уведомления</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER">Всплывающие уведомления с пассажиром</string>
