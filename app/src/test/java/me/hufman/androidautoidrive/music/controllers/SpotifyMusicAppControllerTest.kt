@@ -20,7 +20,7 @@ import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.RepeatMode
-import me.hufman.androidautoidrive.music.spotify.LikedSongsState
+import me.hufman.androidautoidrive.music.spotify.TemporaryPlaylistState
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import org.junit.After
@@ -660,7 +660,7 @@ class SpotifyMusicAppControllerTest {
 
 		verify(webApi).addSongsToPlaylist(playlistId, likedSongs)
 
-		val likedSongsState = LikedSongsState(likedSongs.hashCode().toString(), playlistUriStr, playlistId, null)
+		val likedSongsState = TemporaryPlaylistState(likedSongs.hashCode().toString(), playlistUriStr, playlistId, null)
 		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsState))
 
 		assertEquals(controller.queueUri, playlistUriStr)
@@ -717,7 +717,7 @@ class SpotifyMusicAppControllerTest {
 
 		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "your_library_tracks"))
 
-		val likedSongsState = LikedSongsState(likedSongs.hashCode().toString(), playlistUriStr, playlistId, null)
+		val likedSongsState = TemporaryPlaylistState(likedSongs.hashCode().toString(), playlistUriStr, playlistId, null)
 		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsState))
 
 		assertEquals(controller.queueUri, playlistUriStr)
@@ -820,7 +820,7 @@ class SpotifyMusicAppControllerTest {
 		whenever(webApi.getLikedSongs(controller)) doAnswer { likedSongs }
 		whenever(webApi.replacePlaylistSongs(playlistId, likedSongs)) doAnswer { }
 
-		val likedSongsState = LikedSongsState(arrayOf("bad", "data").hashCode().toString(), playlistUriStr, playlistId, null)
+		val likedSongsState = TemporaryPlaylistState(arrayOf("bad", "data").hashCode().toString(), playlistUriStr, playlistId, null)
 		appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = gson.toJson(likedSongsState)
 
 		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "your_library_tracks"))
@@ -883,7 +883,7 @@ class SpotifyMusicAppControllerTest {
 		whenever(webApi.getLikedSongs(controller)) doAnswer { likedSongs }
 		whenever(webApi.replacePlaylistSongs(playlistId, likedSongs)) doAnswer { }
 
-		val likedSongsState = LikedSongsState(likedSongs.hashCode().toString(), playlistUriStr, playlistId, queueImageUriStr)
+		val likedSongsState = TemporaryPlaylistState(likedSongs.hashCode().toString(), playlistUriStr, playlistId, queueImageUriStr)
 		appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = gson.toJson(likedSongsState)
 
 		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "your_library_tracks"))

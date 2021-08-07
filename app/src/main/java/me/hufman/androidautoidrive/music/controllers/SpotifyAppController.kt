@@ -17,7 +17,7 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
-import me.hufman.androidautoidrive.music.spotify.LikedSongsState
+import me.hufman.androidautoidrive.music.spotify.TemporaryPlaylistState
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import java.util.*
@@ -256,68 +256,23 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 
 			if (queueItems.isNotEmpty()) {
 				queueMetadata = QueueMetadata(queueTitle, null, queueItems)
-
-				val hashCode = queueItems.hashCode().toString()
-				val likedSongsStateJson = appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE]
-				val likedSongsState: LikedSongsState
-				if (likedSongsStateJson.isBlank()) {
-					Log.d(TAG, "No previous liked songs state found, checking user playlists.")
-					val existingPlaylistUri = webApi.getPlaylistUri(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)
-					val playlistUri: String
-					val playlistId: String
-					if (existingPlaylistUri == null) {
-						Log.d(TAG, "No user playlist for ${SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME} found, creating a new one.")
-						val uri = webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)
-						if (uri == null) {
-							Log.e(TAG, "Error creating liked songs playlist, falling back to app remote API")
-							queueItems = emptyList()
-							createQueueMetadata(PlayerContext(queueUri, queueTitle, null, null))
-							return@launch
-						}
-						webApi.addSongsToPlaylist(uri.id, queueItems)
-						playlistUri = uri.uri
-						playlistId = uri.id
-					} else {
-						Log.d(TAG, "User playlist for ${SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME} found, using existing playlist.")
-						playlistUri = existingPlaylistUri.uri
-						playlistId = existingPlaylistUri.id
-					}
-					likedSongsState = LikedSongsState(hashCode, playlistUri, playlistId, null)
-					saveLikedSongsState(likedSongsState)
+				val likedSongsTemporaryPlaylistStateKey = AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE
+				val likedSongsStateJson = appSettings[likedSongsTemporaryPlaylistStateKey]
+				val temporaryPlaylistState = if (likedSongsStateJson.isBlank()) {
+					Log.d(TAG, "No previous liked songs state found.")
+					createTemporaryPlaylistState(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME, likedSongsTemporaryPlaylistStateKey)
 				} else {
 					Log.d(TAG, "Found previous liked songs state.")
-					likedSongsState = gson.fromJson(likedSongsStateJson, LikedSongsState::class.java)
-
-					if (hashCode != likedSongsState.hashCode) {
-						Log.d(TAG, "Previous liked songs state is no longer valid, updating liked songs playlist and writing new hash.")
-						webApi.replacePlaylistSongs(likedSongsState.playlistId, queueItems)
-						likedSongsState.hashCode = hashCode
-						saveLikedSongsState(likedSongsState)
-					}
+					loadTemporaryPlaylistState(likedSongsStateJson, likedSongsTemporaryPlaylistStateKey)
+				}
+				if (temporaryPlaylistState == null) {
+					Log.e(TAG, "Error creating liked songs playlist, falling back to app remote API")
+					queueItems = emptyList()
+					createQueueMetadata(PlayerContext(queueUri, queueTitle, null, null))
+					return@launch
 				}
 
-				queueUri = likedSongsState.playlistUri
-
-				if (likedSongsState.queueCoverArtUri == null) {
-					Log.d(TAG, "No previously stored queue cover art uri found.")
-					val recentlyPlayedUri = "com.spotify.recently-played"
-					val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
-					remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
-						val item = recentlyPlayed?.items?.get(0)
-						if (item != null) {
-							likedSongsState.queueCoverArtUri = item.imageUri.raw
-							remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
-								queueMetadata?.coverArt = coverArt
-							}
-							saveLikedSongsState(likedSongsState)
-						}
-					}
-				} else {
-					Log.d(TAG, "Found previously stored queue cover art uri.")
-					remote.imagesApi.getImage(ImageUri(likedSongsState.queueCoverArtUri), Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
-						queueMetadata?.coverArt = coverArt
-					}
-				}
+				saveTemporaryPlaylistState(temporaryPlaylistState, likedSongsTemporaryPlaylistStateKey)
 
 				callback?.invoke(this@SpotifyAppController)
 			} else {
@@ -327,10 +282,69 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	}
 
 	/**
-	 * Saves the provided [LikedSongsState] to the [AppSettings].
+	 * Creates a [TemporaryPlaylistState] for the supplied playlist name, creating the playlist if it
+	 * is not present and adding the queueItems in context to it. If the playlist creation fails
+	 * then null is returned.
 	 */
-	private fun saveLikedSongsState(likedSongsState: LikedSongsState) {
-		appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = gson.toJson(likedSongsState)
+	private suspend fun createTemporaryPlaylistState(playlistName: String, appSettingsTemporaryPlaylistStateKey: AppSettings.KEYS): TemporaryPlaylistState? {
+		val queueItemsHashCode = queueItems.hashCode().toString()
+		val existingPlaylistUri = webApi.getPlaylistUri(playlistName)
+		val playlistUri: String
+		val playlistId: String
+		if (existingPlaylistUri == null) {
+			Log.d(TAG, "No user playlist for $playlistName found, creating a new one.")
+			val uri = webApi.createPlaylist(playlistName, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION) ?: return null
+			webApi.addSongsToPlaylist(uri.id, queueItems)
+			playlistUri = uri.uri
+			playlistId = uri.id
+		} else {
+			Log.d(TAG, "User playlist for $playlistName found, using existing playlist.")
+			playlistUri = existingPlaylistUri.uri
+			playlistId = existingPlaylistUri.id
+		}
+
+		val temporaryPlaylistState = TemporaryPlaylistState(queueItemsHashCode, playlistUri, playlistId, null)
+
+		queueUri = temporaryPlaylistState.playlistUri
+
+		loadQueueCoverart(temporaryPlaylistState, appSettingsTemporaryPlaylistStateKey)
+
+		return temporaryPlaylistState
+	}
+
+	/**
+	 * Loads a [TemporaryPlaylistState] from its serialized JSON string. If the state of the
+	 * deserialized [TemporaryPlaylistState] is not valid then its contents and hash code will be
+	 * updated.
+	 */
+	private suspend fun loadTemporaryPlaylistState(temporaryPlaylistStateJson: String, appSettingsTemporaryPlaylistStateKey: AppSettings.KEYS): TemporaryPlaylistState {
+		val queueItemsHashCode = queueItems.hashCode().toString()
+		val temporaryPlaylistState = gson.fromJson(temporaryPlaylistStateJson, TemporaryPlaylistState::class.java)
+
+		if (queueItemsHashCode != temporaryPlaylistState.hashCode) {
+			Log.d(TAG, "Previous liked songs state is no longer valid, updating temporary playlist contents and writing new hash code.")
+			webApi.replacePlaylistSongs(temporaryPlaylistState.playlistId, queueItems)
+			temporaryPlaylistState.hashCode = queueItemsHashCode
+		}
+
+		queueUri = temporaryPlaylistState.playlistUri
+
+		if (temporaryPlaylistState.queueCoverArtUri == null) {
+			loadQueueCoverart(temporaryPlaylistState, appSettingsTemporaryPlaylistStateKey)
+		} else {
+			remote.imagesApi.getImage(ImageUri(temporaryPlaylistState.queueCoverArtUri), Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
+				queueMetadata?.coverArt = coverArt
+			}
+		}
+
+		return temporaryPlaylistState
+	}
+
+	/**
+	 * Saves the provided [TemporaryPlaylistState] to the [AppSettings] for the supplied key.
+	 */
+	private fun saveTemporaryPlaylistState(temporaryPlaylistState: TemporaryPlaylistState, appSettingsTemporaryPlaylistStateKey: AppSettings.KEYS) {
+		appSettings[appSettingsTemporaryPlaylistStateKey] = gson.toJson(temporaryPlaylistState)
 	}
 
 	/**
@@ -370,14 +384,20 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	}
 
 	/**
-	 * Updates the [QueueMetadata] with the cover art of the current queue.
+	 * Updates the [QueueMetadata] with the cover art of the current queue. If the
+	 * [TemporaryPlaylistState] and its [AppSettings.KEYS] key are supplied then it will be updated
+	 * with the result.
 	 */
-	private fun loadQueueCoverart() {
+	private fun loadQueueCoverart(temporaryPlaylistState: TemporaryPlaylistState? = null, appSettingsTemporaryPlaylistStateKey: AppSettings.KEYS? = null) {
 		val recentlyPlayedUri = "com.spotify.recently-played"
 		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
 		remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
 			val item = recentlyPlayed?.items?.get(0)
 			if (item != null) {
+				if (temporaryPlaylistState != null && appSettingsTemporaryPlaylistStateKey != null) {
+					temporaryPlaylistState.queueCoverArtUri = item.imageUri.raw
+					saveTemporaryPlaylistState(temporaryPlaylistState, appSettingsTemporaryPlaylistStateKey)
+				}
 				remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
 					queueMetadata?.coverArt = coverArt
 				}
