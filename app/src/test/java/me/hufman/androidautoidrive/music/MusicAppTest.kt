@@ -241,9 +241,12 @@ class MusicAppTest {
 		state.focusCallback?.onFocus(true)
 		assertEquals(IDs.AUDIOSTATE_TITLE_MODEL, playbackId5View.appTitleModel.id)
 		assertEquals(IDs.APPLIST_ID5_STATE, state.toolbarComponentsList[0].getAction()?.asHMIAction()?.getTargetState()?.id)
+		assertEquals(null, state.toolbarComponentsList[1].getAction()?.asHMIAction()?.getTargetState()?.id)    // dynamic, set when first clicked
 		assertEquals(IDs.QUEUE_ID5_STATE, state.toolbarComponentsList[2].getAction()?.asHMIAction()?.getTargetState()?.id)
 		assertNotNull(playbackId5View.repeatButton)
 		assertEquals(IDs.ACTION_ID5_STATE, state.toolbarComponentsList[3].getAction()?.asHMIAction()?.getTargetState()?.id)
+		assertEquals(IDs.ACTION_ID5_STATE, state.toolbarComponentsList[4].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)      // shared with ToolbarState
+		assertEquals(0, state.toolbarComponentsList[5].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
 		assertNull(playbackId5View.appLogoModel)
 		assertEquals(IDs.AUDIOSTATE_COVERART_MODEL, playbackId5View.albumArtBigModel.id)
 		assertEquals(null, playbackId5View.albumArtSmallModel?.id)
@@ -285,7 +288,10 @@ class MusicAppTest {
 		val app = MusicApp(iDriveConnectionStatus, securityAccess, carAppResources, MusicImageIDsSpotify, phoneAppResources, graphicsHelpers, musicAppDiscovery, musicController, musicAppMode)
 		val state = app.playbackId5View?.state as RHMIState.AudioHmiState
 		state.focusCallback?.onFocus(true)
-		state.toolbarComponentsList[4].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
+		try {
+			state.toolbarComponentsList[4].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
+			fail("Expected RHMIActionAbort")
+		} catch (e: RHMIActionAbort) {}
 		verify(musicController).toggleShuffle()
 		state.toolbarComponentsList[5].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
 		verify(musicController).toggleRepeat()
@@ -549,7 +555,10 @@ class MusicAppTest {
 		assertEquals(IDs.IMAGEID_SHUFFLE_OFF, playbackView.shuffleButton.getImageModel()?.asImageIdModel()?.imageId)
 
 		// redraw when the button is supported and currently shuffling
-		playbackView.shuffleButton.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
+		try {
+			playbackView.shuffleButton.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0 to true))
+			fail("Expected RHMIActionAbort")
+		} catch (e: RHMIActionAbort) {}
 		verify(musicController).toggleShuffle()
 
 		whenever(musicController.isShuffling()) doAnswer { true }
