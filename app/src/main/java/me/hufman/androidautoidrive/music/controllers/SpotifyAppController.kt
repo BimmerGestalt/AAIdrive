@@ -322,7 +322,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		val temporaryPlaylistState = gson.fromJson(temporaryPlaylistStateJson, TemporaryPlaylistState::class.java)
 
 		if (queueItemsHashCode != temporaryPlaylistState.hashCode) {
-			Log.d(TAG, "Previous liked songs state is no longer valid, updating temporary playlist contents and writing new hash code.")
+			Log.d(TAG, "Previous temporary playlist state is no longer valid, updating temporary playlist contents and writing new hash code.")
 			webApi.replacePlaylistSongs(temporaryPlaylistState.playlistId, queueItems)
 			temporaryPlaylistState.hashCode = queueItemsHashCode
 		}
