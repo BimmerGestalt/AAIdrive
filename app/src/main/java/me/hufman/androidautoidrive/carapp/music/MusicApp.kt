@@ -321,32 +321,35 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 
 	private fun initWidgets() {
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
-			it.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
-				if (musicController.currentAppController == null) {
-					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
-				} else {
-					// set the destination state for the entrybutton
-					it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = currentPlaybackView.state.id
+			it.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIActionButtonCallback {
+				override fun onAction(invokedBy: Int?) {
+					val bookmarkButton = invokedBy == 2
+					if (musicController.currentAppController == null) {
+						it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
+					} else {
+						// set the destination state for the entrybutton
+						it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = currentPlaybackView.state.id
 
-					// invoked manually, not by a shortcut button
-					// when the Media button is pressed, it shows the Media/Radio window for a short time
-					// and then selects the Entrybutton
-					val contextChangeDelay = System.currentTimeMillis() - hmiContextChangedTime
-					if (musicAppMode.supportsId5Playback() && contextChangeDelay > 1500) {
-						// there's no spotify AM icon for the user to push
-						// so handle this spotify icon push
-						// but only if the user has dwelled on a screen for a second
-						val spotifyApp = musicAppDiscovery.validApps.firstOrNull {
-							it.packageName == "com.spotify.music"
+						// invoked manually, not by a shortcut button
+						// when the Media button is pressed, it shows the Media/Radio window for a short time
+						// and then selects the Entrybutton
+						val contextChangeDelay = System.currentTimeMillis() - hmiContextChangedTime
+						if (musicAppMode.shouldId5Playback() && (contextChangeDelay > 1500 || bookmarkButton)) {
+							// there's no spotify AM icon for the user to push
+							// so handle this spotify icon push
+							// but only if the user has dwelled on a screen for a second
+							val spotifyApp = musicAppDiscovery.validApps.firstOrNull {
+								it.packageName == "com.spotify.music"
+							}
+							if (spotifyApp != null) {
+								avContext.av_requestContext(spotifyApp)
+							}
 						}
-						if (spotifyApp != null) {
-							avContext.av_requestContext(spotifyApp)
-						}
-					}
 
-					val currentApp = musicController.currentAppInfo
-					if (currentApp != null) {
-						avContext.av_requestContext(currentApp)
+						val currentApp = musicController.currentAppInfo
+						if (currentApp != null) {
+							avContext.av_requestContext(currentApp)
+						}
 					}
 				}
 			}
