@@ -37,7 +37,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		const val TAG = "SpotifyWebApi"
 		const val NOTIFICATION_CHANNEL_ID = "SpotifyAuthorization"
 		const val NOTIFICATION_REQ_ID = 56
-		const val LIKED_SONGS_PLAYLIST_NAME = "ANDROIDAUTOIDRIVE_LIKED_SONGS"
+		const val LIKED_SONGS_PLAYLIST_NAME = "AAIDRIVE_LIKED_SONGS"
 
 		private var webApiInstance: SpotifyWebApi? = null
 
