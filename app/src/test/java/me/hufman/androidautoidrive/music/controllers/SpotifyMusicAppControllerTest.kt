@@ -1049,6 +1049,34 @@ class SpotifyMusicAppControllerTest {
 	}
 
 	@Test
+	fun testBrowse_LikedSongsTemporaryPlaylist() = runBlocking {
+		val deferredResults = async {
+			controller.browse(MusicMetadata(mediaId = "library", browseable = true))
+		}
+		delay(1000)
+		assertFalse(deferredResults.isCompleted)
+		val listItem = ListItem("library", "library", null, null, null, false, true)
+		verify(contentApi).getChildrenOfItem(listItem, 200, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 3, arrayOf(
+				ListItem("id1", "uri1", null, "Favorite", "Subtitle", true, false)
+		)))
+		verify(contentApi).getChildrenOfItem(listItem, 200, 1)
+		contentCallback.lastValue.onResult(ListItems(1, 1, 3, arrayOf(
+				ListItem("id2", "uri2", null, SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME, "Subtitle", false, true)
+		)))
+		verify(contentApi).getChildrenOfItem(listItem, 200, 2)
+		contentCallback.lastValue.onResult(ListItems(200, 2, 3, arrayOf(
+				ListItem("id3", "uri3", null, "Favorite2", "Subtitle", true, false)
+		)))
+
+		val results = deferredResults.await()
+		assertTrue(deferredResults.isCompleted)
+		assertEquals(results.size, 2)
+		assertEquals("Favorite", results[0].title)
+		assertEquals("Favorite2", results[1].title)
+	}
+
+	@Test
 	fun testSearch() {
 		runBlocking {
 			assertEquals(null, controller.search("any"))

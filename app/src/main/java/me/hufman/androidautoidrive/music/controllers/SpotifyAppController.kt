@@ -613,8 +613,8 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				deferred.complete(LinkedList())
 			}
 		} else {
-			loadPaginatedItems(directory.toListItem(), { !deferred.isCancelled }) {
-				deferred.complete(it)
+			loadPaginatedItems(directory.toListItem(), { !deferred.isCancelled }) { results ->
+				deferred.complete(results.filterNot { it.title == SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME })
 			}
 		}
 		return deferred.await()
