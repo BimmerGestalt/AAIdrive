@@ -73,6 +73,9 @@ android {
             pseudoLocalesEnabled true
         }
     }
+    bundle {
+        language.enableSplit = false
+    }
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
