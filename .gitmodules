@@ -1,6 +1,6 @@
 [submodule "IDriveConnectKit"]
 	path = IDriveConnectKit
-	url = https://github.com/hufman/IDriveConnectKit.git
+	url = https://github.com/BimmerGestalt/IDriveConnectKit.git
 [submodule "IDriveConnectKitAndroid"]
 	path = IDriveConnectKitAndroid
-	url = https://github.com/hufman/IDriveConnectKitAndroid.git
+	url = https://github.com/BimmerGestalt/IDriveConnectKitAndroid.git
