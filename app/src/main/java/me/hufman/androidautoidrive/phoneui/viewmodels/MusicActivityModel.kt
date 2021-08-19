@@ -104,5 +104,6 @@ class MusicActivityModel(val musicController: MusicController, val spotifyWebApi
 	override fun onCleared() {
 		super.onCleared()
 		musicController.disconnectApp(pause=false)
+		musicController.listener = null
 	}
 }

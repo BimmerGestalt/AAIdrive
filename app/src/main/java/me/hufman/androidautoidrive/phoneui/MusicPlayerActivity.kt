@@ -51,6 +51,11 @@ class MusicPlayerActivity: AppCompatActivity() {
 		tabMusicPlayer.setupWithViewPager(pgrMusicPlayer)
 	}
 
+	override fun onDestroy() {
+		super.onDestroy()
+		UIState.selectedMusicApp = null
+	}
+
 	fun discoverApp(musicAppInfo: MusicAppInfo) {
 		val musicAppDiscovery = MusicAppDiscovery(this, Handler())
 		musicAppDiscovery.loadInstalledMusicApps()
