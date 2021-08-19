@@ -268,6 +268,23 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	}
 
 	/**
+	 * Sets the specified playlist's cover art image to the specified image. The supplied image data
+	 * must be a JPG Base64 string format.
+	 */
+	suspend fun setPlaylistImage(playlistId: String, coverArtImageData: String) {
+		try {
+			webApi?.playlists?.uploadClientPlaylistCover(playlistId, imageData = coverArtImageData)
+		} catch (e: SpotifyException.AuthenticationException) {
+			Log.e(TAG, "Failed to upload the cover art image to playlist $playlistId due to authentication error with the message: ${e.message}")
+			authStateManager.addAccessTokenAuthorizationException(e)
+			createNotAuthorizedNotification()
+			webApi = null
+		} catch (e: Exception) {
+			Log.e(TAG, "Exception occurred when trying upload the cover art image to playlist $playlistId with the message: ${e.message}")
+		}
+	}
+
+	/**
 	 * Initializes the [SpotifyClientApi] instance and updates the [AuthState] with the token used.
 	 */
 	fun initializeWebApi(isProbing: Boolean = false) {
