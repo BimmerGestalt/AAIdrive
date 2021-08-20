@@ -3,15 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="me.hufman.androidautoidrive">
 
+    <!-- Connect to localhost, fetch some images, talk to Spotify Web API -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Run the Foreground Notification to stay in memory -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Optionally access SMS images -->
     <uses-permission android:name="android.permission.READ_SMS" />
+    <!-- Open Assistant while the screen is off in new phones -->
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-
-    <uses-permission
-        android:name="android.permission.BLUETOOTH" />
+    <!-- View Bluetooth status -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <application
         android:name=".ApplicationCallbacks"
