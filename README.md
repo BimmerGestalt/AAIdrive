@@ -152,7 +152,7 @@ Implemented Features
         - [Anghami](https://play.google.com/store/apps/details?id=com.anghami)
         - [Gaana Music](https://play.google.com/store/apps/details?id=com.gaana)
         - [JioSaavn](https://play.google.com/store/apps/details?id=com.jio.media.jiobeats)
-        - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android)
+        - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android) up to version [v2021.08.11](https://apkpure.com/sound-cloud-android/com.soundcloud.android/download/87080-APK-500e8e116f80cf0c2113c6a1863427fc?from=versions%2Fversion)
         - [Spotify](https://play.google.com/store/apps/details?id=com.spotify.music)
         - [Tidal](https://play.google.com/store/apps/details?id=com.aspiro.tidal)
 
