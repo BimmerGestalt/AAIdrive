@@ -371,15 +371,17 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 		if (appSwitcherView.visible) {
 			appSwitcherView.redraw()
 		}
+
 		if (playbackView.visible) {
 			playbackView.redraw()
+			playbackId5View?.backgroundRedraw()     // update ID5 global coverart and progress
 		} else if (playbackId5View?.visible == true) {
 			playbackId5View.redraw()
 		} else {
 			val currentPlaybackView = currentPlaybackView       // slightly cache this dynamic variable
-			currentPlaybackView.backgroundRedraw()
+			currentPlaybackView.backgroundRedraw()      // deferred initialization
 			if (playbackId5View != null && currentPlaybackView != playbackId5View) {
-				playbackId5View.backgroundRedraw()
+				playbackId5View.backgroundRedraw()      // global coverart and progress
 			}
 		}
 
