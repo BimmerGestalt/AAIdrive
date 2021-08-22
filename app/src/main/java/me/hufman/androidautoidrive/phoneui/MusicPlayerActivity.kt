@@ -52,11 +52,6 @@ class MusicPlayerActivity: AppCompatActivity() {
 		findViewById<TabLayout>(R.id.tabMusicPlayer).setupWithViewPager(pgrMusicPlayer)
 	}
 
-	override fun onDestroy() {
-		super.onDestroy()
-		UIState.selectedMusicApp = null
-	}
-
 	fun discoverApp(musicAppInfo: MusicAppInfo) {
 		val musicAppDiscovery = MusicAppDiscovery(this, Handler())
 		musicAppDiscovery.loadInstalledMusicApps()
@@ -90,6 +85,7 @@ class MusicPlayerActivity: AppCompatActivity() {
 
 	override fun onDestroy() {
 		super.onDestroy()
+		UIState.selectedMusicApp = null
 		musicPlayerController.viewPager = null
 	}
 }

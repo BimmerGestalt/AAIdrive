@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data class="AddonAppListItemBinding" >
+        <import type="android.view.View" />
+        <variable
+            name="data"
+            type="me.hufman.androidautoidrive.addons.AddonAppInfo" />
+        <variable
+            name="callback"
+            type="me.hufman.androidautoidrive.phoneui.controllers.AddonAppListController" />
+    </data>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical" >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:onClick="@{() -> callback.openIntent(data.intentOpen)}">
+
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginEnd="12dp"
+                    android:contentDescription="@string/addonAppIcon"
+                    android:scaleType="fitStart"
+                    android:src="@{data.icon}"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="start"
+                    android:ems="10"
+                    android:text="@{data.name}" />
+
+                <LinearLayout
+                    android:id="@+id/paneAddonAppFeatures"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/imgSettings"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:contentDescription="@string/btn_configure"
+                        app:tint="?android:attr/textColorSecondary"
+                        android:src="@drawable/ic_settings_feather"
+                        android:visibility="@{data.intentSettings != null}"
+                        android:onClick="@{() -> callback.openIntent(data.intentSettings)}" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/addonNormalPermission"
+                        android:src="@{data.cdsNormalGranted ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
+                        android:visibility="@{data.cdsNormalRequested ? View.VISIBLE : View.INVISIBLE}"
+                        android:onClick="@{() -> callback.openApplicationPermissions(data)}" />
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/addonPersonalPermission"
+                        android:src="@{data.cdsPersonalGranted ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
+                        android:visibility="@{data.cdsPersonalRequested ? View.VISIBLE : View.INVISIBLE}"
+                        android:onClick="@{() -> callback.openApplicationPermissions(data)}" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txtAddonAppFeatures"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="end"
+                android:text="@{data.featuresString()}" />
+
+        </LinearLayout>
+    </LinearLayout>
+</layout>
