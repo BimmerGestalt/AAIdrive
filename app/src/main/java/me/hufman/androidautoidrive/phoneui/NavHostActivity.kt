@@ -13,7 +13,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import kotlinx.android.synthetic.main.activity_navhost.*
+import com.google.android.material.navigation.NavigationView
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.databinding.NavHeaderBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel
@@ -38,7 +38,8 @@ class NavHostActivity: AppCompatActivity() {
 		}
 
 		setContentView(R.layout.activity_navhost)
-		val navToolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.nav_toolbar)!!
+		val navToolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.nav_toolbar)
+		val navView = findViewById<NavigationView>(R.id.nav_view)
 		setSupportActionBar(navToolbar)
 
 		// Set each of the menu entries as a top level destination
@@ -50,7 +51,7 @@ class NavHostActivity: AppCompatActivity() {
 		val navController = findNavController(R.id.nav_host_fragment)
 		setupActionBarWithNavController(navController, appBarConfig)        // title updater
 		navToolbar.setupWithNavController(navController, appBarConfig)     // hamburger click handler
-		nav_view.setupWithNavController(navController)                      // nav menu click handler
+		navView.setupWithNavController(navController)                      // nav menu click handler
 
 		setupNavHeader()
 
@@ -63,13 +64,14 @@ class NavHostActivity: AppCompatActivity() {
 
 	fun setupNavHeader() {
 		val viewModel  by viewModels<ConnectionStatusModel> { ConnectionStatusModel.Factory(this.applicationContext) }
-		val binding = NavHeaderBinding.inflate(layoutInflater, nav_view, false)
+		val navView = findViewById<NavigationView>(R.id.nav_view)
+		val binding = NavHeaderBinding.inflate(layoutInflater, navView, false)
 		binding.lifecycleOwner = this
 		binding.viewModel = viewModel
-		nav_view.removeHeaderView(nav_view.getHeaderView(0))
-		nav_view.addHeaderView(binding.root)
+		navView.removeHeaderView(navView.getHeaderView(0))
+		navView.addHeaderView(binding.root)
 
-		val paneConnectionStatus = nav_view.getHeaderView(0).findViewById<View>(R.id.paneConnectionStatus)
+		val paneConnectionStatus = navView.getHeaderView(0).findViewById<View>(R.id.paneConnectionStatus)
 		paneConnectionStatus.setOnClickListener {
 			findNavController(R.id.nav_host_fragment).navigate(R.id.nav_connection)
 			val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
@@ -81,11 +83,12 @@ class NavHostActivity: AppCompatActivity() {
 		val themeAttrs = obtainStyledAttributes(R.style.optionGmapVisible, arrayOf(android.R.attr.visibility).toIntArray())
 		val mapVisibility = themeAttrs.getInt(0, 0)
 		themeAttrs.recycle()
-		nav_view.menu.findItem(R.id.nav_maps).isVisible = mapVisibility == View.VISIBLE
+		val navView = findViewById<NavigationView>(R.id.nav_view)
+		navView.menu.findItem(R.id.nav_maps).isVisible = mapVisibility == View.VISIBLE
 
 		val advancedSetting = BooleanLiveSetting(this, AppSettings.KEYS.SHOW_ADVANCED_SETTINGS)
 		advancedSetting.observe(this, Observer {
-			nav_view.menu.findItem(R.id.nav_connection).isVisible = it
+			navView.menu.findItem(R.id.nav_connection).isVisible = it
 		})
 	}
 

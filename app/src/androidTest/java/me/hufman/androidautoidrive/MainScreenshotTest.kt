@@ -16,8 +16,10 @@ import androidx.test.runner.screenshot.Screenshot
 import androidx.viewpager2.widget.ViewPager2
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.whenever
+import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.phoneui.NavHostActivity
-import me.hufman.androidautoidrive.phoneui.adapters.MusicAppListAdapter
+import me.hufman.androidautoidrive.phoneui.adapters.DataBoundViewHolder
+import me.hufman.androidautoidrive.phoneui.controllers.MusicAppListController
 import me.hufman.androidautoidrive.phoneui.viewmodels.TipsModel
 import org.junit.*
 
@@ -149,13 +151,13 @@ class MainScreenshotTest {
 
 		// open the music app features
 		onView(withId(R.id.listMusicApps))
-				.perform(RecyclerViewActions.actionOnItemAtPosition<MusicAppListAdapter.ViewHolder>(0,
+				.perform(RecyclerViewActions.actionOnItemAtPosition<DataBoundViewHolder<MusicAppInfo, MusicAppListController>>(0,
 				ClickChildView.clickChildViewWithId(R.id.paneMusicAppFeatures)))
 		onView(withId(R.id.listMusicApps))
-				.perform(RecyclerViewActions.actionOnItemAtPosition<MusicAppListAdapter.ViewHolder>(1,
+				.perform(RecyclerViewActions.actionOnItemAtPosition<DataBoundViewHolder<MusicAppInfo, MusicAppListController>>(1,
 				ClickChildView.clickChildViewWithId(R.id.paneMusicAppFeatures)))
 		onView(withId(R.id.listMusicApps))
-				.perform(RecyclerViewActions.actionOnItemAtPosition<MusicAppListAdapter.ViewHolder>(2,
+				.perform(RecyclerViewActions.actionOnItemAtPosition<DataBoundViewHolder<MusicAppInfo, MusicAppListController>>(2,
 				ClickChildView.clickChildViewWithId(R.id.paneMusicAppFeatures)))
 
 		screenshot("music_expanded")

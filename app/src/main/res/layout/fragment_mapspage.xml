@@ -4,6 +4,9 @@
         <variable
             name="settings"
             type="me.hufman.androidautoidrive.phoneui.viewmodels.MapSettingsModel" />
+        <variable
+            name="controller"
+            type="me.hufman.androidautoidrive.phoneui.controllers.MapsPageController" />
     </data>
     <ScrollView
         android:layout_width="match_parent"
@@ -28,7 +31,8 @@
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swMapsEnabled"
-                android:checked="@={settings.mapEnabled}"
+                android:checked="@{settings.mapEnabled}"
+                android:onCheckedChanged="@{(button, checked) -> controller.onChangedSwitchGMaps(checked)}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/pane_vertical_margin"

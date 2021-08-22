@@ -5,6 +5,10 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.view.View
@@ -14,12 +18,14 @@ import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
+import me.hufman.androidautoidrive.phoneui.getThemeColor
+import me.hufman.androidautoidrive.utils.Utils.getIconMask
 import java.util.*
 import kotlin.math.max
 
 
 @BindingAdapter("android:src")
-fun setImageViewBitmap(view: ImageView, bitmap: Bitmap) {
+fun setImageViewBitmap(view: ImageView, bitmap: Bitmap?) {
 	view.setImageBitmap(bitmap)
 }
 @BindingAdapter("android:src")
@@ -115,13 +121,45 @@ fun setBackgroundTint(view: View, value: (Context.() -> Int)?) {
 	}
 }
 
+@BindingAdapter("iconMaskColor")
+fun setIconMaskColor(view: ImageView, colorResId: Int) {
+	val color = view.context.getThemeColor(colorResId)
+	view.colorFilter = getIconMask(color)
+}
+@BindingAdapter("app:saturation")
+fun setSaturation(view: ImageView, value: Float) {
+	val matrix = ColorMatrix().apply { setSaturation(value) }
+	view.colorFilter = ColorMatrixColorFilter(matrix)
+	if (value == 1f) {
+		view.clearColorFilter()
+	}
+}
+
 // Add an animation for alpha
-@BindingAdapter("android:alpha")
-fun setAlpha(view: View, value: Float) {
+@BindingAdapter("android:alpha", "app:animationDuration")
+fun setAlpha(view: View, value: Float, duration: Int) {
 	view.animation?.cancel()
-	ValueAnimator.ofFloat(view.alpha, value).apply {
-		addUpdateListener { view.alpha = it.animatedValue as Float }
-		start()
+	if (duration > 0) {
+		ValueAnimator.ofFloat(view.alpha, value).apply {
+			addUpdateListener { view.alpha = it.animatedValue as Float }
+			this.duration = duration.toLong()
+			start()
+		}
+	}
+}
+
+@BindingAdapter("animated")
+fun setAnimated(view: ImageView, value: Boolean) {
+	val drawable = view.drawable as? AnimatedVectorDrawable ?: return
+	if (value) {
+		drawable.start()
+		drawable.registerAnimationCallback(object: Animatable2.AnimationCallback() {
+			override fun onAnimationEnd(drawable: Drawable?) {
+				view.post { (drawable as? AnimatedVectorDrawable)?.start() }
+			}
+		})
+	} else {
+		drawable.stop()
 	}
 }
 

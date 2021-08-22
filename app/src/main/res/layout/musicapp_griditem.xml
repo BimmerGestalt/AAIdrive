@@ -1,28 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="50dp"
-    android:layout_height="50dp"
-    android:layout_gravity="center"
-    android:gravity="center">
 
-    <ImageView
-        android:id="@+id/imgMusicAppIcon"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data class="MusicAppGridItemBinding" >
+        <import type="android.graphics.Typeface" />
+        <import type="android.view.View" />
+        <variable
+            name="data"
+            type="me.hufman.androidautoidrive.music.MusicAppInfo" />
+    </data>
+    <RelativeLayout
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:contentDescription="@string/musicAppIcon"
-        android:scaleType="fitStart"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:layout_gravity="center"
+        android:gravity="center">
 
-    <ImageView
-        android:id="@+id/imgNowPlaying"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:contentDescription="@string/musicAppNowPlaying"
-        app:tint="?android:attr/textColorSecondary"
-        app:srcCompat="@drawable/ic_equalizer_black_24dp" />
+        <ImageView
+            android:id="@+id/imgMusicAppIcon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@{data.name}"
+            android:scaleType="fitStart"
+            android:src="@{data.icon}"
+            tools:srcCompat="@tools:sample/avatars" />
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/imgNowPlaying"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/musicAppNowPlaying"
+            app:tint="?android:attr/textColorSecondary"
+            app:srcCompat="@drawable/ic_dancing_equalizer"
+            app:animated="@{data.playing}"
+            android:visibility="@{data.playing}" />
+
+    </RelativeLayout>
+</layout>

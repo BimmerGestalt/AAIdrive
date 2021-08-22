@@ -11,15 +11,15 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import kotlinx.android.synthetic.main.fragment_music_applist.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.StoredSet
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppInfo
-import me.hufman.androidautoidrive.phoneui.MusicAppDiscoveryThread
-import me.hufman.androidautoidrive.phoneui.adapters.MusicAppListAdapter
+import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
+import me.hufman.androidautoidrive.phoneui.adapters.DataBoundViewHolder
 import me.hufman.androidautoidrive.phoneui.adapters.ObservableListCallback
+import me.hufman.androidautoidrive.phoneui.controllers.MusicAppListController
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicAppsViewModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.findParent
@@ -29,11 +29,12 @@ import kotlin.math.max
 class MusicAppsListFragment: Fragment() {
 	val handler = Handler()
 
+	val controller by lazy { MusicAppListController(requireActivity()) }
 	val appsViewModel by activityViewModels<MusicAppsViewModel> { MusicAppsViewModel.Factory(requireActivity().applicationContext) }
 	private val appsChangedCallback = ObservableListCallback<MusicAppInfo> {
 		val listView = view?.findViewById<RecyclerView>(R.id.listMusicApps)
 		if (listView != null && listView.adapter == null) {
-			listView.adapter = MusicAppListAdapter(requireActivity(), handler, requireActivity().supportFragmentManager, appsViewModel.allApps, appsViewModel.musicAppDiscoveryThread.discovery!!.musicSessions)
+			listView.adapter = DataBoundListAdapter(appsViewModel.allApps, R.layout.musicapp_listitem, controller)
 		}
 		listView?.adapter?.notifyDataSetChanged() // redraw the app list
 	}
@@ -45,6 +46,7 @@ class MusicAppsListFragment: Fragment() {
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		val listMusicApps = view.findViewById<RecyclerView>(R.id.listMusicApps)
 		listMusicApps.setHasFixedSize(true)
 		listMusicApps.layoutManager = LinearLayoutManager(requireActivity())
 		view.post {
@@ -53,6 +55,7 @@ class MusicAppsListFragment: Fragment() {
 
 		appsViewModel.validApps.addOnListChangedCallback(appsChangedCallback)
 
+		val listMusicAppsRefresh = view.findViewById<SwipeRefreshLayout>(R.id.listMusicAppsRefresh)
 		listMusicAppsRefresh.setOnRefreshListener {
 			appsViewModel.musicAppDiscoveryThread.forceDiscovery()
 			handler.postDelayed({
@@ -66,7 +69,7 @@ class MusicAppsListFragment: Fragment() {
 			}
 
 			override fun onSwiped(view: RecyclerView.ViewHolder, direction: Int) {
-				val musicAppInfo = (view as? MusicAppListAdapter.ViewHolder)?.appInfo
+				val musicAppInfo = (view as? DataBoundViewHolder<MusicAppInfo, MusicAppListController>)?.data
 				if (musicAppInfo != null) {
 					val previous = hiddenApps.contains(musicAppInfo.packageName)
 					if (previous) {

@@ -4,4 +4,7 @@
     <declare-styleable name="TipsListFragment_MembersInjector">
         <attr name="tipsMode" />
     </declare-styleable>
+    <declare-styleable name="View">
+        <attr name="animationDuration" format="integer" />
+    </declare-styleable>
 </resources>
