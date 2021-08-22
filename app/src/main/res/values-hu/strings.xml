@@ -82,6 +82,7 @@
     <string name="musicAppSearchable">Kereshető</string>
     <string name="musicAppUnavailable">Nem elérhető</string>
     <string name="musicAppHidden">Rejtett</string>
+    <string name="enable_spotify_layout">Mindig Spotify alkalmazásként jelenjen meg az IDrive5+ -ban</string>
     <string name="enable_audioplayer_layout">A régi kompakt zenei felület előnyben részesítése az IDrive5+ -ban</string>
     <string name="lbl_grant_sessions">Aktív zene alkalmazás vezérlése</string>
     <string name="lbl_grant_spotify_control">Spotify könyvtár tallózásának lehetősége</string>
@@ -152,6 +153,7 @@
     <string name="txt_setup_spp_connected">Bluetooth alkalmazások támogatottak</string>
     <string name="txt_setup_usb_disconnected">Nincs kapcsolat az autóval USB-n keresztül</string>
     <string name="txt_setup_usb_connected">USB töltés módban csatlakoztatva</string>
+    <string name="txt_setup_usb_requires_connected">USB almalmazás kapcsolathoz feltelepített BMW/Mini Connected szükséges</string>
     <string name="txt_setup_enable_usbmtp">Állítsd át a telefon USB módját Adatátvitelre</string>
     <string name="txt_setup_usbmtp_connected">USB tárhely módban csatlakoztatva</string>
     <string name="txt_setup_usbacc_connected">USB tartozék módban csatlakoztatva</string>
@@ -256,9 +258,11 @@
     <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
     <string name="lbl_carinfo_units_masl">m.a.s.l.</string>
     <!-- tips -->
+    <string name="lbl_tip_image">Tipp bemutató kép</string>
     <string name="lbl_tiplist">Tippek és trükkök</string>
     <string name="lbl_tip_expand">Tippek kinyitása</string>
     <string name="tip_connassistant">Használd a Kapcsolati Varázslót az USB tartozék mód bekapcsolásához, az IDrive4 autókban</string>
+    <string name="tip_btapp">Győződj meg róla, hogy az IDrive5 Bluetooth kapcsolat rendelkezik az Alkalmazás opcióval. Próbáld meg megszakítani majd újra kapcsolódni a Bluetooth Audiót, ha a kapcsolat megakad</string>
     <string name="tip_batterymode_mybmw">Próbáld meg kikapcsolni az akku optimalizációt a MyBMW alkalmazás esetében, ami néha segít kapcsolódni az autóhoz</string>
     <string name="tip_batterymode_mymini">Próbáld meg kikapcsolni az akku optimalizációt a Mini alkalmazás esetében, ami néha segít kapcsolódni az autóhoz</string>
     <string name="tip_music_hide">Húzd el a zenei alkalmazást a listából, ezzel elrejted az autó menüjéből azt</string>

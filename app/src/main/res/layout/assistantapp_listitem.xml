@@ -1,52 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data class="AssistantAppListItemBinding" >
+        <variable
+            name="data"
+            type="me.hufman.androidautoidrive.carapp.assistant.AssistantAppInfo" />
+        <variable
+            name="callback"
+            type="me.hufman.androidautoidrive.carapp.assistant.AssistantController" />
+    </data>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="6dp"
-        android:animateLayoutChanges="true"
-        android:orientation="vertical"
-        android:descendantFocusability="blocksDescendants">
+        android:onClick="@{() -> callback.triggerAssistant(data)}">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/imgAssistantAppIcon"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_marginEnd="12dp"
-                android:contentDescription="@string/musicAppIcon"
-                android:scaleType="fitStart"
-                tools:srcCompat="@tools:sample/avatars" />
-
-            <TextView
-                android:id="@+id/txtAssistantAppName"
-                android:layout_width="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical"
+            android:descendantFocusability="blocksDescendants">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:gravity="start"
-                android:ems="10" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/imgAssistantSettingsIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:padding="4dp"
-                android:contentDescription="@string/btn_configure"
-                android:scaleType="fitStart"
-                android:src="@android:drawable/ic_menu_preferences"
-                android:background="?android:selectableItemBackground" />
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginEnd="12dp"
+                    android:contentDescription="@{data.name}"
+                    android:scaleType="fitStart"
+                    android:src="@{data.icon}"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="start"
+                    android:ems="10"
+                    android:text="@{data.name}" />
+
+                <ImageButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="4dp"
+                    android:contentDescription="@string/btn_configure"
+                    android:scaleType="fitStart"
+                    android:src="@android:drawable/ic_menu_preferences"
+                    android:background="?android:selectableItemBackground"
+                    android:visibility="@{callback.supportsSettings(data)}"
+                    android:onClick="@{() -> callback.openSettings(data)}" />
+
+            </LinearLayout>
 
         </LinearLayout>
-
     </LinearLayout>
-</LinearLayout>
+</layout>

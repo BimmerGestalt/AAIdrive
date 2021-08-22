@@ -5,10 +5,7 @@ import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
-import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.androidautoidrive.music.PlaybackPosition
-import me.hufman.androidautoidrive.music.QueueMetadata
+import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
@@ -26,19 +23,22 @@ class MusicActivityModelTest {
 		on { getPosition() } doReturn 4500
 		on { maximumPosition } doReturn 300000
 	}
+	val musicAppInfo = MusicAppInfo("Test", mock(), "com.example.music", null)
 	val musicController = mock<MusicController> {
 		on { isConnected() } doReturn true
 		on { getMetadata() } doReturn metadata
 		on { getPlaybackPosition() } doReturn playbackPosition
 	}
 	val webApi = mock<SpotifyWebApi>()
-	val viewModel = MusicActivityModel(musicController, webApi)
+	val viewModel = MusicActivityModel(musicAppInfo, musicController, webApi)
 
 	@Test
 	fun update() {
 		viewModel.update()
 
 		assertEquals(true, viewModel.connected.value)
+		assertEquals("Test", viewModel.appName.value)
+		assertEquals(musicAppInfo.icon, viewModel.appIcon.value)
 		assertEquals(metadata.artist, viewModel.artist.value)
 		assertEquals(metadata.album, viewModel.album.value)
 		assertEquals(metadata.title, viewModel.title.value)

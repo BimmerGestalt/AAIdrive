@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:width="48dp" android:height="48dp">
+        <shape android:shape="oval" >
+            <size android:width="48dp" android:height="48dp" />
+            <solid android:color="#1d3" />
+        </shape>
+    </item>
+    <item android:width="48dp" android:height="48dp">
+        <shape android:shape="oval" >
+            <size android:width="48dp" android:height="48dp" />
+            <stroke android:color="#000" android:width="3dp"/>
+        </shape>
+    </item>
+    <item android:width="36dp" android:height="36dp"
+        android:gravity="center"
+        android:drawable="@drawable/ic_equalizer_black_24dp">
+    </item>
+</layer-list>

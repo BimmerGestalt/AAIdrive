@@ -4,6 +4,9 @@
         <variable
             name="viewModel"
             type="me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel" />
+        <variable
+            name="controller"
+            type="me.hufman.androidautoidrive.phoneui.controllers.OverviewPageController" />
     </data>
     <ScrollView
         android:id="@+id/pane_scrollView"
@@ -49,6 +52,7 @@
                 android:clipToPadding="false"
                 android:id="@+id/paneOverviewConnecting"
                 android:visibility="@{!viewModel.isCarConnected()}"
+                android:onClick="@{() -> controller.onClickConnecting()}"
                 android:name="me.hufman.androidautoidrive.phoneui.fragments.OverviewConnectingFragment"/>
 
             <androidx.fragment.app.FragmentContainerView

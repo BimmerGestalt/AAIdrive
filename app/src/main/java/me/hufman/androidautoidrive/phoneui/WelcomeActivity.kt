@@ -2,11 +2,13 @@ package me.hufman.androidautoidrive.phoneui
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import kotlinx.android.synthetic.main.activity_welcome.*
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.phoneui.fragments.welcome.*
@@ -18,17 +20,19 @@ class WelcomeActivity: AppCompatActivity() {
 
 		setContentView(R.layout.activity_welcome)
 
+		val pgrWelcomeTabs = findViewById<ViewPager>(R.id.pgrWelcomeTabs)
 		val adapter = FirstStartPagerAdapter(supportFragmentManager)
 		pgrWelcomeTabs.adapter = adapter
 		pgrWelcomeTabs.offscreenPageLimit = 2
 
-		tabWelcomeTabs.setupWithViewPager(pgrWelcomeTabs)
+		findViewById<TabLayout>(R.id.tabWelcomeTabs).setupWithViewPager(pgrWelcomeTabs)
 	}
 
 	override fun onResume() {
 		super.onResume()
 
-		btnNext.setOnClickListener {
+		findViewById<Button>(R.id.btnNext).setOnClickListener {
+			val pgrWelcomeTabs = findViewById<ViewPager>(R.id.pgrWelcomeTabs)
 			if (pgrWelcomeTabs.currentItem != (pgrWelcomeTabs.adapter?.count ?: 0) - 1) {
 				pgrWelcomeTabs.currentItem = pgrWelcomeTabs.currentItem + 1
 			} else {
@@ -42,6 +46,7 @@ class WelcomeActivity: AppCompatActivity() {
 	}
 
 	override fun onBackPressed() {
+		val pgrWelcomeTabs = findViewById<ViewPager>(R.id.pgrWelcomeTabs)
 		if (pgrWelcomeTabs.currentItem == 0) {
 			// pass through default behavior, to close the Activity
 			super.onBackPressed()

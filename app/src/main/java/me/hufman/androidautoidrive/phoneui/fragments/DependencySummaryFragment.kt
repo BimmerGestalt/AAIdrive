@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import me.hufman.androidautoidrive.databinding.DependencySummaryBinding
 import me.hufman.androidautoidrive.phoneui.controllers.DependencyInfoController
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import me.hufman.androidautoidrive.phoneui.viewmodels.DependencyInfoModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
 
 class DependencySummaryFragment: Fragment() {

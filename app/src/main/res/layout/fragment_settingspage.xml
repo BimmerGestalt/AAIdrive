@@ -1,48 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="vertical"
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data class="SettingsPageBinding">
+        <variable
+            name="viewModel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.LanguageSettingsModel" />
+    </data>
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
-        android:paddingEnd="@dimen/default_margin"
-        android:paddingStart="@dimen/default_margin"
-        android:paddingTop="@dimen/default_margin">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/pane_vertical_margin"
-            android:text="@string/lbl_settingspage" />
-
-        <View style="@style/Divider"
-            android:layout_marginBottom="@dimen/pane_vertical_margin"/>
-
-        <androidx.fragment.app.FragmentContainerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/paneLanguageSettings"
-            android:name="me.hufman.androidautoidrive.phoneui.fragments.LanguageSettingsFragment"/>
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/swAdvancedSettings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/lbl_advanced_settings"
-            android:layout_marginBottom="@dimen/settings_vertical_margin" />
-
+        android:layout_height="match_parent">
         <LinearLayout
-            android:id="@+id/paneAdvancedSettings"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/settings_vertical_margin">
+            android:animateLayoutChanges="true"
+            android:paddingEnd="@dimen/default_margin"
+            android:paddingStart="@dimen/default_margin"
+            android:paddingTop="@dimen/default_margin">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
+                android:text="@string/lbl_settingspage" />
+
+            <View style="@style/Divider"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"/>
+
             <androidx.fragment.app.FragmentContainerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/paneMusicAdvancedSettings"
-                android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicAdvancedSettingsFragment"/>
+                android:id="@+id/paneLanguageSettings"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.LanguageSettingsFragment"/>
+            <androidx.appcompat.widget.SwitchCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_advanced_settings"
+                android:layout_marginBottom="@dimen/settings_vertical_margin"
+                android:checked="@={viewModel.showAdvanced}"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/settings_vertical_margin"
+                android:visibility="@{viewModel.showAdvanced}">
+                <androidx.fragment.app.FragmentContainerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/paneMusicAdvancedSettings"
+                    android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicAdvancedSettingsFragment"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</layout>

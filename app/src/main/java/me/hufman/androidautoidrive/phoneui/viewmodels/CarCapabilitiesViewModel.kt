@@ -32,42 +32,42 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 		}
 	}
 
-	private val _isCarConnected = MutableLiveData<Boolean>()
+	private val _isCarConnected = MutableLiveData<Boolean>(false)
 	val isCarConnnected: LiveData<Boolean> = _isCarConnected
 
-	private val _isAudioContextSupported = MutableLiveData<Boolean>()
+	private val _isAudioContextSupported = MutableLiveData(false)
 	val isAudioContextSupported: LiveData<Boolean> = _isAudioContextSupported
 	private val _audioContextStatus = MutableLiveData<Context.() -> String>()
 	val audioContextStatus: LiveData<Context.() -> String> = _audioContextStatus
 	private val _audioContextHint = MutableLiveData<Context.() -> String>()
 	val audioContextHint: LiveData<Context.() -> String> = _audioContextHint
 
-	private val _isAudioStateSupported = MutableLiveData<Boolean>()
+	private val _isAudioStateSupported = MutableLiveData(false)
 	val isAudioStateSupported: LiveData<Boolean> = _isAudioStateSupported
 	private val _audioStateStatus = MutableLiveData<Context.() -> String>()
 	val audioStateStatus: LiveData<Context.() -> String> = _audioStateStatus
 	private val _audioStateHint = MutableLiveData<Context.() -> String>()
 	val audioStateHint: LiveData<Context.() -> String> = _audioStateHint
 
-	private val _isPopupSupported = MutableLiveData<Boolean>()
+	private val _isPopupSupported = MutableLiveData(false)
 	val isPopupSupported: LiveData<Boolean> = _isPopupSupported
-	private val _isPopupNotSupported = MutableLiveData<Boolean>()
+	private val _isPopupNotSupported = MutableLiveData(false)
 	val isPopupNotSupported: LiveData<Boolean> = _isPopupNotSupported
 	private val _popupStatus = MutableLiveData<Context.() -> String>()
 	val popupStatus: LiveData<Context.() -> String> = _popupStatus
 	private val _popupHint = MutableLiveData<Context.() -> String>()
 	val popupHint: LiveData<Context.() -> String> = _popupHint
 
-	private val _isTtsSupported = MutableLiveData<Boolean>()
+	private val _isTtsSupported = MutableLiveData(false)
 	val isTtsSupported: LiveData<Boolean> = _isTtsSupported
-	private val _isTtsNotSupported = MutableLiveData<Boolean>()
+	private val _isTtsNotSupported = MutableLiveData(false)
 	val isTtsNotSupported: LiveData<Boolean> = _isTtsNotSupported
 	private val _ttsStatus = MutableLiveData<Context.() -> String>()
 	val ttsStatus: LiveData<Context.() -> String> = _ttsStatus
 
-	private val _isNaviSupported = MutableLiveData<Boolean>()
+	private val _isNaviSupported = MutableLiveData(false)
 	val isNaviSupported: LiveData<Boolean> = _isNaviSupported
-	private val _isNaviNotSupported = MutableLiveData<Boolean>()
+	private val _isNaviNotSupported = MutableLiveData(false)
 	val isNaviNotSupported: LiveData<Boolean> = _isNaviNotSupported
 	private val _naviStatus = MutableLiveData<Context.() -> String>()
 	val naviStatus: LiveData<Context.() -> String> = _naviStatus

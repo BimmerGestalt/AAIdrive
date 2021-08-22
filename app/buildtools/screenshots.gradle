@@ -1,0 +1,30 @@
+def reportsDirectory = "$buildDir/reports/androidTests/connected"
+def phoneScreenshotsDirectory = "/storage/emulated/0/Android/data/me.hufman.androidautoidrive/files/screenshots"
+
+project.afterEvaluate {
+    def clearScreenshotsTask = task('clearScreenshots', type: Exec) {
+        executable "${android.getAdbExe().toString()}"
+        args 'shell', 'rm', '-r', phoneScreenshotsDirectory
+    }
+
+    def fetchScreenshotsTask = task('fetchScreenshots', type: Exec, group: 'reporting') {
+        executable "${android.getAdbExe().toString()}"
+        args 'pull', phoneScreenshotsDirectory, reportsDirectory
+        finalizedBy {
+            clearScreenshotsTask
+        }
+
+        doFirst {
+            new File(reportsDirectory).mkdirs()
+        }
+    }
+
+    tasks.whenTaskAdded { task ->
+        if (task.name == 'connectedDebugAndroidTest' || task.name == 'connectedNomapNonalyticsDebugAndroidTest' || task.name == 'connectedGmapNonalyticsDebugAndroidTest') {
+            task.finalizedBy {
+                fetchScreenshotsTask
+            }
+        }
+    }
+
+}
