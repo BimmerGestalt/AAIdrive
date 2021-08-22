@@ -155,7 +155,9 @@ fun setAnimated(view: ImageView, value: Boolean) {
 		drawable.start()
 		drawable.registerAnimationCallback(object: Animatable2.AnimationCallback() {
 			override fun onAnimationEnd(drawable: Drawable?) {
-				view.post { (drawable as? AnimatedVectorDrawable)?.start() }
+				if (view.isShown) {
+					view.post { (drawable as? AnimatedVectorDrawable)?.start() }
+				}
 			}
 		})
 	} else {
