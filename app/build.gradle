@@ -22,11 +22,11 @@ apply from: 'buildtools/screenshots.gradle'
 def TRAVIS_BRANCH = System.env.TRAVIS_PULL_REQUEST == "true" ? System.env.TRAVIS_PULL_REQUEST_BRANCH : System.env.TRAVIS_BRANCH
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
     defaultConfig {
         applicationId "me.hufman.androidautoidrive"
         minSdkVersion 23
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode androidGitVersion.code() + 1
         versionName androidGitVersion.name()
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

@@ -11,13 +11,13 @@ class SecurityServiceThread(val securityAccess: SecurityAccess): HandlerThread("
 	}
 
 	fun connect() {
-		Handler(Looper.myLooper()).post {
+		Handler(Looper.myLooper()!!).post {
 			securityAccess.connect()
 		}
 	}
 
 	fun disconnect() {
-		Handler(Looper.myLooper()).post {
+		Handler(Looper.myLooper()!!).post {
 			securityAccess.disconnect()
 			quitSafely()
 		}

@@ -23,6 +23,21 @@
         android:label="@string/permission_cds_personal"
         android:protectionLevel="dangerous"/>
 
+    <queries>
+        <!-- Search for MediaBrowserService -->
+        <intent>
+            <action android:name="android.media.browse.MediaBrowserService" />
+        </intent>
+        <!-- Search for Voice Assistants -->
+        <intent>
+            <action android:name="android.intent.action.VOICE_COMMAND" />
+        </intent>
+        <!-- Search for Addon apps that poll data -->
+        <intent>
+            <action android:name="bimmergestalt.cardata.service" />
+        </intent>
+    </queries>
+
     <application
         android:name=".ApplicationCallbacks"
         android:allowBackup="true"

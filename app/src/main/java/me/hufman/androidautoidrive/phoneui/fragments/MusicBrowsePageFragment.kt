@@ -65,7 +65,7 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 		val mediaId = arguments?.getString(ARG_MEDIA_ID)
 		listBrowseRefresh.setOnRefreshListener {
 			browseDirectory(mediaId)
-			Handler(this.context?.mainLooper).postDelayed({
+			Handler(this.requireContext().mainLooper).postDelayed({
 				this.view?.findViewById<SwipeRefreshLayout>(R.id.listBrowseRefresh)?.isRefreshing = false
 			}, 1000)
 		}

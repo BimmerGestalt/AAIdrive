@@ -24,7 +24,7 @@ class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 	override fun run() {
 		try {
 			Looper.prepare()
-			handler = Handler(Looper.myLooper())
+			handler = Handler(Looper.myLooper()!!)
 			runnable()
 			runnable = {}
 			Log.i(TAG, "Successfully finished runnable for thread $name, starting Handler loop")
