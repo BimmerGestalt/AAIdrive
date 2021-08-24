@@ -227,14 +227,14 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				queueItems = emptyList()
 				queueTitle = playerContext.title
 
+				if (createQueueMetadataJob?.isActive == true) {
+					createQueueMetadataJob?.cancel()
+				}
+
 				val isLikedSongsPlaylist = playerContext.type == "your_library" || playerContext.type == "your_library_tracks"
 				if (isLikedSongsPlaylist || playerContext.title == SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME) {
 					createLikedSongsQueueMetadata()
 				} else {
-					if (createQueueMetadataJob?.isActive == true) {
-						createQueueMetadataJob?.cancel()
-					}
-					createQueueMetadataJob = null
 					webApi.clearGetLikedSongsAttemptedFlag()
 					createQueueMetadata(playerContext)
 				}
@@ -249,10 +249,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	 * not authorized then the the [QueueMetadata] is created from the app remote API.
 	 */
 	fun createLikedSongsQueueMetadata() {
-		if (createQueueMetadataJob?.isActive == true) {
-			createQueueMetadataJob?.cancel()
-		}
-
 		createQueueMetadataJob = GlobalScope.launch(defaultDispatcher) {
 			queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
 
@@ -311,21 +307,11 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 
 		queueUri = temporaryPlaylistState.playlistUri
 
-		val recentlyPlayedUri = "com.spotify.recently-played"
-		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
-		remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
-			val item = recentlyPlayed?.items?.get(0)
-			if (item != null) {
-				remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
-					queueMetadata = QueueMetadata(queueTitle, item.subtitle, queueItems, coverArt, item.uri)
+		val coverArt = getQueueCoverArt()
+		queueMetadata = QueueMetadata(queueTitle, "", queueItems, coverArt, queueUri)
 
-					GlobalScope.launch(defaultDispatcher) {
-						val coverArtBase64 = Base64.encodeToString(Utils.compressBitmapJpg(coverArt, 100), Base64.NO_WRAP)
-						webApi.setPlaylistImage(playlistId, coverArtBase64)
-					}
-				}
-			}
-		}
+		val coverArtBase64 = Base64.encodeToString(Utils.compressBitmapJpg(coverArt, 85), Base64.NO_WRAP)
+		webApi.setPlaylistImage(playlistId, coverArtBase64)
 
 		return temporaryPlaylistState
 	}
@@ -348,7 +334,8 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		queueUri = temporaryPlaylistState.playlistUri
 		queueTitle = temporaryPlaylistState.playlistTitle
 
-		loadQueueCoverart()
+		val coverArt = getQueueCoverArt()
+		queueMetadata = QueueMetadata(queueTitle, "", queueItems, coverArt, queueUri)
 
 		return temporaryPlaylistState
 	}
@@ -388,7 +375,11 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 
 				// builds the QueueMetadata while waiting for cover art to load
 				queueMetadata = QueueMetadata(queueTitle, playerContext.subtitle, queueItems, mediaId = playerContext.uri)
-				loadQueueCoverart()
+
+				GlobalScope.launch(defaultDispatcher) {
+					val coverArt = getQueueCoverArt()
+					queueMetadata = QueueMetadata(queueTitle, playerContext.subtitle, queueItems, coverArt, playerContext.uri)
+				}
 
 				onQueueLoaded?.invoke()
 				callback?.invoke(this)
@@ -397,19 +388,22 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	}
 
 	/**
-	 * Updates the [QueueMetadata] with the cover art of the current queue.
+	 * Retrieves the cover art of the current queue.
 	 */
-	private fun loadQueueCoverart() {
+	private suspend fun getQueueCoverArt(): Bitmap {
+		val deferred = CompletableDeferred<Bitmap>()
 		val recentlyPlayedUri = "com.spotify.recently-played"
 		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
 		remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
 			val item = recentlyPlayed?.items?.get(0)
 			if (item != null) {
 				remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
-					queueMetadata = QueueMetadata(queueTitle, item.subtitle, queueItems, coverArt, item.uri)
+					deferred.complete(coverArt)
 				}
 			}
 		}
+
+		return deferred.await()
 	}
 
 	/**
