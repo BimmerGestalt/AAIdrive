@@ -308,7 +308,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		queueUri = temporaryPlaylistState.playlistUri
 
 		val coverArt = getQueueCoverArt()
-		queueMetadata = QueueMetadata(queueTitle, "", queueItems, coverArt, queueUri)
+		queueMetadata = QueueMetadata(queueTitle, null, queueItems, coverArt, queueUri)
 
 		val coverArtBase64 = Base64.encodeToString(Utils.compressBitmapJpg(coverArt, 85), Base64.NO_WRAP)
 		webApi.setPlaylistImage(playlistId, coverArtBase64)
@@ -335,7 +335,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		queueTitle = temporaryPlaylistState.playlistTitle
 
 		val coverArt = getQueueCoverArt()
-		queueMetadata = QueueMetadata(queueTitle, "", queueItems, coverArt, queueUri)
+		queueMetadata = QueueMetadata(queueTitle, null, queueItems, coverArt, queueUri)
 
 		return temporaryPlaylistState
 	}

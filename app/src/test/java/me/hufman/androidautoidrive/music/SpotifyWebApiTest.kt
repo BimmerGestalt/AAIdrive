@@ -1318,6 +1318,66 @@ class SpotifyWebApiTest {
 		assertNull(playlistUri)
 	}
 
+	@Test
+	fun testSetPlaylistImage() = runBlocking {
+		val playlistId = "playlistId"
+		val coverArtImageData = "coverArtImageData"
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.uploadClientPlaylistCover(playlistId, imageData = coverArtImageData)).doAnswer {  }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		spotifyWebApi.setPlaylistImage(playlistId, coverArtImageData)
+
+		verify(clientPlaylistApi).uploadClientPlaylistCover(playlistId, imageData = coverArtImageData)
+	}
+
+	@Test
+	fun testSetPlaylistImage_AuthenticationException() = runBlocking {
+		val playlistId = "playlistId"
+		val coverArtImageData = "coverArtImageData"
+
+		val exception = SpotifyException.AuthenticationException("message")
+		doNothing().whenever(spotifyAuthStateManager).addAccessTokenAuthorizationException(exception)
+
+		val notificationManager: NotificationManager = mock()
+		whenever(context.getSystemService(NotificationManager::class.java)).thenReturn(notificationManager)
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.uploadClientPlaylistCover(playlistId, imageData = coverArtImageData)).doAnswer { throw exception }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		spotifyWebApi.setPlaylistImage(playlistId, coverArtImageData)
+
+		val internalWebApi: SpotifyClientApi? = Whitebox.getInternalState(spotifyWebApi, "webApi")
+		assertNull(internalWebApi)
+
+		verify(notificationManager, never()).notify(any(), any())
+	}
+
+	@Test
+	fun testSetPlaylistImage_SpotifyException() = runBlocking {
+		val playlistId = "playlistId"
+		val coverArtImageData = "coverArtImageData"
+
+		val exception = SpotifyException.BadRequestException("message")
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.uploadClientPlaylistCover(playlistId, imageData = coverArtImageData)).doAnswer { throw exception }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		spotifyWebApi.setPlaylistImage(playlistId, coverArtImageData)
+	}
+
 	private fun createSpotifyMusicMetadata(spotifyAppController: SpotifyAppController, uriId: String, coverArtCode: String?, artistName: String?, albumName: String?, trackName: String, subtitle: String?, playable: Boolean, browseable: Boolean): SpotifyMusicMetadata {
 		val coverArtUri = if (coverArtCode != null) {
 			"spotify:image:${coverArtCode.drop(1)}"
