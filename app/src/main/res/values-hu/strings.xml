@@ -10,6 +10,8 @@
     <string name="notification_description_chassiscode">Csatlakozva a következőhöz: %s</string>
     <string name="notification_description_bmw">BMW-hez kapcsolódva</string>
     <string name="notification_description_mini">Mini-hez csatlakozva</string>
+    <string name="permission_cds_normal">általános autó információk olvasása</string>
+    <string name="permission_cds_personal">személyes autó információk olvasása</string>
     <!-- notification channel names -->
     <string name="notification_channel_assistant">Asszisztens indító</string>
     <string name="notification_channel_connection">Kapcsolat állapota</string>
