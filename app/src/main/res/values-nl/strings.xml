@@ -10,6 +10,8 @@
     <string name="notification_description_chassiscode">Verbonden met %s</string>
     <string name="notification_description_bmw">Verbonden met uw BMW</string>
     <string name="notification_description_mini">Verbonden met uw Mini</string>
+    <string name="permission_cds_normal">algemene auto info lezen</string>
+    <string name="permission_cds_personal">persoonlijke auto info lezen</string>
     <!-- notification channel names -->
     <string name="notification_channel_assistant">Assistent Launcher</string>
     <string name="notification_channel_connection">Status autoverbinding</string>
