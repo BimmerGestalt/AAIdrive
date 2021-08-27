@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_notification_quickreplies.*
+import androidx.recyclerview.widget.RecyclerView
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
@@ -41,6 +41,7 @@ class NotificationQuickRepliesFragment: Fragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+		val listNotificationQuickReplies = view.findViewById<RecyclerView>(R.id.listNotificationQuickReplies)
 		listNotificationQuickReplies.layoutManager = LinearLayoutManager(requireActivity())
 		listNotificationQuickReplies.adapter = adapter
 		itemTouchHelper.attachToRecyclerView(listNotificationQuickReplies)  // enable drag/swipe

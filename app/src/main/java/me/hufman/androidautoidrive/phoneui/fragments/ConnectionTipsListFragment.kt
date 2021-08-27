@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ScrollView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import me.hufman.androidautoidrive.R
@@ -17,6 +16,7 @@ import me.hufman.androidautoidrive.phoneui.ViewHelpers.scrollBottom
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.scrollTop
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionTipsModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
 class ConnectionTipsListFragment: Fragment() {
 	var mode = ""

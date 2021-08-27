@@ -5,55 +5,42 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_mapspage.*
-import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.BooleanLiveSetting
-import me.hufman.androidautoidrive.MutableAppSettingsReceiver
-import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.databinding.MapPageSettingsBinding
+import me.hufman.androidautoidrive.phoneui.controllers.MapsPageController
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
+import me.hufman.androidautoidrive.phoneui.viewmodels.MapSettingsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
-import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
+import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
 class MapsPageFragment: Fragment() {
-	val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }
-	val permissionsController by lazy { PermissionsController(requireActivity()) }
-	val viewModel by lazy { PermissionsModel.Factory(requireContext().applicationContext).create(PermissionsModel::class.java) }
+	val mapSettingsModel by viewModels<MapSettingsModel> { MapSettingsModel.Factory(requireContext().applicationContext) }
+	val permissionsModel by viewModels<PermissionsModel> { PermissionsModel.Factory(requireContext().applicationContext) }
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		return inflater.inflate(R.layout.fragment_mapspage, container, false)
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+		val permissionsController by lazy { PermissionsController(requireActivity()) }
+		val mapsPageController by lazy { MapsPageController(mapSettingsModel, permissionsModel, permissionsController) }
+
+		val binding = MapPageSettingsBinding.inflate(inflater, container, false)
+		binding.lifecycleOwner = viewLifecycleOwner
+		binding.settings = mapSettingsModel
+		binding.controller = mapsPageController
+		return binding.root
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
-		val mapsEnabledSetting = BooleanLiveSetting(requireContext().applicationContext, AppSettings.KEYS.ENABLED_GMAPS)
-		mapsEnabledSetting.observe(viewLifecycleOwner) {
-			swMapsEnabled.isChecked = it
-			paneMaps.visible = it
-		}
-		swMapsEnabled.setOnCheckedChangeListener { _, isChecked ->
-			onChangedSwitchGMaps(mapsEnabledSetting, isChecked)
-		}
-
-		viewModel.hasLocationPermission.observe(viewLifecycleOwner) {
+		// clear the checkbox if we don't yet have location permission
+		permissionsModel.hasLocationPermission.observe(viewLifecycleOwner) {
 			if (!it) {
-				mapsEnabledSetting.setValue(false)
-			}
-		}
-	}
-
-	fun onChangedSwitchGMaps(setting: BooleanLiveSetting, isChecked: Boolean) {
-		setting.setValue(isChecked)
-		if (isChecked) {
-			// make sure we have permissions to show current location
-			if (viewModel.hasLocationPermission.value != true) {
-				permissionsController.promptLocation()
+				mapSettingsModel.mapEnabled.setValue(false)
 			}
 		}
 	}
 
 	override fun onResume() {
 		super.onResume()
-		viewModel.update()
+		// update the model, used in the controller to know to show the prompt
+		permissionsModel.update()
 	}
 }

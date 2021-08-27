@@ -8,9 +8,7 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import me.hufman.androidautoidrive.CarInformation
-import me.hufman.androidautoidrive.CarInformationObserver
-import me.hufman.androidautoidrive.ChassisCode
+import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.connections.CarConnectionDebugging
 import java.util.*

@@ -1,38 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="top"
-    android:orientation="horizontal"
-    android:background="?android:attr/selectableItemBackground">
-
-    <ImageView
-        android:id="@+id/imgBrowseType"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_weight="0"
-        android:scaleType="centerCrop"
-        tools:srcCompat="@tools:sample/avatars" />
-
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data class="MusicBrowseListItemBinding" >
+        <variable
+            name="data"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.MusicPlayerItem" />
+        <variable
+            name="callback"
+            type="me.hufman.androidautoidrive.phoneui.controllers.MusicPlayerController" />
+    </data>
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:paddingLeft="6dp"
-        android:paddingBottom="6dp">
+        android:gravity="top"
+        android:orientation="horizontal"
+        android:background="?android:attr/selectableItemBackground"
+        android:onClick="@{() -> callback.selectItem(data)}">
 
-        <TextView
-            android:id="@+id/txtBrowseEntryTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_weight="0"
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/avatars"
+            android:visibility="@{data.coverart != null}"
+            android:src="@{data.coverart}"/>
 
-        <TextView
-            android:id="@+id/txtBrowseEntrySubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_weight="0"
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/avatars"
+            android:visibility="@{data.coverart == null}"
+            android:src="@{data.icon}"
+            app:iconMaskColor="@{android.R.attr.textColorSecondary}"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:paddingBottom="6dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{data.title}" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{data.subtitle}"
+                android:textSize="12sp"
+                android:textStyle="italic" />
+        </LinearLayout>
+
     </LinearLayout>
-
-</LinearLayout>
+</layout>

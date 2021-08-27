@@ -5,6 +5,7 @@ import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.utils.TimeUtils.formatTime
 import me.hufman.androidautoidrive.UnicodeCleaner
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.utils.Utils
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
@@ -94,14 +95,14 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		} else {
 			state as RHMIState.ToolbarState
 			appTitleModel = state.getTextModel()?.asRaDataModel()!!
-			appLogoModel = state.componentsList.filterIsInstance<RHMIComponent.Image>().filter {
+			appLogoModel = state.componentsList.filterIsInstance<RHMIComponent.Image>().first {
 				// The one single image which is visible in both wide and small screen modes
 				val property = it.properties[RHMIProperty.PropertyId.POSITION_X.id]
 				val smallPosition = (property as? RHMIProperty.LayoutBag)?.get(1)
 				val widePosition = (property as? RHMIProperty.LayoutBag)?.get(0)
 				(smallPosition is Int && smallPosition < 1900) &&
 				(widePosition is Int && widePosition < 1900)
-			}.first().getModel()?.asRaImageModel()!!
+			}.getModel()?.asRaImageModel()!!
 
 			// group the components into which widescreen state they are visible in
 			// the layout hides the components by setting their X to 2000
@@ -223,7 +224,12 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 		shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_UNAVAILABLE
 		shuffleButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.SHUFFLE_OFF
-		shuffleButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.toggleShuffle() }
+		shuffleButton.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+			controller.toggleShuffle()
+			// this button has the same TargetModel as the Toolbar PlaybackView's Actions button
+			// so we have to throw Abort to not continue to that screen
+			throw RHMIActionAbort()
+		}
 
 		skipBackButton?.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_SKIP_PREVIOUS
 		skipBackButton?.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback { controller.skipToPrevious() }

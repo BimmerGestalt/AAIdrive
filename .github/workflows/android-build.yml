@@ -38,44 +38,74 @@ jobs:
           file: app/build/reports/jacoco/jacoco.xml
           flags: unittests
 
-#  instrumentedTest:
-#    runs-on: macos-10.15
-#    strategy:
-#      matrix:
-#        map: [Nomap, Gmap]
-#        hasSecret:
-#          - ${{ github.repository == 'hufman/AndroidAutoIdrive' && github.event_name == 'push' }}
-#        exclude:  # don't run Gmap tests if we are in a context that doesn't have the gmap secret
-#          - hasSecret: false
-#            map: Gmap
-#    steps:
-#      - name: Checkout the project
-#        uses: actions/checkout@v2
-#        with:
-#          fetch-depth: 0
-#          submodules: true
-#      - name: Set up JDK 1.8
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: 1.8
-#      - name: Download build dependencies
-#        uses: ./.github/actions/download-externals-action
-#      - name: Build the project
-#        run: ./gradlew compileDebug
-#      - name: Run instrumented tests
-#        uses: reactivecircus/android-emulator-runner@v2
-#        env:
-#          AndroidAutoIdrive_GmapsApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_GMAPSAPIKEY }}
-#        with:
-#          api-level: 26
-#          target: google_apis
-#          script: adb install external/BMW_Connected_v3.1.1.3078_apkpure.com.apk && ./gradlew connected${{ matrix.map }}NonalyticsDebugAndroidTestCoverage
-#      - name: Upload CodeCov report
-#        if: matrix.map != 'Gmap'   # don't upload Gmap test results, which don't run during PRs
-#        uses: codecov/codecov-action@v1
-#        with:
-#          file: app/build/reports/jacoco/jacoco.xml
+  instrumentedTest:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        map: [Nomap, Gmap]
+        hasSecret:
+          - ${{ github.repository == 'hufman/AndroidAutoIdrive' && github.event_name == 'push' }}
+        exclude:  # don't run Gmap tests if we are in a context that doesn't have the gmap secret
+          - hasSecret: false
+            map: Gmap
+    steps:
+      - name: Checkout the project
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Download build dependencies
+        uses: ./.github/actions/download-externals-action
+      - name: Build the project
+        run: ./gradlew compileDebug
+      - name: Prepare emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 28
+          emulator-build: 6110076
+          target: google_apis
+          script: adb install external/BMW_Connected_v3.1.1.3078_apkpure.com.apk
+      - name: Run instrumented tests
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          AndroidAutoIdrive_GmapsApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_GMAPSAPIKEY }}
+        with:
+          force-avd-creation: false
+          api-level: 28
+          emulator-build: 6110076
+          target: google_apis
+          script: ./gradlew connected${{ matrix.map }}NonalyticsDebugAndroidTestCoverage
+      - name: Upload CodeCov report
+        if: matrix.map != 'Gmap'   # don't upload Gmap test results, which don't run during PRs
+        uses: codecov/codecov-action@v1
+        with:
+          file: app/build/reports/jacoco/jacoco.xml
 #          flags: instrumentedtests
+
+# android connectedTests don't leave the app or files installed after the test
+# so we have to invoke it manually
+      - name: Generate screenshots
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          AndroidAutoIdrive_GmapsApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_GMAPSAPIKEY }}
+        with:
+          force-avd-creation: false
+          api-level: 28
+          emulator-build: 6110076
+          target: google_apis
+          script: adb logcat -c && ./gradlew install${{ matrix.map }}NonalyticsDebug && ./gradlew install${{ matrix.map }}NonalyticsDebugAndroidTest && ( adb shell am instrument -w me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner || adb shell am instrument -w me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner ) && ./gradlew fetchScreenshots || adb logcat -d
+      - name: Package screenshots
+        uses: actions/upload-artifact@v2
+        if: matrix.map == 'Nomap'
+        with:
+          retention-days: 7
+          name: screenshots
+          path: |
+            app/build/reports/androidTests/connected/screenshots/*
 
   package:
     if: github.repository == 'hufman/AndroidAutoIdrive' && github.event_name == 'push'

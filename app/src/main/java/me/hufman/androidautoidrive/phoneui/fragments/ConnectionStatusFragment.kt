@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import me.hufman.androidautoidrive.databinding.ConnectionStatusBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 
 class ConnectionStatusFragment: Fragment() {
 	val viewModel by activityViewModels<ConnectionStatusModel> { ConnectionStatusModel.Factory(requireContext().applicationContext) }

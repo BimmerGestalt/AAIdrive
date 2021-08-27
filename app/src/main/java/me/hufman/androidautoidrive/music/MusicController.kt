@@ -56,10 +56,6 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	val seekingController = SeekingController(context, handler, this)
 
 
-	init {
-		handler.post { scheduleRedrawProgress() }
-	}
-
 	/**
 	 * Run on the handler's thread, and don't crash for RPC disconnections
 	 */
@@ -154,6 +150,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 					currentAppController = controller
 					Log.i(TAG, "Successful connection to $currentAppController")
 					saveDesiredApp(app)
+					scheduleRedrawProgress()        // start up repeating redraw
 				}
 			}
 		}
@@ -341,6 +338,9 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		assertPlayingMetadata()
 	}
 	fun scheduleRedrawProgress() {
+		if (currentAppController == null) {
+			return
+		}
 		val position = getPlaybackPosition()
 		if (position.isPaused) {
 			handler.postDelayed(redrawProgressTask, 500)

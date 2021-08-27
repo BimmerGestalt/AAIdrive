@@ -5,12 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import me.hufman.androidautoidrive.databinding.DependencyInfoBinding
 import me.hufman.androidautoidrive.phoneui.controllers.DependencyInfoController
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import me.hufman.androidautoidrive.phoneui.viewmodels.DependencyInfoModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 
 class DependencyInfoFragment: Fragment() {
 	val viewModel by activityViewModels<DependencyInfoModel> { DependencyInfoModel.Factory(requireContext().applicationContext) }

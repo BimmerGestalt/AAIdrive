@@ -5,43 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_notificationpage.*
-import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.BooleanLiveSetting
-import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.databinding.WelcomeNotificationBinding
+import me.hufman.androidautoidrive.phoneui.controllers.NotificationPageController
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
-import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
+import me.hufman.androidautoidrive.phoneui.viewmodels.NotificationSettingsModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
 class WelcomeNotificationFragment: Fragment() {
-	val permissionsController by lazy { PermissionsController(requireActivity()) }
-	val viewModel by lazy { PermissionsModel.Factory(requireContext().applicationContext).create(PermissionsModel::class.java) }
+	val notificationSettingsModel by viewModels<NotificationSettingsModel> { NotificationSettingsModel.Factory(requireContext().applicationContext)}
+	val permissionsModel by viewModels<PermissionsModel> {PermissionsModel.Factory(requireContext().applicationContext)}
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		return inflater.inflate(R.layout.fragment_welcome_notification, container, false)
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+		val permissionsController by lazy { PermissionsController(requireActivity()) }
+		val notificationPageController by lazy { NotificationPageController(notificationSettingsModel, permissionsModel, permissionsController) }
+
+		val binding = WelcomeNotificationBinding.inflate(inflater, container, false)
+		binding.lifecycleOwner = viewLifecycleOwner
+		binding.settingsModel = notificationSettingsModel
+		binding.controller = notificationPageController
+		return binding.root
 	}
-
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-
-		val notificationsEnabledSetting = BooleanLiveSetting(requireContext().applicationContext, AppSettings.KEYS.ENABLED_NOTIFICATIONS)
-		notificationsEnabledSetting.observe(viewLifecycleOwner) {
-			swMessageNotifications.isChecked = it
-			paneNotificationSettings.visible = it
-		}
-		swMessageNotifications.setOnCheckedChangeListener { _, isChecked ->
-			onChangedSwitchNotifications(notificationsEnabledSetting, isChecked)
-		}
-	}
-
-	private fun onChangedSwitchNotifications(appSetting: BooleanLiveSetting, isChecked: Boolean) {
-		appSetting.setValue(isChecked)
-		if (isChecked) {
-			// make sure we have permissions to read the notifications
-			if (viewModel.hasNotificationPermission.value != true) {
-				permissionsController.promptNotification()
-			}
-		}
-	}
-
 }

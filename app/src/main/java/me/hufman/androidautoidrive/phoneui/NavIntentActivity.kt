@@ -6,10 +6,11 @@ import android.graphics.Point
 import android.os.Bundle
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import kotlinx.android.synthetic.main.activity_navintent.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.navigation.AndroidGeocoderSearcher
 import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
@@ -49,6 +50,7 @@ class NavIntentActivity: AppCompatActivity() {
 		setContentView(R.layout.activity_navintent)
 
 		viewModel.isSearching.observe(this) {
+			val prgNavSpinner = findViewById<ProgressBar>(R.id.prgNavSpinner)
 			prgNavSpinner.isIndeterminate = it
 
 			// finished searching
@@ -62,9 +64,10 @@ class NavIntentActivity: AppCompatActivity() {
 			}
 		}
 		viewModel.searchFailed.observe(this) {
-			txtNavError.visible = it
+			findViewById<TextView>(R.id.txtNavError).visible = it
 		}
 		viewModel.searchStatus.observe(this) {
+			val txtNavLabel = findViewById<TextView>(R.id.txtNavLabel)
 			val oldText = txtNavLabel.text
 			val newText = this.run(it)
 
@@ -95,7 +98,7 @@ class NavIntentActivity: AppCompatActivity() {
 			else -> null
 		}
 		if (query != null) {
-			txtNavError.text = query.toString()       // in case we need to show it for parse errors
+			findViewById<TextView>(R.id.txtNavError).text = query.toString()       // in case we need to show it for parse errors
 			val navParser = NavigationParser(AndroidGeocoderSearcher(this.applicationContext), URLRedirector())
 			val navTrigger = NavigationTriggerSender(this.applicationContext)
 			val controller = NavigationSearchController(lifecycleScope, navParser, navTrigger, viewModel)

@@ -5,8 +5,8 @@ import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_bcl_status.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.AppSettingsViewer
 import me.hufman.androidautoidrive.R
@@ -48,7 +48,7 @@ class BclStatusFragment: Fragment() {
 
 	fun redraw() {
 		if (!isResumed) return
-		txtBclReport.text = bclStatusListener.toString()
-		paneBclReport.visible = bclStatusListener.state != "UNKNOWN" && bclStatusListener.staleness < 30000 && appSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
+		view?.findViewById<TextView>(R.id.txtBclReport)?.text = bclStatusListener.toString()
+		view?.findViewById<ViewGroup>(R.id.paneBclReport)?.visible = bclStatusListener.state != "UNKNOWN" && bclStatusListener.staleness < 30000 && appSettings[AppSettings.KEYS.SHOW_ADVANCED_SETTINGS].toBoolean()
 	}
 }
