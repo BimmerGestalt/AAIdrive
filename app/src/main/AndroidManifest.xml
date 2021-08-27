@@ -14,6 +14,15 @@
     <!-- View Bluetooth status -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
 
+    <permission android:name="bimmergestalt.permission.CDS_normal"
+        android:description="@string/permission_cds_normal"
+        android:label="@string/permission_cds_normal"
+        android:protectionLevel="normal"/>
+    <permission android:name="bimmergestalt.permission.CDS_personal"
+        android:description="@string/permission_cds_personal"
+        android:label="@string/permission_cds_personal"
+        android:protectionLevel="dangerous"/>
+
     <application
         android:name=".ApplicationCallbacks"
         android:allowBackup="true"
@@ -1030,11 +1039,25 @@
         </service>
 
         <provider
-            android:name="me.hufman.androidautoidrive.CarAPIAssetProvider"
+            android:authorities="bimmergestalt.cardata.provider"
+            android:name="me.hufman.androidautoidrive.CDSContentProvider"
             android:exported="true"
-            android:authorities="me.hufman.androidautoidrive.provider"
-            android:grantUriPermissions="true" />
-
+            android:readPermission="bimmergestalt.permission.CDS_normal"
+            >
+            <path-permission android:path="/cds/10" android:readPermission="bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/11" android:readPermission="bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/57" android:readPermission="bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/59" android:readPermission="bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/60" android:readPermission="bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/61" android:readPermission="bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/62" android:readPermission="bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/63" android:readPermission="bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/64" android:readPermission="bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/65" android:readPermission="bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/66" android:readPermission="bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/67" android:readPermission="bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/87" android:readPermission="bimmergestalt.permission.CDS_personal" />
+        </provider>
 
         <meta-data
             android:name="com.spotify.music.API_KEY"
