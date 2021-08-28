@@ -44,7 +44,7 @@ jobs:
       matrix:
         map: [Nomap, Gmap]
         hasSecret:
-          - ${{ github.repository == 'hufman/AndroidAutoIdrive' && github.event_name == 'push' }}
+          - ${{ github.repository == 'BimmerGestalt/AAIdrive' && github.event_name == 'push' }}
         exclude:  # don't run Gmap tests if we are in a context that doesn't have the gmap secret
           - hasSecret: false
             map: Gmap
@@ -108,7 +108,8 @@ jobs:
             app/build/reports/androidTests/connected/screenshots/*
 
   package:
-    if: github.repository == 'hufman/AndroidAutoIdrive' && github.event_name == 'push'
+    # Only build on the main repo, which has the secrets configured
+    if: github.repository == 'BimmerGestalt/AAIdrive' && github.event_name == 'push'
     needs: [unitTest]  # wait for the tests to succeed
     runs-on: ubuntu-18.04
     steps:
@@ -170,8 +171,8 @@ jobs:
         uses: shallwefootball/s3-upload-action@v1.1.3
         with:
           source_dir: dist
-          destination_dir: hufman/AndroidAutoIdrive
-          aws_bucket: androidautoidrive
+          destination_dir: aaidrive/builds
+          aws_bucket: bimmergestalt
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
