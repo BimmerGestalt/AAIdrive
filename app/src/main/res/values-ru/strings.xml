@@ -338,6 +338,7 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Повторить все</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Повторить одну</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Выключить повтор</string>
+    <string name="MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION">Временный плейлист AAIdrive</string>
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Назад на %s секунд</item>
         <item quantity="few">Назад на %s секунд</item>
