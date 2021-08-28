@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AAIdrive</string>
     <string name="permlab_accessNotifications">Notificação de Acesso IDrive</string>
     <string name="permlab_bindNotificationListenerService">Notificação de Acesso IDrive</string>
     <string name="permdesc_accessNotifications">Notificação de Acesso IDrive</string>
     <string name="permdesc_bindNotificationListenerService">Notificação de Acesso IDrive</string>
-    <string name="notification_title">AAIdrive</string>
     <string name="notification_description">Conectado com veículo</string>
     <string name="notification_description_chassiscode">Conectado com %s</string>
     <string name="notification_description_bmw">Conectado com BMW</string>
