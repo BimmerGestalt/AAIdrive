@@ -1026,7 +1026,7 @@ class SpotifyMusicAppControllerTest {
 	@Test
 	fun testSearch() {
 		runBlocking {
-			assertEquals(null, controller.search("any"))
+			assertTrue(controller.search("any").isEmpty())
 		}
 	}
 

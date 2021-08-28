@@ -639,7 +639,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	override suspend fun search(query: String): List<MusicMetadata> {
 		val deferred = CompletableDeferred<List<MusicMetadata>>()
 		GlobalScope.launch(defaultDispatcher) {
-			deferred.complete(webApi.searchForQuery(this@SpotifyAppController, query))
+			deferred.complete(webApi.searchForQuery(this@SpotifyAppController, query) ?: emptyList())
 		}
 		return deferred.await()
 	}

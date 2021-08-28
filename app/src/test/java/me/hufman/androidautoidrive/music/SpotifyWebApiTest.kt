@@ -652,7 +652,8 @@ class SpotifyWebApiTest {
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
 
-		assertEquals(2, searchResults.size)
+		assertNotNull(searchResults)
+		assertEquals(2, searchResults!!.size)
 		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:album:${uriId1}", coverArtCode1, artistName1, albumName1, albumName1, "Album", true, false)
 		assertEquals(metadata1, searchResults[0])
 		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:album:${uriId2}", coverArtCode2, artistName2, albumName2, albumName2, "Album", true, false)
@@ -694,7 +695,8 @@ class SpotifyWebApiTest {
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
 
-		assertEquals(2, searchResults.size)
+		assertNotNull(searchResults)
+		assertEquals(2, searchResults!!.size)
 		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId1}", coverArtCode1, artistName1, "spotify:album:${albumUriId1}", trackName1, "Track", true, false)
 		assertEquals(metadata1, searchResults[0])
 		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId2}", coverArtCode2, artistName2, "spotify:album:${albumUriId2}", trackName2, "Track", true, false)
@@ -732,7 +734,8 @@ class SpotifyWebApiTest {
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
 
-		assertEquals(2, searchResults.size)
+		assertNotNull(searchResults)
+		assertEquals(2, searchResults!!.size)
 		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:artist:${uriId1}", coverArtCode1, artistName1, null, artistName1, "Artist", false, true)
 		assertEquals(metadata1, searchResults[0])
 		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:artist:${uriId2}", coverArtCode2, artistName2, null, artistName2, "Artist", false, true)
@@ -772,7 +775,8 @@ class SpotifyWebApiTest {
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
 
-		assertEquals(2, searchResults.size)
+		assertNotNull(searchResults)
+		assertEquals(2, searchResults!!.size)
 		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:show:${uriId1}", coverArtCode1, publisherName1, null, showName1, "Show", false, true)
 		assertEquals(metadata1, searchResults[0])
 		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:show:${uriId2}", coverArtCode2, publisherName2, null, showName2, "Show", false, true)
@@ -810,7 +814,8 @@ class SpotifyWebApiTest {
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
 
-		assertEquals(2, searchResults.size)
+		assertNotNull(searchResults)
+		assertEquals(2, searchResults!!.size)
 		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:episode:${uriId1}", coverArtCode1, null, null, episodeName1, "Episode", true, false)
 		assertEquals(metadata1, searchResults[0])
 		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:episode:${uriId2}", coverArtCode2, null, null, episodeName2, "Episode", true, false)
@@ -833,7 +838,8 @@ class SpotifyWebApiTest {
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
 
-		assertTrue(searchResults.isEmpty())
+		assertNotNull(searchResults)
+		assertTrue(searchResults!!.isEmpty())
 	}
 
 	@Test
@@ -896,7 +902,8 @@ class SpotifyWebApiTest {
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
 
-		assertEquals(5, searchResults.size)
+		assertNotNull(searchResults)
+		assertEquals(5, searchResults!!.size)
 		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:album:${albumUriId}", albumCoverArtCode, albumArtistName, albumName, albumName, "Album", true, false)
 		assertEquals(metadata1, searchResults[0])
 		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${trackUriId}", trackCoverArtCode, trackArtistName, "spotify:album:${trackAlbumUriId}", trackName, "Track", true, false)
@@ -930,7 +937,7 @@ class SpotifyWebApiTest {
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
 
-		assertTrue(searchResults.isEmpty())
+		assertNull(searchResults)
 
 		val internalWebApi: SpotifyClientApi? = Whitebox.getInternalState(spotifyWebApi, "webApi")
 		assertNull(internalWebApi)
@@ -955,7 +962,7 @@ class SpotifyWebApiTest {
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
 
-		assertTrue(searchResults.isEmpty())
+		assertNull(searchResults)
 	}
 
 	@Test
@@ -1362,7 +1369,7 @@ class SpotifyWebApiTest {
 	}
 
 	@Test
-	fun testSetPlaylistImage_SpotifyException() = runBlocking {
+	fun testSetPlaylistImage_SpotifyException(): Unit = runBlocking {
 		val playlistId = "playlistId"
 		val coverArtImageData = "coverArtImageData"
 

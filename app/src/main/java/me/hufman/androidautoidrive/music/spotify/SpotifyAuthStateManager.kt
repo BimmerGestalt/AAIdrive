@@ -7,6 +7,7 @@ import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
 import net.openid.appauth.*
 import org.json.JSONException
+import java.lang.Exception
 
 /**
  * Spotify manager for an [AuthState] instance that is created from and mutates a JSON stored [AuthState]
@@ -116,7 +117,7 @@ class SpotifyAuthStateManager private constructor(val appSettings: MutableAppSet
 	/**
 	 * Updates the [AuthState] last token response with an [AuthorizationException].
 	 */
-	fun addAccessTokenAuthorizationException(e: SpotifyException.AuthenticationException) {
+	fun addAccessTokenAuthorizationException(e: Exception) {
 		val authorizationException = AuthorizationException(AuthorizationException.TYPE_OAUTH_TOKEN_ERROR, -1, "Access Token Authentication Error", "Authentication failed with the message: ${e.message}", null, e)
 		updateTokenResponse(null, authorizationException)
 	}
