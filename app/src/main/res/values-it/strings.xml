@@ -10,6 +10,8 @@
     <string name="notification_description_chassiscode">Connesso a %s</string>
     <string name="notification_description_bmw">Connesso a BMW</string>
     <string name="notification_description_mini">Connesso a Mini</string>
+    <string name="permission_cds_normal">Leggi le informazioni generiche dell\'auto</string>
+    <string name="permission_cds_personal">Leggi le informazioni personali dell\'auto</string>
     <!-- notification channel names -->
     <string name="notification_channel_assistant">Launcher Assistente</string>
     <string name="notification_channel_connection">Stato della connessione</string>

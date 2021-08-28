@@ -10,6 +10,8 @@
     <string name="notification_description_chassiscode">Подключен к %s</string>
     <string name="notification_description_bmw">Подключен к BMW</string>
     <string name="notification_description_mini">Подключен к Mini</string>
+    <string name="permission_cds_normal">прочитать общую информацию о машине</string>
+    <string name="permission_cds_personal">прочитать персональную информацию о машине</string>
     <!-- notification channel names -->
     <string name="notification_channel_assistant">Включатель помощника</string>
     <string name="notification_channel_connection">Статус подключения к автомобилю</string>
