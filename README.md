@@ -2,11 +2,11 @@ Android Auto for IDrive
 =======================
 
 [![Build Status](https://img.shields.io/github/workflow/status/BimmerGestalt/AAIdrive/build.svg)](https://github.com/BimmerGestalt/AAIdrive/actions?query=workflow%3Abuild)
-[![Code Coverage](https://img.shields.io/codecov/c/gh/BimmerGestalt/AAIdrive/master.svg)](https://codecov.io/gh/BimmerGestalt/AAIdrive)
+[![Code Coverage](https://img.shields.io/codecov/c/gh/BimmerGestalt/AAIdrive/main.svg)](https://codecov.io/gh/BimmerGestalt/AAIdrive)
 [![Crowdin](https://badges.crowdin.net/androidautoidrive/localized.svg)](https://crowdin.com/project/androidautoidrive)
 [![Release Download](https://img.shields.io/github/release/BimmerGestalt/AAIdrive.svg)](https://github.com/BimmerGestalt/AAIdrive/releases/latest)
-[![Download Counter](https://img.shields.io/github/downloads/BimmerGestalt/AAIdrive/total.svg)](https://tooomm.github.io/github-release-stats/?username=hufman&repository=AndroidAutoIdrive)
-[![Weekly Users](https://img.shields.io/endpoint?url=https://androidautoidrive.s3.amazonaws.com/usage/weekly_users.json)](https://androidautoidrive.s3.amazonaws.com/usage/car_report.html)
+[![Download Counter](https://img.shields.io/github/downloads/BimmerGestalt/AAIdrive/total.svg)](https://tooomm.github.io/github-release-stats/?username=BimmerGestalt&repository=AAIdrive)
+[![Weekly Users](https://img.shields.io/endpoint?url=https://bimmergestalt.s3.amazonaws.com/aaidrive/usage/weekly_users.json)](https://bimmergestalt.s3.amazonaws.com/aaidrive/usage/car_report.html)
 [![Gitter](https://badges.gitter.im/AndroidAutoIdrive/community.svg)](https://gitter.im/AndroidAutoIdrive/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Buy Me A Coffee](https://img.shields.io/badge/support-buymeacoffee-5f7fff)](https://www.buymeacoffee.com/q4JVoxz)
 ![MIT Licensed](https://img.shields.io/github/license/BimmerGestalt/AAIdrive)
@@ -31,8 +31,8 @@ This app requires that the MyBMW or MINI app for your car is installed and that 
 
 Download the APK of the latest stable release from the [Releases page](https://github.com/BimmerGestalt/AAIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. After starting, the app should detect the MyBMW app and start waiting for the car connection.
 
-Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-sentry-release.apk) to automatically report crashes.
-The [nonalytics](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-nonalytics-release.apk) build is available too.
+Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-nomap-sentry-release.apk) to automatically report crashes.
+The [nonalytics](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-nomap-nonalytics-release.apk) build is available too.
 
 Check out the [FAQ](https://bimmergestalt.github.io/AAIdrive/faq.html) if you run into problems.
 
@@ -234,7 +234,7 @@ Build Instructions
     - Plug in your phone and click Run
   - Commandline builds should work too:
     - Make sure Android SDK Build Tools version 28 is installed
-    - `git clone https://github.com/BimmerGestalt/AAIdrive.git && cd AndroidAutoIdrive`
+    - `git clone https://github.com/BimmerGestalt/AAIdrive.git && cd AAIdrive`
     - `git submodule init && git submodule update`
     - `./gradlew assembleNomapNonalyticsDebug`  This step will fail without the Build Tools installed
 
