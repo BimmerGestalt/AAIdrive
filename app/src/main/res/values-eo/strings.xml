@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AndroidAutoIdrive</string>
+    <string name="app_name">AAIdrive</string>
     <string name="permlab_accessNotifications">IDrive Novaĵoj Permeso</string>
     <string name="permlab_bindNotificationListenerService">IDrive Novaĵoj Permeso</string>
     <string name="permdesc_accessNotifications">IDrive Novaĵoj Permeso</string>
     <string name="permdesc_bindNotificationListenerService">IDrive Novaĵoj Permeso</string>
-    <string name="notification_title">Android Auto en IDrive</string>
+    <string name="notification_title">AAIdrive</string>
     <string name="notification_description">Ligita al Aŭto</string>
     <string name="notification_description_chassiscode">Ligita al %s</string>
     <string name="notification_description_bmw">Ligita al BMW</string>

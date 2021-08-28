@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AndroidAutoIdrive</string>
+    <string name="app_name">AAIdrive</string>
     <string name="permlab_accessNotifications">IDrive通知アクセス</string>
     <string name="permlab_bindNotificationListenerService">IDrive通知アクセス</string>
     <string name="permdesc_accessNotifications">IDrive通知アクセス</string>
     <string name="permdesc_bindNotificationListenerService">IDrive通知アクセス</string>
-    <string name="notification_title">Android Auto for IDrive</string>
+    <string name="notification_title">AAIdrive</string>
     <string name="notification_description">車に接続</string>
     <string name="notification_description_chassiscode">%sに接続</string>
     <string name="notification_description_bmw">BMWに接続</string>
@@ -28,10 +28,10 @@
     <string name="lbl_navigation_listener_unsuccess">失敗</string>
     <!-- Welcome pages -->
     <string name="lbl_welcome_heading">接続しましょう</string>
-    <string name="lbl_welcome_intro">AndroidAutoIdriveは、ネイティブのBMWAppsプロトコルを介して携帯電話の音楽アプリやその他の機能を車に追加するための非公式アプリです</string>
+    <string name="lbl_welcome_intro">AAIdriveは、ネイティブのBMWAppsプロトコルを介して携帯電話の音楽アプリやその他の機能を車に追加するための非公式アプリです</string>
     <string name="lbl_welcome_compatible">ほとんどのMY2014以降のBMWまたはNBTまたはNBTEvo（IDrive 4–6に基づく）を搭載したMINIと、アクティブなConnectedDriveまたはBMWOnlineサブスクリプションは互換性があります</string>
     <string name="lbl_welcome_dependencies">車へのアプリの接続は、BMW / MINI Connectedアプリ、または車に接続するための新しいMyBMWまたはMiniアプリによって異なります</string>
-    <string name="lbl_welcome_complete">AndroidAutoIdriveは、他にもさまざまな機能を車に追加します。ぜひチェックしてください！</string>
+    <string name="lbl_welcome_complete">AAIdriveは、他にもさまざまな機能を車に追加します。ぜひチェックしてください！</string>
     <!-- Menu Titles -->
     <string name="menu_overview">概要</string>
     <string name="menu_setup">セットアップ</string>
@@ -45,7 +45,7 @@
     <string name="menu_settings">設定</string>
     <string name="menu_support">サポート</string>
     <string name="btn_next">次へ</string>
-    <string name="lbl_overviewpage">AndroidAutoIdriveは、カスタムBMWアプリプロトコルを介して、携帯電話の音楽アプリと携帯電話の通知の一部を車に統合します</string>
+    <string name="lbl_overviewpage">AAIdriveは、カスタムBMWアプリプロトコルを介して、携帯電話の音楽アプリと携帯電話の通知の一部を車に統合します</string>
     <string name="lbl_connectionpage">車へのアプリの接続はいくつかの要素に依存します。ここでは、車が正常に機能していることを確認するためのヒントをいくつか紹介します。</string>
     <plurals name="lbl_assistantpage">
         <item quantity="other">車の音声入力でトリガーされない場合に備えて、スマートフォンの音声アシスタントが接続済みアプリとして追加されます</item>
@@ -106,14 +106,14 @@
     <string name="lbl_language_prefercar">電話の言語よりも車の言語を優先する</string>
     <string name="lbl_language_prefercar_code">電話の言語よりも車の言語（%s）を優先する</string>
     <string name="lbl_language_forcelanguage">特定の言語を強制する</string>
-    <string name="lbl_donations_volunteer">AndroidAutoIdriveはボランティアプロジェクトです</string>
+    <string name="lbl_donations_volunteer">AAIdriveはボランティアプロジェクトです</string>
     <string name="lbl_donations_request">このプロジェクトが気に入って役に立った場合は、寄付してサポートを示すことを検討してください：</string>
     <string name="btn_donations">寄付</string>
     <string name="lbl_support_other_ways">他の方法でプロジェクトをサポートすることもできます：</string>
     <string name="lbl_support_feedback">フィードバックの提供</string>
     <string name="lbl_support_issues">問題を開く</string>
     <string name="lbl_support_share">単語を広める</string>
-    <string name="lbl_support_thanks">AndroidAutoIdriveをご利用いただきありがとうございます！</string>
+    <string name="lbl_support_thanks">AAIdriveをご利用いただきありがとうございます！</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">キャンセル</string>
     <string name="btn_configure">構成…</string>

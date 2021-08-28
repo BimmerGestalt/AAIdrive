@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AndroidAutoIdrive</string>
+    <string name="app_name">AAIdrive</string>
     <string name="permlab_accessNotifications">Acces notificări IDrive</string>
     <string name="permlab_bindNotificationListenerService">Acces notificări IDrive</string>
     <string name="permdesc_accessNotifications">Acces notificări IDrive</string>
     <string name="permdesc_bindNotificationListenerService">Acces notificări IDrive</string>
-    <string name="notification_title">Android Auto pentru IDrive</string>
+    <string name="notification_title">AAIdrive</string>
     <string name="notification_description">Conectat la mașină</string>
     <string name="notification_description_chassiscode">Conectat la %s</string>
     <string name="notification_description_bmw">Conectat la BMW</string>
@@ -39,7 +39,7 @@
     <string name="menu_settings">Setări</string>
     <string name="menu_support">Suport</string>
     <string name="btn_next">Următorul</string>
-    <string name="lbl_overviewpage">AndroidAutoIdrive integrează unele aplicații de muzică și notificările din telefon via protocolul BMW Apps</string>
+    <string name="lbl_overviewpage">AAIdrive integrează unele aplicații de muzică și notificările din telefon via protocolul BMW Apps</string>
     <string name="lbl_connectionpage">Conecțiunea pentru aplicații a mașinii depinde de câteva piese, și aici aveți câteva sfaturi pentru a vă asigura că funcționează corect</string>
     <string name="lbl_notificationpage">Notificările telefonului pot fi afișate și interacționate din mașină</string>
     <string name="spawn_test_notification">Notificare de test</string>
@@ -95,14 +95,14 @@
     <string name="lbl_language_prefercar">Preferă limba mașinii vs. limba telefonului</string>
     <string name="lbl_language_prefercar_code">Preferă limba mașinii (%s) în loc de limba telefonului</string>
     <string name="lbl_language_forcelanguage">Forțează o anumită limbă</string>
-    <string name="lbl_donations_volunteer">AndroidAutoIdrive este un proiect voluntar</string>
+    <string name="lbl_donations_volunteer">AAIdrive este un proiect voluntar</string>
     <string name="lbl_donations_request">Dacă îți place proiectul și ți se pare util, consideră să îți arăți suportul donând:</string>
     <string name="btn_donations">Donează</string>
     <string name="lbl_support_other_ways">Poți ajuta proiectul și în alte moduri:</string>
     <string name="lbl_support_feedback">Oferă feedback</string>
     <string name="lbl_support_issues">Deschide issue-uri</string>
     <string name="lbl_support_share">Dă mai departe</string>
-    <string name="lbl_support_thanks">Mulțumim că folosiți AndroidAutoIdrive!</string>
+    <string name="lbl_support_thanks">Mulțumim că folosiți AAIdrive!</string>
     <string name="lbl_ok">Ok</string>
     <string name="lbl_cancel">Anulare</string>
     <string name="btn_configure">Configurare …</string>
