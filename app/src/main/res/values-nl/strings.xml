@@ -343,6 +343,7 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Alles herhalen</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Eenmalig herhalen aan</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Herhalen uit</string>
+    <string name="MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION">AAIdrive tijdelijke afspeellijst</string>
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Ga %s seconde terug</item>
         <item quantity="other">Ga %s seconden terug</item>
