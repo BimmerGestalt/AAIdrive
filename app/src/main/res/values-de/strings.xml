@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">AAIdrive</string>
     <string name="permlab_accessNotifications">IDrive Zugriff auf Benachrichtigungen</string>
     <string name="permlab_bindNotificationListenerService">IDrive Zugriff auf Benachrichtigungen</string>
     <string name="permdesc_accessNotifications">IDrive Zugriff auf Benachrichtigungen</string>
     <string name="permdesc_bindNotificationListenerService">IDrive Zugriff auf Benachrichtigungen</string>
+    <string name="notification_title">AAIdrive</string>
     <string name="notification_description">Verbunden mit Fahrzeug</string>
     <string name="notification_description_chassiscode">Verbunden mit %s</string>
     <string name="notification_description_bmw">Verbunden mit BMW</string>
@@ -26,8 +28,10 @@
     <string name="lbl_navigation_listener_unsuccess">Erfolglos</string>
     <!-- Welcome pages -->
     <string name="lbl_welcome_heading">Lass uns eine Verbindung herstellen</string>
+    <string name="lbl_welcome_intro">AAIdrive ist eine inoffizielle App, welche es erlaubt die Musik-Apps des Telefons und andere Features zu Ihrem Auto hinzuzufügen. Es wird hierbei das native \"BMW Apps\"-Protokoll verwendet</string>
     <string name="lbl_welcome_compatible">Es sollten die meisten neueren BMW und Mini Modelle (BJ 2014 oder neuer), welche mit einem NBT oder NBT Evo (basierend auf iDrive 4-6) ausgestattet sind und über ConnectedDrive oder einem BMW Online Abo verfügen kompatibel sein</string>
     <string name="lbl_welcome_dependencies">Die App Verbindung zum Auto hängt von der BMW/MINI Connected App oder der neuen My BMW oder Mini App ab</string>
+    <string name="lbl_welcome_complete">AAIdrive fügt auch eine Vielzahl weiterer Features zum Auto hinzu. Probieren Sie es aus!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Überblick</string>
     <string name="menu_setup">Einrichtung</string>
@@ -41,6 +45,7 @@
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_support">Unterstützung</string>
     <string name="btn_next">Weiter</string>
+    <string name="lbl_overviewpage">AAIdrive integriert einige der Musik-Apps Ihres Telefons und die Benachrichtigungen Ihres Telefons über das benutzerdefinierte BMW Apps-Protokoll in Ihr Auto</string>
     <string name="lbl_connectionpage">Die Verbindung der Apps zum Auto hängt von einigen Teilen ab. Hier einige Hinweise, um sicherzustellen, dass es gut funktioniert</string>
     <plurals name="lbl_assistantpage">
         <item quantity="one">Der Sprachassistent Ihres Telefons wird als verbundene App hinzugefügt, falls die Spracheingabe des Fahrzeugs dies nicht auslöst</item>
@@ -101,12 +106,14 @@
     <string name="lbl_language_prefercar">Spracheinstellung des Fahrzeugs gegenüber Telefonsprache bevorzugen</string>
     <string name="lbl_language_prefercar_code">Spracheinstellung des Fahrzeugs (%s) gegenüber Telefonsprache bevorzugen</string>
     <string name="lbl_language_forcelanguage">Spezifische Sprache verwenden</string>
+    <string name="lbl_donations_volunteer">AAIdrive ist ein Freiwilligenprojekt</string>
     <string name="lbl_donations_request">Wenn Ihnen dieses Projekt gefällt und Sie es nützlich finden, können Sie Ihre Unterstützung durch eine Spende zeigen:</string>
     <string name="btn_donations">Spenden</string>
     <string name="lbl_support_other_ways">Sie können das Projekt auch auf andere Weise unterstützen:</string>
     <string name="lbl_support_feedback">Feedback geben</string>
     <string name="lbl_support_issues">Öffne Tickets</string>
     <string name="lbl_support_share">Weitersagen</string>
+    <string name="lbl_support_thanks">Vielen Dank, dass Sie AAIdrive verwenden!</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Abbrechen</string>
     <string name="btn_configure">Konfigurieren …</string>
