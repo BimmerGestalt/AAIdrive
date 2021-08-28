@@ -340,6 +340,7 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Alle Wiederholen aktivieren</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Einzelnen Titel wiederholen</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Wiederholen deaktivieren</string>
+    <string name="MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION">AAIdrive temporäre Wiedergabeliste</string>
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">%s Sekunde zurückspulen</item>
         <item quantity="other">%s Sekunden zurückspulen</item>
