@@ -321,6 +321,7 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Összes ismétlése</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Ugyanaz ismétlésének bekapcsolása</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Ismétlés kikapcsolása</string>
+    <string name="MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION">AAIdrive ideiglenes lejátszási lista</string>
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">%s másodperc visszatekerése</item>
         <item quantity="other">%s másodperc visszatekerése</item>
