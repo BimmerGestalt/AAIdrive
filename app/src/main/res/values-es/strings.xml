@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">AAIdrive</string>
     <string name="permlab_accessNotifications">Notificación de Acceso a IDrive</string>
     <string name="permlab_bindNotificationListenerService">Notificación de Acceso a IDrive</string>
     <string name="permdesc_accessNotifications">Notificación de Acceso a IDrive</string>
     <string name="permdesc_bindNotificationListenerService">Notificación de Acceso a IDrive</string>
+    <string name="notification_title">AAIdrive</string>
     <string name="notification_description">Conectado con el vehículo</string>
     <string name="notification_description_chassiscode">Conectado con %s</string>
     <string name="notification_description_bmw">Conectado con BMW</string>
@@ -32,6 +34,7 @@
     <string name="menu_settings">Ajustes</string>
     <string name="menu_support">Soporte</string>
     <string name="btn_next">Siguiente</string>
+    <string name="lbl_overviewpage">AAIdrive integra algunas de las aplicaciones de música de tu teléfono y las notificaciones de tu teléfono en tu coche a través del protocolo de aplicaciones BMW</string>
     <string name="lbl_connectionpage">La conexión de la aplicación con el coche depende de varios elementos, aquí puede encontrar una guía para asegurarse de que la conexión funcione correctamente</string>
     <string name="spawn_test_notification">Notificación de prueba</string>
     <string name="message_notifications">Notificaciones de mensaje</string>
