@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">AAIdrive</string>
     <string name="permlab_accessNotifications">IDrive hozzáférés az értesítésekhez</string>
     <string name="permlab_bindNotificationListenerService">IDrive hozzáférés az értesítésekhez</string>
     <string name="permdesc_accessNotifications">IDrive hozzáférés az értesítésekhez</string>
     <string name="permdesc_bindNotificationListenerService">IDrive hozzáférés az értesítésekhez</string>
+    <string name="notification_title">AAIdrive</string>
     <string name="notification_description">Kapcsolódva az autóhoz</string>
     <string name="notification_description_chassiscode">Csatlakozva a következőhöz: %s</string>
     <string name="notification_description_bmw">BMW-hez kapcsolódva</string>
@@ -28,8 +30,10 @@
     <string name="lbl_navigation_listener_unsuccess">Sikertelen</string>
     <!-- Welcome pages -->
     <string name="lbl_welcome_heading">Kapcsolódjunk!</string>
+    <string name="lbl_welcome_intro">Az AAIdrive egy nem hivatalos aplikáció, amelyel autódhoz hozzá tudod adni a telefonodon lévő zenei alkalmazásokat, illetve egyéb tartalmakat a gyári \"BMW Apps\" protokollon keresztül</string>
     <string name="lbl_welcome_compatible">A legtöbb MY2014 vagy az újabb BMW-k és MINI-k, amelyek NBT vagy NBT Evo (IDive 4-6 alapon) egységgel vannak felszerelve, továbbá rendelkeznek aktív ConnectedDrive vagy BMW Online szolgáltatással, azok kompatibilisek kell legyenek</string>
     <string name="lbl_welcome_dependencies">Az autóval való kapcsolat létesítéséhez a \"BMW/MINI Connected app\" vagy az új \"MyBMW\" / \"Mini app\" feltétlenül szükséges</string>
+    <string name="lbl_welcome_complete">Az AAIdrive ezen kívül számos egyéb funkciót kínál az autódhoz. Próbáld ki!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Áttekintés</string>
     <string name="menu_setup">Beállítások</string>
@@ -43,6 +47,7 @@
     <string name="menu_settings">Beállítások</string>
     <string name="menu_support">Támogatás</string>
     <string name="btn_next">Következő</string>
+    <string name="lbl_overviewpage">Az AAIdrive a telefonondon lévő támogatott zenei alkalmazást és a telefonra érkező értesítéseket integrálja az autódba, melyet az egyedi BMW Apps protokollon keresztül valósít meg</string>
     <string name="lbl_connectionpage">Az alkalmazás kapcsolódása számos dologtól függ, itt találsz néhány ötletet a biztos működéshez</string>
     <string name="lbl_assistantpage_tip">Ezek az applikációk különállóak az autó kormányán lévő hang asszisztens gombtól, amely gomb a telefon alapértelmezett asszisztensét indítja</string>
     <string name="lbl_notificationpage">A beérkező értesítések megjeleníthetőek, és megválaszolhatóak az autó rendszeréből</string>
@@ -99,12 +104,14 @@
     <string name="lbl_language_prefercar">Az autó nyelve előnyben részesítve az telefon nyelvével szemben</string>
     <string name="lbl_language_prefercar_code">Az autó nyelve (%s) előnyben részesítve az telefon nyelvével szemben</string>
     <string name="lbl_language_forcelanguage">Meghatározott nyelv kényszerítése</string>
+    <string name="lbl_donations_volunteer">AAIdrive egy önkéntes projekt</string>
     <string name="lbl_donations_request">Amennyiben kedveled ezt a projektet és hasznosnak találod, gondold meg, hogy támogassad azt:</string>
     <string name="btn_donations">Támogatás</string>
     <string name="lbl_support_other_ways">Támogatni tudod a projektet még a következő módokon:</string>
     <string name="lbl_support_feedback">Visszajelzés küldése</string>
     <string name="lbl_support_issues">Nyitott problémák</string>
     <string name="lbl_support_share">Ajánld másoknak!</string>
+    <string name="lbl_support_thanks">Köszönöm hogy az AAIdrive-ot használod!</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Mégsem</string>
     <string name="btn_configure">Beállítás …</string>
