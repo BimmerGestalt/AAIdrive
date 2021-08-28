@@ -5,10 +5,13 @@
     <string name="permlab_bindNotificationListenerService">IDrive aviseringsåtkomst</string>
     <string name="permdesc_accessNotifications">IDrive aviseringsåtkomst</string>
     <string name="permdesc_bindNotificationListenerService">IDrive aviseringsåtkomst</string>
+    <string name="notification_title">AAIdrive</string>
     <string name="notification_description">Ansluten till bil</string>
     <string name="notification_description_chassiscode">Ansluten till %s</string>
     <string name="notification_description_bmw">Ansluten till BMW</string>
     <string name="notification_description_mini">Ansluten till Mini</string>
+    <string name="permission_cds_normal">se allmän bilinformation</string>
+    <string name="permission_cds_personal">se privat bilinformation</string>
     <!-- notification channel names -->
     <string name="notification_channel_assistant">Starta röstassistenter</string>
     <string name="notification_channel_connection">Anslutningsstatus</string>
@@ -27,8 +30,10 @@
     <string name="lbl_navigation_listener_unsuccess">Lyckades ej</string>
     <!-- Welcome pages -->
     <string name="lbl_welcome_heading">Låt oss få dig ansluten</string>
+    <string name="lbl_welcome_intro">AAIdrive är en inofficiell app för att lägga till telefonens musikappar och andra funktioner i din bil genom BMW Apps-protokollet</string>
     <string name="lbl_welcome_compatible">De flesta MY2014 eller nyare BMW eller MINI utrustade med NBT eller NBT Evo (baserat på IDrive 4–6) och en aktiv ConnectedDrive eller BMW Online-prenumeration bör vara kompatibla</string>
     <string name="lbl_welcome_dependencies">Apparnas anslutning till bilen beror på BMW/MINI Connected appen eller den nya appen MyBMW eller Mini för att ansluta till din bil</string>
+    <string name="lbl_welcome_complete">AAIdrive lägger också till andra funktioner till din bil, så pröva och se!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Översikt</string>
     <string name="menu_setup">Inställningar</string>
@@ -42,6 +47,7 @@
     <string name="menu_settings">Inställningar</string>
     <string name="menu_support">Hjälp</string>
     <string name="btn_next">Nästa</string>
+    <string name="lbl_overviewpage">AAIdrive integrerar några av din telefons musikappar och aviseringar till bilen via BMW-protokollet</string>
     <string name="lbl_connectionpage">Apparnas anslutning till bilen beror på ett par saker. Här är några tips för att säkerställa bra funktion</string>
     <plurals name="lbl_assistantpage">
         <item quantity="one">Telefonens röstassistent läggs till som en \"Connected app\", om bilens röstingång inte utlöser den</item>
@@ -103,12 +109,14 @@
     <string name="lbl_language_prefercar">Föredra bilspråk framför telefonspråk</string>
     <string name="lbl_language_prefercar_code">Föredrar bilspråk (%s) över telefonspråk</string>
     <string name="lbl_language_forcelanguage">Tvinga specifikt språk</string>
+    <string name="lbl_donations_volunteer">AAIdrive är ett volontärprojekt</string>
     <string name="lbl_donations_request">Om du gillar detta projekt och tycker att det är användbart så visa gärna ditt stöd genom att donera:</string>
     <string name="btn_donations">Donera</string>
     <string name="lbl_support_other_ways">Du kan också stödja projektet på andra sätt:</string>
     <string name="lbl_support_feedback">Ge feedback</string>
     <string name="lbl_support_issues">Aktuella ärenden</string>
     <string name="lbl_support_share">Sprid detta</string>
+    <string name="lbl_support_thanks">Tack för att du använder AAIdrive!</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Avbryt</string>
     <string name="btn_configure">Konfigurera …</string>
@@ -335,6 +343,7 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Sätt på \"Upprepa alla\"</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Sätt på \"Upprepa en\"</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Stäng av \"Upprepa\"</string>
+    <string name="MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION">AAIdrives tillfälliga spellista</string>
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Bakåt %s sekunder</item>
         <item quantity="other">Bakåt %s sekunder</item>
