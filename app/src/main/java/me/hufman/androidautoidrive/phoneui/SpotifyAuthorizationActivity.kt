@@ -60,7 +60,10 @@ class SpotifyAuthorizationActivity: Activity() {
 	private var authIntentLatch = CountDownLatch(1)
 	private val scopes = listOf(
 			SpotifyScope.USER_MODIFY_PLAYBACK_STATE.uri,
-			SpotifyScope.USER_LIBRARY_READ.uri)
+			SpotifyScope.USER_LIBRARY_READ.uri,
+			SpotifyScope.PLAYLIST_MODIFY_PRIVATE.uri,
+			SpotifyScope.PLAYLIST_READ_PRIVATE.uri,
+			SpotifyScope.UGC_IMAGE_UPLOAD.uri)
 	private val lazyAuthService = lazy {
 		createAuthorizationService()
 	}

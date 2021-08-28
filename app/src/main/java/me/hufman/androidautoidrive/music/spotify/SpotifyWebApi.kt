@@ -10,7 +10,9 @@ import android.os.Handler
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
+import com.adamratzman.spotify.models.PlaylistUri
 import com.adamratzman.spotify.models.SpotifyImage
+import com.adamratzman.spotify.models.SpotifyUri
 import com.adamratzman.spotify.models.Token
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
@@ -18,6 +20,7 @@ import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
+import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
 import net.openid.appauth.*
@@ -34,6 +37,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		const val TAG = "SpotifyWebApi"
 		const val NOTIFICATION_CHANNEL_ID = "SpotifyAuthorization"
 		const val NOTIFICATION_REQ_ID = 56
+		const val LIKED_SONGS_PLAYLIST_NAME = "AAIDRIVE_LIKED_SONGS"
 
 		private var webApiInstance: SpotifyWebApi? = null
 
@@ -72,121 +76,149 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		spotifyAppControllerCaller = null
 	}
 
-	suspend fun getLikedSongs(spotifyAppController: SpotifyAppController): List<SpotifyMusicMetadata>?  {
+	/**
+	 * Creates a private playlist with the provided name and optionally provided description. The
+	 * newly created playlist's [PlaylistUri] is returned.
+	 */
+	suspend fun createPlaylist(playlistName: String, playlistDescription: String? = null): PlaylistUri? = executeApiCall("Failed to create playlist $playlistName") {
+		webApi?.playlists?.createClientPlaylist(name = playlistName, description = playlistDescription, public = false)?.uri
+	}
+
+	/**
+	 * Adds the provided list of songs to the specified playlist.
+	 */
+	suspend fun addSongsToPlaylist(playlistId: String, songs: List<MusicMetadata>) = executeApiCall("Failed to add songs to playlist $playlistId") {
+		webApi?.playlists?.addTracksToClientPlaylist(playlistId, *songs.map { it.mediaId!! }.toTypedArray())
+	}
+
+	/**
+	 * Replaces the songs of the specified playlist with the provided list of songs.
+	 */
+	suspend fun replacePlaylistSongs(playlistId: String, songs: List<MusicMetadata>) = executeApiCall("Failed to replace playlist $playlistId songs") {
+		webApi?.playlists?.replaceClientPlaylistTracks(playlistId, *songs.map { it.mediaId!! }.toTypedArray())
+	}
+
+	/**
+	 * Returns the [SpotifyUri] associated to the provided playlist name or null if it is not found.
+	 */
+	suspend fun getPlaylistUri(playlistName: String): SpotifyUri? = executeApiCall("Failed to find playlist with name $playlistName") {
+		var playlists = webApi?.playlists?.getClientPlaylists(50,0)
+		while (playlists != null) {
+			val matchingPlaylist = playlists.items.find { it.name == playlistName }
+			if (matchingPlaylist != null) {
+				return@executeApiCall matchingPlaylist.uri
+			}
+			playlists = playlists.getNext()
+		}
+
+		return@executeApiCall null
+	}
+
+	suspend fun getLikedSongs(spotifyAppController: SpotifyAppController): List<SpotifyMusicMetadata>? = executeApiCall("Failed to get data from Liked Songs library") {
 		if (webApi == null) {
 			getLikedSongsAttempted = true
 			spotifyAppControllerCaller = spotifyAppController
-			return emptyList()
+			return@executeApiCall emptyList()
 		}
-		try {
-			val likedSongs = webApi?.library?.getSavedTracks(50)?.getAllItemsNotNull()
-			return likedSongs?.map {
-				val track = it.track
-				val mediaId = track.uri.uri
-				val artists = track.artists.map { it.name }.joinToString(", ")
-				val album = track.album
-				val coverArtUri = getCoverArtUri(album.images)
-				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, album.name, track.name)
-			}
-		} catch (e: SpotifyException.AuthenticationException) {
-			Log.e(TAG, "Failed to get data from Liked Songs library due to authentication error with the message: ${e.message}")
-			authStateManager.addAccessTokenAuthorizationException(e)
-			createNotAuthorizedNotification()
-			webApi = null
-		} catch (e: Exception) {
-			Log.e(TAG, "Exception occurred while getting Liked Songs library data with message: ${e.message}")
+
+		val likedSongs = webApi?.library?.getSavedTracks(50)?.getAllItemsNotNull()
+		return@executeApiCall likedSongs?.map {
+			val track = it.track
+			val mediaId = track.uri.uri
+			val artists = track.artists.map { it.name }.joinToString(", ")
+			val album = track.album
+			val coverArtUri = getCoverArtUri(album.images)
+			SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, album.name, track.name)
 		}
-		return null
 	}
 
-	suspend fun searchForQuery(spotifyAppController: SpotifyAppController, query: String): List<SpotifyMusicMetadata> {
+	suspend fun searchForQuery(spotifyAppController: SpotifyAppController, query: String): List<SpotifyMusicMetadata>? = executeApiCall("Failed to get search results for query $query") {
 		if (webApi == null) {
-			return emptyList()
+			return@executeApiCall emptyList()
 		}
-		try {
-			val searchResults = webApi?.search?.searchAllTypes(query, 8)
 
-			// run through each of the search result categories and compile full list
-			val searchResultMusicMetadata: ArrayList<SpotifyMusicMetadata> = ArrayList()
+		val searchResults = webApi?.search?.searchAllTypes(query, 8)
 
-			val albumResults = searchResults?.albums
-			if (albumResults != null && albumResults.isNotEmpty()) {
-				searchResultMusicMetadata.addAll(albumResults.items.map {
-					val mediaId = it.uri.uri
-					val coverArtUri = getCoverArtUri(it.images)
-					val artists = it.artists.map { it.name }.joinToString(", ")
-					val type = it.type.capitalize(Locale.getDefault())
+		// run through each of the search result categories and compile full list
+		val searchResultMusicMetadata: ArrayList<SpotifyMusicMetadata> = ArrayList()
 
-					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, it.name, it.name, type, true, false)
-				})
-			}
+		val albumResults = searchResults?.albums
+		if (albumResults != null && albumResults.isNotEmpty()) {
+			searchResultMusicMetadata.addAll(albumResults.items.map {
+				val mediaId = it.uri.uri
+				val coverArtUri = getCoverArtUri(it.images)
+				val artists = it.artists.map { it.name }.joinToString(", ")
+				val type = it.type.capitalize(Locale.getDefault())
 
-			val songResults = searchResults?.tracks
-			if (songResults != null && songResults.isNotEmpty()) {
-				searchResultMusicMetadata.addAll(songResults.items.map {
-					val mediaId = it.uri.uri
-					val coverArtUri = getCoverArtUri(it.album.images)
-					val artists = it.artists.map { it.name }.joinToString(", ")
-					val albumMediaId = it.album.uri.uri
-					val type = it.type.capitalize(Locale.getDefault())
-
-					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, albumMediaId, it.name, type, true, false)
-				})
-			}
-
-			val artistResults = searchResults?.artists
-			if (artistResults != null && artistResults.isNotEmpty()) {
-				searchResultMusicMetadata.addAll(artistResults.items.map {
-					val mediaId = it.uri.uri
-					val coverArtUri = getCoverArtUri(it.images, 320)
-					val type = it.type.capitalize(Locale.getDefault())
-
-					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.name, null, it.name, type, false, true)
-				})
-			}
-
-			val playlistResults = searchResults?.playlists
-			if (playlistResults != null && playlistResults.isNotEmpty()) {
-				searchResultMusicMetadata.addAll(playlistResults.items.map {
-					val mediaId = it.uri.uri
-					val coverArtUri = getCoverArtUri(it.images, 320)
-					val type = it.type.capitalize(Locale.getDefault())
-
-					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.name, null, it.name, type, false, true)
-				})
-			}
-
-			val showResults = searchResults?.shows
-			if (showResults != null && showResults.isNotEmpty()) {
-				searchResultMusicMetadata.addAll(showResults.items.filterNotNull().map {
-					val mediaId = it.uri.uri
-					val coverArtUri = getCoverArtUri(it.images)
-					val subtitle = it.type.capitalize(Locale.getDefault())
-
-					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.publisher, null, it.name, subtitle, false, true)
-				})
-			}
-
-			val episodeResults = searchResults?.episodes
-			if (episodeResults != null && episodeResults.isNotEmpty()) {
-				searchResultMusicMetadata.addAll(episodeResults.items.filterNotNull().map {
-					val mediaId = it.uri.uri
-					val coverArtUri = getCoverArtUri(it.images)
-					val subtitle = it.type.capitalize(Locale.getDefault())
-
-					SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, null, null, it.name, subtitle, true, false)
-				})
-			}
-			return searchResultMusicMetadata
-		} catch (e: SpotifyException.AuthenticationException) {
-			Log.e(TAG, "Failed to get search results due to authentication error with the message: ${e.message}")
-			authStateManager.addAccessTokenAuthorizationException(e)
-			createNotAuthorizedNotification()
-			webApi = null
-		} catch (e: Exception) {
-			Log.e(TAG, "Exception occurred while attempting to get search results with the message: ${e.message}")
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, it.name, it.name, type, true, false)
+			})
 		}
-		return emptyList()
+
+		val songResults = searchResults?.tracks
+		if (songResults != null && songResults.isNotEmpty()) {
+			searchResultMusicMetadata.addAll(songResults.items.map {
+				val mediaId = it.uri.uri
+				val coverArtUri = getCoverArtUri(it.album.images)
+				val artists = it.artists.map { it.name }.joinToString(", ")
+				val albumMediaId = it.album.uri.uri
+				val type = it.type.capitalize(Locale.getDefault())
+
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, albumMediaId, it.name, type, true, false)
+			})
+		}
+
+		val artistResults = searchResults?.artists
+		if (artistResults != null && artistResults.isNotEmpty()) {
+			searchResultMusicMetadata.addAll(artistResults.items.map {
+				val mediaId = it.uri.uri
+				val coverArtUri = getCoverArtUri(it.images, 320)
+				val type = it.type.capitalize(Locale.getDefault())
+
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.name, null, it.name, type, false, true)
+			})
+		}
+
+		val playlistResults = searchResults?.playlists
+		if (playlistResults != null && playlistResults.isNotEmpty()) {
+			searchResultMusicMetadata.addAll(playlistResults.items.map {
+				val mediaId = it.uri.uri
+				val coverArtUri = getCoverArtUri(it.images, 320)
+				val type = it.type.capitalize(Locale.getDefault())
+
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.name, null, it.name, type, false, true)
+			})
+		}
+
+		val showResults = searchResults?.shows
+		if (showResults != null && showResults.isNotEmpty()) {
+			searchResultMusicMetadata.addAll(showResults.items.filterNotNull().map {
+				val mediaId = it.uri.uri
+				val coverArtUri = getCoverArtUri(it.images)
+				val subtitle = it.type.capitalize(Locale.getDefault())
+
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.publisher, null, it.name, subtitle, false, true)
+			})
+		}
+
+		val episodeResults = searchResults?.episodes
+		if (episodeResults != null && episodeResults.isNotEmpty()) {
+			searchResultMusicMetadata.addAll(episodeResults.items.filterNotNull().map {
+				val mediaId = it.uri.uri
+				val coverArtUri = getCoverArtUri(it.images)
+				val subtitle = it.type.capitalize(Locale.getDefault())
+
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, null, null, it.name, subtitle, true, false)
+			})
+		}
+		return@executeApiCall searchResultMusicMetadata
+	}
+
+	/**
+	 * Sets the specified playlist's cover art image to the specified image. The supplied image data
+	 * must be a JPG Base64 string format.
+	 */
+	suspend fun setPlaylistImage(playlistId: String, coverArtImageData: String) = executeApiCall("Failed to upload the cover art image to playlist $playlistId") {
+		webApi?.playlists?.uploadClientPlaylistCover(playlistId, imageData = coverArtImageData)
 	}
 
 	/**
@@ -199,6 +231,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		webApi = createWebApiClient()
 		if (webApi != null) {
 			authStateManager.updateTokenResponseWithToken(webApi!!.token, clientId)
+
 			if (getLikedSongsAttempted) {
 				getLikedSongsAttempted = false
 				spotifyAppControllerCaller?.createLikedSongsQueueMetadata()
@@ -214,6 +247,41 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 */
 	fun isAuthorized(): Boolean {
 		return authStateManager.isAuthorized()
+	}
+
+	/**
+	 * Executes the [SpotifyClientApi] call with exception handling for failures. In the case of a
+	 * failure the supplied error message will be the prefix of the appropriate log message.
+	 *
+	 * Note: This should wrap **EVERY** [SpotifyClientApi] call.
+	 */
+	private suspend fun <R> executeApiCall(errorMessage: String, block: suspend () -> R): R? {
+		try {
+			return block()
+		} catch (e: SpotifyException.AuthenticationException) {
+			Log.e(TAG, errorMessage + " due to authentication error with the message: ${e.message}")
+			deauthorizeWebApiSession(e)
+		} catch (e: Exception) {
+			if (e.message?.contains("Status Code 403") == true) {
+				Log.e(TAG, errorMessage + " due to unauthorized error with the message: ${e.message}")
+				deauthorizeWebApiSession(e)
+			} else {
+				Log.e(TAG, errorMessage + " due to exception with the message: ${e.message}")
+			}
+		}
+		return null
+	}
+
+	/**
+	 * De-authorizes the current running Web Api session, performing the following actions:
+	 *  - Adding authorization exception to the [SpotifyAuthStateManager]
+	 *  - Creating an unauthorized notification
+	 *  - setting the [SpotifyClientApi] instance to be null
+	 */
+	private fun deauthorizeWebApiSession(e: Exception) {
+		authStateManager.addAccessTokenAuthorizationException(e)
+		createNotAuthorizedNotification()
+		webApi = null
 	}
 
 	/**

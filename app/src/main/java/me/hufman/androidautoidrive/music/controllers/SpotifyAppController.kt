@@ -5,8 +5,10 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Handler
+import android.util.Base64
 import android.util.Log
 import android.util.LruCache
+import com.google.gson.Gson
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
@@ -16,11 +18,13 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.PlaybackPosition
+import me.hufman.androidautoidrive.music.spotify.TemporaryPlaylistState
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
+import me.hufman.androidautoidrive.utils.Utils
 import java.util.*
 
-class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi): MusicAppController {
+class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi, val appSettings: MutableAppSettings): MusicAppController {
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
@@ -116,7 +120,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 						spotifyWebApi.initializeWebApi(isProbing)
 						spotifyWebApi.isUsingSpotify = true
 
-						pendingController.value = SpotifyAppController(context, remote, spotifyWebApi)
+						pendingController.value = SpotifyAppController(context, remote, spotifyWebApi, appSettings)
 
 						// if app discovery says we aren't able to connect, discover again
 						if (!isProbing) {
@@ -172,6 +176,8 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	var createQueueMetadataJob: Job? = null
 	var defaultDispatcher = Dispatchers.Default
 	var onQueueLoaded: (() -> Unit)? = null
+	val gson: Gson = Gson()
+	var queueTitle: String? = null
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
@@ -219,15 +225,16 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			if (queueUri != uri) {
 				queueUri = uri
 				queueItems = emptyList()
+				queueTitle = playerContext.title
+
+				if (createQueueMetadataJob?.isActive == true) {
+					createQueueMetadataJob?.cancel()
+				}
 
 				val isLikedSongsPlaylist = playerContext.type == "your_library" || playerContext.type == "your_library_tracks"
-				if (isLikedSongsPlaylist) {
+				if (isLikedSongsPlaylist || playerContext.title == SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME) {
 					createLikedSongsQueueMetadata()
 				} else {
-					if (createQueueMetadataJob?.isActive == true) {
-						createQueueMetadataJob?.cancel()
-					}
-					createQueueMetadataJob = null
 					webApi.clearGetLikedSongsAttemptedFlag()
 					createQueueMetadata(playerContext)
 				}
@@ -244,15 +251,100 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	fun createLikedSongsQueueMetadata() {
 		createQueueMetadataJob = GlobalScope.launch(defaultDispatcher) {
 			queueItems = webApi.getLikedSongs(this@SpotifyAppController) ?: emptyList()
+
 			if (queueItems.isNotEmpty()) {
-				queueMetadata = QueueMetadata("Liked Songs", null, queueItems)
-				loadQueueCoverart()
+				queueMetadata = QueueMetadata(queueTitle, null, queueItems)
+
+				val likedSongsTemporaryPlaylistStateKey = AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE
+				val likedSongsStateJson = appSettings[likedSongsTemporaryPlaylistStateKey]
+
+				val temporaryPlaylistState = if (likedSongsStateJson.isBlank()) {
+					Log.d(TAG, "No previous liked songs state found.")
+					createTemporaryPlaylistState(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)
+				} else {
+					Log.d(TAG, "Found previous liked songs state.")
+					loadTemporaryPlaylistState(likedSongsStateJson)
+				}
+				if (temporaryPlaylistState == null) {
+					Log.e(TAG, "Error creating liked songs playlist, falling back to app remote API")
+					queueItems = emptyList()
+					createQueueMetadata(PlayerContext(queueUri, queueTitle, null, null))
+					return@launch
+				}
+
+				saveTemporaryPlaylistState(temporaryPlaylistState, likedSongsTemporaryPlaylistStateKey)
 
 				callback?.invoke(this@SpotifyAppController)
 			} else {
-				createQueueMetadata(PlayerContext(queueUri, "Liked Songs", null, null))
+				createQueueMetadata(PlayerContext(queueUri, queueTitle, null, null))
 			}
 		}
+	}
+
+	/**
+	 * Creates a [TemporaryPlaylistState] for the supplied playlist name, creating the playlist if it
+	 * is not present and adding the queueItems in context to it. If the playlist creation fails
+	 * then null is returned.
+	 */
+	private suspend fun createTemporaryPlaylistState(playlistName: String): TemporaryPlaylistState? {
+		val queueItemsHashCode = queueItems.hashCode().toString()
+		val existingPlaylistUri = webApi.getPlaylistUri(playlistName)
+		val playlistUri: String
+		val playlistId: String
+		if (existingPlaylistUri == null) {
+			Log.d(TAG, "No user playlist for $playlistName found, creating a new one.")
+			val uri = webApi.createPlaylist(playlistName, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION) ?: return null
+			webApi.addSongsToPlaylist(uri.id, queueItems)
+			playlistUri = uri.uri
+			playlistId = uri.id
+		} else {
+			Log.d(TAG, "User playlist for $playlistName found, using existing playlist.")
+			playlistUri = existingPlaylistUri.uri
+			playlistId = existingPlaylistUri.id
+		}
+
+		val temporaryPlaylistState = TemporaryPlaylistState(queueItemsHashCode, playlistUri, playlistId, queueTitle)
+
+		queueUri = temporaryPlaylistState.playlistUri
+
+		val coverArt = getQueueCoverArt()
+		queueMetadata = QueueMetadata(queueTitle, null, queueItems, coverArt, queueUri)
+
+		val coverArtBase64 = Base64.encodeToString(Utils.compressBitmapJpg(coverArt, 85), Base64.NO_WRAP)
+		webApi.setPlaylistImage(playlistId, coverArtBase64)
+
+		return temporaryPlaylistState
+	}
+
+	/**
+	 * Loads a [TemporaryPlaylistState] from its serialized JSON string. If the state of the
+	 * deserialized [TemporaryPlaylistState] is not valid then its contents and hash code will be
+	 * updated.
+	 */
+	private suspend fun loadTemporaryPlaylistState(temporaryPlaylistStateJson: String): TemporaryPlaylistState {
+		val queueItemsHashCode = queueItems.hashCode().toString()
+		val temporaryPlaylistState = gson.fromJson(temporaryPlaylistStateJson, TemporaryPlaylistState::class.java)
+
+		if (queueItemsHashCode != temporaryPlaylistState.hashCode) {
+			Log.d(TAG, "Previous temporary playlist state is no longer valid, updating temporary playlist contents and writing new hash code.")
+			webApi.replacePlaylistSongs(temporaryPlaylistState.playlistId, queueItems)
+			temporaryPlaylistState.hashCode = queueItemsHashCode
+		}
+
+		queueUri = temporaryPlaylistState.playlistUri
+		queueTitle = temporaryPlaylistState.playlistTitle
+
+		val coverArt = getQueueCoverArt()
+		queueMetadata = QueueMetadata(queueTitle, null, queueItems, coverArt, queueUri)
+
+		return temporaryPlaylistState
+	}
+
+	/**
+	 * Saves the provided [TemporaryPlaylistState] to the [AppSettings] for the supplied key.
+	 */
+	private fun saveTemporaryPlaylistState(temporaryPlaylistState: TemporaryPlaylistState, appSettingsTemporaryPlaylistStateKey: AppSettings.KEYS) {
+		appSettings[appSettingsTemporaryPlaylistStateKey] = gson.toJson(temporaryPlaylistState)
 	}
 
 	/**
@@ -281,9 +373,13 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			loadPaginatedItems(listItem, { queueUri == playerContext.uri }) {
 				queueItems = removeShufflePlayButtonMetadata(it)
 
-				// build a basic QueueMetadata while waiting for cover art to load
-				queueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, queueItems, mediaId = playerContext.uri)
-				loadQueueCoverart()
+				// builds the QueueMetadata while waiting for cover art to load
+				queueMetadata = QueueMetadata(queueTitle, playerContext.subtitle, queueItems, mediaId = playerContext.uri)
+
+				GlobalScope.launch(defaultDispatcher) {
+					val coverArt = getQueueCoverArt()
+					queueMetadata = QueueMetadata(queueTitle, playerContext.subtitle, queueItems, coverArt, playerContext.uri)
+				}
 
 				onQueueLoaded?.invoke()
 				callback?.invoke(this)
@@ -292,19 +388,22 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	}
 
 	/**
-	 * Creates a new instance of the [QueueMetadata] with the queue cover art loaded.
+	 * Retrieves the cover art of the current queue.
 	 */
-	private fun loadQueueCoverart() {
+	private suspend fun getQueueCoverArt(): Bitmap {
+		val deferred = CompletableDeferred<Bitmap>()
 		val recentlyPlayedUri = "com.spotify.recently-played"
 		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
 		remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
 			val item = recentlyPlayed?.items?.get(0)
 			if (item != null) {
 				remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
-					queueMetadata = QueueMetadata(item.title, item.subtitle, queueItems, coverArt, item.uri)
+					deferred.complete(coverArt)
 				}
 			}
 		}
+
+		return deferred.await()
 	}
 
 	/**
@@ -515,8 +614,8 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				deferred.complete(LinkedList())
 			}
 		} else {
-			loadPaginatedItems(directory.toListItem(), { !deferred.isCancelled }) {
-				deferred.complete(it)
+			loadPaginatedItems(directory.toListItem(), { !deferred.isCancelled }) { results ->
+				deferred.complete(results.filterNot { it.title == SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME })
 			}
 		}
 		return deferred.await()
@@ -540,7 +639,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	override suspend fun search(query: String): List<MusicMetadata> {
 		val deferred = CompletableDeferred<List<MusicMetadata>>()
 		GlobalScope.launch(defaultDispatcher) {
-			deferred.complete(webApi.searchForQuery(this@SpotifyAppController, query))
+			deferred.complete(webApi.searchForQuery(this@SpotifyAppController, query) ?: emptyList())
 		}
 		return deferred.await()
 	}
