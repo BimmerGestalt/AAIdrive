@@ -102,10 +102,6 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
 			addAction(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED)
 		}
-		val uuidFilter = IntentFilter().apply {
-			addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
-			addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
-		}
 		context.registerReceiver(bluetoothListener, btFilter)
 		subscribed = true
 	}

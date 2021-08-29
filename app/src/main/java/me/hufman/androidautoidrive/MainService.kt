@@ -239,7 +239,7 @@ class MainService: Service() {
 
 		val foregroundNotification = foregroundNotificationBuilder.build()
 		if (this.foregroundNotification?.extras?.getCharSequence(Notification.EXTRA_TEXT) !=
-				foregroundNotification?.extras?.getCharSequence(Notification.EXTRA_TEXT)) {
+				foregroundNotification.extras?.getCharSequence(Notification.EXTRA_TEXT)) {
 			startForeground(ONGOING_NOTIFICATION_ID, foregroundNotification)
 		}
 		this.foregroundNotification = foregroundNotification

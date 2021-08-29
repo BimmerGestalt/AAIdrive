@@ -69,7 +69,7 @@ class MusicAppsListFragment: Fragment() {
 			}
 
 			override fun onSwiped(view: RecyclerView.ViewHolder, direction: Int) {
-				val musicAppInfo = (view as? DataBoundViewHolder<MusicAppInfo, MusicAppListController>)?.data
+				val musicAppInfo = (view as? DataBoundViewHolder<*, *>)?.data as? MusicAppInfo
 				if (musicAppInfo != null) {
 					val previous = hiddenApps.contains(musicAppInfo.packageName)
 					if (previous) {
