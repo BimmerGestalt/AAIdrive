@@ -26,8 +26,17 @@ jobs:
         with:
           java-version: 1.8
 
+      - name: Prepare cached external dependencies
+        uses: actions/cache@v2
+        with:
+          key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
+          path: |
+            - external
       - name: Download build dependencies
         uses: ./.github/actions/download-externals-action
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
       - name: Build the project
         run: ./gradlew compileDebug
       - name: Run unit tests
@@ -58,6 +67,12 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Prepare cached external dependencies
+        uses: actions/cache@v2
+        with:
+          key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
+          path: |
+            - external
       - name: Download build dependencies
         uses: ./.github/actions/download-externals-action
       - name: Build the project
@@ -123,6 +138,12 @@ jobs:
         with:
           java-version: 1.8
 
+      - name: Prepare cached external dependencies
+        uses: actions/cache@v2
+        with:
+          key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
+          path: |
+            - external
       - name: Download build dependencies
         uses: ./.github/actions/download-externals-action
       - name: Extract signing key
@@ -160,7 +181,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: apk
-      - name: Determing branch name
+      - name: Determine branch name
         uses: nelonoel/branch-name@v1.0.1
       - name: Stage upload directory
         run: |
