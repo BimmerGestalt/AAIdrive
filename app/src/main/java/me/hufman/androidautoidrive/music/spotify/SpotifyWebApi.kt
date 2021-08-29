@@ -129,28 +129,20 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		}
 	}
 
-	suspend fun getArtistTopSongs(spotifyAppController: SpotifyAppController, artistUri: String): List<SpotifyMusicMetadata>? {
+	suspend fun getArtistTopSongs(spotifyAppController: SpotifyAppController, artistUri: String): List<SpotifyMusicMetadata>? = executeApiCall("Failed to get top tracks from ArtistUri $artistUri") {
 		if (webApi == null) {
 			//TODO: need to revisit the system for handling reattempts at API calls after realizing that the webApi is not authorized that avoids the
 			// storing of specific params to the createQueueMetadata call from SpotifyAppController
 			//  - reattempts only make sense for QueueMetadata construction when the user has the same playerContext
 			//  - job for creation of QueueMetadata should probably be stored in the SpotifyAppController and called from such as storing the API call attempt isn't enough - the whole queue creation job must be stored
 
-			return emptyList()
+			return@executeApiCall emptyList()
 		}
-		try {
-			val topSongs = webApi?.artists?.getArtistTopTracks(artistUri)
-			return topSongs?.map {
-				createSpotifyMusicMetadataFromTrack(it, spotifyAppController)
-			}
-		} catch (e: SpotifyException.AuthenticationException) {
-			Log.e(TAG, "Failed to get top tracks from ArtistUri $artistUri due to authentication error with the message: ${e.message}")
-			authStateManager.addAccessTokenAuthorizationException(e)
-			createNotAuthorizedNotification()
-		} catch (e: Exception) {
-			Log.e(TAG, "Exception occurred while getting top tracks from ArtistUri $artistUri with the message: ${e.message}")
+
+		val topSongs = webApi?.artists?.getArtistTopTracks(artistUri)
+		return@executeApiCall topSongs?.map {
+			createSpotifyMusicMetadataFromTrack(it, spotifyAppController)
 		}
-		return null
 	}
 
 	suspend fun searchForQuery(spotifyAppController: SpotifyAppController, query: String): List<SpotifyMusicMetadata>? = executeApiCall("Failed to get search results for query $query") {
