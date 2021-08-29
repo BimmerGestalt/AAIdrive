@@ -57,9 +57,13 @@ class NavHostActivity: AppCompatActivity() {
 
 		setupNavMenu()
 
-		startService()
-
 		drawerLayout?.post { drawerLayout.openDrawer(GravityCompat.START) }
+	}
+
+	override fun onResume() {
+		super.onResume()
+
+		startService()
 	}
 
 	fun setupNavHeader() {
