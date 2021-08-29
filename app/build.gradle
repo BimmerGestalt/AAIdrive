@@ -62,19 +62,11 @@ android {
     }
     buildTypes {
         release {
-            postprocessing {
-                removeUnusedCode true
-                obfuscate false
-                optimizeCode true
-            }
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
         debug {
-            postprocessing {
-                removeUnusedCode true
-                obfuscate false
-                optimizeCode true
-            }
             testCoverageEnabled true
             pseudoLocalesEnabled true
         }
