@@ -33,6 +33,8 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 
 	private val _hasNotificationPermission = MutableLiveData(false)
 	val hasNotificationPermission: LiveData<Boolean> = _hasNotificationPermission
+	private val _supportsSmsPermission = MutableLiveData(false)
+	val supportsSmsPermission: LiveData<Boolean> = _supportsSmsPermission
 	private val _hasSmsPermission = MutableLiveData(false)
 	val hasSmsPermission: LiveData<Boolean> = _hasSmsPermission
 	private val _hasLocationPermission = MutableLiveData(false)
@@ -52,6 +54,7 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 
 	fun update() {
 		_hasNotificationPermission.value = notificationListenerState.value == true && permissionsState.hasNotificationPermission
+		_supportsSmsPermission.value = permissionsState.supportsSmsPermission
 		_hasSmsPermission.value = permissionsState.hasSmsPermission
 		_hasLocationPermission.value = permissionsState.hasLocationPermission
 		_hasBackgroundPermission.value =  if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
@@ -131,6 +134,11 @@ class PermissionsState(private val appContext: Context) {
 		get() {
 			val enabledListeners = NotificationManagerCompat.getEnabledListenerPackages(appContext)
 			return enabledListeners.contains(appContext.packageName)
+		}
+
+	val supportsSmsPermission: Boolean
+		get() = appContext.packageManager.getPackageInfo(appContext.packageName, PackageManager.GET_PERMISSIONS).requestedPermissions.any {
+			it == Manifest.permission.READ_SMS
 		}
 
 	val hasSmsPermission: Boolean

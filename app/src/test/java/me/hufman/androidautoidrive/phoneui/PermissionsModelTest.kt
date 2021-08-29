@@ -67,6 +67,15 @@ class PermissionsModelTest {
 	}
 
 	@Test
+	fun testModelSmsSupported() {
+		listOf(true, false).forEach {
+			whenever(state.supportsSmsPermission) doReturn it
+			viewModel.update()
+			assertEquals(it, viewModel.supportsSmsPermission.value)
+		}
+	}
+
+	@Test
 	fun testModelSms() {
 		listOf(true, false).forEach {
 			whenever(state.hasSmsPermission) doReturn it
