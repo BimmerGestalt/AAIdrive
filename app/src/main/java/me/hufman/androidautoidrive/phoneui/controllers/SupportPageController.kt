@@ -15,21 +15,21 @@ class SupportPageController {
 	}
 	fun onClickFeedback(view: View) {
 		val intent = Intent(Intent.ACTION_VIEW).apply {
-			data = Uri.parse("https://github.com/hufman/AndroidAutoIdrive/discussions")
+			data = Uri.parse("https://github.com/BimmerGestalt/AAIdrive/discussions")
 			flags = Intent.FLAG_ACTIVITY_NEW_TASK
 		}
 		view.context.startActivity(intent)
 	}
 	fun onClickIssues(view: View) {
 		val intent = Intent(Intent.ACTION_VIEW).apply {
-			data = Uri.parse("https://github.com/hufman/AndroidAutoIdrive/issues")
+			data = Uri.parse("https://github.com/BimmerGestalt/AAIdrive/issues")
 			flags = Intent.FLAG_ACTIVITY_NEW_TASK
 		}
 		view.context.startActivity(intent)
 	}
 	fun onClickShare(view: View) {
 		val intent = Intent(Intent.ACTION_VIEW).apply {
-			data = Uri.parse("https://github.com/hufman/AndroidAutoIdrive")
+			data = Uri.parse("https://github.com/BimmerGestalt/AAIdrive")
 			flags = Intent.FLAG_ACTIVITY_NEW_TASK
 		}
 		view.context.startActivity(intent)
