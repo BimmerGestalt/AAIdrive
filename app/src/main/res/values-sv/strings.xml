@@ -10,6 +10,8 @@
     <string name="notification_description_chassiscode">Ansluten till %s</string>
     <string name="notification_description_bmw">Ansluten till BMW</string>
     <string name="notification_description_mini">Ansluten till Mini</string>
+    <string name="permission_cds_normal">se allmän bilinformation</string>
+    <string name="permission_cds_personal">se privat bilinformation</string>
     <!-- notification channel names -->
     <string name="notification_channel_assistant">Starta röstassistenter</string>
     <string name="notification_channel_connection">Anslutningsstatus</string>
@@ -341,6 +343,7 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Sätt på \"Upprepa alla\"</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Sätt på \"Upprepa en\"</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Stäng av \"Upprepa\"</string>
+    <string name="MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION">AAIdrives tillfälliga spellista</string>
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Bakåt %s sekunder</item>
         <item quantity="other">Bakåt %s sekunder</item>

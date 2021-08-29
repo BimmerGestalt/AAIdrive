@@ -343,6 +343,7 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Attiva modalità Repeat sempre</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Attiva modalità Repeat singola</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Disattiva Repeat</string>
+    <string name="MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION">Playlist temporanea AAIdrive</string>
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Riavvolgi %s secondo</item>
         <item quantity="other">Riavvolgi %s secondi</item>
