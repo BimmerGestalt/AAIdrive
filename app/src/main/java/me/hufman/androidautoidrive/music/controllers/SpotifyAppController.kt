@@ -58,7 +58,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		}
 
 		fun CustomAction.Companion.fromSpotify(name: String, icon: Drawable? = null): CustomAction {
-			return formatCustomActionDisplay(CustomAction("com.spotify.music", name, name, icon.hashCode(), icon, null))
+			return formatCustomActionDisplay(CustomAction("com.spotify.music", name, name, icon.hashCode(), icon, null, null))
 		}
 	}
 
