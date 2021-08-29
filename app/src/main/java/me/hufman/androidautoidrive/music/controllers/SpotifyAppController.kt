@@ -253,14 +253,17 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	 * Creates the [QueueMetadata] for the artist playlist with the artist's top songs using the Web
 	 * API. If the Web API is not authorized then the [QueueMetadata] is created from the app remote API.
 	 */
+	//todo flow from search -> select artist -> browse should redirect to a browse page with the top songs
+	//todo skipToIndex does not work for artist top songs playlist -> will need temporary playlist approach here
 	fun createArtistTopSongsQueueMetadata(playerContext: PlayerContext) {
 		createQueueMetadataJob = GlobalScope.launch(defaultDispatcher) {
 			queueItems = webApi.getArtistTopSongs(this@SpotifyAppController, playerContext.uri) ?: emptyList()
 			if (queueItems.isNotEmpty()) {
-				queueMetadata = QueueMetadata(playerContext.title, "Artist", queueItems)
+				queueTitle = playerContext.title
+				queueMetadata = QueueMetadata(queueTitle, "Artist", queueItems)
 
 				val coverArt = getQueueCoverArt()
-				queueMetadata = QueueMetadata(queueTitle, null, queueItems, coverArt, queueUri)
+				queueMetadata = QueueMetadata(queueTitle, "Artist", queueItems, coverArt, queueUri)
 
 				callback?.invoke(this@SpotifyAppController)
 			} else {
