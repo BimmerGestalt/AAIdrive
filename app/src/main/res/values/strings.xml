@@ -49,6 +49,7 @@
     <string name="menu_assistants">Assistants</string>
     <string name="menu_maps">Maps</string>
     <string name="menu_navigation">Navigation</string>
+    <string name="menu_addons">Addons</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_support">Support</string>
 
@@ -114,6 +115,17 @@
     <string name="lbl_navigationpage_intent">While connected, your car\'s navigation system will show up as an option when other apps\' Navigation buttons open an app chooser</string>
     <string name="lbl_navigationstatus_active">Currently navigating to</string>
     <string name="lbl_navigationstatus_inactive">Not currently navigating</string>
+
+    <string name="lbl_addonspage">Additional apps can work with your car to add even more functionality</string>
+    <string name="lbl_addon_apps">Addon Apps</string>
+    <string name="lbl_addons_empty">None found</string>
+    <string name="addonAppIcon">App Icon</string>
+    <string name="addonNormalPermission">Car Data Access</string>
+    <string name="addonNormalPermissionDeclined">CAN NOT access Car Data</string>
+    <string name="addonNormalPermissionGranted">CAN access Car Data</string>
+    <string name="addonPersonalPermission">Personal Car Data Access</string>
+    <string name="addonPersonalPermissionDeclined">CAN NOT access Personal Car Data</string>
+    <string name="addonPersonalPermissionGranted">CAN access Personal Car Data</string>
 
     <string name="lbl_settingspage">Advanced settings for tweaking behavior, may cause unexpected behavior</string>
     <string name="lbl_language_carinterface">Language to show in the car</string>
