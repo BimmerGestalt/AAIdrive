@@ -10,6 +10,8 @@
     <string name="notification_description_chassiscode">Połączono z %s</string>
     <string name="notification_description_bmw">Połączono z BMW</string>
     <string name="notification_description_mini">Połączono z Mini</string>
+    <string name="permission_cds_normal">odczyt ogólnych danych z pojazdu</string>
+    <string name="permission_cds_personal">odczyt wrażliwych danych z pojazdu</string>
     <!-- notification channel names -->
     <string name="notification_channel_assistant">Asystenci głosowi</string>
     <string name="notification_channel_connection">Status połączanie z samochodem</string>
@@ -105,8 +107,16 @@
     <string name="lbl_navigationpage_intent">Po nawiązaniu połączenia z samochodem, system nawigacyjny pojawi się jako opcja</string>
     <string name="lbl_navigationstatus_active">Obecnie prowadzę do </string>
     <string name="lbl_navigationstatus_inactive">Nawigacja nieaktywna</string>
+    <string name="lbl_addonspage">Dodatkowe aplikacje mogą współracować z samochodem, aby dodać jeszcze więcej funkcjonalności</string>
+    <string name="lbl_addon_apps">Aplikacje dodatków</string>
     <string name="lbl_addons_empty">Nic nie znaleziono</string>
     <string name="addonAppIcon">Ikona aplikacji</string>
+    <string name="addonNormalPermission">Dostęp do danych pojazdu</string>
+    <string name="addonNormalPermissionDeclined">Nie może uzyskać dostępu do danych pojazdu</string>
+    <string name="addonNormalPermissionGranted">Może uzyskać dostępu do danych pojazdu</string>
+    <string name="addonPersonalPermission">Dostępu do wrażliwych danych pojazdu</string>
+    <string name="addonPersonalPermissionDeclined">Nie może uzyskać dostępu do wrażliwych danych pojazdu</string>
+    <string name="addonPersonalPermissionGranted">Może uzyskać dostępu do wrażliwych danych pojazdu</string>
     <string name="lbl_settingspage">Zaawansowane ustawienia, mogą powodować nieoczekiwane zachowanie aplikacji</string>
     <string name="lbl_language_carinterface">Język wyświetlany w samochodzie </string>
     <string name="lbl_language_prefercar">Preferuj język samochodowy a nie język telefonu</string>
@@ -346,6 +356,7 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Powtarzaj wszystkie</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Powtarzaj pojedynczo </string>
     <string name="MUSIC_TURN_REPEAT_OFF">Wyłącz powtarzanie</string>
+    <string name="MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION">Tymczasowa lista odtwarzania AAIdrive</string>
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Przewiń do tyłu o %s sekund</item>
         <item quantity="few">Przewiń do przodu o %s sekund</item>
