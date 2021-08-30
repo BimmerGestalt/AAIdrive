@@ -112,7 +112,11 @@
     <string name="lbl_addons_empty">Не найдено</string>
     <string name="addonAppIcon">Иконка приложения</string>
     <string name="addonNormalPermission">Доступ к данным автомобиля</string>
-    <string name="addonNormalPermissionDeclined">НЕТ доступа к данным о машине</string>
+    <string name="addonNormalPermissionDeclined">НЕ ВОЗМОЖЕН доступ к данным автомобиля</string>
+    <string name="addonNormalPermissionGranted">ВОЗМОЖЕН доступ к данным автомобиля</string>
+    <string name="addonPersonalPermission">Доступ к персональным данным автомобиля</string>
+    <string name="addonPersonalPermissionDeclined">НЕ ВОЗМОЖЕН доступ к персональным данным автомобиля</string>
+    <string name="addonPersonalPermissionGranted">ВОЗМОЖЕН доступ к персональным данным автомобиля</string>
     <string name="lbl_settingspage">Использование расширенных настроек, может привести к неожиданным последствиям</string>
     <string name="lbl_language_carinterface">Язык для отображения в автомобиле</string>
     <string name="lbl_language_prefercar">Предпочитать язык автомобиля языку на телефоне</string>
