@@ -106,13 +106,13 @@
     <string name="lbl_navigationstatus_active">Navigazione attiva verso</string>
     <string name="lbl_navigationstatus_inactive">Navigazione attualmente non attiva</string>
     <string name="lbl_addonspage">App aggiuntive possono funzionare con la tua auto per aggiungere maggiori funzionalità</string>
-    <string name="lbl_addon_apps">Applicazioni Addon</string>
+    <string name="lbl_addon_apps">Applicazioni aggiuntive</string>
     <string name="lbl_addons_empty">Non trovate</string>
     <string name="addonAppIcon">Icona dell\'app</string>
-    <string name="addonNormalPermission">Accesso Dati Automobile</string>
+    <string name="addonNormalPermission">Accesso ai dati dell\'auto</string>
     <string name="addonNormalPermissionDeclined">NON PUÒ accedere ai dati dell\'auto</string>
-    <string name="addonNormalPermissionGranted">PUÒ accedere ai dati auto</string>
-    <string name="addonPersonalPermission">Accesso Dati Personali Dell\'Auto</string>
+    <string name="addonNormalPermissionGranted">PUÒ accedere ai dati dell\'auto</string>
+    <string name="addonPersonalPermission">Accesso ai dati personali dell\'auto</string>
     <string name="addonPersonalPermissionDeclined">NON PUÒ accedere ai dati personali dell\'auto</string>
     <string name="addonPersonalPermissionGranted">PUÒ accedere ai dati personali dell\'auto</string>
     <string name="lbl_settingspage">Impostazioni avanzate, possono causare comportamenti imprevisti</string>
