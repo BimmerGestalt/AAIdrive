@@ -42,6 +42,7 @@
     <string name="menu_assistants">Assistenten</string>
     <string name="menu_maps">Karten</string>
     <string name="menu_navigation">Steuerung</string>
+    <string name="menu_addons">Addons</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_support">Unterstützung</string>
     <string name="btn_next">Weiter</string>
@@ -101,6 +102,16 @@
     <string name="lbl_navigationpage_intent">Wenn eine Verbindung besteht, wird das Navigationssystem Ihres Autos als Option in der App Auswahl angezeigt, wenn in anderen Apps ein Navigationsbutton betätigt wird</string>
     <string name="lbl_navigationstatus_active">Navigiere aktuell zu</string>
     <string name="lbl_navigationstatus_inactive">Derzeit wird nicht navigiert</string>
+    <string name="lbl_addonspage">Diese Zusätzlichen Apps können sich mit dem Auto verbinden um noch mehr Funktionalität hinzuzufügen</string>
+    <string name="lbl_addon_apps">Addon-Apps</string>
+    <string name="lbl_addons_empty">Keine Gefunden</string>
+    <string name="addonAppIcon">App Icon</string>
+    <string name="addonNormalPermission">Zugriff auf die Daten des Autos</string>
+    <string name="addonNormalPermissionDeclined">KANN NICHT auf Daten des Autos zugreifen</string>
+    <string name="addonNormalPermissionGranted">KANN auf Daten des Autos zugreifen</string>
+    <string name="addonPersonalPermission">Zugriff auf persönliche Daten des Autos</string>
+    <string name="addonPersonalPermissionDeclined">KANN NICHT auf persönliche Daten des Autos zugreifen</string>
+    <string name="addonPersonalPermissionGranted">KANN auf persönliche Daten des Autos zugreifen</string>
     <string name="lbl_settingspage">Erweiterte Einstellungen für das Optimieren des Verhaltens können zu unerwartetem Verhalten führen</string>
     <string name="lbl_language_carinterface">Sprache für das Auto</string>
     <string name="lbl_language_prefercar">Spracheinstellung des Fahrzeugs gegenüber Telefonsprache bevorzugen</string>

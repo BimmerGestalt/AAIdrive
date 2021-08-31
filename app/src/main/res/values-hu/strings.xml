@@ -44,6 +44,7 @@
     <string name="menu_assistants">Asszisztensek</string>
     <string name="menu_maps">Térképek</string>
     <string name="menu_navigation">Navigáció</string>
+    <string name="menu_addons">Bővítmények</string>
     <string name="menu_settings">Beállítások</string>
     <string name="menu_support">Támogatás</string>
     <string name="btn_next">Következő</string>
@@ -99,6 +100,16 @@
     <string name="lbl_navigationpage_intent">Meglévő kapcsolat esetén, az autód navigációs rendszere megjelenik egy opcióként, amikor az egyéb navigációs alkalmazások közül választhatsz a telefonodon</string>
     <string name="lbl_navigationstatus_active">Jelenleg navigálas</string>
     <string name="lbl_navigationstatus_inactive">Jelenleg nincs navigálás</string>
+    <string name="lbl_addonspage">További alkalmazások működhetnek együtt autójával, még több funkció hozzáadásához</string>
+    <string name="lbl_addon_apps">Bővítmény Alkalmazások</string>
+    <string name="lbl_addons_empty">Nincs találat</string>
+    <string name="addonAppIcon">Applikáció ikon</string>
+    <string name="addonNormalPermission">Autóadat hozzáférés</string>
+    <string name="addonNormalPermissionDeclined">NEM fér hozzá az autóadataihoz</string>
+    <string name="addonNormalPermissionGranted">HOZZÁFÉR az autóadataihoz</string>
+    <string name="addonPersonalPermission">Személyes Autóadat hozzáférés</string>
+    <string name="addonPersonalPermissionDeclined">NEM fér hozzá a személyes autóadataihoz</string>
+    <string name="addonPersonalPermissionGranted">HOZZÁFÉR a személyes autóadataihoz</string>
     <string name="lbl_settingspage">A haladó beállítások testre szabása váratlan működést eredményezhet</string>
     <string name="lbl_language_carinterface">Nyelv mutatása az autóban</string>
     <string name="lbl_language_prefercar">Az autó nyelve előnyben részesítve az telefon nyelvével szemben</string>
@@ -289,8 +300,11 @@
     <string name="NOTIFICATION_POPUPS">Felugró értesítések</string>
     <string name="NOTIFICATION_POPUPS_PASSENGER"> … utassal az autóban</string>
     <string name="NOTIFICATION_SOUND">Értesítési hang lejátszása</string>
+    <string name="NOTIFICATION_READOUT">Értesítések megtekintésekor azok feolvasása</string>
+    <string name="NOTIFICATION_READOUT_POPUP">Új értesítések felolvasása</string>
     <string name="NOTIFICATION_READOUT_POPUP_PASSENGER"> … utassal az autóban</string>
     <string name="NOTIFICATION_PERMISSION_NEEDED">Az alkalmazásnak hozzáférést kell biztosítsani az értesítésekhez</string>
+    <string name="READOUT_DESCRIPTION">Ezt az alkalmazást felolvasási célokra használják</string>
     <string name="MAP_ACTION_VIEWMAP">Teljes térkép méret</string>
     <string name="MAP_ACTION_SEARCH">Hely keresése</string>
     <string name="MAP_ACTION_CLEARNAV">Navigáció törlése</string>

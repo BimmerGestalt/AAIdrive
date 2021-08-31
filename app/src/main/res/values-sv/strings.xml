@@ -44,6 +44,7 @@
     <string name="menu_assistants">Röstassistenter</string>
     <string name="menu_maps">Kartor</string>
     <string name="menu_navigation">Navigering</string>
+    <string name="menu_addons">Tillägg</string>
     <string name="menu_settings">Inställningar</string>
     <string name="menu_support">Hjälp</string>
     <string name="btn_next">Nästa</string>
@@ -104,6 +105,16 @@
     <string name="lbl_navigationpage_intent">När du är ansluten visas bilens navigationssystem som ett alternativ när andra appar öppnar en app-väljare</string>
     <string name="lbl_navigationstatus_active">Navigerar till</string>
     <string name="lbl_navigationstatus_inactive">Navigerar inte just nu</string>
+    <string name="lbl_addonspage">Ytterligare appar kan fungera med din bil för ännu fler funktioner</string>
+    <string name="lbl_addon_apps">Tillagda appar</string>
+    <string name="lbl_addons_empty">Inget hittades</string>
+    <string name="addonAppIcon">Appikon</string>
+    <string name="addonNormalPermission">Åtkomst av bildata</string>
+    <string name="addonNormalPermissionDeclined">KAN Ej komma åt bildata</string>
+    <string name="addonNormalPermissionGranted">KAN få åtkomst till bildata</string>
+    <string name="addonPersonalPermission">Åtkomst till personbilsdata</string>
+    <string name="addonPersonalPermissionDeclined">KAN Ej komma åt bildata</string>
+    <string name="addonPersonalPermissionGranted">KOMMER åt bildata</string>
     <string name="lbl_settingspage">Avancerade inställningar för utökade funktioner, kan orsaka oväntat beteende</string>
     <string name="lbl_language_carinterface">Språkval i bilen</string>
     <string name="lbl_language_prefercar">Föredra bilspråk framför telefonspråk</string>

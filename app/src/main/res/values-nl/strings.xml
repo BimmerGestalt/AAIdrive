@@ -44,6 +44,7 @@
     <string name="menu_assistants">Assistenten</string>
     <string name="menu_maps">Kaarten</string>
     <string name="menu_navigation">Navigatie</string>
+    <string name="menu_addons">Add-ons</string>
     <string name="menu_settings">Instellingen</string>
     <string name="menu_support">Ondersteuning</string>
     <string name="btn_next">Volgende</string>
@@ -104,6 +105,11 @@
     <string name="lbl_navigationpage_intent">Tijdens het verbinden zal het navigatiesysteem van uw auto verschijnen als een optie wanneer de navigatieknoppen van andere apps een app-kiezer openen</string>
     <string name="lbl_navigationstatus_active">Momenteel navigeren naar</string>
     <string name="lbl_navigationstatus_inactive">Momenteel niet aan het navigeren</string>
+    <string name="lbl_addonspage">Extra apps kunnen met uw auto werken om nog meer functionaliteit toe te voegen</string>
+    <string name="lbl_addon_apps">Add-on Apps</string>
+    <string name="lbl_addons_empty">Geen gevonden</string>
+    <string name="addonAppIcon">App icoon</string>
+    <string name="addonNormalPermission">Auto Data Toegang</string>
     <string name="lbl_settingspage">Geavanceerde instellingen, kan onverwacht gedrag veroorzaken</string>
     <string name="lbl_language_carinterface">Te tonen taal in de auto</string>
     <string name="lbl_language_prefercar">Voorkeur voor autotaal boven telefoon taal</string>
