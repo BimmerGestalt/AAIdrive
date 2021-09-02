@@ -109,7 +109,9 @@
     <string name="musicAppNotes_oldSpotify">Please downgrade Spotify for full functionality (Searching)</string>
     <string name="musicAppNotes_oldSpotifyInstructions">This app can only provide full control over Spotify up to version 8.4.96.953, such as searching. For full control, please download an older version, from APKPure or similar.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Please install the official Spotify client</string>
+    <string name="musicAppNotes_spotify_userDeclined">Please grant permission to browse your library</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Please confirm internet connectivity and disable any ad blocking</string>
+    <string name="musicAppNotes_spotify_backgroundDisabled">Could not open Spotify. Please ensure Spotify is allowed to launch from the background</string>
 
     <string name="lbl_navigationpage_address">Paste in an address to start the car\'s navigation system from your phone</string>
     <string name="lbl_navigationpage_intent">While connected, your car\'s navigation system will show up as an option when other apps\' Navigation buttons open an app chooser</string>
