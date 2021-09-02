@@ -8,6 +8,7 @@ import me.hufman.androidautoidrive.R
 data class AddonAppInfo(val name: String, val icon: Drawable, val packageName: String) {
 	var intentOpen: Intent? = null
 	var intentSettings: Intent? = null
+	var intentDataService: Intent? = null
 
 	var cdsNormalRequested: Boolean = false
 	var cdsNormalGranted: Boolean = false
@@ -27,4 +28,23 @@ data class AddonAppInfo(val name: String, val icon: Drawable, val packageName: S
 			).joinToString("\n")
 		}
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
+
+		other as AddonAppInfo
+
+		if (name != other.name) return false
+		if (packageName != other.packageName) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = name.hashCode()
+		result = 31 * result + packageName.hashCode()
+		return result
+	}
+
 }

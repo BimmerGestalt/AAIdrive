@@ -48,6 +48,7 @@ class AddonDiscovery(val packageManager: PackageManager) {
 				val appInfo = AddonAppInfo(name, icon, packageInfo.packageName).also {
 					it.intentOpen = resolveIntent(Intent(Intent.ACTION_MAIN).setPackage(packageInfo.packageName))
 					it.intentSettings = resolveIntent(Intent(ACTION_APPLICATION_PREFERENCES).setPackage(packageInfo.packageName))
+					it.intentDataService = Intent(INTENT_DATA_SERVICE).setPackage(packageInfo.packageName)
 					it.cdsNormalRequested = cdsNormalRequested
 					it.cdsNormalGranted = cdsNormalGranted
 					it.cdsPersonalRequested = cdsPersonalRequested
