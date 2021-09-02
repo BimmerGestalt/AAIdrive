@@ -152,7 +152,7 @@ jobs:
         run: ./gradlew assembleNomap
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+          KEYSTORE_ALIAS: upload
           KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
           AndroidAutoIdrive_SpotifyApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_SPOTIFYAPIKEY }}
           AndroidAutoIdrive_SentryDsn: ${{ secrets.ANDROIDAUTOIDRIVE_SENTRYDSN }}
