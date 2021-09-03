@@ -39,6 +39,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		const val ARTIST_SONGS_PLAYLIST_NAME = "AAIDRIVE_ARTIST_SONGS"
 
 		private var webApiInstance: SpotifyWebApi? = null
+		private var instanceCount = 0
 
 		/**
 		 * Retrieves the current [SpotifyWebApi] instance creating one if it there are no instances
@@ -48,6 +49,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			if (webApiInstance == null) {
 				webApiInstance = SpotifyWebApi(context, appSettings)
 			}
+			instanceCount++
 			return webApiInstance as SpotifyWebApi
 		}
 	}
@@ -422,9 +424,13 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 * Disconnect process for shutting down the [SpotifyClientApi].
 	 */
 	fun disconnect() {
-		Log.d(TAG, "Disconnecting Web API")
-		webApi?.shutdown()
-		isUsingSpotify = false
-		clearLastFailedQueueMetadataCreate()
+		instanceCount--
+		Log.d(TAG, "Disconnecting SpotifyWebApi")
+		if (instanceCount == 0) {
+			Log.d(TAG, "All instances of SpotifyWebApi disconnected. Shutting down Web API")
+			webApi?.shutdown()
+			isUsingSpotify = false
+			clearLastFailedQueueMetadataCreate()
+		}
 	}
 }
