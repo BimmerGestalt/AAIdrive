@@ -15,7 +15,6 @@ import com.adamratzman.spotify.models.SpotifyImage
 import com.adamratzman.spotify.models.SpotifyUri
 import com.adamratzman.spotify.models.Token
 import com.adamratzman.spotify.models.Track
-import com.adamratzman.spotify.utils.Market
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
@@ -61,22 +60,14 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 
 	private val authStateManager: SpotifyAuthStateManager
 	private val clientId: String
-	private var getLikedSongsAttempted: Boolean = false
-	private var spotifyAppControllerCaller: SpotifyAppController? = null
+	private var lastFailedQueueMetadataCreate: (() -> Unit)? = null
+
 	var isUsingSpotify: Boolean = false
 
 	init {
 		Log.d(TAG, "Initializing for the first time")
 		authStateManager = SpotifyAuthStateManager.getInstance(appSettings)
 		clientId = SpotifyAppController.getClientId(context)
-	}
-
-	/**
-	 * Sets the Liked Songs flag to false and sets the [SpotifyAppController] caller to null.
-	 */
-	fun clearGetLikedSongsAttemptedFlag() {
-		getLikedSongsAttempted = false
-		spotifyAppControllerCaller = null
 	}
 
 	/**
@@ -119,8 +110,11 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 
 	suspend fun getLikedSongs(spotifyAppController: SpotifyAppController): List<SpotifyMusicMetadata>? = executeApiCall("Failed to get data from Liked Songs library") {
 		if (webApi == null) {
-			getLikedSongsAttempted = true
-			spotifyAppControllerCaller = spotifyAppController
+			lastFailedQueueMetadataCreate = {
+				Log.d(SpotifyAppController.TAG, "Retrying Liked Songs queue metadata creation")
+				spotifyAppController.createLikedSongsQueueMetadata()
+			}
+
 			return@executeApiCall emptyList()
 		}
 
@@ -132,10 +126,10 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 
 	suspend fun getArtistTopSongs(spotifyAppController: SpotifyAppController, artistUri: String): List<SpotifyMusicMetadata>? = executeApiCall("Failed to get top tracks from ArtistUri $artistUri") {
 		if (webApi == null) {
-			//TODO: need to revisit the system for handling reattempts at API calls after realizing that the webApi is not authorized that avoids the
-			// storing of specific params to the createQueueMetadata call from SpotifyAppController
-			//  - reattempts only make sense for QueueMetadata construction when the user has the same playerContext
-			//  - job for creation of QueueMetadata should probably be stored in the SpotifyAppController and called from such as storing the API call attempt isn't enough - the whole queue creation job must be stored
+			lastFailedQueueMetadataCreate = {
+				Log.d(SpotifyAppController.TAG, "Retrying Artist Songs queue metadata creation")
+				spotifyAppController.createArtistTopSongsQueueMetadata()
+			}
 
 			return@executeApiCall emptyList()
 		}
@@ -246,10 +240,9 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		if (webApi != null) {
 			authStateManager.updateTokenResponseWithToken(webApi!!.token, clientId)
 
-			if (getLikedSongsAttempted) {
-				getLikedSongsAttempted = false
-				spotifyAppControllerCaller?.createLikedSongsQueueMetadata()
-			}
+			lastFailedQueueMetadataCreate?.invoke()
+			clearLastFailedQueueMetadataCreate()
+
 			if (!isProbing) {
 				updateSpotifyAppInfoAsSearchable()
 			}
@@ -261,6 +254,10 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 */
 	fun isAuthorized(): Boolean {
 		return authStateManager.isAuthorized()
+	}
+
+	fun clearLastFailedQueueMetadataCreate() {
+		lastFailedQueueMetadataCreate = null
 	}
 
 	/**
@@ -431,6 +428,6 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		Log.d(TAG, "Disconnecting Web API")
 		webApi?.shutdown()
 		isUsingSpotify = false
-		clearGetLikedSongsAttemptedFlag()
+		clearLastFailedQueueMetadataCreate()
 	}
 }
