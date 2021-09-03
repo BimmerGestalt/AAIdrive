@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AndroidAutoIdrive</string>
+    <string name="app_name">AAIdrive</string>
     <string name="permlab_accessNotifications">Notification d\'accès iDrive</string>
     <string name="permlab_bindNotificationListenerService">Notification d\'accès iDrive</string>
     <string name="permdesc_accessNotifications">Notification d\'accès iDrive</string>
     <string name="permdesc_bindNotificationListenerService">Notification d\'accès iDrive</string>
-    <string name="notification_title">Android Auto pour iDrive</string>
+    <string name="notification_title">AAIdrive</string>
     <string name="notification_description">Connecté à la Voiture</string>
     <string name="notification_description_chassiscode">Connecté à votre %s</string>
     <string name="notification_description_bmw">Connecté à votre BMW</string>
@@ -28,10 +28,10 @@
     <string name="lbl_navigation_listener_unsuccess">Échec</string>
     <!-- Welcome pages -->
     <string name="lbl_welcome_heading">Connectons-nous</string>
-    <string name="lbl_welcome_intro">AndroidAutoIdrive est une application non officielle pour ajouter des applications de musique de votre téléphone, et d\'autres fonctionnalités à votre voiture via le protocole d\'applications BMW natives</string>
+    <string name="lbl_welcome_intro">AAIdrive est une application non officielle pour ajouter des applications de musique de votre téléphone, et d\'autres fonctionnalités à votre voiture via le protocole d\'applications BMW natives</string>
     <string name="lbl_welcome_compatible">La plupart des MY2014 ou des BMW ou MINIs plus récents équipés de NBT ou NBT Evo (basé sur IDrive 4–6) et d\'un abonnement connecté actif ou BMW en ligne devraient être compatibles</string>
     <string name="lbl_welcome_dependencies">La connexion des applications à la voiture dépend de l\'application BMW/MINI Connected ou de la nouvelle application MyBMW ou Mini pour se connecter à votre voiture</string>
-    <string name="lbl_welcome_complete">AndroidAutoIdrive ajoute également une variété d\'autres fonctionnalités à votre voiture, jetez-y un coup d\'œil !</string>
+    <string name="lbl_welcome_complete">AAIdrive ajoute également une variété d\'autres fonctionnalités à votre voiture, jetez-y un coup d\'œil !</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Vue d\'ensemble</string>
     <string name="menu_setup">Installation</string>
@@ -45,7 +45,7 @@
     <string name="menu_settings">Paramètres</string>
     <string name="menu_support">Support</string>
     <string name="btn_next">Suivant</string>
-    <string name="lbl_overviewpage">AndroidAutoIdrive intègre certaines applications de musique de votre téléphone et les notifications de votre téléphone dans votre voiture via le protocole BMW Apps</string>
+    <string name="lbl_overviewpage">AAIdrive intègre certaines applications de musique de votre téléphone et les notifications de votre téléphone dans votre voiture via le protocole BMW Apps</string>
     <string name="lbl_connectionpage">La connexion des applications à la voiture dépend de quelques éléments, voici quelques conseils pour s\'assurer que cela fonctionne bien</string>
     <plurals name="lbl_assistantpage">
         <item quantity="one">L\'assistant vocal de votre téléphone est ajouté en tant qu\'application connectée, au cas où l\'entrée vocale de la voiture ne le déclenche pas</item>
@@ -103,14 +103,14 @@
     <string name="lbl_language_carinterface">Langue à afficher dans la voiture</string>
     <string name="lbl_language_prefercar">Préférer la langue de la voiture à la langue du téléphone</string>
     <string name="lbl_language_forcelanguage">Forcer une langue spécifique</string>
-    <string name="lbl_donations_volunteer">AndroidAutoIdrive est un projet bénévole</string>
+    <string name="lbl_donations_volunteer">AAIdrive est un projet bénévole</string>
     <string name="lbl_donations_request">Si vous aimez ce projet et que vous le trouvez utile, pensez à montrer votre soutien en faisant un don :</string>
     <string name="btn_donations">Faire un don</string>
     <string name="lbl_support_other_ways">Vous pouvez également soutenir le projet d\'autres manières:</string>
     <string name="lbl_support_feedback">Donnez votre avis</string>
     <string name="lbl_support_issues">Reporter un problème</string>
     <string name="lbl_support_share">Passer le mot</string>
-    <string name="lbl_support_thanks">Merci d\'utiliser AndroidAutoIdrive !</string>
+    <string name="lbl_support_thanks">Merci d\'utiliser AAIdrive !</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Annuler</string>
     <string name="btn_configure">Configurer …</string>

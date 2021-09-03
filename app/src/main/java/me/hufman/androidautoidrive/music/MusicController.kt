@@ -210,10 +210,24 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		}
 	}
 	fun skipToPrevious() = asyncControl { controller ->
-		controller.skipToPrevious()
+		val customActionProvided = controller.getCustomActions().firstOrNull { customAction ->
+			customAction.providesAction == MusicAction.SKIP_TO_PREVIOUS
+		}
+		if (!controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS) && customActionProvided != null) {
+			controller.customAction(customActionProvided)
+		} else {
+			controller.skipToPrevious()
+		}
 	}
 	fun skipToNext() = asyncControl { controller ->
-		controller.skipToNext()
+		val customActionProvided = controller.getCustomActions().firstOrNull { customAction ->
+			customAction.providesAction == MusicAction.SKIP_TO_NEXT
+		}
+		if (!controller.isSupportedAction(MusicAction.SKIP_TO_NEXT) && customActionProvided != null) {
+			controller.customAction(customActionProvided)
+		} else {
+			controller.skipToNext()
+		}
 	}
 	fun startRewind() {
 		seekingController.startRewind()
@@ -321,7 +335,8 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 
 	fun isSupportedAction(action: MusicAction): Boolean {
 		return withController { controller ->
-			return controller.isSupportedAction(action)
+			return controller.isSupportedAction(action) ||
+					controller.getCustomActions().any { it.providesAction == action }
 		} ?: false
 	}
 

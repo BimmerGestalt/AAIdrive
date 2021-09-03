@@ -7,8 +7,11 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.content.res.ResourcesCompat
 import java.lang.Exception
 
-open class CustomAction(val packageName: String, val action: String, val name: String, private val _iconId: Int, val icon: Drawable?, val extras: Bundle?) {
+open class CustomAction(val packageName: String, val action: String, val name: String, private val _iconId: Int, val icon: Drawable?, val extras: Bundle?, val providesAction: MusicAction?) {
 	companion object {
+		val matchSkipPreviousAction = Regex("(skip|seek|jump).{0,5}(back|previous)", RegexOption.IGNORE_CASE)
+		val matchSkipNextAction = Regex("(skip|seek|jump).{0,5}(forward|fwd|next)", RegexOption.IGNORE_CASE)
+
 		fun fromMediaCustomAction(context: Context, packageName: String, action: PlaybackStateCompat.CustomAction): CustomAction {
 			val icon = try {
 				val resources = context.packageManager.getResourcesForApplication(packageName)
@@ -16,9 +19,9 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 			} catch (e: Exception) {
 				null
 			}
-			return enableDwellAction(formatCustomActionDisplay(
-					CustomAction(packageName, action.action, action.name.toString(), action.icon, icon, action.extras)
-			))
+			return enableDwellAction(enableProvidesAction(formatCustomActionDisplay(
+					CustomAction(packageName, action.action, action.name.toString(), action.icon, icon, action.extras, null)
+			)))
 		}
 
 		fun formatCustomActionDisplay(ca: CustomAction): CustomAction {
@@ -65,18 +68,32 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 						niceName = ca.name
 				}
 
-				return CustomAction(ca.packageName, ca.action, niceName, ca._iconId, ca.icon, ca.extras)
+				return ca.clone(name = niceName)
 			}
 
 			if (ca.packageName == "com.jrtstudio.AnotherMusicPlayer") {
 				val rocketPlayerActionPattern = Regex("([A-Za-z]+)[0-9]+")
 				val match = rocketPlayerActionPattern.matchEntire(ca.name)
 				if (match != null) {
-					return CustomAction(ca.packageName, ca.action, match.groupValues[1], ca._iconId, ca.icon, ca.extras)
+					return ca.clone(name = match.groupValues[1])
 				}
 			}
 
 			return ca
+		}
+
+		/**
+		 * Heuristically upgrades some actions with providesAction attributes
+		 * Such as PocketCasts providing custom jumpBack actions
+		 */
+		fun enableProvidesAction(action: CustomAction): CustomAction {
+			if (matchSkipPreviousAction.matches(action.action)) {
+				return action.clone(providesAction = MusicAction.SKIP_TO_PREVIOUS)
+			}
+			if (matchSkipNextAction.matches(action.action)) {
+				return action.clone(providesAction = MusicAction.SKIP_TO_NEXT)
+			}
+			return action
 		}
 
 		/**
@@ -89,10 +106,18 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 					action.action.contains("seek", true)
 			val isChangeAction = action.action.contains("change", true)       // change speed, perhaps
 			if (isSkipAction || isChangeAction) {
-				return CustomActionDwell(action.packageName, action.action, action.name, action._iconId, action.icon, action.extras)
+				return CustomActionDwell(action.packageName, action.action, action.name, action._iconId, action.icon, action.extras, action.providesAction)
 			}
 			return action
 		}
+	}
+
+	fun clone(packageName: String? = null, action: String? = null, name: String? = null,
+	          _iconId: Int? = null, icon: Drawable? = null, extras: Bundle? = null,
+	          providesAction: MusicAction? = null): CustomAction {
+		return CustomAction(packageName ?: this.packageName, action ?: this.action, name ?: this.name,
+				_iconId ?: this._iconId, icon ?: this.icon, extras ?: this.extras,
+				providesAction ?: this.providesAction)
 	}
 
 	override fun equals(other: Any?): Boolean {
@@ -125,4 +150,6 @@ open class CustomAction(val packageName: String, val action: String, val name: S
 /**
  * A CustomAction that doesn't close the Actions window
  */
-class CustomActionDwell(packageName: String, action: String, name: String, _iconId: Int, icon: Drawable?, extras: Bundle?): CustomAction(packageName, action, name, _iconId, icon, extras)
+class CustomActionDwell(packageName: String, action: String, name: String,
+                        _iconId: Int, icon: Drawable?, extras: Bundle?,
+                        providesAction: MusicAction?): CustomAction(packageName, action, name, _iconId, icon, extras, providesAction)

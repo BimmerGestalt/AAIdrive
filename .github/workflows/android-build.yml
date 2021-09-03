@@ -26,8 +26,17 @@ jobs:
         with:
           java-version: 1.8
 
+      - name: Prepare cached external dependencies
+        uses: actions/cache@v2
+        with:
+          key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
+          path: |
+            - external
       - name: Download build dependencies
         uses: ./.github/actions/download-externals-action
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
       - name: Build the project
         run: ./gradlew compileDebug
       - name: Run unit tests
@@ -44,7 +53,7 @@ jobs:
       matrix:
         map: [Nomap, Gmap]
         hasSecret:
-          - ${{ github.repository == 'hufman/AndroidAutoIdrive' && github.event_name == 'push' }}
+          - ${{ github.repository == 'BimmerGestalt/AAIdrive' && github.event_name == 'push' }}
         exclude:  # don't run Gmap tests if we are in a context that doesn't have the gmap secret
           - hasSecret: false
             map: Gmap
@@ -58,6 +67,12 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Prepare cached external dependencies
+        uses: actions/cache@v2
+        with:
+          key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
+          path: |
+            - external
       - name: Download build dependencies
         uses: ./.github/actions/download-externals-action
       - name: Build the project
@@ -108,7 +123,8 @@ jobs:
             app/build/reports/androidTests/connected/screenshots/*
 
   package:
-    if: github.repository == 'hufman/AndroidAutoIdrive' && github.event_name == 'push'
+    # Only build on the main repo, which has the secrets configured
+    if: github.repository == 'BimmerGestalt/AAIdrive' && github.event_name == 'push'
     needs: [unitTest]  # wait for the tests to succeed
     runs-on: ubuntu-18.04
     steps:
@@ -122,6 +138,12 @@ jobs:
         with:
           java-version: 1.8
 
+      - name: Prepare cached external dependencies
+        uses: actions/cache@v2
+        with:
+          key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
+          path: |
+            - external
       - name: Download build dependencies
         uses: ./.github/actions/download-externals-action
       - name: Extract signing key
@@ -130,7 +152,7 @@ jobs:
         run: ./gradlew assembleNomap
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+          KEYSTORE_ALIAS: upload
           KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
           AndroidAutoIdrive_SpotifyApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_SPOTIFYAPIKEY }}
           AndroidAutoIdrive_SentryDsn: ${{ secrets.ANDROIDAUTOIDRIVE_SENTRYDSN }}
@@ -159,7 +181,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: apk
-      - name: Determing branch name
+      - name: Determine branch name
         uses: nelonoel/branch-name@v1.0.1
       - name: Stage upload directory
         run: |
@@ -170,8 +192,8 @@ jobs:
         uses: shallwefootball/s3-upload-action@v1.1.3
         with:
           source_dir: dist
-          destination_dir: hufman/AndroidAutoIdrive
-          aws_bucket: androidautoidrive
+          destination_dir: aaidrive/builds
+          aws_bucket: bimmergestalt
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 

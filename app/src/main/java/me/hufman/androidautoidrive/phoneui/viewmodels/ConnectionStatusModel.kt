@@ -204,6 +204,21 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		_hmiVersion.value = displayedHmiVersion
 	}
 
+	fun onPause() {
+		// clear boolean statuses to stop animations
+		_isBtConnected.value = false
+		_isA2dpConnected.value = false
+		_isSppAvailable.value = false
+		_isUsbConnected.value = false
+		_isUsbCharging.value = false
+		_isUsbTransfer.value = false
+		_isUsbAccessory.value = false
+		_isBclReady.value = false
+		_isBclDisconnected.value = false
+		_isBclConnecting.value = false
+		_isBclStuck.value = false
+	}
+
 	override fun onCleared() {
 		super.onCleared()
 		connection.unregister()

@@ -50,7 +50,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 	private var lastSettingsTime = 0L   // the last time we checked settings, for day/night check
 	private val SETTINGS_TIME_INTERVAL = 5 * 60000  // milliseconds between checking day/night
 
-	val locationProvider = LocationServices.getFusedLocationProviderClient(context)!!
+	val locationProvider = LocationServices.getFusedLocationProviderClient(context)
 	val locationCallback = LocationCallbackImpl()
 	var currentLocation: LatLng? = null
 
@@ -108,12 +108,12 @@ class GMapsController(private val context: Context, private val resultsControlle
 
 		// register for location updates
 		if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-			val locationRequest = LocationRequest()
+			val locationRequest = LocationRequest.create()
 			locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 			locationRequest.interval = 3000
 			locationRequest.fastestInterval = 500
 
-			locationProvider.requestLocationUpdates(locationRequest, locationCallback, null)
+			locationProvider.requestLocationUpdates(locationRequest, locationCallback, context.mainLooper)
 		}
 	}
 
@@ -131,7 +131,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 
 	inner class LocationCallbackImpl: LocationCallback() {
 		override fun onLocationResult(location: LocationResult?) {
-			if (location != null && location.lastLocation != null) {
+			if (location?.lastLocation != null) {
 				if (currentLocation == null) {  // first view
 					initCamera()
 				}

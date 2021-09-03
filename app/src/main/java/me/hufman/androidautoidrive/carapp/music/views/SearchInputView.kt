@@ -120,6 +120,7 @@ class SearchInputView(val state: RHMIState,
 				}
 			}
 
+			@Suppress("EXPERIMENTAL_API_USAGE")
 			override fun onOk() {
 				if(!isSpotify && deferredSearchResults.isCompleted && deferredSearchResults.getCompleted()?.isEmpty() == true) {
 					browseController.playFromSearch(inputComponent.getResultAction()?.asHMIAction(), this.input)

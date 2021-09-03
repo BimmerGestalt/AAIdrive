@@ -15,8 +15,9 @@ class ConnectionTipsModel(val connection: CarConnectionDebugging): TipsModel() {
 	class Factory(val appContext: Context) : ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
-			var model: ConnectionTipsModel? = null
 			val connection = CarConnectionDebugging(appContext) {
+				// no need to call model.update()
+				// we only update the Tips List on a new screen draw, not as the connection changes
 			}
 			// can't unittest CarConnectionDebugging registration
 
@@ -24,7 +25,7 @@ class ConnectionTipsModel(val connection: CarConnectionDebugging): TipsModel() {
 			// don't need to register to BCL updates
 			connection._registerBtStatus()
 			connection._registerUsbStatus()
-			model = ConnectionTipsModel(connection)
+			val model = ConnectionTipsModel(connection)
 			model.update()
 			return model as T
 		}

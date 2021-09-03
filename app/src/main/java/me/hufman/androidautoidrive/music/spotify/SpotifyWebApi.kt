@@ -10,11 +10,8 @@ import android.os.Handler
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
-import com.adamratzman.spotify.models.PlaylistUri
-import com.adamratzman.spotify.models.SpotifyImage
-import com.adamratzman.spotify.models.SpotifyUri
-import com.adamratzman.spotify.models.Token
-import com.adamratzman.spotify.models.Track
+import com.adamratzman.spotify.endpoints.pub.SearchApi
+import com.adamratzman.spotify.models.*
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
@@ -82,14 +79,14 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 * Adds the provided list of songs to the specified playlist.
 	 */
 	suspend fun addSongsToPlaylist(playlistId: String, songs: List<MusicMetadata>) = executeApiCall("Failed to add songs to playlist $playlistId") {
-		webApi?.playlists?.addTracksToClientPlaylist(playlistId, *songs.map { it.mediaId!! }.toTypedArray())
+		webApi?.playlists?.addPlayablesToClientPlaylist(playlistId, *songs.map { PlayableUri(it.mediaId!!) }.toTypedArray())
 	}
 
 	/**
 	 * Replaces the songs of the specified playlist with the provided list of songs.
 	 */
 	suspend fun replacePlaylistSongs(playlistId: String, songs: List<MusicMetadata>) = executeApiCall("Failed to replace playlist $playlistId songs") {
-		webApi?.playlists?.replaceClientPlaylistTracks(playlistId, *songs.map { it.mediaId!! }.toTypedArray())
+		webApi?.playlists?.replaceClientPlaylistPlayables(playlistId, *songs.map { PlayableUri(it.mediaId!!) }.toTypedArray())
 	}
 
 	/**
@@ -145,7 +142,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			return@executeApiCall emptyList()
 		}
 
-		val searchResults = webApi?.search?.searchAllTypes(query, 8)
+		val searchResults = webApi?.search?.search(query, *SearchApi.SearchType.values(), limit=8, market=null)
 
 		// run through each of the search result categories and compile full list
 		val searchResultMusicMetadata: ArrayList<SpotifyMusicMetadata> = ArrayList()

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AndroidAutoIdrive</string>
+    <string name="app_name">AAIdrive</string>
     <string name="permlab_accessNotifications">IDrive Meldingen toegang</string>
     <string name="permlab_bindNotificationListenerService">IDrive toegangs melding</string>
     <string name="permdesc_accessNotifications">IDrive toegangs melding</string>
     <string name="permdesc_bindNotificationListenerService">IDrive toegangs melding</string>
-    <string name="notification_title">Android Auto voor IDrive</string>
+    <string name="notification_title">AAIdrive</string>
     <string name="notification_description">Verbonden met uw auto</string>
     <string name="notification_description_chassiscode">Verbonden met %s</string>
     <string name="notification_description_bmw">Verbonden met uw BMW</string>
@@ -30,10 +30,10 @@
     <string name="lbl_navigation_listener_unsuccess">Mislukt</string>
     <!-- Welcome pages -->
     <string name="lbl_welcome_heading">Laten we verbinding maken</string>
-    <string name="lbl_welcome_intro">AndroidAutoIdrive is een onofficiële app om de muziek-apps en andere functies van uw telefoon aan uw auto toe te voegen via het BMW Apps-protocol</string>
+    <string name="lbl_welcome_intro">AAIdrive is een onofficiële app om de muziek-apps en andere functies van uw telefoon aan uw auto toe te voegen via het BMW Apps-protocol</string>
     <string name="lbl_welcome_compatible">Meeste MY2014 of nieuwere BMWs of MINI\'s uitgerust met NBT of NBT Evo (gebaseerd op IDrive 4–6) en een actieve ConnectedDrive of BMW Online abonnement moeten compatibel zijn</string>
     <string name="lbl_welcome_dependencies">De verbinding met de auto is afhankelijk van de BMW/MINI Connected app of de nieuwe MyBMW of Mini app om verbinding te maken met uw auto</string>
-    <string name="lbl_welcome_complete">AndroidAutoIdrive voegt ook verschillende andere functies toe aan uw auto, check it out!</string>
+    <string name="lbl_welcome_complete">AAIdrive voegt ook verschillende andere functies toe aan uw auto, check it out!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">Overzicht</string>
     <string name="menu_setup">Installatie</string>
@@ -44,10 +44,11 @@
     <string name="menu_assistants">Assistenten</string>
     <string name="menu_maps">Kaarten</string>
     <string name="menu_navigation">Navigatie</string>
+    <string name="menu_addons">Add-ons</string>
     <string name="menu_settings">Instellingen</string>
     <string name="menu_support">Ondersteuning</string>
     <string name="btn_next">Volgende</string>
-    <string name="lbl_overviewpage">AndroidAutoIdrive integreert een aantal muziek-apps van uw telefoon en de meldingen van uw telefoon in uw auto via het aangepaste BMW Apps protocol</string>
+    <string name="lbl_overviewpage">AAIdrive integreert een aantal muziek-apps van uw telefoon en de meldingen van uw telefoon in uw auto via het aangepaste BMW Apps protocol</string>
     <string name="lbl_connectionpage">De verbinding met de auto is afhankelijk van een aantal onderdelen, en hier zijn enkele tips om ervoor te zorgen dat het goed werkt</string>
     <plurals name="lbl_assistantpage">
         <item quantity="one">Spraakassistent van uw telefoon is toegevoegd als een Connected app, in het geval dat de spraakinvoer van de auto het niet activeert</item>
@@ -104,19 +105,24 @@
     <string name="lbl_navigationpage_intent">Tijdens het verbinden zal het navigatiesysteem van uw auto verschijnen als een optie wanneer de navigatieknoppen van andere apps een app-kiezer openen</string>
     <string name="lbl_navigationstatus_active">Momenteel navigeren naar</string>
     <string name="lbl_navigationstatus_inactive">Momenteel niet aan het navigeren</string>
+    <string name="lbl_addonspage">Extra apps kunnen met uw auto werken om nog meer functionaliteit toe te voegen</string>
+    <string name="lbl_addon_apps">Add-on Apps</string>
+    <string name="lbl_addons_empty">Geen gevonden</string>
+    <string name="addonAppIcon">App icoon</string>
+    <string name="addonNormalPermission">Auto Data Toegang</string>
     <string name="lbl_settingspage">Geavanceerde instellingen, kan onverwacht gedrag veroorzaken</string>
     <string name="lbl_language_carinterface">Te tonen taal in de auto</string>
     <string name="lbl_language_prefercar">Voorkeur voor autotaal boven telefoon taal</string>
     <string name="lbl_language_prefercar_code">Voorkeur voor autotaal (%s) boven telefoon taal</string>
     <string name="lbl_language_forcelanguage">Specifieke taal forceren</string>
-    <string name="lbl_donations_volunteer">AndroidAutoIdrive is een vrijwilligers project</string>
+    <string name="lbl_donations_volunteer">AAIdrive is een vrijwilligers project</string>
     <string name="lbl_donations_request">Als u dit project leuk vindt en het nuttig vindt, overweeg dan om uw steun te tonen door te doneren:</string>
     <string name="btn_donations">Doneren</string>
     <string name="lbl_support_other_ways">U kunt het project ook op andere manieren ondersteunen:</string>
     <string name="lbl_support_feedback">Feedback geven</string>
     <string name="lbl_support_issues">Problemen melden</string>
     <string name="lbl_support_share">Vertel het verder</string>
-    <string name="lbl_support_thanks">Bedankt voor het gebruiken van AndroidAutoIdrive!</string>
+    <string name="lbl_support_thanks">Bedankt voor het gebruiken van AAIdrive!</string>
     <string name="lbl_ok">Ok</string>
     <string name="lbl_cancel">Annuleren</string>
     <string name="btn_configure">Configureren …</string>
@@ -343,6 +349,7 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Alles herhalen</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Eenmalig herhalen aan</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Herhalen uit</string>
+    <string name="MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION">AAIdrive tijdelijke afspeellijst</string>
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">Ga %s seconde terug</item>
         <item quantity="other">Ga %s seconden terug</item>

@@ -57,17 +57,20 @@ class NavHostActivity: AppCompatActivity() {
 
 		setupNavMenu()
 
-		startService()
-
 		drawerLayout?.post { drawerLayout.openDrawer(GravityCompat.START) }
 	}
 
+	override fun onResume() {
+		super.onResume()
+
+		startService()
+	}
+
 	fun setupNavHeader() {
-		val viewModel  by viewModels<ConnectionStatusModel> { ConnectionStatusModel.Factory(this.applicationContext) }
 		val navView = findViewById<NavigationView>(R.id.nav_view)
 		val binding = NavHeaderBinding.inflate(layoutInflater, navView, false)
 		binding.lifecycleOwner = this
-		binding.viewModel = viewModel
+		binding.viewModel = connectionViewModel
 		navView.removeHeaderView(navView.getHeaderView(0))
 		navView.addHeaderView(binding.root)
 
@@ -99,5 +102,11 @@ class NavHostActivity: AppCompatActivity() {
 			// Android Oreo strenuously objects to starting the service if the activity isn't visible
 			// for example, when Android Studio tries to start the Activity with the screen off
 		}
+	}
+
+	override fun onPause() {
+		super.onPause()
+		// stop animations in the nav header
+		connectionViewModel.onPause()
 	}
 }

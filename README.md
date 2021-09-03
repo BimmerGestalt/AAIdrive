@@ -1,55 +1,55 @@
-Android Auto for IDrive
-=======================
+AAIdrive
+========
 
-[![Build Status](https://img.shields.io/github/workflow/status/hufman/AndroidAutoIdrive/build.svg)](https://github.com/hufman/AndroidAutoIdrive/actions?query=workflow%3Abuild)
-[![Code Coverage](https://img.shields.io/codecov/c/gh/hufman/AndroidAutoIdrive/master.svg)](https://codecov.io/gh/hufman/AndroidAutoIdrive)
+[![Build Status](https://img.shields.io/github/workflow/status/BimmerGestalt/AAIdrive/build.svg)](https://github.com/BimmerGestalt/AAIdrive/actions?query=workflow%3Abuild)
+[![Code Coverage](https://img.shields.io/codecov/c/gh/BimmerGestalt/AAIdrive/main.svg)](https://codecov.io/gh/BimmerGestalt/AAIdrive)
 [![Crowdin](https://badges.crowdin.net/androidautoidrive/localized.svg)](https://crowdin.com/project/androidautoidrive)
-[![Release Download](https://img.shields.io/github/release/hufman/AndroidAutoIdrive.svg)](https://github.com/hufman/AndroidAutoIdrive/releases/latest)
-[![Download Counter](https://img.shields.io/github/downloads/hufman/AndroidAutoIdrive/total.svg)](https://tooomm.github.io/github-release-stats/?username=hufman&repository=AndroidAutoIdrive)
-[![Weekly Users](https://img.shields.io/endpoint?url=https://androidautoidrive.s3.amazonaws.com/usage/weekly_users.json)](https://androidautoidrive.s3.amazonaws.com/usage/car_report.html)
+[![Release Download](https://img.shields.io/github/release/BimmerGestalt/AAIdrive.svg)](https://github.com/BimmerGestalt/AAIdrive/releases/latest)
+[![Download Counter](https://img.shields.io/github/downloads/BimmerGestalt/AAIdrive/total.svg)](https://tooomm.github.io/github-release-stats/?username=BimmerGestalt&repository=AAIdrive)
+[![Weekly Users](https://img.shields.io/endpoint?url=https://bimmergestalt.s3.amazonaws.com/aaidrive/usage/weekly_users.json)](https://bimmergestalt.s3.amazonaws.com/aaidrive/usage/car_report.html)
 [![Gitter](https://badges.gitter.im/AndroidAutoIdrive/community.svg)](https://gitter.im/AndroidAutoIdrive/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Buy Me A Coffee](https://img.shields.io/badge/support-buymeacoffee-5f7fff)](https://www.buymeacoffee.com/q4JVoxz)
-![MIT Licensed](https://img.shields.io/github/license/hufman/AndroidAutoIdrive)
+![MIT Licensed](https://img.shields.io/github/license/BimmerGestalt/AAIdrive)
 
 The BMW/Mini IDrive NBT does not offer native Android Auto integration, but does provide a very powerful Connected Apps convergence option with tight integration points into the car. This project is an effort to implement most of the features of Android Auto as unofficial BMW/Mini Connected Apps.
 
-By relying on the Connected Apps technology, this app greatly extends the functionality of the car without any modifications or hacks. Any MY2014 or newer BMW or Mini equipped with NBT or NBT Evo and the "BMW Apps (6NR)" feature, an active [BMW ConnectedDrive subscription](https://hufman.github.io/AndroidAutoIdrive/images/bmw-connected-subscription.png), or the "Mini Connected (SA6NM)" option should be compatible.
+By relying on the Connected Apps technology, this app greatly extends the functionality of the car without any modifications or hacks. Any MY2014 or newer BMW or Mini equipped with NBT or NBT Evo and the "BMW Apps (6NR)" feature, an active [BMW ConnectedDrive subscription](https://bimmergestalt.github.io/AAIdrive/images/bmw-connected-subscription.png), or the "Mini Connected (SA6NM)" option should be compatible.
 
-[![App List](https://hufman.github.io/AndroidAutoIdrive/images/demo-applist.gif)<br />Gallery](https://hufman.github.io/AndroidAutoIdrive/gallery.html)
+[![App List](docs/images/demo-applist.gif)<br />Gallery](https://bimmergestalt.github.io/AAIdrive/gallery.html)
 
 Overview
 --------
 
 As part of the Connected Apps feature, when the phone connects to the car over USB (or Bluetooth in 2017+ models), enabled phone apps can show a special dashboard-optimized interface in the car.
 
-Android Auto for IDrive, combined with the safety benefits of the tactile IDrive controller, builds on this protocol to allow the user to interact with their incoming notifications and control their phone's music while the phone is safely tucked away.
+AAIdrive, combined with the safety benefits of the tactile IDrive controller, builds on this protocol to allow the user to interact with their incoming notifications and control their phone's music while the phone is safely tucked away.
 
 Getting Started
 ---------------
 
 This app requires that the MyBMW or MINI app for your car is installed and that it can successfully enable your ID5 car's [Apps checkbox](app/src/main/res/drawable/pic_btapp_bmw.jpg), or if your ID4 car has the [Connection Assistant option](app/src/main/res/drawable/pic_connassistant_bmw.jpg).
 
-Download the APK of the latest stable release from the [Releases page](https://github.com/hufman/AndroidAutoIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. After starting, the app should detect the MyBMW app and start waiting for the car connection.
+Download the APK of the latest stable release from the [Releases page](https://github.com/BimmerGestalt/AAIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. After starting, the app should detect the MyBMW app and start waiting for the car connection.
 
-Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-sentry-release.apk) to automatically report crashes.
-The [nonalytics](https://androidautoidrive.s3.amazonaws.com/hufman/AndroidAutoIdrive/androidautoidrive-latest-master-nomap-nonalytics-release.apk) build is available too.
+Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-nomap-sentry-release.apk) to automatically report crashes.
+The [nonalytics](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-nomap-nonalytics-release.apk) build is available too.
 
-Check out the [FAQ](https://hufman.github.io/AndroidAutoIdrive/faq.html) if you run into problems.
+Check out the [FAQ](https://bimmergestalt.github.io/AAIdrive/faq.html) if you run into problems.
 
 User Guide
 ----------
 
-![Phone Connection](https://hufman.github.io/AndroidAutoIdrive/images/screenshot-connection.png)
+![Phone Connection](https://bimmergestalt.github.io/AAIdrive/images/screenshot-connection.png)
 
 After connecting the phone to the car, the official MyBMW app should show this car icon in the status bar. When this icon appears, this app should connect and add its functionality to the car.
 
-See [this guide](https://hufman.github.io/AndroidAutoIdrive/connection.html) for tips on improving the connection reliability of the MyBMW app.
+See [this guide](https://bimmergestalt.github.io/AAIdrive/connection.html) for tips on improving the connection reliability of the MyBMW app.
 
-![Phone App List](https://hufman.github.io/AndroidAutoIdrive/images/screenshot-phoneapps.jpg)
+![Phone App List](https://bimmergestalt.github.io/AAIdrive/images/screenshot-phoneapps.jpg)
 
 After all the apps are connected, a bunch of new entries will show up in the car's Connected menu. There should be a new Audioplayer or Spotify icon and a book icon with no label. This book icon is the Notifications app, if enabled.
 
-![Music App List](https://hufman.github.io/AndroidAutoIdrive/images/screenshot-medialist.jpg)
+![Music App List](https://bimmergestalt.github.io/AAIdrive/images/screenshot-medialist.jpg)
 
 Several new entries will be added to the Media section of the control screen. The Audioplayer icon is the one with the main functionality, while the other displayed apps above the Audioplayer are quick shortcuts to switch playback to the respective apps. This screenshot also shows the legacy Spotify app at the bottom of the list.
 
@@ -234,7 +234,7 @@ Build Instructions
     - Plug in your phone and click Run
   - Commandline builds should work too:
     - Make sure Android SDK Build Tools version 28 is installed
-    - `git clone https://github.com/hufman/AndroidAutoIdrive.git && cd AndroidAutoIdrive`
+    - `git clone https://github.com/BimmerGestalt/AAIdrive.git && cd AAIdrive`
     - `git submodule init && git submodule update`
     - `./gradlew assembleNomapNonalyticsDebug`  This step will fail without the Build Tools installed
 
@@ -247,7 +247,7 @@ This project contains no advertising or user tracking, and is developed entirely
 
 The app uses the Internet Permission to make a TCP connection to the car, which is reachable through a localhost socket on the main Connected app. Additionally, some cover art and incoming picture notifications (such as from Hangouts) may be fetched from Internet URLs. No other Internet access is required for the app's functionality.
 
-The analytics-enabled version automatically reports some anonymized information to [Sentry](https://www.sentry.io) to assist with debugging and development: Besides any rare and unfortunate crashes, the app reports any [installed music apps](https://github.com/hufman/AndroidAutoIdrive/blob/master/app/src/sentry/java/me/hufman/androidautoidrive/Analytics.kt) and the capabilities each app provides, as well as the [model and capabilities](https://github.com/hufman/AndroidAutoIdrive/blob/master/app/src/main/java/me/hufman/androidautoidrive/CarInformationDiscovery.kt#L33) of any connected car for usage statistics and feature prioritization.
+The analytics-enabled version automatically reports some anonymized information to [Sentry](https://www.sentry.io) to assist with debugging and development: Besides any rare and unfortunate crashes, the app reports any [installed music apps](app/src/sentry/java/me/hufman/androidautoidrive/Analytics.kt) and the capabilities each app provides, as well as the [model and capabilities](app/src/main/java/me/hufman/androidautoidrive/CarInformationDiscovery.kt#L33) of any connected car for usage statistics and feature prioritization.
 
 Each release provides both an analytics-enabled and analytics-disabled option.
 

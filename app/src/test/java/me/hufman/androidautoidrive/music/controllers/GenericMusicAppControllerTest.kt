@@ -79,11 +79,11 @@ class GenericMusicAppControllerTest {
 
 	@Test
 	fun testCustomActions() {
-		val otherAction = CustomAction("com.wrongapp", "test", "Name", 0, null, null)
+		val otherAction = CustomAction("com.wrongapp", "test", "Name", 0, null, null, null)
 		controller.customAction(otherAction)
 		verify(mediaTransportControls, never()).sendCustomAction(any<String>(), anyOrNull())
 
-		val myAction = CustomAction("com.musicapp", "test", "Name", 0, null, null)
+		val myAction = CustomAction("com.musicapp", "test", "Name", 0, null, null, null)
 		controller.customAction(myAction)
 		verify(mediaTransportControls).sendCustomAction(myAction.action, null)
 
@@ -113,7 +113,7 @@ class GenericMusicAppControllerTest {
 			})
 		}
 		whenever(mediaController.playbackState) doReturn playbackState
-		val expectedAction = CustomAction("com.musicapp", "test", "Name", 30, actionIcon, null)
+		val expectedAction = CustomAction("com.musicapp", "test", "Name", 30, actionIcon, null, null)
 		val parsedAction = controller.getCustomActions()
 		assertEquals(1, parsedAction.size)
 		assertEquals(expectedAction, parsedAction[0])

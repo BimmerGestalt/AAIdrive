@@ -24,12 +24,14 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.MusicAppsViewModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.findParent
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.scrollTop
+import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import kotlin.math.max
 
 class MusicAppsListFragment: Fragment() {
 	val handler = Handler()
 
-	val controller by lazy { MusicAppListController(requireActivity()) }
+	val permissionsController by lazy { PermissionsController(requireActivity()) }
+	val controller by lazy { MusicAppListController(requireActivity(), permissionsController) }
 	val appsViewModel by activityViewModels<MusicAppsViewModel> { MusicAppsViewModel.Factory(requireActivity().applicationContext) }
 	private val appsChangedCallback = ObservableListCallback<MusicAppInfo> {
 		val listView = view?.findViewById<RecyclerView>(R.id.listMusicApps)
@@ -69,7 +71,7 @@ class MusicAppsListFragment: Fragment() {
 			}
 
 			override fun onSwiped(view: RecyclerView.ViewHolder, direction: Int) {
-				val musicAppInfo = (view as? DataBoundViewHolder<MusicAppInfo, MusicAppListController>)?.data
+				val musicAppInfo = (view as? DataBoundViewHolder<*, *>)?.data as? MusicAppInfo
 				if (musicAppInfo != null) {
 					val previous = hiddenApps.contains(musicAppInfo.packageName)
 					if (previous) {

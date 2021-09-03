@@ -40,6 +40,7 @@ class MusicAppsViewModel(val musicAppDiscoveryThread: MusicAppDiscoveryThread): 
 
 	override fun onCleared() {
 		super.onCleared()
+		musicAppDiscoveryThread.callback = null
 		musicAppDiscoveryThread.stopDiscovery()
 	}
 }

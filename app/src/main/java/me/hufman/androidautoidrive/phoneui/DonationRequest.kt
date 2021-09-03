@@ -51,7 +51,7 @@ class DayCounter(val settings: MutableAppSettings, val onDayIncremented: () -> U
 class DonationRequest(val context: Context) {
 	companion object {
 		const val DONATION_DAYS_THRESHOLD = 5   // show at the 5th day of use
-		const val DONATION_URL = "https://hufman.github.io/AndroidAutoIdrive/support"
+		const val DONATION_URL = "https://bimmergestalt.github.io/AAIdrive/support"
 		const val NOTIFICATION_CHANNEL_ID = "DonationRequest"
 	}
 

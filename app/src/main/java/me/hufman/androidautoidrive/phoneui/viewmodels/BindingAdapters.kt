@@ -126,7 +126,7 @@ fun setIconMaskColor(view: ImageView, colorResId: Int) {
 	val color = view.context.getThemeColor(colorResId)
 	view.colorFilter = getIconMask(color)
 }
-@BindingAdapter("app:saturation")
+@BindingAdapter("saturation")
 fun setSaturation(view: ImageView, value: Float) {
 	val matrix = ColorMatrix().apply { setSaturation(value) }
 	view.colorFilter = ColorMatrixColorFilter(matrix)
@@ -136,7 +136,7 @@ fun setSaturation(view: ImageView, value: Float) {
 }
 
 // Add an animation for alpha
-@BindingAdapter("android:alpha", "app:animationDuration")
+@BindingAdapter("android:alpha", "animationDuration")
 fun setAlpha(view: View, value: Float, duration: Int) {
 	view.animation?.cancel()
 	if (duration > 0) {
@@ -155,7 +155,9 @@ fun setAnimated(view: ImageView, value: Boolean) {
 		drawable.start()
 		drawable.registerAnimationCallback(object: Animatable2.AnimationCallback() {
 			override fun onAnimationEnd(drawable: Drawable?) {
-				view.post { (drawable as? AnimatedVectorDrawable)?.start() }
+				if (view.isShown) {
+					view.post { (drawable as? AnimatedVectorDrawable)?.start() }
+				}
 			}
 		})
 	} else {
