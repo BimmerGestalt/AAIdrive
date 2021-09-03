@@ -22,6 +22,7 @@ import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.notifications.NotificationParser.Companion.dumpNotification
 import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
 import java.lang.NullPointerException
+import java.lang.RuntimeException
 
 fun Notification.isGroupSummary(): Boolean {
 	val FLAG_GROUP_SUMMARY = 0x00000200     // hard-coded to work on old SDK
@@ -141,6 +142,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 			NotificationsState.replaceNotifications(current)
 		} catch (e: NullPointerException) {
 			Log.w(TAG, "Unable to fetch activeNotifications: $e")
+		} catch (e: RuntimeException) {
+			Log.w(TAG, "Unable to fetch activeNotifications: $e")
 		} catch (e: SecurityException) {
 			Log.w(TAG, "Unable to fetch activeNotifications: $e")
 		}
@@ -168,6 +171,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 				}
 			} catch (e: NullPointerException) {
 				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
+			} catch (e: RuntimeException) {
+				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
 			} catch (e: SecurityException) {
 				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
 			}
@@ -193,6 +198,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 					action.actionIntent.send(listenerService, 0, intent)
 				}
 			} catch (e: NullPointerException) {
+				Log.w(TAG, "Unable to send reply to $actionName to notification $key: $e")
+			} catch (e: RuntimeException) {
 				Log.w(TAG, "Unable to send reply to $actionName to notification $key: $e")
 			} catch (e: SecurityException) {
 				Log.w(TAG, "Unable to send reply to $actionName to notification $key: $e")
