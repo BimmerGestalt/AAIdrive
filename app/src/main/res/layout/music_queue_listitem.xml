@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:background="?android:attr/selectableItemBackground"
         android:onClick="@{() -> callback.selectQueueItem(data)}">
 
@@ -42,6 +43,7 @@
             android:orientation="vertical"
             android:paddingStart="6dp"
             android:paddingEnd="6dp"
+            android:paddingTop="6dp"
             android:paddingBottom="6dp">
             <TextView
                 android:layout_width="wrap_content"
