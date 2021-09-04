@@ -252,7 +252,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	 * Creates the [QueueMetadata] for the artist playlist with the artist's top songs using the Web
 	 * API. If the Web API is not authorized then the [QueueMetadata] is created from the app remote API.
 	 */
-	//todo flow from search -> select artist -> browse should redirect to a browse page with the top songs
 	fun createArtistTopSongsQueueMetadata() {
 		createQueueMetadataJob = GlobalScope.launch(defaultDispatcher) {
 			val artistSongsTemporaryPlaylistStateKey = AppSettings.KEYS.SPOTIFY_ARTIST_SONGS_PLAYLIST_STATE
@@ -434,7 +433,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		if (currentPlayerContext.uri != null && queueItems.isEmpty()) {
 			val listItem = ListItem(playerContext.uri, playerContext.uri, null, playerContext.title, playerContext.subtitle, false, true)
 			loadPaginatedItems(listItem, { currentPlayerContext.uri == playerContext.uri }) {
-				queueItems = removeShufflePlayButtonMetadata(it)
+				queueItems = removeShufflePlayButtonMetadata(it, currentPlayerContext.uri)
 
 				// builds the QueueMetadata while waiting for cover art to load
 				queueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, queueItems, mediaId = playerContext.uri)
@@ -693,6 +692,18 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			}.setErrorCallback {
 				deferred.complete(LinkedList())
 			}
+		} else if (isArtistDirectory(directory)) {
+			GlobalScope.launch(defaultDispatcher) {
+				val artistMediaId = directory.mediaId
+				val artistTopSongs = webApi.getArtistTopSongs(this@SpotifyAppController, artistMediaId) ?: emptyList()
+				if (artistTopSongs.isNotEmpty()) {
+					deferred.complete(artistTopSongs)
+				} else {
+					loadPaginatedItems(directory.toListItem(), { !deferred.isCancelled }) { results ->
+						deferred.complete(removeShufflePlayButtonMetadata(results, artistMediaId))
+					}
+				}
+			}
 		} else {
 			loadPaginatedItems(directory.toListItem(), { !deferred.isCancelled }) { results ->
 				deferred.complete(results.filterNot { it.title == SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME || it.title == SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME })
@@ -702,14 +713,21 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	}
 
 	/**
+	 * Returns whether the supplied [MusicMetadata] directory is an "artist" type.
+	 */
+	private fun isArtistDirectory(directory: MusicMetadata?): Boolean {
+		return directory?.mediaId?.contains(":artist:") == true
+	}
+
+	/**
 	 * Removes the shuffle play button [MusicMetadata] if it is present in the supplied list.
 	 *
 	 * When loading a list of tracks such as an album, a shuffle play button [MusicMetadata] object is
 	 * sometimes present. Call this method to get the list of [MusicMetadata]s that omit the shuffle
 	 * play button.
 	 */
-	private fun removeShufflePlayButtonMetadata(items: List<MusicMetadata>): List<MusicMetadata> {
-		return if (items.isNotEmpty() && items[0].mediaId == currentPlayerContext.uri) {
+	private fun removeShufflePlayButtonMetadata(items: List<MusicMetadata>, mediaIdContext: String): List<MusicMetadata> {
+		return if (items.isNotEmpty() && items[0].mediaId == mediaIdContext) {
 			items.drop(1)
 		} else {
 			items
