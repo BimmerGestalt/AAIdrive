@@ -273,7 +273,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				} else {
 					// PlayerContext title of an artist playlist is sometimes blank
 					if (currentPlayerContext.title.isBlank()) {
-						currentPlayerContext = PlayerContext(currentPlayerContext.uri, getQueueTitle(), currentPlayerContext.subtitle, currentPlayerContext.type)
+						currentPlayerContext = PlayerContext(currentPlayerContext.uri, getCurrentQueueListItem().title, currentPlayerContext.subtitle, currentPlayerContext.type)
 					}
 
 					queueMetadata = QueueMetadata(currentPlayerContext.title, currentPlayerContext.subtitle, queueItems)
@@ -390,7 +390,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			temporaryPlaylistState.hashCode = queueItemsHashCode
 
 			if (currentPlayerContext.uri != temporaryPlaylistState.playlistUri) {
-				temporaryPlaylistState.playlistTitle = getQueueTitle()
+				temporaryPlaylistState.playlistTitle = getCurrentQueueListItem().title
 			}
 		}
 
@@ -450,18 +450,16 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	}
 
 	/**
-	 * Retrieves the cover art of the current queue.
+	 * Retrieves the [ListItem] of the current queue.
 	 */
-	private suspend fun getQueueCoverArt(): Bitmap {
-		val deferred = CompletableDeferred<Bitmap>()
+	private suspend fun getCurrentQueueListItem(): ListItem {
+		val deferred = CompletableDeferred<ListItem>()
 		val recentlyPlayedUri = "com.spotify.recently-played"
 		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
 		remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
 			val item = recentlyPlayed?.items?.get(0)
 			if (item != null) {
-				remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
-					deferred.complete(coverArt)
-				}
+				deferred.complete(item)
 			}
 		}
 
@@ -469,17 +467,13 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	}
 
 	/**
-	 * Retrieves the title of the current queue.
+	 * Retrieves the cover art of the current queue.
 	 */
-	private suspend fun getQueueTitle(): String {
-		val deferred = CompletableDeferred<String>()
-		val recentlyPlayedUri = "com.spotify.recently-played"
-		val li = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
-		remote.contentApi.getChildrenOfItem(li, 1, 0).setResultCallback { recentlyPlayed ->
-			val item = recentlyPlayed?.items?.get(0)
-			if (item != null) {
-				deferred.complete(item.title)
-			}
+	private suspend fun getQueueCoverArt(): Bitmap {
+		val deferred = CompletableDeferred<Bitmap>()
+		val item = getCurrentQueueListItem()
+		remote.imagesApi.getImage(item.imageUri, Image.Dimension.THUMBNAIL).setResultCallback { coverArt ->
+			deferred.complete(coverArt)
 		}
 
 		return deferred.await()
