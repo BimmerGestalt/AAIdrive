@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException
 import me.hufman.androidautoidrive.carapp.CDSConnection
 import me.hufman.androidautoidrive.carapp.CDSData
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
+import me.hufman.androidautoidrive.carapp.CDSEventHandler
 import me.hufman.androidautoidrive.phoneui.viewmodels.CarDrivingStatsModel
 import me.hufman.idriveconnectionkit.CDS
 import me.hufman.idriveconnectionkit.CDSProperty
@@ -37,10 +38,19 @@ open class CarInformation {
 		var currentCapabilities: Map<String, String> = emptyMap()
 		var cachedCapabilities: Map<String, String> = emptyMap()
 		val cdsData = CDSDataProvider()
-		var cachedCdsData = CDSDataProvider().also { cachedCdsData ->
-			CACHED_CDS_KEYS.forEach { cachedProperty ->
-				cdsData.addEventHandler(cachedProperty, CACHED_CDS_INTERVAL, cachedCdsData)
+
+		val cachedCdsListener = object: CDSEventHandler {
+			override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
+				// register for updates through cachedCdsData to keep it subscribed to the car
+				// but actually updating the cache happens through the CarInformationUpdater
 			}
+		}
+		val cachedCdsData = CDSDataProvider().also { cachedCdsData ->
+			CACHED_CDS_KEYS.forEach { cachedProperty ->
+				cachedCdsData.addEventHandler(cachedProperty, CACHED_CDS_INTERVAL, cachedCdsListener)
+			}
+			// this enables cachedCdsData liveData to register for faster updates when on-screen
+			cachedCdsData.setConnection(cdsData.asConnection(cachedCdsData))
 		}
 
 		fun addListener(listener: CarInformationObserver) {
@@ -143,9 +153,6 @@ open class CarInformationUpdater(val appSettings: MutableAppSettings): CarInform
 
 	override fun onCdsConnection(connection: CDSConnection?) {
 		cdsData.setConnection(connection)
-
-		// this enables cachedCdsData liveData to register for faster updates when on-screen
-		cachedCdsData.setConnection(connection)
 	}
 
 	override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
