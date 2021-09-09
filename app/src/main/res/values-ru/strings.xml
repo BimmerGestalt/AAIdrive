@@ -102,7 +102,9 @@
     <string name="musicAppNotes_oldSpotify">Пожалуйста, понизьте версию Spotify для полной функциональности (просмотр)</string>
     <string name="musicAppNotes_oldSpotifyInstructions">Это приложение может обеспечить полный контроль над Spotify до версии 8.4.96.953. Для полного контроля загрузите старую версию.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Пожалуйста, установите официальный клиент Spotify</string>
+    <string name="musicAppNotes_spotify_userDeclined">Пожалуйста, предоставьте разрешение на просмотр вашей библиотеки</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Пожалуйста, подтвердите подключение к Интернету и отключите блокировку рекламы</string>
+    <string name="musicAppNotes_spotify_backgroundDisabled">Не удалось открыть Spotify. Пожалуйста, убедитесь, что Spotify разрешено стартовать из фона</string>
     <string name="lbl_navigationpage_address">Укажите адрес для запуска системы навигации автомобиля с вашего телефона</string>
     <string name="lbl_navigationpage_intent">При подключении навигационная система Вашего автомобиля будет отображаться, как один из вариантов, если есть выбор других приложений для навигации</string>
     <string name="lbl_navigationstatus_active">Сейчас движемся к</string>
