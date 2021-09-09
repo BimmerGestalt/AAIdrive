@@ -63,7 +63,16 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	}
 
 	class Connector(val context: Context, val prompt: Boolean = true, val isProbing: Boolean = false): MusicAppController.Connector {
-		var lastError: Throwable? = null
+		companion object {
+			var lastError: Throwable? = null
+			fun previousControlSuccess(): Boolean {
+				return AppSettings[AppSettings.KEYS.SPOTIFY_CONTROL_SUCCESS].toBoolean()
+			}
+		}
+
+		var lastError: Throwable?
+			get() = Connector.lastError
+			set(value) {Connector.lastError = value}
 
 		fun hasSupport(): Boolean {
 			return SpotifyAppController.hasSupport(context)
@@ -71,9 +80,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		fun isSpotifyInstalled(): Boolean {
 			return SpotifyAppController.isSpotifyInstalled(context)
 		}
-		fun previousControlSuccess(): Boolean {
-			return AppSettings[AppSettings.KEYS.SPOTIFY_CONTROL_SUCCESS].toBoolean()
-		}
+		fun previousControlSuccess(): Boolean = Connector.previousControlSuccess()
 
 		override fun connect(appInfo: MusicAppInfo): Observable<SpotifyAppController> {
 			if (appInfo.packageName != "com.spotify.music") {
@@ -95,13 +102,16 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			val remoteListener = object: com.spotify.android.appremote.api.Connector.ConnectionListener {
 				override fun onFailure(e: Throwable?) {
 					Log.e(TAG, "Failed to connect to Spotify Remote: $e")
-					if (hasSupport(context)) {
+					val appSettings = MutableAppSettingsReceiver(context)
+					val expected = previousControlSuccess()
+					if (hasSupport(context) && (expected || prompt)) {
 						// show an error to the UI, unless we don't have an API key
-						this@Connector.lastError = e
+						// but only if we previously had support or are manually prompting
+						lastError = e
 					}
 					// remember that we failed to connect
 					if (pendingController.value == null) {
-						MutableAppSettingsReceiver(context)[AppSettings.KEYS.SPOTIFY_CONTROL_SUCCESS] = "false"
+						appSettings[AppSettings.KEYS.SPOTIFY_CONTROL_SUCCESS] = "false"
 					}
 					// disconnect an existing session, if any
 					pendingController.value?.disconnect()
@@ -111,7 +121,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				override fun onConnected(remote: SpotifyAppRemote?) {
 					if (remote != null) {
 						Log.i(TAG, "Successfully connected to Spotify Remote")
-						this@Connector.lastError = null
+						lastError = null
 
 						val appSettings = MutableAppSettingsReceiver(context)
 						appSettings[AppSettings.KEYS.SPOTIFY_CONTROL_SUCCESS] = "true"
