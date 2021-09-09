@@ -10,12 +10,52 @@
     <string name="notification_description_chassiscode">Conectado com %s</string>
     <string name="notification_description_bmw">Conectado com BMW</string>
     <string name="notification_description_mini">Conectado com Mini</string>
+    <string name="permission_cds_normal">ler informações genéricas do carro</string>
+    <string name="permission_cds_personal">ler informações pessoais do carro</string>
     <!-- notification channel names -->
+    <string name="notification_channel_assistant">Iniciador de Assistente</string>
+    <string name="notification_channel_connection">Estado da Conexão</string>
+    <string name="notification_channel_donation">Solicitação de doação</string>
+    <string name="notification_channel_spotify">Autorização Spotify</string>
+    <string name="notification_channel_test">Notificação de teste</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <string name="navigation_listener_bmw">Navegação BMW</string>
+    <string name="navigation_listener_mini">Navegação MINI</string>
     <!-- Labels on the navigation trigger activity -->
+    <string name="btn_search">Pesquisar</string>
+    <string name="lbl_navigation_listener_searching">Procurar destino</string>
+    <string name="lbl_navigation_listener_parsefailure">Não foi possível localizar o destino</string>
+    <string name="lbl_navigation_listener_pending">Iniciar navegação</string>
+    <string name="lbl_navigation_listener_success">Concluído com sucesso</string>
+    <string name="lbl_navigation_listener_unsuccess">Sem êxito</string>
     <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Vamos te conectar</string>
+    <string name="lbl_welcome_intro">AAIdrive é um aplicativo não oficial para adicionar os aplicativos de música do seu telefone e outros recursos ao seu carro através do protocolo nativo de aplicativos BMW</string>
+    <string name="lbl_welcome_compatible">A maioria dos carros BMW e MINI fabricados a partir de 2014, com o sistema NBT ou NBT Evo (baseado no IDrive 4-6) deve ser compatível se tiver uma assinatura átiva ConnectedDrive ou BMW Online</string>
+    <string name="lbl_welcome_dependencies">A app requer a aplicação BMW/MINI Connected ou as novas apps MyBMW ou MINI para se conectar ao seu carro</string>
+    <string name="lbl_welcome_complete">AAIdrive também adiciona uma variedade de outros recursos ao seu carro, veja!</string>
     <!-- Menu Titles -->
+    <string name="menu_overview">Geral</string>
+    <string name="menu_setup">Configuração</string>
+    <string name="menu_connection">Ligação</string>
+    <string name="menu_carinfo">Informações sobre o carro</string>
+    <string name="menu_music">Música</string>
+    <string name="menu_notifications">Notificações</string>
+    <string name="menu_assistants">Assistentes</string>
+    <string name="menu_maps">Mapas</string>
+    <string name="menu_navigation">Navegação</string>
+    <string name="menu_addons">Extensões</string>
+    <string name="menu_settings">Configuração</string>
+    <string name="menu_support">Dê o seu apoio</string>
     <string name="btn_next">Seguinte</string>
+    <string name="lbl_overviewpage">O AAIdrive integra algumas apps de música do seu telefone e as notificações do seu telefone no seu carro através dum protocolo personalizado das Apps BMW</string>
+    <string name="lbl_connectionpage">A conexão da aplicação ao carro depende de algumas coisas, e aqui estão algumas dicas para ter a certeza de que tudo está a funcionar como deve de ser</string>
+    <plurals name="lbl_assistantpage">
+        <item quantity="one">O assistente de voz do seu telefone é adicionado como uma app do BMW Connected, caso a entrada por voz do carro não seja capaz de o acionar</item>
+        <item quantity="other">Os assistentes de voz do seu telefone são adicionados como uma app do BMW Connected, caso a entrada por voz do carro não seja capaz de o acionar</item>
+    </plurals>
+    <string name="lbl_assistantpage_tip">Estas aplicações nada têm a ver com o botão do assistente por voz localizado no seu volante, pois esse é só capaz de acionar o assistente predifinido e é configurado à parte</string>
+    <string name="lbl_notificationpage">Pode visualizar e interagir com as suas notificações recebidas diretamente no sistema do seu carro</string>
     <string name="spawn_test_notification">Teste de Notificação</string>
     <string name="message_notifications">Mensagem de Notificação</string>
     <string name="notification_popups">Popups de Notificação</string>
