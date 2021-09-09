@@ -102,6 +102,7 @@
     <string name="musicAppNotes_spotify_apiNotFound">Prego installare il client ufficiale di Spotify</string>
     <string name="musicAppNotes_spotify_userDeclined">Per favore concedi l\'autorizzazione per esplorare la tua libreria</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Prego verificare la connessione e disabilitare qualsiasi blocco pubblicità</string>
+    <string name="musicAppNotes_spotify_backgroundDisabled">Impossibile aprire Spotify. Assicurarsi che Spotify abbia l\'autorizzazione per l\'avvio automatico in secondo piano</string>
     <string name="lbl_navigationpage_address">Incolla in un indirizzo per avviare il sistema di navigazione dell\'auto dal telefono</string>
     <string name="lbl_navigationpage_intent">Quando connesso, il sistema di navigazione dell\'auto verrà visualizzato come opzione quando altre app vorranno inizializzare una navigazione verso un luogo</string>
     <string name="lbl_navigationstatus_active">Navigazione attiva verso</string>
