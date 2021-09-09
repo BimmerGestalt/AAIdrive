@@ -97,7 +97,9 @@
     <string name="musicAppNotes_oldSpotify">Bitte ältere Spotify Version für volle Funktionalität nutzen (Browsing)</string>
     <string name="musicAppNotes_oldSpotifyInstructions">Diese App bietet die vollständige Spotify Steuerung (Playlists durchsuchen und Suche) nur bis Spotify-Version 8.4.96.953. Für volle Steuerung bitte ältere Version von APKPure oder ähnlich herunterladen.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Bitte den offiziellen Spotify-Client installieren</string>
+    <string name="musicAppNotes_spotify_userDeclined">Bitte erteilen Sie die Berechtigung, um Ihre Bibliothek zu durchsuchen</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Bitte Internetzugang bestätigen und Werbeblocker deaktivieren</string>
+    <string name="musicAppNotes_spotify_backgroundDisabled">Spotify konnte nicht geöffnet werden. Bitte stellen Sie sicher, dass Spotify aus dem Hintergrund gestartet werden darf</string>
     <string name="lbl_navigationpage_address">Fügen Sie eine Adresse ein, um die Navigation im Auto von ihrem Telefon aus zu starten</string>
     <string name="lbl_navigationpage_intent">Wenn eine Verbindung besteht, wird das Navigationssystem Ihres Autos als Option in der App Auswahl angezeigt, wenn in anderen Apps ein Navigationsbutton betätigt wird</string>
     <string name="lbl_navigationstatus_active">Navigiere aktuell zu</string>
