@@ -100,7 +100,9 @@
     <string name="musicAppNotes_oldSpotify">Vänligen nedgradera Spotify appen för full funktionalitet (Sök)</string>
     <string name="musicAppNotes_oldSpotifyInstructions">Den här appen kan bara ge full kontroll över Spotify upp till version 8.4.96.953, t.ex. sökning. För full kontroll ladda ner en äldre version, från t.ex. APKPure eller liknande.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Vänligen installera den officiella Spotifyappen</string>
+    <string name="musicAppNotes_spotify_userDeclined">Vänligen ge behörighet att bläddra i ditt bibliotek</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Bekräfta internetanslutning och inaktivera reklamblockering</string>
+    <string name="musicAppNotes_spotify_backgroundDisabled">Kunde ej öppna Spotify. Se till att Spotify tillåts starta i bakgrunden</string>
     <string name="lbl_navigationpage_address">Klistra in en adress för att starta bilens navigationssystem från din telefon</string>
     <string name="lbl_navigationpage_intent">När du är ansluten visas bilens navigationssystem som ett alternativ när andra appar öppnar en app-väljare</string>
     <string name="lbl_navigationstatus_active">Navigerar till</string>
