@@ -100,7 +100,9 @@
     <string name="musicAppNotes_oldSpotify">Downgrade Spotify om van de volledige functionaliteit gebruik te maken</string>
     <string name="musicAppNotes_oldSpotifyInstructions">AndriodAutoIdrive kan enkel de volledige functionaliteit van Spotify versie 8.4.96.953 of ouder bieden. Download een oudere versie van Spotify via APKPure of anderen.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Installeer de officiële Spotify-client</string>
+    <string name="musicAppNotes_spotify_userDeclined">Geef toestemming om door uw bibliotheek te bladeren</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Bevestig de internetverbinding en schakel advertentieblokkering uit</string>
+    <string name="musicAppNotes_spotify_backgroundDisabled">Kan Spotify niet openen. Zorg ervoor dat Spotify op de achtergrond mag starten</string>
     <string name="lbl_navigationpage_address">Plak een adres om het navigatiesysteem van de auto te starten vanaf uw telefoon</string>
     <string name="lbl_navigationpage_intent">Tijdens het verbinden zal het navigatiesysteem van uw auto verschijnen als een optie wanneer de navigatieknoppen van andere apps een app-kiezer openen</string>
     <string name="lbl_navigationstatus_active">Momenteel navigeren naar</string>
