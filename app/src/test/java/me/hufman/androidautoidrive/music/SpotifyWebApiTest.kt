@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
 import com.adamratzman.spotify.endpoints.client.ClientLibraryApi
 import com.adamratzman.spotify.endpoints.client.ClientPlaylistApi
+import com.adamratzman.spotify.endpoints.pub.ArtistApi
 import com.adamratzman.spotify.endpoints.pub.SearchApi
 import com.adamratzman.spotify.models.*
 import com.nhaarman.mockito_kotlin.*
@@ -310,7 +311,7 @@ class SpotifyWebApiTest {
 	}
 
 	@Test
-	fun testInitializeWebApi_GetLikedSongsAttemptedTrue() = runBlocking {
+	fun testInitializeWebApi_GetLikedSongsLastFailedQueueMetadataCreate() = runBlocking {
 		val authorizationCode = "authorizationCode"
 		whenever(spotifyAuthStateManager.getAccessToken()).thenReturn(null)
 		whenever(spotifyAuthStateManager.getAuthorizationCode()).thenReturn(authorizationCode)
@@ -341,21 +342,76 @@ class SpotifyWebApiTest {
 
 		doNothing().whenever(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
 
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("getLikedSongsAttempted"), true)
-
 		val spotifyAppController: SpotifyAppController = mock()
 		doNothing().whenever(spotifyAppController).createLikedSongsQueueMetadata()
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("spotifyAppControllerCaller"), spotifyAppController)
 
 		val handler: Handler = mock()
 		PowerMockito.whenNew(Handler::class.java).withNoArguments().thenReturn(handler)
 		val musicAppDiscovery: MusicAppDiscovery = mock()
 		PowerMockito.whenNew(MusicAppDiscovery::class.java).withArguments(context, handler).thenReturn(musicAppDiscovery)
 
+		val likedSongs = spotifyWebApi.getLikedSongs(spotifyAppController)
+		assertEquals(emptyList<SpotifyMusicMetadata>(), likedSongs)
+
 		spotifyWebApi.initializeWebApi()
 
 		verify(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
 		verify(spotifyAppController).createLikedSongsQueueMetadata()
+
+		val internalLastFailedQueueMetadataCreate: (() -> Unit)? = Whitebox.getInternalState(spotifyWebApi, "lastFailedQueueMetadataCreate")
+		assertNull(internalLastFailedQueueMetadataCreate)
+	}
+
+	@Test
+	fun testInitializeWebApi_GetArtistTopSongsLastFailedQueueMetadataCreate() = runBlocking {
+		val authorizationCode = "authorizationCode"
+		whenever(spotifyAuthStateManager.getAccessToken()).thenReturn(null)
+		whenever(spotifyAuthStateManager.getAuthorizationCode()).thenReturn(authorizationCode)
+
+		val refreshToken = "refreshToken"
+		val accessToken = "accessToken"
+		val expiresAt: Long = 2
+		val token: Token = mock()
+		whenever(token.refreshToken).thenReturn(refreshToken)
+		whenever(token.accessToken).thenReturn(accessToken)
+		whenever(token.expiresAt).thenReturn(expiresAt)
+		whenever(token.scopes).thenReturn(listOf(SpotifyScope.USER_LIBRARY_READ))
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.token).thenReturn(token)
+
+		val apiBuilder: SpotifyClientApiBuilder = mock()
+		whenever(apiBuilder.options).doAnswer { mock() }
+		whenever(apiBuilder.build()).thenReturn(webApi)
+
+		PowerMockito.mockStatic(SpotifyClientApiBuilderHelper::class.java)
+		val companion = PowerMockito.mock(SpotifyClientApiBuilderHelper.Companion::class.java)
+		Whitebox.setInternalState(SpotifyClientApiBuilderHelper::class.java, "Companion", companion)
+		PowerMockito.`when`(companion.createApiBuilderWithAuthorizationCode(clientId, authorizationCode)).thenReturn(apiBuilder)
+
+		val authorizationServiceConfig: AuthorizationServiceConfiguration = mock()
+		whenever(spotifyAuthStateManager.getAuthorizationServiceConfiguration()).thenReturn(authorizationServiceConfig)
+
+		doNothing().whenever(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
+
+		val spotifyAppController: SpotifyAppController = mock()
+		doNothing().whenever(spotifyAppController).createArtistTopSongsQueueMetadata()
+
+		val handler: Handler = mock()
+		PowerMockito.whenNew(Handler::class.java).withNoArguments().thenReturn(handler)
+		val musicAppDiscovery: MusicAppDiscovery = mock()
+		PowerMockito.whenNew(MusicAppDiscovery::class.java).withArguments(context, handler).thenReturn(musicAppDiscovery)
+
+		val likedSongs = spotifyWebApi.getArtistTopSongs(spotifyAppController, "artistUri")
+		assertEquals(emptyList<SpotifyMusicMetadata>(), likedSongs)
+
+		spotifyWebApi.initializeWebApi()
+
+		verify(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
+		verify(spotifyAppController).createArtistTopSongsQueueMetadata()
+
+		val internalLastFailedQueueMetadataCreate: (() -> Unit)? = Whitebox.getInternalState(spotifyWebApi, "lastFailedQueueMetadataCreate")
+		assertNull(internalLastFailedQueueMetadataCreate)
 	}
 
 	@Test
@@ -499,17 +555,42 @@ class SpotifyWebApiTest {
 	}
 
 	@Test
-	fun testDisconnect() {
+	fun testDisconnect_SomeInstancesDisconnected() {
+		val webApi: SpotifyClientApi = mock()
+
+		val instance1 = SpotifyWebApi.getInstance(context, appSettings)
+		FieldSetter.setField(instance1, instance1::class.java.getDeclaredField("webApi"), webApi)
+
+		val instance2 = SpotifyWebApi.getInstance(context, appSettings)
+		FieldSetter.setField(instance2, instance2::class.java.getDeclaredField("webApi"), webApi)
+
+		instance1.isUsingSpotify = true
+
+		instance1.disconnect()
+
+		verify(webApi, never()).shutdown()
+		assertTrue(instance2.isUsingSpotify)
+	}
+
+	@Test
+	fun testDisconnect_AllInstancesDisconnected() {
 		val webApi: SpotifyClientApi = mock()
 		doNothing().whenever(webApi).shutdown()
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
 
-		spotifyWebApi.isUsingSpotify = true
+		val instance1 = SpotifyWebApi.getInstance(context, appSettings)
+		FieldSetter.setField(instance1, instance1::class.java.getDeclaredField("webApi"), webApi)
 
-		spotifyWebApi.disconnect()
+		val instance2 = SpotifyWebApi.getInstance(context, appSettings)
+		FieldSetter.setField(instance2, instance2::class.java.getDeclaredField("webApi"), webApi)
+
+		instance1.isUsingSpotify = true
+
+
+		instance1.disconnect()
+		instance2.disconnect()
 
 		verify(webApi).shutdown()
-		assertEquals(false, spotifyWebApi.isUsingSpotify)
+		assertFalse(instance2.isUsingSpotify)
 	}
 
 	@Test
@@ -606,10 +687,114 @@ class SpotifyWebApiTest {
 	}
 
 	@Test
+	fun testGetArtistTopSongs_NullWebApi() = runBlocking {
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), null)
+
+		val spotifyAppController: SpotifyAppController = mock()
+		val artistTopSongs = spotifyWebApi.getArtistTopSongs(spotifyAppController, "artistUri")
+
+		assertEquals(emptyList<SpotifyMusicMetadata>(), artistTopSongs)
+	}
+
+	@Test
+	fun testGetArtistTopSongs_Success() = runBlocking {
+		val uriId1 = "uriId1"
+		val trackName1 = "Track 1"
+		val artistName1 = "Artist 1"
+		val albumName1 = "Album 1"
+		val coverArtCode1 = "/coverArtCode1"
+
+		val uriId2 = "uriId2"
+		val trackName2 = "Track 2"
+		val artistName2 = "Artist 2"
+		val albumName2 = "Album 2"
+		val coverArtCode2 = "/coverArtCode2"
+
+		val artistUri = "artistUri"
+
+		val topTracks = listOf(
+				createTrack(uriId1, "albumUri1", coverArtCode1, artistName1, trackName1, albumName1),
+				createTrack(uriId2, "albumUri2", coverArtCode2, artistName2, trackName2, albumName2)
+		)
+
+		val artistApi: ArtistApi = mock()
+		whenever(artistApi.getArtistTopTracks(artistUri)).doAnswer { topTracks }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.artists).thenReturn(artistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		val spotifyAppController: SpotifyAppController = mock()
+		val artistTopSongs = spotifyWebApi.getArtistTopSongs(spotifyAppController, artistUri)
+
+		assertNotNull(artistTopSongs)
+		assertEquals(2, artistTopSongs!!.size)
+
+		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId1}", coverArtCode1, artistName1, albumName1, trackName1, null, false, false)
+		assertEquals(metadata1, artistTopSongs[0])
+
+		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId2}", coverArtCode2, artistName2, albumName2, trackName2, null, false, false)
+		assertEquals(metadata2, artistTopSongs[1])
+	}
+
+	@Test
+	fun testGetArtistTopSongs_AuthenticationException() = runBlocking {
+		val artistUri = "artistUri"
+		val exception = SpotifyException.AuthenticationException("message")
+		val artistApi: ArtistApi = mock()
+		whenever(artistApi.getArtistTopTracks(artistUri)).doAnswer { throw exception }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.artists).thenReturn(artistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		doNothing().whenever(spotifyAuthStateManager).addAccessTokenAuthorizationException(exception)
+
+		val notificationManager: NotificationManager = mock()
+		whenever(context.getSystemService(NotificationManager::class.java)).thenReturn(notificationManager)
+
+		val spotifyAppController: SpotifyAppController = mock()
+		val artistTopSongs = spotifyWebApi.getArtistTopSongs(spotifyAppController, artistUri)
+
+		verify(notificationManager, never()).notify(any(), any())
+
+		assertEquals(null, artistTopSongs)
+		val internalWebApi: SpotifyClientApi? = Whitebox.getInternalState(spotifyWebApi, "webApi")
+		assertNull(internalWebApi)
+	}
+
+	@Test
+	fun testGetArtistTopSongs_SpotifyException() = runBlocking {
+		val artistUri = "artistUri"
+		val exception = SpotifyException.BadRequestException("message")
+		val artistApi: ArtistApi = mock()
+		whenever(artistApi.getArtistTopTracks(artistUri)).doAnswer { throw exception }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.artists).thenReturn(artistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		val spotifyAppController: SpotifyAppController = mock()
+		val artistTopSongs = spotifyWebApi.getArtistTopSongs(spotifyAppController, artistUri)
+
+		assertEquals(null, artistTopSongs)
+	}
+
+	@Test
 	fun testIsAuthorized() {
 		whenever(spotifyAuthStateManager.isAuthorized()).thenReturn(true)
 
 		assertEquals(true, spotifyWebApi.isAuthorized())
+	}
+
+	@Test
+	fun testClearLastFailedQueueMetadataCreate() {
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("lastFailedQueueMetadataCreate"), { fail() })
+
+		spotifyWebApi.clearLastFailedQueueMetadataCreate()
+
+		val internalLastFailedQueueMetadataCreate: (() -> Unit)? = Whitebox.getInternalState(spotifyWebApi, "lastFailedQueueMetadataCreate")
+		assertNull(internalLastFailedQueueMetadataCreate)
 	}
 
 	@Test
@@ -669,15 +854,17 @@ class SpotifyWebApiTest {
 		val artistName1 = "Artist 1"
 		val trackName1 = "Track 1"
 		val coverArtCode1 = "/coverArtCode1"
+		val albumName1 = "Album 1"
 
 		val uriId2 = "uriId2"
 		val albumUriId2 = "albumUriId2"
 		val artistName2 = "Artist 2"
 		val trackName2 = "Track 2"
 		val coverArtCode2 = "/coverArtCode2"
+		val albumName2 = "Album 2"
 
-		val track1 = createTrack(uriId1, albumUriId1, coverArtCode1, artistName1, trackName1)
-		val track2 = createTrack(uriId2, albumUriId2, coverArtCode2, artistName2, trackName2)
+		val track1 = createTrack(uriId1, albumUriId1, coverArtCode1, artistName1, trackName1, albumName1)
+		val track2 = createTrack(uriId2, albumUriId2, coverArtCode2, artistName2, trackName2, albumName2)
 
 		val pagingObject: PagingObject<Track> = mock()
 		whenever(pagingObject.items).thenReturn(listOf(track1, track2))
@@ -859,7 +1046,7 @@ class SpotifyWebApiTest {
 		val trackArtistName = "track Artist 1"
 		val trackName = "track Track 1"
 		val trackCoverArtCode = "/trackCoverArtCode"
-		val track = createTrack(trackUriId, trackAlbumUriId, trackCoverArtCode, trackArtistName, trackName)
+		val track = createTrack(trackUriId, trackAlbumUriId, trackCoverArtCode, trackArtistName, trackName, albumName)
 		val trackPagingObject: PagingObject<Track> = mock()
 		whenever(trackPagingObject.items).thenReturn(listOf(track))
 
@@ -1407,8 +1594,8 @@ class SpotifyWebApiTest {
 		return SimpleAlbum("album", emptyList(), emptyMap(), "href", "id", AlbumUri(uriId), artist, images, albumName, "album", null, "1990", "year")
 	}
 
-	private fun createTrack(uriId: String, albumUriId: String, coverArtCode: String, artistName: String, trackName: String): Track {
-		val album = createSimpleAlbum(albumUriId, "artistName", "albumName", coverArtCode)
+	private fun createTrack(uriId: String, albumUriId: String, coverArtCode: String, artistName: String, trackName: String, albumName: String): Track {
+		val album = createSimpleAlbum(albumUriId, "artistName", albumName, coverArtCode)
 		val artist = listOf(SimpleArtist(emptyMap(), "href", "id", ArtistUri("artistUri"), artistName, "artist"))
 		return Track(emptyMap(), emptyMap(), emptyList(), "href", "id", PlayableUri(uriId), album, artist, true, 0, 1000, false, null, trackName, 1, null, 1, "track", null, null, null, null)
 	}
