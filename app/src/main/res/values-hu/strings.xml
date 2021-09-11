@@ -95,7 +95,9 @@
     <string name="musicAppNotes_oldSpotify">Régebbi Spotify verzió telepítése szükséges a teljes funkcionalitáshoz (Keresés)</string>
     <string name="musicAppNotes_oldSpotifyInstructions">Az alkalmazás csak a Spotify 8.4.96.953 verzióig ad teljes vezérlésre lehetőséget, például a keresés támogatását. A teljes vezérléshez tölts le egy régebbi verziót az APKPure-ról vagy máshonnan.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Kérlek telepítsd a hivatalos Spotify alkalmazást</string>
+    <string name="musicAppNotes_spotify_userDeclined">Kérlek, adj engedélyt a könyvtáraid böngészéséhez</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Kérlek ellenőrizd az internet kapcsolatot, illetve kapcsolj ki minden reklámblokkolót</string>
+    <string name="musicAppNotes_spotify_backgroundDisabled">Nem sikerült megnyitni a Spotify-t. Győződj meg arról, hogy engedélyezve van a Spotify háttérből történő indítása</string>
     <string name="lbl_navigationpage_address">Illessz be egy címet az autó navigációjának a telefonodról történő indításához</string>
     <string name="lbl_navigationpage_intent">Meglévő kapcsolat esetén, az autód navigációs rendszere megjelenik egy opcióként, amikor az egyéb navigációs alkalmazások közül választhatsz a telefonodon</string>
     <string name="lbl_navigationstatus_active">Jelenleg navigálas</string>
@@ -168,6 +170,7 @@
     <string name="txt_setup_usb_connected">USB töltés módban csatlakoztatva</string>
     <string name="txt_setup_usb_requires_connected">USB almalmazás kapcsolathoz feltelepített BMW/Mini Connected szükséges</string>
     <string name="txt_setup_enable_usbmtp">Állítsd át a telefon USB módját Adatátvitelre</string>
+    <string name="txt_setup_enable_usbacc">Kapcsold be az USB tartozék módot vagy az Aplikációk opciót az autóban ehhez %s</string>
     <string name="txt_setup_usbmtp_connected">USB tárhely módban csatlakoztatva</string>
     <string name="txt_setup_usbacc_connected">USB tartozék módban csatlakoztatva</string>
     <string name="txt_setup_bcl_init_stuck">Alkalmazás kapcsolat nincs bekapcsolva:</string>
@@ -279,11 +282,13 @@
     <string name="tip_batterymode_mybmw">Próbáld meg kikapcsolni az akku optimalizációt a MyBMW alkalmazás esetében, ami néha segít kapcsolódni az autóhoz</string>
     <string name="tip_batterymode_mymini">Próbáld meg kikapcsolni az akku optimalizációt a Mini alkalmazás esetében, ami néha segít kapcsolódni az autóhoz</string>
     <string name="tip_music_hide">Húzd el a zenei alkalmazást a listából, ezzel elrejted az autó menüjéből azt</string>
+    <string name="tip_batterymode_music">Próbáld meg kikapcsolni az akkumlátor használat optimalizálását a zenei alkalmazásaidhoz, amely néhány telefon márka esetében (pl. Xiaomi) szükséges lehet ahhoz, hogy hogy az alkalmazások a háttérből el tudjanak indulni</string>
     <string name="notification_assistant_tap">Koppints az indításhoz %s</string>
     <string name="notification_assistant_description">Csak azért szükséges, mert a képernyő be van kapcsolva</string>
     <string name="donation_title">Kedveled az alkalmazást?</string>
     <string name="donation_text">Fontold meg támogatásodat egy kis adománnyal</string>
     <string name="txt_spotify_auth_notification">A Spotify Web API-t engedélyezni kell. Kattints ide az engedélyezéshez.</string>
+    <string name="txt_spotify_app_remote_last_error">Spotify App Remote utolsó hiba:</string>
     <string name="txt_spotify_api_authorization_needed">A Spotify Web API engedélyezése szükséges.</string>
     <string name="txt_spotify_api_authorization_success">A Spotify Web API-t engedélyezve!</string>
     <string name="txt_spotify_api_authorization_canceled">A Spotify Web API engedélyezése megszakítva.</string>

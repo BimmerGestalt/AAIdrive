@@ -87,25 +87,37 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 	private fun _updateSpotify() {
 		_hasSpotifyControlPermission.value = spotifyConnector.previousControlSuccess()
 		val errorName = spotifyConnector.lastError?.javaClass?.simpleName
-		val errorMessage = spotifyConnector.lastError?.message
+		val errorMessage = spotifyConnector.lastError?.message ?: ""
 		when(errorName) {
 			"CouldNotFindSpotifyApp" -> _spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_apiNotFound) }
 			"OfflineModeException" -> _spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_apiUnavailable) }
 			"UserNotAuthorizedException" -> when {
 				// no internet
-				errorMessage?.contains("AUTHENTICATION_SERVICE_UNAVAILABLE") == true -> {
+				errorMessage.contains("AUTHENTICATION_SERVICE_UNAVAILABLE") -> {
 					_spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_apiUnavailable) }
 				}
+				// user cancelled
+				errorMessage.contains("Canceled") -> {
+					_spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_userDeclined) }
+				}
 				// user didn't grant access or user cancelled
-				errorMessage?.contains("User authorization required") == true -> {
-					_spotifyErrorHint.value = { ""}
+				errorMessage.contains("AUTHENTICATION_DENIED_BY_USER") -> {
+					_spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_userDeclined) }
+				}
+				// user didn't grant access or user cancelled
+				errorMessage.contains("User authorization required") -> {
+					_spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_userDeclined) }
+				}
+				// could not open the prompt
+				errorMessage.contains("Explicit user authorization") -> {
+					_spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_backgroundDisabled) }
 				}
 				// unknown
 				else -> {
-					_spotifyErrorHint.value = { errorMessage ?: "" }
+					_spotifyErrorHint.value = { errorMessage }
 				}
 			}
-			else -> _spotifyErrorHint.value = { errorMessage ?: "" }
+			else -> _spotifyErrorHint.value = { errorMessage }
 		}
 
 		_isSpotifyWebApiAuthorized.value = spotifyAuthStateManager.isAuthorized()
