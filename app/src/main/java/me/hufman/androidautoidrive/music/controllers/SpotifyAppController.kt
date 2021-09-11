@@ -244,7 +244,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 				webApi.clearLastFailedQueueMetadataCreate()
 
 				val isLikedSongsPlaylist = playerContext.type == "your_library" || playerContext.type == "your_library_tracks"
-				val isArtistPlaylist = playerContext.type == "artist"
+				val isArtistPlaylist = playerContext.type == "artist" || playerContext.type == "your_library_artist"
 				if (isLikedSongsPlaylist || playerContext.title == SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME) {
 					createLikedSongsQueueMetadata()
 				} else if (isArtistPlaylist || playerContext.title == SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME) {
