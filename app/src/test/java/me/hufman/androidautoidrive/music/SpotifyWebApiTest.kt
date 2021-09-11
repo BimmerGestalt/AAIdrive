@@ -570,6 +570,9 @@ class SpotifyWebApiTest {
 
 		verify(webApi, never()).shutdown()
 		assertTrue(instance2.isUsingSpotify)
+
+		// cleanup
+		instance2.disconnect()
 	}
 
 	@Test
@@ -584,7 +587,6 @@ class SpotifyWebApiTest {
 		FieldSetter.setField(instance2, instance2::class.java.getDeclaredField("webApi"), webApi)
 
 		instance1.isUsingSpotify = true
-
 
 		instance1.disconnect()
 		instance2.disconnect()
