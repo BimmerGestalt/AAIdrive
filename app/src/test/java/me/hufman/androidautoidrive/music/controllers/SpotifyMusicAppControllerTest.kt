@@ -589,7 +589,7 @@ class SpotifyMusicAppControllerTest {
 
 		// load a queue
 		playlistCallback.lastValue.onEvent(playerContext)
-		verify(webApi).clearLastFailedQueueMetadataCreate()
+		verify(webApi).clearPendingQueueMetadataCreate()
 		verify(contentApi).getChildrenOfItem(ListItem(playerContext.uri, playerContext.uri, null, playerContext.title, playerContext.subtitle, false, true), 200, 0)
 		contentCallback.lastValue.onResult(ListItems(200, 0, 2, arrayOf(
 				ListItem("id", "uri", null, "Title", "Subtitle", true, false)

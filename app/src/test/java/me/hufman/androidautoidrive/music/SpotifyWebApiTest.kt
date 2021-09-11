@@ -311,7 +311,7 @@ class SpotifyWebApiTest {
 	}
 
 	@Test
-	fun testInitializeWebApi_GetLikedSongsLastFailedQueueMetadataCreate() = runBlocking {
+	fun testInitializeWebApi_GetLikedSongsPendingQueueMetadataCreate() = runBlocking {
 		val authorizationCode = "authorizationCode"
 		whenever(spotifyAuthStateManager.getAccessToken()).thenReturn(null)
 		whenever(spotifyAuthStateManager.getAuthorizationCode()).thenReturn(authorizationCode)
@@ -358,12 +358,12 @@ class SpotifyWebApiTest {
 		verify(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
 		verify(spotifyAppController).createLikedSongsQueueMetadata()
 
-		val internalLastFailedQueueMetadataCreate: (() -> Unit)? = Whitebox.getInternalState(spotifyWebApi, "lastFailedQueueMetadataCreate")
-		assertNull(internalLastFailedQueueMetadataCreate)
+		val internalPendingQueueMetadataCreate: (() -> Unit)? = Whitebox.getInternalState(spotifyWebApi, "pendingQueueMetadataCreate")
+		assertNull(internalPendingQueueMetadataCreate)
 	}
 
 	@Test
-	fun testInitializeWebApi_GetArtistTopSongsLastFailedQueueMetadataCreate() = runBlocking {
+	fun testInitializeWebApi_GetArtistTopSongsPendingQueueMetadataCreate() = runBlocking {
 		val authorizationCode = "authorizationCode"
 		whenever(spotifyAuthStateManager.getAccessToken()).thenReturn(null)
 		whenever(spotifyAuthStateManager.getAuthorizationCode()).thenReturn(authorizationCode)
@@ -410,8 +410,8 @@ class SpotifyWebApiTest {
 		verify(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
 		verify(spotifyAppController).createArtistTopSongsQueueMetadata()
 
-		val internalLastFailedQueueMetadataCreate: (() -> Unit)? = Whitebox.getInternalState(spotifyWebApi, "lastFailedQueueMetadataCreate")
-		assertNull(internalLastFailedQueueMetadataCreate)
+		val internalPendingQueueMetadataCreate: (() -> Unit)? = Whitebox.getInternalState(spotifyWebApi, "pendingQueueMetadataCreate")
+		assertNull(internalPendingQueueMetadataCreate)
 	}
 
 	@Test
@@ -790,13 +790,13 @@ class SpotifyWebApiTest {
 	}
 
 	@Test
-	fun testClearLastFailedQueueMetadataCreate() {
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("lastFailedQueueMetadataCreate"), { fail() })
+	fun testClearPendingQueueMetadataCreate() {
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("pendingQueueMetadataCreate"), { fail() })
 
-		spotifyWebApi.clearLastFailedQueueMetadataCreate()
+		spotifyWebApi.clearPendingQueueMetadataCreate()
 
-		val internalLastFailedQueueMetadataCreate: (() -> Unit)? = Whitebox.getInternalState(spotifyWebApi, "lastFailedQueueMetadataCreate")
-		assertNull(internalLastFailedQueueMetadataCreate)
+		val internalPendingQueueMetadataCreate: (() -> Unit)? = Whitebox.getInternalState(spotifyWebApi, "pendingQueueMetadataCreate")
+		assertNull(internalPendingQueueMetadataCreate)
 	}
 
 	@Test

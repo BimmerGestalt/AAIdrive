@@ -59,7 +59,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 
 	private val authStateManager: SpotifyAuthStateManager
 	private val clientId: String
-	private var lastFailedQueueMetadataCreate: (() -> Unit)? = null
+	private var pendingQueueMetadataCreate: (() -> Unit)? = null
 
 	var isUsingSpotify: Boolean = false
 
@@ -109,7 +109,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 
 	suspend fun getLikedSongs(spotifyAppController: SpotifyAppController): List<SpotifyMusicMetadata>? = executeApiCall("Failed to get data from Liked Songs library") {
 		if (webApi == null) {
-			lastFailedQueueMetadataCreate = {
+			pendingQueueMetadataCreate = {
 				Log.d(SpotifyAppController.TAG, "Retrying Liked Songs queue metadata creation")
 				spotifyAppController.createLikedSongsQueueMetadata()
 			}
@@ -125,7 +125,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 
 	suspend fun getArtistTopSongs(spotifyAppController: SpotifyAppController, artistUri: String): List<SpotifyMusicMetadata>? = executeApiCall("Failed to get top tracks from ArtistUri $artistUri") {
 		if (webApi == null) {
-			lastFailedQueueMetadataCreate = {
+			pendingQueueMetadataCreate = {
 				Log.d(SpotifyAppController.TAG, "Retrying Artist Songs queue metadata creation")
 				spotifyAppController.createArtistTopSongsQueueMetadata()
 			}
@@ -239,8 +239,8 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		if (webApi != null) {
 			authStateManager.updateTokenResponseWithToken(webApi!!.token, clientId)
 
-			lastFailedQueueMetadataCreate?.invoke()
-			clearLastFailedQueueMetadataCreate()
+			pendingQueueMetadataCreate?.invoke()
+			clearPendingQueueMetadataCreate()
 
 			if (!isProbing) {
 				updateSpotifyAppInfoAsSearchable()
@@ -255,8 +255,8 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		return authStateManager.isAuthorized()
 	}
 
-	fun clearLastFailedQueueMetadataCreate() {
-		lastFailedQueueMetadataCreate = null
+	fun clearPendingQueueMetadataCreate() {
+		pendingQueueMetadataCreate = null
 	}
 
 	/**
@@ -430,7 +430,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			Log.d(TAG, "All instances of SpotifyWebApi disconnected. Shutting down Web API")
 			webApi?.shutdown()
 			isUsingSpotify = false
-			clearLastFailedQueueMetadataCreate()
+			clearPendingQueueMetadataCreate()
 		}
 	}
 }
