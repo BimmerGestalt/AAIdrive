@@ -687,6 +687,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 	}
 
 	override suspend fun browse(directory: MusicMetadata?): List<MusicMetadata> {
+		val isArtistDirectory: (MusicMetadata?) -> Boolean = {it?.mediaId?.contains(":artists:") == true}
 		val deferred = CompletableDeferred<List<MusicMetadata>>()
 		if (directory?.mediaId == null) {
 			remote.contentApi.getRecommendedContentItems("default-cars").setResultCallback { results ->
@@ -714,13 +715,6 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			}
 		}
 		return deferred.await()
-	}
-
-	/**
-	 * Returns whether the supplied [MusicMetadata] directory is an "artist" type.
-	 */
-	private fun isArtistDirectory(directory: MusicMetadata?): Boolean {
-		return directory?.mediaId?.contains(":artist:") == true
 	}
 
 	/**
