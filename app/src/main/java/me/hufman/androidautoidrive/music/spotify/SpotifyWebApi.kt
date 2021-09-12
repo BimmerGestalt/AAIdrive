@@ -36,8 +36,10 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		const val NOTIFICATION_CHANNEL_ID = "SpotifyAuthorization"
 		const val NOTIFICATION_REQ_ID = 56
 		const val LIKED_SONGS_PLAYLIST_NAME = "AAIDRIVE_LIKED_SONGS"
+		const val ARTIST_SONGS_PLAYLIST_NAME = "AAIDRIVE_ARTIST_SONGS"
 
 		private var webApiInstance: SpotifyWebApi? = null
+		private var instanceCount = 0
 
 		/**
 		 * Retrieves the current [SpotifyWebApi] instance creating one if it there are no instances
@@ -47,6 +49,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			if (webApiInstance == null) {
 				webApiInstance = SpotifyWebApi(context, appSettings)
 			}
+			instanceCount++
 			return webApiInstance as SpotifyWebApi
 		}
 	}
@@ -56,22 +59,14 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 
 	private val authStateManager: SpotifyAuthStateManager
 	private val clientId: String
-	private var getLikedSongsAttempted: Boolean = false
-	private var spotifyAppControllerCaller: SpotifyAppController? = null
+	private var pendingQueueMetadataCreate: (() -> Unit)? = null
+
 	var isUsingSpotify: Boolean = false
 
 	init {
 		Log.d(TAG, "Initializing for the first time")
 		authStateManager = SpotifyAuthStateManager.getInstance(appSettings)
 		clientId = SpotifyAppController.getClientId(context)
-	}
-
-	/**
-	 * Sets the Liked Songs flag to false and sets the [SpotifyAppController] caller to null.
-	 */
-	fun clearGetLikedSongsAttemptedFlag() {
-		getLikedSongsAttempted = false
-		spotifyAppControllerCaller = null
 	}
 
 	/**
@@ -114,19 +109,33 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 
 	suspend fun getLikedSongs(spotifyAppController: SpotifyAppController): List<SpotifyMusicMetadata>? = executeApiCall("Failed to get data from Liked Songs library") {
 		if (webApi == null) {
-			getLikedSongsAttempted = true
-			spotifyAppControllerCaller = spotifyAppController
+			pendingQueueMetadataCreate = {
+				Log.d(SpotifyAppController.TAG, "Retrying Liked Songs queue metadata creation")
+				spotifyAppController.createLikedSongsQueueMetadata()
+			}
+
 			return@executeApiCall emptyList()
 		}
 
 		val likedSongs = webApi?.library?.getSavedTracks(50)?.getAllItemsNotNull()
 		return@executeApiCall likedSongs?.map {
-			val track = it.track
-			val mediaId = track.uri.uri
-			val artists = track.artists.map { it.name }.joinToString(", ")
-			val album = track.album
-			val coverArtUri = getCoverArtUri(album.images)
-			SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, album.name, track.name)
+			createSpotifyMusicMetadataFromTrack(it.track, spotifyAppController)
+		}
+	}
+
+	suspend fun getArtistTopSongs(spotifyAppController: SpotifyAppController, artistUri: String): List<SpotifyMusicMetadata>? = executeApiCall("Failed to get top tracks from ArtistUri $artistUri") {
+		if (webApi == null) {
+			pendingQueueMetadataCreate = {
+				Log.d(SpotifyAppController.TAG, "Retrying Artist Songs queue metadata creation")
+				spotifyAppController.createArtistTopSongsQueueMetadata()
+			}
+
+			return@executeApiCall emptyList()
+		}
+
+		val topSongs = webApi?.artists?.getArtistTopTracks(artistUri)
+		return@executeApiCall topSongs?.map {
+			createSpotifyMusicMetadataFromTrack(it, spotifyAppController)
 		}
 	}
 
@@ -230,10 +239,9 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		if (webApi != null) {
 			authStateManager.updateTokenResponseWithToken(webApi!!.token, clientId)
 
-			if (getLikedSongsAttempted) {
-				getLikedSongsAttempted = false
-				spotifyAppControllerCaller?.createLikedSongsQueueMetadata()
-			}
+			pendingQueueMetadataCreate?.invoke()
+			clearPendingQueueMetadataCreate()
+
 			if (!isProbing) {
 				updateSpotifyAppInfoAsSearchable()
 			}
@@ -245,6 +253,10 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 */
 	fun isAuthorized(): Boolean {
 		return authStateManager.isAuthorized()
+	}
+
+	fun clearPendingQueueMetadataCreate() {
+		pendingQueueMetadataCreate = null
 	}
 
 	/**
@@ -398,12 +410,27 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	}
 
 	/**
+	 * Creates a [SpotifyMusicMetadata] from a provided [Track].
+	 */
+	private fun createSpotifyMusicMetadataFromTrack(track: Track, spotifyAppController: SpotifyAppController): SpotifyMusicMetadata {
+		val mediaId = track.uri.uri
+		val artists = track.artists.map { it.name }.joinToString(", ")
+		val album = track.album
+		val coverArtUri = getCoverArtUri(album.images)
+		return SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, album.name, track.name)
+	}
+
+	/**
 	 * Disconnect process for shutting down the [SpotifyClientApi].
 	 */
 	fun disconnect() {
-		Log.d(TAG, "Disconnecting Web API")
-		webApi?.shutdown()
-		isUsingSpotify = false
-		clearGetLikedSongsAttemptedFlag()
+		instanceCount--
+		Log.d(TAG, "Disconnecting SpotifyWebApi")
+		if (instanceCount == 0) {
+			Log.d(TAG, "All instances of SpotifyWebApi disconnected. Shutting down Web API")
+			webApi?.shutdown()
+			isUsingSpotify = false
+			clearPendingQueueMetadataCreate()
+		}
 	}
 }
