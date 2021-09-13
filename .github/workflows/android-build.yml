@@ -16,6 +16,8 @@ jobs:
         analytics: [Nonalytics, Sentry]
 
     steps:
+      - name: Log parameters
+        uses: hmarr/debug-action@v2
       - name: Checkout the project
         uses: actions/checkout@v2
         with:
