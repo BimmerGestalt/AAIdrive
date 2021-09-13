@@ -42,11 +42,12 @@ jobs:
       - name: Run unit tests
         run: ./gradlew test${{ matrix.map }}${{ matrix.analytics }}DebugUnitTestCoverage
       - name: Upload CodeCov report
-        if: github.event.pull_request.title != 'New Crowdin updates'   # don't upload coverage for Crowdin pushes
+        if: github.event.pull_request.title != 'New Crowdin updates' && github.event.ref != 'refs/heads/l10n_main'   # don't upload coverage for Crowdin pushes
         uses: codecov/codecov-action@v1
         with:
           file: app/build/reports/jacoco/jacoco.xml
           flags: unittests
+
 
   instrumentedTest:
     runs-on: macos-latest
@@ -96,7 +97,7 @@ jobs:
           target: google_apis
           script: ./gradlew connected${{ matrix.map }}NonalyticsDebugAndroidTestCoverage
       - name: Upload CodeCov report
-        if: matrix.map != 'Gmap' && github.event.pull_request.title != 'New Crowdin updates'   # don't upload Gmap test results, which don't run during PRs
+        if: matrix.map != 'Gmap' && github.event.pull_request.title != 'New Crowdin updates' && github.event.ref != 'refs/heads/l10n_main'   # don't upload Gmap test results, which don't run during PRs
         uses: codecov/codecov-action@v1
         with:
           file: app/build/reports/jacoco/jacoco.xml
