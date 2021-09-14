@@ -88,7 +88,7 @@ android {
         }
     }
 
-    flavorDimensions "map", "analytics"
+    flavorDimensions "map", "analytics", "storefront"
 
     productFlavors {
         nonalytics {
@@ -105,6 +105,12 @@ android {
             // load api keys from ~/.gradle/gradle.properties
             manifestPlaceholders = [spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey,
                                     gmaps_api_key: System.env.AndroidAutoIdrive_GmapsApiKey ? System.env.AndroidAutoIdrive_GmapsApiKey : AndroidAutoIdrive_GmapsApiKey]
+        }
+        full {
+            dimension "storefront"
+        }
+        play {
+            dimension "storefront"
         }
     }
     compileOptions {

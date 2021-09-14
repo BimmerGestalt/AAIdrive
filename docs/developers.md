@@ -60,7 +60,7 @@ Do not use the Github Download Zip option, because it does not include the neces
     ![Build Menu](images/developer-runmenu.png)
 
   - Alternatively, using Gradle manually:
-    - Make sure Android SDK Build Tools version 28 is installed
-    - `./gradlew assembleNomapNonalyticsDebug`
+    - Make sure Android SDK Build Tools version 30 is installed
+    - `./gradlew assembleNomapNonalyticsFullDebug`
     
 The built APKs should be found in `app/build/outputs/apk/*/*/*.apk`
