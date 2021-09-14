@@ -102,7 +102,9 @@
     <string name="musicAppNotes_oldSpotify">Aby uzyskać pełną funkcjonalność (przeglądanie,wyszukiwanie), obniż wersję Spotify</string>
     <string name="musicAppNotes_oldSpotifyInstructions">Ta aplikacja może zapewnić pełną kontrolę nad Spotify do wersji 8.4.96.953, taką jak przeglądanie list odtwarzania i wyszukiwanie. Aby uzyskać pełną kontrolę, pobierz starszą wersję z APKPure lub podobnej.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Proszę zainstalować oficjalnego klienta Spotify</string>
+    <string name="musicAppNotes_spotify_userDeclined">Proszę przyznać uprawnienia do przeglądania biblioteki</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Prosimy sprawdzić połączenie z Internetem i wyłączenie blokady reklam.</string>
+    <string name="musicAppNotes_spotify_backgroundDisabled">Nie można otworzyć Spotify. Upewnij się, że Spotify może uruchamiać się w tle</string>
     <string name="lbl_navigationpage_address">Wklej dokadny adres, aby uruchomić system nawigacji w samochodzie</string>
     <string name="lbl_navigationpage_intent">Po nawiązaniu połączenia z samochodem, system nawigacyjny pojawi się jako opcja</string>
     <string name="lbl_navigationstatus_active">Obecnie prowadzę do </string>
