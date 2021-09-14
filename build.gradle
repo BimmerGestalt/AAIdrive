@@ -7,7 +7,7 @@ buildscript {
     ext.androidx_navigation_version = '2.3.5'
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven {
             url 'https://maven.fabric.io/public'
         }
@@ -25,7 +25,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 
