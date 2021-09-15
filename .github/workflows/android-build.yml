@@ -31,7 +31,7 @@ jobs:
         with:
           key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
           path: |
-            - external
+            external
       - name: Download build dependencies
         uses: ./.github/actions/download-externals-action
 
@@ -74,7 +74,7 @@ jobs:
         with:
           key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
           path: |
-            - external
+            external
       - name: Download build dependencies
         uses: ./.github/actions/download-externals-action
       - name: Build the project
@@ -145,7 +145,7 @@ jobs:
         with:
           key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
           path: |
-            - external
+            external
       - name: Download build dependencies
         uses: ./.github/actions/download-externals-action
       - name: Extract signing key
