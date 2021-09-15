@@ -8,17 +8,23 @@ import me.hufman.androidautoidrive.R
 data class AddonAppInfo(val name: String, val icon: Drawable, val packageName: String) {
 	var intentOpen: Intent? = null
 	var intentSettings: Intent? = null
+	var intentConnectionService: Intent? = null
 	var intentDataService: Intent? = null
 
 	var cdsNormalRequested: Boolean = false
 	var cdsNormalGranted: Boolean = false
 	var cdsPersonalRequested: Boolean = false
 	var cdsPersonalGranted: Boolean = false
+	var carConnectionRequested: Boolean = false
+	var carConnectionGranted: Boolean = false
 
 	fun featuresString(): Context.() -> String {
 		val appInfo = this
 		return {
 			listOfNotNull(
+				if (appInfo.carConnectionRequested) {
+					if (appInfo.carConnectionGranted) getString(R.string.addonConnectionPermissionGranted) else getString(R.string.addonConnectionPermissionDeclined)
+				} else null,
 				if (appInfo.cdsNormalRequested) {
 					if (appInfo.cdsNormalGranted) getString(R.string.addonNormalPermissionGranted) else getString(R.string.addonNormalPermissionDeclined)
 				} else null,
