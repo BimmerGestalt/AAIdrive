@@ -12,8 +12,8 @@ import android.util.Log
 import java.lang.IllegalArgumentException
 import java.util.*
 
-fun BluetoothDevice.isCar(): Boolean {
-	return this.name.startsWith("BMW") || this.name.startsWith("MINI")
+fun BluetoothDevice?.isCar(): Boolean {
+	return this?.name?.startsWith("BMW") == true || this?.name?.startsWith("MINI") == true
 }
 
 class BtStatus(val context: Context, val callback: () -> Unit) {
