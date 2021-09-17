@@ -10,7 +10,8 @@ import androidx.databinding.ViewDataBinding
 import me.hufman.androidautoidrive.BR
 
 class DataBoundArrayAdapter<T, C>(context: Context, val layoutId: Int, contents: List<T>, val callback: C? = null): ArrayAdapter<T>(context, layoutId, contents) {
-	override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+
+	override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 		val layoutInflater = LayoutInflater.from(context)
 		val item = getItem(position)
 		val binding = (convertView?.tag as? ViewDataBinding) ?:

@@ -52,7 +52,7 @@ class NavigationTriggerReceiver(val trigger: NavigationTrigger): BroadcastReceiv
 	}
 	override fun onReceive(p0: Context?, p1: Intent?) {
 		if (p1?.hasExtra(EXTRA_NAVIGATION) == true) {
-			trigger.triggerNavigation(p1.getStringExtra(EXTRA_NAVIGATION))
+			trigger.triggerNavigation(p1.getStringExtra(EXTRA_NAVIGATION) ?: "")
 		}
 	}
 

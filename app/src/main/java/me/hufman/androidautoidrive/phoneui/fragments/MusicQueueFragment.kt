@@ -56,7 +56,7 @@ class MusicQueueFragment: Fragment() {
 		listQueue.adapter = DataBoundListAdapter(contents, R.layout.music_queue_listitem, (activity as MusicPlayerActivity).musicPlayerController)
 
 		listQueueRefresh.setOnRefreshListener {
-			Handler(this.context?.mainLooper).postDelayed({
+			Handler(this.requireContext().mainLooper).postDelayed({
 				this.view?.findViewById<SwipeRefreshLayout>(R.id.listQueueRefresh)?.isRefreshing = false
 			}, 1000)
 		}

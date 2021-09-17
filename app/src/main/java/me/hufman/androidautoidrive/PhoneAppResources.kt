@@ -55,7 +55,7 @@ class PhoneAppResourcesAndroid(val context: Context): PhoneAppResources {
 			else -> throw IllegalArgumentException("Unknown scheme ${parsedUri.scheme}")
 		}
 		val drawable = Drawable.createFromStream(inputStream, uri)
-		inputStream.close()
+		inputStream?.close()
 		return drawable
 	}
 }
