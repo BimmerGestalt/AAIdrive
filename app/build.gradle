@@ -19,12 +19,21 @@ apply from: 'buildtools/checksums.gradle'
 
 apply from: 'buildtools/screenshots.gradle'
 
-def TRAVIS_BRANCH = System.env.TRAVIS_PULL_REQUEST == "true" ? System.env.TRAVIS_PULL_REQUEST_BRANCH : System.env.TRAVIS_BRANCH
+def GITHUB_BRANCH = System.env.GITHUB_REF?.replaceFirst("^refs/.*/", "")
+
+def isRunningOnCI = System.getenv("CI") == "true"
 
 android {
     compileSdkVersion 30
     androidGitVersion {
         hideBranches = [ 'main' ]
+        // include build number for CI builds, omit for local builds
+        // because local dev commonly involves switching between branches
+        if (isRunningOnCI) {
+            codeFormat = 'MMNNPPBBB'
+        } else {
+            codeFormat = 'MMNNPPXXX'
+        }
     }
     defaultConfig {
         applicationId "me.hufman.androidautoidrive"
@@ -51,8 +60,7 @@ android {
     signingConfigs {
         release
     }
-    def isRunningOnTravis = System.getenv("CI") == "true"
-    if (isRunningOnTravis) {
+    if (isRunningOnCI) {
         // configure keystore
         signingConfigs.release.storeFile = file("../keystore.jks")
         signingConfigs.release.storePassword = System.getenv("KEYSTORE_PASSWORD")

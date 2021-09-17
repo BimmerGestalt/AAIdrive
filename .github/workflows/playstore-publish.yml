@@ -1,6 +1,12 @@
 name: publish
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      whats_new:
+        description: "What's new:"
+        required: true
+        default: "Improvements to stability and performance"
 
 jobs:
   unitTest:
@@ -82,3 +88,22 @@ jobs:
           name: bundle
           path: |
             app/build/outputs/bundle/*/*aab
+
+  upload:
+    needs: package
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Download project artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: bundle
+          path: bundle
+      - name: Prepare Changelog
+        run: mkdir whats_new && echo "${{ github.event.inputs.whats_new }}" >> whats_new/whatsnew-en-US
+      - uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SECRET }}
+          packageName: me.hufman.androidautoidrive
+          releaseFiles: "bundle/*/*.aab"
+          track: internal
+          whatsNewDirectory: whats_new
