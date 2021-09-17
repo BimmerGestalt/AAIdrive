@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <!-- View Bluetooth status -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <!-- But don't require Bluetooth support -->
+    <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
 
     <permission android:name="bimmergestalt.permission.CDS_normal"
         android:description="@string/permission_cds_normal"
