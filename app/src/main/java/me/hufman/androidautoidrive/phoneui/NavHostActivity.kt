@@ -28,13 +28,13 @@ class NavHostActivity: AppCompatActivity() {
 		super.onCreate(savedInstanceState)
 		Analytics.init(this)
 		AppSettings.loadSettings(this)
-		L.loadResources(this)
 		CarInformation.loadCache(MutableAppSettingsReceiver(applicationContext))
 
 		if (!AppSettings[AppSettings.KEYS.FIRST_START_DONE].toBoolean()) {
 			val intent = Intent(this, WelcomeActivity::class.java)
 			startActivity(intent)
 			finish()
+			return
 		}
 
 		setContentView(R.layout.activity_navhost)

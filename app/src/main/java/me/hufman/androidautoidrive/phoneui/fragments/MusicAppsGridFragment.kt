@@ -1,7 +1,6 @@
 package me.hufman.androidautoidrive.phoneui.fragments
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 import java.lang.IllegalStateException
 
 class MusicAppsGridFragment: Fragment() {
-	val handler = Handler()
 	val appsViewModel by activityViewModels<MusicAppsViewModel> { MusicAppsViewModel.Factory(requireActivity().applicationContext) }
 	private val appsChangedCallback = ObservableListCallback<MusicAppInfo> {
 		view?.findViewById<NestedGridView>(R.id.listMusicApps)?.invalidateViews() // redraw the app list
@@ -46,7 +44,6 @@ class MusicAppsGridFragment: Fragment() {
 
 	override fun onResume() {
 		super.onResume()
-
 		// update the music apps list, including any music sessions
 		appsViewModel.musicAppDiscoveryThread.discovery()
 	}
