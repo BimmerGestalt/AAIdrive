@@ -32,7 +32,7 @@ class ExampleInstrumentedTest {
                 val signedCert = CertMangling.mergeBMWCert(appCert, securityAccess.fetchBMWCerts(appContext.packageName))
                 val certs = CertMangling.loadCerts(signedCert)
                 certs?.forEach {
-                    Log.i("Test", CertMangling.getCN(it))
+                    Log.i("Test", CertMangling.getCN(it) ?: "")
                 }
             }
         }
