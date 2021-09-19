@@ -23,6 +23,9 @@ def TRAVIS_BRANCH = System.env.TRAVIS_PULL_REQUEST == "true" ? System.env.TRAVIS
 
 android {
     compileSdkVersion 30
+    androidGitVersion {
+        hideBranches = [ 'main' ]
+    }
     defaultConfig {
         applicationId "me.hufman.androidautoidrive"
         minSdkVersion 23
