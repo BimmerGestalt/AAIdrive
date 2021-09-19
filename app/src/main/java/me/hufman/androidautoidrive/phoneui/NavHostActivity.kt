@@ -26,8 +26,10 @@ class NavHostActivity: AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		Analytics.init(this)
 		AppSettings.loadSettings(this)
+		if (AppSettings[AppSettings.KEYS.ENABLED_ANALYTICS].toBoolean()) {
+			Analytics.init(this)
+		}
 		CarInformation.loadCache(MutableAppSettingsReceiver(applicationContext))
 
 		if (!AppSettings[AppSettings.KEYS.FIRST_START_DONE].toBoolean()) {

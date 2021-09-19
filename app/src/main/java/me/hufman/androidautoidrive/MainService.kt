@@ -122,7 +122,10 @@ class MainService: Service() {
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-		Analytics.init(applicationContext)
+		AppSettings.loadSettings(applicationContext)
+		if (AppSettings[AppSettings.KEYS.ENABLED_ANALYTICS].toBoolean()) {
+			Analytics.init(applicationContext)
+		}
 
 		val action = intent?.action ?: ""
 		if (action == ACTION_START) {
