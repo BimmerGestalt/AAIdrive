@@ -104,7 +104,6 @@
                 android:visibility="@{settings.notificationReadoutPopup}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/settings_vertical_margin"
                 android:orientation="vertical"
                 android:layout_marginStart="24dp">
 
@@ -114,6 +113,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
+                    android:paddingBottom="@dimen/settings_vertical_margin"
                     android:text="@string/notification_readout_popup_passenger" />
             </LinearLayout>
         </LinearLayout>

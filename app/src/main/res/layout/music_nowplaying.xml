@@ -147,7 +147,7 @@
             <androidx.appcompat.widget.AppCompatSeekBar
                 android:id="@+id/seekProgress"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:onProgressChanged="@{(view, value, fromUser) -> fromUser ? controller.seekTo(value * 1000) : void}"
                 android:progress="@{viewModel.playbackPosition}"
                 android:max="@{viewModel.maxPosition}"/>
@@ -160,7 +160,7 @@
                 <ImageButton
                     android:id="@+id/btnPrevious"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
@@ -170,7 +170,7 @@
                 <ImageButton
                     android:id="@+id/btnPlay"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
@@ -181,7 +181,7 @@
                 <ImageButton
                     android:id="@+id/btnNext"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"

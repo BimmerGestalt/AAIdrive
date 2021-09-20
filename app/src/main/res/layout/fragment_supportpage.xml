@@ -68,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
-                    android:paddingBottom="12dp"
+                    android:minHeight="48dp"
                     android:orientation="horizontal"
                     android:gravity="center"
                     android:onClick="@{controller::onClickFeedback}">
@@ -87,7 +87,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
-                    android:paddingBottom="12dp"
+                    android:minHeight="48dp"
                     android:orientation="horizontal"
                     android:gravity="center"
                     android:onClick="@{controller::onClickIssues}">
@@ -106,7 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
-                    android:paddingBottom="12dp"
+                    android:minHeight="48dp"
                     android:orientation="horizontal"
                     android:gravity="center"
                     android:onClick="@{controller::onClickShare}">
