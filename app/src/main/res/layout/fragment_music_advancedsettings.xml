@@ -14,6 +14,7 @@
             android:checked="@={settings.audioContext}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:text="@string/enable_audio_context"
             android:layout_marginBottom="@dimen/settings_vertical_margin" />
 
@@ -22,6 +23,7 @@
             android:checked="@={settings.spotifyLayout}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:text="@string/enable_spotify_layout"
             android:layout_marginBottom="@dimen/settings_vertical_margin" />
 
@@ -30,6 +32,7 @@
             android:checked="@={settings.audioplayerLayout}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:text="@string/enable_audioplayer_layout"
             android:layout_marginBottom="@dimen/settings_vertical_margin" />
 

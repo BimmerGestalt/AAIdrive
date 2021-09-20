@@ -66,15 +66,17 @@
                         android:onClick="@{() -> callback.openIntent(data.intentSettings)}" />
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="12dp"
                         android:contentDescription="@string/addonNormalPermission"
                         android:src="@{data.cdsNormalGranted ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
                         android:visibility="@{data.cdsNormalRequested ? View.VISIBLE : View.INVISIBLE}"
                         android:onClick="@{() -> callback.openApplicationPermissions(data)}" />
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="12dp"
                         android:contentDescription="@string/addonPersonalPermission"
                         android:src="@{data.cdsPersonalGranted ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
                         android:visibility="@{data.cdsPersonalRequested ? View.VISIBLE : View.INVISIBLE}"

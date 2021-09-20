@@ -57,7 +57,7 @@
                 <LinearLayout
                     android:id="@+id/paneMusicAppFeatures"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="48dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:onClick="@{() -> callback.toggleFeatures(txtMusicAppFeatures)}">
@@ -74,8 +74,9 @@
 
                     <ImageButton
                         android:id="@+id/imgSettings"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="4dp"
                         android:contentDescription="@string/btn_configure"
                         app:tint="?android:attr/textColorSecondary"
                         android:src="@drawable/ic_settings_feather"

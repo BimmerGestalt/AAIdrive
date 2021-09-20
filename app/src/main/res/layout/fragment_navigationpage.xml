@@ -56,6 +56,7 @@
                         android:id="@+id/txtNavigationAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:minHeight="48dp"
                         android:paddingEnd="24dp"
                         android:inputType="text"
                         android:imeOptions="actionSearch"
@@ -73,9 +74,10 @@
                 </FrameLayout>
 
                 <ImageButton
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_weight="0"
+                    android:drawablePadding="8dp"
                     android:contentDescription="@string/btn_search"
                     app:tint="?android:attr/textColorSecondary"
                     android:src="@drawable/ic_search_black_24dp"

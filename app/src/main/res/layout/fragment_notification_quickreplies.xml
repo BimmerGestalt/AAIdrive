@@ -15,6 +15,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:gravity="center_vertical"
             android:textColor="?android:attr/textColorPrimary"
             android:text="@string/notification_quickreplies"
             android:layout_marginBottom="@dimen/settings_vertical_margin" />
@@ -23,6 +25,7 @@
             android:id="@+id/listNotificationQuickReplies"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="140dp"
             android:layout_marginStart="4dp"/>
 
         <LinearLayout
@@ -35,12 +38,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:minHeight="48dp"
                 android:inputType="text"
                 android:text="@={controller.currentInput}"
                 android:onEditorAction="@{(v, id, event) -> event != null ? controller.addItem() : true}"/>
             <ImageButton
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:drawablePadding="8dp"
                 android:layout_weight="0"
                 android:scaleType="fitCenter"
                 android:contentDescription="@string/btn_add"
