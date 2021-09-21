@@ -61,8 +61,9 @@ class FirstStartPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm,
 		WelcomeDependenciesFragment(),
 		WelcomeNotificationFragment(),
 		WelcomeMusicFragment(),
+		if (WelcomeAnalyticsFragment.isSupported()) WelcomeAnalyticsFragment() else null,
 		WelcomeCompleteFragment()
-	)
+	).filterNotNull()
 
 	override fun getCount(): Int {
 		return tabs.size
