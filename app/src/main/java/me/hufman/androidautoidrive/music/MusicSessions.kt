@@ -115,8 +115,8 @@ class MusicSessions(val context: Context) {
 			val sessions = mediaManager.getActiveSessions(ComponentName(context, NotificationListenerServiceImpl::class.java))
 			return sessions.filter {
 				isControllable(it.playbackState?.actions ?: 0)
-			}.map {
-				MusicAppInfo.getInstance(context, it.packageName, null).apply {
+			}.mapNotNull {
+				MusicAppInfo.getInstance(context, it.packageName, null)?.apply {
 					this.controllable = true
 					val actions = it.playbackState?.actions ?: 0
 					this.playsearchable = actions and PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH > 0
@@ -138,8 +138,13 @@ class MusicSessions(val context: Context) {
 				val state = session.playbackState?.state ?: 0
 				if (isControllable(actions) && state == STATE_PLAYING) {
 					Log.i(TAG, "Found mediaSession for ${session.packageName}")
-					return MusicAppInfo.getInstance(context, session.packageName, null).apply {
+					val appInfo = MusicAppInfo.getInstance(context, session.packageName, null)?.apply {
 						this.controllable = true
+					}
+					if (appInfo != null) {
+						return appInfo
+					} else {
+						Log.w(TAG, "Failed to load MusicAppInfo for ${session.packageName}")
 					}
 				}
 			}

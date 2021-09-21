@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.music
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.AMAppInfo
@@ -33,13 +34,17 @@ data class MusicAppInfo(override val name: String, override val icon: Drawable,
 
 	// general helpers
 	companion object {
-		fun getInstance(context: Context, packageName: String, className: String?): MusicAppInfo {
+		fun getInstance(context: Context, packageName: String, className: String?): MusicAppInfo? {
 			val packageManager = context.packageManager
 
-			val appInfo = packageManager.getApplicationInfo(packageName, 0)
-			val name = packageManager.getApplicationLabel(appInfo).toString()
-			val icon = packageManager.getApplicationIcon(appInfo)
-			return MusicAppInfo(name, icon, packageName, className)
+			return try {
+				val appInfo = packageManager.getApplicationInfo(packageName, 0)
+				val name = packageManager.getApplicationLabel(appInfo).toString()
+				val icon = packageManager.getApplicationIcon(appInfo)
+				MusicAppInfo(name, icon, packageName, className)
+			} catch (e: PackageManager.NameNotFoundException) {
+				null
+			}
 		}
 
 		fun guessCategory(packageName: String, label: String): AMCategory {

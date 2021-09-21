@@ -34,6 +34,10 @@
         <intent>
             <action android:name="android.media.browse.MediaBrowserService" />
         </intent>
+        <!-- Search for applications that may play music without using MediaBrowserService -->
+        <intent>
+            <action android:name="android.intent.action.MEDIA_BUTTON" />
+        </intent>
         <!-- Search for browsers to open Spotify Web Auth -->
         <intent>
             <action android:name="android.intent.action.VIEW" />

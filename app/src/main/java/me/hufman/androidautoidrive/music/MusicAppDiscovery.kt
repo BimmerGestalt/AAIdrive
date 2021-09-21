@@ -120,7 +120,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 		val packageManager = context.packageManager
 		val intent = Intent(MediaBrowserServiceCompat.SERVICE_INTERFACE)
 		val services = packageManager.queryIntentServices(intent, 0)
-		discoveredApps.addAll(services.map {
+		discoveredApps.addAll(services.mapNotNull {
 			val appInfo = it.serviceInfo.applicationInfo
 			val name = packageManager.getApplicationLabel(appInfo).toString()
 			Log.i(TAG, "Found music app $name")

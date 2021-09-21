@@ -166,16 +166,16 @@ class AVContextTest {
 		MEDIA_APPS.forEach { (name, packageName) ->
 			whenever(mockPackageManager.getApplicationLabel(any())) doReturn name
 			assertEquals("$name is Multimedia", AMCategory.MULTIMEDIA, MusicAppInfo.guessCategory(packageName, name))
-			assertEquals("$name info is Multimedia", AMCategory.MULTIMEDIA, MusicAppInfo.getInstance(mockContext, packageName, null).category)
+			assertEquals("$name info is Multimedia", AMCategory.MULTIMEDIA, MusicAppInfo.getInstance(mockContext, packageName, null)?.category)
 		}
 		RADIO_APPS.forEach { (name, packageName) ->
 			whenever(mockPackageManager.getApplicationLabel(any())) doReturn name
 			assertEquals("$name is Radio", AMCategory.RADIO, MusicAppInfo.guessCategory(packageName, name))
-			assertEquals("$name info is Radio", AMCategory.RADIO, MusicAppInfo.getInstance(mockContext, packageName, null).category)
+			assertEquals("$name info is Radio", AMCategory.RADIO, MusicAppInfo.getInstance(mockContext, packageName, null)?.category)
 		}
 
 		whenever(mockPackageManager.getApplicationLabel(any())) doReturn "Spotify"
-		val testCategory = MusicAppInfo.getInstance(mockContext, MEDIA_APPS.getValue("Spotify"), null)
+		val testCategory = MusicAppInfo.getInstance(mockContext, MEDIA_APPS.getValue("Spotify"), null)!!
 		testCategory.forcedCategory = AMCategory.ADDRESSBOOK
 		assertEquals(AMCategory.ADDRESSBOOK, testCategory.category)
 	}
