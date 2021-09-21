@@ -124,6 +124,9 @@
     <string name="lbl_language_prefercar">Preferuj język samochodowy a nie język telefonu</string>
     <string name="lbl_language_prefercar_code">Preferuj język samochodowy (%s) a nie język telefonu</string>
     <string name="lbl_language_forcelanguage">Wymuś określony język </string>
+    <string name="lbl_analytics_intro">AAIdrive jest nieoficjalnym projektem hobbistycznym, niewspieranym w żaden sposób przez BMW, bazującym na protokole inżynierii odwrotnej. Jestem dumny z jego funkcjonalności i stabilności, ale awarie mogą się jeszcze zdarzyć. Rozważ włączenie analityki do automatycznego wysyłania raportów o awariach w celu debugowania.</string>
+    <string name="lbl_analytics_description">Oprócz raportów o awariach, włączenie analizy spowoduje również przesłanie listy zainstalowanych aplikacji muzycznych oraz anonimowych informacji o samochodzie, aby pomóc w nadaniu priorytetu rozwojowi aplikacji.</string>
+    <string name="lbl_analytics_enabled">Włącz analizę i raportowanie awarii</string>
     <string name="lbl_donations_volunteer">AAIdrive to projekt darmowy, wolontariacki, otwarto źródłowy</string>
     <string name="lbl_donations_request">Jeśli podoba Ci się ten projekt i uznasz go za przydatny, rozważ okazanie wsparcia, przekazując:</string>
     <string name="btn_donations">Darowizna</string>
