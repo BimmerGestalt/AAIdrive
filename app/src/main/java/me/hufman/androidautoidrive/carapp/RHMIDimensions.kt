@@ -48,10 +48,7 @@ class SubsetRHMIDimensions(override val rhmiWidth: Int, override val rhmiHeight:
 	override val paddingTop: Int = 0
 	override val marginRight: Int = 0
 }
-class Mini5Dimensions: MiniDimensions(980, 540) {
-	override val marginLeft: Int = 0
-	override val paddingLeft: Int = 170
-}
+
 class GenericRHMIDimensions(override val rhmiWidth: Int, override val rhmiHeight: Int): RHMIDimensions {
 	/*
 	@jezikk82 calculated the following sizes
@@ -98,8 +95,10 @@ class Mini5XLDimensions: MiniDimensions(1440, 540) {
 	override val marginLeft: Int = 0
 	override val paddingLeft: Int = 168     // so we can remove all of the padding
 }
-
-/**
+class Mini5Dimensions: MiniDimensions(980, 540) {
+	override val marginLeft: Int = 0
+	override val paddingLeft: Int = 170
+}
  * Wraps an existing RHMIDimensions to toggle the marginRight based on an open sidebar
  */
 class SidebarRHMIDimensions(val fullscreen: RHMIDimensions, val isWidescreen: () -> Boolean): RHMIDimensions {
