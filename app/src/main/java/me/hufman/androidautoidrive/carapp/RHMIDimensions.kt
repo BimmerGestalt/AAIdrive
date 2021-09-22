@@ -100,7 +100,7 @@ class Mini5Dimensions: MiniDimensions(980, 540) {
 	override val marginLeft: Int = 0
 	override val paddingLeft: Int = 170
 }
-
+/**
  * Wraps an existing RHMIDimensions to toggle the marginRight based on an open sidebar
  */
 class SidebarRHMIDimensions(val fullscreen: RHMIDimensions, val isWidescreen: () -> Boolean): RHMIDimensions {
