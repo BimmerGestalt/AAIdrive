@@ -5,8 +5,6 @@ import android.os.Looper
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
-import java.lang.IllegalStateException
-import java.lang.RuntimeException
 
 const val TAG = "CarThread"
 /**

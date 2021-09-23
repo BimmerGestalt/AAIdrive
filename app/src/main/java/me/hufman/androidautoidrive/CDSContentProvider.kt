@@ -7,11 +7,10 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.BaseColumns
 import com.google.gson.JsonObject
+import io.bimmergestalt.idriveconnectkit.CDSProperty
 import me.hufman.androidautoidrive.carapp.CDSData
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.carapp.CDSEventHandler
-import io.bimmergestalt.idriveconnectkit.CDSProperty
-import java.lang.IllegalArgumentException
 import java.util.*
 
 class CDSContentProvider: ContentProvider(), CDSEventHandler {

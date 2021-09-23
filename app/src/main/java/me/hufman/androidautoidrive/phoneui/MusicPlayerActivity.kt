@@ -2,10 +2,10 @@ package me.hufman.androidautoidrive.phoneui
 
 import android.os.Bundle
 import android.os.Handler
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import me.hufman.androidautoidrive.R

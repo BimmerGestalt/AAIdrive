@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.carapp.notifications.views
 
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
+import me.hufman.androidautoidrive.carapp.L
 
 class PermissionView(val state: RHMIState) {
 	companion object {

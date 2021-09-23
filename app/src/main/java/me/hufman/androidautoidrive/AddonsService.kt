@@ -5,12 +5,10 @@ import android.content.Context
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
-import me.hufman.androidautoidrive.addons.AddonAppInfo
-import me.hufman.androidautoidrive.addons.AddonDiscovery
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
-import java.lang.Exception
-import java.lang.IllegalArgumentException
+import me.hufman.androidautoidrive.addons.AddonAppInfo
+import me.hufman.androidautoidrive.addons.AddonDiscovery
 
 class AddonsService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess) {
 	companion object {

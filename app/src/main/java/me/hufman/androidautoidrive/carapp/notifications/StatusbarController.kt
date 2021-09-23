@@ -1,9 +1,9 @@
 package me.hufman.androidautoidrive.carapp.notifications
 
 import de.bmw.idrive.BMWRemoting
-import me.hufman.androidautoidrive.notifications.CarNotification
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIActionListCallback
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
+import me.hufman.androidautoidrive.notifications.CarNotification
 
 interface StatusbarController {
 	fun add(sbn: CarNotification)

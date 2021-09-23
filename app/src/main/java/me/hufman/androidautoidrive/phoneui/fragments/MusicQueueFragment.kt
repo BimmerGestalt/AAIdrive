@@ -10,14 +10,13 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import kotlin.collections.ArrayList
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.databinding.MusicQueuePageBinding
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.QueueMetadata
-import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
+import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicPlayerQueueItem
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 

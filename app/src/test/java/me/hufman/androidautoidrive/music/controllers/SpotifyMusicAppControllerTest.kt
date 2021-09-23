@@ -15,6 +15,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.MockAppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.music.*

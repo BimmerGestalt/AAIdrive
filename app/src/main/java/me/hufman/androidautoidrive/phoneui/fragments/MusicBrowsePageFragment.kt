@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
@@ -18,6 +17,7 @@ import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
 import me.hufman.androidautoidrive.phoneui.viewmodels.*
+import kotlin.coroutines.CoroutineContext
 
 class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 	override val coroutineContext: CoroutineContext

@@ -7,7 +7,6 @@ import android.util.Log
 import com.google.openlocationcode.OpenLocationCode
 import me.hufman.androidautoidrive.carapp.maps.LatLong
 import java.io.IOException
-import java.lang.IllegalArgumentException
 import java.net.*
 
 

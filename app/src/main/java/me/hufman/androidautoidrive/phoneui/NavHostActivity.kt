@@ -18,7 +18,6 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.databinding.NavHeaderBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
-import java.lang.IllegalStateException
 
 class NavHostActivity: AppCompatActivity() {
 

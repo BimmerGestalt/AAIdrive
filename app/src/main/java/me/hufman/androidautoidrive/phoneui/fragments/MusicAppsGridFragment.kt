@@ -13,7 +13,6 @@ import me.hufman.androidautoidrive.phoneui.adapters.DataBoundArrayAdapter
 import me.hufman.androidautoidrive.phoneui.adapters.ObservableListCallback
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicAppsViewModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
-import java.lang.IllegalStateException
 
 class MusicAppsGridFragment: Fragment() {
 	val appsViewModel by activityViewModels<MusicAppsViewModel> { MusicAppsViewModel.Factory(requireActivity().applicationContext) }

@@ -8,23 +8,19 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
-import me.hufman.androidautoidrive.*
+import io.bimmergestalt.idriveconnectkit.CDS
+import io.bimmergestalt.idriveconnectkit.IDriveConnection
+import io.bimmergestalt.idriveconnectkit.android.CarAppResources
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.rhmi.*
+import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.notifications.views.*
 import me.hufman.androidautoidrive.notifications.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.Utils
 import me.hufman.androidautoidrive.utils.removeFirst
-import io.bimmergestalt.idriveconnectkit.CDS
-import io.bimmergestalt.idriveconnectkit.IDriveConnection
-import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationIdempotent
-import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationSynchronized
-import io.bimmergestalt.idriveconnectkit.android.CarAppResources
-import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
-import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
-import io.bimmergestalt.idriveconnectkit.rhmi.*
-import java.lang.IllegalArgumentException
-import java.lang.RuntimeException
 import java.util.*
 
 const val TAG = "PhoneNotifications"

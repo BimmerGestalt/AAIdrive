@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive.phoneui.controllers
 
-import androidx.lifecycle.*
+import androidx.lifecycle.Observer
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.DefaultDispatcherProvider
 import me.hufman.androidautoidrive.DispatcherProvider

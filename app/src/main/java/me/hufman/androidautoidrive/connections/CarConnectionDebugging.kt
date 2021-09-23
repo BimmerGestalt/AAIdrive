@@ -6,7 +6,6 @@ import android.provider.Settings
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
 import io.bimmergestalt.idriveconnectkit.android.security.KnownSecurityServices
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
-import java.lang.Exception
 
 /**
  * Assists in determining prerequisites and difficulties in the car connection

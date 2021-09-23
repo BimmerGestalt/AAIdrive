@@ -1,10 +1,10 @@
 package me.hufman.androidautoidrive.carapp.notifications.views
 
 import android.util.Log
-import me.hufman.androidautoidrive.notifications.CarNotification
-import me.hufman.androidautoidrive.carapp.notifications.TAG
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import io.bimmergestalt.idriveconnectkit.rhmi.mocking.RHMIApplicationMock
+import me.hufman.androidautoidrive.carapp.notifications.TAG
+import me.hufman.androidautoidrive.notifications.CarNotification
 
 class ID4PopupView(val state: RHMIState): PopupView {
 	companion object {

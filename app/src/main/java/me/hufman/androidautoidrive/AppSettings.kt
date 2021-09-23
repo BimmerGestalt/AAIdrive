@@ -10,7 +10,6 @@ import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonArray
 import com.google.gson.JsonParser
-import java.lang.IllegalStateException
 
 /**
  * This implements read-only access to a singleton of loaded settings

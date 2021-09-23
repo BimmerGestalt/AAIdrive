@@ -27,7 +27,6 @@ import androidx.core.app.NotificationManagerCompat.*
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.PhoneAppResourcesAndroid
 import me.hufman.androidautoidrive.UnicodeCleaner
-import java.lang.ClassCastException
 
 class NotificationParser(val notificationManager: NotificationManager, val phoneAppResources: PhoneAppResources, val remoteViewInflater: (RemoteViews) -> View) {
 	/**

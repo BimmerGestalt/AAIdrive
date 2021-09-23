@@ -14,13 +14,13 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.findParent
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.scrollTop
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
+import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
 import me.hufman.androidautoidrive.phoneui.viewmodels.CapabilitiesTipsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionTipsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.TipsModel
-import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
 class TipsListFragment: Fragment() {

@@ -13,6 +13,7 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import me.hufman.androidautoidrive.carapp.L
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.ByteArrayInputStream

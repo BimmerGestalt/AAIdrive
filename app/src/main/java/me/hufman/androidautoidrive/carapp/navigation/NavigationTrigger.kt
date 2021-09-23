@@ -6,10 +6,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Handler
 import android.util.Log
-import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger.Companion.TAG
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplication
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
-import java.lang.IllegalArgumentException
+import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger.Companion.TAG
 
 interface NavigationTrigger {
 	companion object {

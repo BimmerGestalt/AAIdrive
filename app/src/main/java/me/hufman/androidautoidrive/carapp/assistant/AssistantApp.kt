@@ -3,12 +3,12 @@ package me.hufman.androidautoidrive.carapp.assistant
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
-import me.hufman.androidautoidrive.utils.GraphicsHelpers
-import me.hufman.androidautoidrive.carapp.AMAppList
 import io.bimmergestalt.idriveconnectkit.IDriveConnection
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import me.hufman.androidautoidrive.carapp.AMAppList
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 
 class AssistantApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val controller: AssistantController, val graphicsHelpers: GraphicsHelpers) {
 	val TAG = "AssistantApp"

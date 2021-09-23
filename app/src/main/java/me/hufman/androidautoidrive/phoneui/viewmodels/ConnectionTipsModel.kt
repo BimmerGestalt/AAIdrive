@@ -2,7 +2,6 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.os.Handler
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

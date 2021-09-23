@@ -21,6 +21,7 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
+import me.hufman.androidautoidrive.carapp.L
 import org.awaitility.Awaitility.await
 import org.junit.Assert.*
 import org.junit.Before

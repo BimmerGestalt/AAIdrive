@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.content.res.ResourcesCompat
-import java.lang.Exception
+import me.hufman.androidautoidrive.carapp.L
 
 open class CustomAction(val packageName: String, val action: String, val name: String, private val _iconId: Int, val icon: Drawable?, val extras: Bundle?, val providesAction: MusicAction?) {
 	companion object {

@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import me.hufman.androidautoidrive.databinding.WelcomeNotificationBinding
 import me.hufman.androidautoidrive.phoneui.controllers.NotificationPageController
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
-import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.NotificationSettingsModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
 class WelcomeNotificationFragment: Fragment() {

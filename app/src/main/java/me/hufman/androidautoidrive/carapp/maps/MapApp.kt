@@ -7,17 +7,17 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
-import me.hufman.androidautoidrive.carapp.*
-import me.hufman.androidautoidrive.carapp.maps.views.MenuView
-import me.hufman.androidautoidrive.utils.removeFirst
 import io.bimmergestalt.idriveconnectkit.IDriveConnection
-import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationIdempotent
-import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationSynchronized
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
-import java.lang.IllegalArgumentException
+import me.hufman.androidautoidrive.carapp.FullImageInteraction
+import me.hufman.androidautoidrive.carapp.FullImageView
+import me.hufman.androidautoidrive.carapp.InputState
+import me.hufman.androidautoidrive.carapp.RHMIUtils
+import me.hufman.androidautoidrive.carapp.maps.views.MenuView
+import me.hufman.androidautoidrive.utils.removeFirst
 import java.util.*
 import kotlin.collections.ArrayList
 
