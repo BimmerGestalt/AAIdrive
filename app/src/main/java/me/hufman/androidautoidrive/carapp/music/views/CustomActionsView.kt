@@ -7,7 +7,7 @@ import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.CustomActionDwell
 import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.idriveconnectionkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 
 class CustomActionsView(val state: RHMIState, val graphicsHelpers: GraphicsHelpers, val musicController: MusicController) {
 	companion object {

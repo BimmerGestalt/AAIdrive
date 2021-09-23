@@ -9,8 +9,8 @@ import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.utils.awaitPending
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
-import me.hufman.idriveconnectionkit.rhmi.VisibleCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
+import io.bimmergestalt.idriveconnectkit.rhmi.VisibleCallback
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 

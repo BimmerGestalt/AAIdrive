@@ -21,7 +21,7 @@ import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.combine
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.format
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsInt
-import me.hufman.idriveconnectionkit.CDS
+import io.bimmergestalt.idriveconnectkit.CDS
 import java.lang.Exception
 import java.lang.Math.round
 import java.text.DateFormat

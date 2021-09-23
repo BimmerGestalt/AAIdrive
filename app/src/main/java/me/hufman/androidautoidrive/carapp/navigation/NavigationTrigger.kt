@@ -6,11 +6,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Handler
 import android.util.Log
-import com.google.openlocationcode.OpenLocationCode
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger.Companion.TAG
-import me.hufman.androidautoidrive.carapp.maps.LatLong
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplication
-import me.hufman.idriveconnectionkit.rhmi.RHMIEvent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplication
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
 import java.lang.IllegalArgumentException
 
 interface NavigationTrigger {

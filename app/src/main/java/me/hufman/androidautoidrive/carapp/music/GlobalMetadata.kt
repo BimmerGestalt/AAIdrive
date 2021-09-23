@@ -7,7 +7,7 @@ import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.idriveconnectionkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import kotlin.math.max
 import kotlin.math.min
 

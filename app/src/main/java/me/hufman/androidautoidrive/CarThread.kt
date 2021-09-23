@@ -4,7 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
 import java.lang.IllegalStateException
 import java.lang.RuntimeException
 

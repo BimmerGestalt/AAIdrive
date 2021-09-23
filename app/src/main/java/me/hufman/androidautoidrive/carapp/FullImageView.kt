@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive.carapp
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.carapp.maps.FrameUpdater
-import me.hufman.idriveconnectionkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 
 /**
  * Callbacks for user interactions with the fullscreen display

@@ -6,7 +6,7 @@ import de.bmw.idrive.BMWRemotingServer
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 
 class AVContextHandler(val iDriveConnectionStatus: IDriveConnectionStatus, val carConnection: BMWRemotingServer, val controller: MusicController, val graphicsHelpers: GraphicsHelpers, val musicAppMode: MusicAppMode) {
 	val MY_IDENT = "me.hufman.androidautoidrive.music"  // AM and AV ident string

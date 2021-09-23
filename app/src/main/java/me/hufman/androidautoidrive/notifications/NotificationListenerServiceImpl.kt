@@ -20,7 +20,7 @@ import me.hufman.androidautoidrive.CarConnectionListener
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent.Companion.INTENT_INTERACTION
 import me.hufman.androidautoidrive.notifications.NotificationParser.Companion.dumpNotification
-import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
 import java.lang.NullPointerException
 import java.lang.RuntimeException
 

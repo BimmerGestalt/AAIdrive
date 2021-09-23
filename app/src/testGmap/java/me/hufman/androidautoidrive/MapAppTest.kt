@@ -11,11 +11,11 @@ import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
 import me.hufman.androidautoidrive.carapp.maps.VirtualDisplayScreenCapture
 import me.hufman.androidautoidrive.carapp.maps.MapApp
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
-import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.IDriveConnection
+import io.bimmergestalt.idriveconnectkit.android.CarAppResources
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.ArgumentCaptor

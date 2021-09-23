@@ -9,7 +9,7 @@ import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.QueueMetadata
 import me.hufman.androidautoidrive.utils.truncate
-import me.hufman.idriveconnectionkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import kotlin.math.max
 
 class EnqueuedView(val state: RHMIState, val musicController: MusicController, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {

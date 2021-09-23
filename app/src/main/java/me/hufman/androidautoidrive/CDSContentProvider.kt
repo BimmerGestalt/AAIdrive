@@ -6,15 +6,13 @@ import android.database.AbstractCursor
 import android.database.Cursor
 import android.net.Uri
 import android.provider.BaseColumns
-import android.util.Log
 import com.google.gson.JsonObject
 import me.hufman.androidautoidrive.carapp.CDSData
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.carapp.CDSEventHandler
-import me.hufman.idriveconnectionkit.CDSProperty
+import io.bimmergestalt.idriveconnectkit.CDSProperty
 import java.lang.IllegalArgumentException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class CDSContentProvider: ContentProvider(), CDSEventHandler {
 	companion object {

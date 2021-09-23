@@ -16,7 +16,7 @@ import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeAudioSta
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeToolbarState
 import me.hufman.androidautoidrive.carapp.RHMIUtils.findAdjacentComponent
 import me.hufman.androidautoidrive.music.*
-import me.hufman.idriveconnectionkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 
 class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {

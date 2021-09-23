@@ -3,10 +3,10 @@ package me.hufman.androidautoidrive
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.carapp.*
-import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.IDriveConnection
+import io.bimmergestalt.idriveconnectkit.android.CarAppResources
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import java.lang.Exception
 
 class CarInformationDiscovery(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, carAppAssets: CarAppResources, val listener: CarInformationDiscoveryListener) {

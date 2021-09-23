@@ -1,7 +1,7 @@
 package me.hufman.androidautoidrive.carapp.music.components
 
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
-import me.hufman.idriveconnectionkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 
 interface ProgressGauge {
 	/**

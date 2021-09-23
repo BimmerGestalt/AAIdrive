@@ -3,8 +3,8 @@ package me.hufman.androidautoidrive
 import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import me.hufman.idriveconnectionkit.android.CertMangling
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.android.CertMangling
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import org.awaitility.Awaitility.await
 
 import org.junit.Test

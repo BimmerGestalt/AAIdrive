@@ -13,7 +13,7 @@ import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.liveData
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
-import me.hufman.idriveconnectionkit.CDS
+import io.bimmergestalt.idriveconnectkit.CDS
 
 class CarAdvancedInfoFragment: Fragment() {
 	companion object {

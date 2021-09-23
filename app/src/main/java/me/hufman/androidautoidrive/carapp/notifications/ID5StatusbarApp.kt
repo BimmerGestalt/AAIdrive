@@ -8,11 +8,11 @@ import me.hufman.androidautoidrive.CarAppAssetManager
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.notifications.views.ID5PopupView
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
-import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import me.hufman.idriveconnectionkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.IDriveConnection
+import io.bimmergestalt.idriveconnectkit.android.CarAppResources
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import java.lang.RuntimeException
 import java.util.zip.ZipInputStream
 

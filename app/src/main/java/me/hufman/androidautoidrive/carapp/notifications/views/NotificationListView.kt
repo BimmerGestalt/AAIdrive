@@ -12,7 +12,7 @@ import me.hufman.androidautoidrive.carapp.notifications.TAG
 import me.hufman.androidautoidrive.notifications.CarNotification
 import me.hufman.androidautoidrive.notifications.NotificationsState
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
-import me.hufman.idriveconnectionkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import java.util.*
 
 class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHelpers, val settings: NotificationSettings,

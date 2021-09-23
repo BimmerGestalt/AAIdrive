@@ -8,7 +8,7 @@ import me.hufman.androidautoidrive.carapp.music.AVContextHandler
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
-import me.hufman.idriveconnectionkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 
 class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery, val avContext: AVContextHandler, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 

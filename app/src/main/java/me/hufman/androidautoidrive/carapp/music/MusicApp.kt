@@ -13,14 +13,14 @@ import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.utils.removeFirst
-import me.hufman.idriveconnectionkit.CDS
-import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
-import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import me.hufman.idriveconnectionkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.CDS
+import io.bimmergestalt.idriveconnectkit.IDriveConnection
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationIdempotent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationSynchronized
+import io.bimmergestalt.idriveconnectkit.android.CarAppResources
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import kotlin.collections.ArrayList
 
 

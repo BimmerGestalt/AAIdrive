@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive.carapp.notifications.views
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.notifications.ReplyController
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 
 class ReplyView(destState: RHMIState, inputState: RHMIState, val replyController: ReplyController): InputState<CharSequence>(inputState) {
 	// only send once

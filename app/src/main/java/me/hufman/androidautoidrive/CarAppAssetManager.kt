@@ -1,9 +1,9 @@
 package me.hufman.androidautoidrive
 
 import android.content.Context
-import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.CertMangling
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.android.CarAppResources
+import io.bimmergestalt.idriveconnectkit.android.CertMangling
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import java.io.ByteArrayInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream

@@ -7,8 +7,8 @@ import android.os.IBinder
 import android.util.Log
 import me.hufman.androidautoidrive.addons.AddonAppInfo
 import me.hufman.androidautoidrive.addons.AddonDiscovery
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 

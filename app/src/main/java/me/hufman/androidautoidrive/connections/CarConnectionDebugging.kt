@@ -3,9 +3,9 @@ package me.hufman.androidautoidrive.connections
 import android.content.Context
 import android.os.SystemClock
 import android.provider.Settings
-import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
-import me.hufman.idriveconnectionkit.android.security.KnownSecurityServices
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
+import io.bimmergestalt.idriveconnectkit.android.security.KnownSecurityServices
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import java.lang.Exception
 
 /**

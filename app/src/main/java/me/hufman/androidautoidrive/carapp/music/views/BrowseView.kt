@@ -8,9 +8,9 @@ import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.idriveconnectionkit.rhmi.FocusCallback
-import me.hufman.idriveconnectionkit.rhmi.RHMIAction
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
+import io.bimmergestalt.idriveconnectkit.rhmi.FocusCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import java.util.*
 
 data class BrowseState(val location: MusicMetadata?,    // the directory the user selected

@@ -4,7 +4,7 @@ import android.util.Log
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.maps.FrameUpdater
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
-import me.hufman.idriveconnectionkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 
 class MenuView(val state: RHMIState, val interaction: MapInteractionController, val frameUpdater: FrameUpdater) {
 	companion object {

@@ -1,10 +1,10 @@
 package me.hufman.androidautoidrive
 
 import me.hufman.androidautoidrive.carapp.RHMIApplicationSwappable
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
-import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
-import me.hufman.idriveconnectionkit.rhmi.RHMIEvent
-import me.hufman.idriveconnectionkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationConcrete
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

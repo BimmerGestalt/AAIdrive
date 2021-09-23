@@ -13,8 +13,8 @@ import me.hufman.androidautoidrive.notifications.AudioPlayer
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import java.lang.Exception
 
 class NotificationService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carInformationObserver: CarInformationObserver) {

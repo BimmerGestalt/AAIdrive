@@ -17,11 +17,11 @@ import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.phoneui.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
-import me.hufman.idriveconnectionkit.CDS
-import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
-import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
-import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.CDS
+import io.bimmergestalt.idriveconnectkit.android.CarAPIAppInfo
+import io.bimmergestalt.idriveconnectkit.android.CarAPIDiscovery
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import java.lang.IllegalArgumentException
 import java.util.*
 

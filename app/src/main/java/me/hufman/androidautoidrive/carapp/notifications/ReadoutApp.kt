@@ -5,12 +5,12 @@ import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import me.hufman.androidautoidrive.carapp.*
-import me.hufman.idriveconnectionkit.CDS
-import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import me.hufman.idriveconnectionkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.CDS
+import io.bimmergestalt.idriveconnectkit.IDriveConnection
+import io.bimmergestalt.idriveconnectkit.android.CarAppResources
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import java.lang.RuntimeException
 
 class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, carAppAssets: CarAppResources) {
