@@ -436,11 +436,11 @@ dependencies {
     androidTestImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     androidTestImplementation 'com.github.tmurakami:dexopener:2.0.5'
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
-    implementation project(path: ':IDriveConnectKitAndroid')
-    implementation project(path: ':IDriveConnectKit')
-    testImplementation project(path: ':IDriveConnectKit')
-    androidTestImplementation project(path: ':IDriveConnectKitAndroid')
-    androidTestImplementation project(path: ':IDriveConnectKit')
+    implementation 'io.bimmergestalt:IDriveConnectKit:0.1'
+    implementation 'io.bimmergestalt:IDriveConnectKitAndroid:0.1'
+    testImplementation 'io.bimmergestalt:IDriveConnectKit:0.1'
+    androidTestImplementation 'io.bimmergestalt:IDriveConnectKit:0.1'
+    androidTestImplementation 'io.bimmergestalt:IDriveConnectKitAndroid:0.1'
     androidTestImplementation "org.bouncycastle:bcmail-jdk16:1.46"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
     testImplementation "org.powermock:powermock-core:2.0.9"

@@ -77,9 +77,6 @@ jobs:
             external
       - name: Download build dependencies
         uses: ./.github/actions/download-externals-action
-      - name: Download Etch Compiler
-        # Gradle Download tries to use ipv6, which isn't working for macos runner
-        run: mkdir -p IDriveConnectKitAndroid/build/etch/ && wget --no-verbose --inet4-only https://archive.apache.org/dist/etch/1.4.0/apache-etch-1.4.0-windows-x86-bin.zip -O IDriveConnectKitAndroid/build/etch/apache-etch-1.4.0-windows-x86-bin.zip
       - name: Build the project
         run: ./gradlew compileDebug --stacktrace
       - name: Prepare emulator
