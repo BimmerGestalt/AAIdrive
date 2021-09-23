@@ -55,7 +55,10 @@ class LanguageSettingsModelTest {
 
 	@Test
 	fun testCarLanguage() {
-		val context = mock<Context>()
+		val context = mock<Context> {
+			on {getString(any())} doReturn ""
+			on {getString(any(), any())} doReturn ""
+		}
 		val cdsData = CDSDataProvider()
 		val carInformation = mock<CarInformation>()
 		whenever(carInformation.cdsData) doReturn cdsData
