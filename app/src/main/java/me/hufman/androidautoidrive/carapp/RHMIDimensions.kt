@@ -31,6 +31,7 @@ interface RHMIDimensions {
 
 			if (brand == "BMW" && !id4 && rhmiWidth == 1440) return BMW5XLRHMIDimensions(rhmiWidth, rhmiHeight)
 			if (brand == "MINI" && !id4 && a4axl) return Mini5XLDimensions()
+			if (brand == "MINI" && !id4) return Mini5Dimensions()
 			if (brand == "MINI") return MiniDimensions(rhmiWidth, rhmiHeight)
 			return GenericRHMIDimensions(rhmiWidth, rhmiHeight)
 		}
@@ -95,6 +96,10 @@ class Mini5XLDimensions: MiniDimensions(1440, 540) {
 	override val paddingLeft: Int = 168     // so we can remove all of the padding
 }
 
+class Mini5Dimensions: MiniDimensions(980, 540) {
+	override val marginLeft: Int = 0
+	override val paddingLeft: Int = 170
+}
 /**
  * Wraps an existing RHMIDimensions to toggle the marginRight based on an open sidebar
  */
