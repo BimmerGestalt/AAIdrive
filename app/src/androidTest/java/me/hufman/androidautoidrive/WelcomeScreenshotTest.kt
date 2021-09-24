@@ -59,7 +59,7 @@ class WelcomeScreenshotTest {
 	@Test
 	fun firstStartPages() {
 		onView(withId(pgrWelcomeTabs)).check(matches(isCompletelyDisplayed()))
-		(1..5).forEach { page ->
+		(1..6).forEach { page ->
 			screenshot("welcome_$page")
 			onView(withId(btnNext)).perform(click())
 		}
