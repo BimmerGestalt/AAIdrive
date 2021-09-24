@@ -1,6 +1,0 @@
-[submodule "IDriveConnectKit"]
-	path = IDriveConnectKit
-	url = https://github.com/BimmerGestalt/IDriveConnectKit.git
-[submodule "IDriveConnectKitAndroid"]
-	path = IDriveConnectKitAndroid
-	url = https://github.com/BimmerGestalt/IDriveConnectKitAndroid.git

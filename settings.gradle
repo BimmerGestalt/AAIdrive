@@ -1,1 +1,1 @@
-include ':app', ':IDriveConnectKit', ':IDriveConnectKitAndroid', ':spotify-app-remote'
+include ':app', ':spotify-app-remote'
