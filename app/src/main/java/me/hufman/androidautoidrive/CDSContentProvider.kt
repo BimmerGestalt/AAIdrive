@@ -23,7 +23,7 @@ class CDSContentProvider: ContentProvider(), CDSEventHandler {
 		// how long to wait before unsubscribing an idle CDS property
 		private const val IDLE_UNSUBSCRIBE_TIMEOUT = 10000
 
-		const val CONTENT_PROVIDER_AUTHORITY = "bimmergestalt.cardata.provider"
+		const val CONTENT_PROVIDER_AUTHORITY = "io.bimmergestalt.cardata.provider"
 		const val CONTENT_PROVIDER_CDS = "content://$CONTENT_PROVIDER_AUTHORITY/cds"
 
 		val privateCdsProperties = setOf(
@@ -78,8 +78,8 @@ class CDSContentProvider: ContentProvider(), CDSEventHandler {
 	override fun getType(uri: Uri): String? {
 		val path = uri.path ?: ""
 		return when {
-			path == "/cds" -> { "vnd.android.cursor.dir/vnd.bimmergestalt.cardata.provider.cds" }
-			path.startsWith("/cds/") -> { "vnd.android.cursor.item/vnd.bimmergestalt.cardata.provider.cds" }
+			path == "/cds" -> { "vnd.android.cursor.dir/vnd.io.bimmergestalt.cardata.provider.cds" }
+			path.startsWith("/cds/") -> { "vnd.android.cursor.item/vnd.io.bimmergestalt.cardata.provider.cds" }
 			else -> { null }
 		}
 	}
