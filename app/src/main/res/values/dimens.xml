@@ -4,11 +4,12 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">12dp</dimen>
-    <dimen name="nav_header_height">136dp</dimen>
+    <dimen name="nav_header_height">156dp</dimen>
     <dimen name="nav_drawer_width">270dp</dimen>
     <dimen name="default_margin">24dp</dimen>
 
     <dimen name="pane_vertical_margin">16dp</dimen>
-    <dimen name="settings_vertical_margin">10dp</dimen>
+    <dimen name="settings_vertical_margin">4dp</dimen>
+    <dimen name="checkbox_vertical_margin">4dp</dimen>
     <dimen name="tips_pane_height">350dp</dimen>
 </resources>

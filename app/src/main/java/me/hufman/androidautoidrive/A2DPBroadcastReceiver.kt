@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.util.SparseArray
+import me.hufman.androidautoidrive.connections.isCar
 
 class A2DPBroadcastReceiver: BroadcastReceiver() {
 	val TAG = "A2DPBroadcast"
@@ -45,7 +46,7 @@ class A2DPBroadcastReceiver: BroadcastReceiver() {
 	}
 
 	fun isValidDevice(device: BluetoothDevice?): Boolean {
-		return device?.name != null && (device.name.startsWith("BMW") || device.name.startsWith("MINI"))
+		return device.isCar()
 	}
 
 	fun startMainService(context: Context) {

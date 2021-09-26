@@ -13,15 +13,51 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <!-- View Bluetooth status -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <!-- But don't require Bluetooth support -->
+    <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
 
-    <permission android:name="bimmergestalt.permission.CDS_normal"
+    <permission android:name="io.bimmergestalt.permission.CDS_normal"
         android:description="@string/permission_cds_normal"
         android:label="@string/permission_cds_normal"
         android:protectionLevel="normal"/>
-    <permission android:name="bimmergestalt.permission.CDS_personal"
+    <permission android:name="io.bimmergestalt.permission.CDS_personal"
         android:description="@string/permission_cds_personal"
         android:label="@string/permission_cds_personal"
         android:protectionLevel="dangerous"/>
+
+    <queries>
+        <!-- Discover BMW apps -->
+        <intent>
+            <action android:name="com.bmwgroup.carconnection.ACTION_CAR_APPLICATION_LAUNCHER" />
+        </intent>
+        <!-- Search for MediaBrowserService -->
+        <intent>
+            <action android:name="android.media.browse.MediaBrowserService" />
+        </intent>
+        <!-- Search for applications that may play music without using MediaBrowserService -->
+        <intent>
+            <action android:name="android.intent.action.MEDIA_BUTTON" />
+        </intent>
+        <!-- Search for browsers to open Spotify Web Auth -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.APP_BROWSER" />
+            <data android:scheme="https" />
+        </intent>
+        <!-- Search for Voice Assistants -->
+        <intent>
+            <action android:name="android.intent.action.VOICE_COMMAND" />
+        </intent>
+        <!-- Search for Addon apps that poll data -->
+        <intent>
+            <action android:name="io.bimmergestalt.cardata.service" />
+        </intent>
+    </queries>
 
     <application
         android:name=".ApplicationCallbacks"
@@ -1039,24 +1075,24 @@
         </service>
 
         <provider
-            android:authorities="bimmergestalt.cardata.provider"
+            android:authorities="io.bimmergestalt.cardata.provider"
             android:name="me.hufman.androidautoidrive.CDSContentProvider"
             android:exported="true"
-            android:readPermission="bimmergestalt.permission.CDS_normal"
+            android:readPermission="io.bimmergestalt.permission.CDS_normal"
             >
-            <path-permission android:path="/cds/10" android:readPermission="bimmergestalt.permission.CDS_personal" />
-            <path-permission android:path="/cds/11" android:readPermission="bimmergestalt.permission.CDS_personal" />
-            <path-permission android:path="/cds/57" android:readPermission="bimmergestalt.permission.CDS_personal" />
-            <path-permission android:path="/cds/59" android:readPermission="bimmergestalt.permission.CDS_personal" />
-            <path-permission android:path="/cds/60" android:readPermission="bimmergestalt.permission.CDS_personal" />
-            <path-permission android:path="/cds/61" android:readPermission="bimmergestalt.permission.CDS_personal" />
-            <path-permission android:path="/cds/62" android:readPermission="bimmergestalt.permission.CDS_personal" />
-            <path-permission android:path="/cds/63" android:readPermission="bimmergestalt.permission.CDS_personal" />
-            <path-permission android:path="/cds/64" android:readPermission="bimmergestalt.permission.CDS_personal" />
-            <path-permission android:path="/cds/65" android:readPermission="bimmergestalt.permission.CDS_personal" />
-            <path-permission android:path="/cds/66" android:readPermission="bimmergestalt.permission.CDS_personal" />
-            <path-permission android:path="/cds/67" android:readPermission="bimmergestalt.permission.CDS_personal" />
-            <path-permission android:path="/cds/87" android:readPermission="bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/10" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/11" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/57" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/59" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/60" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/61" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/62" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/63" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/64" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/65" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/66" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/67" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/87" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
         </provider>
 
         <meta-data

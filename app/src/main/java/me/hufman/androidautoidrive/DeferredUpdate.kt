@@ -46,10 +46,11 @@ class DeferredUpdate(val handler: Handler, val currentTimeProvider: () -> Long =
 
 	fun cancel() {
 		synchronized(this) {
+			val task = task
 			if (task != null) {
 				handler.removeCallbacks(task)
 			}
-			task = null
+			this.task = null
 		}
 	}
 

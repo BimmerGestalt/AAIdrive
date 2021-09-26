@@ -6,7 +6,7 @@ import com.google.gson.JsonObject
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemotingServer
 import me.hufman.androidautoidrive.carapp.*
-import me.hufman.idriveconnectionkit.CDS
+import io.bimmergestalt.idriveconnectkit.CDS
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test

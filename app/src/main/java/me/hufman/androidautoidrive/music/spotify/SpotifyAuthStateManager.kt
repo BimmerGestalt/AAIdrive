@@ -7,7 +7,6 @@ import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
 import net.openid.appauth.*
 import org.json.JSONException
-import java.lang.Exception
 
 /**
  * Spotify manager for an [AuthState] instance that is created from and mutates a JSON stored [AuthState]

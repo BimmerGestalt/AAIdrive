@@ -1,6 +1,10 @@
 // Helpfully found at https://veskoiliev.com/how-to-setup-jacoco-for-android-project-with-java-kotlin-and-multiple-flavours/
 
 apply plugin: 'jacoco'
+jacoco {
+    // required Jacoco version to support Kotlin 1.5
+    toolVersion "0.8.7"
+}
 
 project.afterEvaluate {
     /**

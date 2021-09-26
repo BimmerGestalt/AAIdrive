@@ -4,13 +4,13 @@ import android.util.Log
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
+import io.bimmergestalt.idriveconnectkit.CDS
+import io.bimmergestalt.idriveconnectkit.CDSProperty
 import me.hufman.androidautoidrive.carapp.CDSConnection
 import me.hufman.androidautoidrive.carapp.CDSData
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.carapp.CDSEventHandler
 import me.hufman.androidautoidrive.phoneui.viewmodels.CarDrivingStatsModel
-import me.hufman.idriveconnectionkit.CDS
-import me.hufman.idriveconnectionkit.CDSProperty
 import java.util.*
 
 open class CarInformation {

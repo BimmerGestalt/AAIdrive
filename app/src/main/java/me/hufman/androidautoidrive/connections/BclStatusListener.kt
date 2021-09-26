@@ -6,8 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.SystemClock
 import android.text.format.DateUtils
-import java.lang.IllegalArgumentException
-import java.lang.StringBuilder
 import java.text.NumberFormat
 
 class BclStatusListener(val context: Context, val callback: () -> Unit = {}): BroadcastReceiver() {

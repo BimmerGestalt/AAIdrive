@@ -1,10 +1,10 @@
 package me.hufman.androidautoidrive.carapp
 
 import android.util.SparseArray
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.utils.forEach
 import me.hufman.androidautoidrive.utils.set
 import me.hufman.androidautoidrive.utils.setDefault
-import me.hufman.idriveconnectionkit.rhmi.*
 
 /** An RHMIApplication wrapper that can change out its wrapped app
  *  The UI Layout must be loaded into this level, not in the wrapped app

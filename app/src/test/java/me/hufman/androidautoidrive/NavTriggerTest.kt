@@ -6,10 +6,10 @@ import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
 import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerApp
 import me.hufman.androidautoidrive.carapp.navigation.URLRedirector
-import me.hufman.idriveconnectionkit.rhmi.RHMIAction
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
-import me.hufman.idriveconnectionkit.rhmi.RHMIEvent
-import me.hufman.idriveconnectionkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationConcrete
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test

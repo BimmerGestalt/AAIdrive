@@ -1,13 +1,14 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
-import me.hufman.androidautoidrive.utils.GraphicsHelpers
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.UnicodeCleaner
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.CustomActionDwell
 import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.idriveconnectionkit.rhmi.*
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 
 class CustomActionsView(val state: RHMIState, val graphicsHelpers: GraphicsHelpers, val musicController: MusicController) {
 	companion object {

@@ -4,9 +4,9 @@ import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.utils.removeFirst
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
-import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationConcrete
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test

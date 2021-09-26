@@ -5,19 +5,18 @@ import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerReceiver
-import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerApp
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import me.hufman.androidautoidrive.carapp.music.MusicApp
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDsMultimedia
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDsSpotify
+import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerApp
+import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerReceiver
 import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import java.lang.Exception
 
 class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val musicAppMode: MusicAppMode) {
 	var threadMusic: CarThread? = null

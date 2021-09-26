@@ -7,8 +7,8 @@ import android.hardware.display.VirtualDisplay
 import android.util.Log
 import androidx.core.content.ContextCompat
 import me.hufman.androidautoidrive.carapp.maps.*
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import java.lang.Exception
 
 class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val mapAppMode: MapAppMode) {

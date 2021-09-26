@@ -102,7 +102,9 @@
     <string name="musicAppNotes_oldSpotify">Aby uzyskać pełną funkcjonalność (przeglądanie,wyszukiwanie), obniż wersję Spotify</string>
     <string name="musicAppNotes_oldSpotifyInstructions">Ta aplikacja może zapewnić pełną kontrolę nad Spotify do wersji 8.4.96.953, taką jak przeglądanie list odtwarzania i wyszukiwanie. Aby uzyskać pełną kontrolę, pobierz starszą wersję z APKPure lub podobnej.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Proszę zainstalować oficjalnego klienta Spotify</string>
+    <string name="musicAppNotes_spotify_userDeclined">Proszę przyznać uprawnienia do przeglądania biblioteki</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Prosimy sprawdzić połączenie z Internetem i wyłączenie blokady reklam.</string>
+    <string name="musicAppNotes_spotify_backgroundDisabled">Nie można otworzyć Spotify. Upewnij się, że Spotify może uruchamiać się w tle</string>
     <string name="lbl_navigationpage_address">Wklej dokadny adres, aby uruchomić system nawigacji w samochodzie</string>
     <string name="lbl_navigationpage_intent">Po nawiązaniu połączenia z samochodem, system nawigacyjny pojawi się jako opcja</string>
     <string name="lbl_navigationstatus_active">Obecnie prowadzę do </string>
@@ -122,6 +124,9 @@
     <string name="lbl_language_prefercar">Preferuj język samochodowy a nie język telefonu</string>
     <string name="lbl_language_prefercar_code">Preferuj język samochodowy (%s) a nie język telefonu</string>
     <string name="lbl_language_forcelanguage">Wymuś określony język </string>
+    <string name="lbl_analytics_intro">AAIdrive jest nieoficjalnym projektem hobbistycznym, niewspieranym w żaden sposób przez BMW, bazującym na protokole inżynierii odwrotnej. Jestem dumny z jego funkcjonalności i stabilności, ale awarie mogą się jeszcze zdarzyć. Rozważ włączenie analityki do automatycznego wysyłania raportów o awariach w celu debugowania.</string>
+    <string name="lbl_analytics_description">Oprócz raportów o awariach, włączenie analizy spowoduje również przesłanie listy zainstalowanych aplikacji muzycznych oraz anonimowych informacji o samochodzie, aby pomóc w nadaniu priorytetu rozwojowi aplikacji.</string>
+    <string name="lbl_analytics_enabled">Włącz analizę i raportowanie awarii</string>
     <string name="lbl_donations_volunteer">AAIdrive to projekt darmowy, wolontariacki, otwarto źródłowy</string>
     <string name="lbl_donations_request">Jeśli podoba Ci się ten projekt i uznasz go za przydatny, rozważ okazanie wsparcia, przekazując:</string>
     <string name="btn_donations">Darowizna</string>

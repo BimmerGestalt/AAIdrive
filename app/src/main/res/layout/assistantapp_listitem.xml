@@ -12,23 +12,23 @@
     </data>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="@{() -> callback.triggerAssistant(data)}">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp"
-            android:animateLayoutChanges="true"
-            android:orientation="vertical"
-            android:descendantFocusability="blocksDescendants">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
-
+                android:orientation="horizontal"
+                android:onClick="@{() -> callback.triggerAssistant(data)}">
                 <ImageView
                     android:layout_width="44dp"
                     android:layout_height="44dp"
@@ -46,19 +46,17 @@
                     android:gravity="start"
                     android:ems="10"
                     android:text="@{data.name}" />
-
-                <ImageButton
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:padding="4dp"
-                    android:contentDescription="@string/btn_configure"
-                    android:scaleType="fitStart"
-                    android:src="@android:drawable/ic_menu_preferences"
-                    android:background="?android:selectableItemBackground"
-                    android:visibility="@{callback.supportsSettings(data)}"
-                    android:onClick="@{() -> callback.openSettings(data)}" />
-
             </LinearLayout>
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="8dp"
+                android:contentDescription="@string/btn_configure"
+                android:scaleType="fitStart"
+                android:src="@android:drawable/ic_menu_preferences"
+                android:background="?android:selectableItemBackground"
+                android:visibility="@{callback.supportsSettings(data)}"
+                android:onClick="@{() -> callback.openSettings(data)}" />
 
         </LinearLayout>
     </LinearLayout>

@@ -10,10 +10,14 @@
     <string name="notification_description_chassiscode">Conectado con %s</string>
     <string name="notification_description_bmw">Conectado con BMW</string>
     <string name="notification_description_mini">Conectado con Mini</string>
+    <string name="permission_cds_normal">leer información genérica del coche</string>
+    <string name="permission_cds_personal">leer información personal del coche</string>
     <!-- notification channel names -->
+    <string name="notification_channel_assistant">Launcher Asistente</string>
     <string name="notification_channel_connection">Estado de la conexión</string>
     <string name="notification_channel_donation">Donar</string>
     <string name="notification_channel_spotify">Autorización de Spotify</string>
+    <string name="notification_channel_test">Notificación de prueba</string>
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <string name="navigation_listener_bmw">BMW Navegador</string>
     <string name="navigation_listener_mini">MINI Navegador</string>
@@ -22,24 +26,40 @@
     <string name="lbl_navigation_listener_searching">Buscar destino</string>
     <string name="lbl_navigation_listener_parsefailure">Destino no encontrado</string>
     <string name="lbl_navigation_listener_pending">Comenzar guiado a destino</string>
+    <string name="lbl_navigation_listener_success">Éxito</string>
+    <string name="lbl_navigation_listener_unsuccess">Sin éxito</string>
     <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Vamos a conectarte</string>
+    <string name="lbl_welcome_intro">AAIdrive es una aplicación no oficial para añadir las aplicaciones de música de tu teléfono y otras características a tu coche a través del protocolo nativo de aplicaciones BMW</string>
+    <string name="lbl_welcome_compatible">La mayoría de coches BMW o MINI hechos a partir de 2014 equipados con NBT o NBT Evo (basado en IDrive 4–6) que cuentan con una suscripción activa a ConnectedDrive o BMW Online deberían ser compatibles</string>
+    <string name="lbl_welcome_dependencies">La conexión de aplicaciones al coche depende de la aplicación BMW/MINI Connected o de la nueva aplicación MyBMW o Mini para conectarse a tu coche</string>
+    <string name="lbl_welcome_complete">AAIdrive también añade una variedad de otras características a tu coche, ¡échale un vistazo!</string>
     <!-- Menu Titles -->
+    <string name="menu_overview">Visión general</string>
     <string name="menu_setup">Configuración</string>
     <string name="menu_connection">Conexión</string>
+    <string name="menu_carinfo">Información del coche</string>
     <string name="menu_music">Música</string>
     <string name="menu_notifications">Notificaciones</string>
     <string name="menu_assistants">Asistentes de voz</string>
     <string name="menu_maps">Mapas</string>
     <string name="menu_navigation">Navegación</string>
+    <string name="menu_addons">Extensiones</string>
     <string name="menu_settings">Ajustes</string>
     <string name="menu_support">Soporte</string>
     <string name="btn_next">Siguiente</string>
     <string name="lbl_overviewpage">AAIdrive integra algunas de las aplicaciones de música de tu teléfono y las notificaciones de tu teléfono en tu coche a través del protocolo de aplicaciones BMW</string>
     <string name="lbl_connectionpage">La conexión de la aplicación con el coche depende de varios elementos, aquí puede encontrar una guía para asegurarse de que la conexión funcione correctamente</string>
+    <string name="lbl_assistantpage_tip">Estas aplicaciones nada tienen que ver con el botón de dirección del asistente de voz del coche, que solo activa el asistente principal del teléfono y eso está configurado separadamente</string>
+    <string name="lbl_notificationpage">Las notificaciones entrantes pueden ser vistas e interactuadas con el control del coche</string>
     <string name="spawn_test_notification">Notificación de prueba</string>
     <string name="message_notifications">Notificaciones de mensaje</string>
     <string name="notification_popups">Popups de notificación</string>
     <string name="notification_popups_passenger">Popups para el pasajero</string>
+    <string name="notification_sound">Reproducir sonido de notificación</string>
+    <string name="notification_readout">Hablar al ver las notificaciones</string>
+    <string name="notification_readout_popup">Hablar nuevas notificaciones</string>
+    <string name="notification_readout_popup_passenger">… con un pasajero</string>
     <string name="lbl_popupVersion">Las ventanillas emergentes solo trabajan con IDrive4</string>
     <string name="lbl_smsPermission">Otorgue el permiso de SMS para ver las imágenes entrantes de imágenes SMS en el automóvil. El texto siempre será visible.</string>
     <string name="enable_google_maps">Activar Google Maps</string>

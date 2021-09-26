@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive
 
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BaseBMWRemotingServer
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationConcrete
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationConcrete
 import java.util.concurrent.CountDownLatch
 
 class MockBMWRemotingServer: BaseBMWRemotingServer() {

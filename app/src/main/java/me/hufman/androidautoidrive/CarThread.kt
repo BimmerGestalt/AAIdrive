@@ -4,9 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
-import java.lang.IllegalStateException
-import java.lang.RuntimeException
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
 
 const val TAG = "CarThread"
 /**
@@ -24,7 +22,7 @@ class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 	override fun run() {
 		try {
 			Looper.prepare()
-			handler = Handler(Looper.myLooper())
+			handler = Handler(Looper.myLooper()!!)
 			runnable()
 			runnable = {}
 			Log.i(TAG, "Successfully finished runnable for thread $name, starting Handler loop")

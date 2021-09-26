@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive.carapp
 
-import me.hufman.idriveconnectionkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 
 open class RHMIListAdapter<T>(width: Int, val realData: List<T>) : RHMIModel.RaListModel.RHMIList(width) {
 	override fun get(index: Int): Array<Any> {

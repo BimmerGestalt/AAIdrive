@@ -34,8 +34,9 @@
             <androidx.appcompat.widget.SwitchCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:text="@string/lbl_advanced_settings"
-                android:layout_marginBottom="@dimen/settings_vertical_margin"
+                android:paddingBottom="@dimen/settings_vertical_margin"
                 android:checked="@={viewModel.showAdvanced}"/>
 
             <LinearLayout
@@ -50,6 +51,15 @@
                     android:id="@+id/paneMusicAdvancedSettings"
                     android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicAdvancedSettingsFragment"/>
             </LinearLayout>
+
+            <View style="@style/Divider"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"/>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/paneAnalyticsSettings"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.AnalyticsSettingsFragment"/>
         </LinearLayout>
     </ScrollView>
 </layout>

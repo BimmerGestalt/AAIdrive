@@ -9,6 +9,7 @@ import androidx.test.espresso.contrib.DrawerMatchers.isClosed
 import androidx.test.espresso.contrib.DrawerMatchers.isOpen
 import androidx.test.espresso.contrib.NavigationViewActions
 import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayingAtLeast
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -16,6 +17,7 @@ import androidx.test.runner.screenshot.Screenshot
 import androidx.viewpager2.widget.ViewPager2
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.whenever
+import me.hufman.androidautoidrive.EspressoHelpers.withCustomConstraints
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.phoneui.NavHostActivity
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundViewHolder
@@ -73,7 +75,9 @@ class MainScreenshotTest {
 		}
 		(1..count).forEach {
 			screenshot("${name}_$it")
-			onView(withId(R.id.pgrTipsList)).perform(swipeLeft())
+			onView(withId(R.id.pgrTipsList)).perform(
+					withCustomConstraints(swipeLeft(), isDisplayingAtLeast(75))
+			)
 		}
 		onView(withId(R.id.pane_tiplist_expand)).perform(scrollTo())
 		onView(withId(R.id.pane_tiplist_expand)).perform(click())
@@ -152,13 +156,13 @@ class MainScreenshotTest {
 		// open the music app features
 		onView(withId(R.id.listMusicApps))
 				.perform(RecyclerViewActions.actionOnItemAtPosition<DataBoundViewHolder<MusicAppInfo, MusicAppListController>>(0,
-				ClickChildView.clickChildViewWithId(R.id.paneMusicAppFeatures)))
+				EspressoHelpers.clickChildViewWithId(R.id.paneMusicAppFeatures)))
 		onView(withId(R.id.listMusicApps))
 				.perform(RecyclerViewActions.actionOnItemAtPosition<DataBoundViewHolder<MusicAppInfo, MusicAppListController>>(1,
-				ClickChildView.clickChildViewWithId(R.id.paneMusicAppFeatures)))
+				EspressoHelpers.clickChildViewWithId(R.id.paneMusicAppFeatures)))
 		onView(withId(R.id.listMusicApps))
 				.perform(RecyclerViewActions.actionOnItemAtPosition<DataBoundViewHolder<MusicAppInfo, MusicAppListController>>(2,
-				ClickChildView.clickChildViewWithId(R.id.paneMusicAppFeatures)))
+				EspressoHelpers.clickChildViewWithId(R.id.paneMusicAppFeatures)))
 
 		screenshot("music_expanded")
 	}

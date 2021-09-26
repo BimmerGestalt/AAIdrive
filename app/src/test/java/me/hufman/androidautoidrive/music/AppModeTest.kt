@@ -5,7 +5,7 @@ import com.nhaarman.mockito_kotlin.mock
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MockAppSettings
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import org.junit.Assert.*
 import org.junit.Test
 

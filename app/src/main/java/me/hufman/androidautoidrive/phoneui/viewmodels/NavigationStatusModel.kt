@@ -6,12 +6,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import io.bimmergestalt.idriveconnectkit.CDS
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.liveData
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
-import me.hufman.idriveconnectionkit.CDS
 import java.util.*
 
 class NavigationStatusModel(val carInformation: CarInformation): ViewModel() {

@@ -9,11 +9,11 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.gson.JsonObject
+import io.bimmergestalt.idriveconnectkit.CDS
 import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.liveData
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
-import me.hufman.idriveconnectionkit.CDS
 
 class CarAdvancedInfoFragment: Fragment() {
 	companion object {

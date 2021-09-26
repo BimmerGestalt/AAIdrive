@@ -16,13 +16,11 @@ import android.util.Log
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
 import me.hufman.androidautoidrive.CarConnectionListener
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent.Companion.INTENT_INTERACTION
 import me.hufman.androidautoidrive.notifications.NotificationParser.Companion.dumpNotification
-import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
-import java.lang.NullPointerException
-import java.lang.RuntimeException
 
 fun Notification.isGroupSummary(): Boolean {
 	val FLAG_GROUP_SUMMARY = 0x00000200     // hard-coded to work on old SDK

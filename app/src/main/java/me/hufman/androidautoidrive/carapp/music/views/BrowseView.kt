@@ -1,16 +1,17 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import android.util.Log
+import io.bimmergestalt.idriveconnectkit.rhmi.FocusCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import kotlinx.coroutines.Deferred
-import me.hufman.androidautoidrive.utils.GraphicsHelpers
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.idriveconnectionkit.rhmi.FocusCallback
-import me.hufman.idriveconnectionkit.rhmi.RHMIAction
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import java.util.*
 
 data class BrowseState(val location: MusicMetadata?,    // the directory the user selected
@@ -21,7 +22,7 @@ data class BrowseState(val location: MusicMetadata?,    // the directory the use
 
 class BrowseView(val states: List<RHMIState>, val musicController: MusicController, val musicImageIDs: MusicImageIDs, val graphicsHelpers: GraphicsHelpers) {
 	companion object {
-		val SEARCHRESULT_PLAY_FROM_SEARCH = MusicMetadata(mediaId="__PLAY_FROM_SEARCH__", title=L.MUSIC_BROWSE_PLAY_FROM_SEARCH)
+		val SEARCHRESULT_PLAY_FROM_SEARCH = MusicMetadata(mediaId="__PLAY_FROM_SEARCH__", title= L.MUSIC_BROWSE_PLAY_FROM_SEARCH)
 		fun fits(state: RHMIState): Boolean {
 			return BrowsePageView.fits(state)
 		}

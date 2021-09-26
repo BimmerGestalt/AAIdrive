@@ -11,7 +11,6 @@ import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
-import java.lang.IllegalArgumentException
 
 class PermissionsController(val activity: Activity) {
 	companion object {

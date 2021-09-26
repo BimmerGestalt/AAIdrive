@@ -20,7 +20,6 @@ class MusicAppDiscoveryThread(val context: Context, var callback: ((MusicAppDisc
 			scheduleRedraw()
 		}
 		discovery.discoverApps()
-		discovery.probeApps(false)
 	}
 
 	private val redrawRunnable = Runnable {
@@ -40,6 +39,7 @@ class MusicAppDiscoveryThread(val context: Context, var callback: ((MusicAppDisc
 		val handler = handler ?: return
 		handler.post {
 			discovery?.discoverApps()
+			discovery?.probeApps(false)
 		}
 	}
 

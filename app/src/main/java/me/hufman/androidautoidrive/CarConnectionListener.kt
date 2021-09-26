@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
-import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
 
 /**
  * Starts the MainService when the car announces a connection

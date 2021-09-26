@@ -58,8 +58,13 @@ class WelcomeScreenshotTest {
 
 	@Test
 	fun firstStartPages() {
+		val expectedTabs = if (BuildConfig.FLAVOR_analytics == "nonalytics") {
+			5
+		} else {
+			6
+		}
 		onView(withId(pgrWelcomeTabs)).check(matches(isCompletelyDisplayed()))
-		(1..5).forEach { page ->
+		(1..expectedTabs).forEach { page ->
 			screenshot("welcome_$page")
 			onView(withId(btnNext)).perform(click())
 		}

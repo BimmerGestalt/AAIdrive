@@ -28,7 +28,8 @@
             android:alpha="@{capabilities.isPopupNotSupported() ? 0.5f : 1.0f}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/settings_vertical_margin"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
             android:text="@string/notification_popups" />
 
         <LinearLayout
@@ -53,7 +54,8 @@
                 android:checked="@={settings.notificationPopupPassenger}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/settings_vertical_margin"
+                android:minHeight="48dp"
+                android:paddingBottom="@dimen/settings_vertical_margin"
                 android:text="@string/notification_popups_passenger" />
         </LinearLayout>
 
@@ -62,6 +64,7 @@
             android:checked="@={settings.notificationSound}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:layout_marginBottom="@dimen/settings_vertical_margin"
             android:text="@string/notification_sound" />
 
@@ -85,14 +88,16 @@
                 android:checked="@={settings.notificationReadout}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/settings_vertical_margin"
+                android:minHeight="48dp"
+                android:paddingBottom="@dimen/settings_vertical_margin"
                 android:text="@string/notification_readout" />
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swNotificationReadoutPopup"
                 android:checked="@={settings.notificationReadoutPopup}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/settings_vertical_margin"
+                android:minHeight="48dp"
+                android:paddingBottom="@dimen/settings_vertical_margin"
                 android:text="@string/notification_readout_popup" />
             <LinearLayout
                 android:id="@+id/paneNotificationReadout"
@@ -107,7 +112,8 @@
                     android:checked="@={settings.notificationReadoutPopupPassenger}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/settings_vertical_margin"
+                    android:minHeight="48dp"
+                    android:paddingBottom="@dimen/settings_vertical_margin"
                     android:text="@string/notification_readout_popup_passenger" />
             </LinearLayout>
         </LinearLayout>

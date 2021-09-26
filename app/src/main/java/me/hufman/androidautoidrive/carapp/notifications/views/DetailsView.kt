@@ -2,15 +2,16 @@ package me.hufman.androidautoidrive.carapp.notifications.views
 
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import me.hufman.androidautoidrive.utils.GraphicsHelpers
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.FocusTriggerController
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.notifications.*
 import me.hufman.androidautoidrive.notifications.CarNotification
 import me.hufman.androidautoidrive.notifications.CarNotificationController
 import me.hufman.androidautoidrive.notifications.NotificationsState
-import me.hufman.idriveconnectionkit.rhmi.*
-import java.util.ArrayList
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
+import java.util.*
 import kotlin.math.min
 
 class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers,

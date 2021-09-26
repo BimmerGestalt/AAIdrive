@@ -1,11 +1,10 @@
 package me.hufman.androidautoidrive.carapp.music
 
 import android.content.Context
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.AppSettingsViewer
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
-import java.lang.Exception
 
 /**
  * Logic to help decide when to use Audio Context and the ID5 layout

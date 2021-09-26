@@ -9,11 +9,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
-import java.lang.IllegalArgumentException
 import java.util.*
 
-fun BluetoothDevice.isCar(): Boolean {
-	return this.name.startsWith("BMW") || this.name.startsWith("MINI")
+fun BluetoothDevice?.isCar(): Boolean {
+	return this?.name?.startsWith("BMW") == true || this?.name?.startsWith("MINI") == true
 }
 
 class BtStatus(val context: Context, val callback: () -> Unit) {
@@ -78,7 +77,7 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			if (intent?.action == BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED &&
 					intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1) == BluetoothProfile.STATE_CONNECTED) {
 				val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-				device.fetchUuidsWithSdp()
+				device?.fetchUuidsWithSdp()
 			}
 			callback()
 		}

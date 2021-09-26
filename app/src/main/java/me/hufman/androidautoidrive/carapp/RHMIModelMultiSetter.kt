@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive.carapp
 
-import me.hufman.idriveconnectionkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 
 class RHMIModelMultiSetterData(val members: Iterable<RHMIModel.RaDataModel?>) {
 	var value: String

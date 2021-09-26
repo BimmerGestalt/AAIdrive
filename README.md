@@ -33,6 +33,9 @@ Download the APK of the latest stable release from the [Releases page](https://g
 
 Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-nomap-sentry-release.apk) to automatically report crashes.
 The [nonalytics](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-nomap-nonalytics-release.apk) build is available too.
+Some of the new features since version 1.3 include:
+  - Initial support for addon apps, check out [IDriveConnectAddons](https://github.com/BimmerGestalt/IDriveConnectAddons) for more information
+  - Workarounds for skipping tracks in the Spotify Liked Songs and Artists playlists
 
 Check out the [FAQ](https://bimmergestalt.github.io/AAIdrive/faq.html) if you run into problems.
 
@@ -213,32 +216,10 @@ Requirements
 
 To communicate to the car, this project relies on the proxy connection that is created by the main MyBMW or Mini app on the phone. Additionally, the legacy Connected and the Connected Classic apps have been tested as compatible for this purpose, but the Connected app is more resilient against Android's memory management.
 
-Build Instructions
-------------------
+Developer Guide
+---------------
 
-  - (Optional) Add a [Google Maps API key](https://developers.google.com/maps/documentation/android-sdk/signup) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_GmapsApiKey`.
-    - No spaces or quotes are needed around the property value: `AndroidAutoIdrive_GmapsApiKey=AIza`
-    - This key should have access to Maps SDK for Android, Places API, and Directions API.
-    - Billing is needed for the Places API to return search results.
-  - (Optional) Add a [Spotify API Client ID](https://developer.spotify.com/dashboard/) to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_SpotifyApiKey`.
-    - The client secret is not needed, and no spaces or quotes are needed around the property value: `AndroidAutoIdrive_SpotifyApiKey=36b6...`
-    - It needs the Redirect URI set to `me.hufman.androidautoidrive://spotify_callback`
-    - It may also need the package fingerprint added, [follow these instructions](https://developer.spotify.com/documentation/android/quick-start/) to configure it
-  - (Optional) Add a Sentry DSN to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_SentryDsn` to capture crash reports.
-    - No spaces or quotes are needed around the DSN: `AndroidAutoIdrive_SentryDsn=https://e40...@sentry.io/0123...`
-  - After downloading the source code, follow the instructions in [external/README.md](external/README.md) to prepare the needed APK files from official apps.
-  - Android Studio makes it easy to build this project:
-    - File > New > Project From Version Control > Git
-    - Use the Build Variants panel to change which version is built
-    - Build > Make Project to build the APK artifacts
-    - Plug in your phone and click Run
-  - Commandline builds should work too:
-    - Make sure Android SDK Build Tools version 28 is installed
-    - `git clone https://github.com/BimmerGestalt/AAIdrive.git && cd AAIdrive`
-    - `git submodule init && git submodule update`
-    - `./gradlew assembleNomapNonalyticsDebug`  This step will fail without the Build Tools installed
-
-The built APKs should be found in `app/build/outputs/apk/*/*/*.apk`
+To build your own test versions of the app and help contribute to the project, follow [this Developer Guide](https://bimmergestalt.github.io/AAIdrive/developers) to set up your development environment.
 
 Privacy
 -------

@@ -5,15 +5,18 @@ import android.content.Intent
 import android.os.Handler
 import android.util.Log
 import androidx.media.MediaBrowserServiceCompat
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.android.asCoroutineDispatcher
-import me.hufman.androidautoidrive.*
+import kotlinx.coroutines.launch
+import me.hufman.androidautoidrive.Analytics
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.MutableAppSettingsReceiver
+import me.hufman.androidautoidrive.StoredSet
 import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
-import java.lang.Runnable
 import java.util.*
 import kotlin.collections.HashSet
 import kotlin.coroutines.CoroutineContext
@@ -120,7 +123,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 		val packageManager = context.packageManager
 		val intent = Intent(MediaBrowserServiceCompat.SERVICE_INTERFACE)
 		val services = packageManager.queryIntentServices(intent, 0)
-		discoveredApps.addAll(services.map {
+		discoveredApps.addAll(services.mapNotNull {
 			val appInfo = it.serviceInfo.applicationInfo
 			val name = packageManager.getApplicationLabel(appInfo).toString()
 			Log.i(TAG, "Found music app $name")

@@ -24,21 +24,21 @@ class ApplicationCallbacks: Application(), Application.ActivityLifecycleCallback
 		registerActivityLifecycleCallbacks(this)
 	}
 
-	override fun onActivityPaused(p0: Activity?) {
+	override fun onActivityPaused(p0: Activity) {
 		onPause()
 	}
 
-	override fun onActivityResumed(p0: Activity?) {
+	override fun onActivityResumed(p0: Activity) {
 		onResume()
 	}
 
-	override fun onActivityStarted(p0: Activity?) {}
+	override fun onActivityStarted(p0: Activity) {}
 
-	override fun onActivityDestroyed(p0: Activity?) {}
+	override fun onActivityDestroyed(p0: Activity) {}
 
-	override fun onActivitySaveInstanceState(p0: Activity?, p1: Bundle?) {}
+	override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}
 
-	override fun onActivityStopped(p0: Activity?) {}
+	override fun onActivityStopped(p0: Activity) {}
 
-	override fun onActivityCreated(p0: Activity?, p1: Bundle?) {}
+	override fun onActivityCreated(p0: Activity, p1: Bundle?) {}
 }

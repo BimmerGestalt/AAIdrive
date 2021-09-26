@@ -6,9 +6,9 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 
 class AddonDiscovery(val packageManager: PackageManager) {
 	companion object {
-		const val PERMISSION_NORMAL = "bimmergestalt.permission.CDS_normal"
-		const val PERMISSION_PERSONAL = "bimmergestalt.permission.CDS_personal"
-		const val INTENT_DATA_SERVICE = "bimmergestalt.cardata.service"
+		const val PERMISSION_NORMAL = "io.bimmergestalt.permission.CDS_normal"
+		const val PERMISSION_PERSONAL = "io.bimmergestalt.permission.CDS_personal"
+		const val INTENT_DATA_SERVICE = "io.bimmergestalt.cardata.service"
 
 		private const val ACTION_APPLICATION_PREFERENCES = "android.intent.action.APPLICATION_PREFERENCES"  // API 24
 	}

@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.RemoteInput
 import androidx.fragment.app.Fragment
-import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.TAG
 import me.hufman.androidautoidrive.databinding.NotificationPageBinding
 import me.hufman.androidautoidrive.phoneui.controllers.NotificationPageController
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController

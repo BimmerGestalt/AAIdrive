@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.music
 
+import me.hufman.androidautoidrive.carapp.L
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

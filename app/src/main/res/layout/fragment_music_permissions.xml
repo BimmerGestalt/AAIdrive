@@ -15,20 +15,20 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center_vertical">
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:paddingEnd="5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
                 android:visibility="@{!viewModel.hasNotificationPermission}"
                 android:onClick="@{() -> controller.promptNotification()}"
                 app:srcCompat="@android:drawable/checkbox_off_background" />
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:paddingEnd="5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
                 android:visibility="@{viewModel.hasNotificationPermission}"
                 android:onClick="@{() -> controller.promptNotification()}"
                 app:srcCompat="@android:drawable/checkbox_on_background" />
@@ -37,6 +37,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:text="@string/lbl_grant_sessions" />
 
             <Button
@@ -51,7 +53,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:orientation="vertical"
             android:gravity="center_vertical"
             android:visibility="@{viewModel.hasSpotify}">
@@ -62,17 +64,17 @@
                 android:gravity="center_vertical">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:paddingEnd="5dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
                     android:visibility="@{!viewModel.hasSpotifyControlPermission}"
                     android:onClick="@{() -> controller.promptSpotifyControl()}"
                     app:srcCompat="@android:drawable/checkbox_off_background" />
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:paddingEnd="5dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
                     android:visibility="@{viewModel.hasSpotifyControlPermission}"
                     android:onClick="@{() -> controller.clearSpotifyControl()}"
                     app:srcCompat="@android:drawable/checkbox_on_background" />
@@ -81,6 +83,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:text="@string/lbl_grant_spotify_control" />
 
                 <Button
@@ -101,21 +105,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center_vertical"
             android:visibility="@{viewModel.hasSpotify}">
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:paddingEnd="5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
                 android:visibility="@{!viewModel.isSpotifyWebApiAuthorized()}"
                 android:onClick="@{() -> controller.promptSpotifyAuthorization()}"
                 app:srcCompat="@android:drawable/checkbox_off_background" />
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:paddingEnd="5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
                 android:visibility="@{viewModel.isSpotifyWebApiAuthorized()}"
                 android:onClick="@{() -> controller.clearSpotifyAuthorization()}"
                 app:srcCompat="@android:drawable/checkbox_on_background" />
@@ -124,6 +128,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:text="@string/lbl_spotify_api_authorized_user_friendly" />
 
             <Button

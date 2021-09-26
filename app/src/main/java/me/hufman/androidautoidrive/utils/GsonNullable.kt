@@ -3,7 +3,6 @@ package me.hufman.androidautoidrive.utils
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import java.lang.ClassCastException
 
 object GsonNullable {
 	fun JsonObject.tryAsJsonObject(key: String): JsonObject? =

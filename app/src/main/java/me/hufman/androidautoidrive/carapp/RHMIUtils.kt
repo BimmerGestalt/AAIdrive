@@ -2,8 +2,8 @@ package me.hufman.androidautoidrive.carapp
 
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
-import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
-import me.hufman.idriveconnectionkit.rhmi.RHMIProperty
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
 import java.io.InputStream
 import java.security.MessageDigest
 import kotlin.math.abs

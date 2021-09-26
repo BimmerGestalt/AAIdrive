@@ -1,7 +1,8 @@
 package me.hufman.androidautoidrive
 
 import android.app.*
-import android.content.*
+import android.content.ComponentName
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Handler
@@ -9,20 +10,20 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
+import io.bimmergestalt.idriveconnectkit.CDS
+import io.bimmergestalt.idriveconnectkit.android.CarAPIAppInfo
+import io.bimmergestalt.idriveconnectkit.android.CarAPIDiscovery
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import me.hufman.androidautoidrive.carapp.*
-import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
+import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.connections.BtStatus
-import me.hufman.androidautoidrive.phoneui.*
+import me.hufman.androidautoidrive.phoneui.DonationRequest
+import me.hufman.androidautoidrive.phoneui.NavHostActivity
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
-import me.hufman.idriveconnectionkit.CDS
-import me.hufman.idriveconnectionkit.android.CarAPIAppInfo
-import me.hufman.idriveconnectionkit.android.CarAPIDiscovery
-import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import java.lang.IllegalArgumentException
 import java.util.*
 
 class MainService: Service() {
@@ -122,7 +123,10 @@ class MainService: Service() {
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-		Analytics.init(applicationContext)
+		AppSettings.loadSettings(applicationContext)
+		if (AppSettings[AppSettings.KEYS.ENABLED_ANALYTICS].toBoolean()) {
+			Analytics.init(applicationContext)
+		}
 
 		val action = intent?.action ?: ""
 		if (action == ACTION_START) {

@@ -6,10 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.CarCapabilitiesSummarized
+import me.hufman.androidautoidrive.CarInformation
+import me.hufman.androidautoidrive.CarInformationObserver
+import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
-import java.util.*
-import kotlin.collections.HashMap
 
 class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppMode: MusicAppMode): ViewModel() {
 	class Factory(val context: Context): ViewModelProvider.Factory {

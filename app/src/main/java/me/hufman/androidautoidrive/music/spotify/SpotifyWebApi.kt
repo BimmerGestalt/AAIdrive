@@ -22,7 +22,6 @@ import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
 import net.openid.appauth.*
-import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 

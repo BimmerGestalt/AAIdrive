@@ -1,6 +1,7 @@
+package me.hufman.androidautoidrive.carapp
+
 import android.content.Context
 import android.content.res.Configuration
-import java.lang.AssertionError
 import java.util.*
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.memberProperties

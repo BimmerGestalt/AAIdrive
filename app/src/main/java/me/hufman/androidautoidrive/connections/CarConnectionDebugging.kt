@@ -3,10 +3,9 @@ package me.hufman.androidautoidrive.connections
 import android.content.Context
 import android.os.SystemClock
 import android.provider.Settings
-import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
-import me.hufman.idriveconnectionkit.android.security.KnownSecurityServices
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import java.lang.Exception
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
+import io.bimmergestalt.idriveconnectkit.android.security.KnownSecurityServices
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 
 /**
  * Assists in determining prerequisites and difficulties in the car connection
@@ -139,6 +138,10 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 	}
 	fun _registerUsbStatus() {
 		usbStatus.register()
+	}
+
+	fun probeSecurityModules() {
+		securityAccess.connect()
 	}
 
 	fun unregister() {

@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import me.hufman.androidautoidrive.addons.AddonAppInfo
-import java.lang.IllegalArgumentException
 
 class AddonAppListController(val context: Context, val permissionsController: PermissionsController) {
 	fun openApplicationPermissions(appInfo: AddonAppInfo) {

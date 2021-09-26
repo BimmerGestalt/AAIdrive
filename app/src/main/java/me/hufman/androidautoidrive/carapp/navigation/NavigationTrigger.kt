@@ -6,12 +6,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Handler
 import android.util.Log
-import com.google.openlocationcode.OpenLocationCode
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplication
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger.Companion.TAG
-import me.hufman.androidautoidrive.carapp.maps.LatLong
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplication
-import me.hufman.idriveconnectionkit.rhmi.RHMIEvent
-import java.lang.IllegalArgumentException
 
 interface NavigationTrigger {
 	companion object {
@@ -52,7 +49,7 @@ class NavigationTriggerReceiver(val trigger: NavigationTrigger): BroadcastReceiv
 	}
 	override fun onReceive(p0: Context?, p1: Intent?) {
 		if (p1?.hasExtra(EXTRA_NAVIGATION) == true) {
-			trigger.triggerNavigation(p1.getStringExtra(EXTRA_NAVIGATION))
+			trigger.triggerNavigation(p1.getStringExtra(EXTRA_NAVIGATION) ?: "")
 		}
 	}
 

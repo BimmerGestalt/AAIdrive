@@ -117,6 +117,9 @@
     <string name="lbl_language_prefercar">Voorkeur voor autotaal boven telefoon taal</string>
     <string name="lbl_language_prefercar_code">Voorkeur voor autotaal (%s) boven telefoon taal</string>
     <string name="lbl_language_forcelanguage">Specifieke taal forceren</string>
+    <string name="lbl_analytics_intro">AAIdrive is een onofficieel hobbyproject, dat op geen enkele manier wordt ondersteund of goedgekeurd door BMW, voortbouwend op een omgekeerd gebouwd protocol. Ik ben trots op de functionaliteit en stabiliteit, maar crashes kunnen nog steeds gebeuren. Overweeg om analytics automatisch te laten insturen voor foutopsporing.</string>
+    <string name="lbl_analytics_description">Naast crash rapporten zal analytics inschakelen ook de lijst van geïnstalleerde muziek apps en enkele anonieme informatie over auto\'s uploaden om prioriteit te geven aan feature ontwikkeling.</string>
+    <string name="lbl_analytics_enabled">Schakel analytics en crash-rapportage in</string>
     <string name="lbl_donations_volunteer">AAIdrive is een vrijwilligers project</string>
     <string name="lbl_donations_request">Als u dit project leuk vindt en het nuttig vindt, overweeg dan om uw steun te tonen door te doneren:</string>
     <string name="btn_donations">Doneren</string>

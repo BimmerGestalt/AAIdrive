@@ -1,9 +1,9 @@
 package me.hufman.androidautoidrive.carapp
 
 import de.bmw.idrive.BMWRemoting
-import me.hufman.idriveconnectionkit.rhmi.RHMIComponent
-import me.hufman.idriveconnectionkit.rhmi.RHMIEvent
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 
 class FocusTriggerController(val focusEvent: RHMIEvent.FocusEvent, val recreateCallback: () -> Unit) {
 	var hasFocusedState = false

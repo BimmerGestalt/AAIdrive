@@ -10,7 +10,6 @@ import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonArray
 import com.google.gson.JsonParser
-import java.lang.IllegalStateException
 
 /**
  * This implements read-only access to a singleton of loaded settings
@@ -50,7 +49,8 @@ interface AppSettings {
 		CACHED_CAR_CAPABILITIES("Cached_Car_Capabilities", "{}", "JSON Object of any previously-cached capabilities"),
 		CACHED_CAR_DATA("Cached_Car_Data", "{}", "JSON Object of any previously-cached cds properties"),
 		PREFER_CAR_LANGUAGE("Prefer_Car_Language", "true", "Prefer the car's language instead of the phone's language"),
-		FORCE_CAR_LANGUAGE("Force_Car_Language", "", "Force a specific language for the car apps")
+		FORCE_CAR_LANGUAGE("Force_Car_Language", "", "Force a specific language for the car apps"),
+		ENABLED_ANALYTICS("Enable_Analytics", "false", "Enable Analytics module")
 	}
 
 	/** Store the active preferences in a singleton */

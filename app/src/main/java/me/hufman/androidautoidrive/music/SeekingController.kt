@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.music
 import android.content.Context
 import android.os.Handler
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.carapp.L
 
 class SeekingController(val context: Context, val handler: Handler, val controller: MusicController) {
 	companion object {
