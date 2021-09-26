@@ -219,33 +219,41 @@ def RHMISources = [
 ]
 
 // extract RHMI resources from official apps
-task extractRHMI(type: Copy) {
+task confirmRHMIResources() {
+    doFirst {
+        def found = [
+                "BMW Connected Classic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*classic.*\.apk/),
+                "BMW Connected": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*\.apk/),
+                "MINI Connected Classic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*classic.*\.apk/),
+                "MINI Connected": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*\.apk/),
+                "Smartthings Classic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)smartthings.*classic.*\.apk/),
+                "Spotify": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)spotify.*\.apk/),
+        ]
+        found["BMW Connected"].removeAll(found["BMW Connected Classic"])
+        found["MINI Connected"].removeAll(found["MINI Connected Classic"])
+
+        def missing = found.findAll { it.value.isEmpty() }.collect { it.key }
+        if (!missing.isEmpty()) {
+            def message = missing.collect { "Could not locate $it APK in external directory" }.join("\n")
+            throw new MissingResourceException(message)
+        }
+    }
+}
+task extractRHMIResources(type: Copy, dependsOn: confirmRHMIResources) {
     description "Extracts necessary RHMI resources for compilation"
 
     def destRoot = "src/main/assets/carapplications"
 
-    def bmwConnectedClassicFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*classic.*\.apk/)
-
-    def bmwConnectedFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*\.apk/)
-    bmwConnectedFound.removeAll(bmwConnectedClassicFound)
-
-    def miniConnectedClassicFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*classic.*\.apk/)
-
-    def miniConnectedFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*\.apk/)
-    miniConnectedFound.removeAll(miniConnectedClassicFound)
-
-    def smartthingsFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)smartthings.*classic.*\.apk/)
-
-    def spotifyFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)spotify.*\.apk/)
-
     def sources = [
-            "BMWClassic": bmwConnectedClassicFound[0] ?: new StopExecutionException("Could not locate BMW Connected Classic APK in external directory"),
-            "BMW": bmwConnectedFound[0] ?: new StopExecutionException("Could not locate BMW Connected APK in external directory"),
-            "MINIClassic": miniConnectedClassicFound[0] ?: new StopExecutionException("Could not locate MINI Connected Classic APK in external directory"),
-            "MINI": miniConnectedFound[0] ?: new StopExecutionException("Could not locate MINI Connected APK in external directory"),
-            "Smartthings": smartthingsFound[0] ?: new StopExecutionException("Could not locate Smartthings Classic APK in external directory"),
-            "Spotify": spotifyFound[0] ?: new StopExecutionException("Could not locate Spotify APK in external directory"),
+            "BMWClassic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*classic.*\.apk/),
+            "BMW": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*\.apk/),
+            "MINIClassic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*classic.*\.apk/),
+            "MINI": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*\.apk/),
+            "Smartthings": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)smartthings.*classic.*\.apk/),
+            "Spotify": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)spotify.*\.apk/),
     ]
+    sources["BMW"].removeAll(sources["BMWClassic"])
+    sources["MINI"].removeAll(sources["MINIClassic"])
 
     // actually do the copy
     sources.each { sourceZip ->
@@ -253,17 +261,14 @@ task extractRHMI(type: Copy) {
         def missing = RHMISources[sourceZip.key].values().findAll {
             !file("$destRoot/$it").exists()
         }
-        if (!missing.isEmpty()) {
-            if (sourceZip.value instanceof Exception) {
-                throw new StopExecutionException("Could not locate source zip for file(s): [${missing.join(",")}]: ${sourceZip.value.message}")
-            }
+        if (!missing.isEmpty() && !sourceZip.value.isEmpty()) {
             RHMISources[sourceZip.key].each { sourceFile ->
-                from({zipTree(sourceZip.value)}) {
+                from({zipTree(sourceZip.value[0])}) {
                     include "assets/carapplications/${sourceFile.key}"
                     eachFile { it.relativePath = new RelativePath(true, sourceFile.value)}
                 }
             }
-            if (inputs.sourceFiles.empty) throw new StopExecutionException("Could not locate RHMI Resources in provided APK: ${sourceZip.value}")
+            if (inputs.sourceFiles.empty) throw new MissingResourceException("Could not locate RHMI Resources in provided APK: ${sourceZip.value}")
         }
     }
     into destRoot
@@ -282,7 +287,7 @@ task extractRHMI(type: Copy) {
             !file(it).exists()
         }
         if (!missing.isEmpty()) {
-            throw new Exception("Missing required RHMI files:\n${missing.join("\n")}")
+            throw new MissingResourceException("Missing required RHMI files:\n${missing.join("\n")}")
         }
     }
 }
@@ -299,36 +304,35 @@ def RHMISourcesTest = [
         "basecore/rhmi/onlineservices/id5/v2/ui_description.xml": "ui_description_onlineservices_v2.xml",
         "bmwone/rhmi/ui_description_ID5.xml": "ui_description_bmwone.xml",
 ]
-task extractRHMITest(type: Copy) {
+task extractRHMIResourcesTest(type: Copy, dependsOn: confirmRHMIResources) {
     description "Extracts necessary RHMI resources for unit tests"
 
     def destRoot = "src/test/resources"
-    def connectedFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*\.apk/)
-    def connectedClassicFound = new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*\.apk/)
-    connectedFound.removeAll {it.toLowerCase().contains("classic")}
-    connectedClassicFound.retainAll {it.toLowerCase().contains("classic")}
+
+    def sources = [
+            "Classic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*classic.*\.apk/),
+            "Connected": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*\.apk/)
+    ]
+    sources["Connected"].removeAll(sources["Classic"])
 
     def missing = RHMISourcesTest.values().findAll {
         !file("$destRoot/$it").exists()
     }
-    if (!missing.isEmpty()) {
-        if (connectedFound.isEmpty()) {
-            throw new StopExecutionException("Could not locate Connected APK to extract test resources from")
-        }
+    if (!missing.isEmpty() && !sources["Classic"].isEmpty() && !sources["Connected"].isEmpty()) {
         RHMIClassicSourcesTest.each { sourceFile ->
-            from({zipTree(connectedClassicFound[0])}) {
+            from({zipTree(sources["Classic"][0])}) {
                 include "assets/carapplications/${sourceFile.key}"
                 eachFile { it.relativePath = new RelativePath(true, sourceFile.value)}
             }
         }
         RHMISourcesTest.each { sourceFile ->
-            from({zipTree(connectedFound[0])}) {
+            from({zipTree(sources["Connected"][0])}) {
                 include "assets/carapplications/${sourceFile.key}"
                 eachFile { it.relativePath = new RelativePath(true, sourceFile.value)}
             }
         }
-        inputs.files(connectedFound[0])
-        if (inputs.sourceFiles.empty) throw new StopExecutionException("Could not locate RHMI Test Resources in provided APK")
+        inputs.files(sources["Connected"][0])
+        if (inputs.sourceFiles.empty) throw new MissingResourceException("Could not locate RHMI Test Resources in provided APK")
     }
     into destRoot
 
@@ -341,13 +345,13 @@ task extractRHMITest(type: Copy) {
             !file("$destRoot/$it").exists()
         }
         if (!afterMissing.isEmpty()) {
-            throw new Exception("Could not extract test resources:\n${afterMissing.join("\n")}")
+            throw new MissingResourceException("Could not extract test resources:\n${afterMissing.join("\n")}")
         }
     }
 }
 
-preBuild.dependsOn extractRHMI
-preBuild.dependsOn extractRHMITest
+preBuild.dependsOn extractRHMIResources
+preBuild.dependsOn extractRHMIResourcesTest
 
 //tasks.matching {it instanceof Test}.all {
 //    it.outputs.upToDateWhen {false}
