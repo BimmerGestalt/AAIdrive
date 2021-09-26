@@ -100,7 +100,7 @@ jobs:
           path: bundle
       - name: Prepare Changelog
         run: mkdir whats_new && echo "${{ github.event.inputs.whats_new }}" >> whats_new/whatsnew-en-US
-      - uses: r0adkll/upload-google-play@v1
+      - uses: r0adkll/upload-google-play@v1.0.15
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SECRET }}
           packageName: me.hufman.androidautoidrive
