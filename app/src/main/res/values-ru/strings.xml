@@ -124,6 +124,9 @@
     <string name="lbl_language_prefercar">Предпочитать язык автомобиля языку на телефоне</string>
     <string name="lbl_language_prefercar_code">Предпочитать язык автомобиля (%s) языку на телефоне</string>
     <string name="lbl_language_forcelanguage">Принудительно указать язык</string>
+    <string name="lbl_analytics_intro">AAIdrive - неофициальный проект, хобби, которое никоим образом не поддерживается BMW и построено с помощью реверс-инжениринга пользовательского протокола. Я горжусь его функциональностью и стабильностью, но могут случаться сбои. Чтобы помочь улучшить приложение, пожалуйста, включите аналитику для автоматической отправки отчётов об ошибках.</string>
+    <string name="lbl_analytics_description">Помимо отчетов о сбое, включение аналитики также загрузит список установленных музыкальных приложений и некоторую анонимную информацию о автомобиле, чтобы помочь в разработке приложения.</string>
+    <string name="lbl_analytics_enabled">Включить автоматическое отправление отчётов о сбоях</string>
     <string name="lbl_donations_volunteer">AAIdrive — волонтерский проект</string>
     <string name="lbl_donations_request">Если вам нравится этот проект и вы считаете его полезным, выразите поддержку пожертвованием:</string>
     <string name="btn_donations">Пожертвовать</string>
@@ -277,6 +280,8 @@
     <string name="lbl_carinfo_units_kmL">км/л</string>
     <string name="lbl_carinfo_units_mph">миль/ч</string>
     <string name="lbl_carinfo_units_kmph">км/ч</string>
+    <string name="lbl_carinfo_units_celcius">\u2103</string>
+    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
     <string name="lbl_carinfo_units_masl">м над ур. моря</string>
     <!-- tips -->
     <string name="lbl_tip_image">Картинка, демонстрирующая подсказку</string>
