@@ -106,6 +106,9 @@
     <string name="lbl_addon_apps">Bővítmény Alkalmazások</string>
     <string name="lbl_addons_empty">Nincs találat</string>
     <string name="addonAppIcon">Applikáció ikon</string>
+    <string name="addonConnectionPermission">Autó kapcsolat hozzáférés</string>
+    <string name="addonConnectionPermissionDeclined">NEM TUD kapcsolódni az autóhoz</string>
+    <string name="addonConnectionPermissionGranted">TUD kapcsolódni az autóhoz</string>
     <string name="addonNormalPermission">Autóadat hozzáférés</string>
     <string name="addonNormalPermissionDeclined">NEM fér hozzá az autóadataihoz</string>
     <string name="addonNormalPermissionGranted">HOZZÁFÉR az autóadataihoz</string>
