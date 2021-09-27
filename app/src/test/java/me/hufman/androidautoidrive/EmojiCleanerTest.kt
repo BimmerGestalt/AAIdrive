@@ -8,8 +8,38 @@ import org.junit.Test
 class EmojiCleanerTest {
 	@Before
 	fun setup() {
+		UnicodeCleaner._addPlaceholderEmoji("\u00A9", listOf("copyright"), "copyright")
+		UnicodeCleaner._addPlaceholderEmoji("\u2714", listOf("heavy_check_mark"), "heavy_check_mark")
+		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDE00", listOf("grinning"), "grinning face")
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDC08", listOf("cat2"), "cat")
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDE3B", listOf("heart_eyes_cat"), "heart_eyes_cat")
+	}
+
+	/** Verifies that ascii symbols don't get emoji parsed */
+	@Test
+	fun testAscii() {
+		run {
+			val correct = "Test \u00A92020"
+			val parsed = UnicodeCleaner.clean(correct)
+			assertEquals(correct, parsed)
+		}
+		run {
+			val source = "Ready?\uD83D\uDE00"
+			val correct = "Ready? :D "
+			assertEquals(correct, UnicodeCleaner.clean(source))
+		}
+	}
+
+	/** Verifies BMP text */
+	@Test
+	fun testBMP() {
+		// the car doesn't have a Heavy Checkmark in font
+		run {
+			val source = "Test \u2714"
+			val correct = "Test :heavy_check_mark:"
+			val parsed = UnicodeCleaner.clean(source)
+			assertEquals(correct, parsed)
+		}
 	}
 
 	/** Verifies that foreign letters don't get emoji parsed */
