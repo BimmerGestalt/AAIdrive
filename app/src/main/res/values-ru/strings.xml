@@ -113,6 +113,9 @@
     <string name="lbl_addon_apps">Приложения дополнений</string>
     <string name="lbl_addons_empty">Не найдено</string>
     <string name="addonAppIcon">Иконка приложения</string>
+    <string name="addonConnectionPermission">Доступ к подключению автомобиля</string>
+    <string name="addonConnectionPermissionDeclined">НЕЛЬЗЯ подключиться к автомобилю</string>
+    <string name="addonConnectionPermissionGranted">МОЖНО подключиться к автомобилю</string>
     <string name="addonNormalPermission">Доступ к данным автомобиля</string>
     <string name="addonNormalPermissionDeclined">НЕ ВОЗМОЖЕН доступ к данным автомобиля</string>
     <string name="addonNormalPermissionGranted">ВОЗМОЖЕН доступ к данным автомобиля</string>
