@@ -110,6 +110,7 @@
     <string name="lbl_addonspage">Ytterligare appar kan fungera med din bil för ännu fler funktioner</string>
     <string name="lbl_addon_apps">Tillagda appar</string>
     <string name="lbl_addons_empty">Inget hittades</string>
+    <string name="lbl_addon_learn">Mer information</string>
     <string name="addonAppIcon">Appikon</string>
     <string name="addonConnectionPermission">Åtkomst till bilanslutning</string>
     <string name="addonConnectionPermissionDeclined">Kan ej ansluta till bil</string>
