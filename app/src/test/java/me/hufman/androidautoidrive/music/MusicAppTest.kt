@@ -185,6 +185,9 @@ class MusicAppTest {
 	fun setup() {
 		AppSettings.loadDefaultSettings()
 		AppSettings.tempSetSetting(AppSettings.KEYS.AUDIO_FORCE_CONTEXT, "true")
+		UnicodeCleaner._addPlaceholderEmoji("\u00A9", listOf("copyright"), "copyright")
+		UnicodeCleaner._addPlaceholderEmoji("\u2714", listOf("heavy_check_mark"), "heavy_check_mark")
+		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDE00", listOf("grinning"), "grinning face")
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDC08", listOf("cat2"), "cat")
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDE3B", listOf("heart_eyes_cat"), "heart_eyes_cat")
 	}

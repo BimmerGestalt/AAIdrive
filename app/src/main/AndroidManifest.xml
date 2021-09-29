@@ -57,6 +57,10 @@
         <intent>
             <action android:name="io.bimmergestalt.cardata.service" />
         </intent>
+        <!-- Search for Addon apps that connect to the car -->
+        <intent>
+            <action android:name="io.bimmergestalt.carconnection.service" />
+        </intent>
     </queries>
 
     <application

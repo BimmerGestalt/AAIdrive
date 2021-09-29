@@ -1,0 +1,212 @@
+// What files to extract from the source APK files
+def RHMISources = [
+        "BMWClassic": [
+                // multimedia (audioplayer) (sourced from a USA apk)
+                "com.bmwgroup.connected.bmw.usa/com.bmwgroup.connected.bmw.usa.p7b": "multimedia/rhmi/bmw/multimedia.p7b",
+                "com.bmwgroup.connected.bmw.usa/rhmi/multimedia/id5/v2/ui_description.xml": "multimedia/rhmi/ui_description.xml",
+                "com.bmwgroup.connected.bmw.usa/rhmi/bmw/images.zip": "multimedia/rhmi/bmw/images.zip",
+                "com.bmwgroup.connected.bmw.usa/rhmi/bmw/texts.zip": "multimedia/rhmi/bmw/texts.zip",
+                "com.bmwgroup.connected.bmw.usa/rhmi/common/images.zip": "multimedia/rhmi/common/images.zip",
+                "com.bmwgroup.connected.bmw.usa/rhmi/common/texts.zip": "multimedia/rhmi/common/texts.zip",
+                // multimedia (audioplayer) (sourced from a worldwide apk)
+                "com.bmwgroup.connected.bmw/com.bmwgroup.connected.bmw.p7b": "multimedia/rhmi/bmw/multimedia.p7b",
+                "com.bmwgroup.connected.bmw/rhmi/multimedia/id5/v2/ui_description.xml": "multimedia/rhmi/ui_description.xml",
+                "com.bmwgroup.connected.bmw/rhmi/bmw/images.zip": "multimedia/rhmi/bmw/images.zip",
+                "com.bmwgroup.connected.bmw/rhmi/bmw/texts.zip": "multimedia/rhmi/bmw/texts.zip",
+                "com.bmwgroup.connected.bmw/rhmi/common/images.zip": "multimedia/rhmi/common/images.zip",
+                "com.bmwgroup.connected.bmw/rhmi/common/texts.zip": "multimedia/rhmi/common/texts.zip",
+                // news (readout)
+                "news/news.p7b": "news/rhmi/bmw/news.p7b",
+                "news/rhmi/ui_description.xml": "news/rhmi/ui_description.xml",
+                "news/rhmi/bmw/images.zip": "news/rhmi/bmw/images.zip",
+                "news/rhmi/common/images.zip": "news/rhmi/common/images.zip",
+                "news/rhmi/common/texts.zip": "news/rhmi/common/texts.zip",
+        ],
+        "BMW": [
+                // basecoreOnlineServices (notifications, assistant)
+                "basecore/basecore.p7b": "basecoreOnlineServices/rhmi/bmw/basecoreOnlineServices.p7b",
+                "basecore/rhmi/onlineservices/id4/v1/ui_description.xml": "basecoreOnlineServices/rhmi/ui_description.xml",
+                "basecore/rhmi/bmw/images.zip": "basecoreOnlineServices/rhmi/bmw/images.zip",
+                "basecore/rhmi/common/images.zip": "basecoreOnlineServices/rhmi/common/images.zip",
+                "basecore/rhmi/common/texts.zip": "basecoreOnlineServices/rhmi/common/texts.zip",
+
+                // bmwone (id5+ notifications)
+                "bmwone/bmwone.p7b": "bmwone/rhmi/bmw/bmwone.p7b",
+                "bmwone/rhmi/ui_description_ID5.xml": "bmwone/rhmi/ui_description.xml",
+                "bmwone/rhmi/common/images.zip": "bmwone/rhmi/common/images.zip",
+                "bmwone/rhmi/common/bmwone_widgetdb.zip": "bmwone/rhmi/common/widgetdb.zip",
+
+                // Smartthings UI layout
+                // SmartThings <= v2.3.1 uses OnlineServices v2, >= v2.3.6 uses v3
+                "basecore/rhmi/onlineservices/id5/v2/ui_description.xml": "smartthings/rhmi/ui_description.xml",
+                // spotify UI layout, newer versions of Spotify package don't include this file
+                "basecore/rhmi/multimedia/id5/v3/ui_description.xml": "spotify/rhmi/ui_description.xml",
+        ],
+        "MINIClassic": [
+                "com.bmwgroup.connected.mini.usa/com.bmwgroup.connected.mini.usa.p7b": "multimedia/rhmi/mini/multimedia.p7b",
+                "com.bmwgroup.connected.mini.usa/rhmi/mini/images.zip": "multimedia/rhmi/mini/images.zip",
+                "com.bmwgroup.connected.mini.usa/rhmi/mini/texts.zip": "multimedia/rhmi/mini/texts.zip",
+                "com.bmwgroup.connected.mini/com.bmwgroup.connected.mini.p7b": "multimedia/rhmi/mini/multimedia.p7b",
+                "com.bmwgroup.connected.mini/rhmi/mini/images.zip": "multimedia/rhmi/mini/images.zip",
+                "com.bmwgroup.connected.mini/rhmi/mini/texts.zip": "multimedia/rhmi/mini/texts.zip",
+
+                "news/news.p7b": "news/rhmi/mini/news.p7b",
+                "news/rhmi/mini/images.zip": "news/rhmi/mini/images.zip",
+        ],
+        "MINI": [
+                "basecore/basecore.p7b": "basecoreOnlineServices/rhmi/mini/basecoreOnlineServices.p7b",
+                "basecore/rhmi/mini/images.zip": "basecoreOnlineServices/rhmi/mini/images.zip",
+                "bmwone/bmwone.p7b": "bmwone/rhmi/mini/bmwone.p7b",
+        ],
+        "Smartthings": [
+                "com.smartthings.android/com.smartthings.android.p7b": "smartthings/smartthings.p7b",
+                "com.smartthings.android/rhmi/bmw/images.zip": "smartthings/rhmi/bmw/images.zip",
+                "com.smartthings.android/rhmi/bmw/texts.zip": "smartthings/rhmi/bmw/texts.zip",
+                "com.smartthings.android/rhmi/common/images.zip": "smartthings/rhmi/common/images.zip",
+                "com.smartthings.android/rhmi/common/texts.zip": "smartthings/rhmi/common/texts.zip",
+                "com.smartthings.android/rhmi/mini/images.zip": "smartthings/rhmi/mini/images.zip",
+                "com.smartthings.android/rhmi/mini/texts.zip": "smartthings/rhmi/mini/texts.zip",
+        ],
+        "Spotify": [
+                "com.spotify.music/com.spotify.music.p7b": "spotify/spotify.p7b",
+                "com.spotify.music/rhmi/bmw/images.zip": "spotify/rhmi/bmw/images.zip",
+                "com.spotify.music/rhmi/bmw/texts.zip": "spotify/rhmi/bmw/texts.zip",
+                "com.spotify.music/rhmi/mini/images.zip": "spotify/rhmi/mini/images.zip",
+                "com.spotify.music/rhmi/mini/texts.zip": "spotify/rhmi/mini/texts.zip",
+        ],
+]
+
+// extract RHMI resources from official apps
+task confirmRHMIResources() {
+    doFirst {
+        def found = [
+                "BMW Connected Classic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*classic.*\.apk/),
+                "BMW Connected": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*\.apk/),
+                "MINI Connected Classic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*classic.*\.apk/),
+                "MINI Connected": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*\.apk/),
+                "Smartthings Classic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)smartthings.*classic.*\.apk/),
+                "Spotify": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)spotify.*\.apk/),
+        ]
+        found["BMW Connected"].removeAll(found["BMW Connected Classic"])
+        found["MINI Connected"].removeAll(found["MINI Connected Classic"])
+
+        def missing = found.findAll { it.value.isEmpty() }.collect { it.key }
+        if (!missing.isEmpty()) {
+            def message = missing.collect { "Could not locate $it APK in external directory" }.join("\n")
+            throw new MissingResourceException(message)
+        }
+    }
+}
+task extractRHMIResources(type: Copy, dependsOn: confirmRHMIResources) {
+    description "Extracts necessary RHMI resources for compilation"
+
+    def destRoot = "src/main/assets/carapplications"
+
+    def sources = [
+            "BMWClassic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*classic.*\.apk/),
+            "BMW": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*\.apk/),
+            "MINIClassic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*classic.*\.apk/),
+            "MINI": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*\.apk/),
+            "Smartthings": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)smartthings.*classic.*\.apk/),
+            "Spotify": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)spotify.*\.apk/),
+    ]
+    sources["BMW"].removeAll(sources["BMWClassic"])
+    sources["MINI"].removeAll(sources["MINIClassic"])
+
+    // actually do the copy
+    sources.each { sourceZip ->
+        // only prepare the CopySpec if a destination file from this zip is missing
+        def missing = RHMISources[sourceZip.key].values().findAll {
+            !file("$destRoot/$it").exists()
+        }
+        if (!missing.isEmpty() && !sourceZip.value.isEmpty()) {
+            RHMISources[sourceZip.key].each { sourceFile ->
+                from({zipTree(sourceZip.value[0])}) {
+                    include "assets/carapplications/${sourceFile.key}"
+                    eachFile { it.relativePath = new RelativePath(true, sourceFile.value)}
+                }
+            }
+            if (inputs.sourceFiles.empty) throw new MissingResourceException("Could not locate RHMI Resources in provided APK: ${sourceZip.value}")
+        }
+    }
+    into destRoot
+
+    // declare the list of expected files, to inform Gradle Caching
+    def outputFiles = RHMISources.values().collect({ sourceZip ->
+        sourceZip.values()
+    }).flatten().collect({
+        "$destRoot/$it"
+    })
+    outputs.files outputFiles
+
+    // make extra sure that the correct files were extracted from the APKs
+    doLast {
+        def missing = outputFiles.findAll {
+            !file(it).exists()
+        }
+        if (!missing.isEmpty()) {
+            throw new MissingResourceException("Missing required RHMI files:\n${missing.join("\n")}")
+        }
+    }
+}
+
+// Also the unit tests rely on some files, extract those too
+def RHMIClassicSourcesTest = [
+        // these files are only in the Classic app
+        "news/rhmi/ui_description.xml": "ui_description_news.xml",
+]
+def RHMISourcesTest = [
+        "basecore/rhmi/multimedia/id5/v2/ui_description.xml": "ui_description_multimedia_v2.xml",
+        "basecore/rhmi/multimedia/id5/v3/ui_description.xml": "ui_description_multimedia_v3.xml",
+        "basecore/rhmi/onlineservices/id5/v1/ui_description.xml": "ui_description_onlineservices_v1.xml",
+        "basecore/rhmi/onlineservices/id5/v2/ui_description.xml": "ui_description_onlineservices_v2.xml",
+        "bmwone/rhmi/ui_description_ID5.xml": "ui_description_bmwone.xml",
+]
+task extractRHMIResourcesTest(type: Copy, dependsOn: confirmRHMIResources) {
+    description "Extracts necessary RHMI resources for unit tests"
+
+    def destRoot = "src/test/resources"
+
+    def sources = [
+            "Classic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*classic.*\.apk/),
+            "Connected": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*\.apk/)
+    ]
+    sources["Connected"].removeAll(sources["Classic"])
+
+    def missing = RHMISourcesTest.values().findAll {
+        !file("$destRoot/$it").exists()
+    }
+    if (!missing.isEmpty() && !sources["Classic"].isEmpty() && !sources["Connected"].isEmpty()) {
+        RHMIClassicSourcesTest.each { sourceFile ->
+            from({zipTree(sources["Classic"][0])}) {
+                include "assets/carapplications/${sourceFile.key}"
+                eachFile { it.relativePath = new RelativePath(true, sourceFile.value)}
+            }
+        }
+        RHMISourcesTest.each { sourceFile ->
+            from({zipTree(sources["Connected"][0])}) {
+                include "assets/carapplications/${sourceFile.key}"
+                eachFile { it.relativePath = new RelativePath(true, sourceFile.value)}
+            }
+        }
+        inputs.files(sources["Connected"][0])
+        if (inputs.sourceFiles.empty) throw new MissingResourceException("Could not locate RHMI Test Resources in provided APK")
+    }
+    into destRoot
+
+    outputs.files RHMISourcesTest.values().collect {
+        "$destRoot/$it"
+    }
+
+    doLast {
+        def afterMissing = RHMISourcesTest.values().findAll {
+            !file("$destRoot/$it").exists()
+        }
+        if (!afterMissing.isEmpty()) {
+            throw new MissingResourceException("Could not extract test resources:\n${afterMissing.join("\n")}")
+        }
+    }
+}
+
+preBuild.dependsOn extractRHMIResources
+preBuild.dependsOn extractRHMIResourcesTest

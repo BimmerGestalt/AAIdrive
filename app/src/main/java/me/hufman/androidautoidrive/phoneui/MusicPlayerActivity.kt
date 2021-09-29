@@ -85,8 +85,8 @@ class MusicPlayerActivity: AppCompatActivity() {
 
 	override fun onDestroy() {
 		super.onDestroy()
-		UIState.selectedMusicApp = null
 		musicPlayerController.viewPager = null
+		UIState.selectedMusicApp = null
 	}
 }
 

@@ -77,10 +77,96 @@ object UnicodeCleaner {
 		return cleaned
 	}
 
+	// referenced from https://demos.joypixels.com/latest/ascii-smileys.html
+	// with supplement from https://en.wikipedia.org/wiki/List_of_emoticons
+	val EMOTICONS = mapOf(
+			"joy" to ":')",
+			"smiley" to ":D",
+			"slight_smile" to ":)",
+			"sweat_smile" to "':D",
+			"laughing" to "XD",
+			"wink" to ";)",
+			"sweat" to "':(",
+			"kissing_heart" to ":*",
+			"stuck_out_tongue_winking_eye" to "XP",
+			"disappointed" to ":(",
+			"angry" to ">:(",
+			"cry" to ":'(",
+			"fearful" to "D:",
+			"flushed" to ":$",
+			"dizzy_face" to "%)",
+			"innocent" to "O:)",
+			"sunglasses" to "8)",
+			"expressionless" to "-__-",
+			"confused" to ":\\",
+			"stuck_out_tongue" to ":P",
+			"open_mouth" to ":O",
+			"no_mouth" to ":X",
+			// and some others from Emojify's data
+			"grinning" to ":D",
+			"smile" to ":D",
+			"blush" to ":$",
+			"relaxed" to ":)",
+			"kissing_closed_eyes" to ":*",
+			"kissing" to ":*",
+			"kissing_smiling_eyes" to ":*",
+			"stuck_out_tongue_closed_eyes" to "XP",
+			"grin" to ":D",
+			"unamused" to "-__-",
+			"disappointed" to "v_v",
+			"yum" to "XP",
+			"astonished" to ":O",
+			"frowning" to "D:",
+			"anguished" to "D:",
+			"smiling_imp" to ">:)",
+			"grimacing" to ":E",
+			"neutral_face" to ":|",
+			"no_mouth" to ":X",
+			// other symbols
+			"yellow_heart" to "♥",
+			"blue_heart" to "♥",
+			"purple_heart" to "♥",
+			"green_heart" to "♥",
+			"heart" to "♥",
+			"broken_heart" to "</3",
+			"heartpulse" to "♥",
+			"heartbeat" to "♥",
+			"sparkling_heart" to "♥",
+			"cupid" to "♥",
+			"hearts" to "♥",
+			"black_heart" to "♥",
+			"orange_heart" to "♥",
+			"diamonds" to "♦",
+			"large_orange_diamond" to "♦",
+			"large_blue_diamond" to "♦",
+			"small_orange_diamond" to "♦",
+			"small_blue_diamond" to "♦",
+			"clubs" to "♣",
+			"spades" to "♠",
+	)
+
+	fun convertEmoticon(alias: String): String {
+		return EMOTICONS[alias] ?: alias
+	}
+
 	/** Replaces any supported unicode from this string to the shortname tag */
 	fun clean(input: String): String {
 		val bidiCleaned = cleanBidiIsolates(input)
-		return EmojiParser.parseToAliases(bidiCleaned, EmojiParser.FitzpatrickAction.REMOVE)
+
+		val emojiTransformer = object : EmojiParser.EmojiTransformer {
+			override fun transform(unicodeCandidate: EmojiParser.UnicodeCandidate): String {
+				val emoji = unicodeCandidate.emoji?.emoji ?: ""
+				if (emoji[0].code < 255) {
+					// base ascii code, like :copyright: and :registered:
+					return emoji
+				} else if (EMOTICONS.containsKey(unicodeCandidate.emoji?.aliases?.get(0) ?: "")) {
+					return " " + convertEmoticon(unicodeCandidate.emoji?.aliases?.get(0) ?: "") + " "
+				} else {
+					return ":" + unicodeCandidate.emoji?.aliases?.get(0) + ":"
+				}
+			}
+		}
+		return EmojiParser.parseFromUnicode(bidiCleaned, emojiTransformer)
 	}
 
 	/** Builds a simple Emoji object */

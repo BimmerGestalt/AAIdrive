@@ -25,5 +25,12 @@
             android:id="@+id/fragment_addon_applist"
             android:name="me.hufman.androidautoidrive.phoneui.fragments.AddonAppsListFragment"/>
 
+        <Button
+            android:id="@+id/btnLearn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:gravity="center_vertical"
+            android:text="@string/lbl_addon_learn" />
     </LinearLayout>
 </ScrollView>

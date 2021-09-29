@@ -121,7 +121,11 @@
     <string name="lbl_addonspage">Additional apps can work with your car to add even more functionality</string>
     <string name="lbl_addon_apps">Addon Apps</string>
     <string name="lbl_addons_empty">None found</string>
+    <string name="lbl_addon_learn">Learn More</string>
     <string name="addonAppIcon">App Icon</string>
+    <string name="addonConnectionPermission">Car Connection Access</string>
+    <string name="addonConnectionPermissionDeclined">CAN NOT connect to the car</string>
+    <string name="addonConnectionPermissionGranted">CAN connect to the car</string>
     <string name="addonNormalPermission">Car Data Access</string>
     <string name="addonNormalPermissionDeclined">CAN NOT access Car Data</string>
     <string name="addonNormalPermissionGranted">CAN access Car Data</string>

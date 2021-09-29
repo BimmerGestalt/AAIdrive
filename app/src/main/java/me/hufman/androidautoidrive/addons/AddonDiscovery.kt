@@ -8,6 +8,7 @@ class AddonDiscovery(val packageManager: PackageManager) {
 	companion object {
 		const val PERMISSION_NORMAL = "io.bimmergestalt.permission.CDS_normal"
 		const val PERMISSION_PERSONAL = "io.bimmergestalt.permission.CDS_personal"
+		const val INTENT_CONNECTION_SERVICE = "io.bimmergestalt.carconnection.service"
 		const val INTENT_DATA_SERVICE = "io.bimmergestalt.cardata.service"
 
 		private const val ACTION_APPLICATION_PREFERENCES = "android.intent.action.APPLICATION_PREFERENCES"  // API 24
@@ -23,7 +24,7 @@ class AddonDiscovery(val packageManager: PackageManager) {
 	}
 
 	fun discoverApps(): List<AddonAppInfo> {
-		val results = ArrayList<AddonAppInfo>()
+		val discovered = HashMap<String, AddonAppInfo>()
 
 		val intentDataService = Intent(INTENT_DATA_SERVICE)
 		packageManager.queryIntentServices(intentDataService, 0).forEach { resolveInfo ->
@@ -54,10 +55,26 @@ class AddonDiscovery(val packageManager: PackageManager) {
 					it.cdsPersonalRequested = cdsPersonalRequested
 					it.cdsPersonalGranted = cdsPersonalGranted
 				}
-				results.add(appInfo)
+				discovered[packageInfo.packageName] = appInfo
 			}
 		}
 
+		val intentCarService = Intent(INTENT_CONNECTION_SERVICE)
+		packageManager.queryIntentServices(intentCarService, 0).forEach { resolveInfo ->
+			val packageInfo = packageManager.getPackageInfo(resolveInfo.serviceInfo.packageName, 0)
+			val name = packageManager.getApplicationLabel(packageInfo.applicationInfo).toString()
+			val icon = packageManager.getApplicationInfo(packageInfo.packageName, 0).loadIcon(packageManager)
+			val appInfo = discovered[packageInfo.packageName] ?: AddonAppInfo(name, icon, packageInfo.packageName).also {
+				it.intentOpen = resolveIntent(Intent(Intent.ACTION_MAIN).setPackage(packageInfo.packageName))
+				it.intentSettings = resolveIntent(Intent(ACTION_APPLICATION_PREFERENCES).setPackage(packageInfo.packageName))
+			}
+			appInfo.intentConnectionService = Intent(INTENT_CONNECTION_SERVICE).setPackage(packageInfo.packageName)
+			appInfo.carConnectionRequested = true
+			appInfo.carConnectionGranted = true     // TODO support disabling like the MusicApp swiping
+			discovered[packageInfo.packageName] = appInfo
+		}
+
+		val results = ArrayList(discovered.values)
 		results.sortBy { it.name }
 
 		return results

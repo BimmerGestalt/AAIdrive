@@ -111,6 +111,9 @@
     <string name="lbl_addon_apps">Applicazioni aggiuntive</string>
     <string name="lbl_addons_empty">Non trovate</string>
     <string name="addonAppIcon">Icona dell\'app</string>
+    <string name="addonConnectionPermission">Accesso Connessione Auto</string>
+    <string name="addonConnectionPermissionDeclined">NON PUÒ connettersi all\'auto</string>
+    <string name="addonConnectionPermissionGranted">PUÒ connettersi all\'auto</string>
     <string name="addonNormalPermission">Accesso ai dati dell\'auto</string>
     <string name="addonNormalPermissionDeclined">NON PUÒ accedere ai dati dell\'auto</string>
     <string name="addonNormalPermissionGranted">PUÒ accedere ai dati dell\'auto</string>

@@ -111,6 +111,9 @@
     <string name="lbl_addon_apps">Tillagda appar</string>
     <string name="lbl_addons_empty">Inget hittades</string>
     <string name="addonAppIcon">Appikon</string>
+    <string name="addonConnectionPermission">Åtkomst till bilanslutning</string>
+    <string name="addonConnectionPermissionDeclined">Kan ej ansluta till bil</string>
+    <string name="addonConnectionPermissionGranted">Kan ansluta till bilen</string>
     <string name="addonNormalPermission">Åtkomst av bildata</string>
     <string name="addonNormalPermissionDeclined">KAN Ej komma åt bildata</string>
     <string name="addonNormalPermissionGranted">KAN få åtkomst till bildata</string>
