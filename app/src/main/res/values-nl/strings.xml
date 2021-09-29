@@ -110,6 +110,7 @@
     <string name="lbl_addonspage">Extra apps die met de auto samenwerken en nog meer functionaliteit toevoegen</string>
     <string name="lbl_addon_apps">Add-on Apps</string>
     <string name="lbl_addons_empty">Geen add-ons gevonden</string>
+    <string name="lbl_addon_learn">Meer informatie</string>
     <string name="addonAppIcon">App icoon</string>
     <string name="addonConnectionPermission">Status autoverbinding</string>
     <string name="addonConnectionPermissionDeclined">Kan geen verbinding maken met de auto</string>
