@@ -109,6 +109,7 @@
     <string name="lbl_addonspage">Diese Zusätzlichen Apps können sich mit dem Auto verbinden um noch mehr Funktionalität hinzuzufügen</string>
     <string name="lbl_addon_apps">Addon-Apps</string>
     <string name="lbl_addons_empty">Keine Gefunden</string>
+    <string name="lbl_addon_learn">Erfahre mehr</string>
     <string name="addonAppIcon">App Icon</string>
     <string name="addonConnectionPermission">Zugriff auf die Verbindung zum Auto</string>
     <string name="addonConnectionPermissionDeclined">Verbindung zum Auto NICHT MÖGLICH</string>
