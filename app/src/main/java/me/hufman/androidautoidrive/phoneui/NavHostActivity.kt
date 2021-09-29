@@ -98,7 +98,12 @@ class NavHostActivity: AppCompatActivity() {
 
 	fun startService() {
 		try {
-			this.startService(Intent(this, MainService::class.java).setAction(MainService.ACTION_START))
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+				// this is a clear signal of car connection, we can confidently startForeground
+				this.startForegroundService(Intent(this, MainService::class.java).setAction(MainService.ACTION_START))
+			} else {
+				this.startService(Intent(this, MainService::class.java).setAction(MainService.ACTION_START))
+			}
 		} catch (e: IllegalStateException) {
 			// Android Oreo strenuously objects to starting the service if the activity isn't visible
 			// for example, when Android Studio tries to start the Activity with the screen off
