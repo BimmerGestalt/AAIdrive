@@ -112,7 +112,11 @@
     <string name="lbl_addonspage">Dodatkowe aplikacje mogą współracować z samochodem, aby dodać jeszcze więcej funkcjonalności</string>
     <string name="lbl_addon_apps">Aplikacje dodatków</string>
     <string name="lbl_addons_empty">Nic nie znaleziono</string>
+    <string name="lbl_addon_learn">Dowiedz się więcej</string>
     <string name="addonAppIcon">Ikona aplikacji</string>
+    <string name="addonConnectionPermission">Dostęp do połączenia z samochodem</string>
+    <string name="addonConnectionPermissionDeclined">NIE MOŻE połączyć się z samochodem</string>
+    <string name="addonConnectionPermissionGranted">MOŻE połączyć się z samochodem</string>
     <string name="addonNormalPermission">Dostęp do danych pojazdu</string>
     <string name="addonNormalPermissionDeclined">Nie może uzyskać dostępu do danych pojazdu</string>
     <string name="addonNormalPermissionGranted">Może uzyskać dostępu do danych pojazdu</string>
