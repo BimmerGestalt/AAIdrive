@@ -1316,7 +1316,7 @@ class SpotifyWebApiTest {
 
 		val clientPlaylistApi: ClientPlaylistApi = mock()
 		whenever(clientPlaylistApi.replaceClientPlaylistPlayables(playlistId)).doAnswer {  }
-		whenever(clientPlaylistApi.addPlayablesToClientPlaylist(eq(playlistId), any(), position = isNull())).doAnswer {  }
+		whenever(clientPlaylistApi.addPlayablesToClientPlaylist(eq(playlistId), anyVararg(), position = isNull())).doAnswer {  }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
@@ -1325,6 +1325,7 @@ class SpotifyWebApiTest {
 		spotifyWebApi.replacePlaylistSongs(playlistId, songs)
 
 		verify(clientPlaylistApi).replaceClientPlaylistPlayables(playlistId)
+		verify(clientPlaylistApi, times(2)).addPlayablesToClientPlaylist(eq(playlistId), anyVararg(), position = isNull())
 	}
 
 	@Test
