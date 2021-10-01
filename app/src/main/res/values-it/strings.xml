@@ -110,6 +110,7 @@
     <string name="lbl_addonspage">App aggiuntive possono funzionare con la tua auto per aggiungere maggiori funzionalità</string>
     <string name="lbl_addon_apps">Applicazioni aggiuntive</string>
     <string name="lbl_addons_empty">Non trovate</string>
+    <string name="lbl_addon_learn">Per saperne di più</string>
     <string name="addonAppIcon">Icona dell\'app</string>
     <string name="addonConnectionPermission">Accesso Connessione Auto</string>
     <string name="addonConnectionPermissionDeclined">NON PUÒ connettersi all\'auto</string>
