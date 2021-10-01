@@ -112,6 +112,7 @@
     <string name="lbl_addonspage">Дополнения могут работать с вашим автомобилем, чтобы добавить еще больше функциональности</string>
     <string name="lbl_addon_apps">Приложения дополнений</string>
     <string name="lbl_addons_empty">Не найдено</string>
+    <string name="lbl_addon_learn">Подробнее</string>
     <string name="addonAppIcon">Иконка приложения</string>
     <string name="addonConnectionPermission">Доступ к подключению автомобиля</string>
     <string name="addonConnectionPermissionDeclined">НЕЛЬЗЯ подключиться к автомобилю</string>

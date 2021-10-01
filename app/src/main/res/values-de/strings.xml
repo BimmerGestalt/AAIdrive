@@ -91,6 +91,7 @@
     <string name="musicAppHidden">Versteckt</string>
     <string name="enable_audio_context">Audio Fokus via USB Verbindung erzwingen</string>
     <string name="enable_spotify_layout">Immer als Spotify-App erscheinen bei iDrive5+</string>
+    <string name="enable_audioplayer_layout">Bevorzuge legacy compact music interface in IDrive5+</string>
     <string name="lbl_grant_sessions">Steuerung der aktiven Musik Apps</string>
     <string name="lbl_grant_spotify_control">Möglichkeit, deine Spotify-Bibliothek zu durchsuchen</string>
     <string name="lbl_grant_background_music">Erlaube Hintergrundausführung für deine Musik-Apps, falls das Fahrzeug Probleme beim Starten der Apps hat</string>
@@ -109,6 +110,7 @@
     <string name="lbl_addonspage">Diese Zusätzlichen Apps können sich mit dem Auto verbinden um noch mehr Funktionalität hinzuzufügen</string>
     <string name="lbl_addon_apps">Addon-Apps</string>
     <string name="lbl_addons_empty">Keine Gefunden</string>
+    <string name="lbl_addon_learn">Erfahre mehr</string>
     <string name="addonAppIcon">App Icon</string>
     <string name="addonConnectionPermission">Zugriff auf die Verbindung zum Auto</string>
     <string name="addonConnectionPermissionDeclined">Verbindung zum Auto NICHT MÖGLICH</string>
@@ -124,6 +126,9 @@
     <string name="lbl_language_prefercar">Spracheinstellung des Fahrzeugs gegenüber Telefonsprache bevorzugen</string>
     <string name="lbl_language_prefercar_code">Spracheinstellung des Fahrzeugs (%s) gegenüber Telefonsprache bevorzugen</string>
     <string name="lbl_language_forcelanguage">Spezifische Sprache verwenden</string>
+    <string name="lbl_analytics_intro">AAIdrive ist ein inoffizielles Hobbyprojekt, das in keiner Weise von BMW unterstützt oder empfohlen wird und auf einem nachgebauten Protokoll aufbaut. Ich bin stolz auf seine Funktionen und Zuverlässigkeit, aber Abstürze können trotzdem vorkommen. Bitte erwägen Sie, die Analysefunktion zu aktivieren, um automatisch Berichte über Abstürze zur Fehlerbehebung zu senden.</string>
+    <string name="lbl_analytics_description">Neben den Absturzberichten werden durch die Aktivierung der Analysefunktion auch die Liste der installierten Musik-Apps und einige anonyme Fahrzeugdaten hochgeladen, um die Weiterentwicklung der Funktionen zu priorisieren.</string>
+    <string name="lbl_analytics_enabled">Analyse- und Absturzberichte aktivieren</string>
     <string name="lbl_donations_volunteer">AAIdrive ist ein Freiwilligenprojekt</string>
     <string name="lbl_donations_request">Wenn Ihnen dieses Projekt gefällt und Sie es nützlich finden, können Sie Ihre Unterstützung durch eine Spende zeigen:</string>
     <string name="btn_donations">Spenden</string>

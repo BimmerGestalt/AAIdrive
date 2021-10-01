@@ -105,6 +105,7 @@
     <string name="lbl_addonspage">További alkalmazások működhetnek együtt autójával, még több funkció hozzáadásához</string>
     <string name="lbl_addon_apps">Bővítmény Alkalmazások</string>
     <string name="lbl_addons_empty">Nincs találat</string>
+    <string name="lbl_addon_learn">Tudj meg többet</string>
     <string name="addonAppIcon">Applikáció ikon</string>
     <string name="addonConnectionPermission">Autó kapcsolat hozzáférés</string>
     <string name="addonConnectionPermissionDeclined">NEM TUD kapcsolódni az autóhoz</string>
