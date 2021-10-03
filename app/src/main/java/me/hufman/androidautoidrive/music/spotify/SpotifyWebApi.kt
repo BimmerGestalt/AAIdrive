@@ -80,14 +80,25 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 * Adds the provided list of songs to the specified playlist.
 	 */
 	suspend fun addSongsToPlaylist(playlistId: String, songs: List<MusicMetadata>) = executeApiCall("Failed to add songs to playlist $playlistId") {
-		webApi?.playlists?.addPlayablesToClientPlaylist(playlistId, *songs.map { PlayableUri(it.mediaId!!) }.toTypedArray())
+		// need to manually chunk the playlist into 100 song chunks and synchronously call the addPlayablesToClientPlaylist(..)
+		// method for each as a workaround to the bug where >100 songs has the potential of adding the songs out of order
+		songs.chunked(100).forEach { chunk ->
+			val playables = chunk.map { PlayableUri(it.mediaId!!) }.toTypedArray()
+			webApi?.playlists?.addPlayablesToClientPlaylist(playlistId, *playables)
+		}
 	}
 
 	/**
 	 * Replaces the songs of the specified playlist with the provided list of songs.
 	 */
 	suspend fun replacePlaylistSongs(playlistId: String, songs: List<MusicMetadata>) = executeApiCall("Failed to replace playlist $playlistId songs") {
-		webApi?.playlists?.replaceClientPlaylistPlayables(playlistId, *songs.map { PlayableUri(it.mediaId!!) }.toTypedArray())
+		// can only add a maximum of 100 tracks per replace playlist playables request
+		if (songs.size <= 100) {
+			webApi?.playlists?.replaceClientPlaylistPlayables(playlistId, *songs.map { PlayableUri(it.mediaId!!) }.toTypedArray())
+		} else {
+			webApi?.playlists?.replaceClientPlaylistPlayables(playlistId)
+			addSongsToPlaylist(playlistId, songs)
+		}
 	}
 
 	/**

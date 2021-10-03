@@ -99,7 +99,7 @@ class SpotifyMusicAppControllerTest {
 	@Before
 	fun setup() {
 		appSettings = MockAppSettings()
-		controller = SpotifyAppController(mock(), remote, webApi, appSettings)
+		controller = SpotifyAppController(mock(), remote, webApi, appSettings, false)
 		controller.defaultDispatcher = testDispatcher
 	}
 

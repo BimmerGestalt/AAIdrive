@@ -1310,6 +1310,25 @@ class SpotifyWebApiTest {
 	}
 
 	@Test
+	fun testReplacePlaylistSongs_LargeNumberOfSongs() = runBlocking {
+		val playlistId = "playlistId"
+		val songs = (0..120).map { MusicMetadata("mediaId$it", it.toLong(), true, false, 2, null, "coverArtUri$it", null, "Artist $it", "Album $it", "Title $it") }
+
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.replaceClientPlaylistPlayables(playlistId)).doAnswer {  }
+		whenever(clientPlaylistApi.addPlayablesToClientPlaylist(eq(playlistId), anyVararg(), position = isNull())).doAnswer {  }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		spotifyWebApi.replacePlaylistSongs(playlistId, songs)
+
+		verify(clientPlaylistApi).replaceClientPlaylistPlayables(playlistId)
+		verify(clientPlaylistApi, times(2)).addPlayablesToClientPlaylist(eq(playlistId), anyVararg(), position = isNull())
+	}
+
+	@Test
 	fun testReplacePlaylistSongs_AuthenticationException() = runBlocking {
 		val playlistId = "playlistId"
 		val songs = listOf(

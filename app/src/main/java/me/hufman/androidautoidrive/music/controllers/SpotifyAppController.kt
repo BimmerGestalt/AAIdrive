@@ -25,7 +25,7 @@ import me.hufman.androidautoidrive.music.spotify.TemporaryPlaylistState
 import me.hufman.androidautoidrive.utils.Utils
 import java.util.*
 
-class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi, val appSettings: MutableAppSettings): MusicAppController {
+class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi, val appSettings: MutableAppSettings, val isProbing: Boolean): MusicAppController {
 	companion object {
 		const val TAG = "SpotifyAppController"
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
@@ -131,7 +131,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 						spotifyWebApi.initializeWebApi(isProbing)
 						spotifyWebApi.isUsingSpotify = true
 
-						pendingController.value = SpotifyAppController(context, remote, spotifyWebApi, appSettings)
+						pendingController.value = SpotifyAppController(context, remote, spotifyWebApi, appSettings, isProbing)
 
 						// if app discovery says we aren't able to connect, discover again
 						if (!isProbing) {
@@ -191,6 +191,11 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 
 	init {
 		spotifySubscription.setEventCallback { playerState ->
+			if (isProbing) {
+				Log.d(TAG, "Probe instance, not loading playerState")
+				return@setEventCallback
+			}
+
 			Log.d(TAG, "Heard an update from Spotify")
 
 			// update the available actions
@@ -229,6 +234,11 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		}
 
 		playlistSubscription.setEventCallback { playerContext ->
+			if (isProbing) {
+				Log.d(TAG, "Probe instance, not loading playerContext")
+				return@setEventCallback
+			}
+
 			Log.d(TAG, "Heard an update from Spotify queue: ${playerContext.uri}")
 			// update the current queue
 			val uri = playerContext.uri
