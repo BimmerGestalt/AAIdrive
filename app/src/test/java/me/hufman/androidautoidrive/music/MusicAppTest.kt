@@ -305,6 +305,26 @@ class MusicAppTest {
 		verify(musicController).seekTo(0)
 		state.getPlayListAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 2))
 		verify(musicController, times(1)).skipToNext()
+
+		// try seeking
+		clearInvocations(musicController)
+		state.getProgressAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(45.toByte() to 50))
+		state.getProgressAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(45.toByte() to 60))        // dragged around, only handle the first
+		state.getProgressAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(45.toByte() to 70))
+		verify(musicController, times(1)).seekTo(any())
+		verify(musicController).seekTo(90000)
+
+		// the artist/album labels open the browse window
+		val browseResults = CompletableDeferred<List<MusicMetadata>>()
+		whenever(musicController.browseAsync(anyOrNull())) doAnswer {
+			browseResults
+		}
+		app.browseView.clearPages()
+		state.getArtistAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(99.toByte() to true))
+		assertEquals(app.browseView.states[0].id, state.getArtistAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
+		app.browseView.clearPages()
+		state.getAlbumAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(99.toByte() to true))
+		assertEquals(app.browseView.states[0].id, state.getAlbumAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
 	}
 
 	fun testAppInitEnqueueView(enqueuedView: EnqueuedView) {

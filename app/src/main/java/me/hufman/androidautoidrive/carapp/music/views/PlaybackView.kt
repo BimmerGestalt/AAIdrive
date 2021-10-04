@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import de.bmw.idrive.BMWRemoting
+import io.bimmergestalt.idriveconnectkit.etchAsInt
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.UnicodeCleaner
@@ -22,6 +23,7 @@ import me.hufman.androidautoidrive.utils.Utils
 class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {
 		const val INITIALIZATION_DEFERRED_TIMEOUT = 6000
+		const val POSITION_ACTION_DEBOUNCE = 2000
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.AudioHmiState || (
 					state is RHMIState.ToolbarState &&
@@ -67,6 +69,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	var isBuffering: Boolean = false
 	var skipBackEnabled: Boolean = true
 	var skipNextEnabled: Boolean = true
+	var lastPositionActionTime: Long = 0
 
 	init {
 		// discover widgets
@@ -202,6 +205,26 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		}
 		buttons[2].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = enqueuedView.state.id
 		customActionButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = customActionsView.state.id
+
+		if (state is RHMIState.AudioHmiState) {
+			state.getProgressAction()?.asRAAction()?.rhmiActionCallback = RHMIActionCallback { args ->
+				if (args?.containsKey(45.toByte()) == true && lastPositionActionTime + POSITION_ACTION_DEBOUNCE < System.currentTimeMillis()) {
+					val newPosition = etchAsInt(args[45.toByte()])
+					controller.seekTo(controller.getPlaybackPosition().maximumPosition * newPosition / 100)
+					lastPositionActionTime = System.currentTimeMillis()
+				}
+			}
+			state.getArtistAction()?.asRAAction()?.rhmiActionCallback = RHMIActionCallback { args ->
+				browseView.clearPages()
+				val page = browseView.pushBrowsePage(null)
+				state.getArtistAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id
+			}
+			state.getAlbumAction()?.asRAAction()?.rhmiActionCallback = RHMIActionCallback { args ->
+				browseView.clearPages()
+				val page = browseView.pushBrowsePage(null)
+				state.getAlbumAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id
+			}
+		}
 	}
 
 	/**
