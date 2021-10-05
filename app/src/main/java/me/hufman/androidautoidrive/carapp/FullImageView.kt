@@ -81,7 +81,9 @@ class FullImageView(val state: RHMIState, val title: String, val config: FullIma
 				interaction.navigateDown()
 			}
 			// reset focus to the middle of the list
-			state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().triggerEvent(mapOf(0 to inputList.id, 41 to 3))
+			if (directionUp != null) {
+				state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().triggerEvent(mapOf(0 to inputList.id, 41 to 3))
+			}
 		}
 		inputList.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIActionButtonCallback {
 			override fun onAction(invokedBy: Int?) {
