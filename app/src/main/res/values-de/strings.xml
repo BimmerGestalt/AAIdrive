@@ -121,7 +121,7 @@
     <string name="addonPersonalPermission">Zugriff auf persönliche Daten des Autos</string>
     <string name="addonPersonalPermissionDeclined">KANN NICHT auf persönliche Daten des Autos zugreifen</string>
     <string name="addonPersonalPermissionGranted">KANN auf persönliche Daten des Autos zugreifen</string>
-    <string name="lbl_settingspage">Erweiterte Einstellungen für das Optimieren des Verhaltens können zu unerwartetem Verhalten führen</string>
+    <string name="lbl_settingspage">Die Verwendung der erweiterten Einstellungen kann zu unerwartetem Verhalten führen</string>
     <string name="lbl_language_carinterface">Sprache für das Auto</string>
     <string name="lbl_language_prefercar">Spracheinstellung des Fahrzeugs gegenüber Telefonsprache bevorzugen</string>
     <string name="lbl_language_prefercar_code">Spracheinstellung des Fahrzeugs (%s) gegenüber Telefonsprache bevorzugen</string>
@@ -145,8 +145,8 @@
     <string name="connectionStatusMissingConnectedApp">Kann Connected oder Connected Classic App nicht finden</string>
     <string name="connectionStatusWaiting">Warte auf Verbindung mit Fahrzeug</string>
     <string name="connectionStatusConnected">Verbunden mit %s</string>
-    <string name="lblChassisCode">Fahrgestell</string>
-    <string name="lblHmiVersion">IDrive-Typ</string>
+    <string name="lblChassisCode">Baureihe</string>
+    <string name="lblHmiVersion">iDrive-Typ</string>
     <string name="nowplaying_notconnected">&lt;Nicht Verbunden&gt;</string>
     <string name="nowplaying_unknown">&lt;Unbekannt&gt;</string>
     <!-- connection setup -->
@@ -284,7 +284,7 @@
     <string name="lbl_carinfo_units_kmph">km/h</string>
     <string name="lbl_carinfo_units_celcius">\u2103</string>
     <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
-    <string name="lbl_carinfo_units_masl">Seehöhe</string>
+    <string name="lbl_carinfo_units_masl">m (über Normalnull)</string>
     <!-- tips -->
     <string name="lbl_tip_image">Auf Demo-Bild tippen</string>
     <string name="lbl_tiplist">Tipps und Tricks</string>
