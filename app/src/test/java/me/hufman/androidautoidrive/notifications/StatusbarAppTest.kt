@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
-import me.hufman.androidautoidrive.CarAppAssetManager
 import me.hufman.androidautoidrive.MockBMWRemotingServer
 import me.hufman.androidautoidrive.carapp.notifications.ID5StatusbarApp
 import me.hufman.androidautoidrive.carapp.notifications.ShowNotificationController
@@ -15,6 +14,7 @@ import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
+import me.hufman.androidautoidrive.CarAppWidgetAssetResources
 import me.hufman.androidautoidrive.carapp.L
 import org.junit.Assert.*
 import org.junit.Test
@@ -39,7 +39,7 @@ class StatusbarAppTest {
 			close()
 		}
 	}.toByteArray()
-	val carAppResources = mock<CarAppAssetManager> {
+	val carAppResources = mock<CarAppWidgetAssetResources> {
 		on { getAppCertificate() } doReturn ByteArrayInputStream(ByteArray(0))
 		on { getUiDescription() } doAnswer { this.javaClass.classLoader!!.getResourceAsStream("ui_description_bmwone.xml") }
 		on { getImagesDB(any()) } doAnswer { ByteArrayInputStream(images) }

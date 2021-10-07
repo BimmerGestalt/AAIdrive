@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive
 import android.content.Context
 import android.content.res.AssetManager
 import com.nhaarman.mockito_kotlin.*
+import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import java.io.FileNotFoundException
@@ -23,7 +24,7 @@ class AssetManagerTest {
 	fun testCommonAssets() {
 		whenever(assets.open(argThat {startsWith("carapplications/appname/rhmi/bmw")})) doThrow FileNotFoundException()
 
-		val manager = CarAppAssetManager(context, "appname")
+		val manager = CarAppAssetResources(context, "appname")
 		assertNotNull(manager.getAppCertificateRaw("bmw"))
 		assertNotNull(manager.getUiDescription("BMW"))
 		assertNotNull(manager.getImagesDB("bmw"))
@@ -31,7 +32,7 @@ class AssetManagerTest {
 		verify(assets, times(1)).open("carapplications/appname/rhmi/bmw/appname.p7b")
 		verify(assets, times(1)).open("carapplications/appname/appname.p7b")
 		verify(assets, times(1)).open("carapplications/appname/rhmi/bmw/ui_description.xml")
-		verify(assets, times(1)).open("carapplications/appname/rhmi/ui_description.xml")
+		verify(assets, times(1)).open("carapplications/appname/rhmi/common/ui_description.xml")
 		verify(assets, times(1)).open("carapplications/appname/rhmi/bmw/images.zip")
 		verify(assets, times(1)).open("carapplications/appname/rhmi/common/images.zip")
 		verify(assets, times(1)).open("carapplications/appname/rhmi/bmw/texts.zip")
@@ -42,7 +43,7 @@ class AssetManagerTest {
 	/** This application has all BMW resources */
 	@Test
 	fun testBMWAssets() {
-		val manager = CarAppAssetManager(context, "appname")
+		val manager = CarAppAssetResources(context, "appname")
 		assertNotNull(manager.getAppCertificateRaw("bmw"))
 		assertNotNull(manager.getUiDescription("BMW"))
 		assertNotNull(manager.getImagesDB("bmw"))
@@ -60,7 +61,7 @@ class AssetManagerTest {
 		whenever(assets.open("carapplications/appname/rhmi/mini/appname.p7b")) doThrow FileNotFoundException()
 		whenever(assets.open("carapplications/appname/rhmi/mini/ui_description.xml")) doThrow FileNotFoundException()
 
-		val manager = CarAppAssetManager(context, "appname")
+		val manager = CarAppAssetResources(context, "appname")
 		assertNotNull(manager.getAppCertificateRaw("minI"))
 		assertNotNull(manager.getUiDescription("Mini"))
 		assertNotNull(manager.getImagesDB("MINI"))
@@ -68,7 +69,7 @@ class AssetManagerTest {
 		verify(assets, times(1)).open("carapplications/appname/rhmi/mini/appname.p7b")
 		verify(assets, times(1)).open("carapplications/appname/appname.p7b")
 		verify(assets, times(1)).open("carapplications/appname/rhmi/mini/ui_description.xml")
-		verify(assets, times(1)).open("carapplications/appname/rhmi/ui_description.xml")
+		verify(assets, times(1)).open("carapplications/appname/rhmi/common/ui_description.xml")
 		verify(assets, times(1)).open("carapplications/appname/rhmi/mini/images.zip")
 		verify(assets, times(1)).open("carapplications/appname/rhmi/mini/texts.zip")
 	}

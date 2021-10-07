@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive
 import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import io.bimmergestalt.idriveconnectkit.android.CertMangling
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import org.awaitility.Awaitility.await
@@ -24,7 +25,7 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         val securityAccess = SecurityAccess.getInstance(appContext)
 
-        val assets = CarAppAssetManager(appContext, "basecoreOnlineServices")
+        val assets = CarAppAssetResources(appContext, "basecoreOnlineServices")
         val appCert = assets.getAppCertificateRaw("Mini")?.readBytes() as ByteArray
         Log.i("Test", String(appCert))
         securityAccess.callback = {

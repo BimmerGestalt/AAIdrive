@@ -8,7 +8,6 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.FocusTriggerController
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
-import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.notifications.*
 import me.hufman.androidautoidrive.carapp.notifications.TAG
 import me.hufman.androidautoidrive.notifications.CarNotification
@@ -50,7 +49,7 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 	var mostInterestingNotification: CarNotification? = null        // most recently arrived or selected notification
 
 	val shownNotifications = Collections.synchronizedList(ArrayList<CarNotification>())   // which notifications are showing
-	val notificationListData = object: RHMIListAdapter<CarNotification>(3, shownNotifications) {
+	val notificationListData = object: RHMIModel.RaListModel.RHMIListAdapter<CarNotification>(3, shownNotifications) {
 		override fun convertRow(index: Int, item: CarNotification): Array<Any> {
 			val icon = item.icon?.let { graphicsHelpers.compress(it, 48, 48) } ?: ""
 			val text = "${item.title}\n${item.text.trim().split(Regex("\n")).lastOrNull() ?: ""}"
@@ -61,7 +60,7 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 		addRow(arrayOf("", "", L.NOTIFICATIONS_EMPTY_LIST))
 	}
 
-	val menuSettingsListData = object: RHMIListAdapter<AppSettings.KEYS>(3, settings.getSettings()) {
+	val menuSettingsListData = object: RHMIModel.RaListModel.RHMIListAdapter<AppSettings.KEYS>(3, settings.getSettings()) {
 		override fun convertRow(index: Int, item: AppSettings.KEYS): Array<Any> {
 			val checked = settings.isChecked(item)
 			val checkmark = if (checked) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, IMAGEID_CHECKMARK) else ""

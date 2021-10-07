@@ -119,18 +119,6 @@ object Utils {
 		return ColorMatrixColorFilter(values)
 	}
 
-	fun etchAsInt(obj: Any?, default: Int = 0): Int {
-		/** Etch likes to shrink numbers to the smallest type that will fit
-		 * But JVM wants the number types to match in various places
-		 */
-		return when (obj) {
-			is Byte -> obj.toInt()
-			is Short -> obj.toInt()
-			is Int -> obj
-			else -> default
-		}
-	}
-
 	fun loadZipfile(zipfile: InputStream?): Map<String, ByteArray> {
 		zipfile ?: return mapOf()
 		val contents = HashMap<String, ByteArray>()

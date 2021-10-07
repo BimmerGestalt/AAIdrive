@@ -4,7 +4,6 @@ import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.L
-import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
@@ -43,7 +42,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	var visibleRowsOriginalMusicMetadata: List<MusicMetadata> = emptyList()
 	var selectedIndex: Int = 0
 
-	var songsListAdapter = object: RHMIListAdapter<MusicMetadata>(4, songsList) {
+	var songsListAdapter = object: RHMIModel.RaListModel.RHMIListAdapter<MusicMetadata>(4, songsList) {
 		override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
 			val checkmark = if (item.queueId == currentSong?.queueId) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK) else ""
 

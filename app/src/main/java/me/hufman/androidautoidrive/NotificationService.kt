@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.provider.Settings
 import android.util.Log
+import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import me.hufman.androidautoidrive.carapp.notifications.ID5StatusbarApp
@@ -38,7 +39,7 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 						notificationSettings.notificationListenerConnected = Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")?.contains(context.packageName) == true
 						notificationSettings.btStatus.register()
 						carappNotifications = PhoneNotifications(iDriveConnectionStatus, securityAccess,
-								CarAppAssetManager(context, "basecoreOnlineServices"),
+								CarAppAssetResources(context, "basecoreOnlineServices"),
 								PhoneAppResourcesAndroid(context),
 								GraphicsHelpersAndroid(),
 								CarNotificationControllerIntent(context),
@@ -55,7 +56,7 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 								// start up the readout app
 								// using a handler to automatically handle shutting down during init
 								val carappReadout = ReadoutApp(iDriveConnectionStatus, securityAccess,
-										CarAppAssetManager(context, "news"))
+									CarAppAssetResources(context, "news"))
 								carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
 								this.carappReadout = carappReadout
 							}
@@ -66,7 +67,7 @@ class NotificationService(val context: Context, val iDriveConnectionStatus: IDri
 								// start up the id5 statusbar app
 								// using a handler to automatically handle shutting down during init
 								val carappStatusbar = ID5StatusbarApp(iDriveConnectionStatus, securityAccess,
-										CarAppAssetManager(context, "bmwone"), GraphicsHelpersAndroid())
+									CarAppWidgetAssetResources(context, "bmwone"), GraphicsHelpersAndroid())
 								// main app should use this for popup access
 								carappNotifications?.viewPopup = carappStatusbar.popupView
 								// main app should use this for statusbar access

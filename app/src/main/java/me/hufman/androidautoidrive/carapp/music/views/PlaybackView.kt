@@ -1,7 +1,7 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import de.bmw.idrive.BMWRemoting
-import io.bimmergestalt.idriveconnectkit.etchAsInt
+import io.bimmergestalt.idriveconnectkit.Utils.etchAsInt
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.UnicodeCleaner

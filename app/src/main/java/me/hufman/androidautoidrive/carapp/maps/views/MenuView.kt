@@ -3,7 +3,6 @@ package me.hufman.androidautoidrive.carapp.maps.views
 import android.util.Log
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.carapp.L
-import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.maps.FrameUpdater
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
 
@@ -18,7 +17,7 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 	}
 
 	val menuEntries = listOf(L.MAP_ACTION_VIEWMAP, L.MAP_ACTION_SEARCH, L.MAP_ACTION_CLEARNAV)
-	val rhmiMenuEntries = object: RHMIListAdapter<String>(3, menuEntries) {}
+	val rhmiMenuEntries = object: RHMIModel.RaListModel.RHMIListAdapter<String>(3, menuEntries) {}
 	val menuMap = state.componentsList.filterIsInstance<RHMIComponent.List>()[0]
 	val mapModel = menuMap.getModel()!!
 	val menuList = state.componentsList.filterIsInstance<RHMIComponent.List>()[1]

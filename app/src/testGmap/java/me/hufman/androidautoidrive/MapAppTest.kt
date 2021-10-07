@@ -6,7 +6,7 @@ import android.os.Handler
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
-import me.hufman.androidautoidrive.carapp.GenericRHMIDimensions
+import io.bimmergestalt.idriveconnectkit.GenericRHMIDimensions
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
 import me.hufman.androidautoidrive.carapp.maps.VirtualDisplayScreenCapture
 import me.hufman.androidautoidrive.carapp.maps.MapApp
