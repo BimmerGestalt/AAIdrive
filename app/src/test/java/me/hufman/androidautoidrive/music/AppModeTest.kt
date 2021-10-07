@@ -23,7 +23,7 @@ class AppModeTest {
 	fun testMusicAppManual() {
 		// Allow the user to force enable the context
 		val settings = MockAppSettings(AppSettings.KEYS.AUDIO_FORCE_CONTEXT to "false", AppSettings.KEYS.AUDIO_SUPPORTS_USB to "false")
-		val mode = MusicAppMode(usbConnection, emptyMap(), settings, null, null, null)
+		val mode = MusicAppMode(usbConnection, emptyMap(), settings, true, null, null, null)
 		assertFalse(mode.shouldRequestAudioContext())
 
 		settings[AppSettings.KEYS.AUDIO_FORCE_CONTEXT] = "true"
@@ -34,7 +34,7 @@ class AppModeTest {
 	fun testUSBSupport() {
 		// Test that the USB connection is handled properly
 		val settings = MockAppSettings(AppSettings.KEYS.AUDIO_FORCE_CONTEXT to "false", AppSettings.KEYS.AUDIO_SUPPORTS_USB to "false")
-		val mode = MusicAppMode(usbConnection, emptyMap(), settings, null, null, null)
+		val mode = MusicAppMode(usbConnection, emptyMap(), settings, true, null, null, null)
 		assertFalse(mode.shouldRequestAudioContext())
 
 		// the phone is old enough to support it over USB
@@ -42,7 +42,7 @@ class AppModeTest {
 		assertTrue(mode.shouldRequestAudioContext())
 
 		// should work over BT too, even if the phone is old
-		val btMode = MusicAppMode(btConnection, emptyMap(), settings, null, null, null)
+		val btMode = MusicAppMode(btConnection, emptyMap(), settings, true, null, null, null)
 		assertTrue(btMode.shouldRequestAudioContext())
 	}
 
@@ -50,7 +50,7 @@ class AppModeTest {
 	fun testBTSupport() {
 		// Verify that the BT connection is handled properly
 		val settings = MockAppSettings(AppSettings.KEYS.AUDIO_FORCE_CONTEXT to "false", AppSettings.KEYS.AUDIO_SUPPORTS_USB to "false")
-		val mode = MusicAppMode(btConnection, emptyMap(), settings, null, null, null)
+		val mode = MusicAppMode(btConnection, emptyMap(), settings, true, null, null, null)
 		assertTrue(mode.shouldRequestAudioContext())
 	}
 
@@ -59,45 +59,60 @@ class AppModeTest {
 		val settings = MockAppSettings()
 		// spotify not installed
 		run {
-			val noSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, null, null, null)
+			val noSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, true, null, null, null)
+			assertFalse(noSpotifyMode.shouldId5Playback())
+		}
+		// spotify not installed and no Connected is installed
+		run {
+			val noSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, false, null, null, null)
 			assertFalse(noSpotifyMode.shouldId5Playback())
 		}
 		// old spotify installed
 		run {
-			val oldSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, null, null, "8.4.98.892")
+			val oldSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, true, null, null, "8.4.98.892")
 			assertFalse(oldSpotifyMode.shouldId5Playback())
+		}
+		// old spotify installed but no Connected is installed
+		run {
+			val oldSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, false, null, null, "8.4.98.892")
+			assertTrue(oldSpotifyMode.shouldId5Playback())
 		}
 		// new spotify installed
 		run {
-			val newSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, null, null, "8.5.68.904")
+			val newSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, true, null, null, "8.5.68.904")
+			assertTrue(newSpotifyMode.shouldId5Playback())
+		}
+		// new spotify installed and no Connected installed
+		run {
+			val newSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, false, null, null, "8.5.68.904")
 			assertTrue(newSpotifyMode.shouldId5Playback())
 		}
 		// newer spotify installed
 		run {
-			val newerSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, null, null, "8.6.20")
+			val newerSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, true, null, null, "8.6.20")
 			assertTrue(newerSpotifyMode.shouldId5Playback())
 		}
 		// fake old spotify installed
 		run {
-			val newerSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, null, null, "8.2.536-dogfood-xmax")
+			val newerSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, true, null, null, "8.2.536-dogfood-xmax")
 			assertFalse(newerSpotifyMode.shouldId5Playback())
 		}
 		// fake new spotify installed
 		run {
-			val newerSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, null, null, "8.6.536-dogfood-xmax")
+			val newerSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, true, null, null, "8.6.536-dogfood-xmax")
 			assertTrue(newerSpotifyMode.shouldId5Playback())
 		}
 
 		// force spotify layout
 		settings[AppSettings.KEYS.FORCE_SPOTIFY_LAYOUT] = "true"
 		run {
-			val forcedSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, null, null, null)
+			val forcedSpotifyMode = MusicAppMode(btConnection, id6Capabilities, settings, true, null, null, null)
 			assertTrue(forcedSpotifyMode.shouldId5Playback())
 		}
 
 		// can't do it in id4
 		run {
-			val forcedSpotifyMode = MusicAppMode(btConnection, id4Capabilities, settings, null, null, "8.6.20")
+			val forcedSpotifyMode = MusicAppMode(btConnection, id4Capabilities, settings, true, null, null, "8.6.20")
 			assertFalse(forcedSpotifyMode.shouldId5Playback())
 		}
 	}
@@ -108,28 +123,28 @@ class AppModeTest {
 
 		// no radio app
 		run {
-			val noRadioMode = MusicAppMode(btConnection, id6Capabilities, settings, null, null, null)
+			val noRadioMode = MusicAppMode(btConnection, id6Capabilities, settings, true, null, null, null)
 			assertEquals(null, noRadioMode.getRadioAppName())
 		}
 		// iHeartRadio
 		run {
-			val ihrRadioMode = MusicAppMode(btConnection, id6Capabilities, settings, "yes", null, null)
+			val ihrRadioMode = MusicAppMode(btConnection, id6Capabilities, settings, true, "yes", null, null)
 			assertEquals("iHeartRadio", ihrRadioMode.getRadioAppName())
 		}
 		// Pandora
 		run {
-			val pandoraRadioMode = MusicAppMode(btConnection, id6Capabilities, settings, null, "yes", null)
+			val pandoraRadioMode = MusicAppMode(btConnection, id6Capabilities, settings, true, null, "yes", null)
 			assertEquals("Pandora", pandoraRadioMode.getRadioAppName())
 		}
 		// Both
 		run {
-			val bothRadioMode = MusicAppMode(btConnection, id6Capabilities, settings, "yes", "yes", null)
+			val bothRadioMode = MusicAppMode(btConnection, id6Capabilities, settings, true, "yes", "yes", null)
 			assertEquals(null, bothRadioMode.getRadioAppName())
 		}
 
 		// disabled in usb mode
 		run {
-			val ihrRadioMode = MusicAppMode(usbConnection, id6Capabilities, settings, "yes", null, null)
+			val ihrRadioMode = MusicAppMode(usbConnection, id6Capabilities, settings, true, "yes", null, null)
 			assertEquals(null, ihrRadioMode.getRadioAppName())
 		}
 	}

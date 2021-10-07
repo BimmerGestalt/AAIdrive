@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.carapp.music
 import android.content.Context
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.AppSettingsViewer
 
@@ -14,7 +15,7 @@ import me.hufman.androidautoidrive.AppSettingsViewer
  *     USB app connection if the phone has AOAv2 audio support (generally, running an OS earlier than Oreo)
  */
 class MusicAppMode(val iDriveConnectionStatus: IDriveConnectionStatus, val capabilities: Map<String, String?>, val appSettings: AppSettings,
-                   val iHeartRadioVersion: String?, val pandoraVersion: String?, val spotifyVersion: String?) {
+                   val isConnectedInstalled: Boolean, val iHeartRadioVersion: String?, val pandoraVersion: String?, val spotifyVersion: String?) {
 	companion object {
 		fun getIHeartRadioVersion(context: Context): String? {
 			return try {
@@ -37,10 +38,13 @@ class MusicAppMode(val iDriveConnectionStatus: IDriveConnectionStatus, val capab
 		}
 
 		fun build(capabilities: Map<String, String?>, context: Context): MusicAppMode {
+			val isConnectedInstalled = SecurityAccess.installedSecurityServices.any {
+				it.name.startsWith("BMWC") || it.name.startsWith("MiniC")
+			}
 			val iHeartRadioVersion = getIHeartRadioVersion(context)
 			val pandoraVersion = getPandoraVersion(context)
 			val spotifyVersion = getSpotifyVersion(context)
-			return MusicAppMode(IDriveConnectionObserver(), capabilities, AppSettingsViewer(), iHeartRadioVersion, pandoraVersion, spotifyVersion)
+			return MusicAppMode(IDriveConnectionObserver(), capabilities, AppSettingsViewer(), isConnectedInstalled, iHeartRadioVersion, pandoraVersion, spotifyVersion)
 		}
 	}
 
@@ -102,7 +106,8 @@ class MusicAppMode(val iDriveConnectionStatus: IDriveConnectionStatus, val capab
 	}
 	/** Whether to automatically start Spotify mode, ignoring from any advanced settings */
 	fun heuristicAudioState(): Boolean {
-		return !isId4() && isNewSpotifyInstalled() && shouldRequestAudioContext()
+		val isSpotifyNotEnabled = spotifyVersion != null && !isConnectedInstalled
+		return !isId4() && (isSpotifyNotEnabled || isNewSpotifyInstalled()) && shouldRequestAudioContext()
 	}
 	/** Whether the current mode starts Spotify mode, including the forced advanced setting */
 	fun supportsId5Playback(): Boolean {
