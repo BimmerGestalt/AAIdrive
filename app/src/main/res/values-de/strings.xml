@@ -11,7 +11,7 @@
     <string name="notification_description_bmw">Verbunden mit BMW</string>
     <string name="notification_description_mini">Verbunden mit Mini</string>
     <string name="permission_cds_normal">allgemeine Autoinfo lesen</string>
-    <string name="permission_cds_personal">persönliche Autoinfo lesen</string>
+    <string name="permission_cds_personal">Persönliche Fahrzeuginformationen auslesen</string>
     <!-- notification channel names -->
     <string name="notification_channel_assistant">Assistent Launcher</string>
     <string name="notification_channel_connection">Fahrzeugverbindungsstatus</string>
@@ -91,7 +91,7 @@
     <string name="musicAppHidden">Versteckt</string>
     <string name="enable_audio_context">Audio Fokus via USB Verbindung erzwingen</string>
     <string name="enable_spotify_layout">Immer als Spotify-App erscheinen bei iDrive5+</string>
-    <string name="enable_audioplayer_layout">Bevorzuge legacy compact music interface in IDrive5+</string>
+    <string name="enable_audioplayer_layout">Bevorzuge kompaktes Musik-Interface (legacy) in iDrive5+</string>
     <string name="lbl_grant_sessions">Steuerung der aktiven Musik Apps</string>
     <string name="lbl_grant_spotify_control">Möglichkeit, deine Spotify-Bibliothek zu durchsuchen</string>
     <string name="lbl_grant_background_music">Erlaube Hintergrundausführung für deine Musik-Apps, falls das Fahrzeug Probleme beim Starten der Apps hat</string>
@@ -107,11 +107,11 @@
     <string name="lbl_navigationpage_intent">Wenn eine Verbindung besteht, wird das Navigationssystem Ihres Autos als Option in der App Auswahl angezeigt, wenn in anderen Apps ein Navigationsbutton betätigt wird</string>
     <string name="lbl_navigationstatus_active">Navigiere aktuell zu</string>
     <string name="lbl_navigationstatus_inactive">Derzeit wird nicht navigiert</string>
-    <string name="lbl_addonspage">Diese Zusätzlichen Apps können sich mit dem Auto verbinden um noch mehr Funktionalität hinzuzufügen</string>
+    <string name="lbl_addonspage">Diese zusätzlichen Apps können sich mit dem Auto verbinden, um noch mehr Funktionalität hinzuzufügen</string>
     <string name="lbl_addon_apps">Addon-Apps</string>
-    <string name="lbl_addons_empty">Keine Gefunden</string>
+    <string name="lbl_addons_empty">Keine Addons gefunden</string>
     <string name="lbl_addon_learn">Erfahre mehr</string>
-    <string name="addonAppIcon">App Icon</string>
+    <string name="addonAppIcon">App-Symbol</string>
     <string name="addonConnectionPermission">Zugriff auf die Verbindung zum Auto</string>
     <string name="addonConnectionPermissionDeclined">Verbindung zum Auto NICHT MÖGLICH</string>
     <string name="addonConnectionPermissionGranted">Verbindung zum Auto MÖGLICH</string>
@@ -121,7 +121,7 @@
     <string name="addonPersonalPermission">Zugriff auf persönliche Daten des Autos</string>
     <string name="addonPersonalPermissionDeclined">KANN NICHT auf persönliche Daten des Autos zugreifen</string>
     <string name="addonPersonalPermissionGranted">KANN auf persönliche Daten des Autos zugreifen</string>
-    <string name="lbl_settingspage">Erweiterte Einstellungen für das Optimieren des Verhaltens können zu unerwartetem Verhalten führen</string>
+    <string name="lbl_settingspage">Die Verwendung der erweiterten Einstellungen kann zu unerwartetem Verhalten führen</string>
     <string name="lbl_language_carinterface">Sprache für das Auto</string>
     <string name="lbl_language_prefercar">Spracheinstellung des Fahrzeugs gegenüber Telefonsprache bevorzugen</string>
     <string name="lbl_language_prefercar_code">Spracheinstellung des Fahrzeugs (%s) gegenüber Telefonsprache bevorzugen</string>
@@ -145,8 +145,8 @@
     <string name="connectionStatusMissingConnectedApp">Kann Connected oder Connected Classic App nicht finden</string>
     <string name="connectionStatusWaiting">Warte auf Verbindung mit Fahrzeug</string>
     <string name="connectionStatusConnected">Verbunden mit %s</string>
-    <string name="lblChassisCode">Fahrgestell</string>
-    <string name="lblHmiVersion">IDrive-Typ</string>
+    <string name="lblChassisCode">Baureihe</string>
+    <string name="lblHmiVersion">iDrive-Typ</string>
     <string name="nowplaying_notconnected">&lt;Nicht Verbunden&gt;</string>
     <string name="nowplaying_unknown">&lt;Unbekannt&gt;</string>
     <!-- connection setup -->
@@ -284,7 +284,7 @@
     <string name="lbl_carinfo_units_kmph">km/h</string>
     <string name="lbl_carinfo_units_celcius">\u2103</string>
     <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
-    <string name="lbl_carinfo_units_masl">Seehöhe</string>
+    <string name="lbl_carinfo_units_masl">m (über Normalnull)</string>
     <!-- tips -->
     <string name="lbl_tip_image">Auf Demo-Bild tippen</string>
     <string name="lbl_tiplist">Tipps und Tricks</string>
