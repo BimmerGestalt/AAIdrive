@@ -42,6 +42,12 @@ class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 				// the car is no longer connected
 				// so this is most likely a crash caused by the closed connection
 				Log.i(TAG, "Shutting down thread $name due to disconnection")
+			} else if (e.errorMsg?.contains("RHMI application was already connected") == true) {
+				// sometimes, the BCL tunnel blips during the start of the connection
+				// and so previously-initialized apps are still "in the car" though the tunnel has since restarted
+				// and so the car complains that the app is already connected
+				// so shut down the thread for now and wait for MainService to start this app module again
+				Log.i(TAG, "RHMI application was already connected, perhaps from a previous partial connection, shutting down thread $name")
 			} else {
 				throw(e)
 			}
