@@ -300,7 +300,7 @@
     <string name="tip_music_hide">Quita una aplicación de música de la lista para ocultarla del coche</string>
     <string name="tip_batterymode_music">Intente desactivar las optimizaciones de la batería para sus aplicaciones de música, que podría ser necesario para iniciar las aplicaciones desde su ejecución en segundo plano, de algunas marcas de teléfono como Xiaomi</string>
     <string name="tip_popup_suppress_id5">Los popups de notificación son suprimidos mientras interactúan con el coche o mientras introducen texto</string>
-    <string name="tip_notification_bookmark">Guarda un botón de acceso directo en la aplicación de Libro sin etiqueta para un acceso rápido a tus notificaciones</string>
+    <string name="tip_notification_bookmark">Guarda un botón de acceso directo a la aplicación de Libro sin etiqueta para un acceso rápido a tus notificaciones</string>
     <string name="tip_notification_bookmark_ambutton">Guarda un botón de acceso directo en la aplicación de Notificaciones para un acceso rápido a tus notificaciones</string>
     <string name="tip_notification_bookmark_details">Guardar un botón de acceso directo mientras se ve la lista de notificaciones para un acceso rápido a la notificación más reciente</string>
     <string name="tip_notification_quickaccess">Entrar en la aplicación de Notificaciones rápidamente después de recibir una nueva notificación abrirá esta notificación directamente</string>
