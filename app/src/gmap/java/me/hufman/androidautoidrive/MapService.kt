@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.hardware.display.VirtualDisplay
 import android.util.Log
 import androidx.core.content.ContextCompat
+import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import me.hufman.androidautoidrive.carapp.maps.*
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
@@ -40,7 +41,7 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 						this.mapListener = mapListener
 
 						val mapApp = MapApp(iDriveConnectionStatus, securityAccess,
-								CarAppAssetManager(context, "smartthings"),
+								CarAppAssetResources(context, "smartthings"),
 								mapAppMode,
 								MapInteractionControllerIntent(context), mapScreenCapture)
 						this.mapApp = mapApp

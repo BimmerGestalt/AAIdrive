@@ -4,7 +4,6 @@ import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
-import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.music.CustomAction
 import me.hufman.androidautoidrive.music.CustomActionDwell
 import me.hufman.androidautoidrive.music.MusicController
@@ -20,7 +19,7 @@ class CustomActionsView(val state: RHMIState, val graphicsHelpers: GraphicsHelpe
 
 	val listComponent: RHMIComponent.List
 	val actionList = ArrayList<CustomAction>()
-	val listAdapter = object: RHMIListAdapter<CustomAction>(3, actionList) {
+	val listAdapter = object: RHMIModel.RaListModel.RHMIListAdapter<CustomAction>(3, actionList) {
 		override fun convertRow(index: Int, item: CustomAction): Array<Any> {
 			val name = UnicodeCleaner.clean(item.name)
 			if (item.icon != null) {

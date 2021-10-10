@@ -4,7 +4,6 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.carapp.L
-import me.hufman.androidautoidrive.carapp.RHMIListAdapter
 import me.hufman.androidautoidrive.carapp.music.AVContextHandler
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
@@ -28,7 +27,7 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 	var visible = false
 	var hasSelectionChanged = 0 // allow the car to set the selection one time
 	val apps = ArrayList<MusicAppInfo>()
-	val appsListAdapter = object: RHMIListAdapter<MusicAppInfo>(3, apps) {
+	val appsListAdapter = object: RHMIModel.RaListModel.RHMIListAdapter<MusicAppInfo>(3, apps) {
 		override fun convertRow(index: Int, item: MusicAppInfo): Array<Any> {
 			val appIcon = graphicsHelpers.compress(item.icon, 48, 48)
 			val checkbox = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK)

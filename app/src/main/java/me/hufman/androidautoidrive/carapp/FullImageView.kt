@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.carapp
 
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
+import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.carapp.maps.FrameUpdater
 

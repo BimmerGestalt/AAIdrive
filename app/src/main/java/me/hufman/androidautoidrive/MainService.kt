@@ -11,8 +11,9 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
 import io.bimmergestalt.idriveconnectkit.CDS
+import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import io.bimmergestalt.idriveconnectkit.android.CarAPIAppInfo
-import io.bimmergestalt.idriveconnectkit.android.CarAPIDiscovery
+import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import me.hufman.androidautoidrive.carapp.*
@@ -201,14 +202,14 @@ class MainService: Service() {
 				disconnectIntentName = "me.hufman.androidautoidrive.CarConnectionListener_STOP",
 				appIcon = null
 		)
-		CarAPIDiscovery.announceApp(applicationContext, myApp)
+		myApp.announceApp(applicationContext)
 	}
 
 	private fun startCarProber() {
 		if (carProberThread?.isAlive != true) {
 			carProberThread = CarProber(securityAccess,
-				CarAppAssetManager(applicationContext, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
-				CarAppAssetManager(applicationContext, "smartthings").getAppCertificateRaw("mini")!!.readBytes()
+				CarAppAssetResources(applicationContext, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
+				CarAppAssetResources(applicationContext, "smartthings").getAppCertificateRaw("mini")!!.readBytes()
 			).apply { start() }
 		} else {
 			carProberThread?.schedule(1000)
@@ -352,7 +353,7 @@ class MainService: Service() {
 					}
 
 					carappCapabilities = CarInformationDiscovery(iDriveConnectionReceiver, securityAccess,
-							CarAppAssetManager(applicationContext, "smartthings"), carInformationUpdater)
+						CarAppAssetResources(applicationContext, "smartthings"), carInformationUpdater)
 					carappCapabilities?.onCreate()
 				}
 				threadCapabilities?.start()
@@ -410,9 +411,9 @@ class MainService: Service() {
 					Log.i(TAG, "Starting to discover car capabilities")
 
 					carappAssistant = AssistantApp(iDriveConnectionReceiver, securityAccess,
-							CarAppAssetManager(applicationContext, "basecoreOnlineServices"),
-							AssistantControllerAndroid(applicationContext, PhoneAppResourcesAndroid(applicationContext)),
-							GraphicsHelpersAndroid())
+						CarAppAssetResources(applicationContext, "basecoreOnlineServices"),
+						AssistantControllerAndroid(applicationContext, PhoneAppResourcesAndroid(applicationContext)),
+						GraphicsHelpersAndroid())
 					carappAssistant?.onCreate()
 				}
 				threadAssistant?.start()

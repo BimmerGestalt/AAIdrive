@@ -26,10 +26,6 @@
         android:protectionLevel="dangerous"/>
 
     <queries>
-        <!-- Discover BMW apps -->
-        <intent>
-            <action android:name="com.bmwgroup.carconnection.ACTION_CAR_APPLICATION_LAUNCHER" />
-        </intent>
         <!-- Search for MediaBrowserService -->
         <intent>
             <action android:name="android.media.browse.MediaBrowserService" />

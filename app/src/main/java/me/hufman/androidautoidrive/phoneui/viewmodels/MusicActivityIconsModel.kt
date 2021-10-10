@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import me.hufman.androidautoidrive.CarAppAssetManager
+import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import me.hufman.androidautoidrive.utils.Utils
 
 class MusicActivityIconsModel(private val _icons: Map<String, Bitmap>): ViewModel() {
@@ -17,7 +17,7 @@ class MusicActivityIconsModel(private val _icons: Map<String, Bitmap>): ViewMode
 		}
 
 		private fun loadIcons(context: Context): Map<String, Bitmap> {
-			val appAssets = CarAppAssetManager(context, "multimedia")
+			val appAssets = CarAppAssetResources(context, "multimedia")
 			val images = Utils.loadZipfile(appAssets.getImagesDB("common"))
 			val icons = HashMap<String, Bitmap>()
 			for (id in listOf(ARTIST_ID, ALBUM_ID, SONG_ID, PLACEHOLDER_ID, FOLDER_ID)) {

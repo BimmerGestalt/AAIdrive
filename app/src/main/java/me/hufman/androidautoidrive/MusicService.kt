@@ -5,6 +5,7 @@ import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
+import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import me.hufman.androidautoidrive.carapp.music.MusicApp
@@ -55,7 +56,7 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 					if (musicAppMode.supportsId5Playback()) {
 						try {
 							carappMusic = MusicApp(iDriveConnectionStatus, securityAccess,
-									CarAppAssetManager(context, "spotify"),
+									CarAppAssetResources(context, "spotify"),
 									MusicImageIDsSpotify,
 									PhoneAppResourcesAndroid(context),
 									GraphicsHelpersAndroid(),
@@ -68,7 +69,7 @@ class MusicService(val context: Context, val iDriveConnectionStatus: IDriveConne
 					}
 					if (carappMusic == null) {
 						carappMusic = MusicApp(iDriveConnectionStatus, securityAccess,
-								CarAppAssetManager(context, "multimedia"),
+								CarAppAssetResources(context, "multimedia"),
 								MusicImageIDsMultimedia,
 								PhoneAppResourcesAndroid(context),
 								GraphicsHelpersAndroid(),
