@@ -35,7 +35,8 @@
                 android:onCheckedChanged="@{(button, checked) -> controller.onChangedSwitchGMaps(checked)}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/pane_vertical_margin"
+                android:minHeight="48dp"
+                android:paddingBottom="@dimen/settings_vertical_margin"
                 android:text="@string/enable_google_maps" />
 
             <androidx.fragment.app.FragmentContainerView
