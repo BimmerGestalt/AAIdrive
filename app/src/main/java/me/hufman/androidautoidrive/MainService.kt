@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
@@ -72,8 +73,11 @@ class MainService: Service() {
 		combinedCallback()
 	}
 
+	// detect if the phone has suspended or destroyed the app
+	val backgroundInterruptionDetection by lazy { BackgroundInterruptionDetection.build(applicationContext) }
+
 	// shut down probing after a timeout
-	val handler = Handler()
+	val handler = Handler(Looper.getMainLooper())
 	val shutdownTimeout = Runnable {
 		if (!iDriveConnectionReceiver.isConnected || !securityAccess.isConnected()) {
 			stopSelf()
@@ -97,6 +101,8 @@ class MainService: Service() {
 
 	override fun onCreate() {
 		super.onCreate()
+
+		backgroundInterruptionDetection.detectKilledPreviously()
 
 		// only register listeners a single time
 
@@ -154,6 +160,8 @@ class MainService: Service() {
 
 		carProberThread?.quitSafely()
 		btStatus.unregister()
+
+		backgroundInterruptionDetection.stop()
 
 		// close the notification
 		stopServiceNotification()
@@ -312,6 +320,8 @@ class MainService: Service() {
 
 					// start addons
 					startAny = startAny or startAddons()
+
+					backgroundInterruptionDetection.start()
 				}
 
 				// check if we are idle and should shut down
@@ -325,6 +335,10 @@ class MainService: Service() {
 				DonationRequest(this).countUsage()
 			} else {
 				Log.d(TAG, "Not fully connected: IDrive:${iDriveConnectionReceiver.isConnected} SecurityService:${securityAccess.isConnected()}")
+				if (connectionTime != null) {
+					// record that we successfully disconnected
+					backgroundInterruptionDetection.safelyStop()
+				}
 				connectionTime = null
 				stopCarApps()
 				val timeout = if (btStatus.isBTConnected) CONNECTED_PROBE_TIMEOUT else DISCONNECTED_PROBE_TIMEOUT
