@@ -23,7 +23,7 @@ import me.hufman.androidautoidrive.utils.Utils
 class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {
 		const val INITIALIZATION_DEFERRED_TIMEOUT = 6000
-		const val POSITION_ACTION_DEBOUNCE = 2000
+		const val POSITION_ACTION_DEBOUNCE = 500
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.AudioHmiState || (
 					state is RHMIState.ToolbarState &&
