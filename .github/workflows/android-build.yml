@@ -11,6 +11,7 @@ jobs:
   unitTest:
     runs-on: ubuntu-18.04
     strategy:
+      fail-fast: false
       matrix:
         map: [Nomap, Gmap]
         analytics: [Nonalytics, Sentry]
@@ -52,6 +53,7 @@ jobs:
   instrumentedTest:
     runs-on: macos-latest
     strategy:
+      fail-fast: false
       matrix:
         map: [Nomap, Gmap]
         hasSecret:
