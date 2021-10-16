@@ -164,6 +164,9 @@
     <string name="txt_setup_bmw_mine_conflict">Entrambe le applicazioni BMW Connected e My BMW sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non ci si connetta tramite USB</string>
     <string name="txt_setup_mini_mine_conflict">Entrambe le app MINI Connected e My MINI sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non si connetta tramite USB</string>
     <string name="txt_setup_security_missing">Il Security Service non è raggiungibile:</string>
+    <string name="txt_setup_background_killed">L\'app è stata terminata durante la connessione all\'auto</string>
+    <string name="txt_setup_background_suspended">L\'applicazione è stata in pausa in background durante la connessione all\'auto</string>
+    <string name="txt_setup_background_restrictions_hint">Controlla le impostazioni di esecuzione app in background del tuo telefono e le impostazioni della batteria per consentire a AAIdrive di funzionare in background</string>
     <string name="btn_install">Installa</string>
     <string name="btn_install_bmwmine">Installa l\'app MyBMW</string>
     <string name="btn_install_minimine">Installa l\'app Mini</string>
