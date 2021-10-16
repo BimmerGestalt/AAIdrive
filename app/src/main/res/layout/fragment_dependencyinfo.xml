@@ -21,7 +21,7 @@
 
         <!-- Background Execution -->
         <LinearLayout
-            android:visibility="@{permissionsModel.hasBackgroundPermission}"
+            android:visibility="@{permissionsModel.hasBackgroundPermission &amp;&amp; !viewModel.hasBackgroundSuspended &amp;&amp; !viewModel.hasBackgroundKilled}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -74,6 +74,51 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/txt_setup_background_hint" />
+        </LinearLayout>
+
+        <!-- Background restrictions caused problems -->
+        <LinearLayout
+            android:visibility="@{viewModel.hasBackgroundSuspended || viewModel.hasBackgroundKilled}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:onClick="@{() -> permissionsController.openApplicationPermissions(&quot;me.hufman.androidautoidrive&quot;)}"
+            android:gravity="center">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/checkbox_vertical_margin"
+                android:gravity="center">
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
+                    app:tint="?android:attr/textColorSecondary"
+                    android:src="@drawable/ic_error_outline_black_24dp" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:visibility="@{viewModel.hasBackgroundKilled}"
+                    android:text="@string/txt_setup_background_killed" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:visibility="@{!viewModel.hasBackgroundKilled &amp;&amp; viewModel.hasBackgroundSuspended}"
+                    android:text="@string/txt_setup_background_suspended" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_setup_background_restrictions_hint" />
         </LinearLayout>
 
         <!-- BMW Connection -->

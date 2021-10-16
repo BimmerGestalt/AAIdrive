@@ -6,9 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import me.hufman.androidautoidrive.BackgroundInterruptionDetection
 import me.hufman.androidautoidrive.connections.CarConnectionDebugging
 
-class DependencyInfoModel(val connection: CarConnectionDebugging): ViewModel() {
+class DependencyInfoModel(val connection: CarConnectionDebugging, val interruptionDetection: BackgroundInterruptionDetection): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -20,7 +21,7 @@ class DependencyInfoModel(val connection: CarConnectionDebugging): ViewModel() {
 			// can't unittest CarConnectionDebugging registration
 			// don't actually need to subscribe to the connection status for devices or bcl
 			// the callback automatically provides SecurityService callbacks
-			model = DependencyInfoModel(connection)
+			model = DependencyInfoModel(connection, BackgroundInterruptionDetection.build(appContext))
 			model.update()
 			return model as T
 		}
@@ -53,6 +54,12 @@ class DependencyInfoModel(val connection: CarConnectionDebugging): ViewModel() {
 	private val _isSecurityServiceDisconnected = MutableLiveData<Boolean>()
 	val isSecurityServiceDisconnected: LiveData<Boolean> = _isSecurityServiceDisconnected
 
+	// Background restrictions appear to be in effect
+	val _hasBackgroundKilled = MutableLiveData(false)
+	val hasBackgroundKilled: LiveData<Boolean> = _hasBackgroundKilled
+	val _hasBackgroundSuspended = MutableLiveData(false)
+	val hasBackgroundSuspended: LiveData<Boolean> = _hasBackgroundSuspended
+
 	fun update() {
 		_isBmwConnectedInstalled.value = connection.isBMWConnectedInstalled
 		_isMiniConnectedInstalled.value = connection.isMiniConnectedInstalled
@@ -65,6 +72,8 @@ class DependencyInfoModel(val connection: CarConnectionDebugging): ViewModel() {
 		_isBmwReady.value = connection.isBMWInstalled && connection.isConnectedSecurityConnected
 		_isMiniReady.value = connection.isMiniInstalled && connection.isConnectedSecurityConnected
 		_isSecurityServiceDisconnected.value = connection.isConnectedSecurityInstalled && !connection.isConnectedSecurityConnected
+		_hasBackgroundKilled.value = interruptionDetection.detectedKilled >= 3
+		_hasBackgroundSuspended.value = interruptionDetection.detectedSuspended >= 2
 	}
 
 	override fun onCleared() {

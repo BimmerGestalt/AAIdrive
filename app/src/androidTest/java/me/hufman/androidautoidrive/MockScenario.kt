@@ -47,7 +47,7 @@ class MockScenario(context: Context) {
 	}
 	val carCapabilitiesViewModel = CarCapabilitiesViewModel(carInfo, musicAppMode)
 	val connectionStatusModel = ConnectionStatusModel(connectionDebugging, carInfo)
-	val dependencyInfoModel = DependencyInfoModel(connectionDebugging)
+	val dependencyInfoModel = DependencyInfoModel(connectionDebugging, mock())
 
 	val connectionTipsModel = ConnectionTipsModel(connectionDebugging)
 	val capabilitiesTipsModel = CapabilitiesTipsModel(carInfo)
@@ -84,6 +84,7 @@ class MockScenario(context: Context) {
 		on {hasNotificationPermission} doReturn true
 		on {hasSmsPermission} doReturn true
 		on {hasLocationPermission} doReturn true
+		on {hasBackgroundPermission} doReturn true
 	}
 
 	val mapSettingsModel = mock<MapSettingsModel> {
