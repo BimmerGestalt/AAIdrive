@@ -29,6 +29,6 @@ class ReplyView(destState: RHMIState, inputState: RHMIState, val replyController
 	}
 
 	override fun convertRow(row: CharSequence): String {
-		return UnicodeCleaner.clean(row.toString())
+		return UnicodeCleaner.clean(row.toString(), false)
 	}
 }

@@ -13,6 +13,7 @@ class EmojiCleanerTest {
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDE00", listOf("grinning"), "grinning face")
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDC08", listOf("cat2"), "cat")
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDE3B", listOf("heart_eyes_cat"), "heart_eyes_cat")
+		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDC97", listOf("heartpulse"), "heartpulse")
 	}
 
 	/** Verifies that ascii symbols don't get emoji parsed */
