@@ -43,7 +43,7 @@ class AddonDiscovery(val packageManager: PackageManager) {
 			}
 			if (cdsNormalRequested || cdsPersonalRequested) {
 				val name = packageManager.getApplicationLabel(packageInfo.applicationInfo).toString()
-				val icon = packageManager.getApplicationInfo(packageInfo.packageName, 0).loadIcon(packageManager)
+				val icon = packageInfo.applicationInfo.loadIcon(packageManager)
 				val cdsNormalGranted = packageManager.checkPermission(PERMISSION_NORMAL, packageInfo.packageName) == PERMISSION_GRANTED
 				val cdsPersonalGranted = packageManager.checkPermission(PERMISSION_PERSONAL, packageInfo.packageName) == PERMISSION_GRANTED
 				val appInfo = AddonAppInfo(name, icon, packageInfo.packageName).also {
@@ -63,14 +63,20 @@ class AddonDiscovery(val packageManager: PackageManager) {
 		packageManager.queryIntentServices(intentCarService, 0).forEach { resolveInfo ->
 			val packageInfo = packageManager.getPackageInfo(resolveInfo.serviceInfo.packageName, 0)
 			val name = packageManager.getApplicationLabel(packageInfo.applicationInfo).toString()
-			val icon = packageManager.getApplicationInfo(packageInfo.packageName, 0).loadIcon(packageManager)
+			val icon = packageInfo.applicationInfo.loadIcon(packageManager)
 			val appInfo = discovered[packageInfo.packageName] ?: AddonAppInfo(name, icon, packageInfo.packageName).also {
 				it.intentOpen = resolveIntent(Intent(Intent.ACTION_MAIN).setPackage(packageInfo.packageName))
 				it.intentSettings = resolveIntent(Intent(ACTION_APPLICATION_PREFERENCES).setPackage(packageInfo.packageName))
+				it.intentConnectionService = Intent(INTENT_CONNECTION_SERVICE).setPackage(packageInfo.packageName)
+				// a direct car connection can provide all the same
+				it.cdsNormalRequested = true
+				it.cdsNormalGranted = true
+				it.cdsPersonalRequested = true
+				it.cdsPersonalGranted = true
+				// show the checkboxes about the car connection
+				it.carConnectionRequested = true
+				it.carConnectionGranted = true     // TODO support disabling like the MusicApp swiping
 			}
-			appInfo.intentConnectionService = Intent(INTENT_CONNECTION_SERVICE).setPackage(packageInfo.packageName)
-			appInfo.carConnectionRequested = true
-			appInfo.carConnectionGranted = true     // TODO support disabling like the MusicApp swiping
 			discovered[packageInfo.packageName] = appInfo
 		}
 
