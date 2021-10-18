@@ -166,6 +166,9 @@
     <string name="txt_setup_bmw_mine_conflict">Zainstalowane masz zarówno aplikacje BMW Connected, jak i My BMW, co może powodować niestabilność połączenia (chyba że łączysz się przez USB)</string>
     <string name="txt_setup_mini_mine_conflict">Zainstalowane masz zarówno aplikacje MINI Connected, jak i My MINI, co może powodować niestabilność połączenia (chyba że łączysz się przez USB)</string>
     <string name="txt_setup_security_missing">Usługa bezpieczeństwa jest nieosiągalna:</string>
+    <string name="txt_setup_background_killed">Aplikacja została zabita podczas połączenia z samochodem</string>
+    <string name="txt_setup_background_suspended">Aplikacja została wstrzymana w tle podczas połączenia z samochodem</string>
+    <string name="txt_setup_background_restrictions_hint">Sprawdź możliwość działania aplikacji w tle i ustawienia oszczędzania baterii, aby AAIdrive mógł działać poprawnie</string>
     <string name="btn_install">Instalacja</string>
     <string name="btn_install_bmwmine">Zainstaluj aplikacji MyBMW</string>
     <string name="btn_install_minimine">Zainstaluj aplikacji Mini</string>
