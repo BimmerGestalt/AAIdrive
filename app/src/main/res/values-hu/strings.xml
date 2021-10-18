@@ -156,6 +156,8 @@
     <string name="txt_setup_bmw_mine_conflict">A BMW Connected és MyBMW alkalmazások telepítve vannak, ami instabilitást okozhat a kapcsolatban, kivéve ha USB-n keresztül kapcsolódsz</string>
     <string name="txt_setup_mini_mine_conflict">A Mini Connected és Mini alkalmazások telepítve vannak, ami instabilitást okozhat a kapcsolatban, kivéve ha USB-n keresztül kapcsolódsz</string>
     <string name="txt_setup_security_missing">Biztonsági szolgáltatás nem elérhető:</string>
+    <string name="txt_setup_background_killed">Az alkalmazás be lett zárva miközben csatlakozott az autóhoz</string>
+    <string name="txt_setup_background_suspended">Az alkalmazás szüneteltetve lett a háttérben miközben csatlakozott az autóhoz</string>
     <string name="btn_install">Telepítés</string>
     <string name="btn_install_bmwmine">Telepítsd a MyBMW alkalmazást</string>
     <string name="btn_install_minimine">Telepítsd a Mini alkalmazást</string>
