@@ -4,6 +4,7 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.FocusTriggerController
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.notifications.*
@@ -241,7 +242,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 					setEnabled(true)
 					setSelectable(true)
 					getImageModel()?.asImageIdModel()?.imageId = 158
-					getTooltipModel()?.asRaDataModel()?.value = action.name.toString()
+					getTooltipModel()?.asRaDataModel()?.value = UnicodeCleaner.clean(action.name.toString())
 					getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 						if (action.supportsReply) {
 							// show input to reply

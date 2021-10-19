@@ -456,7 +456,7 @@ class NotificationAppTest {
 	                             sidePicture: Drawable? = null, picture: Drawable? = null, pictureUri: String? = null,
 	                             actions: List<CarNotification.Action>? = null): CarNotification {
 		val usedNotifications = actions ?: listOf(CarNotification.Action(
-				"Custom Action", false, emptyList()
+				"Custom Action \uD83D\uDC97", false, emptyList()
 		))
 
 		return CarNotification("me.hufman.androidautoidrive", "test$title", "Test AppName", mock(), clearable, usedNotifications,
@@ -1026,7 +1026,7 @@ class NotificationAppTest {
 		assertEquals(true, mockServer.properties[123]?.get(RHMIProperty.PropertyId.ENABLED.id))
 		assertEquals(true, mockServer.properties[123]?.get(RHMIProperty.PropertyId.SELECTABLE.id))
 		assertEquals(true, mockServer.properties[123]?.get(RHMIProperty.PropertyId.VISIBLE.id))
-		assertEquals("Custom Action", mockServer.data[524])  // custom action button
+		assertEquals("Custom Action  ♥ ", mockServer.data[524])  // custom action button
 		assertEquals(false, mockServer.properties[124]?.get(RHMIProperty.PropertyId.ENABLED.id))  // custom action button
 		assertEquals(false, mockServer.properties[124]?.get(RHMIProperty.PropertyId.SELECTABLE.id))  // clear this notification button
 		assertEquals(true, mockServer.properties[124]?.get(RHMIProperty.PropertyId.VISIBLE.id))
