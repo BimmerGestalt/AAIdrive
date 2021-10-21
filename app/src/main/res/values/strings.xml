@@ -343,6 +343,7 @@
     <string name="notification_assistant_description">Only necessary because the screen is on</string>
     <string name="donation_title">Like this app?</string>
     <string name="donation_text">Consider showing your support with a small donation</string>
+    <string name="donation_text_onetime">One-time request</string>
 
     <string name="txt_spotify_auth_notification">Spotify Web API needs to be authorized. Click here to authorize.</string>
     <string name="txt_spotify_app_remote_last_error">Spotify App Remote Last Error:</string>

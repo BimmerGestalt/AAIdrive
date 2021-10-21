@@ -87,6 +87,8 @@ class DonationRequest(val context: Context) {
 		val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
 				.setContentTitle(context.getText(R.string.donation_title))
 				.setContentText(context.getText(R.string.donation_text))
+				.setStyle(NotificationCompat.BigTextStyle()
+						.setSummaryText(context.getString(R.string.donation_text_onetime)))
 				.setSmallIcon(R.drawable.ic_notify)
 				.setPriority(NotificationCompat.PRIORITY_LOW)
 				.setAutoCancel(true)
