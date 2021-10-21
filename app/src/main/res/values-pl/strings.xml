@@ -138,6 +138,7 @@
     <string name="lbl_support_feedback">Przekaz swoją opinie</string>
     <string name="lbl_support_issues">Zgłoś problem</string>
     <string name="lbl_support_share">Poleć znajomym</string>
+    <string name="lbl_support_privacy">Prywatność ma znaczenie, dlatego AAIdrive nie zbiera, nie przechowuje ani nie udostępnia żadnych danych osobowych. Naciśnij tutaj, aby dowiedzieć się więcej…</string>
     <string name="lbl_support_thanks">Dziękujemy za korzystanie z AAIdrive!</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Anuluj</string>
@@ -314,6 +315,7 @@
     <string name="notification_assistant_description">Konieczne tylko dlatego, że ekran jest włączony</string>
     <string name="donation_title">Podoba Ci się ta aplikacja?</string>
     <string name="donation_text">Consider showing your support with a small donation</string>
+    <string name="donation_text_onetime">Prośba jednorazowa</string>
     <string name="txt_spotify_auth_notification">Wymagana jest autoryzacja Spotify Web API. Kliknij tutaj, aby autoryzować. </string>
     <string name="txt_spotify_app_remote_last_error">Ostatni błąd aplikacji Spotify App Remote: </string>
     <string name="txt_spotify_api_authorization_needed">Wymagana autoryzacja Spotify Web API.</string>
