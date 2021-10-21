@@ -138,6 +138,7 @@
     <string name="lbl_support_feedback">Предоставление обратной связи</string>
     <string name="lbl_support_issues">Известные проблемы</string>
     <string name="lbl_support_share">Рассказать о приложении</string>
+    <string name="lbl_support_privacy">Конфиденциальность важна, поэтому AAAIdrive не собирает, не хранит и не делится личными данными. Нажмите здесь, чтобы узнать больше…</string>
     <string name="lbl_support_thanks">Спасибо за использование AAIdrive!</string>
     <string name="lbl_ok">Ок</string>
     <string name="lbl_cancel">Отмена</string>
