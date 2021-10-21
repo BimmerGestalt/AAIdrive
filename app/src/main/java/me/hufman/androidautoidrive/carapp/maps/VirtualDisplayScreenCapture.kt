@@ -19,7 +19,7 @@ class VirtualDisplayScreenCapture(val imageCapture: ImageReader, val bitmapConfi
 	companion object {
 		fun build(width: Int, height: Int): VirtualDisplayScreenCapture {
 			return VirtualDisplayScreenCapture(
-					ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2)!!,
+					ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2),
 					Bitmap.Config.ARGB_8888,
 					Bitmap.CompressFormat.JPEG)
 		}

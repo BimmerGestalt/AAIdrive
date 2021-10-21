@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Handler
+import android.os.Looper
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,7 +16,7 @@ class CarSummaryModel(carInfoOverride: CarInformation? = null, val showAdvancedS
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
-			val handler = Handler()
+			val handler = Handler(Looper.getMainLooper())
 			var model: CarSummaryModel? = null
 			val carInfo = CarInformationObserver {
 				handler.post { model?.update() }

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
@@ -161,70 +162,70 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 
 		val albumResults = searchResults?.albums
 		if (albumResults != null && albumResults.isNotEmpty()) {
-			searchResultMusicMetadata.addAll(albumResults.items.map {
-				val mediaId = it.uri.uri
-				val coverArtUri = getCoverArtUri(it.images)
-				val artists = it.artists.map { it.name }.joinToString(", ")
-				val type = it.type.capitalize(Locale.getDefault())
+			searchResultMusicMetadata.addAll(albumResults.items.map { result ->
+				val mediaId = result.uri.uri
+				val coverArtUri = getCoverArtUri(result.images)
+				val artists = result.artists.joinToString(", ") { it.name }
+				val type = result.type.replaceFirstChar(Char::uppercase)
 
-				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, it.name, it.name, type, true, false)
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, result.name, result.name, type, playable=true, browseable=false)
 			})
 		}
 
 		val songResults = searchResults?.tracks
 		if (songResults != null && songResults.isNotEmpty()) {
-			searchResultMusicMetadata.addAll(songResults.items.map {
-				val mediaId = it.uri.uri
-				val coverArtUri = getCoverArtUri(it.album.images)
-				val artists = it.artists.map { it.name }.joinToString(", ")
-				val albumMediaId = it.album.uri.uri
-				val type = it.type.capitalize(Locale.getDefault())
+			searchResultMusicMetadata.addAll(songResults.items.map { result ->
+				val mediaId = result.uri.uri
+				val coverArtUri = getCoverArtUri(result.album.images)
+				val artists = result.artists.joinToString(", ") { it.name }
+				val albumMediaId = result.album.uri.uri
+				val type = result.type.replaceFirstChar(Char::uppercase)
 
-				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, albumMediaId, it.name, type, true, false)
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, albumMediaId, result.name, type, playable=true, browseable=false)
 			})
 		}
 
 		val artistResults = searchResults?.artists
 		if (artistResults != null && artistResults.isNotEmpty()) {
-			searchResultMusicMetadata.addAll(artistResults.items.map {
-				val mediaId = it.uri.uri
-				val coverArtUri = getCoverArtUri(it.images, 320)
-				val type = it.type.capitalize(Locale.getDefault())
+			searchResultMusicMetadata.addAll(artistResults.items.map { result ->
+				val mediaId = result.uri.uri
+				val coverArtUri = getCoverArtUri(result.images, 320)
+				val type = result.type.replaceFirstChar(Char::uppercase)
 
-				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.name, null, it.name, type, false, true)
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.name, null, result.name, type, playable=false, browseable=true)
 			})
 		}
 
 		val playlistResults = searchResults?.playlists
 		if (playlistResults != null && playlistResults.isNotEmpty()) {
-			searchResultMusicMetadata.addAll(playlistResults.items.map {
-				val mediaId = it.uri.uri
-				val coverArtUri = getCoverArtUri(it.images, 320)
-				val type = it.type.capitalize(Locale.getDefault())
+			searchResultMusicMetadata.addAll(playlistResults.items.map { result ->
+				val mediaId = result.uri.uri
+				val coverArtUri = getCoverArtUri(result.images, 320)
+				val type = result.type.replaceFirstChar(Char::uppercase)
 
-				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.name, null, it.name, type, false, true)
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.name, null, result.name, type, playable=false, browseable=true)
 			})
 		}
 
 		val showResults = searchResults?.shows
 		if (showResults != null && showResults.isNotEmpty()) {
-			searchResultMusicMetadata.addAll(showResults.items.filterNotNull().map {
-				val mediaId = it.uri.uri
-				val coverArtUri = getCoverArtUri(it.images)
-				val subtitle = it.type.capitalize(Locale.getDefault())
+			searchResultMusicMetadata.addAll(showResults.items.filterNotNull().map { result ->
+				val mediaId = result.uri.uri
+				val coverArtUri = getCoverArtUri(result.images)
+				val subtitle = result.type.replaceFirstChar(Char::uppercase)
 
-				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, it.publisher, null, it.name, subtitle, false, true)
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.publisher, null, result.name, subtitle, playable=false, browseable=true)
 			})
 		}
 
 		val episodeResults = searchResults?.episodes
 		if (episodeResults != null && episodeResults.isNotEmpty()) {
-			searchResultMusicMetadata.addAll(episodeResults.items.filterNotNull().map {
-				val mediaId = it.uri.uri
-				val coverArtUri = getCoverArtUri(it.images)
-				val subtitle = it.type.capitalize(Locale.getDefault())
+			searchResultMusicMetadata.addAll(episodeResults.items.filterNotNull().map { result ->
+				val mediaId = result.uri.uri
+				val coverArtUri = getCoverArtUri(result.images)
+				val subtitle = result.type.replaceFirstChar(Char::uppercase)
 
-				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, null, null, it.name, subtitle, true, false)
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, null, null, result.name, subtitle, playable=true, browseable=false)
 			})
 		}
 		return@executeApiCall searchResultMusicMetadata
@@ -308,7 +309,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 * Updates the Spotify [MusicAppInfo] searchable flag to true if it is set to false.
 	 */
 	private fun updateSpotifyAppInfoAsSearchable() {
-		val musicAppDiscovery = MusicAppDiscovery(context, Handler())
+		val musicAppDiscovery = MusicAppDiscovery(context, Handler(Looper.getMainLooper()))
 		musicAppDiscovery.loadInstalledMusicApps()
 		val spotifyAppInfo = musicAppDiscovery.allApps.firstOrNull { it.packageName == "com.spotify.music" }
 
@@ -424,7 +425,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 */
 	private fun createSpotifyMusicMetadataFromTrack(track: Track, spotifyAppController: SpotifyAppController): SpotifyMusicMetadata {
 		val mediaId = track.uri.uri
-		val artists = track.artists.map { it.name }.joinToString(", ")
+		val artists = track.artists.joinToString(", ") { it.name }
 		val album = track.album
 		val coverArtUri = getCoverArtUri(album.images)
 		return SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, album.name, track.name)

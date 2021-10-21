@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -60,7 +61,7 @@ class SpotifyApiErrorDialog: DialogFragment() {
 						authorizeButton.visible = false
 
 						// close the dialog after 2 seconds automatically
-						Handler().postDelayed({ dismissAllowingStateLoss() }, 2000)
+						Handler(Looper.getMainLooper()).postDelayed({ dismissAllowingStateLoss() }, 2000)
 					}
 
 					else -> {

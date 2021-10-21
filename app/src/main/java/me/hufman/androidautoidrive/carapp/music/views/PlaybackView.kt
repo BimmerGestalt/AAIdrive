@@ -214,12 +214,12 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 					lastPositionActionTime = System.currentTimeMillis()
 				}
 			}
-			state.getArtistAction()?.asRAAction()?.rhmiActionCallback = RHMIActionCallback { args ->
+			state.getArtistAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 				browseView.clearPages()
 				val page = browseView.pushBrowsePage(null)
 				state.getArtistAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id
 			}
-			state.getAlbumAction()?.asRAAction()?.rhmiActionCallback = RHMIActionCallback { args ->
+			state.getAlbumAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 				browseView.clearPages()
 				val page = browseView.pushBrowsePage(null)
 				state.getAlbumAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id

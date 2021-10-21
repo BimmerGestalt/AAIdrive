@@ -114,7 +114,7 @@ class SpotifyWebApiTest {
 		doNothing().whenever(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
 
 		val handler: Handler = mock()
-		PowerMockito.whenNew(Handler::class.java).withNoArguments().thenReturn(handler)
+		PowerMockito.whenNew(Handler::class.java).withAnyArguments().thenReturn(handler)
 		val musicAppDiscovery: MusicAppDiscovery = mock()
 		PowerMockito.whenNew(MusicAppDiscovery::class.java).withArguments(context, handler).thenReturn(musicAppDiscovery)
 
@@ -248,7 +248,7 @@ class SpotifyWebApiTest {
 		doNothing().whenever(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
 
 		val handler: Handler = mock()
-		PowerMockito.whenNew(Handler::class.java).withNoArguments().thenReturn(handler)
+		PowerMockito.whenNew(Handler::class.java).withAnyArguments().thenReturn(handler)
 		val musicAppDiscovery: MusicAppDiscovery = mock()
 		PowerMockito.whenNew(MusicAppDiscovery::class.java).withArguments(context, handler).thenReturn(musicAppDiscovery)
 
@@ -346,7 +346,7 @@ class SpotifyWebApiTest {
 		doNothing().whenever(spotifyAppController).createLikedSongsQueueMetadata()
 
 		val handler: Handler = mock()
-		PowerMockito.whenNew(Handler::class.java).withNoArguments().thenReturn(handler)
+		PowerMockito.whenNew(Handler::class.java).withAnyArguments().thenReturn(handler)
 		val musicAppDiscovery: MusicAppDiscovery = mock()
 		PowerMockito.whenNew(MusicAppDiscovery::class.java).withArguments(context, handler).thenReturn(musicAppDiscovery)
 
@@ -398,7 +398,7 @@ class SpotifyWebApiTest {
 		doNothing().whenever(spotifyAppController).createArtistTopSongsQueueMetadata()
 
 		val handler: Handler = mock()
-		PowerMockito.whenNew(Handler::class.java).withNoArguments().thenReturn(handler)
+		PowerMockito.whenNew(Handler::class.java).withAnyArguments().thenReturn(handler)
 		val musicAppDiscovery: MusicAppDiscovery = mock()
 		PowerMockito.whenNew(MusicAppDiscovery::class.java).withArguments(context, handler).thenReturn(musicAppDiscovery)
 
@@ -490,7 +490,7 @@ class SpotifyWebApiTest {
 		doNothing().whenever(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
 
 		val handler: Handler = mock()
-		PowerMockito.whenNew(Handler::class.java).withNoArguments().thenReturn(handler)
+		PowerMockito.whenNew(Handler::class.java).withAnyArguments().thenReturn(handler)
 		val spotifyMusicApp = MusicAppInfo("Spotify", mock(), "com.spotify.music", null)
 		spotifyMusicApp.searchable = false
 		val musicAppInfoList = listOf(spotifyMusicApp)
@@ -539,7 +539,7 @@ class SpotifyWebApiTest {
 		doNothing().whenever(spotifyAuthStateManager).updateTokenResponseWithToken(token, clientId)
 
 		val handler: Handler = mock()
-		PowerMockito.whenNew(Handler::class.java).withNoArguments().thenReturn(handler)
+		PowerMockito.whenNew(Handler::class.java).withAnyArguments().thenReturn(handler)
 		val spotifyMusicApp = MusicAppInfo("Spotify", mock(), "com.spotify.music", null)
 		spotifyMusicApp.searchable = true
 		val musicAppInfoList = listOf(spotifyMusicApp)

@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Handler
+import android.os.Looper
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import kotlinx.coroutines.Job
@@ -19,7 +20,7 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
-			val handler = Handler()
+			val handler = Handler(Looper.getMainLooper())
 			var model: ConnectionStatusModel? = null
 			val connection = CarConnectionDebugging(appContext) {
 				handler.post { model?.update() }
@@ -149,7 +150,7 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		_isBclStuck.value = connection.isBCLStuck
 		_isBclConnected.value = connection.isBCLConnected
 		_hintBclMode.value = {getString(R.string.txt_setup_enable_bcl_mode, connection.deviceName)}
-		_bclTransport.value = connection.bclTransport?.toUpperCase(Locale.ROOT) ?: ""
+		_bclTransport.value = connection.bclTransport?.uppercase(Locale.ROOT) ?: ""
 		_bclModeText.value = if (connection.bclTransport == null) {
 			{ getString(R.string.txt_setup_bcl_connected) }
 		} else {
@@ -169,7 +170,7 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		}
 
 		// current car overview
-		val brand = if (connection.isBCLConnected) connection.carBrand?.toUpperCase(Locale.ROOT) else null
+		val brand = if (connection.isBCLConnected) connection.carBrand?.uppercase(Locale.ROOT) else null
 		_carBrand.value = brand
 		when (brand) {
 			"BMW" -> _carLogo.value = { ContextCompat.getDrawable(this, R.drawable.logo_bmw) }

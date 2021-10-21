@@ -243,8 +243,8 @@ class MainService: Service() {
 			foregroundNotificationBuilder.setContentText(getString(R.string.connectionStatusWaiting))
 			foregroundNotificationBuilder.setOngoing(false) // able to swipe away if we aren't currently connected
 		} else {
-			if (brand?.toLowerCase(Locale.ROOT) == "bmw") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_bmw))
-			if (brand?.toLowerCase(Locale.ROOT) == "mini") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_mini))
+			if (brand?.lowercase(Locale.ROOT) == "bmw") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_bmw))
+			if (brand?.lowercase(Locale.ROOT) == "mini") foregroundNotificationBuilder.setContentText(getText(R.string.notification_description_mini))
 
 			if (chassisCode != null) {
 				foregroundNotificationBuilder.setContentText(resources.getString(R.string.notification_description_chassiscode, chassisCode.toString()))
@@ -445,12 +445,12 @@ class MainService: Service() {
 
 	fun startNavigationListener() {
 		if (carInformationObserver.capabilities["navi"] == "true") {
-			if (iDriveConnectionReceiver.brand?.toLowerCase(Locale.ROOT) == "bmw") {
+			if (iDriveConnectionReceiver.brand?.lowercase(Locale.ROOT) == "bmw") {
 				packageManager.setComponentEnabledSetting(
 						ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityBMW"),
 						PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
 				)
-			} else if (iDriveConnectionReceiver.brand?.toLowerCase(Locale.ROOT) == "mini") {
+			} else if (iDriveConnectionReceiver.brand?.lowercase(Locale.ROOT) == "mini") {
 				packageManager.setComponentEnabledSetting(
 						ComponentName(BuildConfig.APPLICATION_ID, "${BuildConfig.APPLICATION_ID}.phoneui.NavActivityMINI"),
 						PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP

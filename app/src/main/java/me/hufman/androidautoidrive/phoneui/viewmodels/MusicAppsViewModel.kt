@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableList
 import androidx.lifecycle.ViewModel
@@ -15,7 +16,7 @@ class MusicAppsViewModel(val musicAppDiscoveryThread: MusicAppDiscoveryThread): 
 		override fun <T : ViewModel?> create(modelClass: Class<T>): T {
 			var model: MusicAppsViewModel? = null
 
-			val handler = Handler() // UI thread handler
+			val handler = Handler(Looper.getMainLooper()) // UI thread handler
 			val thread = MusicAppDiscoveryThread(appContext) { _ ->
 				handler.post {
 					model?.update()

@@ -32,9 +32,9 @@ interface AMAppInfo {
 
 	companion object {
 		fun getAppWeight(appName: String): Int {
-			val name = appName.toLowerCase().toCharArray().filter { it.isLetter() }
-			var score = min(name[0].toInt() - 'a'.toInt(), 'z'.toInt())
-			score = score * 6 + ((name[1].toInt() / 6.0).roundToInt())
+			val name = appName.lowercase().toCharArray().filter { it.isLetter() }
+			var score = min(name[0].code - 'a'.code, 'z'.code)
+			score = score * 6 + ((name[1].code / 6.0).roundToInt())
 			return score
 		}
 	}

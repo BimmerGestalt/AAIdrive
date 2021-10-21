@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Handler
+import android.os.Looper
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -23,7 +24,7 @@ class MusicActivityModel(val musicApp: MusicAppInfo, val musicController: MusicC
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel?> create(modelClass: Class<T>): T {
 			var model: MusicActivityModel? = null
-			val controller = MusicController(appContext, Handler())
+			val controller = MusicController(appContext, Handler(Looper.getMainLooper()))
 			val spotifyWebApi = SpotifyWebApi.getInstance(appContext, MutableAppSettingsReceiver(appContext))
 			controller.connectAppManually(musicApp)
 			controller.listener = Runnable {

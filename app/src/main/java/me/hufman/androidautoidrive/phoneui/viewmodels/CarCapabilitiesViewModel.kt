@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,7 +17,7 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 	class Factory(val context: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-			val postHandler = Handler()
+			val postHandler = Handler(Looper.getMainLooper())
 			var viewModel: CarCapabilitiesViewModel? = null
 			val carCapabilities = HashMap<String, String>()
 			val musicAppMode = MusicAppMode.build(carCapabilities, context)

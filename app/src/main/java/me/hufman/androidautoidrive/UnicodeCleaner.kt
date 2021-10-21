@@ -173,7 +173,7 @@ object UnicodeCleaner {
 	@VisibleForTesting(otherwise = VisibleForTesting.NONE)
 	fun _buildPlaceholderEmoji(emoji: String, aliases: List<String>, description: String): Emoji {
 		return Emoji(emojiChar=emoji, emoji=emoji, unicode=emoji, aliases=aliases, description = description,
-				htmlDec="&#${emoji[0].toLong()};", htmlHex="&#${emoji[0].toLong().toString(16)};")
+				htmlDec="&#${emoji[0].code};", htmlHex="&#${emoji[0].code.toString(16)};")
 	}
 
 	/** Builds just enough of an Emoji object to pass unit tests, and adds it to the data */

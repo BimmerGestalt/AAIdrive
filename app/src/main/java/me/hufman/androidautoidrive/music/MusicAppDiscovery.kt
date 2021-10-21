@@ -147,7 +147,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 		// load previously-probed states
 		loadCache()
 
-		this.browseApps.sortBy { it.name.toLowerCase() }
+		this.browseApps.sortBy { it.name.lowercase() }
 
 		// load the music session apps
 		addSessionApps()
@@ -196,7 +196,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 				apps.add(app)
 			}
 		}
-		apps.sortBy { it.name.toLowerCase() }
+		apps.sortBy { it.name.lowercase() }
 
 		// clear out any apps that are no longer active sessions
 		for (app in apps) {

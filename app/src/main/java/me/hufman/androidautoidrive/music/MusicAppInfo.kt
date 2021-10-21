@@ -48,7 +48,7 @@ data class MusicAppInfo(override val name: String, override val icon: Drawable,
 		}
 
 		fun guessCategory(packageName: String, label: String): AMCategory {
-			val lowLabel = label.toLowerCase(Locale.getDefault())
+			val lowLabel = label.lowercase()
 
 			// any names which are Media, even though they look like radio
 			val MEDIA_NAMES = setOf("librofm")

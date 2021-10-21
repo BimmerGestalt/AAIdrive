@@ -54,10 +54,9 @@ class FilterInputView(val state: RHMIState,
 					// still loading
 					sendSuggestions(listOf(FILTERRESULT_LOADING))
 				} else {
-					val results = input.toLowerCase(Locale.ROOT).let { inputLower ->
+					val results = input.lowercase().let { inputLower ->
 						musicList.asSequence().map {
-							Pair(it, UnicodeCleaner.clean((it.title ?: "") + " " + (it.artist
-									?: "")).toLowerCase(Locale.ROOT))
+							Pair(it, UnicodeCleaner.clean((it.title ?: "") + " " + (it.artist ?: "")).lowercase())
 						}.let {
 							it.filter { meta ->
 								meta.second.split(Regex("\\s+")).any { word ->

@@ -187,12 +187,12 @@ class CarCapabilitiesSummarized(val carInformation: CarInformation) {
 	val isPopupNotSupported = false
 
 	val isTtsSupported: Boolean
-		get() = carInformation.capabilities["tts"]?.toLowerCase(Locale.ROOT) == "true"
+		get() = carInformation.capabilities["tts"]?.lowercase(Locale.ROOT) == "true"
 	val isTtsNotSupported: Boolean
-		get() = carInformation.capabilities["tts"]?.toLowerCase(Locale.ROOT) == "false"
+		get() = carInformation.capabilities["tts"]?.lowercase(Locale.ROOT) == "false"
 
 	val isNaviSupported: Boolean
-		get() = carInformation.capabilities["navi"]?.toLowerCase(Locale.ROOT) == "true"
+		get() = carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "true"
 	val isNaviNotSupported: Boolean
-		get() = carInformation.capabilities["navi"]?.toLowerCase(Locale.ROOT) == "false"
+		get() = carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
 }

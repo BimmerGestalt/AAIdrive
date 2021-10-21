@@ -340,8 +340,8 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			if (!alreadyShown) {
 				val currentlyPopped = sbn.equalsKey(viewPopup.currentNotification)
 				val currentlyReading = viewDetails.visible && sbn.equalsKey(viewDetails.selectedNotification)
-				val currentlyInputing = hmiContextWidgetType.toLowerCase(Locale.ROOT).contains("speller") ||
-						hmiContextWidgetType.toLowerCase(Locale.ROOT).contains("keyboard") ||
+				val currentlyInputing = hmiContextWidgetType.lowercase(Locale.ROOT).contains("speller") ||
+						hmiContextWidgetType.lowercase(Locale.ROOT).contains("keyboard") ||
 						focusedStateTracker.isFocused[stateInput.id] == true
 				val timeSinceContextChange = System.currentTimeMillis() - hmiContextChangedTime
 				val userActivelyInteracting = timeSinceContextChange < HMI_CONTEXT_THRESHOLD

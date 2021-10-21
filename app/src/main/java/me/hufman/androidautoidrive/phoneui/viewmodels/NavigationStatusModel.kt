@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,7 +19,7 @@ class NavigationStatusModel(val carInformation: CarInformation): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
-			val postHandler = Handler()
+			val postHandler = Handler(Looper.getMainLooper())
 			var viewModel: NavigationStatusModel? = null
 			val carInformation = CarInformationObserver {
 				// update the detected capabilities
@@ -62,7 +63,7 @@ class NavigationStatusModel(val carInformation: CarInformation): ViewModel() {
 		_isConnected.value = carInformation.isConnected
 
 		val capabilities = carInformation.capabilities
-		_isNaviSupported.value = capabilities["navi"]?.toLowerCase(Locale.ROOT) == "true"
-		_isNaviNotSupported.value = capabilities["navi"]?.toLowerCase(Locale.ROOT) == "false"
+		_isNaviSupported.value = capabilities["navi"]?.lowercase(Locale.ROOT) == "true"
+		_isNaviNotSupported.value = capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
 	}
 }

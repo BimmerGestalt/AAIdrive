@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Handler
+import android.os.Looper
 import android.util.Base64
 import android.util.Log
 import android.util.LruCache
@@ -135,7 +136,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 
 						// if app discovery says we aren't able to connect, discover again
 						if (!isProbing) {
-							val musicAppDiscovery = MusicAppDiscovery(context, Handler())
+							val musicAppDiscovery = MusicAppDiscovery(context, Handler(Looper.getMainLooper()))
 							musicAppDiscovery.loadInstalledMusicApps()
 							val spotifyAppInfo = musicAppDiscovery.allApps.firstOrNull { it.packageName == "com.spotify.music" }
 							if (spotifyAppInfo?.connectable == false) {

@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,7 +14,7 @@ class DependencyInfoModel(val connection: CarConnectionDebugging, val interrupti
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
-			val handler = Handler()
+			val handler = Handler(Looper.getMainLooper())
 			var model: DependencyInfoModel? = null
 			val connection = CarConnectionDebugging(appContext) {
 				handler.post { model?.update() }

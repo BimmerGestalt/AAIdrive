@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.phoneui.fragments
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +29,7 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 import kotlin.math.max
 
 class MusicAppsListFragment: Fragment() {
-	val handler = Handler()
+	val handler = Handler(Looper.getMainLooper())
 
 	val permissionsController by lazy { PermissionsController(requireActivity()) }
 	val controller by lazy { MusicAppListController(requireActivity(), permissionsController) }
