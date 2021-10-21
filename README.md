@@ -228,7 +228,23 @@ This project contains no advertising or user tracking, and is developed entirely
 
 The app uses the Internet Permission to make a TCP connection to the car, which is reachable through a localhost socket on the main Connected app. Additionally, some cover art and incoming picture notifications (such as from Hangouts) may be fetched from Internet URLs. No other Internet access is required for the app's functionality.
 
-The analytics-enabled version automatically reports some anonymized information to [Sentry](https://www.sentry.io) to assist with debugging and development: Besides any rare and unfortunate crashes, the app reports any [installed music apps](app/src/sentry/java/me/hufman/androidautoidrive/Analytics.kt) and the capabilities each app provides, as well as the [model and capabilities](app/src/main/java/me/hufman/androidautoidrive/CarInformationDiscovery.kt#L33) of any connected car for usage statistics and feature prioritization.
+As part of its functionality, the app collects and remembers some information locally on your phone:
+
+  - The Car Information tab remembers information about the most-recently-connected car, including model and available features, specific driving statistics and vehicle settings, and the last location reported by the car while it was connected
+  - The music functionality remembers a list of installed music apps and what features they provide
+  - The Spotify integration retains a token to access your Spotify Library
+
+The app also needs some other information to function, but does not remember any of it and will never share it:
+
+  - To establish the car connection, the app identifies which BMW and Mini apps are installed
+  - The app watches Bluetooth connections to identify when the car is connected
+  - Any installed Voice Assistants are discovered to be added to the car
+  - Apps which act as AAIdrive Addons are discovered and presented in the Addons tab
+  - If enabled, notifications are read from the phone while connected to the car and then forgotten when disconnected
+  - If compiled into the app and then enabled, the custom map feature will use the phone's location while displaying the map
+
+The analytics-disabled version will never share any information, and no analytics code is compiled into this version of the app.
+The analytics-enabled version provides an option to share some anonymized information to [Sentry](https://www.sentry.io) to assist with debugging and development: If enabled, besides any rare and unfortunate crashes, the app will share any [installed music apps](app/src/sentry/java/me/hufman/androidautoidrive/Analytics.kt) and the capabilities each app provides, as well as the [model and capabilities](app/src/main/java/me/hufman/androidautoidrive/CarInformationDiscovery.kt#L36) of any connected car for usage statistics and feature prioritization.
 
 Each release provides both an analytics-enabled and analytics-disabled option.
 
