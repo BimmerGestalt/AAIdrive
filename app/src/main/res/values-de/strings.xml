@@ -136,6 +136,7 @@
     <string name="lbl_support_feedback">Feedback geben</string>
     <string name="lbl_support_issues">Öffne Tickets</string>
     <string name="lbl_support_share">Weitersagen</string>
+    <string name="lbl_support_privacy">Datenschutz ist wichtig, weshalb AAIdrive personenbezogene Daten nicht erfasst, speichert oder weitergibt. Tippe hier, um mehr zu erfahren…</string>
     <string name="lbl_support_thanks">Vielen Dank, dass Sie AAIdrive verwenden!</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Abbrechen</string>
