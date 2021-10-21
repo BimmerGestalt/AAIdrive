@@ -294,6 +294,7 @@
     <string name="notification_assistant_description">Csak azért szükséges, mert a képernyő be van kapcsolva</string>
     <string name="donation_title">Kedveled az alkalmazást?</string>
     <string name="donation_text">Fontold meg támogatásodat egy kis adománnyal</string>
+    <string name="donation_text_onetime">Egy alkalmi kérés</string>
     <string name="txt_spotify_auth_notification">A Spotify Web API-t engedélyezni kell. Kattints ide az engedélyezéshez.</string>
     <string name="txt_spotify_app_remote_last_error">Spotify App Remote utolsó hiba:</string>
     <string name="txt_spotify_api_authorization_needed">A Spotify Web API engedélyezése szükséges.</string>
