@@ -128,6 +128,7 @@
     <string name="lbl_support_feedback">Visszajelzés küldése</string>
     <string name="lbl_support_issues">Nyitott problémák</string>
     <string name="lbl_support_share">Ajánld másoknak!</string>
+    <string name="lbl_support_privacy">Adatvédelem számít, ezért az AAIdrive nem gyűjt, tárol, vagy oszt meg személyes adatot. Koppints ide hogy többet tudj meg…</string>
     <string name="lbl_support_thanks">Köszönöm hogy az AAIdrive-ot használod!</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Mégsem</string>
