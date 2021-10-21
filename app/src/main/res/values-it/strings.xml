@@ -136,6 +136,7 @@
     <string name="lbl_support_feedback">Dando un feedback</string>
     <string name="lbl_support_issues">Segnalando problemi o bug</string>
     <string name="lbl_support_share">Facendo passaparola</string>
+    <string name="lbl_support_privacy">La privacy conta, motivo per cui AAIdrive non raccoglie, memorizza o condivide i tuoi dati personali. Tocca qui per saperne di più…</string>
     <string name="lbl_support_thanks">Grazie per utilizzare AAIdrive!</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancella</string>
