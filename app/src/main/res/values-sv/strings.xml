@@ -136,6 +136,7 @@
     <string name="lbl_support_feedback">Ge feedback</string>
     <string name="lbl_support_issues">Aktuella ärenden</string>
     <string name="lbl_support_share">Sprid detta</string>
+    <string name="lbl_support_privacy">Sekretess är viktigt, vilket är anledningen till att AAIdrive ej samlar in, lagrar eller delar personuppgifter. Tryck här för mer information…</string>
     <string name="lbl_support_thanks">Tack för att du använder AAIdrive!</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Avbryt</string>
@@ -312,6 +313,7 @@
     <string name="notification_assistant_description">Endast nödvändigt eftersom skärmen är på</string>
     <string name="donation_title">Gillar du denna app?</string>
     <string name="donation_text">Bidra gärna med en donation som stöd för detta projekt</string>
+    <string name="donation_text_onetime">Engångsbegäran</string>
     <string name="txt_spotify_auth_notification">Spotify Web API måste auktoriseras. Klicka här för att auktoriseras.</string>
     <string name="txt_spotify_app_remote_last_error">Spotify Remote App Senaste fel:</string>
     <string name="txt_spotify_api_authorization_needed">Spotify Web API auktorisering krävs.</string>
