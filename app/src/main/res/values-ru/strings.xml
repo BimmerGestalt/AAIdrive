@@ -166,6 +166,8 @@
     <string name="txt_setup_bmw_mine_conflict">BMW Connected и My BMW установлены одновременно. Соединение может быть нестабильно, если оно выполняется не через USB</string>
     <string name="txt_setup_mini_mine_conflict">Both the MINI Connected and My MINI apps are installed, which might cause connection instability unless connecting over USB</string>
     <string name="txt_setup_security_missing">Служба безопасности недоступна:</string>
+    <string name="txt_setup_background_killed">Приложение было убито во время соединения с автомобилем</string>
+    <string name="txt_setup_background_suspended">Приложение было приостановлено в фоновом режиме во время соединения с автомобилем</string>
     <string name="btn_install">Установить</string>
     <string name="btn_install_bmwmine">Установить MyBMW</string>
     <string name="btn_install_minimine">Установить приложение Mini</string>

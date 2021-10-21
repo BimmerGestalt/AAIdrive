@@ -110,7 +110,11 @@
     <string name="lbl_addonspage">Apps adicionais podem funcionar com o seu carro para adicionar ainda mais funcionalidades</string>
     <string name="lbl_addon_apps">Apps adicionais</string>
     <string name="lbl_addons_empty">Nada encontrado</string>
+    <string name="lbl_addon_learn">Saiba mais</string>
     <string name="addonAppIcon">Ícone da aplicação</string>
+    <string name="addonConnectionPermission">Acesso à conexão de carro</string>
+    <string name="addonConnectionPermissionDeclined">Não pode conectar-se ao carro</string>
+    <string name="addonConnectionPermissionGranted">Pode conectar-se ao carro</string>
     <string name="addonNormalPermission">Acesso aos dados do carro</string>
     <string name="addonNormalPermissionDeclined">Não é possível acessar os dados do carro</string>
     <string name="addonNormalPermissionGranted">Acesso aos dados do carro é possível</string>
@@ -160,6 +164,9 @@
     <string name="txt_setup_bmw_mine_conflict">Tanto o BMW Connected como a app MyBMW estão instaladas, o que pode causar instabilidade de conexão a não ser que se conecte via USB</string>
     <string name="txt_setup_mini_mine_conflict">Tanto a MINI Connected como a nova app MINI estão instaladas, o que pode causar instabilidade de conexão a não ser que se conecte via USB</string>
     <string name="txt_setup_security_missing">Centro de Segurança não está disponível:</string>
+    <string name="txt_setup_background_killed">A app foi encerrada enquanto estava conectada ao carro</string>
+    <string name="txt_setup_background_suspended">A app foi pausada em segundo plano enquanto estava conectada ao carro</string>
+    <string name="txt_setup_background_restrictions_hint">Verifique a execução em segundo plano e as configurações de bateria do seu telefone para permitir que a AAIdrive seja executada em segundo plano</string>
     <string name="btn_install">Instalar</string>
     <string name="btn_install_bmwmine">Instalar a app MyBMW</string>
     <string name="btn_install_minimine">Instalar a nova app Mini</string>
