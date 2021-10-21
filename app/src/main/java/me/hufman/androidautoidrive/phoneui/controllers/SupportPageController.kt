@@ -34,4 +34,11 @@ class SupportPageController {
 		}
 		view.context.startActivity(intent)
 	}
+	fun onClickPrivacy(view: View) {
+		val intent = Intent(Intent.ACTION_VIEW).apply {
+			data = Uri.parse("https://github.com/BimmerGestalt/AAIdrive#privacy")
+			flags = Intent.FLAG_ACTIVITY_NEW_TASK
+		}
+		view.context.startActivity(intent)
+	}
 }

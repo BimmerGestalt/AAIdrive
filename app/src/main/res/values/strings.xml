@@ -149,6 +149,7 @@
     <string name="lbl_support_feedback">Providing feedback</string>
     <string name="lbl_support_issues">Opening issues</string>
     <string name="lbl_support_share">Spreading the word</string>
+    <string name="lbl_support_privacy">Privacy matters, which is why AAIdrive does not collect, store, or share personal data. Tap here to learn more…</string>
     <string name="lbl_support_thanks">Thank you for using AAIdrive!</string>
 
     <string name="lbl_ok">OK</string>
