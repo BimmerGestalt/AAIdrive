@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playstore_tagline">Add Android Auto features to your BMW and Mini IDrive NBT dashboard</string>
+    <string name="playstore_desc_title">Unlock the full potential of your BMW Connected Apps-powered car to enhance your driving experience!</string>
+    <string name="playstore_desc_features_heading">Combined with an active BMW ConnectedDrive subscription or the Mini Connected option, this project adds most of the features of Android Auto to your car as unofficial BMW/Mini Connected Apps:</string>
+    <string name="playstore_desc_features_music">See music apps on your phone as media sources in IDrive</string>
+    <string name="playstore_desc_features_assistants">Interact with voice assistants installed on your phone</string>
+    <string name="playstore_desc_features_notifications">Read, listen and interact with notifications through the car's controls</string>
+    <string name="playstore_desc_features_carnav">Trigger car navigation from phone apps</string>
+    <string name="playstore_desc_features_carinfo">Read various diagnostic info and statistics from your car</string>
+    <string name="playstore_desc_features_addons_mirroring">Extend capabilities through optional add-ons (such as screen mirroring)</string>
+    <string name="playstore_desc_features_custommap_soon">Custom map implementation coming soon</string>
+    <string name="playstore_desc_nativeapps_protocol">By using the native BMW Apps protocol, exactly like the old Spotify app, this app does not modify your car in any way, and all of the extended capabilities are only provided while your phone is connected.</string>
+    <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps requires that the MyBMW or MINI app for your car is installed and that it can successfully enable your IDrive5+ car's Apps checkbox, or that your IDrive4 car has the ConnectedDrive Connection Assistant option.</string>
+    <string name="playstore_desc_depends_bmw_subscription">This usually requires having an active BMW ConnectedDrive subscription, which is typically included for a few years after you bought your new car.</string>
+</resources>
