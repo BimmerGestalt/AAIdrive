@@ -9,6 +9,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-kapt'
 
+apply plugin: 'org.ajoberstar.grgit'
+
 apply from: 'buildtools/ColoredOutput.gradle'
 
 apply from: 'buildtools/jacoco.gradle'
@@ -46,8 +48,7 @@ android {
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunner 'me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner'
         archivesBaseName = "androidautoidrive-${androidGitVersion.name()}"
-        buildConfigField "long", "BUILD_TIME", System.currentTimeMillis() + "L"
-
+        buildConfigField "long", "COMMIT_TIME", ((grgit != null && !androidGitVersion.name().contains("-dirty")) ? grgit.head().dateTime.toEpochSecond() : 0L) + "L"
         manifestPlaceholders = [
                 spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey,
                 appAuthRedirectScheme: applicationId
