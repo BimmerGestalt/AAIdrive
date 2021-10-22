@@ -323,21 +323,14 @@ class MainService: Service() {
 
 					backgroundInterruptionDetection.start()
 				}
-
-				// check if we are idle and should shut down
-				if (!startAny) {
-					Log.i(TAG, "No apps are enabled, skipping the service start")
-					stopServiceNotification()
-					stopSelf()
-				}
-
-				// show a donation popup, if it's time
-				DonationRequest(this).countUsage()
 			} else {
 				Log.d(TAG, "Not fully connected: IDrive:${iDriveConnectionReceiver.isConnected} SecurityService:${securityAccess.isConnected()}")
 				if (connectionTime != null) {
 					// record that we successfully disconnected
 					backgroundInterruptionDetection.safelyStop()
+
+					// show a donation popup, if it's time
+					DonationRequest(this).countUsage()
 				}
 				connectionTime = null
 				stopCarApps()
