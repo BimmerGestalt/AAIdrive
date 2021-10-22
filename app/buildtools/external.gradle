@@ -96,6 +96,7 @@ task confirmRHMIResources() {
             throw new MissingResourceException(message)
         }
     }
+    getOutputs().dir("../external")
 }
 task extractRHMIResources(type: Copy, dependsOn: confirmRHMIResources) {
     description "Extracts necessary RHMI resources for compilation"
