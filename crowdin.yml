@@ -4,3 +4,5 @@ files:
     translate_content: 0
     translate_attributes: 0
     content_segmentation: 0
+  - source: /playstore/res/values/strings*.xml
+    translation: /playstore/res/values-%android_code%/%original_file_name%
