@@ -1,2 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="playstore_tagline">Android Auto funkciók hozzáadása a BMW és Mini IDrive NBT műszerfalhoz</string>
+    <string name="playstore_desc_features_music">A telefonondon lévő zenei alkalmazások média forrásként az IDive-ban</string>
+    <string name="playstore_desc_features_assistants">Telefonodra telepített hang asszisztensekkel interakciók</string>
+    <string name="playstore_desc_features_notifications">Megjelenítés, felolvasás és válaszok az értesítésekre az autó vezérlőin keresztül</string>
+    <string name="playstore_desc_features_carnav">Autó navigációjának indítása a telefonon lévő alkalmazásokból</string>
+    <string name="playstore_desc_features_carinfo">Az autós különböző diganosztikai és statisztikai információinak olvasása</string>
+    <string name="playstore_desc_features_custommap_soon">Egyedi térkép implementáció hamarosan elérhető</string>
+    <string name="playstore_desc_depends_bmw_subscription">Ehhez általában aktív BMW ConnectedDrive regisztráció szükséges, amely általában az új autó vásárlását követően néhány évig alapból megkapsz.</string>
+</resources>
