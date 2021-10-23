@@ -121,6 +121,8 @@
     <string name="lbl_language_prefercar">Az autó nyelve előnyben részesítve az telefon nyelvével szemben</string>
     <string name="lbl_language_prefercar_code">Az autó nyelve (%s) előnyben részesítve az telefon nyelvével szemben</string>
     <string name="lbl_language_forcelanguage">Meghatározott nyelv kényszerítése</string>
+    <string name="lbl_analytics_intro">Az AAIdrive egy nem hivatalos hobbiprojekt, amelyet a BMW semmilyen módon nem támogat, és egy visszafejtett protokollra épít. Büszke vagyok a funkcionalitására és stabilitására, de még mindig előfordulhatnak összeomlások. Vedd fontolóra annak engedélyezését, hogy az analitika automatikusan küldjön hibajelentéseket hibakeresés és hibajavítás céljából.</string>
+    <string name="lbl_analytics_enabled">Analitika és hibajelentés engedélyezése</string>
     <string name="lbl_donations_volunteer">AAIdrive egy önkéntes projekt</string>
     <string name="lbl_donations_request">Amennyiben kedveled ezt a projektet és hasznosnak találod, gondold meg, hogy támogassad azt:</string>
     <string name="btn_donations">Támogatás</string>
@@ -358,6 +360,7 @@
         <item quantity="other">%s másodperc előre tekerése</item>
     </plurals>
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Nem kedvel</string>
+    <string name="MUSIC_SPOTIFY_START_RADIO">Rádióállomás készítése</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Kedvel</string>
     <string name="MUSIC_SPOTIFY_THUMB_UP">Tetszik</string>
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Tetszik</string>
