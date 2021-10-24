@@ -136,6 +136,7 @@
     <string name="lbl_support_feedback">Feedback geven</string>
     <string name="lbl_support_issues">Problemen melden</string>
     <string name="lbl_support_share">Vertel het verder</string>
+    <string name="lbl_support_privacy">Privacy is belangrijk. AAIdrive verzamelt en deelt geen persoonsgegevens. Tik voor meer informatie…</string>
     <string name="lbl_support_thanks">Bedankt voor het gebruiken van AAIdrive!</string>
     <string name="lbl_ok">Ok</string>
     <string name="lbl_cancel">Annuleren</string>
@@ -164,6 +165,9 @@
     <string name="txt_setup_bmw_mine_conflict">Zowel de BMW Connected en Mijn BMW apps zijn geïnstalleerd, dit kan verbindingsinstabiliteit veroorzaken tenzij u via USB aangesloten bent</string>
     <string name="txt_setup_mini_mine_conflict">Zowel de BMW Connected en Mijn BMW apps zijn geïnstalleerd, dit kan verbindingsinstabiliteit veroorzaken tenzij u via USB aangesloten bent</string>
     <string name="txt_setup_security_missing">Security Service is onbereikbaar:</string>
+    <string name="txt_setup_background_killed">De app is afgesloten tijdens verbinding met de auto</string>
+    <string name="txt_setup_background_suspended">De app is gepauzeerd op de achtergrond terwijl deze is aangesloten op de auto</string>
+    <string name="txt_setup_background_restrictions_hint">Controleer de achtergronduitvoering van je telefoon en de batterij instellingen zodat AAIdrive op de achtergrond kan worden uitgevoerd</string>
     <string name="btn_install">Installeren</string>
     <string name="btn_install_bmwmine">Installeer de MyBMW app</string>
     <string name="btn_install_minimine">Installeer de Mini app</string>
@@ -309,6 +313,7 @@
     <string name="notification_assistant_description">Enkel nodig omdat het scherm aan is</string>
     <string name="donation_title">Vindt je deze app leuk?</string>
     <string name="donation_text">Overweeg om uw steun te tonen met een kleine donatie</string>
+    <string name="donation_text_onetime">Eenmalige aanvraag</string>
     <string name="txt_spotify_auth_notification">Spotify Web API moet worden geautoriseerd. Klik hier om toestemming te geven.</string>
     <string name="txt_spotify_app_remote_last_error">Spotify App Remote Laatste fout:</string>
     <string name="txt_spotify_api_authorization_needed">Spotify Web API autorisatie vereist.</string>
