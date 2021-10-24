@@ -1,2 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="playstore_tagline">Android Auto functies toevoegen aan uw BMW en Mini IDrive NBT dashboard</string>
+    <string name="playstore_desc_title">Ontgrendel het volledige potentieel van BMW Connected Apps in je auto om je rijervaring te verbeteren!</string>
+</resources>
