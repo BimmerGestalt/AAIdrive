@@ -17,41 +17,41 @@ import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
 import me.hufman.androidautoidrive.phoneui.adapters.ReorderableItemsCallback
 import me.hufman.androidautoidrive.phoneui.controllers.NotificationQuickRepliesController
 
-class NotificationQuickRepliesFragment: Fragment() {
-	// the model of data to show
-	val appSettings by lazy { MutableAppSettingsReceiver(requireContext().applicationContext) }
-	val replies by lazy { StoredList(appSettings, AppSettings.KEYS.NOTIFICATIONS_QUICK_REPLIES) }
+class NotificationQuickRepliesFragment : Fragment() {
+    // the model of data to show
+    val appSettings by lazy { MutableAppSettingsReceiver(requireContext().applicationContext) }
+    val replies by lazy { StoredList(appSettings, AppSettings.KEYS.NOTIFICATIONS_QUICK_REPLIES) }
 
-	// swiping interactions
-	val itemTouchCallback by lazy { ReorderableItemsCallback(replies) }
-	val itemTouchHelper by lazy { ItemTouchHelper(itemTouchCallback) }
+    // swiping interactions
+    val itemTouchCallback by lazy { ReorderableItemsCallback(replies) }
+    val itemTouchHelper by lazy { ItemTouchHelper(itemTouchCallback) }
 
-	// the controller to handle UI actions
-	val controller by lazy { NotificationQuickRepliesController(replies, itemTouchHelper) }
+    // the controller to handle UI actions
+    val controller by lazy { NotificationQuickRepliesController(replies, itemTouchHelper) }
 
-	// the RecyclerView.Adapter to display
-	val adapter by lazy { DataBoundListAdapter(replies, R.layout.listitem_notification_quickreply, controller) }
+    // the RecyclerView.Adapter to display
+    val adapter by lazy { DataBoundListAdapter(replies, R.layout.listitem_notification_quickreply, controller) }
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-		val binding = NotificationQuickRepliesBinding.inflate(inflater, container, false)
-		binding.lifecycleOwner = viewLifecycleOwner
-		binding.controller = controller
-		return binding.root
-	}
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val binding = NotificationQuickRepliesBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.controller = controller
+        return binding.root
+    }
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		val listNotificationQuickReplies = view.findViewById<RecyclerView>(R.id.listNotificationQuickReplies)
-		listNotificationQuickReplies.layoutManager = LinearLayoutManager(requireActivity())
-		listNotificationQuickReplies.adapter = adapter
-		itemTouchHelper.attachToRecyclerView(listNotificationQuickReplies)  // enable drag/swipe
-		controller.adapter = adapter        // allow the controller to notifyDataSetChanged
-	}
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val listNotificationQuickReplies = view.findViewById<RecyclerView>(R.id.listNotificationQuickReplies)
+        listNotificationQuickReplies.layoutManager = LinearLayoutManager(requireActivity())
+        listNotificationQuickReplies.adapter = adapter
+        itemTouchHelper.attachToRecyclerView(listNotificationQuickReplies) // enable drag/swipe
+        controller.adapter = adapter // allow the controller to notifyDataSetChanged
+    }
 
-	override fun onResume() {
-		super.onResume()
+    override fun onResume() {
+        super.onResume()
 
-		// load the list of items into the adapter
-		adapter.notifyDataSetChanged()
-	}
+        // load the list of items into the adapter
+        adapter.notifyDataSetChanged()
+    }
 }

@@ -13,38 +13,38 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 
-class MusicNowPlayingFragment: Fragment() {
-	lateinit var musicController: MusicController
+class MusicNowPlayingFragment : Fragment() {
+    lateinit var musicController: MusicController
 
-	val viewModel by activityViewModels<MusicActivityModel>()
-	val iconsModel by activityViewModels<MusicActivityIconsModel>()
+    val viewModel by activityViewModels<MusicActivityModel>()
+    val iconsModel by activityViewModels<MusicActivityIconsModel>()
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-		val binding = MusicNowPlayingBinding.inflate(inflater, container, false)
-		binding.lifecycleOwner = viewLifecycleOwner
-		binding.controller = viewModel.musicController
-		binding.viewModel = viewModel
-		binding.iconsModel = iconsModel
-		return binding.root
-	}
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val binding = MusicNowPlayingBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.controller = viewModel.musicController
+        binding.viewModel = viewModel
+        binding.iconsModel = iconsModel
+        return binding.root
+    }
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		musicController = viewModel.musicController
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        musicController = viewModel.musicController
 
-		// handlers
-		view.findViewById<ImageView>(R.id.imgError).setOnClickListener {
-			val arguments = Bundle().apply {
-				putString(SpotifyApiErrorDialog.EXTRA_TITLE, viewModel.errorTitle.value)
-				putString(SpotifyApiErrorDialog.EXTRA_MESSAGE, viewModel.errorMessage.value)
-				putBoolean(SpotifyApiErrorDialog.EXTRA_WEB_API_AUTHORIZED, viewModel.isWebApiAuthorized.value == true)
-			}
-			val fragmentManager = activity?.supportFragmentManager
-			if (fragmentManager != null) {
-				SpotifyApiErrorDialog().apply {
-					setArguments(arguments)
-					show(fragmentManager, "spotify_error")
-				}
-			}
-		}
-	}
+        // handlers
+        view.findViewById<ImageView>(R.id.imgError).setOnClickListener {
+            val arguments = Bundle().apply {
+                putString(SpotifyApiErrorDialog.EXTRA_TITLE, viewModel.errorTitle.value)
+                putString(SpotifyApiErrorDialog.EXTRA_MESSAGE, viewModel.errorMessage.value)
+                putBoolean(SpotifyApiErrorDialog.EXTRA_WEB_API_AUTHORIZED, viewModel.isWebApiAuthorized.value == true)
+            }
+            val fragmentManager = activity?.supportFragmentManager
+            if (fragmentManager != null) {
+                SpotifyApiErrorDialog().apply {
+                    setArguments(arguments)
+                    show(fragmentManager, "spotify_error")
+                }
+            }
+        }
+    }
 }

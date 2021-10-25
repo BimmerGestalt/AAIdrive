@@ -8,14 +8,14 @@ import kotlinx.coroutines.Dispatchers
  */
 @Suppress("PropertyName")
 interface DispatcherProvider {
-	val Main: CoroutineDispatcher
-		get() = Dispatchers.Main
-	val Default: CoroutineDispatcher
-		get() = Dispatchers.Default
-	val IO: CoroutineDispatcher
-		get() = Dispatchers.IO
-	val Unconfined: CoroutineDispatcher
-		get() = Dispatchers.Unconfined
+    val Main: CoroutineDispatcher
+        get() = Dispatchers.Main
+    val Default: CoroutineDispatcher
+        get() = Dispatchers.Default
+    val IO: CoroutineDispatcher
+        get() = Dispatchers.IO
+    val Unconfined: CoroutineDispatcher
+        get() = Dispatchers.Unconfined
 }
 
 class DefaultDispatcherProvider : DispatcherProvider

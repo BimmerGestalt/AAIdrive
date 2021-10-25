@@ -9,13 +9,13 @@ import me.hufman.androidautoidrive.databinding.AnalyticsSettingsBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.AnalyticsSettingsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
-class AnalyticsSettingsFragment: Fragment() {
-	val viewModel by viewModels<AnalyticsSettingsModel> { AnalyticsSettingsModel.Factory(requireContext().applicationContext) }
+class AnalyticsSettingsFragment : Fragment() {
+    val viewModel by viewModels<AnalyticsSettingsModel> { AnalyticsSettingsModel.Factory(requireContext().applicationContext) }
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-		val binding = AnalyticsSettingsBinding.inflate(inflater, container, false)
-		binding.lifecycleOwner = viewLifecycleOwner
-		binding.viewModel = viewModel
-		return binding.root
-	}
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val binding = AnalyticsSettingsBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
+        return binding.root
+    }
 }

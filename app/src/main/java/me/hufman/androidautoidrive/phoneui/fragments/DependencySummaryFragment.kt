@@ -12,23 +12,23 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.DependencyInfoModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 
-class DependencySummaryFragment: Fragment() {
-	val viewModel by activityViewModels<DependencyInfoModel> { DependencyInfoModel.Factory(requireContext().applicationContext) }
-	val permissionsModel by activityViewModels<PermissionsModel> { PermissionsModel.Factory(requireContext().applicationContext) }
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-		val controller = DependencyInfoController(requireContext().applicationContext)
-		val permissionsController = PermissionsController(requireActivity())
-		val binding = DependencySummaryBinding.inflate(inflater, container, false)
-		binding.lifecycleOwner = viewLifecycleOwner
-		binding.controller = controller
-		binding.viewModel = viewModel
-		binding.permissionsModel = permissionsModel
-		binding.permissionsController = permissionsController
-		return binding.root
-	}
+class DependencySummaryFragment : Fragment() {
+    val viewModel by activityViewModels<DependencyInfoModel> { DependencyInfoModel.Factory(requireContext().applicationContext) }
+    val permissionsModel by activityViewModels<PermissionsModel> { PermissionsModel.Factory(requireContext().applicationContext) }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val controller = DependencyInfoController(requireContext().applicationContext)
+        val permissionsController = PermissionsController(requireActivity())
+        val binding = DependencySummaryBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.controller = controller
+        binding.viewModel = viewModel
+        binding.permissionsModel = permissionsModel
+        binding.permissionsController = permissionsController
+        return binding.root
+    }
 
-	override fun onResume() {
-		super.onResume()
-		permissionsModel.update()
-	}
+    override fun onResume() {
+        super.onResume()
+        permissionsModel.update()
+    }
 }

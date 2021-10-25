@@ -9,407 +9,434 @@ import android.os.Bundle
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.anyOrNull
+import com.nhaarman.mockito_kotlin.doAnswer
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.reset
+import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.whenever
 import kotlinx.coroutines.runBlocking
-import me.hufman.androidautoidrive.music.*
-import org.junit.Assert.*
+import me.hufman.androidautoidrive.music.CustomAction
+import me.hufman.androidautoidrive.music.MusicAction
+import me.hufman.androidautoidrive.music.MusicBrowser
+import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.music.RepeatMode
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-
 class GenericMusicAppControllerTest {
-	val context = mock<Context>()
-	val mediaTransportControls = mock<MediaControllerCompat.TransportControls>()
-	val mediaController = mock<MediaControllerCompat> {
-		on { transportControls } doReturn mediaTransportControls
-		on { packageName } doReturn "com.musicapp"
-	}
-	val musicBrowser = mock<MusicBrowser> {
-		on { connected } doReturn true
-	}
-	lateinit var controller: GenericMusicAppController
+    val context = mock<Context>()
+    val mediaTransportControls = mock<MediaControllerCompat.TransportControls>()
+    val mediaController = mock<MediaControllerCompat> {
+        on { transportControls } doReturn mediaTransportControls
+        on { packageName } doReturn "com.musicapp"
+    }
+    val musicBrowser = mock<MusicBrowser> {
+        on { connected } doReturn true
+    }
+    lateinit var controller: GenericMusicAppController
 
-	fun createPlaybackState(stateValue: Int, positionValue: Long, actionsValue: Long): PlaybackStateCompat {
-		return mock {
-			on { state } doReturn stateValue
-			on { position } doReturn positionValue
-			on { actions } doReturn actionsValue
-		}
-	}
+    fun createPlaybackState(stateValue: Int, positionValue: Long, actionsValue: Long): PlaybackStateCompat {
+        return mock {
+            on { state } doReturn stateValue
+            on { position } doReturn positionValue
+            on { actions } doReturn actionsValue
+        }
+    }
 
-	@Before
-	fun setup() {
-		controller = GenericMusicAppController(context, mediaController, musicBrowser)
-	}
+    @Before
+    fun setup() {
+        controller = GenericMusicAppController(context, mediaController, musicBrowser)
+    }
 
-	@Test
-	fun testControl() {
-		controller.play()
-		verify(mediaTransportControls).play()
+    @Test
+    fun testControl() {
+        controller.play()
+        verify(mediaTransportControls).play()
 
-		controller.pause()
-		verify(mediaTransportControls).pause()
+        controller.pause()
+        verify(mediaTransportControls).pause()
 
-		controller.skipToPrevious()
-		verify(mediaTransportControls).skipToPrevious()
+        controller.skipToPrevious()
+        verify(mediaTransportControls).skipToPrevious()
 
-		controller.skipToNext()
-		verify(mediaTransportControls).skipToNext()
+        controller.skipToNext()
+        verify(mediaTransportControls).skipToNext()
 
-		controller.seekTo(100)
-		verify(mediaTransportControls).seekTo(100)
+        controller.seekTo(100)
+        verify(mediaTransportControls).seekTo(100)
 
-		val song = MusicMetadata(mediaId = "test", queueId = 2)
-		controller.playSong(song)
-		verify(mediaTransportControls).playFromMediaId(song.mediaId, null)
-		controller.playQueue(song)
-		verify(mediaTransportControls).skipToQueueItem(song.queueId as Long)
+        val song = MusicMetadata(mediaId = "test", queueId = 2)
+        controller.playSong(song)
+        verify(mediaTransportControls).playFromMediaId(song.mediaId, null)
+        controller.playQueue(song)
+        verify(mediaTransportControls).skipToQueueItem(song.queueId as Long)
 
-		controller.playFromSearch("query")
-		verify(mediaTransportControls).playFromSearch("query", null)
-	}
+        controller.playFromSearch("query")
+        verify(mediaTransportControls).playFromSearch("query", null)
+    }
 
-	@Test
-	fun testSupportedAction() {
-		whenever(mediaController.playbackState) doAnswer {
-			createPlaybackState(0, 0, MusicAction.PLAY.flag)
-		}
-		assertTrue(controller.isSupportedAction(MusicAction.PLAY))
-	}
+    @Test
+    fun testSupportedAction() {
+        whenever(mediaController.playbackState) doAnswer {
+            createPlaybackState(0, 0, MusicAction.PLAY.flag)
+        }
+        assertTrue(controller.isSupportedAction(MusicAction.PLAY))
+    }
 
-	@Test
-	fun testCustomActions() {
-		val otherAction = CustomAction("com.wrongapp", "test", "Name", 0, null, null, null)
-		controller.customAction(otherAction)
-		verify(mediaTransportControls, never()).sendCustomAction(any<String>(), anyOrNull())
+    @Test
+    fun testCustomActions() {
+        val otherAction = CustomAction("com.wrongapp", "test", "Name", 0, null, null, null)
+        controller.customAction(otherAction)
+        verify(mediaTransportControls, never()).sendCustomAction(any<String>(), anyOrNull())
 
-		val myAction = CustomAction("com.musicapp", "test", "Name", 0, null, null, null)
-		controller.customAction(myAction)
-		verify(mediaTransportControls).sendCustomAction(myAction.action, null)
+        val myAction = CustomAction("com.musicapp", "test", "Name", 0, null, null, null)
+        controller.customAction(myAction)
+        verify(mediaTransportControls).sendCustomAction(myAction.action, null)
 
-		// empty playbackstate, empty actions
-		val emptyActions = controller.getCustomActions()
-		assertEquals(0, emptyActions.size)
+        // empty playbackstate, empty actions
+        val emptyActions = controller.getCustomActions()
+        assertEquals(0, emptyActions.size)
 
-		// parsing an official custom action
-		// prepare the context to return info from the app
-		val actionIcon = mock<Drawable>()
-		@Suppress("DEPRECATION")
-		val resources = mock<Resources> {
-			on { getDrawable(any()) } doReturn actionIcon       // unit tests run under old SDK codepath in ResourcesCompat
-			on { getDrawable(any(), anyOrNull()) } doReturn actionIcon
-		}
-		val packageManager = mock<PackageManager> {
-			on { getResourcesForApplication(any<String>()) } doReturn resources
-		}
-		whenever(context.packageManager) doReturn packageManager
+        // parsing an official custom action
+        // prepare the context to return info from the app
+        val actionIcon = mock<Drawable>()
+        @Suppress("DEPRECATION")
+        val resources = mock<Resources> {
+            on { getDrawable(any()) } doReturn actionIcon // unit tests run under old SDK codepath in ResourcesCompat
+            on { getDrawable(any(), anyOrNull()) } doReturn actionIcon
+        }
+        val packageManager = mock<PackageManager> {
+            on { getResourcesForApplication(any<String>()) } doReturn resources
+        }
+        whenever(context.packageManager) doReturn packageManager
 
-		val playbackState = createPlaybackState(PlaybackStateCompat.STATE_PLAYING, 1000, 0)
-		whenever(playbackState.customActions) doAnswer {
-			listOf(mock {
-				on { action } doReturn "test"
-				on { name } doReturn "Name"
-				on { icon } doReturn 30
-			})
-		}
-		whenever(mediaController.playbackState) doReturn playbackState
-		val expectedAction = CustomAction("com.musicapp", "test", "Name", 30, actionIcon, null, null)
-		val parsedAction = controller.getCustomActions()
-		assertEquals(1, parsedAction.size)
-		assertEquals(expectedAction, parsedAction[0])
-		assertEquals(expectedAction.icon, parsedAction[0].icon)
-	}
+        val playbackState = createPlaybackState(PlaybackStateCompat.STATE_PLAYING, 1000, 0)
+        whenever(playbackState.customActions) doAnswer {
+            listOf(
+                mock {
+                    on { action } doReturn "test"
+                    on { name } doReturn "Name"
+                    on { icon } doReturn 30
+                }
+            )
+        }
+        whenever(mediaController.playbackState) doReturn playbackState
+        val expectedAction = CustomAction("com.musicapp", "test", "Name", 30, actionIcon, null, null)
+        val parsedAction = controller.getCustomActions()
+        assertEquals(1, parsedAction.size)
+        assertEquals(expectedAction, parsedAction[0])
+        assertEquals(expectedAction.icon, parsedAction[0].icon)
+    }
 
-	@Test
-	fun testIsShuffling() {
-		whenever(mediaController.shuffleMode) doAnswer {
-			PlaybackStateCompat.SHUFFLE_MODE_ALL
-		}
-		assertTrue(controller.isShuffling())
+    @Test
+    fun testIsShuffling() {
+        whenever(mediaController.shuffleMode) doAnswer {
+            PlaybackStateCompat.SHUFFLE_MODE_ALL
+        }
+        assertTrue(controller.isShuffling())
 
-		whenever(mediaController.shuffleMode) doAnswer {
-			PlaybackStateCompat.SHUFFLE_MODE_GROUP
-		}
-		assertTrue(controller.isShuffling())
+        whenever(mediaController.shuffleMode) doAnswer {
+            PlaybackStateCompat.SHUFFLE_MODE_GROUP
+        }
+        assertTrue(controller.isShuffling())
 
-		whenever(mediaController.shuffleMode) doAnswer {
-			PlaybackStateCompat.SHUFFLE_MODE_NONE
-		}
-		assertFalse(controller.isShuffling())
+        whenever(mediaController.shuffleMode) doAnswer {
+            PlaybackStateCompat.SHUFFLE_MODE_NONE
+        }
+        assertFalse(controller.isShuffling())
 
-		whenever(mediaController.shuffleMode) doAnswer {
-			PlaybackStateCompat.SHUFFLE_MODE_INVALID
-		}
-		assertFalse(controller.isShuffling())
-	}
+        whenever(mediaController.shuffleMode) doAnswer {
+            PlaybackStateCompat.SHUFFLE_MODE_INVALID
+        }
+        assertFalse(controller.isShuffling())
+    }
 
-	@Test
-	fun testToggleShuffle() {
-		whenever(mediaController.shuffleMode) doAnswer {
-			PlaybackStateCompat.SHUFFLE_MODE_NONE
-		}
-		controller.toggleShuffle()
-		verify(mediaTransportControls).setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL)
+    @Test
+    fun testToggleShuffle() {
+        whenever(mediaController.shuffleMode) doAnswer {
+            PlaybackStateCompat.SHUFFLE_MODE_NONE
+        }
+        controller.toggleShuffle()
+        verify(mediaTransportControls).setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL)
 
-		whenever(mediaController.shuffleMode) doAnswer {
-			PlaybackStateCompat.SHUFFLE_MODE_ALL
-		}
-		controller.toggleShuffle()
-		verify(mediaTransportControls).setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE)
-	}
+        whenever(mediaController.shuffleMode) doAnswer {
+            PlaybackStateCompat.SHUFFLE_MODE_ALL
+        }
+        controller.toggleShuffle()
+        verify(mediaTransportControls).setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE)
+    }
 
-	@Test
-	fun testGetRepeatMode() {
-		whenever(mediaController.repeatMode) doAnswer {
-			PlaybackStateCompat.REPEAT_MODE_NONE
-		}
-		assertEquals(RepeatMode.OFF, controller.getRepeatMode())
+    @Test
+    fun testGetRepeatMode() {
+        whenever(mediaController.repeatMode) doAnswer {
+            PlaybackStateCompat.REPEAT_MODE_NONE
+        }
+        assertEquals(RepeatMode.OFF, controller.getRepeatMode())
 
-		whenever(mediaController.repeatMode) doAnswer {
-			PlaybackStateCompat.REPEAT_MODE_ALL
-		}
-		assertEquals(RepeatMode.ALL, controller.getRepeatMode())
+        whenever(mediaController.repeatMode) doAnswer {
+            PlaybackStateCompat.REPEAT_MODE_ALL
+        }
+        assertEquals(RepeatMode.ALL, controller.getRepeatMode())
 
-		whenever(mediaController.repeatMode) doAnswer {
-			PlaybackStateCompat.REPEAT_MODE_ONE
-		}
-		assertEquals(RepeatMode.ONE, controller.getRepeatMode())
-	}
+        whenever(mediaController.repeatMode) doAnswer {
+            PlaybackStateCompat.REPEAT_MODE_ONE
+        }
+        assertEquals(RepeatMode.ONE, controller.getRepeatMode())
+    }
 
-	@Test
-	fun testRepeatToggle() {
-		whenever(mediaController.repeatMode) doAnswer {
-			PlaybackStateCompat.REPEAT_MODE_NONE
-		}
-		controller.toggleRepeat()
-		verify(mediaTransportControls).setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL)
+    @Test
+    fun testRepeatToggle() {
+        whenever(mediaController.repeatMode) doAnswer {
+            PlaybackStateCompat.REPEAT_MODE_NONE
+        }
+        controller.toggleRepeat()
+        verify(mediaTransportControls).setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL)
 
-		whenever(mediaController.repeatMode) doAnswer {
-			PlaybackStateCompat.REPEAT_MODE_ALL
-		}
-		controller.toggleRepeat()
-		verify(mediaTransportControls).setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ONE)
+        whenever(mediaController.repeatMode) doAnswer {
+            PlaybackStateCompat.REPEAT_MODE_ALL
+        }
+        controller.toggleRepeat()
+        verify(mediaTransportControls).setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ONE)
 
-		whenever(mediaController.repeatMode) doAnswer {
-			PlaybackStateCompat.REPEAT_MODE_ONE
-		}
-		controller.toggleRepeat()
-		verify(mediaTransportControls).setRepeatMode(PlaybackStateCompat.REPEAT_MODE_NONE)
-	}
+        whenever(mediaController.repeatMode) doAnswer {
+            PlaybackStateCompat.REPEAT_MODE_ONE
+        }
+        controller.toggleRepeat()
+        verify(mediaTransportControls).setRepeatMode(PlaybackStateCompat.REPEAT_MODE_NONE)
+    }
 
-	@Test
-	fun testQueue() {
-		val mediaDescription = mock<MediaDescriptionCompat> {
-			on { iconBitmap } doAnswer { mock() }
-			on { title } doReturn "test title"
-		}
-		val queueTitle = "queue title"
-		whenever(mediaController.queueTitle) doAnswer { queueTitle }
-		whenever(mediaController.queue) doAnswer {
-			listOf(mock {
-				on { queueId } doReturn 2L
-				on { description } doReturn mediaDescription
-			})
-		}
-		val queue = controller.getQueue()
-		assertNotNull(queue)
-		assertEquals(queueTitle, queue!!.title)
-		assertNull(queue.subtitle)
+    @Test
+    fun testQueue() {
+        val mediaDescription = mock<MediaDescriptionCompat> {
+            on { iconBitmap } doAnswer { mock() }
+            on { title } doReturn "test title"
+        }
+        val queueTitle = "queue title"
+        whenever(mediaController.queueTitle) doAnswer { queueTitle }
+        whenever(mediaController.queue) doAnswer {
+            listOf(
+                mock {
+                    on { queueId } doReturn 2L
+                    on { description } doReturn mediaDescription
+                }
+            )
+        }
+        val queue = controller.getQueue()
+        assertNotNull(queue)
+        assertEquals(queueTitle, queue!!.title)
+        assertNull(queue.subtitle)
 
-		val songs = queue.songs
-		assertNotNull(queue.songs)
-		assertEquals(1, songs!!.size)
-		assertEquals(2L, songs[0].queueId)
-		assertEquals("test title", songs[0].title)
-	}
+        val songs = queue.songs
+        assertNotNull(queue.songs)
+        assertEquals(1, songs!!.size)
+        assertEquals(2L, songs[0].queueId)
+        assertEquals("test title", songs[0].title)
+    }
 
-	@Test
-	fun testMetadata() {
-		val mockMetadata = mock<Bundle> {
-			on { getString(any()) } doReturn null as String?
-		}
-		whenever(mediaController.metadata) doAnswer {
-			mock {
-				on { getBitmap(any()) } doAnswer { mockMetadata.getParcelable(it.getArgument(0)) }
-				on { getLong(any()) } doAnswer { mockMetadata.getLong(it.getArgument(0)) }
-				on { getString(any()) } doAnswer { mockMetadata.getString(it.getArgument(0)) }
-				on { bundle } doReturn mockMetadata
-			}
-		}
+    @Test
+    fun testMetadata() {
+        val mockMetadata = mock<Bundle> {
+            on { getString(any()) } doReturn null as String?
+        }
+        whenever(mediaController.metadata) doAnswer {
+            mock {
+                on { getBitmap(any()) } doAnswer { mockMetadata.getParcelable(it.getArgument(0)) }
+                on { getLong(any()) } doAnswer { mockMetadata.getLong(it.getArgument(0)) }
+                on { getString(any()) } doAnswer { mockMetadata.getString(it.getArgument(0)) }
+                on { bundle } doReturn mockMetadata
+            }
+        }
 
-		// mediaId
-		for (key in listOf("MEDIA_ID")) {
-			reset(mockMetadata)
-			whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "MediaId-$key"
-			val metadata = controller.getMetadata()
-			assertEquals("MediaId-$key", metadata?.mediaId)
-		}
+        // mediaId
+        for (key in listOf("MEDIA_ID")) {
+            reset(mockMetadata)
+            whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "MediaId-$key"
+            val metadata = controller.getMetadata()
+            assertEquals("MediaId-$key", metadata?.mediaId)
+        }
 
-		// artist
-		for (key in listOf("ALBUM_ARTIST", "ARTIST")) {
-			reset(mockMetadata)
-			whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "Artist-$key"
-			val metadata = controller.getMetadata()
-			assertEquals("Artist-$key", metadata?.artist)
-		}
+        // artist
+        for (key in listOf("ALBUM_ARTIST", "ARTIST")) {
+            reset(mockMetadata)
+            whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "Artist-$key"
+            val metadata = controller.getMetadata()
+            assertEquals("Artist-$key", metadata?.artist)
+        }
 
-		// artist
-		for (key in listOf("ALBUM")) {
-			reset(mockMetadata)
-			whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "Album-$key"
-			val metadata = controller.getMetadata()
-			assertEquals("Album-$key", metadata?.album)
-		}
+        // artist
+        for (key in listOf("ALBUM")) {
+            reset(mockMetadata)
+            whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "Album-$key"
+            val metadata = controller.getMetadata()
+            assertEquals("Album-$key", metadata?.album)
+        }
 
-		// title
-		for (key in listOf("DISPLAY_TITLE", "TITLE")) {
-			reset(mockMetadata)
-			whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "testTitle-$key"
-			val metadata = controller.getMetadata()
-			assertEquals("testTitle-$key", metadata?.title)
-		}
+        // title
+        for (key in listOf("DISPLAY_TITLE", "TITLE")) {
+            reset(mockMetadata)
+            whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "testTitle-$key"
+            val metadata = controller.getMetadata()
+            assertEquals("testTitle-$key", metadata?.title)
+        }
 
-		// longs
-		for (item in mapOf("DURATION" to "getDuration", "TRACK_NUMBER" to  "getTrackNumber", "NUM_TRACKS" to "getTrackCount")) {
-			reset(mockMetadata)
-			val expected = item.key.length.toLong()
-			whenever(mockMetadata.getLong("android.media.metadata.${item.key}")) doReturn expected
-			val metadata = controller.getMetadata()
-			val found = metadata?.javaClass?.getMethod(item.value)?.invoke(metadata)
-			assertEquals(expected, found)
-		}
+        // longs
+        for (item in mapOf("DURATION" to "getDuration", "TRACK_NUMBER" to "getTrackNumber", "NUM_TRACKS" to "getTrackCount")) {
+            reset(mockMetadata)
+            val expected = item.key.length.toLong()
+            whenever(mockMetadata.getLong("android.media.metadata.${item.key}")) doReturn expected
+            val metadata = controller.getMetadata()
+            val found = metadata?.javaClass?.getMethod(item.value)?.invoke(metadata)
+            assertEquals(expected, found)
+        }
 
-		// coverart
-		for (key in listOf("ART", "ALBUM_ART", "DISPLAY_ICON")) {
-			reset(mockMetadata)
-			val coverArt = mock<Bitmap>()
-			whenever(mockMetadata.getParcelable<Bitmap>("android.media.metadata.$key")) doReturn coverArt
-			val metadata = controller.getMetadata()
-			assertEquals(coverArt, metadata?.coverArt)
-		}
+        // coverart
+        for (key in listOf("ART", "ALBUM_ART", "DISPLAY_ICON")) {
+            reset(mockMetadata)
+            val coverArt = mock<Bitmap>()
+            whenever(mockMetadata.getParcelable<Bitmap>("android.media.metadata.$key")) doReturn coverArt
+            val metadata = controller.getMetadata()
+            assertEquals(coverArt, metadata?.coverArt)
+        }
 
-		// coverartUri
-		for (key in listOf("ART_URI", "ALBUM_ART_URI", "DISPLAY_ICON_URI")) {
-			reset(mockMetadata)
-			whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "uri-$key"
-			val metadata = controller.getMetadata()
-			assertEquals("uri-$key", metadata?.coverArtUri)
-		}
-	}
+        // coverartUri
+        for (key in listOf("ART_URI", "ALBUM_ART_URI", "DISPLAY_ICON_URI")) {
+            reset(mockMetadata)
+            whenever(mockMetadata.getString("android.media.metadata.$key")) doReturn "uri-$key"
+            val metadata = controller.getMetadata()
+            assertEquals("uri-$key", metadata?.coverArtUri)
+        }
+    }
 
-	@Test
-	fun testPlaybackPosition() {
-		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_PAUSED, 1000, 0) }
-		val playbackPosition = controller.getPlaybackPosition()
-		assertTrue(playbackPosition.isPaused)
-		assertFalse(playbackPosition.isBuffering)
-		assertEquals(1000, playbackPosition.lastPosition)
+    @Test
+    fun testPlaybackPosition() {
+        whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_PAUSED, 1000, 0) }
+        val playbackPosition = controller.getPlaybackPosition()
+        assertTrue(playbackPosition.isPaused)
+        assertFalse(playbackPosition.isBuffering)
+        assertEquals(1000, playbackPosition.lastPosition)
 
-		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_BUFFERING, 1000, 0) }
-		assertTrue(controller.getPlaybackPosition().isPaused)
-		assertTrue(controller.getPlaybackPosition().isBuffering)
+        whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_BUFFERING, 1000, 0) }
+        assertTrue(controller.getPlaybackPosition().isPaused)
+        assertTrue(controller.getPlaybackPosition().isBuffering)
 
-		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_CONNECTING, 1000, 0) }
-		assertTrue(controller.getPlaybackPosition().isPaused)
-		assertTrue(controller.getPlaybackPosition().isBuffering)
+        whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_CONNECTING, 1000, 0) }
+        assertTrue(controller.getPlaybackPosition().isPaused)
+        assertTrue(controller.getPlaybackPosition().isBuffering)
 
-		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_STOPPED, 1000, 0) }
-		assertTrue(controller.getPlaybackPosition().isPaused)
-		assertFalse(controller.getPlaybackPosition().isBuffering)
+        whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_STOPPED, 1000, 0) }
+        assertTrue(controller.getPlaybackPosition().isPaused)
+        assertFalse(controller.getPlaybackPosition().isBuffering)
 
-		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_NONE, 1000, 0) }
-		assertTrue(controller.getPlaybackPosition().isPaused)
-		assertFalse(controller.getPlaybackPosition().isBuffering)
+        whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_NONE, 1000, 0) }
+        assertTrue(controller.getPlaybackPosition().isPaused)
+        assertFalse(controller.getPlaybackPosition().isBuffering)
 
-		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_PLAYING, 1000, 0) }
-		assertFalse(controller.getPlaybackPosition().isPaused)
-		assertFalse(controller.getPlaybackPosition().isBuffering)
+        whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_PLAYING, 1000, 0) }
+        assertFalse(controller.getPlaybackPosition().isPaused)
+        assertFalse(controller.getPlaybackPosition().isBuffering)
 
-		whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_PLAYING or PlaybackStateCompat.STATE_BUFFERING, 1000, 0) }
-		assertFalse(controller.getPlaybackPosition().isPaused)
-		assertFalse(controller.getPlaybackPosition().isBuffering)
+        whenever(mediaController.playbackState) doAnswer { createPlaybackState(PlaybackStateCompat.STATE_PLAYING or PlaybackStateCompat.STATE_BUFFERING, 1000, 0) }
+        assertFalse(controller.getPlaybackPosition().isPaused)
+        assertFalse(controller.getPlaybackPosition().isBuffering)
 
-		whenever(mediaController.playbackState) doReturn null as PlaybackStateCompat?
-		val defaultPlaybackPosition = controller.getPlaybackPosition()
-		assertTrue(defaultPlaybackPosition.isPaused)
-		assertEquals(0, defaultPlaybackPosition.lastPosition)
-		assertEquals(0, defaultPlaybackPosition.maximumPosition)
-	}
+        whenever(mediaController.playbackState) doReturn null as PlaybackStateCompat?
+        val defaultPlaybackPosition = controller.getPlaybackPosition()
+        assertTrue(defaultPlaybackPosition.isPaused)
+        assertEquals(0, defaultPlaybackPosition.lastPosition)
+        assertEquals(0, defaultPlaybackPosition.maximumPosition)
+    }
 
-	@Test
-	fun testBrowse() {
-		// null results
-		runBlocking {
-			val results = controller.browse(null)
-			assertEquals(0, results.size)
-			verify(musicBrowser).browse(null)
-		}
+    @Test
+    fun testBrowse() {
+        // null results
+        runBlocking {
+            val results = controller.browse(null)
+            assertEquals(0, results.size)
+            verify(musicBrowser).browse(null)
+        }
 
-		runBlocking {
-			val root = MusicMetadata(mediaId = "/")
-			val descriptionValue = mock<MediaDescriptionCompat> {
-				on { title } doReturn "title"
-				on { extras } doAnswer { mock {
-					on { getString("android.media.metadata.ARTIST") } doReturn "Artist"
-				}}
-			}
-			whenever(musicBrowser.browse("/")) doAnswer {
-				listOf(mock {
-					on { mediaId } doReturn "mediaID"
-					on { description } doReturn descriptionValue
-				})
-			}
-			val results = controller.browse(root)
-			assertEquals(1, results.size)
-			assertEquals("mediaID", results[0].mediaId)
-			assertEquals("title", results[0].title)
-			assertEquals("Artist", results[0].artist)
-			verify(musicBrowser).browse("/")
-		}
-	}
+        runBlocking {
+            val root = MusicMetadata(mediaId = "/")
+            val descriptionValue = mock<MediaDescriptionCompat> {
+                on { title } doReturn "title"
+                on { extras } doAnswer {
+                    mock {
+                        on { getString("android.media.metadata.ARTIST") } doReturn "Artist"
+                    }
+                }
+            }
+            whenever(musicBrowser.browse("/")) doAnswer {
+                listOf(
+                    mock {
+                        on { mediaId } doReturn "mediaID"
+                        on { description } doReturn descriptionValue
+                    }
+                )
+            }
+            val results = controller.browse(root)
+            assertEquals(1, results.size)
+            assertEquals("mediaID", results[0].mediaId)
+            assertEquals("title", results[0].title)
+            assertEquals("Artist", results[0].artist)
+            verify(musicBrowser).browse("/")
+        }
+    }
 
-	@Test
-	fun testSearch() {
-		// null results
-		runBlocking {
-			val results = controller.search("")
-			assertEquals(null, results)
-			verify(musicBrowser).search("")
-		}
+    @Test
+    fun testSearch() {
+        // null results
+        runBlocking {
+            val results = controller.search("")
+            assertEquals(null, results)
+            verify(musicBrowser).search("")
+        }
 
-		runBlocking {
-			val descriptionValue = mock<MediaDescriptionCompat> {
-				on { title } doReturn "title"
-				on { extras } doAnswer { mock {
-					on { getString("android.media.metadata.ARTIST") } doReturn "Artist"
-				}}
-			}
-			whenever(musicBrowser.search("query")) doAnswer {
-				listOf(mock {
-					on { mediaId } doReturn "mediaID"
-					on { description } doReturn descriptionValue
-				})
-			}
-			val results = controller.search("query")
-			assertEquals(1, results!!.size)
-			assertEquals("mediaID", results[0].mediaId)
-			assertEquals("title", results[0].title)
-			assertEquals("Artist", results[0].artist)
-			verify(musicBrowser).search("query")
-		}
-	}
+        runBlocking {
+            val descriptionValue = mock<MediaDescriptionCompat> {
+                on { title } doReturn "title"
+                on { extras } doAnswer {
+                    mock {
+                        on { getString("android.media.metadata.ARTIST") } doReturn "Artist"
+                    }
+                }
+            }
+            whenever(musicBrowser.search("query")) doAnswer {
+                listOf(
+                    mock {
+                        on { mediaId } doReturn "mediaID"
+                        on { description } doReturn descriptionValue
+                    }
+                )
+            }
+            val results = controller.search("query")
+            assertEquals(1, results!!.size)
+            assertEquals("mediaID", results[0].mediaId)
+            assertEquals("title", results[0].title)
+            assertEquals("Artist", results[0].artist)
+            verify(musicBrowser).search("query")
+        }
+    }
 
-	@Test
-	fun testDisconnect() {
-		controller.disconnect()
-		// tries to load up controllerCallback, which crashes
-		// and so it never gets to unregisterCallback
-//		verify(mediaController).unregisterCallback(any())
-		verify(musicBrowser).disconnect()
-	}
+    @Test
+    fun testDisconnect() {
+        controller.disconnect()
+        // tries to load up controllerCallback, which crashes
+        // and so it never gets to unregisterCallback
+// 		verify(mediaController).unregisterCallback(any())
+        verify(musicBrowser).disconnect()
+    }
 
-	@Test
-	fun testToString() {
-		assertEquals("GenericMusicAppController(com.musicapp,true)", controller.toString())
-	}
+    @Test
+    fun testToString() {
+        assertEquals("GenericMusicAppController(com.musicapp,true)", controller.toString())
+    }
 }

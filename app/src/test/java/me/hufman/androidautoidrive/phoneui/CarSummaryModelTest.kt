@@ -4,7 +4,12 @@ import android.content.Context
 import android.content.res.Resources
 import android.util.TypedValue
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doAnswer
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.verify
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.ChassisCode
 import me.hufman.androidautoidrive.R
@@ -16,79 +21,79 @@ import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
 
 class CarSummaryModelTest {
-	@Rule
-	@JvmField
-	val instantTaskExecutorRule = InstantTaskExecutorRule()
+    @Rule
+    @JvmField
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-	@Rule
-	@JvmField
-	val testCoroutineRule = TestCoroutineRule()
+    @Rule
+    @JvmField
+    val testCoroutineRule = TestCoroutineRule()
 
-	@Suppress("DEPRECATION")
-	val resources: Resources = mock {
-		on {getColor(any())} doAnswer {context.getColor(it.arguments[0] as Int)}
-		on {getColor(any(), any())} doAnswer {context.getColor(it.arguments[0] as Int)}
-		on {getDrawable(any())} doAnswer{context.getDrawable(it.arguments[0] as Int)}
-		on {getValue(anyInt(), any(), any())} doAnswer { (it.arguments[1] as TypedValue).resourceId = it.arguments[0] as Int }
-	}
-	val context: Context = mock {
-		on {getString(any())} doReturn ""
-		on {getString(any(), any())} doReturn ""
-		on {resources} doReturn resources
-	}
+    @Suppress("DEPRECATION")
+    val resources: Resources = mock {
+        on { getColor(any()) } doAnswer { context.getColor(it.arguments[0] as Int) }
+        on { getColor(any(), any()) } doAnswer { context.getColor(it.arguments[0] as Int) }
+        on { getDrawable(any()) } doAnswer { context.getDrawable(it.arguments[0] as Int) }
+        on { getValue(anyInt(), any(), any()) } doAnswer { (it.arguments[1] as TypedValue).resourceId = it.arguments[0] as Int }
+    }
+    val context: Context = mock {
+        on { getString(any()) } doReturn ""
+        on { getString(any(), any()) } doReturn ""
+        on { resources } doReturn resources
+    }
 
-	@Test
-	fun testConnectedNoBrand() {
-		val carInfo = mock<CarInformation>()
-		val model = CarSummaryModel(carInfo, mock()).apply { update() }
+    @Test
+    fun testConnectedNoBrand() {
+        val carInfo = mock<CarInformation>()
+        val model = CarSummaryModel(carInfo, mock()).apply { update() }
 
-		context.run(model.carLogo.value!!)
-		verify(context, never()).getDrawable(R.drawable.logo_bmw)
-		verify(context, never()).getDrawable(R.drawable.logo_mini)
-	}
+        context.run(model.carLogo.value!!)
+        verify(context, never()).getDrawable(R.drawable.logo_bmw)
+        verify(context, never()).getDrawable(R.drawable.logo_mini)
+    }
 
-	@Test
-	fun testConnectedBMWBrand() {
-		val carCapabilities = mapOf(
-				"hmi.type" to "BMW ID6L",
-				"vehicle.type" to "F22"
-		)
-		val carInfo = mock<CarInformation> {
-			on {capabilities} doReturn carCapabilities
-		}
-		val model = CarSummaryModel(carInfo, mock()).apply { update() }
+    @Test
+    fun testConnectedBMWBrand() {
+        val carCapabilities = mapOf(
+            "hmi.type" to "BMW ID6L",
+            "vehicle.type" to "F22"
+        )
+        val carInfo = mock<CarInformation> {
+            on { capabilities } doReturn carCapabilities
+        }
+        val model = CarSummaryModel(carInfo, mock()).apply { update() }
 
-		assertEquals("BMW", model.carBrand.value)
-		context.run(model.carLogo.value!!)
-		verify(context).getDrawable(R.drawable.logo_bmw)
-	}
+        assertEquals("BMW", model.carBrand.value)
+        context.run(model.carLogo.value!!)
+        verify(context).getDrawable(R.drawable.logo_bmw)
+    }
 
-	@Test
-	fun testConnectedMiniBrand() {
-		val carCapabilities = mapOf(
-			"hmi.type" to "MINI ID5",
-			"vehicle.type" to "F56"
-		)
-		val carInfo = mock<CarInformation> {
-			on {capabilities} doReturn carCapabilities
-		}
-		val model = CarSummaryModel(carInfo, mock()).apply { update() }
+    @Test
+    fun testConnectedMiniBrand() {
+        val carCapabilities = mapOf(
+            "hmi.type" to "MINI ID5",
+            "vehicle.type" to "F56"
+        )
+        val carInfo = mock<CarInformation> {
+            on { capabilities } doReturn carCapabilities
+        }
+        val model = CarSummaryModel(carInfo, mock()).apply { update() }
 
-		assertEquals("MINI", model.carBrand.value)
-		context.run(model.carLogo.value!!)
-		verify(context).getDrawable(R.drawable.logo_mini)
-	}
+        assertEquals("MINI", model.carBrand.value)
+        context.run(model.carLogo.value!!)
+        verify(context).getDrawable(R.drawable.logo_mini)
+    }
 
-	@Test
-	fun testChassisCode() {
-		val carCapabilities = mapOf(
-			"vehicle.type" to "F56"
-		)
-		val carInfo = mock<CarInformation> {
-			on {capabilities} doReturn carCapabilities
-		}
-		val model = CarSummaryModel(carInfo, mock()).apply { update() }
+    @Test
+    fun testChassisCode() {
+        val carCapabilities = mapOf(
+            "vehicle.type" to "F56"
+        )
+        val carInfo = mock<CarInformation> {
+            on { capabilities } doReturn carCapabilities
+        }
+        val model = CarSummaryModel(carInfo, mock()).apply { update() }
 
-		assertEquals(ChassisCode.F56, model.carChassisCode.value)
-	}
+        assertEquals(ChassisCode.F56, model.carChassisCode.value)
+    }
 }

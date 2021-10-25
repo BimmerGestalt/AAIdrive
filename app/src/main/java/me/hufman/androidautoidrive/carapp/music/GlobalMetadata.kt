@@ -12,140 +12,139 @@ import kotlin.math.max
 import kotlin.math.min
 
 class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
-	val multimediaInfoEvent: RHMIEvent.MultimediaInfoEvent
-	val statusbarEvent: RHMIEvent.StatusbarEvent
-	val instrumentCluster: RHMIComponent.InstrumentCluster
+    val multimediaInfoEvent: RHMIEvent.MultimediaInfoEvent
+    val statusbarEvent: RHMIEvent.StatusbarEvent
+    val instrumentCluster: RHMIComponent.InstrumentCluster
 
-	var displayedApp: MusicAppInfo? = null
-	var displayedSong: MusicMetadata? = null
-	var displayedQueue: List<MusicMetadata>? = null
-	var icQueue: List<MusicMetadata> = ArrayList()
+    var displayedApp: MusicAppInfo? = null
+    var displayedSong: MusicMetadata? = null
+    var displayedQueue: List<MusicMetadata>? = null
+    var icQueue: List<MusicMetadata> = ArrayList()
 
-	init {
-		multimediaInfoEvent = app.events.values.filterIsInstance<RHMIEvent.MultimediaInfoEvent>().first()
-		statusbarEvent = app.events.values.filterIsInstance<RHMIEvent.StatusbarEvent>().first()
-		instrumentCluster = app.components.values.filterIsInstance<RHMIComponent.InstrumentCluster>().first()
-	}
+    init {
+        multimediaInfoEvent = app.events.values.filterIsInstance<RHMIEvent.MultimediaInfoEvent>().first()
+        statusbarEvent = app.events.values.filterIsInstance<RHMIEvent.StatusbarEvent>().first()
+        instrumentCluster = app.components.values.filterIsInstance<RHMIComponent.InstrumentCluster>().first()
+    }
 
-	companion object {
-		val QUEUE_SKIPPREVIOUS = MusicMetadata(mediaId = "__QUEUE_SKIPBACK__", title="< ${L.MUSIC_SKIP_PREVIOUS}")
-		val QUEUE_SKIPNEXT = MusicMetadata(mediaId = "__QUEUE_SKIPNEXT__", title="${L.MUSIC_SKIP_NEXT} >")
+    companion object {
+        val QUEUE_SKIPPREVIOUS = MusicMetadata(mediaId = "__QUEUE_SKIPBACK__", title = "< ${L.MUSIC_SKIP_PREVIOUS}")
+        val QUEUE_SKIPNEXT = MusicMetadata(mediaId = "__QUEUE_SKIPNEXT__", title = "${L.MUSIC_SKIP_NEXT} >")
 
-		const val QUEUE_BACK_COUNT = 15 // how far back to allow scrolling
-		const val QUEUE_NEXT_COUNT = 25 // how far forward to allow scrolling
-	}
+        const val QUEUE_BACK_COUNT = 15 // how far back to allow scrolling
+        const val QUEUE_NEXT_COUNT = 25 // how far forward to allow scrolling
+    }
 
-	fun initWidgets() {
-		instrumentCluster.getSetTrackAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { onClick(it) }
-	}
+    fun initWidgets() {
+        instrumentCluster.getSetTrackAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { onClick(it) }
+    }
 
-	fun forgetDisplayedInfo() {
-		displayedApp = null
-		displayedSong = null
-		displayedQueue = null
-	}
+    fun forgetDisplayedInfo() {
+        displayedApp = null
+        displayedSong = null
+        displayedQueue = null
+    }
 
-	fun redraw() {
-		val app = controller.currentAppInfo
-		if (app != null && app != displayedApp) {
-			showApp(app)
-		}
+    fun redraw() {
+        val app = controller.currentAppInfo
+        if (app != null && app != displayedApp) {
+            showApp(app)
+        }
 
-		val song = controller.getMetadata()
-		if (song != null && song != displayedSong) {
-			showSong(song)
-		}
+        val song = controller.getMetadata()
+        if (song != null && song != displayedSong) {
+            showSong(song)
+        }
 
-		val queue = controller.getQueue()?.songs
-		if (queue != displayedQueue || song != displayedSong) {
-			val icQueue = prepareQueue(queue, song)
-			showQueue(icQueue, song)
-			this.icQueue = icQueue
-		}
+        val queue = controller.getQueue()?.songs
+        if (queue != displayedQueue || song != displayedSong) {
+            val icQueue = prepareQueue(queue, song)
+            showQueue(icQueue, song)
+            this.icQueue = icQueue
+        }
 
-		displayedApp = app
-		displayedSong = song
-		displayedQueue = queue
-	}
+        displayedApp = app
+        displayedSong = song
+        displayedQueue = queue
+    }
 
-	private fun showApp(app: MusicAppInfo) {
-		// set the name of the app
-		statusbarEvent.getTextModel()?.asRaDataModel()?.value = app.name
-		statusbarEvent.triggerEvent()
-	}
+    private fun showApp(app: MusicAppInfo) {
+        // set the name of the app
+        statusbarEvent.getTextModel()?.asRaDataModel()?.value = app.name
+        statusbarEvent.triggerEvent()
+    }
 
-	private fun showSong(song: MusicMetadata) {
-		// show in the sidebar
-		val artistModel = multimediaInfoEvent.getTextModel1()?.asRaDataModel()
-		val trackModel = multimediaInfoEvent.getTextModel2()?.asRaDataModel()
-		artistModel?.value = UnicodeCleaner.clean(song.artist ?: "")
-		trackModel?.value = UnicodeCleaner.clean(song.title ?: "")
+    private fun showSong(song: MusicMetadata) {
+        // show in the sidebar
+        val artistModel = multimediaInfoEvent.getTextModel1()?.asRaDataModel()
+        val trackModel = multimediaInfoEvent.getTextModel2()?.asRaDataModel()
+        artistModel?.value = UnicodeCleaner.clean(song.artist ?: "")
+        trackModel?.value = UnicodeCleaner.clean(song.title ?: "")
 
-		// show in the IC
-		instrumentCluster.getTextModel()?.asRaDataModel()?.value = UnicodeCleaner.clean(song.title ?: "")
+        // show in the IC
+        instrumentCluster.getTextModel()?.asRaDataModel()?.value = UnicodeCleaner.clean(song.title ?: "")
 
-		// actually tell the car to load the data
-		multimediaInfoEvent.triggerEvent()
-	}
+        // actually tell the car to load the data
+        multimediaInfoEvent.triggerEvent()
+    }
 
-	/**
-	 * Decorates a song queue with a Back/Next action around the current song
-	 */
-	fun prepareQueue(songQueue: List<MusicMetadata>?, currentSong: MusicMetadata?): List<MusicMetadata> {
-		val queue = ArrayList<MusicMetadata>(songQueue?.size ?: 0 + 3)
-		val index = songQueue?.indexOfFirst { it.queueId == currentSong?.queueId } ?: -1
-		fun addPrevious(): Unit = if (controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS)) { queue.add(QUEUE_SKIPPREVIOUS); Unit } else Unit
-		fun addNext(): Unit = if (controller.isSupportedAction(MusicAction.SKIP_TO_NEXT)) { queue.add(QUEUE_SKIPNEXT); Unit } else Unit
-		if (songQueue != null && currentSong != null && index >= 0) {
-			// add the previous/next actions around the current song
-			// This allows for using the shuffle mode's back/next and also the queue selection
-			queue.addAll(songQueue.subList(max(0, index - QUEUE_BACK_COUNT), index))
-			addPrevious()
-			queue.add(currentSong)
-			addNext()
-			if (index < songQueue.count()) {
-				queue.addAll(songQueue.subList(index + 1, min(songQueue.count(), index + QUEUE_NEXT_COUNT)))
-			}
-		} else {
-			addPrevious()
-			if (currentSong != null) { queue.add(currentSong) }
-			addNext()
-		}
-		return queue
-	}
+    /**
+     * Decorates a song queue with a Back/Next action around the current song
+     */
+    fun prepareQueue(songQueue: List<MusicMetadata>?, currentSong: MusicMetadata?): List<MusicMetadata> {
+        val queue = ArrayList<MusicMetadata>(songQueue?.size ?: 0 + 3)
+        val index = songQueue?.indexOfFirst { it.queueId == currentSong?.queueId } ?: -1
+        fun addPrevious(): Unit = if (controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS)) { queue.add(QUEUE_SKIPPREVIOUS); Unit } else Unit
+        fun addNext(): Unit = if (controller.isSupportedAction(MusicAction.SKIP_TO_NEXT)) { queue.add(QUEUE_SKIPNEXT); Unit } else Unit
+        if (songQueue != null && currentSong != null && index >= 0) {
+            // add the previous/next actions around the current song
+            // This allows for using the shuffle mode's back/next and also the queue selection
+            queue.addAll(songQueue.subList(max(0, index - QUEUE_BACK_COUNT), index))
+            addPrevious()
+            queue.add(currentSong)
+            addNext()
+            if (index < songQueue.count()) {
+                queue.addAll(songQueue.subList(index + 1, min(songQueue.count(), index + QUEUE_NEXT_COUNT)))
+            }
+        } else {
+            addPrevious()
+            if (currentSong != null) { queue.add(currentSong) }
+            addNext()
+        }
+        return queue
+    }
 
-	private fun showQueue(queue: List<MusicMetadata>, currentSong: MusicMetadata?) {
-		val adapter = object: RHMIModel.RaListModel.RHMIListAdapter<MusicMetadata>(7, queue) {
-			override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
-				val selected = item.queueId == currentSong?.queueId
-				return arrayOf(
-						index,  // index
-						UnicodeCleaner.clean(item.title ?: ""),   // title
-						UnicodeCleaner.clean(item.artist ?: ""),  // artist
-						UnicodeCleaner.clean(item.album ?: ""),   // album
-						-1,
-						if (selected) 1 else 0, // checked
-						true
-				)
-			}
-		}
+    private fun showQueue(queue: List<MusicMetadata>, currentSong: MusicMetadata?) {
+        val adapter = object : RHMIModel.RaListModel.RHMIListAdapter<MusicMetadata>(7, queue) {
+            override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
+                val selected = item.queueId == currentSong?.queueId
+                return arrayOf(
+                    index, // index
+                    UnicodeCleaner.clean(item.title ?: ""), // title
+                    UnicodeCleaner.clean(item.artist ?: ""), // artist
+                    UnicodeCleaner.clean(item.album ?: ""), // album
+                    -1,
+                    if (selected) 1 else 0, // checked
+                    true
+                )
+            }
+        }
 
-		try {
-			instrumentCluster.getUseCaseModel()?.asRaDataModel()?.value = "EntICPlaylist"
-			instrumentCluster.getPlaylistModel()?.asRaListModel()?.setValue(adapter, 0, adapter.height, adapter.height)
-		} catch (e: BMWRemoting.ServiceException) {
-			// This playlist model call has been observed to crash, for some reason
-		}
-	}
+        try {
+            instrumentCluster.getUseCaseModel()?.asRaDataModel()?.value = "EntICPlaylist"
+            instrumentCluster.getPlaylistModel()?.asRaListModel()?.setValue(adapter, 0, adapter.height, adapter.height)
+        } catch (e: BMWRemoting.ServiceException) {
+            // This playlist model call has been observed to crash, for some reason
+        }
+    }
 
-	private fun onClick(index: Int) {
-		val song = icQueue.getOrNull(index)
-		when {
-			song == QUEUE_SKIPPREVIOUS -> controller.skipToPrevious()
-			song == QUEUE_SKIPNEXT -> controller.skipToNext()
-			song == controller.getMetadata() -> controller.seekTo(0)
-			song?.queueId != null -> controller.playQueue(song)
-		}
-	}
-
+    private fun onClick(index: Int) {
+        val song = icQueue.getOrNull(index)
+        when {
+            song == QUEUE_SKIPPREVIOUS -> controller.skipToPrevious()
+            song == QUEUE_SKIPNEXT -> controller.skipToNext()
+            song == controller.getMetadata() -> controller.seekTo(0)
+            song?.queueId != null -> controller.playQueue(song)
+        }
+    }
 }

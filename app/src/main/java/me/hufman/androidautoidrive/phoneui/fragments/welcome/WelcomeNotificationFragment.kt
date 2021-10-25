@@ -12,18 +12,18 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.NotificationSettingsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
-class WelcomeNotificationFragment: Fragment() {
-	val notificationSettingsModel by viewModels<NotificationSettingsModel> { NotificationSettingsModel.Factory(requireContext().applicationContext)}
-	val permissionsModel by viewModels<PermissionsModel> {PermissionsModel.Factory(requireContext().applicationContext)}
+class WelcomeNotificationFragment : Fragment() {
+    val notificationSettingsModel by viewModels<NotificationSettingsModel> { NotificationSettingsModel.Factory(requireContext().applicationContext) }
+    val permissionsModel by viewModels<PermissionsModel> { PermissionsModel.Factory(requireContext().applicationContext) }
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-		val permissionsController by lazy { PermissionsController(requireActivity()) }
-		val notificationPageController by lazy { NotificationPageController(notificationSettingsModel, permissionsModel, permissionsController) }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val permissionsController by lazy { PermissionsController(requireActivity()) }
+        val notificationPageController by lazy { NotificationPageController(notificationSettingsModel, permissionsModel, permissionsController) }
 
-		val binding = WelcomeNotificationBinding.inflate(inflater, container, false)
-		binding.lifecycleOwner = viewLifecycleOwner
-		binding.settingsModel = notificationSettingsModel
-		binding.controller = notificationPageController
-		return binding.root
-	}
+        val binding = WelcomeNotificationBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.settingsModel = notificationSettingsModel
+        binding.controller = notificationPageController
+        return binding.root
+    }
 }

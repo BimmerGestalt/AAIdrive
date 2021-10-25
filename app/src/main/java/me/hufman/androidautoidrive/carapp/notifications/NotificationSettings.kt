@@ -7,64 +7,66 @@ import me.hufman.androidautoidrive.connections.BtStatus
 import java.util.*
 
 class NotificationSettings(val capabilities: Map<String, String?>, val btStatus: BtStatus, val appSettings: MutableAppSettingsObserver) {
-	var callback
-		get() = appSettings.callback
-		set(value) { appSettings.callback = value }
+    var callback
+        get() = appSettings.callback
+        set(value) { appSettings.callback = value }
 
-	// quick replies for input suggestions
-	val quickReplies: List<String> = StoredList(appSettings, AppSettings.KEYS.NOTIFICATIONS_QUICK_REPLIES)
+    // quick replies for input suggestions
+    val quickReplies: List<String> = StoredList(appSettings, AppSettings.KEYS.NOTIFICATIONS_QUICK_REPLIES)
 
-	// whether the notification listener service is connected
-	var notificationListenerConnected = true
+    // whether the notification listener service is connected
+    var notificationListenerConnected = true
 
-	// car's supported features
-	val tts = capabilities["tts"]?.lowercase(Locale.ROOT) == "true"
+    // car's supported features
+    val tts = capabilities["tts"]?.lowercase(Locale.ROOT) == "true"
 
-	fun getSettings(): List<AppSettings.KEYS> {
-		val popupSettings = listOf(
-				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP,
-				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER
-		)
-		val soundSettings = listOf(
-				AppSettings.KEYS.NOTIFICATIONS_SOUND
-		)
-		val readoutSettings = if (tts) {
-			listOf(
-					AppSettings.KEYS.NOTIFICATIONS_READOUT,
-					AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP,
-					AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
-			)
-		} else {
-			listOf()
-		}
-		return popupSettings + soundSettings + readoutSettings
-	}
+    fun getSettings(): List<AppSettings.KEYS> {
+        val popupSettings = listOf(
+            AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP,
+            AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER
+        )
+        val soundSettings = listOf(
+            AppSettings.KEYS.NOTIFICATIONS_SOUND
+        )
+        val readoutSettings = if (tts) {
+            listOf(
+                AppSettings.KEYS.NOTIFICATIONS_READOUT,
+                AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP,
+                AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
+            )
+        } else {
+            listOf()
+        }
+        return popupSettings + soundSettings + readoutSettings
+    }
 
-	fun toggleSetting(setting: AppSettings.KEYS) {
-		appSettings[setting] = (!appSettings[setting].toBoolean()).toString()
-	}
+    fun toggleSetting(setting: AppSettings.KEYS) {
+        appSettings[setting] = (!appSettings[setting].toBoolean()).toString()
+    }
 
-	fun isChecked(setting: AppSettings.KEYS): Boolean {
-		return appSettings[setting].toBoolean()
-	}
+    fun isChecked(setting: AppSettings.KEYS): Boolean {
+        return appSettings[setting].toBoolean()
+    }
 
-	fun shouldPopup(passengerSeated: Boolean): Boolean {
-		return appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
-			(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
-				!passengerSeated)
-	}
+    fun shouldPopup(passengerSeated: Boolean): Boolean {
+        return appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
+            (
+                appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||
+                    !passengerSeated
+                )
+    }
 
-	fun shouldPlaySound(): Boolean {
-		return btStatus.isA2dpConnected && appSettings[AppSettings.KEYS.NOTIFICATIONS_SOUND].toBoolean()
-	}
+    fun shouldPlaySound(): Boolean {
+        return btStatus.isA2dpConnected && appSettings[AppSettings.KEYS.NOTIFICATIONS_SOUND].toBoolean()
+    }
 
-	fun shouldReadoutNotificationPopup(passengerSeated: Boolean): Boolean {
-		val main = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP].toBoolean()
-		val passenger = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER].toBoolean()
-		return tts && main && (passenger || !passengerSeated)
-	}
+    fun shouldReadoutNotificationPopup(passengerSeated: Boolean): Boolean {
+        val main = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP].toBoolean()
+        val passenger = appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER].toBoolean()
+        return tts && main && (passenger || !passengerSeated)
+    }
 
-	fun shouldReadoutNotificationDetails(): Boolean {
-		return tts && appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT].toBoolean()
-	}
+    fun shouldReadoutNotificationDetails(): Boolean {
+        return tts && appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT].toBoolean()
+    }
 }

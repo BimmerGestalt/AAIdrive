@@ -9,7 +9,10 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
-import com.spotify.android.appremote.api.error.*
+import com.spotify.android.appremote.api.error.CouldNotFindSpotifyApp
+import com.spotify.android.appremote.api.error.OfflineModeException
+import com.spotify.android.appremote.api.error.SpotifyRemoteServiceException
+import com.spotify.android.appremote.api.error.UserNotAuthorizedException
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
@@ -24,287 +27,287 @@ import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 
 class PermissionsModelTest {
-	@Rule
-	@JvmField
-	val instantTaskExecutorRule = InstantTaskExecutorRule()
+    @Rule
+    @JvmField
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-	val context = mock<Context> {
-		on { getString(anyInt()) } doReturn ""
-	}
-	val notificationListenerState = mock<LiveData<Boolean>>()
-	val state = mock<PermissionsState>()
-	val activityManager = mock<ActivityManager>()
-	val spotifyConnector = mock<SpotifyAppController.Connector>()
-	val spotifyAuthStateManager = mock<SpotifyAuthStateManager>()
-	val viewModel = PermissionsModel(notificationListenerState, state, activityManager, spotifyConnector, spotifyAuthStateManager)
+    val context = mock<Context> {
+        on { getString(anyInt()) } doReturn ""
+    }
+    val notificationListenerState = mock<LiveData<Boolean>>()
+    val state = mock<PermissionsState>()
+    val activityManager = mock<ActivityManager>()
+    val spotifyConnector = mock<SpotifyAppController.Connector>()
+    val spotifyAuthStateManager = mock<SpotifyAuthStateManager>()
+    val viewModel = PermissionsModel(notificationListenerState, state, activityManager, spotifyConnector, spotifyAuthStateManager)
 
 	/* A helper to set a constant value
 	* From https://proandroiddev.com/build-version-in-unit-testing-4e963940dae7
 	* */
-	fun setFinalStatic(field: Field, newValue: Any) {
-		field.setAccessible(true)
+    fun setFinalStatic(field: Field, newValue: Any) {
+        field.setAccessible(true)
 
-		val modifiersField = Field::class.java.getDeclaredField("modifiers")
-		modifiersField.setAccessible(true)
-		modifiersField.setInt(field, field.getModifiers() and Modifier.FINAL.inv())
+        val modifiersField = Field::class.java.getDeclaredField("modifiers")
+        modifiersField.setAccessible(true)
+        modifiersField.setInt(field, field.getModifiers() and Modifier.FINAL.inv())
 
-		field.set(null, newValue)
-	}
+        field.set(null, newValue)
+    }
 
-	@Test
-	fun testModelNotification() {
-		whenever(notificationListenerState.value) doReturn true
-		listOf(true, false).forEach {
-			whenever(state.hasNotificationPermission) doReturn it
-			viewModel.update()
-			assertEquals(it, viewModel.hasNotificationPermission.value)
-		}
+    @Test
+    fun testModelNotification() {
+        whenever(notificationListenerState.value) doReturn true
+        listOf(true, false).forEach {
+            whenever(state.hasNotificationPermission) doReturn it
+            viewModel.update()
+            assertEquals(it, viewModel.hasNotificationPermission.value)
+        }
 
-		whenever(notificationListenerState.value) doReturn false
-		whenever(state.hasNotificationPermission) doReturn true
-		viewModel.update()
-		assertEquals(false, viewModel.hasNotificationPermission.value)
-	}
+        whenever(notificationListenerState.value) doReturn false
+        whenever(state.hasNotificationPermission) doReturn true
+        viewModel.update()
+        assertEquals(false, viewModel.hasNotificationPermission.value)
+    }
 
-	@Test
-	fun testModelSmsSupported() {
-		listOf(true, false).forEach {
-			whenever(state.supportsSmsPermission) doReturn it
-			viewModel.update()
-			assertEquals(it, viewModel.supportsSmsPermission.value)
-		}
-	}
+    @Test
+    fun testModelSmsSupported() {
+        listOf(true, false).forEach {
+            whenever(state.supportsSmsPermission) doReturn it
+            viewModel.update()
+            assertEquals(it, viewModel.supportsSmsPermission.value)
+        }
+    }
 
-	@Test
-	fun testModelSms() {
-		listOf(true, false).forEach {
-			whenever(state.hasSmsPermission) doReturn it
-			viewModel.update()
-			assertEquals(it, viewModel.hasSmsPermission.value)
-		}
-	}
+    @Test
+    fun testModelSms() {
+        listOf(true, false).forEach {
+            whenever(state.hasSmsPermission) doReturn it
+            viewModel.update()
+            assertEquals(it, viewModel.hasSmsPermission.value)
+        }
+    }
 
-	@Test
-	fun testModelLocation() {
-		listOf(true, false).forEach {
-			whenever(state.hasLocationPermission) doReturn it
-			viewModel.update()
-			assertEquals(it, viewModel.hasLocationPermission.value)
-		}
-	}
+    @Test
+    fun testModelLocation() {
+        listOf(true, false).forEach {
+            whenever(state.hasLocationPermission) doReturn it
+            viewModel.update()
+            assertEquals(it, viewModel.hasLocationPermission.value)
+        }
+    }
 
-	@Test
-	fun testBackgroundPermission() {
-		// old phone
-		setFinalStatic(Build.VERSION::class.java.getField("SDK_INT"), 16)
-		listOf(true, false).forEach {
-			whenever(activityManager.isBackgroundRestricted) doReturn it
-			viewModel.update()
-			assertEquals(true, viewModel.hasBackgroundPermission.value)
-		}
-		// new phone
-		setFinalStatic(Build.VERSION::class.java.getField("SDK_INT"), 28)
-		listOf(true, false).forEach {
-			whenever(activityManager.isBackgroundRestricted) doReturn it
-			viewModel.update()
-			assertEquals(!it, viewModel.hasBackgroundPermission.value)
-		}
-	}
+    @Test
+    fun testBackgroundPermission() {
+        // old phone
+        setFinalStatic(Build.VERSION::class.java.getField("SDK_INT"), 16)
+        listOf(true, false).forEach {
+            whenever(activityManager.isBackgroundRestricted) doReturn it
+            viewModel.update()
+            assertEquals(true, viewModel.hasBackgroundPermission.value)
+        }
+        // new phone
+        setFinalStatic(Build.VERSION::class.java.getField("SDK_INT"), 28)
+        listOf(true, false).forEach {
+            whenever(activityManager.isBackgroundRestricted) doReturn it
+            viewModel.update()
+            assertEquals(!it, viewModel.hasBackgroundPermission.value)
+        }
+    }
 
-	@Test
-	fun testSpotifyControlMissing() {
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn false
-		whenever(spotifyConnector.hasSupport()) doReturn false
-		viewModel.updateSpotify()
-		assertEquals(false, viewModel.hasSpotify.value)
+    @Test
+    fun testSpotifyControlMissing() {
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn false
+        whenever(spotifyConnector.hasSupport()) doReturn false
+        viewModel.updateSpotify()
+        assertEquals(false, viewModel.hasSpotify.value)
 
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
-		whenever(spotifyConnector.hasSupport()) doReturn false
-		viewModel.updateSpotify()
-		assertEquals(false, viewModel.hasSpotify.value)
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
+        whenever(spotifyConnector.hasSupport()) doReturn false
+        viewModel.updateSpotify()
+        assertEquals(false, viewModel.hasSpotify.value)
 
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn false
-		whenever(spotifyConnector.hasSupport()) doReturn true
-		viewModel.updateSpotify()
-		assertEquals(false, viewModel.hasSpotify.value)
-	}
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn false
+        whenever(spotifyConnector.hasSupport()) doReturn true
+        viewModel.updateSpotify()
+        assertEquals(false, viewModel.hasSpotify.value)
+    }
 
-	@Test
-	fun testSpotifyControlDisconnected() {
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
-		whenever(spotifyConnector.hasSupport()) doReturn true
+    @Test
+    fun testSpotifyControlDisconnected() {
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
+        whenever(spotifyConnector.hasSupport()) doReturn true
 
-		val result = MutableObservable<SpotifyAppController>()
-		whenever(spotifyConnector.connect()) doReturn result
+        val result = MutableObservable<SpotifyAppController>()
+        whenever(spotifyConnector.connect()) doReturn result
 
-		viewModel.updateSpotify()
-		result.callback?.invoke(mock())     // should trigger _updateSpotify
-		assertEquals(false, viewModel.hasSpotifyControlPermission.value)
-		assertEquals("", context.run(viewModel.spotifyHint.value!!))
-	}
+        viewModel.updateSpotify()
+        result.callback?.invoke(mock()) // should trigger _updateSpotify
+        assertEquals(false, viewModel.hasSpotifyControlPermission.value)
+        assertEquals("", context.run(viewModel.spotifyHint.value!!))
+    }
 
-	@Test
-	fun testSpotifyControlModded() {
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
-		whenever(spotifyConnector.hasSupport()) doReturn true
-		whenever(spotifyConnector.lastError) doReturn CouldNotFindSpotifyApp()
+    @Test
+    fun testSpotifyControlModded() {
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
+        whenever(spotifyConnector.hasSupport()) doReturn true
+        whenever(spotifyConnector.lastError) doReturn CouldNotFindSpotifyApp()
 
-		val result = MutableObservable<SpotifyAppController>()
-		whenever(spotifyConnector.connect()) doReturn result
+        val result = MutableObservable<SpotifyAppController>()
+        whenever(spotifyConnector.connect()) doReturn result
 
-		viewModel.updateSpotify()
-		result.callback?.invoke(mock())     // should trigger _updateSpotify
-		assertEquals(false, viewModel.hasSpotifyControlPermission.value)
-		context.run(viewModel.spotifyHint.value!!)
-		verify(context).getString(R.string.musicAppNotes_spotify_apiNotFound)
-	}
+        viewModel.updateSpotify()
+        result.callback?.invoke(mock()) // should trigger _updateSpotify
+        assertEquals(false, viewModel.hasSpotifyControlPermission.value)
+        context.run(viewModel.spotifyHint.value!!)
+        verify(context).getString(R.string.musicAppNotes_spotify_apiNotFound)
+    }
 
-	@Test
-	fun testSpotifyControlOffline() {
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
-		whenever(spotifyConnector.hasSupport()) doReturn true
-		whenever(spotifyConnector.lastError) doReturn OfflineModeException("", mock())
+    @Test
+    fun testSpotifyControlOffline() {
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
+        whenever(spotifyConnector.hasSupport()) doReturn true
+        whenever(spotifyConnector.lastError) doReturn OfflineModeException("", mock())
 
-		val result = MutableObservable<SpotifyAppController>()
-		whenever(spotifyConnector.connect()) doReturn result
+        val result = MutableObservable<SpotifyAppController>()
+        whenever(spotifyConnector.connect()) doReturn result
 
-		viewModel.updateSpotify()
-		result.callback?.invoke(mock())     // should trigger _updateSpotify
-		assertEquals(false, viewModel.hasSpotifyControlPermission.value)
-		context.run(viewModel.spotifyHint.value!!)
-		verify(context).getString(R.string.musicAppNotes_spotify_apiUnavailable)
-	}
+        viewModel.updateSpotify()
+        result.callback?.invoke(mock()) // should trigger _updateSpotify
+        assertEquals(false, viewModel.hasSpotifyControlPermission.value)
+        context.run(viewModel.spotifyHint.value!!)
+        verify(context).getString(R.string.musicAppNotes_spotify_apiUnavailable)
+    }
 
-	@Test
-	fun testSpotifyControlUnavailable() {
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
-		whenever(spotifyConnector.hasSupport()) doReturn true
-		whenever(spotifyConnector.lastError) doReturn UserNotAuthorizedException("AUTHENTICATION_SERVICE_UNAVAILABLE", mock())
+    @Test
+    fun testSpotifyControlUnavailable() {
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
+        whenever(spotifyConnector.hasSupport()) doReturn true
+        whenever(spotifyConnector.lastError) doReturn UserNotAuthorizedException("AUTHENTICATION_SERVICE_UNAVAILABLE", mock())
 
-		val result = MutableObservable<SpotifyAppController>()
-		whenever(spotifyConnector.connect()) doReturn result
+        val result = MutableObservable<SpotifyAppController>()
+        whenever(spotifyConnector.connect()) doReturn result
 
-		viewModel.updateSpotify()
-		result.callback?.invoke(mock())     // should trigger _updateSpotify
-		assertEquals(false, viewModel.hasSpotifyControlPermission.value)
-		context.run(viewModel.spotifyHint.value!!)
-		verify(context).getString(R.string.musicAppNotes_spotify_apiUnavailable)
-	}
+        viewModel.updateSpotify()
+        result.callback?.invoke(mock()) // should trigger _updateSpotify
+        assertEquals(false, viewModel.hasSpotifyControlPermission.value)
+        context.run(viewModel.spotifyHint.value!!)
+        verify(context).getString(R.string.musicAppNotes_spotify_apiUnavailable)
+    }
 
-	@Test
-	fun testSpotifyControlUnauthorized() {
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
-		whenever(spotifyConnector.hasSupport()) doReturn true
-		whenever(spotifyConnector.lastError) doReturn UserNotAuthorizedException("User authorization required", mock())
+    @Test
+    fun testSpotifyControlUnauthorized() {
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
+        whenever(spotifyConnector.hasSupport()) doReturn true
+        whenever(spotifyConnector.lastError) doReturn UserNotAuthorizedException("User authorization required", mock())
 
-		val result = MutableObservable<SpotifyAppController>()
-		whenever(spotifyConnector.connect()) doReturn result
+        val result = MutableObservable<SpotifyAppController>()
+        whenever(spotifyConnector.connect()) doReturn result
 
-		viewModel.updateSpotify()
-		result.callback?.invoke(mock())     // should trigger _updateSpotify
-		assertEquals(false, viewModel.hasSpotifyControlPermission.value)
-		assertEquals("", context.run(viewModel.spotifyHint.value!!))
-	}
+        viewModel.updateSpotify()
+        result.callback?.invoke(mock()) // should trigger _updateSpotify
+        assertEquals(false, viewModel.hasSpotifyControlPermission.value)
+        assertEquals("", context.run(viewModel.spotifyHint.value!!))
+    }
 
-	@Test
-	fun testSpotifyControlUnauthorizedOther() {
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
-		whenever(spotifyConnector.hasSupport()) doReturn true
-		whenever(spotifyConnector.lastError) doReturn UserNotAuthorizedException("Unknown", mock())
+    @Test
+    fun testSpotifyControlUnauthorizedOther() {
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
+        whenever(spotifyConnector.hasSupport()) doReturn true
+        whenever(spotifyConnector.lastError) doReturn UserNotAuthorizedException("Unknown", mock())
 
-		val result = MutableObservable<SpotifyAppController>()
-		whenever(spotifyConnector.connect()) doReturn result
+        val result = MutableObservable<SpotifyAppController>()
+        whenever(spotifyConnector.connect()) doReturn result
 
-		viewModel.updateSpotify()
-		result.callback?.invoke(mock())     // should trigger _updateSpotify
-		assertEquals(false, viewModel.hasSpotifyControlPermission.value)
-		assertEquals("Unknown", context.run(viewModel.spotifyHint.value!!))
-	}
+        viewModel.updateSpotify()
+        result.callback?.invoke(mock()) // should trigger _updateSpotify
+        assertEquals(false, viewModel.hasSpotifyControlPermission.value)
+        assertEquals("Unknown", context.run(viewModel.spotifyHint.value!!))
+    }
 
-	@Test
-	fun testSpotifyControlUnknown() {
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
-		whenever(spotifyConnector.hasSupport()) doReturn true
-		whenever(spotifyConnector.lastError) doReturn SpotifyRemoteServiceException("Unknown", mock())
+    @Test
+    fun testSpotifyControlUnknown() {
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
+        whenever(spotifyConnector.hasSupport()) doReturn true
+        whenever(spotifyConnector.lastError) doReturn SpotifyRemoteServiceException("Unknown", mock())
 
-		val result = MutableObservable<SpotifyAppController>()
-		whenever(spotifyConnector.connect()) doReturn result
+        val result = MutableObservable<SpotifyAppController>()
+        whenever(spotifyConnector.connect()) doReturn result
 
-		viewModel.updateSpotify()
-		result.callback?.invoke(mock())     // should trigger _updateSpotify
-		assertEquals(false, viewModel.hasSpotifyControlPermission.value)
-		assertEquals("Unknown", context.run(viewModel.spotifyHint.value!!))
-	}
+        viewModel.updateSpotify()
+        result.callback?.invoke(mock()) // should trigger _updateSpotify
+        assertEquals(false, viewModel.hasSpotifyControlPermission.value)
+        assertEquals("Unknown", context.run(viewModel.spotifyHint.value!!))
+    }
 
-	@Test
-	fun testSpotifyControlConnectingFalse() {
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
-		whenever(spotifyConnector.hasSupport()) doReturn true
-		whenever(spotifyConnector.previousControlSuccess()) doReturn false
-		val viewModel = PermissionsModel(notificationListenerState, state, activityManager, spotifyConnector, mock())
-		assertEquals(false, viewModel.hasSpotifyControlPermission.value)
-	}
+    @Test
+    fun testSpotifyControlConnectingFalse() {
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
+        whenever(spotifyConnector.hasSupport()) doReturn true
+        whenever(spotifyConnector.previousControlSuccess()) doReturn false
+        val viewModel = PermissionsModel(notificationListenerState, state, activityManager, spotifyConnector, mock())
+        assertEquals(false, viewModel.hasSpotifyControlPermission.value)
+    }
 
-	@Test
-	fun testSpotifyControlConnectingTrue() {
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
-		whenever(spotifyConnector.hasSupport()) doReturn true
-		whenever(spotifyConnector.previousControlSuccess()) doReturn true
-		val viewModel = PermissionsModel(notificationListenerState, state, activityManager, spotifyConnector, mock())
-		assertEquals(true, viewModel.hasSpotifyControlPermission.value)
-	}
+    @Test
+    fun testSpotifyControlConnectingTrue() {
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
+        whenever(spotifyConnector.hasSupport()) doReturn true
+        whenever(spotifyConnector.previousControlSuccess()) doReturn true
+        val viewModel = PermissionsModel(notificationListenerState, state, activityManager, spotifyConnector, mock())
+        assertEquals(true, viewModel.hasSpotifyControlPermission.value)
+    }
 
-	@Test
-	fun testSpotifyControlConnected() {
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
-		whenever(spotifyConnector.hasSupport()) doReturn true
-		whenever(spotifyConnector.previousControlSuccess()) doReturn false
+    @Test
+    fun testSpotifyControlConnected() {
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
+        whenever(spotifyConnector.hasSupport()) doReturn true
+        whenever(spotifyConnector.previousControlSuccess()) doReturn false
 
-		val result = MutableObservable<SpotifyAppController>()
-		result.value = mock()
-		whenever(spotifyConnector.connect()) doReturn result
+        val result = MutableObservable<SpotifyAppController>()
+        result.value = mock()
+        whenever(spotifyConnector.connect()) doReturn result
 
-		viewModel.updateSpotify()   // tries to connect
-		result.callback?.invoke(mock())     // should trigger _updateSpotify
-		assertEquals(false, viewModel.hasSpotifyControlPermission.value)
+        viewModel.updateSpotify() // tries to connect
+        result.callback?.invoke(mock()) // should trigger _updateSpotify
+        assertEquals(false, viewModel.hasSpotifyControlPermission.value)
 
-		// connection succeeded
-		whenever(spotifyConnector.previousControlSuccess()) doReturn true
-		result.callback?.invoke(mock())     // should trigger _updateSpotify
-		assertEquals(true, viewModel.hasSpotifyControlPermission.value)
-	}
+        // connection succeeded
+        whenever(spotifyConnector.previousControlSuccess()) doReturn true
+        result.callback?.invoke(mock()) // should trigger _updateSpotify
+        assertEquals(true, viewModel.hasSpotifyControlPermission.value)
+    }
 
-	@Test
-	fun testSpotifyWebApiNotAuthorized() {
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
-		whenever(spotifyConnector.hasSupport()) doReturn true
+    @Test
+    fun testSpotifyWebApiNotAuthorized() {
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
+        whenever(spotifyConnector.hasSupport()) doReturn true
 
-		whenever(spotifyAuthStateManager.isAuthorized()) doReturn false
+        whenever(spotifyAuthStateManager.isAuthorized()) doReturn false
 
-		val result = MutableObservable<SpotifyAppController>()
-		result.value = mock()
-		whenever(spotifyConnector.connect()) doReturn result
+        val result = MutableObservable<SpotifyAppController>()
+        result.value = mock()
+        whenever(spotifyConnector.connect()) doReturn result
 
-		viewModel.updateSpotify()
-		result.callback?.invoke(mock())
+        viewModel.updateSpotify()
+        result.callback?.invoke(mock())
 
-		assertEquals(false, viewModel.isSpotifyWebApiAuthorized.value)
-	}
+        assertEquals(false, viewModel.isSpotifyWebApiAuthorized.value)
+    }
 
-	@Test
-	fun testSpotifyWebApiAuthorized() {
-		whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
-		whenever(spotifyConnector.hasSupport()) doReturn true
+    @Test
+    fun testSpotifyWebApiAuthorized() {
+        whenever(spotifyConnector.isSpotifyInstalled()) doReturn true
+        whenever(spotifyConnector.hasSupport()) doReturn true
 
-		whenever(spotifyAuthStateManager.isAuthorized()) doReturn true
+        whenever(spotifyAuthStateManager.isAuthorized()) doReturn true
 
-		val result = MutableObservable<SpotifyAppController>()
-		result.value = mock()
-		whenever(spotifyConnector.connect()) doReturn result
+        val result = MutableObservable<SpotifyAppController>()
+        result.value = mock()
+        whenever(spotifyConnector.connect()) doReturn result
 
-		viewModel.updateSpotify()
-		result.callback?.invoke(mock())
+        viewModel.updateSpotify()
+        result.callback?.invoke(mock())
 
-		assertEquals(true, viewModel.isSpotifyWebApiAuthorized.value)
-	}
+        assertEquals(true, viewModel.isSpotifyWebApiAuthorized.value)
+    }
 }

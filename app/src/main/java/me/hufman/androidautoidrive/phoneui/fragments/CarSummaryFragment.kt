@@ -9,13 +9,13 @@ import androidx.fragment.app.activityViewModels
 import me.hufman.androidautoidrive.databinding.CarSummaryBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.CarSummaryModel
 
-class CarSummaryFragment: Fragment() {
-	val viewModel by activityViewModels<CarSummaryModel> { CarSummaryModel.Factory(requireContext().applicationContext) }
+class CarSummaryFragment : Fragment() {
+    val viewModel by activityViewModels<CarSummaryModel> { CarSummaryModel.Factory(requireContext().applicationContext) }
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-		val binding = CarSummaryBinding.inflate(inflater, container, false)
-		binding.lifecycleOwner = viewLifecycleOwner
-		binding.viewModel = viewModel
-		return binding.root
-	}
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val binding = CarSummaryBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
+        return binding.root
+    }
 }

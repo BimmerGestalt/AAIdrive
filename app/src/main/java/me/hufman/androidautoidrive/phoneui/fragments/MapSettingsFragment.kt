@@ -9,12 +9,12 @@ import me.hufman.androidautoidrive.databinding.MapSettingsBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.MapSettingsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
-class MapSettingsFragment: Fragment() {
-	val settingsModel by viewModels<MapSettingsModel> { MapSettingsModel.Factory(requireContext().applicationContext) }
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-		val binding = MapSettingsBinding.inflate(inflater, container, false)
-		binding.lifecycleOwner = viewLifecycleOwner
-		binding.settings = settingsModel
-		return binding.root
-	}
+class MapSettingsFragment : Fragment() {
+    val settingsModel by viewModels<MapSettingsModel> { MapSettingsModel.Factory(requireContext().applicationContext) }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val binding = MapSettingsBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.settings = settingsModel
+        return binding.root
+    }
 }

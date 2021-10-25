@@ -9,18 +9,18 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import me.hufman.androidautoidrive.BR
 
-class DataBoundArrayAdapter<T, C>(context: Context, val layoutId: Int, contents: List<T>, val callback: C? = null): ArrayAdapter<T>(context, layoutId, contents) {
+class DataBoundArrayAdapter<T, C>(context: Context, val layoutId: Int, contents: List<T>, val callback: C? = null) : ArrayAdapter<T>(context, layoutId, contents) {
 
-	override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-		val layoutInflater = LayoutInflater.from(context)
-		val item = getItem(position)
-		val binding = (convertView?.tag as? ViewDataBinding) ?:
-			DataBindingUtil.inflate(layoutInflater, layoutId, parent, false)
-		binding.setVariable(BR.data, item)
-		if (callback != null) {
-			binding.setVariable(BR.callback, callback)
-		}
-		binding.executePendingBindings()
-		return binding.root
-	}
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val layoutInflater = LayoutInflater.from(context)
+        val item = getItem(position)
+        val binding = (convertView?.tag as? ViewDataBinding)
+            ?: DataBindingUtil.inflate(layoutInflater, layoutId, parent, false)
+        binding.setVariable(BR.data, item)
+        if (callback != null) {
+            binding.setVariable(BR.callback, callback)
+        }
+        binding.executePendingBindings()
+        return binding.root
+    }
 }

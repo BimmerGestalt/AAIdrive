@@ -7,10 +7,8 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import io.bimmergestalt.idriveconnectkit.android.CertMangling
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import org.awaitility.Awaitility.await
-
 import org.junit.Test
 import org.junit.runner.RunWith
-
 
 /**
  * Instrumented test, which will execute on an Android device.

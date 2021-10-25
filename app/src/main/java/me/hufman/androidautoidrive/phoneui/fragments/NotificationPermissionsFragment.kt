@@ -11,19 +11,19 @@ import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
-class NotificationPermissionsFragment: Fragment() {
-	val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }
-	val viewModel by viewModels<PermissionsModel> { PermissionsModel.Factory(requireContext().applicationContext) }
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-		val binding = NotificationPermissionsBinding.inflate(inflater, container, false)
-		binding.lifecycleOwner = viewLifecycleOwner
-		binding.controller = PermissionsController(requireActivity())
-		binding.viewModel = viewModel
-		return binding.root
-	}
+class NotificationPermissionsFragment : Fragment() {
+    val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }
+    val viewModel by viewModels<PermissionsModel> { PermissionsModel.Factory(requireContext().applicationContext) }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val binding = NotificationPermissionsBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.controller = PermissionsController(requireActivity())
+        binding.viewModel = viewModel
+        return binding.root
+    }
 
-	override fun onResume() {
-		super.onResume()
-		viewModel.update()
-	}
+    override fun onResume() {
+        super.onResume()
+        viewModel.update()
+    }
 }

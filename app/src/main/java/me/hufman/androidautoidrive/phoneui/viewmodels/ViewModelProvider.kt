@@ -12,63 +12,65 @@ val mockedViewModels = HashMap<Class<*>, ViewModel>()
 
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.viewModels(
-		noinline factoryProducer: (() -> ViewModelProvider.Factory)? = null
+    noinline factoryProducer: (() -> ViewModelProvider.Factory)? = null
 ): Lazy<VM> {
-	// the production producer
-	val factoryPromise = factoryProducer ?: {
-		defaultViewModelProviderFactory
-	}
-	return createMockedViewModelLazy(VM::class, { viewModelStore }, factoryPromise)
+    // the production producer
+    val factoryPromise = factoryProducer ?: {
+        defaultViewModelProviderFactory
+    }
+    return createMockedViewModelLazy(VM::class, { viewModelStore }, factoryPromise)
 }
 
 @MainThread
 inline fun <reified VM : ViewModel> Fragment.viewModels(
-		noinline ownerProducer: () -> ViewModelStoreOwner = { this },
-		noinline factoryProducer: (() -> ViewModelProvider.Factory)? = null
+    noinline ownerProducer: () -> ViewModelStoreOwner = { this },
+    noinline factoryProducer: (() -> ViewModelProvider.Factory)? = null
 ) = createViewModelLazy(VM::class, { ownerProducer().viewModelStore }, factoryProducer)
 
 @MainThread
 inline fun <reified VM : ViewModel> Fragment.activityViewModels(
-		noinline factoryProducer: (() -> ViewModelProvider.Factory)? = null
-) = createViewModelLazy(VM::class, { requireActivity().viewModelStore },
-		factoryProducer ?: { requireActivity().defaultViewModelProviderFactory })
+    noinline factoryProducer: (() -> ViewModelProvider.Factory)? = null
+) = createViewModelLazy(
+    VM::class, { requireActivity().viewModelStore },
+    factoryProducer ?: { requireActivity().defaultViewModelProviderFactory }
+)
 
 @MainThread
 fun <VM : ViewModel> Fragment.createViewModelLazy(
-		viewModelClass: KClass<VM>,
-		storeProducer: () -> ViewModelStore,
-		factoryProducer: (() -> ViewModelProvider.Factory)? = null
+    viewModelClass: KClass<VM>,
+    storeProducer: () -> ViewModelStore,
+    factoryProducer: (() -> ViewModelProvider.Factory)? = null
 ): Lazy<VM> {
-	val factoryPromise = factoryProducer ?: {
-		defaultViewModelProviderFactory
-	}
-	return createMockedViewModelLazy(viewModelClass, storeProducer, factoryPromise)
+    val factoryPromise = factoryProducer ?: {
+        defaultViewModelProviderFactory
+    }
+    return createMockedViewModelLazy(viewModelClass, storeProducer, factoryPromise)
 }
 
 /**
  * Wraps the default factoryPromise with one that looks in the mockedViewModels map
  */
 fun <VM : ViewModel> createMockedViewModelLazy(
-		viewModelClass: KClass<VM>,
-		storeProducer: () -> ViewModelStore,
-		factoryPromise: () -> ViewModelProvider.Factory
+    viewModelClass: KClass<VM>,
+    storeProducer: () -> ViewModelStore,
+    factoryPromise: () -> ViewModelProvider.Factory
 ): Lazy<VM> {
-	// the mock producer
-	val mockedFactoryPromise: () -> ViewModelProvider.Factory = {
-		// if there are any mocked ViewModels, return a Factory that fetches them
-		if (mockedViewModels.isNotEmpty()) {
-			object: ViewModelProvider.Factory {
-				override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-					@Suppress("UNCHECKED_CAST")
-					return mockedViewModels[modelClass] as T
-							?: factoryPromise().create(modelClass)  // return the normal one if no mock found
-				}
-			}
-		} else {
-			// if no mocks, call the normal factoryPromise directly
-			factoryPromise()
-		}
-	}
+    // the mock producer
+    val mockedFactoryPromise: () -> ViewModelProvider.Factory = {
+        // if there are any mocked ViewModels, return a Factory that fetches them
+        if (mockedViewModels.isNotEmpty()) {
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                    @Suppress("UNCHECKED_CAST")
+                    return mockedViewModels[modelClass] as T
+                        ?: factoryPromise().create(modelClass) // return the normal one if no mock found
+                }
+            }
+        } else {
+            // if no mocks, call the normal factoryPromise directly
+            factoryPromise()
+        }
+    }
 
-	return ViewModelLazy(viewModelClass, storeProducer, mockedFactoryPromise)
+    return ViewModelLazy(viewModelClass, storeProducer, mockedFactoryPromise)
 }

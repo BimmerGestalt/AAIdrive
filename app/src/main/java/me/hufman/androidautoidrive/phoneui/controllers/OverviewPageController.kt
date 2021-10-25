@@ -5,7 +5,7 @@ import androidx.navigation.fragment.findNavController
 import me.hufman.androidautoidrive.R
 
 class OverviewPageController(val fragment: Fragment) {
-	fun onClickConnecting() {
-		fragment.findNavController().navigate(R.id.nav_connection)
-	}
+    fun onClickConnecting() {
+        fragment.findNavController().navigate(R.id.nav_connection)
+    }
 }

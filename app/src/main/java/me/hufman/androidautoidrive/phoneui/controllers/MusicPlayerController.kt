@@ -11,34 +11,34 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.MusicPlayerQueueItem
 
 class MusicPlayerController(var viewPager: ViewPager?, val musicController: MusicController) {
 
-	fun showNowPlaying() {
-		viewPager?.currentItem = 0
-	}
+    fun showNowPlaying() {
+        viewPager?.currentItem = 0
+    }
 
-	fun showBrowse() {
-		viewPager?.currentItem = 1
-	}
+    fun showBrowse() {
+        viewPager?.currentItem = 1
+    }
 
-	fun pushBrowse(directory: MusicMetadata?) {
-		val adapter = viewPager?.adapter as? MusicPlayerPagerAdapter ?: return
-		val container = adapter.getItem(1) as MusicBrowseFragment
-		container.replaceFragment(MusicBrowsePageFragment.newInstance(directory), true)
-	}
+    fun pushBrowse(directory: MusicMetadata?) {
+        val adapter = viewPager?.adapter as? MusicPlayerPagerAdapter ?: return
+        val container = adapter.getItem(1) as MusicBrowseFragment
+        container.replaceFragment(MusicBrowsePageFragment.newInstance(directory), true)
+    }
 
-	fun selectItem(item: MusicPlayerItem?) {
-		if (item != null) {
-			if (item.musicMetadata.browseable) {
-				pushBrowse(item.musicMetadata)
-				showBrowse()
-			} else {
-				musicController.playSong(item.musicMetadata)
-				showNowPlaying()
-			}
-		}
-	}
+    fun selectItem(item: MusicPlayerItem?) {
+        if (item != null) {
+            if (item.musicMetadata.browseable) {
+                pushBrowse(item.musicMetadata)
+                showBrowse()
+            } else {
+                musicController.playSong(item.musicMetadata)
+                showNowPlaying()
+            }
+        }
+    }
 
-	fun selectQueueItem(item: MusicPlayerQueueItem) {
-		musicController.playQueue(item.musicMetadata)
-		showNowPlaying()
-	}
+    fun selectQueueItem(item: MusicPlayerQueueItem) {
+        musicController.playQueue(item.musicMetadata)
+        showNowPlaying()
+    }
 }

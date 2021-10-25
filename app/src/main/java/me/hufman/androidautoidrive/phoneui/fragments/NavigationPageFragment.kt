@@ -15,17 +15,17 @@ import me.hufman.androidautoidrive.phoneui.controllers.NavigationSearchControlle
 import me.hufman.androidautoidrive.phoneui.viewmodels.NavigationStatusModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
-class NavigationPageFragment: Fragment() {
+class NavigationPageFragment : Fragment() {
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-		val viewModel by viewModels<NavigationStatusModel> { NavigationStatusModel.Factory(requireContext().applicationContext) }
-		val navParser = NavigationParser(AndroidGeocoderSearcher(requireContext().applicationContext), URLRedirector())
-		val navTrigger = NavigationTriggerSender(requireContext().applicationContext)
-		val controller = NavigationSearchController(lifecycleScope, navParser, navTrigger, viewModel)
-		val binding = NavigationStatusBindingImpl.inflate(inflater, container, false)
-		binding.lifecycleOwner = viewLifecycleOwner
-		binding.viewModel = viewModel
-		binding.controller = controller
-		return binding.root
-	}
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val viewModel by viewModels<NavigationStatusModel> { NavigationStatusModel.Factory(requireContext().applicationContext) }
+        val navParser = NavigationParser(AndroidGeocoderSearcher(requireContext().applicationContext), URLRedirector())
+        val navTrigger = NavigationTriggerSender(requireContext().applicationContext)
+        val controller = NavigationSearchController(lifecycleScope, navParser, navTrigger, viewModel)
+        val binding = NavigationStatusBindingImpl.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
+        binding.controller = controller
+        return binding.root
+    }
 }

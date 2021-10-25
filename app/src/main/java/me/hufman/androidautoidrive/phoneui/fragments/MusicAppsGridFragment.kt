@@ -14,41 +14,41 @@ import me.hufman.androidautoidrive.phoneui.adapters.ObservableListCallback
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicAppsViewModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 
-class MusicAppsGridFragment: Fragment() {
-	val appsViewModel by activityViewModels<MusicAppsViewModel> { MusicAppsViewModel.Factory(requireActivity().applicationContext) }
-	private val appsChangedCallback = ObservableListCallback<MusicAppInfo> {
-		view?.findViewById<NestedGridView>(R.id.listMusicApps)?.invalidateViews() // redraw the app list
-	}
+class MusicAppsGridFragment : Fragment() {
+    val appsViewModel by activityViewModels<MusicAppsViewModel> { MusicAppsViewModel.Factory(requireActivity().applicationContext) }
+    private val appsChangedCallback = ObservableListCallback<MusicAppInfo> {
+        view?.findViewById<NestedGridView>(R.id.listMusicApps)?.invalidateViews() // redraw the app list
+    }
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		return inflater.inflate(R.layout.fragment_music_appgrid, container, false)
-	}
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		val listMusicApps = view.findViewById<NestedGridView>(R.id.listMusicApps)
-		listMusicApps.setOnItemClickListener { _, _, _, _ ->
-			try {
-				findNavController().navigate(R.id.nav_music)
-			} catch (e: IllegalStateException) {
-				// this is rare and unusual, but swallow the exception to not crash the app
-			}
-		}
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_music_appgrid, container, false)
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val listMusicApps = view.findViewById<NestedGridView>(R.id.listMusicApps)
+        listMusicApps.setOnItemClickListener { _, _, _, _ ->
+            try {
+                findNavController().navigate(R.id.nav_music)
+            } catch (e: IllegalStateException) {
+                // this is rare and unusual, but swallow the exception to not crash the app
+            }
+        }
 
-		view.post {
-			appsChangedCallback.onChanged(null)
-		}
-		appsViewModel.validApps.addOnListChangedCallback(appsChangedCallback)
+        view.post {
+            appsChangedCallback.onChanged(null)
+        }
+        appsViewModel.validApps.addOnListChangedCallback(appsChangedCallback)
 
-		listMusicApps.adapter = DataBoundArrayAdapter(requireContext(), R.layout.musicapp_griditem, appsViewModel.validApps, null)
-	}
+        listMusicApps.adapter = DataBoundArrayAdapter(requireContext(), R.layout.musicapp_griditem, appsViewModel.validApps, null)
+    }
 
-	override fun onResume() {
-		super.onResume()
-		// update the music apps list, including any music sessions
-		appsViewModel.musicAppDiscoveryThread.discovery()
-	}
+    override fun onResume() {
+        super.onResume()
+        // update the music apps list, including any music sessions
+        appsViewModel.musicAppDiscoveryThread.discovery()
+    }
 
-	override fun onDestroy() {
-		super.onDestroy()
-		appsViewModel.validApps.removeOnListChangedCallback(appsChangedCallback)
-	}
+    override fun onDestroy() {
+        super.onDestroy()
+        appsViewModel.validApps.removeOnListChangedCallback(appsChangedCallback)
+    }
 }

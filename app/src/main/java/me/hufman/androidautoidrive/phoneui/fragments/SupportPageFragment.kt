@@ -10,13 +10,13 @@ import me.hufman.androidautoidrive.phoneui.controllers.SupportPageController
 import me.hufman.androidautoidrive.phoneui.viewmodels.SupportPageModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
-class SupportPageFragment: Fragment() {
-	val viewModel by viewModels<SupportPageModel>()
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		val binding = SupportPageBinding.inflate(inflater, container, false)
-		binding.lifecycleOwner = viewLifecycleOwner
-		binding.viewModel = viewModel
-		binding.controller = SupportPageController()
-		return binding.root
-	}
+class SupportPageFragment : Fragment() {
+    val viewModel by viewModels<SupportPageModel>()
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val binding = SupportPageBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
+        binding.controller = SupportPageController()
+        return binding.root
+    }
 }

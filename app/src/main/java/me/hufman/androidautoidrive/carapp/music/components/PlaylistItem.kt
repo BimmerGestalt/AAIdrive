@@ -8,11 +8,11 @@ package me.hufman.androidautoidrive.carapp.music.components
  * @param secondText - second line of text
  */
 fun PlaylistItem(isAnimated: Boolean, isEnabled: Boolean, leftImage: Any, firstText: String, secondText: String = ""): Array<Any> {
-	return arrayOf(
-		isAnimated, leftImage, firstText,
-		"", false,    // firstRightImage
-		"", false,    // secondRightImage
-		secondText, secondText.isNotBlank(),
-		isEnabled
-	)
+    return arrayOf(
+        isAnimated, leftImage, firstText,
+        "", false, // firstRightImage
+        "", false, // secondRightImage
+        secondText, secondText.isNotBlank(),
+        isEnabled
+    )
 }

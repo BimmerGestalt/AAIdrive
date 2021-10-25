@@ -19,65 +19,65 @@ import me.hufman.androidautoidrive.notifications.CarNotification
  *   - User presses Back, which stops the current speaking
  */
 class ReadoutInteractions(val settings: NotificationSettings) {
-	companion object {
-		/**
-		 * Return a trimmed version of the first line that is duplicated in the second line
-		 */
-		fun trimCommonSuffix(line1: String, line2: String): String {
-			var endpoint = line1.length
-			(line1.length downTo 0).forEach { index ->
-				val affix = line1.substring(index)
-				if (line2.startsWith(affix)) {
-					endpoint = index
-				}
-			}
-			return line1.substring(0, endpoint)
-		}
-	}
+    companion object {
+        /**
+         * Return a trimmed version of the first line that is duplicated in the second line
+         */
+        fun trimCommonSuffix(line1: String, line2: String): String {
+            var endpoint = line1.length
+            (line1.length downTo 0).forEach { index ->
+                val affix = line1.substring(index)
+                if (line2.startsWith(affix)) {
+                    endpoint = index
+                }
+            }
+            return line1.substring(0, endpoint)
+        }
+    }
 
-	var readoutController: ReadoutController? = null   // gets initialized later than the main Notifications app
-	var currentNotification: CarNotification? = null
-		get() {
-			if (readoutController?.isActive != true) { field = null }
-			return field
-		}
-		set(value) { field = value }
+    var readoutController: ReadoutController? = null // gets initialized later than the main Notifications app
+    var currentNotification: CarNotification? = null
+        get() {
+            if (readoutController?.isActive != true) { field = null }
+            return field
+        }
+        set(value) { field = value }
 
-	var passengerSeated: Boolean = false
+    var passengerSeated: Boolean = false
 
-	fun triggerPopupReadout(carNotification: CarNotification) {
-		// read the latest line of a new notification, if we aren't currently reading
-		if (settings.shouldReadoutNotificationPopup(passengerSeated) && currentNotification == null) {
-			currentNotification = carNotification
-			val line = carNotification.text.split("\n").lastOrNull() ?: ""
-			val lines = mutableListOf(line)
-			val title = trimCommonSuffix(carNotification.title, line)
-			if (title.isNotEmpty()) {
-				lines.add(0, title)
-			}
-			readoutController?.readout(lines)
-			// mark the tts state as busy, in case the Notification app checks the state before CDS updates
-			readoutController?.onTTSEvent(TTSState(ReadoutState.BUSY.value, -1, -1, readoutController?.name ?: "", null))
-		}
-	}
+    fun triggerPopupReadout(carNotification: CarNotification) {
+        // read the latest line of a new notification, if we aren't currently reading
+        if (settings.shouldReadoutNotificationPopup(passengerSeated) && currentNotification == null) {
+            currentNotification = carNotification
+            val line = carNotification.text.split("\n").lastOrNull() ?: ""
+            val lines = mutableListOf(line)
+            val title = trimCommonSuffix(carNotification.title, line)
+            if (title.isNotEmpty()) {
+                lines.add(0, title)
+            }
+            readoutController?.readout(lines)
+            // mark the tts state as busy, in case the Notification app checks the state before CDS updates
+            readoutController?.onTTSEvent(TTSState(ReadoutState.BUSY.value, -1, -1, readoutController?.name ?: "", null))
+        }
+    }
 
-	fun triggerDisplayReadout(carNotification: CarNotification, ignoreSetting: Boolean = false) {
-		if (ignoreSetting || settings.shouldReadoutNotificationDetails()) {
-			if (carNotification != currentNotification) {
-				if (currentNotification != null) {
-					readoutController?.cancel()
-					Thread.sleep(500)
-				}
-				currentNotification = carNotification
-				readoutController?.readout(carNotification.text.split("\n"))
-				// mark the tts state as busy, in case the Notification app checks the state before CDS updates
-				readoutController?.onTTSEvent(TTSState(ReadoutState.BUSY.value, -1, -1, readoutController?.name ?: "", null))
-			}
-		}
-	}
+    fun triggerDisplayReadout(carNotification: CarNotification, ignoreSetting: Boolean = false) {
+        if (ignoreSetting || settings.shouldReadoutNotificationDetails()) {
+            if (carNotification != currentNotification) {
+                if (currentNotification != null) {
+                    readoutController?.cancel()
+                    Thread.sleep(500)
+                }
+                currentNotification = carNotification
+                readoutController?.readout(carNotification.text.split("\n"))
+                // mark the tts state as busy, in case the Notification app checks the state before CDS updates
+                readoutController?.onTTSEvent(TTSState(ReadoutState.BUSY.value, -1, -1, readoutController?.name ?: "", null))
+            }
+        }
+    }
 
-	fun cancel() {
-		currentNotification = null
-		readoutController?.cancel()
-	}
+    fun cancel() {
+        currentNotification = null
+        readoutController?.cancel()
+    }
 }

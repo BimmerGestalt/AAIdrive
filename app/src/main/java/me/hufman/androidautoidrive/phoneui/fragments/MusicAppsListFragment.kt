@@ -28,35 +28,35 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.MusicAppsViewModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 import kotlin.math.max
 
-class MusicAppsListFragment: Fragment() {
-	val handler = Handler(Looper.getMainLooper())
+class MusicAppsListFragment : Fragment() {
+    val handler = Handler(Looper.getMainLooper())
 
-	val permissionsController by lazy { PermissionsController(requireActivity()) }
-	val controller by lazy { MusicAppListController(requireActivity(), permissionsController) }
-	val appsViewModel by activityViewModels<MusicAppsViewModel> { MusicAppsViewModel.Factory(requireActivity().applicationContext) }
-	private val appsChangedCallback = ObservableListCallback<MusicAppInfo> {
-		val listView = view?.findViewById<RecyclerView>(R.id.listMusicApps)
-		if (listView != null && listView.adapter == null) {
-			listView.adapter = DataBoundListAdapter(appsViewModel.allApps, R.layout.musicapp_listitem, controller)
-		}
-		listView?.adapter?.notifyDataSetChanged() // redraw the app list
-	}
-	val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }
-	val hiddenApps by lazy { StoredSet(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS) }
+    val permissionsController by lazy { PermissionsController(requireActivity()) }
+    val controller by lazy { MusicAppListController(requireActivity(), permissionsController) }
+    val appsViewModel by activityViewModels<MusicAppsViewModel> { MusicAppsViewModel.Factory(requireActivity().applicationContext) }
+    private val appsChangedCallback = ObservableListCallback<MusicAppInfo> {
+        val listView = view?.findViewById<RecyclerView>(R.id.listMusicApps)
+        if (listView != null && listView.adapter == null) {
+            listView.adapter = DataBoundListAdapter(appsViewModel.allApps, R.layout.musicapp_listitem, controller)
+        }
+        listView?.adapter?.notifyDataSetChanged() // redraw the app list
+    }
+    val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }
+    val hiddenApps by lazy { StoredSet(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS) }
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		return inflater.inflate(R.layout.fragment_music_applist, container, false)
-	}
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_music_applist, container, false)
+    }
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		val listMusicApps = view.findViewById<RecyclerView>(R.id.listMusicApps)
-		listMusicApps.setHasFixedSize(true)
-		listMusicApps.layoutManager = LinearLayoutManager(requireActivity())
-		view.post {
-			appsChangedCallback.onChanged(null)
-		}
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val listMusicApps = view.findViewById<RecyclerView>(R.id.listMusicApps)
+        listMusicApps.setHasFixedSize(true)
+        listMusicApps.layoutManager = LinearLayoutManager(requireActivity())
+        view.post {
+            appsChangedCallback.onChanged(null)
+        }
 
-		appsViewModel.validApps.addOnListChangedCallback(appsChangedCallback)
+        appsViewModel.validApps.addOnListChangedCallback(appsChangedCallback)
 
 		val listMusicAppsRefresh = view.findViewById<SwipeRefreshLayout>(R.id.listMusicAppsRefresh)
 		listMusicApps.addOnScrollListener(object: RecyclerView.OnScrollListener() {
@@ -74,53 +74,53 @@ class MusicAppsListFragment: Fragment() {
 			}, 2000)
 		}
 
-		val swipeCallback = object: ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-			override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
-				return false
-			}
+        val swipeCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
 
-			override fun onSwiped(view: RecyclerView.ViewHolder, direction: Int) {
-				val musicAppInfo = (view as? DataBoundViewHolder<*, *>)?.data as? MusicAppInfo
-				if (musicAppInfo != null) {
-					val previous = hiddenApps.contains(musicAppInfo.packageName)
-					if (previous) {
-						hiddenApps.remove(musicAppInfo.packageName)
-					} else {
-						hiddenApps.add(musicAppInfo.packageName)
-					}
-				}
-			}
-		}
-		ItemTouchHelper(swipeCallback).attachToRecyclerView(listMusicApps)
+            override fun onSwiped(view: RecyclerView.ViewHolder, direction: Int) {
+                val musicAppInfo = (view as? DataBoundViewHolder<*, *>)?.data as? MusicAppInfo
+                if (musicAppInfo != null) {
+                    val previous = hiddenApps.contains(musicAppInfo.packageName)
+                    if (previous) {
+                        hiddenApps.remove(musicAppInfo.packageName)
+                    } else {
+                        hiddenApps.add(musicAppInfo.packageName)
+                    }
+                }
+            }
+        }
+        ItemTouchHelper(swipeCallback).attachToRecyclerView(listMusicApps)
 
-		// set the actual scrollview size
-		view.post {
-			setHeightInScrollview()
-		}
-	}
+        // set the actual scrollview size
+        view.post {
+            setHeightInScrollview()
+        }
+    }
 
-	override fun onResume() {
-		super.onResume()
+    override fun onResume() {
+        super.onResume()
 
-		// build list of discovered music apps
-		appsViewModel.musicAppDiscoveryThread.discovery()
-	}
+        // build list of discovered music apps
+        appsViewModel.musicAppDiscoveryThread.discovery()
+    }
 
-	private fun setHeightInScrollview() {
-		// set height based on parent scrollview size
-		val view = this.view ?: return
-		val scrollView = view.findParent { it is ScrollView } as? ScrollView ?: return
-		val scrollHeight = scrollView.height
-		val height = max(400, scrollHeight - view.scrollTop)
+    private fun setHeightInScrollview() {
+        // set height based on parent scrollview size
+        val view = this.view ?: return
+        val scrollView = view.findParent { it is ScrollView } as? ScrollView ?: return
+        val scrollHeight = scrollView.height
+        val height = max(400, scrollHeight - view.scrollTop)
 
-		val layoutParams = view.layoutParams
-		layoutParams.height = height
-		view.layoutParams = layoutParams
-		view.requestLayout()
-	}
+        val layoutParams = view.layoutParams
+        layoutParams.height = height
+        view.layoutParams = layoutParams
+        view.requestLayout()
+    }
 
-	override fun onDestroy() {
-		super.onDestroy()
-		appsViewModel.validApps.removeOnListChangedCallback(appsChangedCallback)
-	}
+    override fun onDestroy() {
+        super.onDestroy()
+        appsViewModel.validApps.removeOnListChangedCallback(appsChangedCallback)
+    }
 }

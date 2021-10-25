@@ -6,24 +6,24 @@ import android.content.Intent
 import me.hufman.androidautoidrive.addons.AddonAppInfo
 
 class AddonAppListController(val context: Context, val permissionsController: PermissionsController) {
-	fun openApplicationPermissions(appInfo: AddonAppInfo) {
-		permissionsController.openApplicationPermissions(appInfo.packageName)
-	}
+    fun openApplicationPermissions(appInfo: AddonAppInfo) {
+        permissionsController.openApplicationPermissions(appInfo.packageName)
+    }
 
-	private fun tryOpenActivity(intent: Intent): Boolean {
-		if (context.packageManager.resolveActivity(intent, 0) != null) {
-			try {
-				context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-				return true
-			} catch (e: ActivityNotFoundException) {
-			} catch (e: IllegalArgumentException) {}
-		}
-		return false
-	}
+    private fun tryOpenActivity(intent: Intent): Boolean {
+        if (context.packageManager.resolveActivity(intent, 0) != null) {
+            try {
+                context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                return true
+            } catch (e: ActivityNotFoundException) {
+            } catch (e: IllegalArgumentException) {}
+        }
+        return false
+    }
 
-	fun openIntent(intent: Intent?) {
-		if (intent != null) {
-			tryOpenActivity(intent)
-		}
-	}
+    fun openIntent(intent: Intent?) {
+        if (intent != null) {
+            tryOpenActivity(intent)
+        }
+    }
 }

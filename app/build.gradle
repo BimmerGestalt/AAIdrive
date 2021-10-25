@@ -11,6 +11,8 @@ apply plugin: 'kotlin-kapt'
 
 apply plugin: 'org.ajoberstar.grgit'
 
+apply plugin: 'org.jlleitschuh.gradle.ktlint'
+
 apply from: 'buildtools/ColoredOutput.gradle'
 
 apply from: 'buildtools/jacoco.gradle'

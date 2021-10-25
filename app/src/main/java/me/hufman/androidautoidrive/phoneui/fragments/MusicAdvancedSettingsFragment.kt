@@ -9,12 +9,12 @@ import me.hufman.androidautoidrive.databinding.MusicAdvancedSettingsBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicAdvancedSettingsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 
-class MusicAdvancedSettingsFragment: Fragment() {
-	val settingsModel by activityViewModels<MusicAdvancedSettingsModel> { MusicAdvancedSettingsModel.Factory(requireContext().applicationContext) }
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		val binding = MusicAdvancedSettingsBinding.inflate(inflater, container, false)
-		binding.lifecycleOwner = viewLifecycleOwner
-		binding.settings = settingsModel
-		return binding.root
-	}
+class MusicAdvancedSettingsFragment : Fragment() {
+    val settingsModel by activityViewModels<MusicAdvancedSettingsModel> { MusicAdvancedSettingsModel.Factory(requireContext().applicationContext) }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val binding = MusicAdvancedSettingsBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.settings = settingsModel
+        return binding.root
+    }
 }
