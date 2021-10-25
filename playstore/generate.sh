@@ -8,6 +8,7 @@ function lang_line {
 }
 
 for lang_dir in res/values*; do
+    grep -F '<resources></resources>' "$lang_dir"/strings.xml > /dev/null && continue
     lang="${lang_dir#res/values}"
     output_name="listing$lang.txt"
     echo "$output_name"
