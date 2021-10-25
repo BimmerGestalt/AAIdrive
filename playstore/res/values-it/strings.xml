@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playstore_tagline">Aggiungi funzionalità Android Auto al cruscotto BMW e Mini IDrive NBT</string>
+    <string name="playstore_desc_title">Sblocca tutto il potenziale della tua auto con funzionalità BMW Connected App per migliorare la tua esperienza di guida!</string>
+    <string name="playstore_desc_features_heading">Combinato con un abbonamento BMW ConnectedDrive attivo o con l\'opzione Mini Connected, questo progetto aggiunge la maggior parte delle caratteristiche di Android Auto alla vostra auto tramite BMW/Mini Connected Apps non ufficiali:</string>
+    <string name="playstore_desc_features_music">Visualizza le app musicali sul tuo telefono come sorgenti multimediali in IDrive</string>
+    <string name="playstore_desc_features_assistants">Interagisci con gli assistenti vocali installati sul telefono</string>
+    <string name="playstore_desc_features_notifications">Legga, ascolta e interagisci con le notifiche attraverso i controlli della vettura</string>
+    <string name="playstore_desc_features_carnav">Attiva la navigazione auto dalle app del telefono</string>
+    <string name="playstore_desc_features_carinfo">Leggi varie informazioni diagnostiche e statistiche della tua auto</string>
+    <string name="playstore_desc_features_addons_mirroring">Estendere le funzionalità tramite componenti aggiuntivi opzionali (come il mirroring)</string>
+    <string name="playstore_desc_features_custommap_soon">L\'implementazione di mappe personalizzate (in arrivo)</string>
+    <string name="playstore_desc_nativeapps_protocol">Utilizzando il protocollo nativo BMW App, esattamente come la vecchia app Spotify, questa app non modifica la tua auto in alcun modo, e tutte le funzionalità estese sono fornite solo mentre il telefono è connesso.</string>
+    <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps richiede che l\'app MyBMW o MINI per la tua auto sia installata e che possa abilitare correttamente la casella di controllo App dell\'auto IDrive5+, o che la vostra auto IDrive4 abbia l\'opzione ConnectedDrive Connection Assistant.</string>
+    <string name="playstore_desc_depends_bmw_subscription">Questo di solito richiede di avere un abbonamento BMW ConnectedDrive attivo, che è in genere incluso per alcuni anni dopo aver acquistato la vostra nuova auto.</string>
+</resources>
