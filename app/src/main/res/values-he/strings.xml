@@ -64,6 +64,20 @@
     <string name="notification_quickreplies_default">[\"👍\",\"אני בדרך!\",\"בנהיגה לא יכול/ה לדבר\",\"לא יכול/ה לענות, תתקשר/י במקום\",\"אתקשר מאוחר יותר]</string>
     <string name="lbl_notification_permissions">הרשאה לקריאת התראות</string>
     <string name="lbl_notification_sms_permissions">הרשאה להצגת הודעות תמונה MMS</string>
+    <string name="lbl_popupVersion">התראות קופצות עובדות רק עם IDrive 4</string>
+    <string name="lbl_ttsUnsupported">TTS לא נתמך על ידי הרכב שלך</string>
+    <string name="lbl_smsPermission">אפשר הרשאת SMS כדי לצפות בתמונות מהודעות נכנסות ברכב. הטקסט תמיד יוצג.</string>
+    <string name="lbl_mapspage">הצגת גוגל מפות בסיסי במסך הרכב</string>
+    <string name="enable_google_maps">הפעל גוגל מפות</string>
+    <string name="lbl_widescreen_map">מפה במסך רחב</string>
+    <string name="lbl_map_invert_zoom">הפוך כיוון זום</string>
+    <string name="lbl_map_tilt">הטיית מפה</string>
+    <string name="lbl_map_traffic">הצג תנועה</string>
+    <string name="lbl_gmap_buildings">הצג בניינים 3D</string>
+    <string name="gmapStyleLabel">סגנון מפה</string>
+    <string name="lbl_music_apps">מוזיקה: אפליקציות</string>
+    <string name="musicAppIcon">אייקון אפליקציה</string>
+    <string name="musicAppNowPlaying">מנגן עכשיו</string>
     <string name="addonPersonalPermission">גישה למידע רכב פרטי</string>
     <string name="addonPersonalPermissionDeclined">CAN אין גישה למידע רכב פרטי</string>
     <string name="addonPersonalPermissionGranted">CAN יש גישה למידע רכב פרטי</string>
@@ -73,14 +87,18 @@
     <string name="lbl_language_prefercar_code">בחר בשפת הרכב (%s) ולא בשפת הטלפון</string>
     <string name="lbl_language_forcelanguage">כפה שפה ספציפית</string>
     <string name="btn_donations">תרומה</string>
+    <string name="lbl_support_thanks">תודה לכם על האמון והשימוש בAAIdrive!</string>
     <string name="lbl_ok">אישור</string>
     <string name="lbl_cancel">ביטול</string>
+    <string name="btn_configure">הגדר…</string>
     <string name="btn_add">הוסף</string>
     <string name="lbl_error">שגיאה</string>
     <string name="connectionStatusWaiting">ממתין לחיבור עם הרכב</string>
     <string name="connectionStatusConnected">מחובר ל- %s</string>
     <string name="lblChassisCode">שלדה</string>
+    <string name="lblHmiVersion">סוג IDrive</string>
     <!-- connection setup -->
+    <string name="btn_install">התקנה</string>
     <!-- connection status -->
     <!-- capabilities -->
     <!-- debug status -->
