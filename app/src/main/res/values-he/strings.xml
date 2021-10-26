@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AAIdrive</string>
+    <string name="permlab_accessNotifications">Idrive התראת גישה</string>
+    <string name="permlab_bindNotificationListenerService">Idrive התראת גישה</string>
+    <string name="permdesc_accessNotifications">Idrive התראת גישה</string>
+    <string name="permdesc_bindNotificationListenerService">Idrive התראת גישה</string>
+    <string name="notification_title">AAIdrive</string>
+    <string name="notification_description">מחובר לרכב</string>
+    <string name="notification_description_chassiscode">מחובר ל- %s</string>
+    <string name="notification_description_bmw">מחובר אל BMW</string>
+    <string name="notification_description_mini">מחובר אל Mini</string>
+    <string name="permission_cds_normal">קריאת מידע רכב כללי</string>
+    <string name="permission_cds_personal">קריאת מידע רכב פרטי</string>
+    <!-- notification channel names -->
+    <string name="notification_channel_assistant">עוזר הפעלה</string>
+    <string name="notification_channel_connection">סטטוס חיבור רכב</string>
+    <string name="notification_channel_donation">בקשת תרומה</string>
+    <string name="notification_channel_spotify">אימות Spotify</string>
+    <string name="notification_channel_test">התראת נסיון</string>
+    <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
+    <string name="navigation_listener_bmw">ניווט BMW</string>
+    <string name="navigation_listener_mini">ניווט Mini</string>
+    <!-- Labels on the navigation trigger activity -->
+    <string name="btn_search">חפש</string>
+    <string name="lbl_navigation_listener_searching">חפש/י יעד</string>
+    <string name="lbl_navigation_listener_parsefailure">לא נמצא יעד</string>
+    <string name="lbl_navigation_listener_pending">התחל ניווט</string>
+    <string name="lbl_navigation_listener_success">הצלחה</string>
+    <string name="lbl_navigation_listener_unsuccess">נכשל</string>
+    <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Let\'s get you connected</string>
+    <string name="lbl_welcome_intro">AAIdrive הינה אפליקציה לא רשמית עבור רכבי BMW ו-MINI להוספת אפליקציות מוזיקה ואפשרויות נוספות ישירות מהטלפון אל הרכב באמצעות BMW Apps Protocol</string>
+    <string name="lbl_welcome_compatible">רוב רכבי BMW ו-MINI מעל שנת 2014, המצוידות במערכת NBT או NBT EVO (מבוססת Idrive 4-6) יתאימו, ובנוסף חשבון דרך אפליקצית MY BMW או CONNECTED DRIVE - הרשמה חינם</string>
+    <string name="lbl_welcome_dependencies">האפליקציות מתווספות אל הרכב בעזרת אפליקצית CONNECTED DRIVE או MyBMW</string>
+    <string name="lbl_welcome_complete">AAIdrive מוסיפה אפשרויות נוספות לרכב, כדאי לבדוק!</string>
+    <!-- Menu Titles -->
+    <string name="menu_overview">סקירה כללית</string>
+    <string name="menu_setup">הגדרות</string>
+    <string name="menu_connection">חיבור</string>
+    <string name="menu_carinfo">מידע על הרכב</string>
+    <string name="menu_music">מוזיקה</string>
+    <string name="menu_notifications">התראות</string>
+    <string name="menu_assistants">עוזרים קוליים</string>
+    <string name="menu_maps">מפות</string>
+    <string name="menu_navigation">ניווט</string>
+    <string name="menu_addons">תוספים</string>
+    <string name="menu_settings">הגדרות</string>
+    <string name="menu_support">תמיכה</string>
+    <string name="btn_next">הבא</string>
+    <string name="lbl_overviewpage">AAIdrive מתממשקת אל אפליקציות המוזיקה והתראות של הטלפון באמצעות BMW Apps Protocol</string>
+    <string name="lbl_connectionpage">האפליקציה תלויה במספר אפשרויות כדי לעבוד, הנה כמה טיפים שיעזרו לכם לוודא שהכל עובד תקין</string>
+    <string name="lbl_assistantpage_tip">אפליקציות אלו שונות מלחצן \"עזרה קולית\" הנשלט מההגה, אשר מפעיל את העוזר הקולי הראשי של המכשיר, והם נשלטות בנפרד</string>
+    <string name="lbl_notificationpage">התראות נכנסות ניתנות לצפייה ולשליטה מהרכב</string>
+    <string name="spawn_test_notification">התראת נסיון</string>
+    <string name="message_notifications">התראות על הודעות</string>
+    <string name="notification_popups">התראות קופצות</string>
+    <string name="notification_popups_passenger">התראות קופצות עם נוסע ברכב</string>
+    <string name="notification_sound">נגן צליל התראה</string>
+    <string name="notification_readout">קרא בקול הודעות בזמן צפייה בהן</string>
+    <string name="notification_readout_popup">קרא בקול הודעות חדשות</string>
+    <string name="notification_readout_popup_passenger">...עם נוסע ברכב</string>
+    <string name="notification_quickreplies">תגובות מהירות</string>
+    <string name="notification_quickreplies_default">[\"👍\",\"אני בדרך!\",\"בנהיגה לא יכול/ה לדבר\",\"לא יכול/ה לענות, תתקשר/י במקום\",\"אתקשר מאוחר יותר]</string>
+    <string name="lbl_notification_permissions">הרשאה לקריאת התראות</string>
+    <string name="lbl_notification_sms_permissions">הרשאה להצגת הודעות תמונה MMS</string>
+    <string name="addonPersonalPermission">גישה למידע רכב פרטי</string>
+    <string name="addonPersonalPermissionDeclined">CAN אין גישה למידע רכב פרטי</string>
+    <string name="addonPersonalPermissionGranted">CAN יש גישה למידע רכב פרטי</string>
+    <string name="lbl_settingspage">הגדרות מתקדמות לשינוי האפליקציה - עלול לגרום להתנהגות לא צפויה</string>
+    <string name="lbl_language_carinterface">שפה להצגה במסך הרכב</string>
+    <string name="lbl_language_prefercar">בחר בשפת הרכב ולא בשפת הטלפון</string>
+    <string name="lbl_language_prefercar_code">בחר בשפת הרכב (%s) ולא בשפת הטלפון</string>
+    <string name="lbl_language_forcelanguage">כפה שפה ספציפית</string>
+    <string name="btn_donations">תרומה</string>
+    <string name="lbl_ok">אישור</string>
+    <string name="lbl_cancel">ביטול</string>
+    <string name="btn_add">הוסף</string>
+    <string name="lbl_error">שגיאה</string>
+    <string name="connectionStatusWaiting">ממתין לחיבור עם הרכב</string>
+    <string name="connectionStatusConnected">מחובר ל- %s</string>
+    <string name="lblChassisCode">שלדה</string>
+    <!-- connection setup -->
+    <!-- connection status -->
+    <!-- capabilities -->
+    <!-- debug status -->
+    <!-- car status -->
+    <!-- unit suffixes -->
+    <!-- tips -->
+    <!-- car app strings -->
+</resources>
