@@ -14,7 +14,6 @@ import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
-import com.soywiz.korio.async.async
 import com.spotify.android.appremote.api.ConnectApi
 import com.spotify.android.appremote.api.ContentApi
 import com.spotify.android.appremote.api.ImagesApi
@@ -36,7 +35,7 @@ import com.spotify.protocol.types.PlayerRestrictions
 import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Repeat
 import com.spotify.protocol.types.Track
-import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -55,6 +54,7 @@ import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.spotify.TemporaryPlaylistState
 import me.hufman.androidautoidrive.utils.Utils
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull

@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
@@ -22,6 +21,7 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicPlayerItem
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicPlayerSearchItem
+import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 import kotlin.coroutines.CoroutineContext
 
 class MusicSearchFragment : Fragment(), CoroutineScope {
