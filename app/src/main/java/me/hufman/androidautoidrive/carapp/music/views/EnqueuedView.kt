@@ -1,7 +1,14 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import de.bmw.idrive.BMWRemoting
-import io.bimmergestalt.idriveconnectkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.FocusCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIActionListCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
+import io.bimmergestalt.idriveconnectkit.rhmi.RequestDataCallback
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs

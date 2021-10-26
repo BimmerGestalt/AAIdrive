@@ -4,7 +4,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.media.session.MediaController
 import android.media.session.MediaSessionManager
-import android.media.session.PlaybackState.*
+import android.media.session.PlaybackState.ACTION_PAUSE
+import android.media.session.PlaybackState.ACTION_PLAY
+import android.media.session.PlaybackState.ACTION_PLAY_FROM_SEARCH
+import android.media.session.PlaybackState.STATE_PLAYING
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -14,7 +17,7 @@ import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.music.controllers.GenericMusicAppController
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
-import java.util.*
+import java.util.LinkedList
 import java.util.concurrent.ConcurrentHashMap
 
 class MusicSessions(val context: Context) {

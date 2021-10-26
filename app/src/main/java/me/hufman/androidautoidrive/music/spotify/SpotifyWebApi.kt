@@ -10,9 +10,15 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.adamratzman.spotify.*
+import com.adamratzman.spotify.SpotifyClientApi
+import com.adamratzman.spotify.SpotifyException
 import com.adamratzman.spotify.endpoints.pub.SearchApi
-import com.adamratzman.spotify.models.*
+import com.adamratzman.spotify.models.PlayableUri
+import com.adamratzman.spotify.models.PlaylistUri
+import com.adamratzman.spotify.models.SpotifyImage
+import com.adamratzman.spotify.models.SpotifyUri
+import com.adamratzman.spotify.models.Token
+import com.adamratzman.spotify.models.Track
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
@@ -22,8 +28,6 @@ import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
-import net.openid.appauth.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**

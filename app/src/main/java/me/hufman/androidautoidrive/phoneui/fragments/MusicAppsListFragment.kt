@@ -58,21 +58,21 @@ class MusicAppsListFragment : Fragment() {
 
         appsViewModel.validApps.addOnListChangedCallback(appsChangedCallback)
 
-		val listMusicAppsRefresh = view.findViewById<SwipeRefreshLayout>(R.id.listMusicAppsRefresh)
-		listMusicApps.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-			override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-				// disable the swipe-refresh if we aren't positioned at the top
-				if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-					listMusicAppsRefresh.isEnabled = recyclerView.computeVerticalScrollOffset() == 0
-				}
-			}
-		})
-		listMusicAppsRefresh.setOnRefreshListener {
-			appsViewModel.musicAppDiscoveryThread.forceDiscovery()
-			handler.postDelayed({
-				this.view?.findViewById<SwipeRefreshLayout>(R.id.listMusicAppsRefresh)?.isRefreshing = false
-			}, 2000)
-		}
+        val listMusicAppsRefresh = view.findViewById<SwipeRefreshLayout>(R.id.listMusicAppsRefresh)
+        listMusicApps.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                // disable the swipe-refresh if we aren't positioned at the top
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    listMusicAppsRefresh.isEnabled = recyclerView.computeVerticalScrollOffset() == 0
+                }
+            }
+        })
+        listMusicAppsRefresh.setOnRefreshListener {
+            appsViewModel.musicAppDiscoveryThread.forceDiscovery()
+            handler.postDelayed({
+                this.view?.findViewById<SwipeRefreshLayout>(R.id.listMusicAppsRefresh)?.isRefreshing = false
+            }, 2000)
+        }
 
         val swipeCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {

@@ -11,7 +11,12 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.phoneui.fragments.welcome.*
+import me.hufman.androidautoidrive.phoneui.fragments.welcome.WelcomeAnalyticsFragment
+import me.hufman.androidautoidrive.phoneui.fragments.welcome.WelcomeCompleteFragment
+import me.hufman.androidautoidrive.phoneui.fragments.welcome.WelcomeDependenciesFragment
+import me.hufman.androidautoidrive.phoneui.fragments.welcome.WelcomeFragment
+import me.hufman.androidautoidrive.phoneui.fragments.welcome.WelcomeMusicFragment
+import me.hufman.androidautoidrive.phoneui.fragments.welcome.WelcomeNotificationFragment
 
 class WelcomeActivity : AppCompatActivity() {
 

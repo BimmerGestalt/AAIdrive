@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive
 
-import java.util.*
+import java.util.Locale
 
 enum class ChassisCode(val brand: String, val chassis: String) {
     // Mini codes | https://new.minimania.com/MINI_model_designations

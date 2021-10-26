@@ -14,15 +14,42 @@ import io.bimmergestalt.idriveconnectkit.Utils.rhmi_setResourceCached
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
-import io.bimmergestalt.idriveconnectkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIActionButtonCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplication
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationEtch
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationIdempotent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationSynchronized
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import me.hufman.androidautoidrive.PhoneAppResources
-import me.hufman.androidautoidrive.carapp.*
-import me.hufman.androidautoidrive.carapp.notifications.views.*
-import me.hufman.androidautoidrive.notifications.*
+import me.hufman.androidautoidrive.carapp.CDSConnectionEtch
+import me.hufman.androidautoidrive.carapp.CDSDataProvider
+import me.hufman.androidautoidrive.carapp.CDSEventHandler
+import me.hufman.androidautoidrive.carapp.FocusTriggerController
+import me.hufman.androidautoidrive.carapp.FocusedStateTracker
+import me.hufman.androidautoidrive.carapp.L
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
+import me.hufman.androidautoidrive.carapp.RHMIApplicationSwappable
+import me.hufman.androidautoidrive.carapp.notifications.views.DetailsView
+import me.hufman.androidautoidrive.carapp.notifications.views.ID4PopupView
+import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
+import me.hufman.androidautoidrive.carapp.notifications.views.PermissionView
+import me.hufman.androidautoidrive.carapp.notifications.views.PopupView
+import me.hufman.androidautoidrive.carapp.onPropertyChangedEvent
+import me.hufman.androidautoidrive.carapp.subscriptions
+import me.hufman.androidautoidrive.notifications.AudioPlayer
+import me.hufman.androidautoidrive.notifications.CarNotification
+import me.hufman.androidautoidrive.notifications.CarNotificationController
+import me.hufman.androidautoidrive.notifications.NotificationUpdaterController
+import me.hufman.androidautoidrive.notifications.NotificationUpdaterControllerIntent
+import me.hufman.androidautoidrive.notifications.NotificationsState
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.Utils
 import me.hufman.androidautoidrive.utils.removeFirst
-import java.util.*
+import java.util.LinkedList
+import java.util.Locale
 
 const val TAG = "PhoneNotifications"
 const val HMI_CONTEXT_THRESHOLD = 5000L

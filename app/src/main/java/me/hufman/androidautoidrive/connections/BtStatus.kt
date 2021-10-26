@@ -9,7 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
-import java.util.*
+import java.util.UUID
 
 fun BluetoothDevice?.isCar(): Boolean {
     return this?.name?.startsWith("BMW") == true || this?.name?.startsWith("MINI") == true

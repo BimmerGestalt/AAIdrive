@@ -13,7 +13,9 @@ import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 /**
  * Track how many days the user has used the app

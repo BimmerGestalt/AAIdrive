@@ -3,17 +3,26 @@ package me.hufman.androidautoidrive.carapp.notifications.views
 import android.os.Handler
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import io.bimmergestalt.idriveconnectkit.rhmi.*
-import me.hufman.androidautoidrive.*
+import io.bimmergestalt.idriveconnectkit.rhmi.FocusCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIActionListCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.DeferredUpdate
 import me.hufman.androidautoidrive.carapp.FocusTriggerController
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
-import me.hufman.androidautoidrive.carapp.notifications.*
+import me.hufman.androidautoidrive.carapp.notifications.NotificationSettings
+import me.hufman.androidautoidrive.carapp.notifications.ReadoutInteractions
+import me.hufman.androidautoidrive.carapp.notifications.ShowNotificationController
+import me.hufman.androidautoidrive.carapp.notifications.StatusbarController
 import me.hufman.androidautoidrive.carapp.notifications.TAG
 import me.hufman.androidautoidrive.notifications.CarNotification
 import me.hufman.androidautoidrive.notifications.NotificationsState
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
-import java.util.*
+import java.util.Collections
 
 class NotificationListView(
     val state: RHMIState,

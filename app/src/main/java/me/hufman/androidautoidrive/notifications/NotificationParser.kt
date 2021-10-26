@@ -23,7 +23,9 @@ import android.widget.RemoteViews
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat.*
+import androidx.core.app.NotificationManagerCompat.IMPORTANCE_LOW
+import androidx.core.app.NotificationManagerCompat.IMPORTANCE_MIN
+import androidx.core.app.NotificationManagerCompat.IMPORTANCE_NONE
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.PhoneAppResourcesAndroid
 import me.hufman.androidautoidrive.UnicodeCleaner

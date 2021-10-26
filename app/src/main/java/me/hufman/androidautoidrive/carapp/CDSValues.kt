@@ -4,7 +4,7 @@ import com.google.gson.JsonObject
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsInt
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive
-import java.util.*
+import java.util.Locale
 
 enum class CDSVehicleLanguage(val value: Int, val locale: Locale) {
     NONE(0, Locale.ROOT),

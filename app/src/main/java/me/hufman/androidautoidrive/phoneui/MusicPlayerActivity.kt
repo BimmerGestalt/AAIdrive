@@ -14,7 +14,11 @@ import me.hufman.androidautoidrive.databinding.MusicPlayerBinding
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.phoneui.controllers.MusicPlayerController
-import me.hufman.androidautoidrive.phoneui.fragments.*
+import me.hufman.androidautoidrive.phoneui.fragments.MusicBrowseFragment
+import me.hufman.androidautoidrive.phoneui.fragments.MusicBrowsePageFragment
+import me.hufman.androidautoidrive.phoneui.fragments.MusicNowPlayingFragment
+import me.hufman.androidautoidrive.phoneui.fragments.MusicQueueFragment
+import me.hufman.androidautoidrive.phoneui.fragments.MusicSearchFragment
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels

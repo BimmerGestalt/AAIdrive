@@ -14,7 +14,13 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
-import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.Analytics
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.BooleanLiveSetting
+import me.hufman.androidautoidrive.CarInformation
+import me.hufman.androidautoidrive.MainService
+import me.hufman.androidautoidrive.MutableAppSettingsReceiver
+import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.databinding.NavHeaderBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels

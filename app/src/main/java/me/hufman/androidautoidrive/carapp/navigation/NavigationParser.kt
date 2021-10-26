@@ -7,7 +7,11 @@ import android.util.Log
 import com.google.openlocationcode.OpenLocationCode
 import me.hufman.androidautoidrive.carapp.maps.LatLong
 import java.io.IOException
-import java.net.*
+import java.net.HttpURLConnection
+import java.net.URI
+import java.net.URISyntaxException
+import java.net.URL
+import java.net.URLEncoder
 
 interface AddressSearcher {
     fun search(query: String): Address?

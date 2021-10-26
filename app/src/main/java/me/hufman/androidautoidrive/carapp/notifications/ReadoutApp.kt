@@ -10,8 +10,21 @@ import io.bimmergestalt.idriveconnectkit.Utils.rhmi_setResourceCached
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
-import io.bimmergestalt.idriveconnectkit.rhmi.*
-import me.hufman.androidautoidrive.carapp.*
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplication
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationEtch
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationIdempotent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationSynchronized
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
+import me.hufman.androidautoidrive.carapp.CDSConnectionEtch
+import me.hufman.androidautoidrive.carapp.CDSDataProvider
+import me.hufman.androidautoidrive.carapp.CDSEventHandler
+import me.hufman.androidautoidrive.carapp.L
+import me.hufman.androidautoidrive.carapp.ReadoutController
+import me.hufman.androidautoidrive.carapp.TTSState
+import me.hufman.androidautoidrive.carapp.onPropertyChangedEvent
+import me.hufman.androidautoidrive.carapp.subscriptions
 
 class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, carAppAssets: CarAppResources) {
     val carConnection: BMWRemotingServer

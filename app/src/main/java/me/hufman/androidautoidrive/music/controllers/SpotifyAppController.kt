@@ -13,18 +13,40 @@ import com.google.gson.Gson
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
-import com.spotify.protocol.types.*
-import kotlinx.coroutines.*
-import me.hufman.androidautoidrive.*
+import com.spotify.protocol.types.Image
+import com.spotify.protocol.types.ImageUri
+import com.spotify.protocol.types.ListItem
+import com.spotify.protocol.types.PlayerContext
+import com.spotify.protocol.types.PlayerOptions
+import com.spotify.protocol.types.PlayerRestrictions
+import com.spotify.protocol.types.PlayerState
+import com.spotify.protocol.types.Repeat
+import com.spotify.protocol.types.Track
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.MutableAppSettings
+import me.hufman.androidautoidrive.MutableAppSettingsReceiver
+import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.Observable
+import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.L
-import me.hufman.androidautoidrive.music.*
+import me.hufman.androidautoidrive.music.CustomAction
+import me.hufman.androidautoidrive.music.MusicAction
+import me.hufman.androidautoidrive.music.MusicAppDiscovery
+import me.hufman.androidautoidrive.music.MusicAppInfo
+import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.PlaybackPosition
+import me.hufman.androidautoidrive.music.QueueMetadata
+import me.hufman.androidautoidrive.music.RepeatMode
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.spotify.TemporaryPlaylistState
 import me.hufman.androidautoidrive.utils.Utils
-import java.util.*
+import java.util.LinkedList
 
 class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val webApi: SpotifyWebApi, val appSettings: MutableAppSettings, val isProbing: Boolean) : MusicAppController {
     companion object {

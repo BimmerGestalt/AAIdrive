@@ -13,7 +13,7 @@ import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.liveData
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
-import java.util.*
+import java.util.Locale
 
 class NavigationStatusModel(val carInformation: CarInformation) : ViewModel() {
     class Factory(val appContext: Context) : ViewModelProvider.Factory {

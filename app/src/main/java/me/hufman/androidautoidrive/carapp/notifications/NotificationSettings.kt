@@ -4,7 +4,7 @@ import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsObserver
 import me.hufman.androidautoidrive.StoredList
 import me.hufman.androidautoidrive.connections.BtStatus
-import java.util.*
+import java.util.Locale
 
 class NotificationSettings(val capabilities: Map<String, String?>, val btStatus: BtStatus, val appSettings: MutableAppSettingsObserver) {
     var callback

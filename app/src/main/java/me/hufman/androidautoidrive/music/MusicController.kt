@@ -4,15 +4,19 @@ import android.content.Context
 import android.os.DeadObjectException
 import android.os.Handler
 import android.util.Log
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.android.asCoroutineDispatcher
+import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import java.lang.Runnable
-import java.util.*
+import java.util.LinkedList
 import kotlin.coroutines.CoroutineContext
 
 class MusicController(val context: Context, val handler: Handler) : CoroutineScope {

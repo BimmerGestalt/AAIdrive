@@ -12,7 +12,7 @@ import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
-import java.util.*
+import java.util.LinkedList
 
 data class BrowseState(
     val location: MusicMetadata?, // the directory the user selected

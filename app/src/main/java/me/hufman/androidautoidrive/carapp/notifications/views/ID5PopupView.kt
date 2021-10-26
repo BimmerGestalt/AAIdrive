@@ -1,7 +1,12 @@
 package me.hufman.androidautoidrive.carapp.notifications.views
 
 import android.util.Log
-import io.bimmergestalt.idriveconnectkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.FocusCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIActionCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import io.bimmergestalt.idriveconnectkit.rhmi.mocking.RHMIApplicationMock
 import me.hufman.androidautoidrive.carapp.notifications.TAG
 import me.hufman.androidautoidrive.notifications.CarNotification

@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.R
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 class SupportPageModel : ViewModel() {
     private val _buildInfo = MutableLiveData<Context.() -> String> {

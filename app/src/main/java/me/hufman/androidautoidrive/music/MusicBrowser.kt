@@ -7,13 +7,17 @@ import android.os.Handler
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.util.Log
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.android.asCoroutineDispatcher
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.Observable
 import me.hufman.androidautoidrive.music.controllers.GenericMusicAppController
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
-import java.util.*
+import java.util.LinkedList
 
 class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, val musicAppInfo: MusicAppInfo) {
     companion object {

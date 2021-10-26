@@ -5,7 +5,13 @@ import com.adamratzman.spotify.SpotifyException
 import com.adamratzman.spotify.models.Token
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
-import net.openid.appauth.*
+import net.openid.appauth.AuthState
+import net.openid.appauth.AuthorizationException
+import net.openid.appauth.AuthorizationResponse
+import net.openid.appauth.AuthorizationServiceConfiguration
+import net.openid.appauth.GrantTypeValues
+import net.openid.appauth.TokenRequest
+import net.openid.appauth.TokenResponse
 import org.json.JSONException
 
 /**

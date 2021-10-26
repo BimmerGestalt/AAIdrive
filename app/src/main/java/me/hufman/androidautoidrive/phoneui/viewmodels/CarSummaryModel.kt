@@ -9,7 +9,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.BooleanLiveSetting
+import me.hufman.androidautoidrive.CarInformation
+import me.hufman.androidautoidrive.CarInformationObserver
+import me.hufman.androidautoidrive.ChassisCode
+import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 
 class CarSummaryModel(carInfoOverride: CarInformation? = null, val showAdvancedSettings: BooleanLiveSetting) : ViewModel() {

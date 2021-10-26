@@ -12,7 +12,11 @@ import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.view.View
-import android.widget.*
+import android.widget.Adapter
+import android.widget.AdapterView
+import android.widget.ImageView
+import android.widget.Spinner
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
@@ -20,7 +24,7 @@ import com.google.android.material.animation.ArgbEvaluatorCompat
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 import me.hufman.androidautoidrive.phoneui.getThemeColor
 import me.hufman.androidautoidrive.utils.Utils.getIconMask
-import java.util.*
+import java.util.WeakHashMap
 import kotlin.math.max
 
 @BindingAdapter("android:src")

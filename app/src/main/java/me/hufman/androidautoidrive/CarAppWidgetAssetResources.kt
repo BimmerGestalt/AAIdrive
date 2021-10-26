@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive
 import android.content.Context
 import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import java.io.InputStream
-import java.util.*
+import java.util.Locale
 
 class CarAppWidgetAssetResources(context: Context, name: String) : CarAppAssetResources(context, name) {
     // BMWOne has a widgets DB to upload

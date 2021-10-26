@@ -2,15 +2,23 @@ package me.hufman.androidautoidrive.carapp.music.views
 
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import io.bimmergestalt.idriveconnectkit.rhmi.*
-import kotlinx.coroutines.*
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIActionListCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
+import io.bimmergestalt.idriveconnectkit.rhmi.RequestDataCallback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.truncate
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.max

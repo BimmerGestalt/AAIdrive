@@ -1,6 +1,10 @@
 package me.hufman.androidautoidrive
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,7 +21,11 @@ import io.bimmergestalt.idriveconnectkit.android.CarAPIAppInfo
 import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
-import me.hufman.androidautoidrive.carapp.*
+import me.hufman.androidautoidrive.carapp.CDSConnection
+import me.hufman.androidautoidrive.carapp.CDSConnectionAsync
+import me.hufman.androidautoidrive.carapp.CDSEventHandler
+import me.hufman.androidautoidrive.carapp.CDSVehicleLanguage
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
 import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
@@ -26,7 +34,7 @@ import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.phoneui.DonationRequest
 import me.hufman.androidautoidrive.phoneui.NavHostActivity
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
-import java.util.*
+import java.util.Locale
 
 class MainService : Service() {
     companion object {

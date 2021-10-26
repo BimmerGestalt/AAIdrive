@@ -3,7 +3,12 @@ package me.hufman.androidautoidrive.carapp.music.views
 import android.util.Log
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import io.bimmergestalt.idriveconnectkit.rhmi.VisibleCallback
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.L
@@ -12,7 +17,7 @@ import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.utils.awaitPending
-import java.util.*
+import java.util.LinkedList
 import kotlin.coroutines.CoroutineContext
 
 class SearchInputView(

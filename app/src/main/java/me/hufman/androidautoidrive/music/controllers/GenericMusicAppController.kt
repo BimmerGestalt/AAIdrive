@@ -10,9 +10,15 @@ import android.util.Log
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import kotlinx.coroutines.launch
-import me.hufman.androidautoidrive.music.*
+import me.hufman.androidautoidrive.music.CustomAction
+import me.hufman.androidautoidrive.music.MusicAction
+import me.hufman.androidautoidrive.music.MusicBrowser
+import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.music.PlaybackPosition
+import me.hufman.androidautoidrive.music.QueueMetadata
+import me.hufman.androidautoidrive.music.RepeatMode
 import me.hufman.androidautoidrive.utils.CachedData
-import java.util.*
+import java.util.LinkedList
 
 /**
  * Wraps a MediaController with a handy interface

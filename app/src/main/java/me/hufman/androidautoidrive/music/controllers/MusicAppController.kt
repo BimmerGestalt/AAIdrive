@@ -1,7 +1,13 @@
 package me.hufman.androidautoidrive.music.controllers
 
 import me.hufman.androidautoidrive.Observable
-import me.hufman.androidautoidrive.music.*
+import me.hufman.androidautoidrive.music.CustomAction
+import me.hufman.androidautoidrive.music.MusicAction
+import me.hufman.androidautoidrive.music.MusicAppInfo
+import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.music.PlaybackPosition
+import me.hufman.androidautoidrive.music.QueueMetadata
+import me.hufman.androidautoidrive.music.RepeatMode
 
 interface MusicAppController {
     interface Connector {

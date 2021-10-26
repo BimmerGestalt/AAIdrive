@@ -11,7 +11,9 @@ import me.hufman.androidautoidrive.carapp.CDSData
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.carapp.CDSEventHandler
 import me.hufman.androidautoidrive.phoneui.viewmodels.CarDrivingStatsModel
-import java.util.*
+import java.util.Collections
+import java.util.Locale
+import java.util.WeakHashMap
 
 open class CarInformation {
     companion object {

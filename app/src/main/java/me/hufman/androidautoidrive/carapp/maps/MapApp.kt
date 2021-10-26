@@ -12,13 +12,18 @@ import io.bimmergestalt.idriveconnectkit.Utils.rhmi_setResourceCached
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
-import io.bimmergestalt.idriveconnectkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplication
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationEtch
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationIdempotent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationSynchronized
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import me.hufman.androidautoidrive.carapp.FullImageInteraction
 import me.hufman.androidautoidrive.carapp.FullImageView
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.maps.views.MenuView
 import me.hufman.androidautoidrive.utils.removeFirst
-import java.util.*
+import java.util.LinkedList
 import kotlin.collections.ArrayList
 
 const val TAG = "MapView"

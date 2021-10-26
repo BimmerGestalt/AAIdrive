@@ -12,7 +12,7 @@ import io.bimmergestalt.idriveconnectkit.CDSProperty
 import me.hufman.androidautoidrive.carapp.CDSData
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.carapp.CDSEventHandler
-import java.util.*
+import java.util.EnumMap
 
 class CDSContentProvider : ContentProvider(), CDSEventHandler {
     companion object {

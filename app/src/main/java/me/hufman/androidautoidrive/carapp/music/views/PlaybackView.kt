@@ -2,7 +2,14 @@ package me.hufman.androidautoidrive.carapp.music.views
 
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.Utils.etchAsInt
-import io.bimmergestalt.idriveconnectkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.FocusCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIActionButtonCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIActionCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIActionListCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.L
@@ -15,7 +22,11 @@ import me.hufman.androidautoidrive.carapp.music.components.PlaylistItem
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGauge
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeAudioState
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeToolbarState
-import me.hufman.androidautoidrive.music.*
+import me.hufman.androidautoidrive.music.MusicAction
+import me.hufman.androidautoidrive.music.MusicAppInfo
+import me.hufman.androidautoidrive.music.MusicController
+import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.music.RepeatMode
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.TimeUtils.formatTime
 import me.hufman.androidautoidrive.utils.Utils

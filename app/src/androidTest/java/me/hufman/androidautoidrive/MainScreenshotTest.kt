@@ -25,7 +25,10 @@ import me.hufman.androidautoidrive.phoneui.NavHostActivity
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundViewHolder
 import me.hufman.androidautoidrive.phoneui.controllers.MusicAppListController
 import me.hufman.androidautoidrive.phoneui.viewmodels.TipsModel
-import org.junit.*
+import org.junit.Before
+import org.junit.BeforeClass
+import org.junit.Rule
+import org.junit.Test
 
 class MainScreenshotTest {
     companion object {

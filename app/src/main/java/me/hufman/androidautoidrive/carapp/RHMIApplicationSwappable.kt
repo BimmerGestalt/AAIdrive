@@ -1,7 +1,12 @@
 package me.hufman.androidautoidrive.carapp
 
 import android.util.SparseArray
-import io.bimmergestalt.idriveconnectkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplication
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import me.hufman.androidautoidrive.utils.forEach
 import me.hufman.androidautoidrive.utils.set
 import me.hufman.androidautoidrive.utils.setDefault

@@ -1,7 +1,12 @@
 package me.hufman.androidautoidrive.carapp.maps.views
 
 import android.util.Log
-import io.bimmergestalt.idriveconnectkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.FocusCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIActionListCallback
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.maps.FrameUpdater
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController

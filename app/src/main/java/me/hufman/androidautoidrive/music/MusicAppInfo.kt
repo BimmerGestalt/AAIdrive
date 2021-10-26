@@ -7,7 +7,6 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.AMAppInfo
 import me.hufman.androidautoidrive.carapp.AMAppInfo.Companion.getAppWeight
 import me.hufman.androidautoidrive.carapp.AMCategory
-import java.util.*
 
 data class MusicAppInfo(
     override val name: String,

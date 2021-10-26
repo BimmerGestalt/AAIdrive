@@ -5,7 +5,11 @@ import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -14,7 +18,7 @@ import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.ChassisCode
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.connections.CarConnectionDebugging
-import java.util.*
+import java.util.Locale
 
 class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo: CarInformation) : ViewModel() {
     class Factory(val appContext: Context) : ViewModelProvider.Factory {

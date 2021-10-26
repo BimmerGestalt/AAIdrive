@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive.carapp.notifications
 
 import androidx.annotation.VisibleForTesting
 import me.hufman.androidautoidrive.notifications.CarNotification
-import java.util.*
+import java.util.Collections
 
 class PopupHistory(val maxSize: Int = POPPED_HISTORY_SIZE) {
     companion object {
