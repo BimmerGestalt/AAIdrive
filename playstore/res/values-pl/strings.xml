@@ -1,2 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="playstore_tagline">Dodaj funkcje Android Auto do BMW i Mini IDrive NBT</string>
+    <string name="playstore_desc_title">Odblokuj pełen potencjał samochodu z BMW Connected Apps, aby zwiększyć swoje doświadczenie w prowadzeniu pojazdów!</string>
+    <string name="playstore_desc_features_heading">W połączeniu z aktywną subskrypcją BMW ConnectedDrive lub opcją Mini Connected ten projekt dodaje większość funkcjonalności Android Auto do twojego samochodu jako nieoficjalna aplikacja BMW/Mini Connected Apps:</string>
+    <string name="playstore_desc_features_music">Zobacz aplikacje muzyczne z telefonu jako źródła mediów w IDrive</string>
+    <string name="playstore_desc_features_assistants">Współpracuj z asystentami głosowymi zainstalowanymi na telefonie</string>
+    <string name="playstore_desc_features_notifications">Przeglądaj, słuchaj (TTS) i odpowiadaj na powiadomieniami za pomocą panelu powiadomień w samochodzie</string>
+    <string name="playstore_desc_features_carnav">Wyzwalaj nawigację samochodową z aplikacji na telefone</string>
+    <string name="playstore_desc_features_carinfo">Odczytaj różne informacje diagnostyczne i statystyki z samochodu</string>
+    <string name="playstore_desc_features_addons_mirroring">Rozszerz możliwości o opcjonalne dodatki (takie jak screen mirroring)</string>
+    <string name="playstore_desc_features_custommap_soon">Niestandardowa implementacja mapy wkrótce</string>
+    <string name="playstore_desc_nativeapps_protocol">Używając natywnego protokołu aplikacji BMW, dokładnie tak jak stara aplikacja Spotify, ta aplikacja nie modyfikuje Twojego samochodu w żaden sposób i wszystkie rozszerzone możliwości są dostarczane tylko wtedy, gdy Twój telefon jest podłączony.</string>
+    <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps wymaga, aby aplikacja MyBMW lub MINI dla twojego samochodu była zainstalowana i aby zostało włączone wsparcie aplikacji IDrive5+ w ustawieniach połączonego telefonu w samochodzie, albo Twój samochód z IDrive4 ma opcję ConnectedDrive Connection Assistant.</string>
+    <string name="playstore_desc_depends_bmw_subscription">Zazwyczaj wymaga to aktywnej subskrypcji BMW ConnectedDrive, która jest aktywna przez kilka lat po zakupieniu nowego samochodu.</string>
+</resources>
