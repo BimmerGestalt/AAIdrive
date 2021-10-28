@@ -1,1 +1,4 @@
 /build
+
+# copied during build from values-he
+src/main/res/values-iw

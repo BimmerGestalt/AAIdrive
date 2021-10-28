@@ -23,6 +23,8 @@ apply from: 'buildtools/external.gradle'
 
 apply from: 'buildtools/screenshots.gradle'
 
+apply from: 'buildtools/preprocess_resources.gradle'
+
 def GITHUB_BRANCH = System.env.GITHUB_REF?.replaceFirst("^refs/.*/", "")
 
 def isRunningOnCI = System.getenv("CI") == "true"
