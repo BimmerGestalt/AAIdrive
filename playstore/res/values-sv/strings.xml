@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="playstore_tagline">Lägg till Android \"Autofunktioner\" till din BMW och Mini \"IDrive\" NBT instrumentpanel</string>
+    <string name="playstore_tagline">Lägg till Android \"Autofunktioner\" till din BMW och Mini \"IDrive\" NBT</string>
     <string name="playstore_desc_title">Lås upp den fulla potentialen i din BMW Connected App drivna bil för att förbättra din körupplevelse!</string>
     <string name="playstore_desc_features_heading">Kombinerat med ett aktivt BMW ConnectedDrive-abonnemang eller Mini Connected kan det här projektet lägga till de flesta funktioner i Android Auto till din bil som inofficiella BMW/Mini Connected Apps:</string>
     <string name="playstore_desc_features_music">Se musikappar på din telefon som mediakällor i IDrive</string>
