@@ -18,6 +18,9 @@ import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
+import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
+import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive
+import me.hufman.androidautoidrive.utils.GsonNullable.tryAsString
 import me.hufman.androidautoidrive.utils.Utils.loadZipfile
 import me.hufman.androidautoidrive.utils.removeFirst
 
@@ -36,6 +39,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 
 	val globalMetadata: GlobalMetadata
 	var hmiContextChangedTime = 0L
+	var hmiContextMenuTitle = ""
 	val playbackId5View: PlaybackView?
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
@@ -97,9 +101,13 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 
 			// listen for HMI Context events
 			cdsData.setConnection(CDSConnectionEtch(carConnection))
-			cdsData.subscriptions.defaultIntervalLimit = 50
+			cdsData.subscriptions.defaultIntervalLimit = 300
 			cdsData.subscriptions[CDS.HMI.GRAPHICALCONTEXT] = {
-				hmiContextChangedTime = System.currentTimeMillis()
+				val title = it.tryAsJsonObject("graphicalContext")?.tryAsJsonPrimitive("menuTitle")?.tryAsString ?: ""
+				if (title != hmiContextMenuTitle) {
+					hmiContextChangedTime = System.currentTimeMillis()
+					hmiContextMenuTitle = title
+				}
 			}
 		}
 
@@ -332,7 +340,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 						// when the Media button is pressed, it shows the Media/Radio window for a short time
 						// and then selects the Entrybutton
 						val contextChangeDelay = System.currentTimeMillis() - hmiContextChangedTime
-						if (musicAppMode.shouldId5Playback() && (contextChangeDelay > 1500 || bookmarkButton)) {
+						if (musicAppMode.supportsId5Playback() && (contextChangeDelay > 1500 || bookmarkButton)) {
 							// there's no spotify AM icon for the user to push
 							// so handle this spotify icon push
 							// but only if the user has dwelled on a screen for a second
