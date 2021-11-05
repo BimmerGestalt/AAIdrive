@@ -11,6 +11,8 @@ AAIdrive
 [![Buy Me A Coffee](https://img.shields.io/badge/support-buymeacoffee-5f7fff)](https://www.buymeacoffee.com/q4JVoxz)
 ![MIT Licensed](https://img.shields.io/github/license/BimmerGestalt/AAIdrive)
 
+<a href="https://play.google.com/store/apps/details?id=me.hufman.androidautoidrive"><img height="60" alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"/></a>
+
 The BMW/Mini IDrive NBT does not offer native Android Auto integration, but does provide a very powerful Connected Apps convergence option with tight integration points into the car. This project is an effort to implement most of the features of Android Auto as unofficial BMW/Mini Connected Apps.
 
 By relying on the Connected Apps technology, this app greatly extends the functionality of the car without any modifications or hacks. Any MY2014 or newer BMW or Mini equipped with NBT or NBT Evo and the "BMW Apps (6NR)" feature, an active [BMW ConnectedDrive subscription](https://bimmergestalt.github.io/AAIdrive/images/bmw-connected-subscription.png), or the "Mini Connected (SA6NM)" option should be compatible.
@@ -29,13 +31,10 @@ Getting Started
 
 This app requires that the MyBMW or MINI app for your car is installed and that it can successfully enable your ID5 car's [Apps checkbox](app/src/main/res/drawable/pic_btapp_bmw.jpg), or if your ID4 car has the [Connection Assistant option](app/src/main/res/drawable/pic_connassistant_bmw.jpg).
 
-Download the APK of the latest stable release from the [Releases page](https://github.com/BimmerGestalt/AAIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. After starting, the app should detect the MyBMW app and start waiting for the car connection.
+Download the APK of the latest stable release from the [Releases page](https://github.com/BimmerGestalt/AAIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. It is also available on the [Google Play Store](https://play.google.com/store/apps/details?id=me.hufman.androidautoidrive). After starting, the app should detect the MyBMW app and start waiting for the car connection.
 
 Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-nomap-sentry-release.apk) to automatically report crashes.
 The [nonalytics](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-nomap-nonalytics-release.apk) build is available too.
-Some of the new features since version 1.3 include:
-  - Initial support for addon apps, check out [IDriveConnectAddons](https://github.com/BimmerGestalt/IDriveConnectAddons) for more information
-  - Workarounds for skipping tracks in the Spotify Liked Songs and Artists playlists
 
 Check out the [FAQ](https://bimmergestalt.github.io/AAIdrive/faq.html) if you run into problems.
 
