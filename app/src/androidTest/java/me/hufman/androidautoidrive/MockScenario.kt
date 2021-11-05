@@ -23,7 +23,9 @@ infix fun <T> OngoingStubbing<LiveData<Context.() -> T>>.doReturnContexted(value
 
 class MockScenario(context: Context) {
 	val connectionDebugging = mock<CarConnectionDebugging> {
-		on {isBMWConnectedInstalled} doReturn true
+		on {isBMWConnectedInstalled} doReturn false
+		on {isBMWMineInstalled} doReturn true
+		on {isBMWInstalled} doReturn true
 		on {isConnectedSecurityInstalled} doReturn true
 		on {isConnectedSecurityConnected} doReturn true
 		on {isBCLConnected} doReturn true
