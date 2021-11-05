@@ -32,21 +32,21 @@ class ConnectionTipsModel(val connection: CarConnectionDebugging): TipsModel() {
 
 	val TIPS = listOf(
 		ConnectionTip({getString(R.string.tip_usb_chargingmode)}, {ContextCompat.getDrawable(this, R.drawable.tip_phone_chargemode)}) {
-			!isUsbAccessoryConnected
+			isUsbConnected && !isUsbAccessoryConnected
 		},
 		ConnectionTip({getString(R.string.tip_connassistant)}, {ContextCompat.getDrawable(this, R.drawable.tip_connassistant_bmw)}) {
-			isBMWConnectedInstalled
+			isBMWInstalled
 		},
 		ConnectionTip({getString(R.string.tip_connassistant)}, {ContextCompat.getDrawable(this, R.drawable.tip_connassistant_mini)}) {
-			isMiniConnectedInstalled
+			isMiniInstalled
 		},
 		ConnectionTip({getString(R.string.tip_btapp)}, {ContextCompat.getDrawable(this, R.drawable.tip_btapp_bmw)}) {
 			val btApps = !isBTConnected || (isBTConnected && !isSPPAvailable)
-			(isBMWConnectedInstalled || isBMWMineInstalled) && btApps
+			isBMWInstalled && btApps
 		},
 		ConnectionTip({getString(R.string.tip_btapp)}, {ContextCompat.getDrawable(this, R.drawable.tip_btapp_mini)}) {
 			val btApps = !isBTConnected || (isBTConnected && !isSPPAvailable)
-			(isMiniConnectedInstalled || isMiniMineInstalled) && btApps
+			isMiniInstalled && btApps
 		},
 		ConnectionTip({getString(R.string.tip_batterymode_mybmw)}, {ContextCompat.getDrawable(this, R.drawable.tip_batterymode_mybmw)}) {
 			isBMWMineInstalled

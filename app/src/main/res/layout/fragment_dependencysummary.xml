@@ -246,16 +246,16 @@
 
             <Button
                 android:visibility="@{!viewModel.isBmwInstalled()}"
-                android:onClick="@{() -> controller.installBMWConnected()}"
+                android:onClick="@{() -> controller.installBMWMine()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/btn_install_bmw"/>
+                android:text="@string/btn_install_bmwmine"/>
             <Button
                 android:visibility="@{!viewModel.isMiniInstalled()}"
-                android:onClick="@{() -> controller.installMiniConnected()}"
+                android:onClick="@{() -> controller.installMiniMine()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/btn_install_mini"/>
+                android:text="@string/btn_install_minimine"/>
         </LinearLayout>
 
         <!-- Security Service -->
