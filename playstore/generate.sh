@@ -4,8 +4,8 @@ cd "$(dirname "$(realpath "$0")")"
 
 function lang_line {
     name="$1"
-    grep -F '<string name="'"$name"'">' "$lang_dir"/strings.xml | sed -e 's/\s*<[^>]*>\s*//g' | head -n 1 |
-    sed -e 's/\\"/"/g' -e 's/&amp;/\&/g'
+    grep -F '<string name="'"$name"'"' "$lang_dir"/strings.xml | sed -e 's/\s*<[^>]*>\s*//g' | head -n 1 |
+    sed -e 's/\\"/"/g' -e 's/&amp;/\&/g' -e "s/\\\\'/'/g"
 }
 
 for lang_dir in res/values*; do
