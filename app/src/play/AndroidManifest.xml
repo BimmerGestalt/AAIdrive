@@ -8,7 +8,7 @@
 	
 	<!-- Google Play doesn't allow QUERY_ALL_PACKAGES -->
 	<!-- https://support.google.com/googleplay/android-developer/answer/10158779?hl=en -->
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:node="remove" />
 
     <application>
     </application>
