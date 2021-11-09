@@ -11,6 +11,9 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <!-- Open Assistant while the screen is off in new phones -->
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <!-- Retrieve package information (app icon, etc.) from all apps -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
     <!-- View Bluetooth status -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <!-- But don't require Bluetooth support -->
