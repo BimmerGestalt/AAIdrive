@@ -5,6 +5,10 @@
 
     <!-- Google Play doesn't allow READ_SMS -->
     <uses-permission android:name="android.permission.READ_SMS" tools:node="remove" />
+	
+	<!-- Google Play doesn't allow QUERY_ALL_PACKAGES -->
+	<!-- https://support.google.com/googleplay/android-developer/answer/10158779?hl=en -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
 
     <application>
     </application>
