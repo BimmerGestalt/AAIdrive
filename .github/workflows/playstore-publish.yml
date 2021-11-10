@@ -105,5 +105,5 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SECRET }}
           packageName: me.hufman.androidautoidrive
           releaseFiles: "bundle/*/*.aab"
-          track: internal
+          track: beta
           whatsNewDirectory: whats_new
