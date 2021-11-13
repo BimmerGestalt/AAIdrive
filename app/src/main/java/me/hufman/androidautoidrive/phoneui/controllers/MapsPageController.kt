@@ -7,8 +7,8 @@ class MapsPageController(val mapSettingsModel: MapSettingsModel,
                          val permissionsModel: PermissionsModel,
                          val permissionsController: PermissionsController) {
 
-	fun onChangedSwitchGMaps(isChecked: Boolean) {
-		mapSettingsModel.mapEnabled.setValue(isChecked)
+	fun onChangedPhoneGps(isChecked: Boolean) {
+		mapSettingsModel.mapPhoneGps.setValue(isChecked)
 		if (isChecked) {
 			// make sure we have permissions to show current location
 			if (permissionsModel.hasLocationPermission.value != true) {

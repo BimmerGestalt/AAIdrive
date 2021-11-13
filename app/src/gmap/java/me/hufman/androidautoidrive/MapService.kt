@@ -10,6 +10,7 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import me.hufman.androidautoidrive.carapp.maps.*
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import java.lang.Exception
 
 class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val mapAppMode: MapAppMode) {
@@ -22,19 +23,20 @@ class MapService(val context: Context, val iDriveConnectionStatus: IDriveConnect
 	var running = false
 
 	fun start(): Boolean {
-		if (AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean() &&
-				ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-				== PackageManager.PERMISSION_GRANTED) {
+		if (AppSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()) {
 			running = true
 			synchronized(this) {
 				if (threadGMaps?.isAlive != true) {
 					threadGMaps = CarThread("GMaps") {
 						Log.i(MainService.TAG, "Starting GMaps")
+						val cdsData = CDSDataProvider()
+						cdsData.setConnection(CarInformation.cdsData.asConnection(cdsData))
+						val carLocationProvider = CarLocationProvider(cdsData)
 						val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.fullDimensions.visibleWidth, mapAppMode.fullDimensions.visibleHeight)
 						this.mapScreenCapture = mapScreenCapture
 						val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(context, mapScreenCapture.imageCapture, 250)
 						this.virtualDisplay = virtualDisplay
-						val mapController = GMapsController(context, MapResultsSender(context), virtualDisplay, MutableAppSettingsReceiver(context, null /* specifically main thread */))
+						val mapController = GMapsController(context, carLocationProvider, MapResultsSender(context), virtualDisplay, MutableAppSettingsReceiver(context, null /* specifically main thread */))
 						this.mapController = mapController
 						val mapListener = MapsInteractionControllerListener(context, mapController)
 						mapListener.onCreate()

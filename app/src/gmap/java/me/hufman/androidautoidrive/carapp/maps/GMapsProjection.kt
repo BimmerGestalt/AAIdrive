@@ -1,9 +1,8 @@
 package me.hufman.androidautoidrive.carapp.maps
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Presentation
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Point
 import android.os.Bundle
 import androidx.core.content.ContextCompat
@@ -20,12 +19,11 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.utils.TimeUtils
 import java.util.*
 
-class GMapsProjection(val parentContext: Context, display: Display, val appSettings: AppSettingsObserver): Presentation(parentContext, display) {
+class GMapsProjection(val parentContext: Context, display: Display, val appSettings: AppSettingsObserver, val locationSource: GMapLocationSource): Presentation(parentContext, display) {
 	val TAG = "GMapsProjection"
 	var map: GoogleMap? = null
 	var mapListener: Runnable? = null
 	var currentStyleId: Int? = null
-	var location: LatLng? = null
 
 	val fullDimensions = display.run {
 		val dimension = Point()
@@ -36,6 +34,7 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 		appSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()
 	}
 
+	@SuppressLint("MissingPermission")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
@@ -50,11 +49,10 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 			// load initial theme settings for the map, location might not be loaded yet though
 			applySettings()
 
-			map.isIndoorEnabled = false
+			map.setLocationSource(locationSource)
+			map.isMyLocationEnabled = true
 
-			if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-				map.isMyLocationEnabled = true
-			}
+			map.isIndoorEnabled = false
 
 			with (map.uiSettings) {
 				isCompassEnabled = true
@@ -84,7 +82,7 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 
 		val style = appSettings[AppSettings.KEYS.GMAPS_STYLE].lowercase(Locale.ROOT)
 
-		val location = this.location
+		val location = this.locationSource.location
 		val mapstyleId = when(style) {
 			"auto" -> if (location == null || TimeUtils.getDayMode(LatLong(location.latitude, location.longitude))) null else R.raw.gmaps_style_night
 			"hybrid" -> null

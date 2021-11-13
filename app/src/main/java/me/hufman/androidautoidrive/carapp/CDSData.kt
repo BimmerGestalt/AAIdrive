@@ -208,6 +208,7 @@ val CDSData.subscriptions: CDSSubscriptions
 interface CDSSubscriptions {
 	var defaultIntervalLimit: Int
 	operator fun set(property: CDSProperty, subscription: ((JsonObject) -> Unit)?)
+	operator fun get(property: CDSProperty): ((JsonObject) -> Unit)?
 	fun addSubscription(property: CDSProperty, intervalLimit: Int = defaultIntervalLimit, subscription: (JsonObject) -> Unit)
 	fun removeSubscription(property: CDSProperty)
 }
@@ -225,6 +226,10 @@ class CDSSubscriptionsManager(private val cdsData: CDSData): CDSEventHandler, CD
 		} else {
 			removeSubscription(property)
 		}
+	}
+
+	override fun get(property: CDSProperty): ((JsonObject) -> Unit)? {
+		return _subscriptions[property]
 	}
 
 	override fun addSubscription(property: CDSProperty, intervalLimit: Int, subscription: (value: JsonObject) -> Unit) {

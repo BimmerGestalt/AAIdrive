@@ -26,21 +26,4 @@ class MapsPageFragment: Fragment() {
 		binding.controller = mapsPageController
 		return binding.root
 	}
-
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-
-		// clear the checkbox if we don't yet have location permission
-		permissionsModel.hasLocationPermission.observe(viewLifecycleOwner) {
-			if (!it) {
-				mapSettingsModel.mapEnabled.setValue(false)
-			}
-		}
-	}
-
-	override fun onResume() {
-		super.onResume()
-		// update the model, used in the controller to know to show the prompt
-		permissionsModel.update()
-	}
 }

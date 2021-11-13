@@ -2,15 +2,13 @@ package me.hufman.androidautoidrive
 
 import android.content.Context
 import android.content.IntentFilter
+import android.location.Location
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.internal.runner.junit4.statement.UiThreadStatement.runOnUiThread
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.anyArray
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.carapp.maps.*
 import org.awaitility.Awaitility.await
 import org.junit.Assert.assertEquals
@@ -21,6 +19,8 @@ import org.mockito.ArgumentCaptor
 
 @RunWith(AndroidJUnit4::class)
 class InstrumentedTestGMaps {
+	val locationProvider = mock<CarLocationProvider> {
+	}
 	val interactionReceiver = mock<MapInteractionController> {
 	}
 
@@ -72,7 +72,7 @@ class InstrumentedTestGMaps {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 		val imageCapture = VirtualDisplayScreenCapture.build(1000, 400)
 		val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(getContext(), imageCapture.imageCapture)
-		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay, MutableAppSettingsReceiver(appContext))
+		val mapController = GMapsController(appContext, locationProvider, mockResultsReceiver, virtualDisplay, MutableAppSettingsReceiver(appContext))
 		mapController.searchLocations("test", LatLngBounds(LatLng(37.333, -122.416), LatLng(37.783, -121.9)))
 		await().untilAsserted { verify(mockResultsReceiver).onSearchResults(anyArray()) }
 
@@ -87,13 +87,16 @@ class InstrumentedTestGMaps {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 		val imageCapture = VirtualDisplayScreenCapture.build(1000, 400)
 		val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(getContext(), imageCapture.imageCapture)
-		val mapController = GMapsController(appContext, mockResultsReceiver, virtualDisplay, MutableAppSettingsReceiver(appContext))
+		val mapController = GMapsController(appContext, locationProvider, mockResultsReceiver, virtualDisplay, MutableAppSettingsReceiver(appContext))
 		runOnUiThread {
 			mapController.showMap()
 		}
 		await().until { mapController.projection?.map != null }
 		runOnUiThread {
-			mapController.currentLocation = LatLng(37.389444, -122.081944)
+			mapController.currentLocation = mock<Location> {
+				on { latitude } doReturn 37.389444
+				on { longitude } doReturn -122.081944
+			}
 			mapController.navigateTo(LatLong(37.429167, -122.138056))
 		}
 		await().until { mapController.currentNavRoute != null }

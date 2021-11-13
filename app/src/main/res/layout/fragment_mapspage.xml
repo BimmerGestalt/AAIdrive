@@ -31,8 +31,7 @@
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swMapsEnabled"
-                android:checked="@{settings.mapEnabled}"
-                android:onCheckedChanged="@{(button, checked) -> controller.onChangedSwitchGMaps(checked)}"
+                android:checked="@={settings.mapEnabled}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"

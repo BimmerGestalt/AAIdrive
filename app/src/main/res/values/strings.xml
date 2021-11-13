@@ -81,6 +81,7 @@
 
     <string name="lbl_mapspage">A basic Google Maps screen can be displayed in the car</string>
     <string name="enable_google_maps">Enable Google Maps</string>
+    <string name="lbl_map_phone_gps">Use Phone GPS instead of Car GPS</string>
     <string name="lbl_widescreen_map">Widescreen Map</string>
     <string name="lbl_map_invert_zoom">Invert zoom direction</string>
     <string name="lbl_map_tilt">Tilt map</string>

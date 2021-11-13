@@ -6,7 +6,6 @@ import android.content.Intent
 import java.io.Serializable
 
 
-data class LatLong(val latitude: Double, val longitude: Double): Serializable
 data class MapResult(val id: String, val name: String,
                 val address: String? = null,
                 val location: LatLong? = null): Serializable {
