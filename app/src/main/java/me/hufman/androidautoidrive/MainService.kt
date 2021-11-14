@@ -2,7 +2,9 @@ package me.hufman.androidautoidrive
 
 import android.app.*
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Handler
@@ -12,20 +14,20 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.bmwgroup.connected.car.app.BrandType
 import io.bimmergestalt.idriveconnectkit.CDS
-import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import io.bimmergestalt.idriveconnectkit.android.CarAPIAppInfo
 import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import me.hufman.androidautoidrive.addons.AddonsService
 import me.hufman.androidautoidrive.carapp.*
-import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
-import me.hufman.androidautoidrive.carapp.assistant.AssistantControllerAndroid
-import me.hufman.androidautoidrive.carapp.maps.MapAppMode
-import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.carapp.assistant.AssistantAppService
+import me.hufman.androidautoidrive.carapp.carinfo.CarInformationDiscoveryService
+import me.hufman.androidautoidrive.carapp.maps.MapAppService
+import me.hufman.androidautoidrive.carapp.music.MusicAppService
+import me.hufman.androidautoidrive.carapp.notifications.NotificationAppService
 import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.phoneui.DonationRequest
 import me.hufman.androidautoidrive.phoneui.NavHostActivity
-import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
 import java.util.*
 
 class MainService: Service() {
@@ -56,16 +58,9 @@ class MainService: Service() {
 	val carInformationObserver = CarInformationObserver()
 	val carInformationUpdater by lazy { CarInformationUpdater(appSettings) }
 	val cdsObserver = CDSEventHandler { _, _ -> combinedCallback() }
-	var threadCapabilities: CarThread? = null
-	var carappCapabilities: CarInformationDiscovery? = null
 
-	var notificationService: NotificationService? = null
-	var mapService: MapService? = null
-	var musicService: MusicService? = null
+	var moduleServiceBindings = HashMap<Class<out Service>, ServiceConnection>()
 	var addonsService: AddonsService? = null
-
-	var threadAssistant: CarThread? = null
-	var carappAssistant: AssistantApp? = null
 
 	// reschedule a combinedCallback to make sure enough time has passed
 	var connectionTime: Long? = null
@@ -175,7 +170,6 @@ class MainService: Service() {
 		Log.i(TAG, "Starting up service $this")
 		// show the notification, so we can be startForegroundService'd
 		createNotificationChannel()
-		startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
 		// try connecting to the security service
 		if (!securityServiceThread.isAlive) {
 			securityServiceThread.start()
@@ -260,6 +254,8 @@ class MainService: Service() {
 	}
 
 	fun combinedCallback() {
+		startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
+
 		synchronized(MainService::class.java) {
 			handler.removeCallbacks(shutdownTimeout)
 			if (iDriveConnectionReceiver.isConnected && securityAccess.isConnected()) {
@@ -342,98 +338,92 @@ class MainService: Service() {
 		carInformationUpdater.isConnected = iDriveConnectionReceiver.isConnected && securityAccess.isConnected()
 	}
 
-	fun startCarCapabilities(): Boolean {
+	fun startModuleService(cls: Class<out Service>) {
+		val connectionIntent = Intent(this, cls)
+		connectionIntent.putExtra("EXTRA_BRAND", iDriveConnectionReceiver.brand)
+		connectionIntent.putExtra("EXTRA_HOST", iDriveConnectionReceiver.host)
+		connectionIntent.putExtra("EXTRA_PORT", iDriveConnectionReceiver.port)
+		connectionIntent.putExtra("EXTRA_INSTANCE_ID", iDriveConnectionReceiver.instanceId)
+
 		synchronized(this) {
-			if (threadCapabilities?.isAlive != true) {
-				Log.d(TAG, "Starting CarCapabilities thread")
-				// clear the capabilities to not start dependent services until it's ready
-				threadCapabilities = CarThread("Capabilities") {
-					Log.i(TAG, "Starting to discover car capabilities")
-					val handler = threadCapabilities?.handler!!
-
-					// receiver to receive capabilities and cds properties
-					// wraps the CDSConnection with a Handler async wrapper
-					val carInformationUpdater = object: CarInformationUpdater(appSettings) {
-						override fun onCdsConnection(connection: CDSConnection?) {
-							super.onCdsConnection(connection?.let { CDSConnectionAsync(handler, connection) })
-						}
-					}
-
-					carappCapabilities = CarInformationDiscovery(iDriveConnectionReceiver, securityAccess,
-						CarAppAssetResources(applicationContext, "smartthings"), carInformationUpdater)
-					carappCapabilities?.onCreate()
-				}
-				threadCapabilities?.start()
+			if (!moduleServiceBindings.containsKey(cls)) {
+				val serviceConnection = ModuleServiceConnection(cls.simpleName)
+				bindService(connectionIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+				moduleServiceBindings[cls] = serviceConnection
+			} else {
+				startService(connectionIntent)
 			}
 		}
+	}
+
+	fun stopModuleService(cls: Class<out Service>) {
+		val connectionIntent = Intent(this, cls)
+		connectionIntent.putExtra("EXTRA_BRAND", iDriveConnectionReceiver.brand)
+		connectionIntent.putExtra("EXTRA_HOST", iDriveConnectionReceiver.host)
+		connectionIntent.putExtra("EXTRA_PORT", iDriveConnectionReceiver.port)
+		connectionIntent.putExtra("EXTRA_INSTANCE_ID", iDriveConnectionReceiver.instanceId)
+
+		synchronized(this) {
+			val connection = moduleServiceBindings.remove(cls)
+			if (connection != null) {
+				unbindService(connection)
+			}
+			stopService(connectionIntent)
+		}
+	}
+
+	fun startCarCapabilities(): Boolean {
+		startModuleService(CarInformationDiscoveryService::class.java)
 		return true
 	}
 
 	fun stopCarCapabilities() {
-		carappCapabilities?.onDestroy()
-		carappCapabilities = null
-		threadCapabilities?.quitSafely()
-		threadCapabilities = null
+		stopModuleService(CarInformationDiscoveryService::class.java)
 	}
 
 	fun startNotifications(): Boolean {
-		if (carInformationObserver.capabilities.isNotEmpty() && notificationService == null) {
-			notificationService = NotificationService(applicationContext, iDriveConnectionReceiver, securityAccess, carInformationObserver)
+		val shouldRun = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
+		if (shouldRun) {
+			startModuleService(NotificationAppService::class.java)
+		} else {
+			stopModuleService(NotificationAppService::class.java)
 		}
-		return notificationService?.start() ?: false
+		return shouldRun
 	}
 
 	fun stopNotifications() {
-		notificationService?.stop()
+		stopModuleService(NotificationAppService::class.java)
 	}
 
 	fun startMaps(): Boolean {
-		if (carInformationObserver.capabilities.isNotEmpty() && mapService == null) {
-			mapService = MapService(applicationContext, iDriveConnectionReceiver, securityAccess,
-					MapAppMode(RHMIDimensions.create(carInformationObserver.capabilities), AppSettingsViewer()))
+		val shouldRun = appSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
+		if (shouldRun) {
+			startModuleService(MapAppService::class.java)
+		} else {
+			stopModuleService(MapAppService::class.java)
 		}
-		return mapService?.start() ?: false
+		return shouldRun
 	}
 
 	fun stopMaps() {
-		mapService?.stop()
+		stopModuleService(MapAppService::class.java)
 	}
 
 	fun startMusic(): Boolean {
-		if (carInformationObserver.capabilities.isNotEmpty() && musicService == null) {
-			musicService = MusicService(applicationContext, iDriveConnectionReceiver, securityAccess,
-					MusicAppMode.build(carInformationObserver.capabilities, applicationContext))
-		}
-		musicService?.start()
+		startModuleService(MusicAppService::class.java)
 		return true
 	}
 	fun stopMusic() {
-		musicService?.stop()
+		stopModuleService(MusicAppService::class.java)
 	}
 
 	fun startAssistant(): Boolean {
-		synchronized(this) {
-			if (threadAssistant == null) {
-				threadAssistant = CarThread("Assistant") {
-					Log.i(TAG, "Starting to discover car capabilities")
-
-					carappAssistant = AssistantApp(iDriveConnectionReceiver, securityAccess,
-						CarAppAssetResources(applicationContext, "basecoreOnlineServices"),
-						AssistantControllerAndroid(applicationContext, PhoneAppResourcesAndroid(applicationContext)),
-						GraphicsHelpersAndroid())
-					carappAssistant?.onCreate()
-				}
-				threadAssistant?.start()
-			}
-		}
+		startModuleService(AssistantAppService::class.java)
 		return true
 	}
 
 	fun stopAssistant() {
-		carappAssistant?.onDestroy()
-		carappAssistant = null
-		threadAssistant?.quitSafely()
-		threadAssistant = null
+		stopModuleService(AssistantAppService::class.java)
 	}
 
 	fun startNavigationListener() {
@@ -482,9 +472,6 @@ class MainService: Service() {
 		stopAssistant()
 		stopNavigationListener()
 		stopAddons()
-
-		// revert notification to Waiting for Connection
-		startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
 	}
 
 	/**
@@ -501,5 +488,24 @@ class MainService: Service() {
 		Log.i(TAG, "Hiding foreground notification")
 		stopForeground(true)
 		foregroundNotification = null
+	}
+
+	/** Receive updates about the connection status */
+	class ModuleServiceConnection(val name: String): ServiceConnection {
+		var connected = false
+			private set
+
+		override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+			Log.i(TAG, "Successful connection to $name module")
+			connected = true
+		}
+		override fun onNullBinding(name: ComponentName?) {
+			Log.i(TAG, "Successful null connection to $name module")
+			connected = true
+		}
+		override fun onServiceDisconnected(name: ComponentName?) {
+			Log.i(TAG, "Disconnected from $name module")
+			connected = false
+		}
 	}
 }

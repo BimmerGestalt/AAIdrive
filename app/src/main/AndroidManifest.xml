@@ -1041,6 +1041,12 @@
             </intent-filter>
         </service>
 
+        <service android:name=".carapp.assistant.AssistantAppService" android:exported="false" />
+        <service android:name=".carapp.carinfo.CarInformationDiscoveryService" android:exported="false" />
+        <service android:name=".carapp.maps.MapAppService" android:exported="false" />
+        <service android:name=".carapp.music.MusicAppService" android:exported="false" />
+        <service android:name=".carapp.notifications.NotificationAppService" android:exported="false" />
+
         <receiver android:name=".CarConnectionListener">
             <intent-filter>
                 <action android:name="com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_ATTACHED" />
