@@ -73,6 +73,7 @@
     <string name="lbl_smsPermission">Erteile Zugriff für SMS-Nachrichten um Bilder von Nachrichten im Fahrzeug zu sehen. Text ist immer sichtbar.</string>
     <string name="lbl_mapspage">Ein grundlegender Google Maps-Bildschirm kann im Auto angezeigt werden</string>
     <string name="enable_google_maps">Google Maps aktivieren</string>
+    <string name="lbl_map_phone_gps">GPS vom Telefon anstelle der GPS Signale des Autos verwenden</string>
     <string name="lbl_widescreen_map">Breitbild (Widescreen) Karte</string>
     <string name="lbl_map_invert_zoom">Zoom-Richtung umkehren</string>
     <string name="lbl_map_tilt">Neigung der Karte</string>
