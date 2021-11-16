@@ -73,6 +73,7 @@
     <string name="lbl_smsPermission">Geef de SMS toegang om afbeeldingen weer te geven van inkomende SMS berichten in de auto. De tekst blijft altijd zichtbaar.</string>
     <string name="lbl_mapspage">Een eenvoudig Google Maps scherm kan worden weergegeven in de auto</string>
     <string name="enable_google_maps">Google Maps inschakelen</string>
+    <string name="lbl_map_phone_gps">Telefoon GPS gebruiken in plaats van auto GPS</string>
     <string name="lbl_widescreen_map">Breedbeeld map</string>
     <string name="lbl_map_invert_zoom">Zoomrichting omkeren</string>
     <string name="lbl_map_tilt">Kaart kantelen</string>
