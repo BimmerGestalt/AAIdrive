@@ -73,6 +73,7 @@
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
     <string name="lbl_mapspage">Una schermata standard di Google Maps può essere visualizzata nell\'auto</string>
     <string name="enable_google_maps">Abilita Google Maps</string>
+    <string name="lbl_map_phone_gps">Usa il GPS del telefono invece di quello dell\'auto</string>
     <string name="lbl_widescreen_map">Mappa a tutto schermo</string>
     <string name="lbl_map_invert_zoom">Inverti direzione zoom</string>
     <string name="lbl_map_tilt">Inclina la mappa</string>

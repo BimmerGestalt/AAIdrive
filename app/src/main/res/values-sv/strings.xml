@@ -73,6 +73,7 @@
     <string name="lbl_smsPermission">Ge behörighet för inkommande SMS att visa bilder i bilen. Texten är däremot alltid synlig.</string>
     <string name="lbl_mapspage">Ett enkelt Google Maps fönster kan visas i bilen</string>
     <string name="enable_google_maps">Aktivera Google Maps</string>
+    <string name="lbl_map_phone_gps">Använd telefonens GPS istället för bilens GPS</string>
     <string name="lbl_widescreen_map">Widescreen karta</string>
     <string name="lbl_map_invert_zoom">Zooma ut</string>
     <string name="lbl_map_tilt">Luta kartvyn</string>

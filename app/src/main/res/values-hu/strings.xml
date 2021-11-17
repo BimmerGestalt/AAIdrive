@@ -69,6 +69,7 @@
     <string name="lbl_smsPermission">Engedélyezés a beérkező SMS üzenetekben lévő képeknek az autóban történő megjelenítésre. A szöveg állandóan látható.</string>
     <string name="lbl_mapspage">Alapvető Google Térkép megjelenítése az autóban</string>
     <string name="enable_google_maps">Google Térkép bekapcsolása</string>
+    <string name="lbl_map_phone_gps">Telefon GPS-ének használata az autó GPS-e helyett</string>
     <string name="lbl_widescreen_map">Szélesképernyős térkép</string>
     <string name="lbl_map_invert_zoom">Nagyítás irányának megfordítása</string>
     <string name="lbl_map_tilt">Térkép döntése</string>

@@ -75,6 +75,7 @@
     <string name="lbl_smsPermission">Доступ к смс и фотографиям. Показывать всегда текст.</string>
     <string name="lbl_mapspage">Базовый экран карт Google может отображаться в автомобиле</string>
     <string name="enable_google_maps">Включить Google Maps</string>
+    <string name="lbl_map_phone_gps">Использовать GPS телефона вместо GPS автомобиля</string>
     <string name="lbl_widescreen_map">Широкоэкранные карты</string>
     <string name="lbl_map_invert_zoom">Инвертировать масштаб</string>
     <string name="lbl_map_tilt">Наклонить карту</string>
