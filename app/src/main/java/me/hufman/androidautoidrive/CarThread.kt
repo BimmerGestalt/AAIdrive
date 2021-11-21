@@ -58,7 +58,9 @@ class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 	}
 
 	fun post(block: () -> Unit) {
-		handler?.post(block)
+		if (handler?.looper?.thread?.isAlive == true) {
+			handler?.post(block)
+		}
 	}
 
 	fun quit() {

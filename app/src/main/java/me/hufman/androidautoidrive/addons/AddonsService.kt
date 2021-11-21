@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive
+package me.hufman.androidautoidrive.addons
 
 import android.content.ComponentName
 import android.content.Context
@@ -8,8 +8,6 @@ import android.os.IBinder
 import android.util.Log
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
-import me.hufman.androidautoidrive.addons.AddonAppInfo
-import me.hufman.androidautoidrive.addons.AddonDiscovery
 
 class AddonsService(val context: Context, val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess) {
 	companion object {

@@ -36,6 +36,10 @@ class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray, val 
 			}
 		}
 		schedule(2000)
+		if (IDriveConnectionStatus.isConnected && carConnection == null) {
+			// weird state, assert that we really have no connection
+			IDriveConnectionStatus.reset()
+		}
 	}
 
 	val KeepaliveTask = Runnable {
