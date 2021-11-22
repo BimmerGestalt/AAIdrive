@@ -6,10 +6,11 @@ import io.bimmergestalt.idriveconnectkit.IDriveConnection
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
 import me.hufman.androidautoidrive.MockBMWRemotingServer
 import me.hufman.androidautoidrive.carapp.calendar.RHMIDateUtils
 import me.hufman.androidautoidrive.carapp.calendar.CalendarApp
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Test
 import java.io.ByteArrayInputStream
 import java.util.*
@@ -35,6 +36,7 @@ class CalendarAppTest {
 		CalendarEvent("Holiday", makeCalendar(2022, 1, 1, 0, 0), makeCalendar(2022, 1, 2, 0, 0), ""),
 	)
 	val calendarProvider = mock<CalendarProvider> {
+		on {hasPermission()} doReturn true
 		on {getEvents(any(), any(), isNull())} doAnswer { inv -> calendarEvents.filter { it.start[Calendar.YEAR] == inv.arguments[0] && it.start[Calendar.MONTH] + 1 == inv.arguments[1] } }
 		on {getEvents(any(), any(), isNotNull())} doAnswer { inv -> calendarEvents.filter { it.start[Calendar.YEAR] == inv.arguments[0] && it.start[Calendar.MONTH] + 1 == inv.arguments[1] && it.start[Calendar.DAY_OF_MONTH] == inv.arguments[2] } }
 	}
@@ -69,6 +71,22 @@ class CalendarAppTest {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider)
+	}
+
+	@Test
+	fun testMonthPermission() {
+		whenever(calendarProvider.hasPermission()) doReturn false
+
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider)
+		app.viewMonth.selectedDate = makeCalendar(2021, 11, 1)
+		// check that the hmi event listener is set
+		IDriveConnection.mockRemotingClient!!.rhmi_onHmiEvent(0, "", app.viewMonth.state.id, 1, mapOf(4.toByte() to true))
+
+		val focusEvent = app.carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
+		assertNotNull(mockServer.triggeredEvents[focusEvent.id])
+		assertEquals(app.viewPermission.state.id, mockServer.triggeredEvents[focusEvent.id]!![0.toByte()])
 	}
 
 	@Test

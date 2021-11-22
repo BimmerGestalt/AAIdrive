@@ -6,16 +6,18 @@ import io.bimmergestalt.idriveconnectkit.rhmi.RHMIActionCallback
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import me.hufman.androidautoidrive.calendar.CalendarProvider
+import me.hufman.androidautoidrive.carapp.FocusTriggerController
 import me.hufman.androidautoidrive.carapp.calendar.RHMIDateUtils
 import java.util.*
 
-class CalendarMonthView(val state: RHMIState, val calendarProvider: CalendarProvider) {
+class CalendarMonthView(val state: RHMIState, val focusTriggerController: FocusTriggerController, val calendarProvider: CalendarProvider) {
 	companion object {
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.CalendarMonthState
 		}
 	}
 
+	var shownPermission = false
 	var selectedDate: Calendar = Calendar.getInstance()
 	val dateModel: RHMIModel.RaIntModel
 	val listModel: RHMIModel.RaListModel
@@ -26,7 +28,7 @@ class CalendarMonthView(val state: RHMIState, val calendarProvider: CalendarProv
 		listModel = state.getHighlightListModel() as RHMIModel.RaListModel
 	}
 
-	fun initWidgets(calendarDayView: CalendarDayView) {
+	fun initWidgets(permissionView: PermissionView, calendarDayView: CalendarDayView) {
 		state as RHMIState.CalendarMonthState
 		state.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionCallback { args ->
 			// user clicked a day
@@ -48,13 +50,21 @@ class CalendarMonthView(val state: RHMIState, val calendarProvider: CalendarProv
 
 		state.focusCallback = FocusCallback { focused ->
 			if (focused) {
-				update()
+				if (!calendarProvider.hasPermission() && !shownPermission) {
+					focusTriggerController.focusState(permissionView.state, false)
+					shownPermission = true
+				} else {
+					update()
+				}
 			}
 		}
 	}
 
 	fun update() {
 		val currentDate = selectedDate
+		if (!calendarProvider.hasPermission()) {
+			return
+		}
 
 		val events = calendarProvider.getEvents(currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH) + 1, null)
 		val highlightedDays = HashSet<Int>()

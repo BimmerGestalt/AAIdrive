@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.calendar
 
 import android.content.Context
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.database.Cursor
 import android.provider.CalendarContract
 import java.util.*
@@ -90,6 +91,9 @@ class CalendarProvider(val context: Context) {
 		}
 	}
 
+	fun hasPermission(): Boolean {
+		return context.checkSelfPermission(android.Manifest.permission.READ_CALENDAR) == PERMISSION_GRANTED
+	}
 
 	fun getEvents(year: Int, month: Int, day: Int?): List<CalendarEvent> {
 		val events = ArrayList<CalendarEvent>()

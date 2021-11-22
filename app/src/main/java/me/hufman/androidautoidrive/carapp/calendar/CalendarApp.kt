@@ -11,9 +11,11 @@ import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.calendar.CalendarProvider
+import me.hufman.androidautoidrive.carapp.FocusTriggerController
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.calendar.views.CalendarDayView
 import me.hufman.androidautoidrive.carapp.calendar.views.CalendarMonthView
+import me.hufman.androidautoidrive.carapp.calendar.views.PermissionView
 
 class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, carAppResources: CarAppResources,
                   val calendarProvider: CalendarProvider) {
@@ -23,6 +25,7 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 
 	val carConnection: BMWRemotingServer
 	val carApp: RHMIApplication
+	val viewPermission: PermissionView      // show a message if permissions are missing
 	val viewMonth: CalendarMonthView
 	val viewDay: CalendarDayView
 
@@ -39,7 +42,11 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 		listener.server = carConnection
 		listener.app = carApp
 
-		viewMonth = CalendarMonthView(carApp.states.values.first { CalendarMonthView.fits(it) }, calendarProvider)
+		val focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
+		val focusTriggerController = FocusTriggerController(focusEvent) {}
+
+		viewPermission = PermissionView(carApp.states.values.first { PermissionView.fits(it) })
+		viewMonth = CalendarMonthView(carApp.states.values.first { CalendarMonthView.fits(it) }, focusTriggerController, calendarProvider)
 		viewDay = CalendarDayView(carApp.states.values.first { CalendarDayView.fits(it) }, calendarProvider)
 
 		initWidgets()
@@ -107,7 +114,7 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
 			it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = viewMonth.state.id
 		}
-		viewMonth.initWidgets(viewDay)
+		viewMonth.initWidgets(viewPermission, viewDay)
 		viewDay.initWidgets()
 	}
 
