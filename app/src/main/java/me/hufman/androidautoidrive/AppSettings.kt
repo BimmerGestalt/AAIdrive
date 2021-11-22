@@ -53,7 +53,8 @@ interface AppSettings {
 		CACHED_CAR_DATA("Cached_Car_Data", "{}", "JSON Object of any previously-cached cds properties"),
 		PREFER_CAR_LANGUAGE("Prefer_Car_Language", "true", "Prefer the car's language instead of the phone's language"),
 		FORCE_CAR_LANGUAGE("Force_Car_Language", "", "Force a specific language for the car apps"),
-		ENABLED_ANALYTICS("Enable_Analytics", "false", "Enable Analytics module")
+		ENABLED_ANALYTICS("Enable_Analytics", "false", "Enable Analytics module"),
+		MUSIC_SEARCH_QUERY_HISTORY("Music_Search_Query_History","", "Music service search query history")
 	}
 
 	/** Store the active preferences in a singleton */
@@ -161,11 +162,27 @@ class MockAppSettings(vararg settings: Pair<AppSettings.KEYS, String> = emptyArr
 }
 
 /**
+ * An isolated MutableAppSettings object that can be used in place of a [MutableAppSettingsReceiver].
+ * By default it returns all the default settings values.
+ */
+class MockAppSettingsReceiver(context: Context, vararg settings: Pair<AppSettings.KEYS, String> = emptyArray()): MutableAppSettingsReceiver(context) {
+	override var callback: (() -> Unit)? = null
+	val settings = mutableMapOf(*settings)
+	override operator fun get(key: AppSettings.KEYS): String {
+		return settings[key] ?: key.default
+	}
+	override operator fun set(key: AppSettings.KEYS, value: String) {
+		settings[key] = value
+		callback?.invoke()
+	}
+}
+
+/**
  * A MutableAppSettings object that modifies the global singleton and notifies other instances
  * Clients should set a callback to subscribe, and they should set it to null to unsubscribe to avoid leaking
  * Clients can specify a custom handler on which to receive the callback
  */
-class MutableAppSettingsReceiver(val context: Context, val handler: Handler? = null): MutableAppSettingsObserver {
+open class MutableAppSettingsReceiver(val context: Context, val handler: Handler? = null): MutableAppSettingsObserver {
 	companion object {
 		val INTENT_SETTINGS_CHANGED = "me.hufman.androidautoidrive.INTENT_SETTINGS_CHANGED"
 	}

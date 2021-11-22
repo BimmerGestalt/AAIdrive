@@ -63,11 +63,20 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 		outputListModel.setValue(outputList, 0, outputList.height, outputList.height)
 	}
 
-	fun onInput(letter: String) {
+	/**
+	 * Handles processing the input from the RHMIActionSpellerCallback and sets the input result model
+	 * to the updated input.
+	 */
+	private fun onInput(letter: String) {
 		when (letter) {
 			"delall" -> input = ""
 			"del" -> input = input.dropLast(1)
-			else -> input += letter
+			else -> if (letter.length > 1) {
+				// workaround for when result model has been set to a non-empty value the "letter" that is passed into the SpellerCallback is the entire modified input string
+				input = letter
+			} else {
+				input += letter
+			}
 		}
 		inputComponent.getResultModel()?.asRaDataModel()?.value = input
 		onEntry(input)

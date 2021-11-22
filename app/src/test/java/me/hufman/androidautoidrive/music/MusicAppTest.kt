@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
+import com.google.gson.Gson
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
@@ -170,6 +171,7 @@ class MusicAppTest {
 		on { loadDesiredApp() } doReturn ""
 		on { musicSessions } doReturn mock<MusicSessions>()
 		on { isConnected() } doReturn true
+		on { appSettings } doReturn MockAppSettingsReceiver(mock())
 	}
 
 	val inputState = mock<RHMIState> {
@@ -180,6 +182,8 @@ class MusicAppTest {
 			})
 		}
 	}
+
+	val gson: Gson = Gson()
 
 	@Before
 	fun setup() {
@@ -1986,6 +1990,7 @@ class MusicAppTest {
 		// try clicking the action
 		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+
 		// there should be action handlers now
 		assertNotNull(app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction())
 		assertNotNull(app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction())
@@ -1995,15 +2000,18 @@ class MusicAppTest {
 		verify(musicController, never()).searchAsync(any())
 
 		// enter a longer query
-		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "mario"))
+		val searchQuery = "mario"
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to searchQuery))
 		await().untilAsserted { verify(musicController, times(1)).searchAsync(any()) }
 
 		await().untilAsserted {
 			assertArrayEquals(arrayOf(arrayOf("<Searching>")), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
 		}
+
 		// search results finished loading
+		val searchResultItem = MusicMetadata("testId4", title = "New song", browseable = false, playable = true)
 		searchResults.complete(listOf(MusicMetadata("testId5", title = "Best snew song", browseable = false, playable = true),
-				MusicMetadata("testId4", title = "New song", browseable = false, playable = true)))
+				searchResultItem))
 		await().untilAsserted {
 			assertArrayEquals(arrayOf(arrayOf(L.MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS), arrayOf("Best snew song"), arrayOf("New song")), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
 		}
@@ -2011,7 +2019,12 @@ class MusicAppTest {
 		// select a suggestion
 		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 2))
 		assertEquals(IDs.PLAYBACK_STATE, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asHMIAction()?.getTargetState()?.id)
-		verify(musicController).playSong(MusicMetadata("testId4", title = "New song", browseable = false, playable = true))
+		verify(musicController).playSong(searchResultItem)
+
+		// search history should be updated
+		val searchQueryHistory = gson.fromJson(musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY], Array<String>::class.java)
+		assertEquals(searchQueryHistory.size, 1)
+		assertEquals(searchQueryHistory[0], searchQuery)
 	}
 
 	@Suppress("DeferredResultUnused")
@@ -2061,7 +2074,7 @@ class MusicAppTest {
 		val item2Title = "Item 2"
 		searchResults.complete(listOf(
 				MusicMetadata("testId1", title = item1Title, browseable = false, playable = true),
-				MusicMetadata("testid2", title = item2Title, browseable = false, playable = true)
+				MusicMetadata("testId2", title = item2Title, browseable = false, playable = true)
 		))
 		await().untilAsserted {
 			assertArrayEquals(arrayOf(arrayOf(L.MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS), arrayOf(item1Title), arrayOf(item2Title)), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
@@ -2085,6 +2098,11 @@ class MusicAppTest {
 		assertEquals(2, songs.size)
 		assertEquals("${item1Title}\n", songs[0][3])
 		assertEquals("${item2Title}\n", songs[1][3])
+
+		// search history should be updated
+		val searchQueryHistory = gson.fromJson(musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY], Array<String>::class.java)
+		assertEquals(searchQueryHistory.size, 1)
+		assertEquals(searchQueryHistory[0], query)
 	}
 
 	@Suppress("DeferredResultUnused")
@@ -2134,7 +2152,7 @@ class MusicAppTest {
 		val item2Title = "Item 2"
 		searchResults.complete(listOf(
 				MusicMetadata("testId1", title = item1Title, browseable = false, playable = true),
-				MusicMetadata("testid2", title = item2Title, browseable = false, playable = true)
+				MusicMetadata("testId2", title = item2Title, browseable = false, playable = true)
 		))
 		await().untilAsserted {
 			assertArrayEquals(arrayOf(arrayOf(L.MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS), arrayOf(item1Title), arrayOf(item2Title)), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
@@ -2143,6 +2161,11 @@ class MusicAppTest {
 		// user clicks "View Full Results"
 		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		assertEquals(IDs.BROWSE2_STATE, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asHMIAction()?.getTargetState()?.id)
+
+		// search history should be updated
+		val searchQueryHistory = gson.fromJson(musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY], Array<String>::class.java)
+		assertEquals(searchQueryHistory.size, 1)
+		assertEquals(searchQueryHistory[0], query)
 	}
 
 	@Suppress("DeferredResultUnused")
@@ -2197,6 +2220,11 @@ class MusicAppTest {
 		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getResultAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		assertEquals(IDs.PLAYBACK_STATE, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getResultAction()?.asHMIAction()?.getTargetState()?.id)
 		verify(musicController).playFromSearch(query)
+
+		// search history should be updated
+		val searchQueryHistory = gson.fromJson(musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY], Array<String>::class.java)
+		assertEquals(searchQueryHistory.size, 1)
+		assertEquals(searchQueryHistory[0], query)
 	}
 
 	@Suppress("DeferredResultUnused")
@@ -2251,6 +2279,11 @@ class MusicAppTest {
 		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getResultAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		assertEquals(null, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getResultAction()?.asHMIAction()?.getTargetState()?.id)
 		verify(musicController, never()).playFromSearch(query)
+
+		// search history should be updated
+		val searchQueryHistory = gson.fromJson(musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY], Array<String>::class.java)
+		assertEquals(searchQueryHistory.size, 1)
+		assertEquals(searchQueryHistory[0], query)
 	}
 
 	@Suppress("DeferredResultUnused")
@@ -2269,7 +2302,8 @@ class MusicAppTest {
 
 		browseView.pageController.openSearchInput(null)
 
-		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "mario"))
+		val query = "mario"
+		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to query))
 		await().untilAsserted { verify(musicController, times(1)).searchAsync(any()) }
 
 		await().untilAsserted {
@@ -2299,6 +2333,339 @@ class MusicAppTest {
 		} catch (e: RHMIActionAbort) { // don't succeed the RAAction
 		}
 		assertEquals(0, inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
+	}
+
+	@Suppress("DeferredResultUnused")
+	@Test
+	fun testSearch_SearchHistory_SearchWithDifferentQuery() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!, app.states[IDs.BROWSE3_STATE]!!), musicController, MusicImageIDsMultimedia, graphicsHelpers)
+		browseView.initWidgets(playbackView, app.states[IDs.INPUT_STATE]!!)
+
+		val oldQuery = "query 1"
+		musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY] = gson.toJson(listOf(oldQuery))
+
+		// prepare results
+		val browseResults = CompletableDeferred<List<MusicMetadata>>()
+		whenever(musicController.browseAsync(anyOrNull())) doAnswer { browseResults }
+		val searchResults = CompletableDeferred<List<MusicMetadata>>()
+		whenever(musicController.searchAsync(anyOrNull())) doAnswer { searchResults }
+
+		whenever(musicController.currentAppInfo).doReturn(
+				MusicAppInfo("Test", mock(), "package", "class").apply { searchable = true}
+		)
+
+		// display browse page home
+		val page1 = browseView.pushBrowsePage(null)
+		page1.show()
+
+		// then finish loading browse
+		browseResults.complete(listOf (
+				MusicMetadata("testId1", title = "Browse Item Title",	browseable = false, playable = true),
+		))
+
+		// clicking the search action
+		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+
+		// search with a query
+		val query = "valid query"
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to query))
+		await().untilAsserted { verify(musicController, times(1)).searchAsync(query) }
+
+		await().untilAsserted {
+			assertArrayEquals(arrayOf(arrayOf("<Searching>")), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
+		}
+
+		// search results finished loading
+		val item1Title = "Item 1"
+		val item2Title = "Item 2"
+		searchResults.complete(listOf(
+				MusicMetadata("testId1", title = item1Title, browseable = false, playable = true),
+				MusicMetadata("testId2", title = item2Title, browseable = false, playable = true)
+		))
+		await().untilAsserted {
+			assertArrayEquals(arrayOf(arrayOf(L.MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS), arrayOf(item1Title), arrayOf(item2Title)), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
+		}
+
+		// user clicks OK button on input state
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getResultAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(IDs.BROWSE2_STATE, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getResultAction()?.asHMIAction()?.getTargetState()?.id)
+
+		app.states[IDs.BROWSE2_STATE]?.onHmiEvent(1, mapOf(4.toByte() to true))
+		app.components[IDs.BROWSE2_MUSIC_COMPONENT]?.requestDataCallback?.onRequestData(0, 10)
+
+		await().untilAsserted {
+			assertEquals(2, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+		}
+
+		// ensure search results page is shown with the correct data
+		assertEquals(L.MUSIC_SEARCH_RESULTS_LABEL, mockServer.data[IDs.BROWSE2_LABEL_MODEL])
+
+		val songs = (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data
+		assertEquals(2, songs.size)
+		assertEquals("${item1Title}\n", songs[0][3])
+		assertEquals("${item2Title}\n", songs[1][3])
+
+		// search history should be updated
+		val searchQueryHistory = gson.fromJson(musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY], Array<String>::class.java)
+		assertEquals(searchQueryHistory.size, 2)
+		assertEquals(searchQueryHistory[0], oldQuery)
+		assertEquals(searchQueryHistory[1], query)
+	}
+
+	@Suppress("DeferredResultUnused")
+	@Test
+	fun testSearch_SearchHistory_SearchWithSameQuery() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!, app.states[IDs.BROWSE3_STATE]!!), musicController, MusicImageIDsMultimedia, graphicsHelpers)
+		browseView.initWidgets(playbackView, app.states[IDs.INPUT_STATE]!!)
+
+		val oldQuery1 = "query 1"
+		val oldQuery2 = "query 2"
+		musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY] = gson.toJson(listOf(oldQuery1, oldQuery2))
+
+		// prepare results
+		val browseResults = CompletableDeferred<List<MusicMetadata>>()
+		whenever(musicController.browseAsync(anyOrNull())) doAnswer { browseResults }
+		val searchResults = CompletableDeferred<List<MusicMetadata>>()
+		whenever(musicController.searchAsync(anyOrNull())) doAnswer { searchResults }
+
+		whenever(musicController.currentAppInfo).doReturn(
+				MusicAppInfo("Test", mock(), "package", "class").apply { searchable = true}
+		)
+
+		// display browse page home
+		val page1 = browseView.pushBrowsePage(null)
+		page1.show()
+
+		// then finish loading browse
+		browseResults.complete(listOf (
+				MusicMetadata("testId1", title = "Browse Item Title",	browseable = false, playable = true),
+		))
+
+		// clicking the search action
+		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+
+		// search with an old query
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to oldQuery1))
+		await().untilAsserted { verify(musicController, times(1)).searchAsync(oldQuery1) }
+
+		await().untilAsserted {
+			assertArrayEquals(arrayOf(arrayOf("<Searching>")), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
+		}
+
+		// search results finished loading
+		val item1Title = "Item 1"
+		val item2Title = "Item 2"
+		searchResults.complete(listOf(
+				MusicMetadata("testId1", title = item1Title, browseable = false, playable = true),
+				MusicMetadata("testId2", title = item2Title, browseable = false, playable = true)
+		))
+		await().untilAsserted {
+			assertArrayEquals(arrayOf(arrayOf(L.MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS), arrayOf(item1Title), arrayOf(item2Title)), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
+		}
+
+		// user clicks OK button on input state
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getResultAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(IDs.BROWSE2_STATE, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getResultAction()?.asHMIAction()?.getTargetState()?.id)
+
+		app.states[IDs.BROWSE2_STATE]?.onHmiEvent(1, mapOf(4.toByte() to true))
+		app.components[IDs.BROWSE2_MUSIC_COMPONENT]?.requestDataCallback?.onRequestData(0, 10)
+
+		await().untilAsserted {
+			assertEquals(2, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+		}
+
+		// ensure search results page is shown with the correct data
+		assertEquals(L.MUSIC_SEARCH_RESULTS_LABEL, mockServer.data[IDs.BROWSE2_LABEL_MODEL])
+
+		val songs = (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data
+		assertEquals(2, songs.size)
+		assertEquals("${item1Title}\n", songs[0][3])
+		assertEquals("${item2Title}\n", songs[1][3])
+
+		// search history should be updated
+		val searchQueryHistory = gson.fromJson(musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY], Array<String>::class.java)
+		assertEquals(searchQueryHistory.size, 2)
+		assertEquals(searchQueryHistory[0], oldQuery2)
+		assertEquals(searchQueryHistory[1], oldQuery1)
+	}
+
+	@Suppress("DeferredResultUnused")
+	@Test
+	fun testSearch_SearchHistory_SearchWithDifferentQuery_SearchHistoryAtMax() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!, app.states[IDs.BROWSE3_STATE]!!), musicController, MusicImageIDsMultimedia, graphicsHelpers)
+		browseView.initWidgets(playbackView, app.states[IDs.INPUT_STATE]!!)
+
+		val queryHistory = listOf(
+				"query 1",
+				"query 2",
+				"query 3",
+				"query 4",
+				"query 5",
+				"query 6",
+				"query 7",
+				"query 8"
+		)
+		musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY] = gson.toJson(queryHistory)
+
+		// prepare results
+		val browseResults = CompletableDeferred<List<MusicMetadata>>()
+		whenever(musicController.browseAsync(anyOrNull())) doAnswer { browseResults }
+		val searchResults = CompletableDeferred<List<MusicMetadata>>()
+		whenever(musicController.searchAsync(anyOrNull())) doAnswer { searchResults }
+
+		whenever(musicController.currentAppInfo).doReturn(
+				MusicAppInfo("Test", mock(), "package", "class").apply { searchable = true}
+		)
+
+		// display browse page home
+		val page1 = browseView.pushBrowsePage(null)
+		page1.show()
+
+		// then finish loading browse
+		browseResults.complete(listOf (
+				MusicMetadata("testId1", title = "Browse Item Title",	browseable = false, playable = true),
+		))
+
+		// clicking the search action
+		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+
+		// search with a query
+		val query = "valid query"
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to query))
+		await().untilAsserted { verify(musicController, times(1)).searchAsync(query) }
+
+		await().untilAsserted {
+			assertArrayEquals(arrayOf(arrayOf("<Searching>")), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
+		}
+
+		// search results finished loading
+		val item1Title = "Item 1"
+		val item2Title = "Item 2"
+		searchResults.complete(listOf(
+				MusicMetadata("testId1", title = item1Title, browseable = false, playable = true),
+				MusicMetadata("testId2", title = item2Title, browseable = false, playable = true)
+		))
+		await().untilAsserted {
+			assertArrayEquals(arrayOf(arrayOf(L.MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS), arrayOf(item1Title), arrayOf(item2Title)), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
+		}
+
+		// user clicks OK button on input state
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getResultAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(IDs.BROWSE2_STATE, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getResultAction()?.asHMIAction()?.getTargetState()?.id)
+
+		app.states[IDs.BROWSE2_STATE]?.onHmiEvent(1, mapOf(4.toByte() to true))
+		app.components[IDs.BROWSE2_MUSIC_COMPONENT]?.requestDataCallback?.onRequestData(0, 10)
+
+		await().untilAsserted {
+			assertEquals(2, (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable?)?.totalRows)
+		}
+
+		// ensure search results page is shown with the correct data
+		assertEquals(L.MUSIC_SEARCH_RESULTS_LABEL, mockServer.data[IDs.BROWSE2_LABEL_MODEL])
+
+		val songs = (mockServer.data[IDs.BROWSE2_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data
+		assertEquals(2, songs.size)
+		assertEquals("${item1Title}\n", songs[0][3])
+		assertEquals("${item2Title}\n", songs[1][3])
+
+		// search history should be updated
+		val newQueryHistory = queryHistory.subList(1, queryHistory.size) + listOf(query)
+
+		val searchQueryHistory = gson.fromJson(musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY], Array<String>::class.java)
+		assertEquals(searchQueryHistory.size, 8)
+		assertEquals(searchQueryHistory.toList(), newQueryHistory)
+	}
+
+	@Suppress("DeferredResultUnused")
+	@Test
+	fun testSearch_SearchHistory_UsingSearchHistoryQuery() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!, app.states[IDs.BROWSE3_STATE]!!), musicController, MusicImageIDsMultimedia, graphicsHelpers)
+		browseView.initWidgets(playbackView, app.states[IDs.INPUT_STATE]!!)
+
+		val oldQuery1 = "query 1"
+		val oldQuery2 = "query 2"
+		val oldQuery3 = "query 3"
+		musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY] = gson.toJson(listOf(oldQuery1, oldQuery2, oldQuery3))
+
+		// prepare results
+		val browseResults = CompletableDeferred<List<MusicMetadata>>()
+		whenever(musicController.browseAsync(anyOrNull())) doAnswer { browseResults }
+		val searchResults = CompletableDeferred<List<MusicMetadata>>()
+		whenever(musicController.searchAsync(anyOrNull())) doAnswer { searchResults }
+
+		whenever(musicController.currentAppInfo).doReturn(
+				MusicAppInfo("Test", mock(), "package", "class").apply { searchable = true}
+		)
+
+		// display browse page home
+		val page1 = browseView.pushBrowsePage(null)
+		page1.show()
+
+		// then finish loading browse
+		browseResults.complete(listOf (
+				MusicMetadata("testId1", title = "Browse Item Title",	browseable = false, playable = true),
+		))
+
+		// clicking the search action
+		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
+		assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+
+		// focusing the search input
+		app.states[IDs.INPUT_STATE]?.focusCallback?.onFocus(true)
+
+		// select query history item
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
+
+		// result model is updated and search results are brought up
+		assertEquals(oldQuery2, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getResultModel()?.asRaDataModel()?.value)
+		assertEquals(IDs.INPUT_COMPONENT, app.components[IDs.INPUT_COMPONENT]?.asInput()?.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value)
+
+		// forcing the search - in vehicle this is done automatically when the result model is changed and invokes RHMIActionSpellerCallback
+		app.components[IDs.INPUT_COMPONENT]?.asInput()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to oldQuery2))
+
+		// search with query history item is performed
+		await().untilAsserted { verify(musicController, times(1)).searchAsync(oldQuery2) }
+
+		await().untilAsserted {
+			assertArrayEquals(arrayOf(arrayOf("<Searching>")), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
+		}
+
+		// search results finished loading
+		val item1Title = "Item 1"
+		val item2Title = "Item 2"
+		searchResults.complete(listOf(
+				MusicMetadata("testId1", title = item1Title, browseable = false, playable = true),
+				MusicMetadata("testId2", title = item2Title, browseable = false, playable = true)
+		))
+		await().untilAsserted {
+			assertArrayEquals(arrayOf(arrayOf(L.MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS), arrayOf(item1Title), arrayOf(item2Title)), (mockServer.data[IDs.INPUT_SUGGEST_MODEL] as BMWRemoting.RHMIDataTable?)?.data)
+		}
+
+		// search history should be updated
+		val searchQueryHistory = gson.fromJson(musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY], Array<String>::class.java)
+		assertEquals(searchQueryHistory.size, 3)
+		assertEquals(searchQueryHistory[0], oldQuery1)
+		assertEquals(searchQueryHistory[1], oldQuery3)
+		assertEquals(searchQueryHistory[2], oldQuery2)
 	}
 
 	@Suppress("DeferredResultUnused")
