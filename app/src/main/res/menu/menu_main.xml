@@ -25,6 +25,11 @@
             android:title="@string/menu_assistants" />
 
         <item
+            android:id="@+id/nav_calendar"
+            android:icon="@drawable/ic_calendar_feather"
+            android:title="@string/menu_calendar" />
+
+        <item
             android:id="@+id/nav_maps"
             android:icon="@drawable/ic_map_feather"
             android:title="@string/menu_maps" />

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data class="CalendarPageBinding">
+        <variable
+            name="settingsModel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.CalendarSettingsModel" />
+        <variable
+            name="controller"
+            type="me.hufman.androidautoidrive.phoneui.controllers.CalendarPageController" />
+    </data>
+    <ScrollView
+        android:id="@+id/pane_scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:paddingEnd="@dimen/default_margin"
+            android:paddingStart="@dimen/default_margin"
+            android:paddingTop="@dimen/default_margin"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
+                android:text="@string/lbl_calendarpage" />
+
+            <View style="@style/Divider"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/swMessageNotifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingBottom="@dimen/settings_vertical_margin"
+                android:text="@string/lbl_calendar_enabled"
+                android:checked="@{settingsModel.calendarEnabled}"
+                android:onCheckedChanged="@{(button, checked) -> controller.onChangedSwitchCalendar(checked)}"/>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/paneCalendarSettings"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.CalendarSettingsFragment"
+                android:visibility="@{settingsModel.calendarEnabled}"/>
+        </LinearLayout>
+    </ScrollView>
+
+</layout>

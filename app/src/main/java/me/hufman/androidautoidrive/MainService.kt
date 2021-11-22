@@ -431,7 +431,12 @@ class MainService: Service() {
 	}
 
 	fun startCalendar(): Boolean {
-		startModuleService(CalendarAppService::class.java)
+		val shouldRun = appSettings[AppSettings.KEYS.ENABLED_CALENDAR].toBoolean()
+		if (shouldRun) {
+			startModuleService(CalendarAppService::class.java)
+		} else {
+			stopModuleService(CalendarAppService::class.java)
+		}
 		return true
 	}
 
