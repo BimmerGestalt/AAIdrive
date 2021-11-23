@@ -25,6 +25,8 @@ open class CarInformation {
 		)
 
 		private val CACHED_CDS_INTERVAL = 10000
+		private var lastCacheTime = 0L
+
 		@JvmStatic
 		protected val CACHED_CDS_KEYS = setOf(
 				CDS.VEHICLE.LANGUAGE
@@ -91,6 +93,7 @@ open class CarInformation {
 			} catch (e: IllegalStateException) {
 				Log.w(TAG, "Failed to restore cached cds properties", e)
 			}
+			lastCacheTime = 0L      // reset the cache time, needed for unit tests
 		}
 
 		fun saveCache(settings: MutableAppSettings) {
@@ -100,14 +103,17 @@ open class CarInformation {
 			}
 			settings[AppSettings.KEYS.CACHED_CAR_CAPABILITIES] = capabilities.toString()
 
-			val cdsCached = JsonObject()
-			CACHED_CDS_KEYS.forEach { propertyKey ->
-				val value = cachedCdsData[propertyKey]
-				if (value != null) {
-					cdsCached.add(propertyKey.propertyName, value)
+			if (lastCacheTime + CACHED_CDS_INTERVAL < System.currentTimeMillis()) {
+				val cdsCached = JsonObject()
+				CACHED_CDS_KEYS.forEach { propertyKey ->
+					val value = cachedCdsData[propertyKey]
+					if (value != null) {
+						cdsCached.add(propertyKey.propertyName, value)
+					}
 				}
+				settings[AppSettings.KEYS.CACHED_CAR_DATA] = cdsCached.toString()
+				lastCacheTime = System.currentTimeMillis()
 			}
-			settings[AppSettings.KEYS.CACHED_CAR_DATA] = cdsCached.toString()
 		}
 	}
 
