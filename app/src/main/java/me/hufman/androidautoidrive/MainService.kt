@@ -179,6 +179,7 @@ class MainService: Service() {
 		announceCarAPI()
 		iDriveConnectionReceiver.subscribe(applicationContext)
 		startCarProber()
+		combinedCallback()
 	}
 
 	private fun createNotificationChannel() {
