@@ -97,13 +97,13 @@ open class CarInformation {
 		}
 
 		fun saveCache(settings: MutableAppSettings) {
-			val capabilities = JsonObject()
-			cachedCapabilities.keys.forEach { key ->
-				capabilities.addProperty(key, cachedCapabilities[key])
-			}
-			settings[AppSettings.KEYS.CACHED_CAR_CAPABILITIES] = capabilities.toString()
-
 			if (lastCacheTime + CACHED_CDS_INTERVAL < System.currentTimeMillis()) {
+				val capabilities = JsonObject()
+				cachedCapabilities.keys.forEach { key ->
+					capabilities.addProperty(key, cachedCapabilities[key])
+				}
+				settings[AppSettings.KEYS.CACHED_CAR_CAPABILITIES] = capabilities.toString()
+
 				val cdsCached = JsonObject()
 				CACHED_CDS_KEYS.forEach { propertyKey ->
 					val value = cachedCdsData[propertyKey]
