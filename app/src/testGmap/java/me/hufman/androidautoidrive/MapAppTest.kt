@@ -16,6 +16,7 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.ArgumentCaptor
@@ -35,7 +36,7 @@ class MapAppTest {
 	}
 
 	val appSettings = MockAppSettings()
-	val mapAppMode = MapAppMode(GenericRHMIDimensions(1280, 480), appSettings)
+	val mapAppMode = MapAppMode(GenericRHMIDimensions(1280, 480), appSettings, MusicAppMode.TRANSPORT_PORTS.USB)
 	val mockImageReader = mock<ImageReader> {
 		on { width } doReturn 1000
 		on { height } doReturn 500

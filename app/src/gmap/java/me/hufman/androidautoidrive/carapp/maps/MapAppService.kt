@@ -7,6 +7,7 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.carapp.CarAppService
+import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import java.lang.Exception
 
 class MapAppService: CarAppService() {
@@ -23,8 +24,8 @@ class MapAppService: CarAppService() {
 			val cdsData = CDSDataProvider()
 			cdsData.setConnection(CarInformation.cdsData.asConnection(cdsData))
 			val carLocationProvider = CarLocationProvider(cdsData)
-			val mapAppMode = MapAppMode(RHMIDimensions.create(carInformation.capabilities), AppSettingsViewer())
-			val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.fullDimensions.visibleWidth, mapAppMode.fullDimensions.visibleHeight)
+			val mapAppMode = MapAppMode(RHMIDimensions.create(carInformation.capabilities), AppSettingsViewer(), MusicAppMode.TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port)!!)
+			val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.fullDimensions.visibleWidth, mapAppMode.fullDimensions.visibleHeight, mapAppMode.compressQuality)
 			this.mapScreenCapture = mapScreenCapture
 			val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(applicationContext, mapScreenCapture.imageCapture, 250)
 			this.virtualDisplay = virtualDisplay

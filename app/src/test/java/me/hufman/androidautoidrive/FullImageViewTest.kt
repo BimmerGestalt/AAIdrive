@@ -8,6 +8,7 @@ import me.hufman.androidautoidrive.utils.removeFirst
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationConcrete
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
+import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -30,7 +31,7 @@ class FullImageViewTest {
 	fun testInitialize() {
 		val appSettings = MockAppSettings()
 		appSettings[AppSettings.KEYS.MAP_WIDESCREEN] = "false"
-		val fullImageConfig = MapAppMode(GenericRHMIDimensions(1280, 480), appSettings)
+		val fullImageConfig = MapAppMode(GenericRHMIDimensions(1280, 480), appSettings, MusicAppMode.TRANSPORT_PORTS.USB)
 		val fullImageView = FullImageView(this.fullImageState, "Map", fullImageConfig, mock(), mock())
 		fullImageView.initWidgets()
 		assertEquals(703, fullImageView.imageComponent.properties[RHMIProperty.PropertyId.WIDTH.id]?.value)
@@ -46,7 +47,7 @@ class FullImageViewTest {
 	fun testInteraction() {
 		val appSettings = MockAppSettings()
 		appSettings[AppSettings.KEYS.MAP_INVERT_SCROLL] = "false"
-		val fullImageConfig = MapAppMode(GenericRHMIDimensions(1280, 480), appSettings)
+		val fullImageConfig = MapAppMode(GenericRHMIDimensions(1280, 480), appSettings, MusicAppMode.TRANSPORT_PORTS.USB)
 		val mockInteraction = mock<FullImageInteraction> {
 			on { getClickState() } doReturn RHMIState.PlainState(carApp, 99)
 		}

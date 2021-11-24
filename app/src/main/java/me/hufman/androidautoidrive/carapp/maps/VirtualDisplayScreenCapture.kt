@@ -17,11 +17,12 @@ import java.io.ByteArrayOutputStream
  */
 class VirtualDisplayScreenCapture(val imageCapture: ImageReader, val bitmapConfig: Bitmap.Config, val compressFormat: Bitmap.CompressFormat, var compressQuality: Int = 65) {
 	companion object {
-		fun build(width: Int, height: Int): VirtualDisplayScreenCapture {
+		fun build(width: Int, height: Int, compressQuality: Int = 65): VirtualDisplayScreenCapture {
 			return VirtualDisplayScreenCapture(
 					ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2),
 					Bitmap.Config.ARGB_8888,
-					Bitmap.CompressFormat.JPEG)
+					Bitmap.CompressFormat.JPEG,
+					compressQuality)
 		}
 
 		fun createVirtualDisplay(context: Context, imageCapture: ImageReader, dpi:Int = 100, name: String = "IDriveVirtualDisplay"): VirtualDisplay {

@@ -40,6 +40,7 @@ abstract class CarAppService: Service() {
 	override fun onBind(intent: Intent?): IBinder? {
 		intent ?: return null
 		setConnection(intent)
+		startThread()
 		return null
 	}
 
@@ -75,27 +76,10 @@ abstract class CarAppService: Service() {
 	/**
 	 * Parses the connection intent and sets the connection details
 	 *
-	 * Until we are split out to a separate process, check for differences before setting the details
+	 * Until we are split out to a separate process, rely on the MainService to handle this
 	 */
 	fun setConnection(intent: Intent) {
-		val brand = intent.getStringExtra("EXTRA_BRAND")
-		val host = intent.getStringExtra("EXTRA_HOST")
-		val port = intent.getIntExtra("EXTRA_PORT", -1)
-		val instanceId = intent.getIntExtra("EXTRA_INSTANCE_ID", -1)
-//		Log.i(TAG, "Received connection details: $brand at $host:$port($instanceId)")
-		brand ?: return
-		host ?: return
-		if (port == -1) {
-			return
-		}
-		if (!iDriveConnectionStatus.isConnected ||
-				iDriveConnectionStatus.brand != brand ||
-				iDriveConnectionStatus.host != host ||
-				iDriveConnectionStatus.port != port ||
-				iDriveConnectionStatus.instanceId != instanceId) {
-			IDriveConnectionStatus.setConnection(brand, host, port, instanceId)
-		}
-		startThread()
+		IDriveConnectionReceiver().onReceive(applicationContext, intent)
 	}
 
 	/**

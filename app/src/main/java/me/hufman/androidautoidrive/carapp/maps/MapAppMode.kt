@@ -4,8 +4,12 @@ import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.carapp.FullImageConfig
+import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 
-class MapAppMode(val fullDimensions: RHMIDimensions, val appSettings: AppSettings): FullImageConfig {
+class MapAppMode(val fullDimensions: RHMIDimensions, val appSettings: AppSettings, val carTransport: MusicAppMode.TRANSPORT_PORTS): FullImageConfig {
+	// the default jpg quality to use based on carTransport
+	val compressQuality: Int = if (carTransport == MusicAppMode.TRANSPORT_PORTS.USB) 65 else 40
+
 	// the current appDimensions depending on the widescreen setting
 	val appDimensions = SidebarRHMIDimensions(fullDimensions) {isWidescreen}
 
