@@ -15,6 +15,7 @@ import me.hufman.androidautoidrive.carapp.FocusTriggerController
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.calendar.views.CalendarDayView
 import me.hufman.androidautoidrive.carapp.calendar.views.CalendarMonthView
+import me.hufman.androidautoidrive.carapp.calendar.views.CalendarEventView
 import me.hufman.androidautoidrive.carapp.calendar.views.PermissionView
 
 class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, carAppResources: CarAppResources,
@@ -28,6 +29,7 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 	val viewPermission: PermissionView      // show a message if permissions are missing
 	val viewMonth: CalendarMonthView
 	val viewDay: CalendarDayView
+	val viewEvent: CalendarEventView
 
 	init {
 		val listener = CalendarAppCarListener()
@@ -48,6 +50,7 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 		viewPermission = PermissionView(carApp.states.values.first { PermissionView.fits(it) })
 		viewMonth = CalendarMonthView(carApp.states.values.first { CalendarMonthView.fits(it) }, focusTriggerController, calendarProvider)
 		viewDay = CalendarDayView(carApp.states.values.first { CalendarDayView.fits(it) }, calendarProvider)
+		viewEvent = CalendarEventView(carApp.states.values.first { CalendarEventView.fits(it) })
 
 		initWidgets()
 	}
@@ -115,7 +118,8 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 			it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = viewMonth.state.id
 		}
 		viewMonth.initWidgets(viewPermission, viewDay)
-		viewDay.initWidgets()
+		viewDay.initWidgets(viewEvent)
+		viewEvent.initWidgets()
 	}
 
 	fun disconnect() {

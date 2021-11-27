@@ -377,6 +377,11 @@
     <string name="NOTIFICATION_CENTER_APP">This app is used to push to the car\'s Notification Center</string>
     <string name="READOUT_DESCRIPTION">This app is used for readout purposes</string>
 
+    <string name="CALENDAR_TIME_START">Start</string>
+    <string name="CALENDAR_TIME_END">End</string>
+    <string name="CALENDAR_TIME_DURATION">Duration</string>
+    <string name="CALENDAR_TIME_ALLDAY">All Day</string>
+
     <string name="MAP_ACTION_VIEWMAP">View Full Map</string>
     <string name="MAP_ACTION_SEARCH">Search for Place</string>
     <string name="MAP_ACTION_CLEARNAV">Clear Navigation</string>

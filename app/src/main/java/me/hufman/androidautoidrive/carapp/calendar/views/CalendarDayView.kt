@@ -1,15 +1,11 @@
 package me.hufman.androidautoidrive.carapp.calendar.views
 
 import de.bmw.idrive.BMWRemoting
-import io.bimmergestalt.idriveconnectkit.rhmi.FocusCallback
-import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
-import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
-import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
+import io.bimmergestalt.idriveconnectkit.Utils.etchAsInt
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.calendar.CalendarEvent
 import me.hufman.androidautoidrive.calendar.CalendarProvider
 import me.hufman.androidautoidrive.carapp.calendar.RHMIDateUtils
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 class CalendarDayView(val state: RHMIState, val calendarProvider: CalendarProvider) {
@@ -20,21 +16,29 @@ class CalendarDayView(val state: RHMIState, val calendarProvider: CalendarProvid
 	}
 
 	var selectedDate: Calendar? = null
+	var events: List<CalendarEvent> = ArrayList()
+	val calendarDay: RHMIComponent.CalendarDay
 	val dateModel: RHMIModel.RaIntModel
 	val listModel: RHMIModel.RaListModel
 
 	init {
 		state as RHMIState.CalendarState
-		val calendarDay = state.componentsList.filterIsInstance<RHMIComponent.CalendarDay>().first()
+		calendarDay = state.componentsList.filterIsInstance<RHMIComponent.CalendarDay>().first()
 		dateModel = calendarDay.getDateModel()?.asRaIntModel()!!
 		listModel = calendarDay.getAppointmentListModel()?.asRaListModel()!!
 	}
 
-	fun initWidgets() {
+	fun initWidgets(eventView: CalendarEventView) {
 		state.focusCallback = FocusCallback { focused ->
 			if (focused) {
 				update()
 			}
+		}
+		calendarDay.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionCallback { args ->
+			val index = etchAsInt(args?.get(0.toByte()) ?: -1) - 1      // car indexes this list starting at 1
+			val event = events.getOrNull(index)
+			eventView.selectedEvent = event
+			calendarDay.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = eventView.state.id
 		}
 	}
 
@@ -51,6 +55,11 @@ class CalendarDayView(val state: RHMIState, val calendarProvider: CalendarProvid
 
 		if (currentDate != null) {
 			val events = calendarProvider.getEvents(currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH) + 1, currentDate.get(Calendar.DAY_OF_MONTH))
+//			this.events = events.sortedBy {
+//				(it.start[Calendar.HOUR_OF_DAY] * 60 + it.start[Calendar.MINUTE]) * 1440 +
+//				it.end[Calendar.HOUR_OF_DAY] * 60 + it.end[Calendar.MINUTE]
+//			}
+			this.events = events
 			val carList = object: RHMIModel.RaListModel.RHMIListAdapter<CalendarEvent>(4, events) {
 				override fun convertRow(index: Int, item: CalendarEvent): Array<Any> {
 					return arrayOf(
