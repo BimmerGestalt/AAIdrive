@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.calendar
 
+import android.location.Address
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.IDriveConnection
@@ -11,6 +12,7 @@ import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
 import me.hufman.androidautoidrive.MockBMWRemotingServer
 import me.hufman.androidautoidrive.carapp.calendar.RHMIDateUtils
 import me.hufman.androidautoidrive.carapp.calendar.CalendarApp
+import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -41,6 +43,9 @@ class CalendarAppTest {
 		on {hasPermission()} doReturn true
 		on {getEvents(any(), any(), isNull())} doAnswer { inv -> calendarEvents.filter { it.start[Calendar.YEAR] == inv.arguments[0] && it.start[Calendar.MONTH] + 1 == inv.arguments[1] } }
 		on {getEvents(any(), any(), isNotNull())} doAnswer { inv -> calendarEvents.filter { it.start[Calendar.YEAR] == inv.arguments[0] && it.start[Calendar.MONTH] + 1 == inv.arguments[1] && it.start[Calendar.DAY_OF_MONTH] == inv.arguments[2] } }
+	}
+	val addressSearcher = mock<AddressSearcher> {
+		on {search(any())} doReturn null
 	}
 
 	@Before
@@ -77,7 +82,7 @@ class CalendarAppTest {
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
 
 		assertEquals("Richtext", app.viewEvent.descriptionList.getModel()?.modelType)
 	}
@@ -88,7 +93,7 @@ class CalendarAppTest {
 
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
 		app.viewMonth.selectedDate = makeCalendar(2021, 11, 1)
 		// check that the hmi event listener is set
 		IDriveConnection.mockRemotingClient!!.rhmi_onHmiEvent(0, "", app.viewMonth.state.id, 1, mapOf(4.toByte() to true))
@@ -102,7 +107,7 @@ class CalendarAppTest {
 	fun testMonthView() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
 		app.viewMonth.selectedDate = makeCalendar(2021, 11, 1)
 		// check that the hmi event listener is set
 		IDriveConnection.mockRemotingClient!!.rhmi_onHmiEvent(0, "", app.viewMonth.state.id, 1, mapOf(4.toByte() to true))
@@ -117,7 +122,7 @@ class CalendarAppTest {
 	fun testMonthScroll() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
 		app.viewMonth.selectedDate = makeCalendar(2021, 11, 1)
 		app.viewMonth.update()
 
@@ -134,7 +139,7 @@ class CalendarAppTest {
 	fun testMonthClick() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
 		val monthState = app.viewMonth.state.asCalendarMonthState()!!
 
 		app.viewMonth.selectedDate = makeCalendar(2021, 11, 1)
@@ -152,7 +157,7 @@ class CalendarAppTest {
 	fun testDayView() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
 		app.viewDay.selectedDate = makeCalendar(2021, 11, 11)
 		// check that the hmi event listener is set
 		IDriveConnection.mockRemotingClient!!.rhmi_onHmiEvent(0, "", app.viewDay.state.id, 1, mapOf(4.toByte() to true))
@@ -174,7 +179,7 @@ class CalendarAppTest {
 	fun testDayClick() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
 		app.viewDay.selectedDate = makeCalendar(2021, 11, 11)
 		val dayComponent = app.viewDay.calendarDay
 
@@ -192,7 +197,7 @@ class CalendarAppTest {
 	fun testEventViewNull() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
 		val viewEvent = app.viewEvent
 
 		// RHMIIdempotentApp thinks the data is "" and will ignore requests to set it to ""
@@ -209,10 +214,12 @@ class CalendarAppTest {
 		assertEquals(2, (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).totalColumns)
 		assertEquals(0, (mockServer.data[viewEvent.descriptionList.model] as BMWRemoting.RHMIDataTable).totalRows)
 		assertEquals(1, (mockServer.data[viewEvent.descriptionList.model] as BMWRemoting.RHMIDataTable).totalColumns)
+//		assertEquals(false, mockServer.properties[viewEvent.descriptionList.id]!![RHMIProperty.PropertyId.ENABLED.id])  // already disabled by ui_description
 		assertEquals(false, mockServer.properties[viewEvent.descriptionList.id]!![RHMIProperty.PropertyId.VISIBLE.id])
 		assertEquals(true, mockServer.properties[viewEvent.descriptionList.id]!![RHMIProperty.PropertyId.SELECTABLE.id])
 		assertEquals(0, (mockServer.data[viewEvent.locationList.model] as BMWRemoting.RHMIDataTable).totalRows)
 		assertEquals(1, (mockServer.data[viewEvent.locationList.model] as BMWRemoting.RHMIDataTable).totalColumns)
+		assertEquals(false, mockServer.properties[viewEvent.locationList.id]!![RHMIProperty.PropertyId.ENABLED.id])
 		assertEquals(false, mockServer.properties[viewEvent.locationList.id]!![RHMIProperty.PropertyId.VISIBLE.id])
 		assertEquals(true, mockServer.properties[viewEvent.locationList.id]!![RHMIProperty.PropertyId.SELECTABLE.id])
 	}
@@ -221,7 +228,7 @@ class CalendarAppTest {
 	fun testEventView() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
 		val viewEvent = app.viewEvent
 		viewEvent.selectedEvent = calendarProvider.getEvents(2021, 11, 11)[1]
 
@@ -233,17 +240,90 @@ class CalendarAppTest {
 		assertEquals(2, (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).totalRows)
 		assertEquals(2, (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).totalColumns)
 		assertEquals("Start", (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).data[0][0])
-		assertEquals("11/11/21, 6:00 PM", (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).data[0][1])
 		assertEquals("End", (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).data[1][0])
-		assertEquals("11/11/21, 8:00 PM", (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).data[1][1])
 		assertEquals(1, (mockServer.data[viewEvent.descriptionList.model] as BMWRemoting.RHMIDataTable).totalRows)
 		assertEquals(1, (mockServer.data[viewEvent.descriptionList.model] as BMWRemoting.RHMIDataTable).totalColumns)
 		assertEquals("Full Description\n", (mockServer.data[viewEvent.descriptionList.model] as BMWRemoting.RHMIDataTable).data[0][0])
+//		assertEquals(false, mockServer.properties[viewEvent.descriptionList.id]!![RHMIProperty.PropertyId.ENABLED.id])
+		assertEquals(true, mockServer.properties[viewEvent.descriptionList.id]!![RHMIProperty.PropertyId.VISIBLE.id])
+		assertEquals(true, mockServer.properties[viewEvent.descriptionList.id]!![RHMIProperty.PropertyId.SELECTABLE.id])
+		assertEquals(1, (mockServer.data[viewEvent.locationList.model] as BMWRemoting.RHMIDataTable).totalRows)
+		assertEquals(1, (mockServer.data[viewEvent.locationList.model] as BMWRemoting.RHMIDataTable).totalColumns)
+		assertEquals("Home\n", (mockServer.data[viewEvent.locationList.model] as BMWRemoting.RHMIDataTable).data[0][0])
+		assertEquals(false, mockServer.properties[viewEvent.locationList.id]!![RHMIProperty.PropertyId.ENABLED.id])
+		assertEquals(true, mockServer.properties[viewEvent.locationList.id]!![RHMIProperty.PropertyId.VISIBLE.id])
+		assertEquals(true, mockServer.properties[viewEvent.locationList.id]!![RHMIProperty.PropertyId.SELECTABLE.id])
+	}
+
+	@Test
+	fun testEventViewAllDay() {
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
+		val viewEvent = app.viewEvent
+		viewEvent.selectedEvent = calendarProvider.getEvents(2021, 11, 25)[0]
+
+		// check that the hmi event listener is set
+		IDriveConnection.mockRemotingClient!!.rhmi_onHmiEvent(0, "", app.viewEvent.state.id, 1, mapOf(4.toByte() to true))
+
+		// check that data was filled in
+		assertEquals("Holiday", mockServer.data[viewEvent.titleLabel.model])
+		assertEquals(1, (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).totalRows)
+		assertEquals(2, (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).totalColumns)
+		assertEquals("Duration", (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).data[0][0])
+		assertEquals("All Day", (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).data[0][1])
+		assertEquals(0, (mockServer.data[viewEvent.descriptionList.model] as BMWRemoting.RHMIDataTable).totalRows)
+		assertEquals(1, (mockServer.data[viewEvent.descriptionList.model] as BMWRemoting.RHMIDataTable).totalColumns)
+//		assertEquals(false, mockServer.properties[viewEvent.descriptionList.id]!![RHMIProperty.PropertyId.ENABLED.id])
+		assertEquals(false, mockServer.properties[viewEvent.descriptionList.id]!![RHMIProperty.PropertyId.VISIBLE.id])
+		assertEquals(true, mockServer.properties[viewEvent.descriptionList.id]!![RHMIProperty.PropertyId.SELECTABLE.id])
+		assertEquals(0, (mockServer.data[viewEvent.locationList.model] as BMWRemoting.RHMIDataTable).totalRows)
+		assertEquals(false, mockServer.properties[viewEvent.locationList.id]!![RHMIProperty.PropertyId.ENABLED.id])
+		assertEquals(false, mockServer.properties[viewEvent.locationList.id]!![RHMIProperty.PropertyId.VISIBLE.id])
+		assertEquals(true, mockServer.properties[viewEvent.locationList.id]!![RHMIProperty.PropertyId.SELECTABLE.id])
+	}
+
+	@Test
+	fun testEventAddress() {
+		// address lookup works
+		whenever(addressSearcher.search(any())) doReturn mock<Address>()
+
+		val mockServer = MockBMWRemotingServer()
+		IDriveConnection.mockRemotingServer = mockServer
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
+		val viewEvent = app.viewEvent
+		viewEvent.selectedEvent = calendarProvider.getEvents(2021, 11, 11)[1]
+
+		// check that the hmi event listener is set
+		IDriveConnection.mockRemotingClient!!.rhmi_onHmiEvent(0, "", app.viewEvent.state.id, 1, mapOf(4.toByte() to true))
+
+		// check that data was filled in
+		assertEquals("C", mockServer.data[viewEvent.titleLabel.model])
+		assertEquals(1, (mockServer.data[viewEvent.descriptionList.model] as BMWRemoting.RHMIDataTable).totalRows)
+		assertEquals(1, (mockServer.data[viewEvent.descriptionList.model] as BMWRemoting.RHMIDataTable).totalColumns)
+		assertEquals("Full Description\n", (mockServer.data[viewEvent.descriptionList.model] as BMWRemoting.RHMIDataTable).data[0][0])
+//		assertEquals(false, mockServer.properties[viewEvent.descriptionList.id]!![RHMIProperty.PropertyId.ENABLED.id])
 		assertEquals(true, mockServer.properties[viewEvent.descriptionList.id]!![RHMIProperty.PropertyId.VISIBLE.id])
 		assertEquals(true, mockServer.properties[viewEvent.descriptionList.id]!![RHMIProperty.PropertyId.SELECTABLE.id])
 		assertEquals(1, (mockServer.data[viewEvent.locationList.model] as BMWRemoting.RHMIDataTable).totalRows)
 		assertEquals("Home\n", (mockServer.data[viewEvent.locationList.model] as BMWRemoting.RHMIDataTable).data[0][0])
+		assertEquals(true, mockServer.properties[viewEvent.locationList.id]!![RHMIProperty.PropertyId.ENABLED.id])      // address is clickable
 		assertEquals(true, mockServer.properties[viewEvent.locationList.id]!![RHMIProperty.PropertyId.VISIBLE.id])
 		assertEquals(true, mockServer.properties[viewEvent.locationList.id]!![RHMIProperty.PropertyId.SELECTABLE.id])
+
+		// the Times list should include a new Navigate option
+		assertEquals(3, (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).totalRows)
+		assertEquals(2, (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).totalColumns)
+		assertEquals("Start", (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).data[0][0])
+		assertEquals("End", (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).data[1][0])
+		assertEquals("Navigate", (mockServer.data[viewEvent.timesList.model] as BMWRemoting.RHMIDataTable).data[2][0])
+		// click the address
+		IDriveConnection.mockRemotingClient?.rhmi_onActionEvent(0, "", viewEvent.locationList.getAction()!!.asRAAction()!!.id, mapOf(0.toByte() to 0))
+
+		// navigation handler should be triggered
+		val navEvent = app.carApp.events.values.filterIsInstance<RHMIEvent.ActionEvent>().first {
+			it.getAction()?.asLinkAction()?.actionType == "navigate"
+		}
+		assertTrue(mockServer.triggeredEvents.containsKey(navEvent.id))
 	}
 }

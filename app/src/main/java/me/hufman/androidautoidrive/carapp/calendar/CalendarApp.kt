@@ -17,9 +17,12 @@ import me.hufman.androidautoidrive.carapp.calendar.views.CalendarDayView
 import me.hufman.androidautoidrive.carapp.calendar.views.CalendarMonthView
 import me.hufman.androidautoidrive.carapp.calendar.views.CalendarEventView
 import me.hufman.androidautoidrive.carapp.calendar.views.PermissionView
+import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
+import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger
+import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerApp
 
 class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, carAppResources: CarAppResources,
-                  val calendarProvider: CalendarProvider) {
+                  val calendarProvider: CalendarProvider, val addressSearcher: AddressSearcher) {
 	companion object {
 		const val TAG = "CalendarApp"
 	}
@@ -46,11 +49,12 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 
 		val focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
 		val focusTriggerController = FocusTriggerController(focusEvent) {}
+		val navigationTrigger = NavigationTriggerApp(carApp)
 
 		viewPermission = PermissionView(carApp.states.values.first { PermissionView.fits(it) })
 		viewMonth = CalendarMonthView(carApp.states.values.first { CalendarMonthView.fits(it) }, focusTriggerController, calendarProvider)
 		viewDay = CalendarDayView(carApp.states.values.first { CalendarDayView.fits(it) }, calendarProvider)
-		viewEvent = CalendarEventView(carApp.states.values.first { CalendarEventView.fits(it) })
+		viewEvent = CalendarEventView(carApp.states.values.first { CalendarEventView.fits(it) }, addressSearcher, navigationTrigger)
 
 		initWidgets()
 	}

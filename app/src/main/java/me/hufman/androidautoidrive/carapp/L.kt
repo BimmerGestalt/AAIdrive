@@ -28,6 +28,7 @@ object L {
 	var CALENDAR_TIME_END = "End"
 	var CALENDAR_TIME_DURATION = "Duration"
 	var CALENDAR_TIME_ALLDAY = "All Day"
+	var CALENDAR_NAVIGATE = "Navigate"
 
 	var MAP_ACTION_VIEWMAP = "View Full Map"
 	var MAP_ACTION_SEARCH = "Search for Place"
