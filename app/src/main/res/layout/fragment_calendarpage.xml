@@ -33,6 +33,12 @@
             <View style="@style/Divider"
                 android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
+                android:text="@string/lbl_calendar_description" />
+
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swMessageNotifications"
                 android:layout_width="match_parent"

@@ -56,5 +56,26 @@
                 android:visibility="@{!permissions.hasCalendarPermission}"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:gravity="center_vertical"
+            android:visibility="@{settings.xiaomiCalendarInstalled}">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_error_outline_black_24dp"
+                app:tint="?android:attr/textColorSecondary"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="@string/lbl_calendar_xiaomi_installed" />
+        </LinearLayout>
     </LinearLayout>
 </layout>

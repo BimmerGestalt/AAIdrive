@@ -81,8 +81,10 @@
     <string name="lbl_smsPermission">Grant the SMS permission to view pictures from incoming SMS images in the car. The text itself is always visible.</string>
 
     <string name="lbl_calendarpage">Your calendar can be displayed in the car, offering quick navigation to appointments</string>
+    <string name="lbl_calendar_description">Events in the phone\'s calendar as seen in Google Calendar will show up in the car. Any work profile calendar is unavailable.</string>
     <string name="lbl_calendar_enabled">Show calendar</string>
     <string name="lbl_calendar_permissions">Access to view calendar</string>
+    <string name="lbl_calendar_xiaomi_installed">Events in Mi Calendar may not be visible in the car</string>
 
     <string name="lbl_mapspage">A basic Google Maps screen can be displayed in the car</string>
     <string name="enable_google_maps">Enable Google Maps</string>

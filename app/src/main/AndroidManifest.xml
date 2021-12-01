@@ -62,6 +62,8 @@
         <intent>
             <action android:name="io.bimmergestalt.carconnection.service" />
         </intent>
+        <!-- Check for the Xiaomi Calendar -->
+        <package android:name="com.xiaomi.calendar" />
     </queries>
 
     <application
