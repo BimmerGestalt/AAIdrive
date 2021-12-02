@@ -4,7 +4,8 @@ import androidx.annotation.VisibleForTesting
 import java.util.*
 
 object NotificationsState {
-	@VisibleForTesting
+	var serviceConnected = false        // whether the notification listener service is running
+
 	val notifications = ArrayList<CarNotification>()    // the notifications shown in the list
 
 	fun getNotificationByKey(key: String?): CarNotification? {

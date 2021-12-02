@@ -24,7 +24,7 @@ class MapAppService: CarAppService() {
 			val cdsData = CDSDataProvider()
 			cdsData.setConnection(CarInformation.cdsData.asConnection(cdsData))
 			val carLocationProvider = CarLocationProvider(cdsData)
-			val mapAppMode = MapAppMode(RHMIDimensions.create(carInformation.capabilities), AppSettingsViewer(), MusicAppMode.TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port)!!)
+			val mapAppMode = MapAppMode(RHMIDimensions.create(carInformation.capabilities), AppSettingsViewer(), MusicAppMode.TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port) ?: MusicAppMode.TRANSPORT_PORTS.BT)
 			val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.fullDimensions.visibleWidth, mapAppMode.fullDimensions.visibleHeight, mapAppMode.compressQuality)
 			this.mapScreenCapture = mapScreenCapture
 			val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(applicationContext, mapScreenCapture.imageCapture, 250)
