@@ -66,7 +66,7 @@ class CalendarMonthView(val state: RHMIState, val focusTriggerController: FocusT
 			return
 		}
 
-		val events = calendarProvider.getEvents(currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH) + 1, null)
+		val events = calendarProvider.getEvents(currentDate[Calendar.YEAR], currentDate[Calendar.MONTH] + 1, null)
 		val highlightedDays = HashSet<Int>()
 		events.forEach {
 			highlightedDays.add(it.start[Calendar.DAY_OF_MONTH])

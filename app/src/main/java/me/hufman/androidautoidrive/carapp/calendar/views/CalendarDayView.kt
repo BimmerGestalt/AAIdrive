@@ -54,7 +54,10 @@ class CalendarDayView(val state: RHMIState, val calendarProvider: CalendarProvid
 		}
 
 		if (currentDate != null) {
-			val events = calendarProvider.getEvents(currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH) + 1, currentDate.get(Calendar.DAY_OF_MONTH))
+			// need to select the entire month to find long-running events around the current day
+			val events = calendarProvider.getEvents(currentDate[Calendar.YEAR], currentDate[Calendar.MONTH] + 1, null).filter {
+				it.start[Calendar.DAY_OF_MONTH] == currentDate[Calendar.DAY_OF_MONTH]
+			}
 //			this.events = events.sortedBy {
 //				(it.start[Calendar.HOUR_OF_DAY] * 60 + it.start[Calendar.MINUTE]) * 1440 +
 //				it.end[Calendar.HOUR_OF_DAY] * 60 + it.end[Calendar.MINUTE]
