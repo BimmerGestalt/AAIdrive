@@ -88,12 +88,14 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	override fun onListenerConnected() {
 		super.onListenerConnected()
 		_serviceState.value = true
+		NotificationsState.serviceConnected = true
 
 		updateNotificationList()
 	}
 
 	override fun onListenerDisconnected() {
 		_serviceState.value = false
+		NotificationsState.serviceConnected = false
 
 		// clear the list in the car
 		NotificationsState.replaceNotifications(emptyList())

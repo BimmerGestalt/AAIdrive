@@ -1,7 +1,6 @@
 package me.hufman.androidautoidrive.carapp.notifications
 
 import android.content.Intent
-import android.provider.Settings
 import android.util.Log
 import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import me.hufman.androidautoidrive.*
@@ -24,7 +23,6 @@ class NotificationAppService: CarAppService() {
 			Log.i(MainService.TAG, "Starting notifications app")
 			val handler = handler!!
 			val notificationSettings = NotificationSettings(carInformation.capabilities, BtStatus(applicationContext) {}, MutableAppSettingsReceiver(applicationContext, handler))
-			notificationSettings.notificationListenerConnected = Settings.Secure.getString(applicationContext.contentResolver, "enabled_notification_listeners")?.contains(applicationContext.packageName) == true
 			notificationSettings.btStatus.register()
 			carappNotifications = PhoneNotifications(iDriveConnectionStatus, securityAccess,
 					CarAppAssetResources(applicationContext, "basecoreOnlineServices"),

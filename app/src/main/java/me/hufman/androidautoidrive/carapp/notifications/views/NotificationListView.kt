@@ -86,7 +86,7 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 		// refresh the list when we are displayed
 		state.focusCallback = FocusCallback { focused ->
 			visible = focused
-			if (firstView && !settings.notificationListenerConnected) {
+			if (firstView && !NotificationsState.serviceConnected) {
 				focusTriggerController.focusState(permissionView.state, false)   // skip through to permissions view
 				firstView = false
 			} else if (focused) {

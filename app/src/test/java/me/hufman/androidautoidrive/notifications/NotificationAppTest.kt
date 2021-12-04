@@ -80,7 +80,6 @@ class NotificationAppTest {
 				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER, AppSettings.KEYS.NOTIFICATIONS_SOUND,
 				AppSettings.KEYS.NOTIFICATIONS_READOUT, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
 		)}
-		on { notificationListenerConnected } doReturn true
 		on { quickReplies } doAnswer { listOf("\uD83D\uDE3B") }
 		on { shouldPopup(any()) } doReturn true
 		on { shouldPlaySound() } doReturn true
@@ -104,6 +103,7 @@ class NotificationAppTest {
 	@Before
 	fun setUp() {
 		NotificationsState.notifications.clear()
+		NotificationsState.serviceConnected = true
 		UnicodeCleaner._addPlaceholderEmoji("\u00A9", listOf("copyright"), "copyright")
 		UnicodeCleaner._addPlaceholderEmoji("\u2714", listOf("heavy_check_mark"), "heavy_check_mark")
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDE00", listOf("grinning"), "grinning face")
@@ -774,7 +774,7 @@ class NotificationAppTest {
 	 */
 	@Test
 	fun testViewNotificationsMissingPermission() {
-		whenever(notificationSettings.notificationListenerConnected) doReturn false
+		NotificationsState.serviceConnected = false
 
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
