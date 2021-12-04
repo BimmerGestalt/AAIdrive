@@ -77,5 +77,14 @@
                 android:paddingBottom="12dp"
                 android:text="@string/lbl_calendar_xiaomi_installed" />
         </LinearLayout>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:text="@string/lbl_calendar_detailed_events"
+            android:checked="@={settings.detailedEvents}"/>
+
     </LinearLayout>
 </layout>

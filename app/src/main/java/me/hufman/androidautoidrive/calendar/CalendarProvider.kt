@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.database.Cursor
 import android.provider.CalendarContract
+import me.hufman.androidautoidrive.AppSettings
 import java.util.*
 
 fun Calendar.copy(): Calendar {
@@ -18,10 +19,10 @@ data class CalendarEvent(
 		val start: Calendar,
 		val end: Calendar,
 		val location: String,
-		val description: String? = null
+		val description: String
 )
 
-class CalendarProvider(val context: Context) {
+class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 	companion object {
 
 		val PROJECTION = arrayOf(
@@ -128,7 +129,10 @@ class CalendarProvider(val context: Context) {
 					if (event.start[Calendar.YEAR] == year &&
 						event.start[Calendar.MONTH] + 1 == month &&
 						(event.start[Calendar.DAY_OF_MONTH] == day || day == null)) {
-						events.add(event)
+							if (!appSettings[AppSettings.KEYS.CALENDAR_DETAILED_EVENTS].toBoolean() ||
+									event.description.isNotBlank() || event.location.isNotBlank()) {
+								events.add(event)
+							}
 //						println("${event.title}  ${allDay}T $timezoneName  ${event.start} - ${event.end}")
 //					} else {
 //						println("Skipping ${event.title} on ${event.start}")

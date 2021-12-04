@@ -19,7 +19,7 @@ class CalendarAppService: CarAppService() {
 			val handler = handler!!
 			carappCalendar = CalendarApp(iDriveConnectionStatus, securityAccess,
 					CarAppAssetResources(applicationContext, "calendar"),
-					CalendarProvider(applicationContext),
+					CalendarProvider(applicationContext, appSettings),
 					AndroidGeocoderSearcher(applicationContext))
 			carappCalendar?.onCreate()
 		}

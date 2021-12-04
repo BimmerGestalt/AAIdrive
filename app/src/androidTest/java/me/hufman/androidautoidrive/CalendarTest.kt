@@ -13,7 +13,7 @@ class CalendarTest {
 	@Ignore("Debugging")
 	fun testCalendar() {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-		val calendar = CalendarProvider(appContext)
+		val calendar = CalendarProvider(appContext, AppSettingsViewer())
 		calendar.getEvents(2021, 12, 31)
 	}
 }

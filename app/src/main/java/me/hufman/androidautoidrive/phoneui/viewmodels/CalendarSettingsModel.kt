@@ -17,6 +17,7 @@ class CalendarSettingsModel(appContext: Context): ViewModel() {
 	}
 
 	val calendarEnabled = BooleanLiveSetting(appContext, AppSettings.KEYS.ENABLED_CALENDAR)
+	val detailedEvents = BooleanLiveSetting(appContext, AppSettings.KEYS.CALENDAR_DETAILED_EVENTS)
 
 	val xiaomiCalendarInstalled = FunctionalLiveData<Boolean> {
 		try {

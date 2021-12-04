@@ -40,7 +40,6 @@
                 android:text="@string/lbl_calendar_description" />
 
             <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/swMessageNotifications"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
