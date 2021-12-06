@@ -49,6 +49,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			add(it)     // add the currently shown notifications to suppress popups
 		}
 	}
+	var popupAutoCloser: PopupAutoCloser? = null
 
 	var viewPopup: PopupView                // notification about notification
 	val viewList: NotificationListView      // show a list of active notifications
@@ -307,6 +308,20 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 		notificationReceiver.register(context, notificationBroadcastReceiver, handler)
 
 		viewList.onCreate(handler)
+
+		popupAutoCloser = PopupAutoCloser(handler, viewPopup)
+	}
+	fun id5Upgrade(id5StatusbarApp: ID5StatusbarApp) {
+		// main app should use id5 for popup access
+		viewPopup = id5StatusbarApp.popupView
+		// main app should use id5 for statusbar access
+		statusbarController.controller = id5StatusbarApp.statusbarController
+		// the id5 statusbar can trigger the main app view state
+		id5StatusbarApp.showNotificationController = showNotificationController
+
+		// replace the popup autocloser with the new popup state
+		val handler = popupAutoCloser?.handler ?: return        // this should be initialized already, but just in case
+		popupAutoCloser = PopupAutoCloser(handler, viewPopup)
 	}
 	fun onDestroy(context: Context) {
 		val notificationReceiver = this.notificationBroadcastReceiver
@@ -347,6 +362,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 				val userActivelyInteracting = timeSinceContextChange < HMI_CONTEXT_THRESHOLD
 				if (notificationSettings.shouldPopup(passengerSeated) && (currentlyPopped || (!currentlyReading && !currentlyInputing && !userActivelyInteracting))) {
 					viewPopup.showNotification(sbn)
+					popupAutoCloser?.start()
 				} else if (!currentlyPopped && !currentlyReading) {
 					// only show the statusbar icon if we didn't pop it up
 					viewList.showNotification(sbn)
