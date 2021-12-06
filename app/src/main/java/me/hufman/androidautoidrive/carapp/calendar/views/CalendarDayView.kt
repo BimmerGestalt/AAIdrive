@@ -5,6 +5,7 @@ import io.bimmergestalt.idriveconnectkit.Utils.etchAsInt
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.calendar.CalendarEvent
 import me.hufman.androidautoidrive.calendar.CalendarProvider
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.calendar.RHMIDateUtils
 import java.util.*
 
@@ -35,10 +36,18 @@ class CalendarDayView(val state: RHMIState, val calendarProvider: CalendarProvid
 			}
 		}
 		calendarDay.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionCallback { args ->
-			val index = etchAsInt(args?.get(0.toByte()) ?: -1) - 1      // car indexes this list starting at 1
-			val event = events.getOrNull(index)
-			eventView.selectedEvent = event
-			calendarDay.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = eventView.state.id
+			val index = etchAsInt(args?.get(0.toByte()) ?: -1)
+			if (index == 0) {
+				// the header row, showing the current date
+				selectedDate?.add(Calendar.DAY_OF_YEAR, 1)
+				update()
+				throw RHMIActionAbort()
+			} else if (index > 0) {
+				// car indexes the events list starting at 1
+				val event = events.getOrNull(index - 1)
+				eventView.selectedEvent = event
+				calendarDay.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = eventView.state.id
+			}
 		}
 	}
 
