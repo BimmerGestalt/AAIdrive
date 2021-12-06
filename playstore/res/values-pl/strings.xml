@@ -5,6 +5,7 @@
     <string name="playstore_desc_features_music">Zobacz aplikacje muzyczne z telefonu jako źródła mediów w IDrive</string>
     <string name="playstore_desc_features_assistants">Współpracuj z asystentami głosowymi zainstalowanymi na telefonie</string>
     <string name="playstore_desc_features_notifications">Przeglądaj, słuchaj (TTS) i odpowiadaj na powiadomieniami za pomocą panelu powiadomień w samochodzie</string>
+    <string name="playstore_desc_features_calendar">Zobacz swój kalendarz w samochodzie i rozpocznij nawigację do miejsca spotkania</string>
     <string name="playstore_desc_features_carnav">Wyzwalaj nawigację samochodową z aplikacji na telefone</string>
     <string name="playstore_desc_features_carinfo">Odczytaj różne informacje diagnostyczne i statystyki z samochodu</string>
     <string name="playstore_desc_features_addons_mirroring">Rozszerz możliwości o opcjonalne dodatki (takie jak screen mirroring)</string>
