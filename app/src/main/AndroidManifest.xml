@@ -1045,12 +1045,36 @@
             </intent-filter>
         </service>
 
-        <service android:name=".carapp.assistant.AssistantAppService" android:exported="false" />
-        <service android:name=".carapp.calendar.CalendarAppService" android:exported="false" />
-        <service android:name=".carapp.carinfo.CarInformationDiscoveryService" android:exported="false" />
-        <service android:name=".carapp.maps.MapAppService" android:exported="false" />
-        <service android:name=".carapp.music.MusicAppService" android:exported="false" />
-        <service android:name=".carapp.notifications.NotificationAppService" android:exported="false" />
+        <service android:name=".carapp.assistant.AssistantAppService" android:exported="false">
+            <intent-filter>
+                <action android:name="me.hufman.androidautoidrive.carconnection.service" />
+            </intent-filter>
+        </service>
+        <service android:name=".carapp.calendar.CalendarAppService" android:exported="false">
+            <intent-filter>
+                <action android:name="me.hufman.androidautoidrive.carconnection.service" />
+            </intent-filter>
+        </service>
+        <service android:name=".carapp.carinfo.CarInformationDiscoveryService" android:exported="false">
+            <intent-filter>
+                <action android:name="me.hufman.androidautoidrive.carconnection.service" />
+            </intent-filter>
+        </service>
+        <service android:name=".carapp.maps.MapAppService" android:exported="false">
+            <intent-filter>
+                <action android:name="me.hufman.androidautoidrive.carconnection.service" />
+            </intent-filter>
+        </service>
+        <service android:name=".carapp.music.MusicAppService" android:exported="false">
+            <intent-filter>
+                <action android:name="me.hufman.androidautoidrive.carconnection.service" />
+            </intent-filter>
+        </service>
+        <service android:name=".carapp.notifications.NotificationAppService" android:exported="false">
+            <intent-filter>
+                <action android:name="me.hufman.androidautoidrive.carconnection.service" />
+            </intent-filter>
+        </service>
 
         <receiver android:name=".CarConnectionListener">
             <intent-filter>

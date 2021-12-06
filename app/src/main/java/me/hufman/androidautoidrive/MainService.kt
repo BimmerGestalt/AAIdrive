@@ -20,12 +20,7 @@ import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import me.hufman.androidautoidrive.addons.AddonsService
 import me.hufman.androidautoidrive.carapp.*
-import me.hufman.androidautoidrive.carapp.assistant.AssistantAppService
-import me.hufman.androidautoidrive.carapp.calendar.CalendarAppService
 import me.hufman.androidautoidrive.carapp.carinfo.CarInformationDiscoveryService
-import me.hufman.androidautoidrive.carapp.maps.MapAppService
-import me.hufman.androidautoidrive.carapp.music.MusicAppService
-import me.hufman.androidautoidrive.carapp.notifications.NotificationAppService
 import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.phoneui.DonationRequest
 import me.hufman.androidautoidrive.phoneui.NavHostActivity
@@ -37,6 +32,7 @@ class MainService: Service() {
 
 		const val ACTION_START = "me.hufman.androidautoidrive.MainService.start"
 		const val ACTION_STOP = "me.hufman.androidautoidrive.MainService.stop"
+		const val ACTION_SERVICE_MODULE = "me.hufman.androidautoidrive.carconnection.service"
 		const val EXTRA_FOREGROUND = "EXTRA_FOREGROUND"
 
 		const val CONNECTED_PROBE_TIMEOUT: Long = 2 * 60 * 1000     // if Bluetooth is connected
@@ -60,7 +56,7 @@ class MainService: Service() {
 	val carInformationUpdater by lazy { CarInformationUpdater(appSettings) }
 	val cdsObserver = CDSEventHandler { _, _ -> combinedCallback() }
 
-	var moduleServiceBindings = HashMap<Class<out Service>, ServiceConnection>()
+	var moduleServiceBindings = HashMap<String, ServiceConnection>()
 	var addonsService: AddonsService? = null
 
 	// reschedule a combinedCallback to make sure enough time has passed
@@ -277,8 +273,6 @@ class MainService: Service() {
 					return
 				}
 
-				var startAny = false
-
 				AppSettings.loadSettings(applicationContext)
 
 				// set the car app languages
@@ -294,33 +288,20 @@ class MainService: Service() {
 
 				// report car capabilities
 				// also loads the car language
-				startAny = startAny or startCarCapabilities()
+				startCarCapabilities()
 
 				if (appSettings[AppSettings.KEYS.PREFER_CAR_LANGUAGE].toBoolean() &&
 						carInformationObserver.cdsData[CDS.VEHICLE.LANGUAGE] == null) {
 					// still waiting for language
 					Log.d(TAG, "Waiting for the car's language to be confirmed")
 				} else {
-					// start notifications
-					startAny = startAny or startNotifications()
-
-					// start maps
-					startAny = startAny or startMaps()
-
-					// start music
-					startAny = startAny or startMusic()
-
-					// start assistant
-					startAny = startAny or startAssistant()
-
-					// start calendar
-					startAny = startAny or startCalendar()
+					startModuleServices()
 
 					// start navigation handler
 					startNavigationListener()
 
 					// start addons
-					startAny = startAny or startAddons()
+					startAddons()
 
 					backgroundInterruptionDetection.start()
 				}
@@ -343,33 +324,35 @@ class MainService: Service() {
 		carInformationUpdater.isConnected = iDriveConnectionReceiver.isConnected && securityAccess.isConnected()
 	}
 
-	fun startModuleService(cls: Class<out Service>) {
-		val connectionIntent = Intent(this, cls)
+	fun startModuleService(clsName: String) {
+		val connectionIntent = Intent(ACTION_SERVICE_MODULE)
+				.setComponent(ComponentName(applicationContext.packageName, clsName))
 		connectionIntent.putExtra("EXTRA_BRAND", iDriveConnectionReceiver.brand)
 		connectionIntent.putExtra("EXTRA_HOST", iDriveConnectionReceiver.host)
 		connectionIntent.putExtra("EXTRA_PORT", iDriveConnectionReceiver.port)
 		connectionIntent.putExtra("EXTRA_INSTANCE_ID", iDriveConnectionReceiver.instanceId)
 
 		synchronized(this) {
-			if (!moduleServiceBindings.containsKey(cls)) {
-				val serviceConnection = ModuleServiceConnection(cls.simpleName)
+			if (!moduleServiceBindings.containsKey(clsName)) {
+				val serviceConnection = ModuleServiceConnection(clsName)
 				bindService(connectionIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-				moduleServiceBindings[cls] = serviceConnection
+				moduleServiceBindings[clsName] = serviceConnection
 			} else {
 				startService(connectionIntent)
 			}
 		}
 	}
 
-	fun stopModuleService(cls: Class<out Service>) {
-		val connectionIntent = Intent(this, cls)
+	fun stopModuleService(clsName: String) {
+		val connectionIntent = Intent(ACTION_SERVICE_MODULE)
+				.setComponent(ComponentName(applicationContext.packageName, clsName))
 		connectionIntent.putExtra("EXTRA_BRAND", iDriveConnectionReceiver.brand)
 		connectionIntent.putExtra("EXTRA_HOST", iDriveConnectionReceiver.host)
 		connectionIntent.putExtra("EXTRA_PORT", iDriveConnectionReceiver.port)
 		connectionIntent.putExtra("EXTRA_INSTANCE_ID", iDriveConnectionReceiver.instanceId)
 
 		synchronized(this) {
-			val connection = moduleServiceBindings.remove(cls)
+			val connection = moduleServiceBindings.remove(clsName)
 			if (connection != null) {
 				unbindService(connection)
 			}
@@ -377,57 +360,26 @@ class MainService: Service() {
 		}
 	}
 
-	fun startCarCapabilities(): Boolean {
-		startModuleService(CarInformationDiscoveryService::class.java)
-		return true
+	fun startModuleServices() {
+		val intentService = Intent(ACTION_SERVICE_MODULE)
+				.setPackage(applicationContext.packageName)
+		packageManager.queryIntentServices(intentService, 0).forEach { resolveInfo ->
+			startModuleService(resolveInfo.serviceInfo.name)
+		}
 	}
 
+	fun stopModuleServices() {
+		val intentService = Intent(ACTION_SERVICE_MODULE)
+				.setPackage(applicationContext.packageName)
+		packageManager.queryIntentServices(intentService, 0).forEach { resolveInfo ->
+			stopModuleService(resolveInfo.serviceInfo.name)
+		}
+	}
+	fun startCarCapabilities() {
+		startModuleService(CarInformationDiscoveryService::class.java.name)
+	}
 	fun stopCarCapabilities() {
-		stopModuleService(CarInformationDiscoveryService::class.java)
-	}
-
-	fun startNotifications(): Boolean {
-		startModuleService(NotificationAppService::class.java)
-		return true
-	}
-
-	fun stopNotifications() {
-		stopModuleService(NotificationAppService::class.java)
-	}
-
-	fun startMaps(): Boolean {
-		startModuleService(MapAppService::class.java)
-		return true
-	}
-
-	fun stopMaps() {
-		stopModuleService(MapAppService::class.java)
-	}
-
-	fun startMusic(): Boolean {
-		startModuleService(MusicAppService::class.java)
-		return true
-	}
-	fun stopMusic() {
-		stopModuleService(MusicAppService::class.java)
-	}
-
-	fun startAssistant(): Boolean {
-		startModuleService(AssistantAppService::class.java)
-		return true
-	}
-
-	fun stopAssistant() {
-		stopModuleService(AssistantAppService::class.java)
-	}
-
-	fun startCalendar(): Boolean {
-		startModuleService(CalendarAppService::class.java)
-		return true
-	}
-
-	fun stopCalendar() {
-		stopModuleService(CalendarAppService::class.java)
+		startModuleService(CarInformationDiscoveryService::class.java.name)
 	}
 
 	fun startNavigationListener() {
@@ -470,11 +422,7 @@ class MainService: Service() {
 
 	private fun stopCarApps() {
 		stopCarCapabilities()
-		stopNotifications()
-		stopMaps()
-		stopMusic()
-		stopAssistant()
-		stopCalendar()
+		stopModuleServices()
 		stopNavigationListener()
 		stopAddons()
 	}
