@@ -348,6 +348,9 @@
     <string name="READOUT_DESCRIPTION">Appen används för avläsningsändamål</string>
     <string name="CALENDAR_TIME_START">Starta</string>
     <string name="CALENDAR_TIME_END">Avsluta</string>
+    <string name="CALENDAR_TIME_DURATION">Varaktighet</string>
+    <string name="CALENDAR_TIME_ALLDAY">Heldag</string>
+    <string name="CALENDAR_NAVIGATE">Navigera</string>
     <string name="MAP_ACTION_VIEWMAP">Se hela kartan</string>
     <string name="MAP_ACTION_SEARCH">Sök efter plats</string>
     <string name="MAP_ACTION_CLEARNAV">Ta bort navigering</string>
