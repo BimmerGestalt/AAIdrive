@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="playstore_tagline">Dodaj funkcje Android Auto do BMW i Mini IDrive NBT</string>
+    <string name="playstore_desc_title">Odblokuj pełen potencjał samochodu z BMW Connected Apps i IDrive wersja 4-6, aby zwiększyć swoje doświadczenie w użytkowania pojazdu!</string>
     <string name="playstore_desc_features_heading">W połączeniu z aktywną subskrypcją BMW ConnectedDrive lub opcją Mini Connected ten projekt dodaje większość funkcjonalności Android Auto do twojego samochodu jako nieoficjalna aplikacja BMW/Mini Connected Apps:</string>
     <string name="playstore_desc_features_music">Zobacz aplikacje muzyczne z telefonu jako źródła mediów w IDrive</string>
     <string name="playstore_desc_features_assistants">Współpracuj z asystentami głosowymi zainstalowanymi na telefonie</string>
