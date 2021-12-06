@@ -42,6 +42,7 @@
     <string name="menu_music">Muzyka</string>
     <string name="menu_notifications">Powiadomienia</string>
     <string name="menu_assistants">Asystenci</string>
+    <string name="menu_calendar">Kalendarz</string>
     <string name="menu_maps">Mapy</string>
     <string name="menu_navigation">Nawigacja</string>
     <string name="menu_addons">Dodatki</string>
@@ -73,6 +74,12 @@
     <string name="lbl_popupVersion">Wyskakujace powiadomienia działaja tylko z IDrive4</string>
     <string name="lbl_ttsUnsupported">Twój samochód nie obsługuje funkcji TTS</string>
     <string name="lbl_smsPermission">Przyznaj uprawnienia SMS aby wyświetlać obrazy z przychodzących SMS w samochodzie. Tekst jest zawsze widoczny.</string>
+    <string name="lbl_calendarpage">Twój kalendarz może być wyświetlany w samochodzie, oferując szybką nawigację do miejsca spotkania</string>
+    <string name="lbl_calendar_description">Wydarzenia w kalendarzu telefonu (widoczne również w Google kalendarzu) pokażą się w samochodzie. Profile służbowe jeśli nie są synchronizowane z domyślnym kalendarzem nie będą dostępne.</string>
+    <string name="lbl_calendar_enabled">Pokaż kalendarz</string>
+    <string name="lbl_calendar_permissions">Dostęp do wyświetlenia kalendarza</string>
+    <string name="lbl_calendar_xiaomi_installed">Wydarzenia z aplikacji Mi kalendarzu mogą nie być widoczne w samochodzie</string>
+    <string name="lbl_calendar_detailed_events">Ukryj wydarzenia bez szczegółów lub lokalizacji</string>
     <string name="lbl_mapspage">W samochodzie można wyświetlić podstawowy ekran Google Maps (proof of concept)</string>
     <string name="enable_google_maps">Włącz Google Maps</string>
     <string name="lbl_map_phone_gps">Użyj lokalizacji telefonu zamiast samochodu</string>
@@ -341,6 +348,11 @@
     <string name="NOTIFICATION_PERMISSION_NEEDED">Ta aplikacja musi mieć dostęp do powiadomień</string>
     <string name="NOTIFICATION_CENTER_APP">Ta aplikacja służy do wysyłania powiadomień do centrum powiadomień samochodu</string>
     <string name="READOUT_DESCRIPTION">Ta aplikacja jest używana do odczytu powiadomień (TTS)</string>
+    <string name="CALENDAR_TIME_START">Początek</string>
+    <string name="CALENDAR_TIME_END">Koniec</string>
+    <string name="CALENDAR_TIME_DURATION">Czas trwania</string>
+    <string name="CALENDAR_TIME_ALLDAY">Cały Dzień</string>
+    <string name="CALENDAR_NAVIGATE">Nawiguj</string>
     <string name="MAP_ACTION_VIEWMAP">Zobacz całą mapę</string>
     <string name="MAP_ACTION_SEARCH">Szukaj miejsca</string>
     <string name="MAP_ACTION_CLEARNAV">Wyczyść nawigacja</string>
