@@ -31,7 +31,9 @@ abstract class CarAppService: Service() {
 
 	override fun onCreate() {
 		super.onCreate()
-		securityAccess.connect()
+		if (!securityAccess.isConnected()) {
+			securityAccess.connect()
+		}
 	}
 
 	/**
