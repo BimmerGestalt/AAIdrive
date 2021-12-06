@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="playstore_tagline">Android Auto funkciók hozzáadása a BMW és Mini IDrive NBT műszerfalhoz</string>
+    <string name="playstore_desc_title">Fedezd fel a BMW Connected Apps-alapú IDirve 4-6 -os rendszerű autód összes lehetőségét, hogy ezzel emeld vezetési élményedet!</string>
     <string name="playstore_desc_features_heading">Kombinálva egy aktív BMW ConnectedDrive vagy Mini Connected regisztrációval, ez a projekt a legtöbb Android Auto funkciót hozzáadja az autódhoz, mint nem hivatalos BMW/Mini Connected alkalmazások:</string>
     <string name="playstore_desc_features_music">A telefonondon lévő zenei alkalmazások média forrásként az IDive-ban</string>
     <string name="playstore_desc_features_assistants">Telefonodra telepített hang asszisztensekkel interakciók</string>
