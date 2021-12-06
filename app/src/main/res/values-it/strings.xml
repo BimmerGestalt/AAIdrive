@@ -42,6 +42,7 @@
     <string name="menu_music">Musica</string>
     <string name="menu_notifications">Notifiche</string>
     <string name="menu_assistants">Assistente</string>
+    <string name="menu_calendar">Calendario</string>
     <string name="menu_maps">Mappe</string>
     <string name="menu_navigation">Navigazione</string>
     <string name="menu_addons">Estensioni</string>
@@ -71,6 +72,9 @@
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS non è supportato dalla tua auto</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
+    <string name="lbl_calendarpage">Puoi visualizzare il calendario sullo schermo della vettura, offrendo così possibilità di navigare rapidamente attraverso i tuoi appuntamenti</string>
+    <string name="lbl_calendar_enabled">Mostra il Calendario</string>
+    <string name="lbl_calendar_permissions">Accesso al calendario</string>
     <string name="lbl_mapspage">Una schermata standard di Google Maps può essere visualizzata nell\'auto</string>
     <string name="enable_google_maps">Abilita Google Maps</string>
     <string name="lbl_map_phone_gps">Usa il GPS del telefono invece di quello dell\'auto</string>
