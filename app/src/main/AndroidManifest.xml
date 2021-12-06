@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Run the Foreground Notification to stay in memory -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Read Calendar to show in the car -->
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
     <!-- Optionally access SMS images -->
     <uses-permission android:name="android.permission.READ_SMS" />
     <!-- Open Assistant while the screen is off in new phones -->
@@ -60,6 +62,8 @@
         <intent>
             <action android:name="io.bimmergestalt.carconnection.service" />
         </intent>
+        <!-- Check for the Xiaomi Calendar -->
+        <package android:name="com.xiaomi.calendar" />
     </queries>
 
     <application
@@ -1042,6 +1046,7 @@
         </service>
 
         <service android:name=".carapp.assistant.AssistantAppService" android:exported="false" />
+        <service android:name=".carapp.calendar.CalendarAppService" android:exported="false" />
         <service android:name=".carapp.carinfo.CarInformationDiscoveryService" android:exported="false" />
         <service android:name=".carapp.maps.MapAppService" android:exported="false" />
         <service android:name=".carapp.music.MusicAppService" android:exported="false" />

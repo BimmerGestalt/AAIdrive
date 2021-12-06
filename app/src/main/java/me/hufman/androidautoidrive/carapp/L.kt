@@ -24,6 +24,12 @@ object L {
 	var NOTIFICATION_CENTER_APP = "This app is used to push to the car's Notification Center"
 	var READOUT_DESCRIPTION = "This app is used for readout purposes"
 
+	var CALENDAR_TIME_START = "Start"
+	var CALENDAR_TIME_END = "End"
+	var CALENDAR_TIME_DURATION = "Duration"
+	var CALENDAR_TIME_ALLDAY = "All Day"
+	var CALENDAR_NAVIGATE = "Navigate"
+
 	var MAP_ACTION_VIEWMAP = "View Full Map"
 	var MAP_ACTION_SEARCH = "Search for Place"
 	var MAP_ACTION_CLEARNAV = "Clear Navigation"

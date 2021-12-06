@@ -32,6 +32,10 @@
         android:name="me.hufman.androidautoidrive.phoneui.fragments.AssistantPageFragment"
         android:label="@string/menu_assistants" />
     <fragment
+        android:id="@+id/nav_calendar"
+        android:name="me.hufman.androidautoidrive.phoneui.fragments.CalendarPageFragment"
+        android:label="@string/menu_calendar" />
+    <fragment
         android:id="@+id/nav_maps"
         android:name="me.hufman.androidautoidrive.phoneui.fragments.MapsPageFragment"
         android:label="@string/menu_maps" />

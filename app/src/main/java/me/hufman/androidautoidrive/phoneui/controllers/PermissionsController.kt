@@ -15,6 +15,7 @@ import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
 class PermissionsController(val activity: Activity) {
 	companion object {
 		const val REQUEST_SMS = 20
+		const val REQUEST_CALENDAR = 30
 		const val REQUEST_LOCATION = 4000
 	}
 
@@ -58,6 +59,12 @@ class PermissionsController(val activity: Activity) {
 		}
 	}
 
+	fun openSelfPermissions() {
+		ActivityCompat.requestPermissions(activity,
+				arrayOf(Manifest.permission.READ_CALENDAR),
+				REQUEST_CALENDAR)
+	}
+
 	fun promptNotification() {
 		val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
 				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -70,9 +77,15 @@ class PermissionsController(val activity: Activity) {
 				REQUEST_SMS)
 	}
 
+	fun promptCalendar() {
+		ActivityCompat.requestPermissions(activity,
+				arrayOf(Manifest.permission.READ_CALENDAR),
+				REQUEST_CALENDAR)
+	}
+
 	fun promptLocation() {
 		ActivityCompat.requestPermissions(activity,
-				arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+				arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
 				REQUEST_LOCATION)
 	}
 

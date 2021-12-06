@@ -21,6 +21,7 @@ import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import me.hufman.androidautoidrive.addons.AddonsService
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.assistant.AssistantAppService
+import me.hufman.androidautoidrive.carapp.calendar.CalendarAppService
 import me.hufman.androidautoidrive.carapp.carinfo.CarInformationDiscoveryService
 import me.hufman.androidautoidrive.carapp.maps.MapAppService
 import me.hufman.androidautoidrive.carapp.music.MusicAppService
@@ -312,6 +313,9 @@ class MainService: Service() {
 					// start assistant
 					startAny = startAny or startAssistant()
 
+					// start calendar
+					startAny = startAny or startCalendar()
+
 					// start navigation handler
 					startNavigationListener()
 
@@ -427,6 +431,20 @@ class MainService: Service() {
 		stopModuleService(AssistantAppService::class.java)
 	}
 
+	fun startCalendar(): Boolean {
+		val shouldRun = appSettings[AppSettings.KEYS.ENABLED_CALENDAR].toBoolean()
+		if (shouldRun) {
+			startModuleService(CalendarAppService::class.java)
+		} else {
+			stopModuleService(CalendarAppService::class.java)
+		}
+		return true
+	}
+
+	fun stopCalendar() {
+		stopModuleService(CalendarAppService::class.java)
+	}
+
 	fun startNavigationListener() {
 		if (carInformationObserver.capabilities["navi"] == "true") {
 			if (iDriveConnectionReceiver.brand?.lowercase(Locale.ROOT) == "bmw") {
@@ -471,6 +489,7 @@ class MainService: Service() {
 		stopMaps()
 		stopMusic()
 		stopAssistant()
+		stopCalendar()
 		stopNavigationListener()
 		stopAddons()
 	}

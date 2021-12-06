@@ -47,6 +47,7 @@
     <string name="menu_music">Music</string>
     <string name="menu_notifications">Notifications</string>
     <string name="menu_assistants">Assistants</string>
+    <string name="menu_calendar">Calendar</string>
     <string name="menu_maps">Maps</string>
     <string name="menu_navigation">Navigation</string>
     <string name="menu_addons">Addons</string>
@@ -78,6 +79,13 @@
     <string name="lbl_popupVersion">Popups only work with IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS is not supported by your car</string>
     <string name="lbl_smsPermission">Grant the SMS permission to view pictures from incoming SMS images in the car. The text itself is always visible.</string>
+
+    <string name="lbl_calendarpage">Your calendar can be displayed in the car, offering quick navigation to appointments</string>
+    <string name="lbl_calendar_description">Events in the phone\'s calendar as seen in Google Calendar will show up in the car. Any work profile calendar is unavailable.</string>
+    <string name="lbl_calendar_enabled">Show calendar</string>
+    <string name="lbl_calendar_permissions">Access to view calendar</string>
+    <string name="lbl_calendar_xiaomi_installed">Events in Mi Calendar may not be visible in the car</string>
+    <string name="lbl_calendar_detailed_events">Hide events without details or locations</string>
 
     <string name="lbl_mapspage">A basic Google Maps screen can be displayed in the car</string>
     <string name="enable_google_maps">Enable Google Maps</string>
@@ -371,6 +379,12 @@
     <string name="NOTIFICATION_PERMISSION_NEEDED">This app needs to be granted Notification Access</string>
     <string name="NOTIFICATION_CENTER_APP">This app is used to push to the car\'s Notification Center</string>
     <string name="READOUT_DESCRIPTION">This app is used for readout purposes</string>
+
+    <string name="CALENDAR_TIME_START">Start</string>
+    <string name="CALENDAR_TIME_END">End</string>
+    <string name="CALENDAR_TIME_DURATION">Duration</string>
+    <string name="CALENDAR_TIME_ALLDAY">All Day</string>
+    <string name="CALENDAR_NAVIGATE">Navigate</string>
 
     <string name="MAP_ACTION_VIEWMAP">View Full Map</string>
     <string name="MAP_ACTION_SEARCH">Search for Place</string>

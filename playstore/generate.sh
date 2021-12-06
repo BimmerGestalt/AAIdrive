@@ -24,6 +24,7 @@ Full Description:
 🎵 `lang_line playstore_desc_features_music`
 🎙️ `lang_line playstore_desc_features_assistants`
 🔔 `lang_line playstore_desc_features_notifications`
+📅 `lang_line playstore_desc_features_calendar`
 🗺️ `lang_line playstore_desc_features_carnav`
 👀 `lang_line playstore_desc_features_carinfo`
 🧩 `lang_line playstore_desc_features_addons_mirroring`
