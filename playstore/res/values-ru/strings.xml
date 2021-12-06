@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="playstore_tagline">Добавьте возможности Android Auto на панель IDrive вашего BMW или Mini</string>
+    <string name="playstore_desc_title">Откройте весь потенциал приложений на базе BMW Connected для повышения качества вождения!</string>
     <string name="playstore_desc_features_heading">Совмещенный с активной подпиской BMW ConnectedDrive или опцией Mini Connected, этот проект добавляет большую часть возможностей Android Auto на ваш автомобиль как неофициальные приложения BMW/Mini:</string>
     <string name="playstore_desc_features_music">Просматривайте музыкальные приложения вашего телефона как источники мультимедиа в IDrive</string>
     <string name="playstore_desc_features_assistants">Взаимодействуйте с голосовыми помощниками, установленными на вашем телефоне</string>
     <string name="playstore_desc_features_notifications">Читайте, слушайте и отвечайте на уведомления на дисплее автомобиля</string>
+    <string name="playstore_desc_features_calendar">Просмотрите календарь в автомобиле и начните навигацию по встречам</string>
     <string name="playstore_desc_features_carnav">Запустите автонавигацию на вашем телефоне</string>
     <string name="playstore_desc_features_carinfo">Читайте различные данные диагностики и статистику вашего автомобиля</string>
     <string name="playstore_desc_features_addons_mirroring">Расширьте возможности через необязательные дополнения (например, зеркалирование экрана)</string>
