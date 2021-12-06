@@ -387,13 +387,8 @@ class MainService: Service() {
 	}
 
 	fun startNotifications(): Boolean {
-		val shouldRun = appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
-		if (shouldRun) {
-			startModuleService(NotificationAppService::class.java)
-		} else {
-			stopModuleService(NotificationAppService::class.java)
-		}
-		return shouldRun
+		startModuleService(NotificationAppService::class.java)
+		return true
 	}
 
 	fun stopNotifications() {
@@ -401,13 +396,8 @@ class MainService: Service() {
 	}
 
 	fun startMaps(): Boolean {
-		val shouldRun = appSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
-		if (shouldRun) {
-			startModuleService(MapAppService::class.java)
-		} else {
-			stopModuleService(MapAppService::class.java)
-		}
-		return shouldRun
+		startModuleService(MapAppService::class.java)
+		return true
 	}
 
 	fun stopMaps() {
@@ -432,12 +422,7 @@ class MainService: Service() {
 	}
 
 	fun startCalendar(): Boolean {
-		val shouldRun = appSettings[AppSettings.KEYS.ENABLED_CALENDAR].toBoolean()
-		if (shouldRun) {
-			startModuleService(CalendarAppService::class.java)
-		} else {
-			stopModuleService(CalendarAppService::class.java)
-		}
+		startModuleService(CalendarAppService::class.java)
 		return true
 	}
 

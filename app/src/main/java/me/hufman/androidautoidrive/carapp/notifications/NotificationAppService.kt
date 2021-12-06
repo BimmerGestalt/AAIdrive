@@ -17,45 +17,46 @@ class NotificationAppService: CarAppService() {
 	var carappReadout: ReadoutApp? = null
 	var carappStatusbar: ID5StatusbarApp? = null
 
+	override fun shouldStartApp(): Boolean {
+		return appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()
+	}
+
 	override fun onCarStart() {
-		if (appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS].toBoolean()) {
+		Log.i(MainService.TAG, "Starting notifications app")
+		val handler = handler!!
+		val notificationSettings = NotificationSettings(carInformation.capabilities, BtStatus(applicationContext) {}, MutableAppSettingsReceiver(applicationContext, handler))
+		notificationSettings.btStatus.register()
+		carappNotifications = PhoneNotifications(iDriveConnectionStatus, securityAccess,
+				CarAppAssetResources(applicationContext, "basecoreOnlineServices"),
+				PhoneAppResourcesAndroid(applicationContext),
+				GraphicsHelpersAndroid(),
+				CarNotificationControllerIntent(applicationContext),
+				AudioPlayer(applicationContext),
+				notificationSettings)
+		carappNotifications?.onCreate(applicationContext, handler)
+		// request an initial draw
+		applicationContext.sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
 
-			Log.i(MainService.TAG, "Starting notifications app")
-			val handler = handler!!
-			val notificationSettings = NotificationSettings(carInformation.capabilities, BtStatus(applicationContext) {}, MutableAppSettingsReceiver(applicationContext, handler))
-			notificationSettings.btStatus.register()
-			carappNotifications = PhoneNotifications(iDriveConnectionStatus, securityAccess,
-					CarAppAssetResources(applicationContext, "basecoreOnlineServices"),
-					PhoneAppResourcesAndroid(applicationContext),
-					GraphicsHelpersAndroid(),
-					CarNotificationControllerIntent(applicationContext),
-					AudioPlayer(applicationContext),
-					notificationSettings)
-			carappNotifications?.onCreate(applicationContext, handler)
-			// request an initial draw
-			applicationContext.sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
-
-			handler.post {
-				if (running) {
-					// start up the readout app
-					// using a handler to automatically handle shutting down during init
-					val carappReadout = ReadoutApp(iDriveConnectionStatus, securityAccess,
-							CarAppAssetResources(applicationContext, "news"))
-					carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
-					this.carappReadout = carappReadout
-				}
+		handler.post {
+			if (running) {
+				// start up the readout app
+				// using a handler to automatically handle shutting down during init
+				val carappReadout = ReadoutApp(iDriveConnectionStatus, securityAccess,
+						CarAppAssetResources(applicationContext, "news"))
+				carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
+				this.carappReadout = carappReadout
 			}
-			handler.post {
-				val id4 = carInformation.capabilities["hmi.type"]?.contains("ID4")
-				if (running && id4 == false) {
-					// start up the id5 statusbar app
-					// using a handler to automatically handle shutting down during init
-					val carappStatusbar = ID5StatusbarApp(iDriveConnectionStatus, securityAccess,
-							CarAppWidgetAssetResources(applicationContext, "bmwone"), GraphicsHelpersAndroid())
-					carappNotifications?.id5Upgrade(carappStatusbar)
-					this.carappStatusbar = carappStatusbar
-					Log.i(MainService.TAG, "Finished initializing id5 statusbar")
-				}
+		}
+		handler.post {
+			val id4 = carInformation.capabilities["hmi.type"]?.contains("ID4")
+			if (running && id4 == false) {
+				// start up the id5 statusbar app
+				// using a handler to automatically handle shutting down during init
+				val carappStatusbar = ID5StatusbarApp(iDriveConnectionStatus, securityAccess,
+						CarAppWidgetAssetResources(applicationContext, "bmwone"), GraphicsHelpersAndroid())
+				carappNotifications?.id5Upgrade(carappStatusbar)
+				this.carappStatusbar = carappStatusbar
+				Log.i(MainService.TAG, "Finished initializing id5 statusbar")
 			}
 		}
 	}

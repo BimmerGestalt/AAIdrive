@@ -14,6 +14,10 @@ class CarInformationDiscoveryService: CarAppService() {
 	val appSettings by lazy { MutableAppSettingsReceiver(applicationContext) }
 	var carappCapabilities: CarInformationDiscovery? = null
 
+	override fun shouldStartApp(): Boolean {
+		return true
+	}
+
 	override fun onCarStart() {
 		Log.i(MainService.TAG, "Starting to discover car capabilities")
 		val handler = handler!!

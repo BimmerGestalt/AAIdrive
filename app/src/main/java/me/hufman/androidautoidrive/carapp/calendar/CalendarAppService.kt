@@ -13,16 +13,19 @@ class CalendarAppService: CarAppService() {
 
 	val appSettings by lazy { MutableAppSettingsReceiver(applicationContext) }
 	var carappCalendar: CalendarApp? = null
+
+	override fun shouldStartApp(): Boolean {
+		return appSettings[AppSettings.KEYS.ENABLED_CALENDAR].toBoolean()
+	}
+
 	override fun onCarStart() {
-		if (appSettings[AppSettings.KEYS.ENABLED_CALENDAR].toBoolean()) {
-			Log.i(MainService.TAG, "Starting calendar app")
-			val handler = handler!!
-			carappCalendar = CalendarApp(iDriveConnectionStatus, securityAccess,
-					CarAppAssetResources(applicationContext, "calendar"),
-					CalendarProvider(applicationContext, appSettings),
-					AndroidGeocoderSearcher(applicationContext))
-			carappCalendar?.onCreate()
-		}
+		Log.i(MainService.TAG, "Starting calendar app")
+		val handler = handler!!
+		carappCalendar = CalendarApp(iDriveConnectionStatus, securityAccess,
+				CarAppAssetResources(applicationContext, "calendar"),
+				CalendarProvider(applicationContext, appSettings),
+				AndroidGeocoderSearcher(applicationContext))
+		carappCalendar?.onCreate()
 	}
 
 	override fun onCarStop() {

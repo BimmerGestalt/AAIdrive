@@ -88,16 +88,20 @@ abstract class CarAppService: Service() {
 	 * Starts the thread for the car app, if it isn't running
 	 */
 	fun startThread() {
-		running = true
+		if (shouldStartApp()) {
+			running = true
 
-		if (iDriveConnectionStatus.isConnected &&
-				securityAccess.isConnected() &&
-				thread?.isAlive != true) {
+			if (iDriveConnectionStatus.isConnected &&
+					securityAccess.isConnected() &&
+					thread?.isAlive != true) {
 
-			thread = CarThread(TAG) {
-				onCarStart()
+				thread = CarThread(TAG) {
+					onCarStart()
+				}
+				thread?.start()
 			}
-			thread?.start()
+		} else {
+			stopThread()
 		}
 	}
 
@@ -128,6 +132,8 @@ abstract class CarAppService: Service() {
 			// thread is already dead
 		}
 	}
+
+	abstract fun shouldStartApp(): Boolean
 
 	abstract fun onCarStart()
 

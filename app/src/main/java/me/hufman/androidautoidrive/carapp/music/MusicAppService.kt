@@ -32,6 +32,10 @@ class MusicAppService: CarAppService() {
 		}
 	}
 
+	override fun shouldStartApp(): Boolean {
+		return true
+	}
+
 	override fun onCarStart() {
 		// load the emoji dictionary, used by music app
 		UnicodeCleaner.init(applicationContext)

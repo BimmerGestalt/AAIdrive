@@ -8,6 +8,10 @@ import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
 class AssistantAppService: CarAppService() {
 	var carappAssistant: AssistantApp? = null
 
+	override fun shouldStartApp(): Boolean {
+		return true
+	}
+
 	override fun onCarStart() {
 		carappAssistant = AssistantApp(iDriveConnectionStatus, securityAccess,
 				CarAppAssetResources(applicationContext, "basecoreOnlineServices"),
