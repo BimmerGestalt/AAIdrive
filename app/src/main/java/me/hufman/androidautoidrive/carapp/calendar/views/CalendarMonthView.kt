@@ -80,7 +80,8 @@ class CalendarMonthView(val state: RHMIState, val focusTriggerController: FocusT
 //		}
 
 		// if the user hasn't changed the view yet, update
-		if (selectedDate == currentDate) {
+		if (selectedDate[Calendar.YEAR] == currentDate[Calendar.YEAR] &&
+			selectedDate[Calendar.MONTH] == currentDate[Calendar.MONTH]) {
 			listModel.value = highlightedDaysList
 		}
 	}
