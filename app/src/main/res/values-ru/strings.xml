@@ -42,6 +42,7 @@
     <string name="menu_music">Музыка</string>
     <string name="menu_notifications">Уведомления</string>
     <string name="menu_assistants">Помощник</string>
+    <string name="menu_calendar">Календарь</string>
     <string name="menu_maps">Карты</string>
     <string name="menu_navigation">Навигация</string>
     <string name="menu_addons">Дополнения</string>
@@ -73,6 +74,12 @@
     <string name="lbl_popupVersion">Всплывающие уведомления работают только с IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS не поддерживается вашим автомобилем</string>
     <string name="lbl_smsPermission">Доступ к смс и фотографиям. Показывать всегда текст.</string>
+    <string name="lbl_calendarpage">Ваш календарь может быть отображен в автомобиле, предлагая быструю навигацию по встречам</string>
+    <string name="lbl_calendar_description">События в календаре телефона, как видно в Календаре Google, будут показаны в автомобиле. Календарь любого рабочего профиля недоступен.</string>
+    <string name="lbl_calendar_enabled">Показать календарь</string>
+    <string name="lbl_calendar_permissions">Доступ к просмотру календаря</string>
+    <string name="lbl_calendar_xiaomi_installed">События в Mi Календаре могут не отображаться в автомобиле</string>
+    <string name="lbl_calendar_detailed_events">Скрывать события без подробностей или местоположения</string>
     <string name="lbl_mapspage">Базовый экран карт Google может отображаться в автомобиле</string>
     <string name="enable_google_maps">Включить Google Maps</string>
     <string name="lbl_map_phone_gps">Использовать GPS телефона вместо GPS автомобиля</string>
@@ -334,6 +341,11 @@
     <string name="NOTIFICATION_PERMISSION_NEEDED">Этому приложению необходимо предоставить доступ к уведомлениям</string>
     <string name="NOTIFICATION_CENTER_APP">Это приложение используется для отправки в центр уведомлений автомобиля</string>
     <string name="READOUT_DESCRIPTION">Это приложение используется для ввода даных</string>
+    <string name="CALENDAR_TIME_START">Пуск</string>
+    <string name="CALENDAR_TIME_END">Конец</string>
+    <string name="CALENDAR_TIME_DURATION">Длительность</string>
+    <string name="CALENDAR_TIME_ALLDAY">Весь день</string>
+    <string name="CALENDAR_NAVIGATE">&amp;Навигация</string>
     <string name="MAP_ACTION_VIEWMAP">Посмотреть полную карту</string>
     <string name="MAP_ACTION_SEARCH">Поиск места</string>
     <string name="MAP_ACTION_CLEARNAV">Удалить маршрут</string>

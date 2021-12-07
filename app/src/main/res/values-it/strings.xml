@@ -42,6 +42,7 @@
     <string name="menu_music">Musica</string>
     <string name="menu_notifications">Notifiche</string>
     <string name="menu_assistants">Assistente</string>
+    <string name="menu_calendar">Calendario</string>
     <string name="menu_maps">Mappe</string>
     <string name="menu_navigation">Navigazione</string>
     <string name="menu_addons">Estensioni</string>
@@ -71,6 +72,12 @@
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS non è supportato dalla tua auto</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
+    <string name="lbl_calendarpage">Puoi visualizzare il calendario sullo schermo della vettura, offrendo così possibilità di navigare rapidamente attraverso i tuoi appuntamenti</string>
+    <string name="lbl_calendar_description">Verranno visualizzati nell\'auto gli eventi nel calendario del telefono così come visti in Google Calendar. Altri calendari privati o di profili business non saranno disponibili.</string>
+    <string name="lbl_calendar_enabled">Mostra il Calendario</string>
+    <string name="lbl_calendar_permissions">Accesso al calendario</string>
+    <string name="lbl_calendar_xiaomi_installed">Gli appuntamenti del Mi Calendar potrebbero non essere visualizzati</string>
+    <string name="lbl_calendar_detailed_events">Nascondi gli eventi senza dettagli o luoghi</string>
     <string name="lbl_mapspage">Una schermata standard di Google Maps può essere visualizzata nell\'auto</string>
     <string name="enable_google_maps">Abilita Google Maps</string>
     <string name="lbl_map_phone_gps">Usa il GPS del telefono invece di quello dell\'auto</string>
@@ -339,6 +346,11 @@
     <string name="NOTIFICATION_PERMISSION_NEEDED">Questa app ha bisogno di ottenere l\'accesso alle notifiche</string>
     <string name="NOTIFICATION_CENTER_APP">Questa applicazione viene utilizzata per comunicare con il Centro Notifiche dell\'auto</string>
     <string name="READOUT_DESCRIPTION">Questa app è utilizzata per scopi di lettura</string>
+    <string name="CALENDAR_TIME_START">Inizio</string>
+    <string name="CALENDAR_TIME_END">Fine</string>
+    <string name="CALENDAR_TIME_DURATION">Durata</string>
+    <string name="CALENDAR_TIME_ALLDAY">Tutto il giorno</string>
+    <string name="CALENDAR_NAVIGATE">Naviga</string>
     <string name="MAP_ACTION_VIEWMAP">Visualizza la mappa fullscreen</string>
     <string name="MAP_ACTION_SEARCH">Cerca un luogo</string>
     <string name="MAP_ACTION_CLEARNAV">Cancella la navigazione</string>

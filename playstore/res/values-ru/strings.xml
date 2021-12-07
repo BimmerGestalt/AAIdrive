@@ -6,6 +6,7 @@
     <string name="playstore_desc_features_music">Просматривайте музыкальные приложения вашего телефона как источники мультимедиа в IDrive</string>
     <string name="playstore_desc_features_assistants">Взаимодействуйте с голосовыми помощниками, установленными на вашем телефоне</string>
     <string name="playstore_desc_features_notifications">Читайте, слушайте и отвечайте на уведомления на дисплее автомобиля</string>
+    <string name="playstore_desc_features_calendar">Просмотрите календарь в автомобиле и начните навигацию по встречам</string>
     <string name="playstore_desc_features_carnav">Запустите автонавигацию на вашем телефоне</string>
     <string name="playstore_desc_features_carinfo">Читайте различные данные диагностики и статистику вашего автомобиля</string>
     <string name="playstore_desc_features_addons_mirroring">Расширьте возможности через необязательные дополнения (например, зеркалирование экрана)</string>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="playstore_tagline">Android Auto functies toevoegen aan uw BMW en Mini IDrive NBT dashboard</string>
-    <string name="playstore_desc_title">Ontgrendel het volledige potentieel van BMW Connected Apps in uw auto om uw rijervaring te verbeteren!</string>
     <string name="playstore_desc_features_heading">Combineer met een actieve BMW ConnectedDrive abonnement of de optie Mini Connect, dit project voegt de meeste functies van Android Auto toe aan uw auto als onofficiële BMW/Mini Connected Apps:</string>
     <string name="playstore_desc_features_music">Muziek-apps van uw telefoon als media-bronnen in IDrive</string>
     <string name="playstore_desc_features_assistants">Interactie met spraakassistenten van uw telefoon</string>
