@@ -74,7 +74,7 @@
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
     <string name="lbl_calendarpage">Puoi visualizzare il calendario sullo schermo della vettura, offrendo così possibilità di navigare rapidamente attraverso i tuoi appuntamenti</string>
     <string name="lbl_calendar_description">Verranno visualizzati nell\'auto gli eventi nel calendario del telefono così come visti in Google Calendar. Altri calendari privati o di profili business non saranno disponibili.</string>
-    <string name="lbl_calendar_enabled">Mostra il Calendario</string>
+    <string name="lbl_calendar_enabled">Mostra il calendario</string>
     <string name="lbl_calendar_permissions">Accesso al calendario</string>
     <string name="lbl_calendar_xiaomi_installed">Gli appuntamenti del Mi Calendar potrebbero non essere visualizzati</string>
     <string name="lbl_calendar_detailed_events">Nascondi gli eventi senza dettagli o luoghi</string>
