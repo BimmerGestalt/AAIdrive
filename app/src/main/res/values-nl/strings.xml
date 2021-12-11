@@ -196,6 +196,8 @@
     <string name="txt_setup_bcl_waiting">Wachten op een app-verbinding om te starten</string>
     <string name="txt_setup_enable_bclspp_bt">Probeer Bluetooth Music te in/uitschakelen</string>
     <string name="txt_setup_enable_bclspp_usb">Herstart de Bluetooth verbinding of maak verbinding via USB</string>
+    <string name="txt_setup_enable_bmwmine">Zorg ervoor dat de MyBMW app is ingelogd</string>
+    <string name="txt_setup_enable_minimine">Zorg ervoor dat de MINI app is ingelogd</string>
     <string name="txt_setup_bcl_connecting">Apps maakt verbinding</string>
     <string name="txt_setup_bcl_connected">Apps is verbonden</string>
     <string name="txt_setup_bcl_connected_transport">Apps is verbonden via %s</string>
