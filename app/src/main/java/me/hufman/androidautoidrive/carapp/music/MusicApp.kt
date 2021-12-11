@@ -18,9 +18,6 @@ import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
-import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
-import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive
-import me.hufman.androidautoidrive.utils.GsonNullable.tryAsString
 import me.hufman.androidautoidrive.utils.Utils.loadZipfile
 import me.hufman.androidautoidrive.utils.removeFirst
 
@@ -36,10 +33,9 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 
 	val avContext: AVContextHandler
 	val amAppList: AMAppList<MusicAppInfo>
+	val contextTracker = ContextTracker()
 
 	val globalMetadata: GlobalMetadata
-	var hmiContextChangedTime = 0L
-	var hmiContextMenuTitle = ""
 	val playbackId5View: PlaybackView?
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
@@ -103,11 +99,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 			cdsData.setConnection(CDSConnectionEtch(carConnection))
 			cdsData.subscriptions.defaultIntervalLimit = 300
 			cdsData.subscriptions[CDS.HMI.GRAPHICALCONTEXT] = {
-				val title = it.tryAsJsonObject("graphicalContext")?.tryAsJsonPrimitive("menuTitle")?.tryAsString ?: ""
-				if (title != hmiContextMenuTitle) {
-					hmiContextChangedTime = System.currentTimeMillis()
-					hmiContextMenuTitle = title
-				}
+				contextTracker.onHmiContextUpdate(it)
 			}
 		}
 
@@ -336,11 +328,8 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 						// set the destination state for the entrybutton
 						it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = currentPlaybackView.state.id
 
-						// invoked manually, not by a shortcut button
-						// when the Media button is pressed, it shows the Media/Radio window for a short time
-						// and then selects the Entrybutton
-						val contextChangeDelay = System.currentTimeMillis() - hmiContextChangedTime
-						if (musicAppMode.supportsId5Playback() && (contextChangeDelay > 1500 || bookmarkButton)) {
+						// invoked manually, not by the Media shortcut button
+						if (musicAppMode.supportsId5Playback() && (bookmarkButton || contextTracker.isIntentionalSpotifyClick())) {
 							// there's no spotify AM icon for the user to push
 							// so handle this spotify icon push
 							// but only if the user has dwelled on a screen for a second
