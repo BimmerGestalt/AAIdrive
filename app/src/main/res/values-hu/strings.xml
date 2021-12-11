@@ -195,6 +195,8 @@
     <string name="txt_setup_bcl_waiting">Várakozás alkalmazás kapcsolat indítására</string>
     <string name="txt_setup_enable_bclspp_bt">Próbáld meg ki/be kapcsolni a Bluetooth Zenét</string>
     <string name="txt_setup_enable_bclspp_usb">Próbáld meg ki/be kapcsolni a Bluetooth Zenét vagy csatlakozz USB-n keresztül</string>
+    <string name="txt_setup_enable_bmwmine">Győződj meg róla, hogy be van jelentkezve a MyBMW alkalmazás</string>
+    <string name="txt_setup_enable_minimine">Győződj meg róla, hogy be van jelentkezve a MINI alkalmazás</string>
     <string name="txt_setup_bcl_connecting">Alkalmazás kapcsolat létrehozása</string>
     <string name="txt_setup_bcl_connected">Alkalmazás kapcsolat fut</string>
     <string name="txt_setup_bcl_connected_transport">Alkalmazás kapcsolat %s-on keresztül fut</string>
