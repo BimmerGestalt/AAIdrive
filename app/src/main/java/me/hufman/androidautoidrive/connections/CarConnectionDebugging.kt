@@ -74,9 +74,11 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 		} catch (e: Exception) { false }
 
 	val isBMWMineInstalled
-		get() = SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.BMWMine)
+		get() = SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.BMWMine) ||
+				SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.BMWMineNA)
 	val isMiniMineInstalled
-		get() = SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.MiniMine)
+		get() = SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.MiniMine) ||
+				SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.MiniMineNA)
 
 	private val btStatus = BtStatus(context) { callback() }
 	private val usbStatus = UsbStatus(context) { callback() }
@@ -125,6 +127,9 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 
 	val carBrand
 		get() = idriveListener.brand
+
+	val btCarBrand
+		get() = btStatus.carBrand
 
 	fun register() {
 		idriveListener.callback = { callback() }

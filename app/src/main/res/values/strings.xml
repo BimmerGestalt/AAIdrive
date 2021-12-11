@@ -225,6 +225,8 @@
     <string name="txt_setup_bcl_waiting">Waiting for Apps Connection to start</string>
     <string name="txt_setup_enable_bclspp_bt">Try toggling Bluetooth Music</string>
     <string name="txt_setup_enable_bclspp_usb">Try toggling Bluetooth Music or connecting over USB</string>
+    <string name="txt_setup_enable_bmwmine">Make sure the MyBMW app is logged in</string>
+    <string name="txt_setup_enable_minimine">Make sure the MINI app is logged in</string>
     <string name="txt_setup_bcl_connecting">Apps Connection is connecting</string>
     <string name="txt_setup_bcl_connected">Apps Connection is running</string>
     <string name="txt_setup_bcl_connected_transport">Apps Connection is running over %s</string>

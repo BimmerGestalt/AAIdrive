@@ -138,8 +138,16 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 			_bclReadyTimer = viewModelScope.launch {
 				delay(BCL_READY_THRESHOLD)
 				if (_isBclConnected.value != true) {
-					_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bclspp_usb) }
-					_carConnectionHint.value = { getString(R.string.txt_setup_enable_bclspp_usb) }
+					if (connection.isBMWMineInstalled && connection.btCarBrand == "BMW") {
+						_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bmwmine) }
+						_carConnectionHint.value = { getString(R.string.txt_setup_enable_bmwmine) }
+					} else if (connection.isMiniMineInstalled && connection.btCarBrand == "MINI") {
+						_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_minimine) }
+						_carConnectionHint.value = { getString(R.string.txt_setup_enable_minimine) }
+					} else {
+						_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bclspp_usb) }
+						_carConnectionHint.value = { getString(R.string.txt_setup_enable_bclspp_usb) }
+					}
 				}
 			}
 		}

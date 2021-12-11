@@ -42,6 +42,15 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 	val isBTConnected
 		get() = isHfConnected || isA2dpConnected
 
+	val carBrand: String?
+		get() = a2dpListener.profile?.connectedDevices?.filter { it.isCar() }?.map {
+			when {
+				it?.name?.startsWith("BMW") == true -> "BMW"
+				it?.name?.startsWith("MINI") == true -> "MINI"
+				else -> null
+			}
+		}?.firstOrNull()
+
 	inner class ProfileListener(profileId: Int): BluetoothProfile.ServiceListener {
 		var profile: BluetoothProfile? = null
 		private val profileName = when(profileId) {

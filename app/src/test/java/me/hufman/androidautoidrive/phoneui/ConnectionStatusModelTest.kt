@@ -232,7 +232,8 @@ class ConnectionStatusModelTest {
 	@Test
 	fun testBclDisconnectedBMWMine() = testCoroutineRule.runBlockingTest {
 		val connection = mock<CarConnectionDebugging> {
-			on {isBMWConnectedInstalled} doReturn false  // usb is not supported
+			on {isBMWMineInstalled} doReturn true
+			on {btCarBrand} doReturn "BMW"
 			on {isBTConnected} doReturn true
 			on {isSPPAvailable} doReturn true
 			on {isBCLConnecting} doReturn false
@@ -257,13 +258,51 @@ class ConnectionStatusModelTest {
 		delay(10500L)
 		// flips to show a hint after a timeout
 		context.run(model.hintBclDisconnected.value!!)
-		verify(context).getString(eq(R.string.txt_setup_enable_bclspp_usb))
+		verify(context).getString(eq(R.string.txt_setup_enable_bmwmine))
 
 		// main connection status shows the hint too
 		context.run(model.carConnectionText.value!!)
 		verify(context, times(2)).getString(eq(R.string.txt_setup_bcl_waiting))
 		context.run(model.carConnectionHint.value!!)
-		verify(context, times(2)).getString(eq(R.string.txt_setup_enable_bclspp_usb))
+		verify(context, times(2)).getString(eq(R.string.txt_setup_enable_bmwmine))
+	}
+
+	@Test
+	fun testBclDisconnectedMiniMine() = testCoroutineRule.runBlockingTest {
+		val connection = mock<CarConnectionDebugging> {
+			on {isMiniMineInstalled} doReturn true
+			on {btCarBrand} doReturn "MINI"
+			on {isBTConnected} doReturn true
+			on {isSPPAvailable} doReturn true
+			on {isBCLConnecting} doReturn false
+			on {isBCLConnected} doReturn false
+		}
+		val carInfo = mock<CarInformation>()
+		val model = ConnectionStatusModel(connection, carInfo).apply { update() }
+
+		assertEquals(true, model.isBtConnected.value)
+		assertEquals(false, model.isUsbConnected.value)
+		assertEquals(true, model.isBclReady.value)
+		assertEquals(true, model.isBclDisconnected.value)
+		assertEquals(false, model.isBclConnecting.value)
+		assertEquals(false, model.isBclConnected.value)
+
+		context.run(model.carConnectionText.value!!)
+		verify(context).getString(eq(R.string.txt_setup_bcl_waiting))
+		assertEquals("", context.run(model.carConnectionHint.value!!))
+		// empty hint
+		assertEquals("", context.run(model.hintBclDisconnected.value!!))
+
+		delay(10500L)
+		// flips to show a hint after a timeout
+		context.run(model.hintBclDisconnected.value!!)
+		verify(context).getString(eq(R.string.txt_setup_enable_minimine))
+
+		// main connection status shows the hint too
+		context.run(model.carConnectionText.value!!)
+		verify(context, times(2)).getString(eq(R.string.txt_setup_bcl_waiting))
+		context.run(model.carConnectionHint.value!!)
+		verify(context, times(2)).getString(eq(R.string.txt_setup_enable_minimine))
 	}
 
 	@Test
