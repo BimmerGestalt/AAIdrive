@@ -10,6 +10,8 @@
     <string name="notification_description_chassiscode">Conectat la %s</string>
     <string name="notification_description_bmw">Conectat la BMW</string>
     <string name="notification_description_mini">Conectat la Mini</string>
+    <string name="permission_cds_normal">informatii generice masina</string>
+    <string name="permission_cds_personal">Informatii personale masina</string>
     <!-- notification channel names -->
     <string name="notification_channel_assistant">Lansator asistenți</string>
     <string name="notification_channel_connection">Stare conectare mașină</string>
@@ -27,20 +29,29 @@
     <string name="lbl_navigation_listener_success">Succes</string>
     <string name="lbl_navigation_listener_unsuccess">Eroare</string>
     <!-- Welcome pages -->
+    <string name="lbl_welcome_heading">Conectare</string>
+    <string name="lbl_welcome_intro">AAIDrive este o aplicatie neoficiala, care adauga muzica, aplicatii si alte caracteristici de pe telefon pe automobil prin protocolul nativ BMW Apps</string>
+    <string name="lbl_welcome_compatible">Incepand cu MY2014 sau mai nou, sunt compatibile masinile BMW sau MINI echipate cu NBT sau NBT Evo (echipate cu IDrive 4-6) si cu o subscriptie online activa la BMW Connected Drive</string>
+    <string name="lbl_welcome_dependencies">Conectarea la masina depinde de conexiunea aplicatiei BMW/MINI Connected, MyBMW sau MINI la masina.</string>
+    <string name="lbl_welcome_complete">AAIDrive adauga o multime de alte functii masinii tale, incearca-l!</string>
     <!-- Menu Titles -->
     <string name="menu_overview">General</string>
     <string name="menu_setup">Configurare</string>
     <string name="menu_connection">Conecțiune</string>
+    <string name="menu_carinfo">Informatii masina</string>
     <string name="menu_music">Muzică</string>
     <string name="menu_notifications">Notificări</string>
     <string name="menu_assistants">Asistenți</string>
+    <string name="menu_calendar">Calendar</string>
     <string name="menu_maps">Hărți</string>
     <string name="menu_navigation">Navigare</string>
+    <string name="menu_addons">Addons</string>
     <string name="menu_settings">Setări</string>
     <string name="menu_support">Suport</string>
     <string name="btn_next">Următorul</string>
     <string name="lbl_overviewpage">AAIdrive integrează unele aplicații de muzică și notificările din telefon via protocolul BMW Apps</string>
     <string name="lbl_connectionpage">Conecțiunea pentru aplicații a mașinii depinde de câteva piese, și aici aveți câteva sfaturi pentru a vă asigura că funcționează corect</string>
+    <string name="lbl_assistantpage_tip">Aceste aplicații sunt separate de butonul volanului asistent vocal al mașinii, care declanșează doar asistentul implicit al telefonului dvs. și este configurat separat</string>
     <string name="lbl_notificationpage">Notificările telefonului pot fi afișate și interacționate din mașină</string>
     <string name="spawn_test_notification">Notificare de test</string>
     <string name="message_notifications">Notificări mesaj</string>
@@ -57,8 +68,15 @@
     <string name="lbl_popupVersion">Popup-urile funcționează doar cu IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS nu e suportat de mașina dvs.</string>
     <string name="lbl_smsPermission">Permisiune SMS necesară pentru a vedea imaginile din mesaje în mașină. Textul este disponibil întotdeauna.</string>
+    <string name="lbl_calendarpage">Calendarul poate fi afișat în mașină, oferind o navigare rapidă la programări</string>
+    <string name="lbl_calendar_description">Evenimentele din calendarul telefonului vor aparea in masina asa cum sunt afisate in Google Calendar. Profilurile de munca din calendar nu sunt disponiobile.</string>
+    <string name="lbl_calendar_enabled">Afisare calendar</string>
+    <string name="lbl_calendar_permissions">Acces calendar</string>
+    <string name="lbl_calendar_xiaomi_installed">Evenimentele din Mi Calendar ar putea să nu fie vizibile în mașină</string>
+    <string name="lbl_calendar_detailed_events">Ascunde evenimentele fără detalii sau locații</string>
     <string name="lbl_mapspage">Un ecran simplu Google Maps poate fi afișat în mașină</string>
     <string name="enable_google_maps">Activează Google Maps</string>
+    <string name="lbl_map_phone_gps">Utilizează GPS de telefon în loc de GPS masinii</string>
     <string name="lbl_widescreen_map">Hartă widescreen</string>
     <string name="lbl_map_invert_zoom">Inversează direcția de zoom</string>
     <string name="lbl_map_tilt">Înclinare hartă</string>
@@ -77,6 +95,7 @@
     <string name="musicAppHidden">Ascuns</string>
     <string name="enable_audio_context">Cere Audio Focus</string>
     <string name="enable_spotify_layout">Afișează întotdeauna ca Spotify în IDrive5+</string>
+    <string name="enable_audioplayer_layout">Preferă interfața muzicală compactă dinn IDrive5+</string>
     <string name="lbl_grant_sessions">Control pe aplicațiile de muzică</string>
     <string name="lbl_grant_spotify_control">Capacitatea de a naviga prin biblioteca Spotify</string>
     <string name="lbl_grant_background_music">Permite execuția în fundal pentru aplicațiile de muzică, în cazul în care mașina nu le pornește corect</string>
@@ -85,16 +104,35 @@
     <string name="musicAppNotes_oldSpotify">Încarcă o versiune mai veche de Spotify pentru control complet</string>
     <string name="musicAppNotes_oldSpotifyInstructions">Aplicația poate oferi control deplin pentru Spotify până la versiunea 8.4.96.953, cum ar fi afișarea playlist-urilor și căutarea melodiilor. Pentru control deplin, descarcă o versiune mai veche de pe APKPure sau site-uri similare.</string>
     <string name="musicAppNotes_spotify_apiNotFound">Vă rugăm să instalați aplicația oficială Spotify</string>
+    <string name="musicAppNotes_spotify_userDeclined">Vă rugăm să acordați permisiunea de a răsfoi biblioteca</string>
     <string name="musicAppNotes_spotify_apiUnavailable">Vă rugăm să confirmați accesul la internet și să dezactivați orice ad blocker</string>
+    <string name="musicAppNotes_spotify_backgroundDisabled">Spotify nu a putut fi deschis. Vă rugăm să vă asiguraţi că Spotify are permisiunea de a lansa din fundal</string>
     <string name="lbl_navigationpage_address">Scrieți o adresă pentru a o trimite către sistemul de navigare al mașinii</string>
     <string name="lbl_navigationpage_intent">Cât timp sunteți conectat, sistemul de navigare al mașinii va apărea ca o opțiune când alte aplicații trimit o locație spre navigare</string>
     <string name="lbl_navigationstatus_active">Navigare către</string>
     <string name="lbl_navigationstatus_inactive">Navigație oprită</string>
+    <string name="lbl_addonspage">Aplicațiile suplimentare pot funcționa cu mașina dvs. pentru a adăuga și mai multe funcționalități</string>
+    <string name="lbl_addon_apps">Addon Apps</string>
+    <string name="lbl_addons_empty">Nici unul găsit</string>
+    <string name="lbl_addon_learn">Aflați mai multe</string>
+    <string name="addonAppIcon">Pictograma aplicației</string>
+    <string name="addonConnectionPermission">Stare conectare mașină</string>
+    <string name="addonConnectionPermissionDeclined">NU se poate conecta la mașină</string>
+    <string name="addonConnectionPermissionGranted">Se poate conecta la mașină</string>
+    <string name="addonNormalPermission">Acces la datele automobilului</string>
+    <string name="addonNormalPermissionDeclined">NU se pot accesa datele din mașină</string>
+    <string name="addonNormalPermissionGranted">Se pot accesa datele din mașină</string>
+    <string name="addonPersonalPermission">Accesul la datele personale din masina</string>
+    <string name="addonPersonalPermissionDeclined">NU se pot accesa datele personale din mașină</string>
+    <string name="addonPersonalPermissionGranted">Se pot accesa datele personale din mașină</string>
     <string name="lbl_settingspage">Setări avansate, pot cauza comportamente neașteptate</string>
     <string name="lbl_language_carinterface">Limbă pentru afișat în mașină</string>
     <string name="lbl_language_prefercar">Preferă limba mașinii vs. limba telefonului</string>
     <string name="lbl_language_prefercar_code">Preferă limba mașinii (%s) în loc de limba telefonului</string>
     <string name="lbl_language_forcelanguage">Forțează o anumită limbă</string>
+    <string name="lbl_analytics_intro">AAIdrive este un proiect neoficial de hobby, care nu este susţinut sau aprobat de BMW în nici un fel, pornind de la un protocol de inginerie inversă. Sunt mândru de funcționalitatea și stabilitatea sa, dar probleme in functionare se mai pot întâmpla. Te rugăm să iei în considerare posibilitatea de a se trimite automat orice raport de eroare pentru depanare.</string>
+    <string name="lbl_analytics_description">Pe lângă rapoartele de defecțiune, activarea analitică va încărca, de asemenea, lista de aplicații muzicale instalate și unele informații anonime despre automobile, pentru a ajuta la prioritizarea dezvoltării caracteristicilor.</string>
+    <string name="lbl_analytics_enabled">Activați analiza și raportarea erorilor</string>
     <string name="lbl_donations_volunteer">AAIdrive este un proiect voluntar</string>
     <string name="lbl_donations_request">Dacă îți place proiectul și ți se pare util, consideră să îți arăți suportul donând:</string>
     <string name="btn_donations">Donează</string>
@@ -102,6 +140,7 @@
     <string name="lbl_support_feedback">Oferă feedback</string>
     <string name="lbl_support_issues">Deschide issue-uri</string>
     <string name="lbl_support_share">Dă mai departe</string>
+    <string name="lbl_support_privacy">Confidențialitatea contează, de aceea AAIdrive nu colectează, stochează sau partajează date personale. Apasă aici pentru a afla mai multe…</string>
     <string name="lbl_support_thanks">Mulțumim că folosiți AAIdrive!</string>
     <string name="lbl_ok">Ok</string>
     <string name="lbl_cancel">Anulare</string>
@@ -116,6 +155,9 @@
     <string name="nowplaying_notconnected">&lt;Neconectat&gt;</string>
     <string name="nowplaying_unknown">&lt;Necunoscut&gt;</string>
     <!-- connection setup -->
+    <string name="txt_setup_background_permission">Această aplicație poate rula în fundal</string>
+    <string name="txt_setup_background_impermission">Această aplicație nu poate rula în fundal</string>
+    <string name="txt_setup_background_hint">Conexiunile automate funcționează mai bine dacă activitatea de fundal este permisă</string>
     <string name="txt_setup_bmw_ready">Aplicația este gata să se conecteze la un BMW</string>
     <string name="txt_setup_mini_ready">Aplicația este gata să se conecteze la un Mini</string>
     <string name="txt_setup_bmw_missing">Nepregătit pentru conectare la BMW:</string>
