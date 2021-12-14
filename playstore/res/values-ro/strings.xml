@@ -1,2 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="playstore_tagline">Adăugaţi caracteristici Android Auto la BMW şi Mini IDrive NBT</string>
+    <string name="playstore_desc_title">Deblochează întregul potențial al aplicatiei BMW Connected care rulează IDrive 4-6 pentru a vă îmbunătăți experiența de conducere!</string>
+    <string name="playstore_desc_features_heading">Combinat cu un abonament activ BMW ConnectedDrive sau cu Mini ConnectedDrive acest proiect adaugă majoritatea caracteristicilor Android Auto la mașina ta ca aplicații neoficiale BMW/Mini conectate:</string>
+    <string name="playstore_desc_features_music">Vezi aplicațiile muzicale de pe telefon ca surse media în IDrive</string>
+    <string name="playstore_desc_features_assistants">Interacționează cu asistenții vocali instalați pe telefon</string>
+    <string name="playstore_desc_features_notifications">Citește, ascultă și interacționează cu notificările prin intermediul controalelor mașinii</string>
+    <string name="playstore_desc_features_calendar">Vizualizați calendarul în mașină și începeți navigarea la programări</string>
+    <string name="playstore_desc_features_carnav">Declanșează navigarea mașinii din aplicațiile telefonului</string>
+    <string name="playstore_desc_features_carinfo">Citește diverse informații de diagnosticare și statistici din mașina ta</string>
+    <string name="playstore_desc_features_addons_mirroring">Extindeți capacitățile prin add-ons (cum ar fi oglindirea ecranului)</string>
+    <string name="playstore_desc_features_custommap_soon">Implementarea hărții personalizate în curând</string>
+    <string name="playstore_desc_nativeapps_protocol">Folosind protocolul nativ de aplicații BMW, exact ca vechea aplicație Spotify, această aplicație nu vă modifică mașina în niciun fel, si toate capabilitatile extinse sunt furnizate doar in timp ce telefonul este conectat.</string>
+    <string name="playstore_desc_depends_mybmw">Aplicațiile BMW/Mini Connected necesită ca aplicația MyBMW sau MINI pentru mașina dvs. să fie instalată și să se poată activa cu succes caseta de selectare a aplicațiilor IDrive5+, sau ca mașina dvs. cu IDrive4 are opțiunea Asistentă pentru conexiune ConnectedDrive.</string>
+    <string name="playstore_desc_depends_bmw_subscription">Acest lucru necesită de obicei un abonament activ BMW ConnectedDrive, care este inclus timp de câțiva ani după ce ați cumpărat mașina nouă.</string>
+</resources>

@@ -77,7 +77,7 @@
     <string name="lbl_calendar_enabled">Mostra il calendario</string>
     <string name="lbl_calendar_permissions">Accesso al calendario</string>
     <string name="lbl_calendar_xiaomi_installed">Gli appuntamenti del Mi Calendar potrebbero non essere visualizzati</string>
-    <string name="lbl_calendar_detailed_events">Nascondi gli eventi senza dettagli o luoghi</string>
+    <string name="lbl_calendar_detailed_events">Nascondi gli eventi senza dettagli o posizioni</string>
     <string name="lbl_mapspage">Una schermata standard di Google Maps può essere visualizzata nell\'auto</string>
     <string name="enable_google_maps">Abilita Google Maps</string>
     <string name="lbl_map_phone_gps">Usa il GPS del telefono invece di quello dell\'auto</string>
@@ -203,6 +203,8 @@
     <string name="txt_setup_bcl_waiting">In attesa della connessione App</string>
     <string name="txt_setup_enable_bclspp_bt">Prova a attivare/disattivare Bluetooth Music</string>
     <string name="txt_setup_enable_bclspp_usb">Prova ad attivare Bluetooth Music o connetterti via USB</string>
+    <string name="txt_setup_enable_bmwmine">Assicurati che l\'app MyBMW sia connessa</string>
+    <string name="txt_setup_enable_minimine">Assicurati che l\'app MINI sia connessa</string>
     <string name="txt_setup_bcl_connecting">La connessione Apps è in corso</string>
     <string name="txt_setup_bcl_connected">La connessione Apps è attiva</string>
     <string name="txt_setup_bcl_connected_transport">La connessione Apps è attiva via %s</string>
