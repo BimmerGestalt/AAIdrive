@@ -32,9 +32,6 @@ jobs:
       - name: Download build dependencies
         uses: ./.github/actions/download-externals-action
 
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
-
       - name: Build the project
         run: ./gradlew compileNomapSentryPlayDebugSources
 
@@ -65,9 +62,6 @@ jobs:
             external
       - name: Download build dependencies
         uses: ./.github/actions/download-externals-action
-
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
 
       - name: Extract signing key
         run: "echo ${{ secrets.KEYSTORE_BASE64 }} | base64 -d > keystore.jks"
