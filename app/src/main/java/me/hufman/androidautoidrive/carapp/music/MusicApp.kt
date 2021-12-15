@@ -328,6 +328,10 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 						// set the destination state for the entrybutton
 						it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = currentPlaybackView.state.id
 
+						// wait for any hmi context changes to filter through
+						if (musicAppMode.supportsId5Playback() && !bookmarkButton) {
+							Thread.sleep(50)
+						}
 						// invoked manually, not by the Media shortcut button
 						if (musicAppMode.supportsId5Playback() && (bookmarkButton || contextTracker.isIntentionalSpotifyClick())) {
 							// there's no spotify AM icon for the user to push
