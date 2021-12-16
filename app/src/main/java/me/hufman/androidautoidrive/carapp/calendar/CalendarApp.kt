@@ -17,8 +17,8 @@ import me.hufman.androidautoidrive.carapp.calendar.views.CalendarDayView
 import me.hufman.androidautoidrive.carapp.calendar.views.CalendarMonthView
 import me.hufman.androidautoidrive.carapp.calendar.views.CalendarEventView
 import me.hufman.androidautoidrive.carapp.calendar.views.PermissionView
+import me.hufman.androidautoidrive.carapp.maps.LatLong
 import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
-import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerApp
 
 class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, carAppResources: CarAppResources,
@@ -29,6 +29,7 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 
 	val carConnection: BMWRemotingServer
 	val carApp: RHMIApplication
+	val upcomingDestination: UpcomingDestination
 	val viewPermission: PermissionView      // show a message if permissions are missing
 	val viewMonth: CalendarMonthView
 	val viewDay: CalendarDayView
@@ -55,7 +56,7 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 		viewMonth = CalendarMonthView(carApp.states.values.first { CalendarMonthView.fits(it) }, focusTriggerController, calendarProvider)
 		viewDay = CalendarDayView(carApp.states.values.first { CalendarDayView.fits(it) }, calendarProvider)
 		viewEvent = CalendarEventView(carApp.states.values.first { CalendarEventView.fits(it) }, addressSearcher, navigationTrigger)
-
+		upcomingDestination = UpcomingDestination(calendarProvider, addressSearcher, navigationTrigger)
 		initWidgets()
 	}
 
@@ -124,6 +125,10 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 		viewMonth.initWidgets(viewPermission, viewDay)
 		viewDay.initWidgets(viewEvent)
 		viewEvent.initWidgets()
+	}
+
+	fun navigateNextDestination(currentPosition: LatLong) {
+		upcomingDestination.navigateUpcomingDestination(currentPosition)
 	}
 
 	fun disconnect() {
