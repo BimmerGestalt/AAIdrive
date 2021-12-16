@@ -42,9 +42,9 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 		const val INDEX_END = 6
 
 		fun parseEvent(cursor: Cursor): CalendarEvent {
-			val title = cursor.getString(INDEX_TITLE)
-			val description = cursor.getString(INDEX_DESCRIPTION)
-			val location = cursor.getString(INDEX_LOCATION)
+			val title = cursor.getString(INDEX_TITLE) ?: ""
+			val description = cursor.getString(INDEX_DESCRIPTION) ?: ""
+			val location = cursor.getString(INDEX_LOCATION) ?: ""
 
 			val eventStart = Calendar.getInstance().apply {
 				timeInMillis = cursor.getLong(INDEX_BEGIN)
