@@ -96,6 +96,10 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 		return context.checkSelfPermission(android.Manifest.permission.READ_CALENDAR) == PERMISSION_GRANTED
 	}
 
+	fun getNow(): Calendar {
+		return Calendar.getInstance()
+	}
+
 	fun getEvents(year: Int, month: Int, day: Int?): List<CalendarEvent> {
 		val events = ArrayList<CalendarEvent>()
 		val start = Calendar.getInstance()
