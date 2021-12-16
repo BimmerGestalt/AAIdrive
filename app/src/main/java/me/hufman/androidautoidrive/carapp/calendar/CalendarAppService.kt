@@ -31,10 +31,12 @@ class CalendarAppService: CarAppService() {
 				AndroidGeocoderSearcher(applicationContext))
 		carappCalendar?.onCreate()
 		handler?.post {
-			val carPosition = carInformation.cdsData[CDS.NAVIGATION.GPSPOSITION]
-			val location = LatLong(carPosition?.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("latitude")?.tryAsDouble ?: 0.0,
-					carPosition?.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("longitude")?.tryAsDouble ?: 0.0)
-			carappCalendar?.navigateNextDestination(location)
+			if (appSettings[AppSettings.KEYS.CALENDAR_AUTOMATIC_NAVIGATION].toBoolean()) {
+				val carPosition = carInformation.cdsData[CDS.NAVIGATION.GPSPOSITION]
+				val location = LatLong(carPosition?.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("latitude")?.tryAsDouble ?: 0.0,
+						carPosition?.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("longitude")?.tryAsDouble ?: 0.0)
+				carappCalendar?.navigateNextDestination(location)
+			}
 		}
 	}
 
