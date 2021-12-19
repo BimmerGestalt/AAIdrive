@@ -128,7 +128,7 @@ class UpcomingDestinationTest {
 	@Test
 	fun testSkipTooLongAway() {
 		calendarEvents = listOf(
-				CalendarEvent("B", makeCalendar(2021, 11, 11, 10, 15), makeCalendar(2021, 11, 11, 16, 45), "Place2", ""),
+				CalendarEvent("B", makeCalendar(2021, 11, 11, 10, 45), makeCalendar(2021, 11, 11, 16, 45), "Place2", ""),
 		)
 		whenever(addressSearcher.search(any())) doReturn farAddress
 		upcomingDestination.navigateUpcomingDestination(currentLatLong)
