@@ -133,8 +133,8 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 					if (event.start[Calendar.YEAR] == year &&
 						event.start[Calendar.MONTH] + 1 == month &&
 						(event.start[Calendar.DAY_OF_MONTH] == day || day == null)) {
-							if (!appSettings[AppSettings.KEYS.CALENDAR_DETAILED_EVENTS].toBoolean() ||
-									event.description.isNotBlank() || event.location.isNotBlank()) {
+							val isDetailed = event.title.isNotBlank() && (event.description.isNotBlank() || event.location.isNotBlank() )
+							if (!appSettings[AppSettings.KEYS.CALENDAR_DETAILED_EVENTS].toBoolean() || isDetailed) {
 								events.add(event)
 							}
 //						println("${event.title}  ${allDay}T $timezoneName  ${event.start} - ${event.end}")
