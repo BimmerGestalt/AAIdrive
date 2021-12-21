@@ -78,6 +78,7 @@
     <string name="lbl_calendar_permissions">Åtkomst att visa kalender</string>
     <string name="lbl_calendar_xiaomi_installed">Händelser i Mi Kalender kanske inte syns i bilen</string>
     <string name="lbl_calendar_detailed_events">Dölj händelser utan information eller adresser</string>
+    <string name="lbl_calendar_automatic_navigation">Navigera automatiskt till kommande möten</string>
     <string name="lbl_mapspage">Ett enkelt Google Maps fönster kan visas i bilen</string>
     <string name="enable_google_maps">Aktivera Google Maps</string>
     <string name="lbl_map_phone_gps">Använd telefonens GPS istället för bilens GPS</string>
