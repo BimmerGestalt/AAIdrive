@@ -454,8 +454,8 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 
 	/**
 	 * Creates the [QueueMetadata] for the playlist either using the Web API or App Remote API. If
-	 * the Web API is not authorized but chosen then the [QueueMetadata] falls back to the App Remote
-	 * API to create the [QueueMetadata].
+	 * the Web API is marked to be used but is not authorized, the App Remote API is used as a fallback
+	 * to create the [QueueMetadata].
 	 */
 	private fun createPlaylistQueueMetadata(playerContext: PlayerContext, useWebApi: Boolean) {
 		createQueueMetadataJob = GlobalScope.launch(defaultDispatcher) {

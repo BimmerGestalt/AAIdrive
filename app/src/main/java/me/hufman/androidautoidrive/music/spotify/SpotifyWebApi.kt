@@ -71,7 +71,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 
 	/**
 	 * Returns the songs from a specified playlist URI. This supports playlists that include both
-	 * songs and podcasts.
+	 * songs and podcasts. Local tracks are not supported.
 	 */
 	suspend fun getPlaylistSongs(spotifyAppController: SpotifyAppController, playlistUri: String): List<SpotifyMusicMetadata>? = executeApiCall("Failed to get songs from playlist $playlistUri") {
 		if (webApi == null) {
