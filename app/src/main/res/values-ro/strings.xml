@@ -79,6 +79,7 @@
     <string name="lbl_calendar_permissions">Acces calendar</string>
     <string name="lbl_calendar_xiaomi_installed">Evenimentele din Mi Calendar ar putea să nu fie vizibile în mașină</string>
     <string name="lbl_calendar_detailed_events">Ascunde evenimentele fără detalii sau locații</string>
+    <string name="lbl_calendar_automatic_navigation">Navigați automat catre întâlnirile viitoarele</string>
     <string name="lbl_mapspage">Un ecran simplu Google Maps poate fi afișat în mașină</string>
     <string name="enable_google_maps">Activează Google Maps</string>
     <string name="lbl_map_phone_gps">Utilizează GPS de telefon în loc de GPS masinii</string>
