@@ -77,7 +77,7 @@ class CalendarDayView(val state: RHMIState, val calendarProvider: CalendarProvid
 					return arrayOf(
 						RHMIDateUtils.convertToRhmiTime(item.start),
 						RHMIDateUtils.convertToRhmiTime(item.end),
-						BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, 38),
+						0,
 						item.title
 					)
 				}
