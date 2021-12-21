@@ -1691,12 +1691,9 @@ class SpotifyWebApiTest {
 	}
 
 	@Test
-	fun testGetPlaylistSongs_SongAndPodcastTracks() = runBlocking {
+	fun testGetPlaylistSongs_LocalTrack() = runBlocking {
 		val uriId1 = "uriId1"
 		val trackName1 = "Track 1"
-		val artistName1 = "Artist 1"
-		val albumName1 = "Album 1"
-		val coverArtCode1 = "/coverArtCode1"
 
 		val uriId2 = "uriId2"
 		val trackName2 = "Track 2"
@@ -1705,8 +1702,52 @@ class SpotifyWebApiTest {
 		val coverArtCode2 = "/coverArtCode2"
 
 		val playlistTracks = listOf(
+				createPlaylistLocalTrack(uriId1, trackName1),
+				createPlaylistPodcastTrack(uriId2, trackName2, artistName2, albumName2, coverArtCode2)
+		)
+
+		val pagingObject: PagingObject<PlaylistTrack> = mock()
+		whenever(pagingObject.items).thenReturn(playlistTracks)
+
+		val playlistUri = "playlistUri"
+		val clientPlaylistApi: ClientPlaylistApi = mock()
+		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, null)).doAnswer { pagingObject }
+
+		val webApi: SpotifyClientApi = mock()
+		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
+		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+
+		val spotifyAppController: SpotifyAppController = mock()
+		val songs = spotifyWebApi.getPlaylistSongs(spotifyAppController, playlistUri)
+
+		assertNotNull(songs)
+		assertEquals(1, songs!!.size)
+
+		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId2}", coverArtCode2, artistName2, albumName2, trackName2, null, false, false)
+		assertEquals(metadata1, songs[0])
+	}
+
+	@Test
+	fun testGetPlaylistSongs_SongTrack_PodcastTrack_LocalTrack() = runBlocking {
+		val uriId1 = "uriId1"
+		val trackName1 = "Track 1"
+		val artistName1 = "Artist 1"
+		val albumName1 = "Album 1"
+		val coverArtCode1 = "/coverArtCode1"
+
+		val uriId2 = "uriId2"
+		val trackName2 = "Track 2"
+
+		val uriId3 = "uriId3"
+		val trackName3 = "Track 3"
+		val artistName3 = "Artist 3"
+		val albumName3 = "Album 3"
+		val coverArtCode3 = "/coverArtCode3"
+
+		val playlistTracks = listOf(
 				createPlaylistPodcastTrack(uriId1, trackName1, artistName1, albumName1, coverArtCode1),
-				createPlaylistTrack(uriId2, trackName2, artistName2, albumName2, coverArtCode2)
+				createPlaylistLocalTrack(uriId2, trackName2),
+				createPlaylistTrack(uriId3, trackName3, artistName3, albumName3, coverArtCode3)
 		)
 
 		val pagingObject: PagingObject<PlaylistTrack> = mock()
@@ -1729,7 +1770,7 @@ class SpotifyWebApiTest {
 		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId1}", coverArtCode1, artistName1, albumName1, trackName1, null, false, false)
 		assertEquals(metadata1, songs[0])
 
-		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId2}", coverArtCode2, artistName2, albumName2, trackName2, null, false, false)
+		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId3}", coverArtCode3, artistName3, albumName3, trackName3, null, false, false)
 		assertEquals(metadata2, songs[1])
 	}
 
@@ -1755,9 +1796,6 @@ class SpotifyWebApiTest {
 
 		val uriId4 = "uriId4"
 		val trackName4 = "Track 4"
-		val artistName4 = "Artist 4"
-		val albumName4 = "Album 4"
-		val coverArtCode4 = "/coverArtCode4"
 
 		val playlistTracks1 = listOf(
 				createPlaylistTrack(uriId1, trackName1, artistName1, albumName1, coverArtCode1),
@@ -1765,8 +1803,8 @@ class SpotifyWebApiTest {
 		)
 
 		val playlistTracks2 = listOf(
-				createPlaylistPodcastTrack(uriId3, trackName3, artistName3, albumName3, coverArtCode3),
-				createPlaylistTrack(uriId4, trackName4, artistName4, albumName4, coverArtCode4)
+				createPlaylistTrack(uriId3, trackName3, artistName3, albumName3, coverArtCode3),
+				createPlaylistLocalTrack(uriId4, trackName4)
 		)
 
 		val pagingObject2: PagingObject<PlaylistTrack> = mock()
@@ -1788,7 +1826,7 @@ class SpotifyWebApiTest {
 		val songs = spotifyWebApi.getPlaylistSongs(spotifyAppController, playlistUri)
 
 		assertNotNull(songs)
-		assertEquals(4, songs!!.size)
+		assertEquals(3, songs!!.size)
 
 		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId1}", coverArtCode1, artistName1, albumName1, trackName1, null, false, false)
 		assertEquals(metadata1, songs[0])
@@ -1798,9 +1836,6 @@ class SpotifyWebApiTest {
 
 		val metadata3 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId3}", coverArtCode3, artistName3, albumName3, trackName3, null, false, false)
 		assertEquals(metadata3, songs[2])
-
-		val metadata4 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId4}", coverArtCode4, artistName4, albumName4, trackName4, null, false, false)
-		assertEquals(metadata4, songs[3])
 	}
 
 	@Test
@@ -1869,6 +1904,12 @@ class SpotifyWebApiTest {
 		val album = SimpleAlbum("album", emptyList(), emptyMap(), "href", "id", AlbumUri("albumUri"), artists, images, albumName, "type", null, "1950", "year")
 		val track = PodcastEpisodeTrack(album, artists, emptyList(), 1, 5, true, false, emptyMap(), emptyMap(), "", "", null, false, trackName, 1, "", null, 1,"type", PlayableUri(uriId), null)
 		return PlaylistTrack(null, null, null, false, track, null)
+	}
+
+	private fun createPlaylistLocalTrack(uriId: String, trackName: String): PlaylistTrack {
+		val album = SimpleLocalAlbum("album", emptyList(), "albumName", null, null, "type")
+		val track = LocalTrack(album, emptyList(), null, null, null, null, null, true, trackName, null, null, "type", LocalTrackUri(uriId))
+		return PlaylistTrack(null, null, null, true, track, null)
 	}
 
 	private fun createSavedTrack(uriId: String, trackName: String, artistName: String, albumName: String, coverArtCode: String, heightToMatch: Int = 300): SavedTrack {
