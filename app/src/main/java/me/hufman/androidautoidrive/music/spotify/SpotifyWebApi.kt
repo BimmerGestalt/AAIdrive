@@ -70,6 +70,33 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	}
 
 	/**
+	 * Returns the songs from a specified playlist URI. This supports playlists that include both
+	 * songs and podcasts.
+	 */
+	suspend fun getPlaylistSongs(spotifyAppController: SpotifyAppController, playlistUri: String): List<SpotifyMusicMetadata>? = executeApiCall("Failed to get songs from playlist $playlistUri") {
+		if (webApi == null) {
+			return@executeApiCall emptyList()
+		}
+
+		val songs: ArrayList<SpotifyMusicMetadata> = ArrayList()
+		var pagedSongs = webApi?.playlists?.getPlaylistTracks(playlistUri, 50, 0, null)
+		while(pagedSongs != null) {
+			songs.addAll(pagedSongs.items.map { playlistTrack ->
+				if (playlistTrack.track?.asTrack != null) {
+					val track = playlistTrack.track?.asTrack
+					createSpotifyMusicMetadataFromTrack(track!!, spotifyAppController)
+				} else {
+					val episodeTrack = playlistTrack.track?.asPodcastEpisodeTrack
+					createSpotifyMusicMetadataFromPodcastEpisodeTrack(episodeTrack!!, spotifyAppController)
+				}
+			})
+			pagedSongs = pagedSongs.getNext()
+		}
+
+		return@executeApiCall songs
+	}
+
+	/**
 	 * Creates a private playlist with the provided name and optionally provided description. The
 	 * newly created playlist's [PlaylistUri] is returned.
 	 */
@@ -429,6 +456,14 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		val album = track.album
 		val coverArtUri = getCoverArtUri(album.images)
 		return SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, album.name, track.name)
+	}
+
+	private fun createSpotifyMusicMetadataFromPodcastEpisodeTrack(episode: PodcastEpisodeTrack, spotifyAppController: SpotifyAppController): SpotifyMusicMetadata {
+		val mediaId = episode.uri.uri
+		val artists = episode.artists.joinToString(", ") { it.name }
+		val album = episode.album
+		val coverArtUri = getCoverArtUri(album.images)
+		return SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, artists, album.name, episode.name)
 	}
 
 	/**
