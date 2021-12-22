@@ -82,12 +82,14 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		var pagedSongs = webApi?.playlists?.getPlaylistTracks(playlistUri, 50, 0, null)
 		while(pagedSongs != null) {
 			pagedSongs.items.forEach { playlistTrack ->
-				if (playlistTrack.track?.asTrack != null) {
-					val track = playlistTrack.track?.asTrack
-					songs.add(createSpotifyMusicMetadataFromTrack(track!!, spotifyAppController))
-				} else if (playlistTrack.track?.asPodcastEpisodeTrack != null) {
-					val episodeTrack = playlistTrack.track?.asPodcastEpisodeTrack
-					songs.add(createSpotifyMusicMetadataFromPodcastEpisodeTrack(episodeTrack!!, spotifyAppController))
+				val track = playlistTrack.track?.asTrack
+				if (track != null) {
+					songs.add(createSpotifyMusicMetadataFromTrack(track, spotifyAppController))
+				}
+
+				val episodeTrack = playlistTrack.track?.asPodcastEpisodeTrack
+				if (episodeTrack != null) {
+					songs.add(createSpotifyMusicMetadataFromPodcastEpisodeTrack(episodeTrack, spotifyAppController))
 				}
 			}
 			pagedSongs = pagedSongs.getNext()
