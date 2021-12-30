@@ -63,7 +63,7 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 		outputListModel.setValue(outputList, 0, outputList.height, outputList.height)
 	}
 
-	fun onInput(letter: String) {
+	open fun onInput(letter: String) {
 		when (letter) {
 			"delall" -> input = ""
 			"del" -> input = input.dropLast(1)
