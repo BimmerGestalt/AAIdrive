@@ -42,6 +42,7 @@
     <string name="menu_music">Musik</string>
     <string name="menu_notifications">Benachrichtigungen</string>
     <string name="menu_assistants">Assistenten</string>
+    <string name="menu_calendar">Kalender</string>
     <string name="menu_maps">Karten</string>
     <string name="menu_navigation">Steuerung</string>
     <string name="menu_addons">Addons</string>
@@ -71,6 +72,13 @@
     <string name="lbl_popupVersion">PopUps funktionieren nur mit IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS wird von Ihrem Fahrzeug nicht unterstützt</string>
     <string name="lbl_smsPermission">Erteile Zugriff für SMS-Nachrichten um Bilder von Nachrichten im Fahrzeug zu sehen. Text ist immer sichtbar.</string>
+    <string name="lbl_calendarpage">Ihr Kalender kann im Fahrzeug angezeigt werden und bietet eine schnelle Navigation zu Terminen</string>
+    <string name="lbl_calendar_description">Termine im Kalender des Telefons, wie in Google Kalender angezeigt, werden im Auto angezeigt. Jeder Arbeitsprofilkalender ist nicht verfügbar.</string>
+    <string name="lbl_calendar_enabled">Kalender anzeigen</string>
+    <string name="lbl_calendar_permissions">Zugriff auf Kalender</string>
+    <string name="lbl_calendar_xiaomi_installed">Einträge im Mi Calendar sind möglicherweise nicht im Fahrzeug sichtbar</string>
+    <string name="lbl_calendar_detailed_events">Termine ohne Details oder Standorte ausblenden</string>
+    <string name="lbl_calendar_automatic_navigation">Automatisch zu bevorstehenden Terminen navigieren</string>
     <string name="lbl_mapspage">Ein grundlegender Google Maps-Bildschirm kann im Auto angezeigt werden</string>
     <string name="enable_google_maps">Google Maps aktivieren</string>
     <string name="lbl_map_phone_gps">GPS vom Telefon anstelle der GPS Signale des Autos verwenden</string>
@@ -341,6 +349,11 @@
     <string name="NOTIFICATION_PERMISSION_NEEDED">Diese App muss Zugriff auf Benachrichtigungen erhalten</string>
     <string name="NOTIFICATION_CENTER_APP">Diese App wird verwendet, um Nachrichten an das Benachrichtigungssystem des Autos zu senden</string>
     <string name="READOUT_DESCRIPTION">Diese App wird zum Auslesen verwendet</string>
+    <string name="CALENDAR_TIME_START">Von</string>
+    <string name="CALENDAR_TIME_END">Bis</string>
+    <string name="CALENDAR_TIME_DURATION">Dauer</string>
+    <string name="CALENDAR_TIME_ALLDAY">Ganztägig</string>
+    <string name="CALENDAR_NAVIGATE">Navigieren</string>
     <string name="MAP_ACTION_VIEWMAP">Volle Karte zeigen</string>
     <string name="MAP_ACTION_SEARCH">Ort suchen</string>
     <string name="MAP_ACTION_CLEARNAV">Navigation leeren</string>
