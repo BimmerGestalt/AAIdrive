@@ -62,8 +62,8 @@ class ContextTracker(val timeProvider: () -> Long = {System.currentTimeMillis()}
 			return false
 		}
 		val time = timeProvider()
-		if (menuChangedTime + MENU_CHANGED_THRESHOLD > time && linesScrolled == 0) {
-			// user entered the menu too recently
+		if (menuChangedTime + MENU_CHANGED_THRESHOLD > time && linesScrolled <= 1) {
+			// user entered the menu too recently and didn't scroll enough
 			wasUnintentional = true
 			return false
 		}

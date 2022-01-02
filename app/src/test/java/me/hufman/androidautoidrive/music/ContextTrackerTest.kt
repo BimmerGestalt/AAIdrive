@@ -111,4 +111,13 @@ class ContextTrackerTest {
 		time.passTime(10000)
 		assertFalse(contextTracker.isIntentionalSpotifyClick())
 	}
+
+	@Test
+	/** The car scrolls a single line after pushing the Media button, make sure that doesn't count as user input */
+	fun testSingleScrollInput() {
+		contextTracker.onHmiContextUpdate("Media", 0)
+		time.passTime(15)
+		contextTracker.onHmiContextUpdate("Media", 1)   // the car changed list index
+		assertFalse(contextTracker.isIntentionalSpotifyClick())
+	}
 }
