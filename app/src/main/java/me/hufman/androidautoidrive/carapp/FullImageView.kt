@@ -37,6 +37,7 @@ class FullImageView(val state: RHMIState, val title: String, val config: FullIma
 	val imageComponent = state.componentsList.filterIsInstance<RHMIComponent.Image>().first()
 	val imageModel = imageComponent.getModel()!!
 	val inputList = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
+	val focusEvent = state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
 
 	fun initWidgets() {
 		// set up the components on the map
@@ -53,6 +54,7 @@ class FullImageView(val state: RHMIState, val title: String, val config: FullIma
 				imageComponent.setProperty(RHMIProperty.PropertyId.WIDTH.id, config.rhmiDimensions.visibleWidth)
 				imageComponent.setProperty(RHMIProperty.PropertyId.HEIGHT.id, config.rhmiDimensions.visibleHeight)
 				frameUpdater.showWindow(config.rhmiDimensions.visibleWidth, config.rhmiDimensions.visibleHeight, imageModel)
+				focusEvent.triggerEvent(mapOf(0 to inputList.id, 41 to 3))
 			} else {
 				Log.i(TAG, "Hiding map on full screen")
 				frameUpdater.hideWindow(imageModel)
@@ -64,7 +66,6 @@ class FullImageView(val state: RHMIState, val title: String, val config: FullIma
 		scrollList.addRow(arrayOf(title, "", "")) // neutral
 		(4..6).forEach { scrollList.addRow(arrayOf("-", "", "")) }  // zoom out
 		inputList.getModel()?.asRaListModel()?.setValue(scrollList, 0, scrollList.height, scrollList.height)
-		state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().triggerEvent(mapOf(0 to inputList.id, 41 to 3))
 
 		inputList.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { listIndex ->
 			// decide which way to scroll
@@ -83,7 +84,7 @@ class FullImageView(val state: RHMIState, val title: String, val config: FullIma
 			}
 			// reset focus to the middle of the list
 			if (directionUp != null) {
-				state.app.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first().triggerEvent(mapOf(0 to inputList.id, 41 to 3))
+				focusEvent.triggerEvent(mapOf(0 to inputList.id, 41 to 3))
 			}
 		}
 		inputList.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIActionButtonCallback {
