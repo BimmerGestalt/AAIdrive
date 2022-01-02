@@ -19,8 +19,10 @@ class ReplyView(destState: RHMIState, inputState: RHMIState, val replyController
 	}
 
 	override fun onInput(letter: String) {
-		// the user dictated a response, ignore the next onOK()
-		voicedInput = input == "" && letter.length > 1
+		// if the user dictated a response, ignore the next onOK()
+		if (input == "" && letter.length > 1) {
+			voicedInput = true
+		}
 		super.onInput(letter)
 	}
 
