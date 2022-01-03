@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.phoneui.controllers
 
+import android.location.Address
 import androidx.lifecycle.Observer
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.DefaultDispatcherProvider
@@ -35,7 +36,7 @@ class NavigationSearchController(val scope: CoroutineScope, val parser: Navigati
 			navigationStatusModel.isSearching.value = true
 			navigationStatusModel.searchStatus.value = { getString(R.string.lbl_navigation_listener_searching) }
 			navigationStatusModel.searchFailed.value = false
-			val result = searchToRHMI(query)
+			val result = searchAddress(query)
 
 			// start navigation in the car
 			if (result == null) {
@@ -63,7 +64,7 @@ class NavigationSearchController(val scope: CoroutineScope, val parser: Navigati
 		return false    // hide the keyboard after clicking the search button
 	}
 
-	suspend fun searchToRHMI(query: CharSequence): String? {
+	suspend fun searchAddress(query: CharSequence): Address? {
 		val url = if (query.startsWith("geo:") ||
 				query.startsWith("google.navigation:") ||
 				query.startsWith("http")) {
@@ -79,7 +80,7 @@ class NavigationSearchController(val scope: CoroutineScope, val parser: Navigati
 		return result
 	}
 
-	suspend fun triggerNavigation(rhmiDestination: String) {
+	suspend fun triggerNavigation(destination: Address) {
 		val observer = Observer<Boolean> {}
 		try {
 			// register for navigation status
@@ -87,7 +88,7 @@ class NavigationSearchController(val scope: CoroutineScope, val parser: Navigati
 			// try a few times
 			for (i in 0 until TRIES) {
 				withContext(dispatchers.IO) {
-					navigationTrigger.triggerNavigation(rhmiDestination)
+					navigationTrigger.triggerNavigation(destination)
 				}
 				for (t in 0 until TIMEOUT / 1000) {
 					delay(1000)
