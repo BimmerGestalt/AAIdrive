@@ -2,6 +2,8 @@ package me.hufman.androidautoidrive.phoneui
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.google.gson.JsonObject
 import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.CarInformation
@@ -9,6 +11,7 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.phoneui.viewmodels.NavigationStatusModel
 import io.bimmergestalt.idriveconnectkit.CDS
+import me.hufman.androidautoidrive.BuildConfig
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -28,9 +31,11 @@ class NavigationStatusModelTest {
 		on { cdsData } doReturn cdsData
 	}
 
+	val liveDataObserver = Observer<Boolean> {}
+
 	@Test
 	fun testIsConnected() {
-		val model = NavigationStatusModel(carInformation).apply { update() }
+		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false)).apply { update() }
 		assertEquals(false, model.isConnected.value)
 
 		isConnected = true
@@ -40,7 +45,7 @@ class NavigationStatusModelTest {
 
 	@Test
 	fun testNaviSupported() {
-		val model = NavigationStatusModel(carInformation).apply { update() }
+		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false)).apply { update() }
 		assertEquals(false, model.isNaviSupported.value)
 		assertEquals(false, model.isNaviNotSupported.value)
 
@@ -56,8 +61,32 @@ class NavigationStatusModelTest {
 	}
 
 	@Test
+	fun testCustomNavNotSupported() {
+		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(true))
+		assertEquals(false, model.isCustomNaviSupported.value)
+
+		model.isCustomNaviSupportedAndPreferred.observeForever(liveDataObserver)
+		for (prefer in listOf(false, true)) {
+			model.isCustomNaviPreferred.value = prefer
+			assertEquals(false, model.isCustomNaviSupportedAndPreferred.value)
+		}
+	}
+
+	@Test
+	fun testCustomNavSupported() {
+		val model = NavigationStatusModel(carInformation, MutableLiveData(true), MutableLiveData(true))
+		assertEquals(true, model.isCustomNaviSupported.value)
+
+		model.isCustomNaviSupportedAndPreferred.observeForever(liveDataObserver)
+		for (prefer in listOf(false, true)) {
+			model.isCustomNaviPreferred.value = prefer
+			assertEquals(prefer, model.isCustomNaviSupportedAndPreferred.value)
+		}
+	}
+
+	@Test
 	fun testNavigating() {
-		val model = NavigationStatusModel(carInformation).apply { update() }
+		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false)).apply { update() }
 		model.navigationStatus.observeForever {  }
 		assertEquals(false, model.isNavigating.value)
 		context.run(model.navigationStatus.value!!)
@@ -84,7 +113,7 @@ class NavigationStatusModelTest {
 
 	@Test
 	fun testDestination() {
-		val model = NavigationStatusModel(carInformation).apply { update() }
+		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false)).apply { update() }
 		model.destination.observeForever {  }
 		assertEquals("", model.destination.value)
 		cdsData.onPropertyChangedEvent(CDS.NAVIGATION.NEXTDESTINATION, JsonObject()

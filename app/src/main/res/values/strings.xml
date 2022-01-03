@@ -127,6 +127,7 @@
     <string name="lbl_navigationpage_intent">While connected, your car\'s navigation system will show up as an option when other apps\' Navigation buttons open an app chooser</string>
     <string name="lbl_navigationstatus_active">Currently navigating to</string>
     <string name="lbl_navigationstatus_inactive">Not currently navigating</string>
+    <string name="lbl_navigation_prefer_custom">Prefer custom map navigation</string>
 
     <string name="lbl_addonspage">Additional apps can work with your car to add even more functionality</string>
     <string name="lbl_addon_apps">Addon Apps</string>

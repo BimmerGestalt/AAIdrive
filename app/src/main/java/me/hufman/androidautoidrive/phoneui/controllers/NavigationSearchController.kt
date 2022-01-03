@@ -49,7 +49,8 @@ class NavigationSearchController(val scope: CoroutineScope, val parser: Navigati
 				triggerNavigation(result)
 
 				// update the result label
-				if (navigationStatusModel.isNavigating.value == true) {
+				if (navigationStatusModel.isNavigating.value == true ||
+						navigationStatusModel.isCustomNaviSupportedAndPreferred.value == true) {
 					navigationStatusModel.searchStatus.value = { getString(R.string.lbl_navigation_listener_success) }
 				} else {
 					navigationStatusModel.searchStatus.value = { getString(R.string.lbl_navigation_listener_unsuccess) }
@@ -85,6 +86,7 @@ class NavigationSearchController(val scope: CoroutineScope, val parser: Navigati
 		try {
 			// register for navigation status
 			navigationStatusModel.isNavigating.observeForever(observer)
+			navigationStatusModel.isCustomNaviSupportedAndPreferred.observeForever(observer)
 			// try a few times
 			for (i in 0 until TRIES) {
 				withContext(dispatchers.IO) {
@@ -93,17 +95,20 @@ class NavigationSearchController(val scope: CoroutineScope, val parser: Navigati
 				for (t in 0 until TIMEOUT / 1000) {
 					delay(1000)
 					// wait up to TIMEOUT or until car begins navigation
-					if (navigationStatusModel.isNavigating.value == true) {
+					if (navigationStatusModel.isNavigating.value == true ||
+							navigationStatusModel.isCustomNaviSupportedAndPreferred.value == true) {
 						break
 					}
 				}
 				// if the car is navigating, don't try again
-				if (navigationStatusModel.isNavigating.value == true) {
+				if (navigationStatusModel.isNavigating.value == true ||
+						navigationStatusModel.isCustomNaviSupportedAndPreferred.value == true) {
 					break
 				}
 			}
 		} finally {
 			navigationStatusModel.isNavigating.removeObserver(observer)
+			navigationStatusModel.isCustomNaviSupportedAndPreferred.removeObserver(observer)
 		}
 	}
 }

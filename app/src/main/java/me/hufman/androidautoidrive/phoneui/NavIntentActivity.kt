@@ -12,10 +12,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.carapp.navigation.AndroidGeocoderSearcher
-import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
-import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerSender
-import me.hufman.androidautoidrive.carapp.navigation.URLRedirector
+import me.hufman.androidautoidrive.carapp.navigation.*
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 import me.hufman.androidautoidrive.phoneui.controllers.NavigationSearchController
 import me.hufman.androidautoidrive.phoneui.viewmodels.NavigationStatusModel
@@ -100,7 +97,7 @@ class NavIntentActivity: AppCompatActivity() {
 		if (query != null) {
 			findViewById<TextView>(R.id.txtNavError).text = query.toString()       // in case we need to show it for parse errors
 			val navParser = NavigationParser(AndroidGeocoderSearcher(this.applicationContext), URLRedirector())
-			val navTrigger = NavigationTriggerSender(this.applicationContext)
+			val navTrigger = NavigationTriggerDeterminator(this.applicationContext)
 			val controller = NavigationSearchController(lifecycleScope, navParser, navTrigger, viewModel)
 			controller.startNavigation(query.toString())
 		}

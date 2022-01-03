@@ -9,6 +9,10 @@ import android.os.Handler
 import android.util.Log
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplication
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.BooleanLiveSetting
+import me.hufman.androidautoidrive.BuildConfig
+import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger.Companion.TAG
 
 interface NavigationTrigger {
@@ -46,6 +50,31 @@ class NavigationTriggerApp(app: RHMIApplication): NavigationTrigger {
 		} catch (e: Exception) {
 			Log.i(TAG, "Error while starting navigation", e)
 		}
+	}
+}
+
+class NavigationTriggerDeterminator(context: Context): NavigationTrigger {
+	val preferCustomNav = BooleanLiveSetting(context, AppSettings.KEYS.NAV_PREFER_CUSTOM_MAP)
+	val triggerCarNav = NavigationTriggerSender(context)
+	val triggerCustomNav = NavigationTriggerCustomNav(context)
+
+	override fun triggerNavigation(destination: Address) {
+		if (BuildConfig.FLAVOR_map != "nomap" && preferCustomNav.value == true) {
+			triggerCustomNav.triggerNavigation(destination)
+		} else {
+			triggerCarNav.triggerNavigation(destination)
+		}
+	}
+}
+
+class NavigationTriggerCustomNav(val context: Context): NavigationTrigger {
+	override fun triggerNavigation(destination: Address) {
+		val latlong = LatLong(destination.latitude, destination.longitude)
+		val intent = Intent(INTENT_INTERACTION)
+				.setPackage(context.packageName)
+				.putExtra(EXTRA_INTERACTION_TYPE, INTERACTION_NAV_START)
+				.putExtra(EXTRA_LATLONG, latlong)
+		context.sendBroadcast(intent)
 	}
 }
 

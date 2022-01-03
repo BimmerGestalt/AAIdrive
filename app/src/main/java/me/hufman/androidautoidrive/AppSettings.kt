@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonArray
 import com.google.gson.JsonParser
@@ -34,6 +35,7 @@ interface AppSettings {
 		MAP_INVERT_SCROLL("Map_Invert_Scroll", "false", "Invert zoom direction"),
 		MAP_TRAFFIC("Map_Traffic", "true", "Show traffic"),
 		MAP_USE_PHONE_GPS("Map_Use_Phone_GPS", "false", "Use Phone GPS"),
+		NAV_PREFER_CUSTOM_MAP("Nav_Prefer_Custom_Map", "false", "Prefer custom map nav over car nav"),
 		GMAPS_BUILDINGS("GMaps_Buildings", "true", "GMaps 3D Buildings"),
 		GMAPS_STYLE("GMaps_Style", "auto", "GMaps style"),
 		AUDIO_SUPPORTS_USB("Audio_Supports_USB", (Build.VERSION.SDK_INT < Build.VERSION_CODES.O).toString(), "The phone is old enough to support USB accessory audio"),
@@ -231,7 +233,11 @@ abstract class LiveSetting<K>(val context: Context, val key: AppSettings.KEYS): 
 	override fun getValue(): K? {
 		val backing = getData()
 		if (backing != super.getValue()) {
-			super.setValue(backing)
+			if (Looper.getMainLooper() == Looper.myLooper()) {
+				super.setValue(backing)
+			} else {
+				super.postValue(backing)
+			}
 		}
 		return backing
 	}
