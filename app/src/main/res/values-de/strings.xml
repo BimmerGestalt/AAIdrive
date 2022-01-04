@@ -77,7 +77,7 @@
     <string name="lbl_calendar_enabled">Kalender anzeigen</string>
     <string name="lbl_calendar_permissions">Zugriff auf Kalender</string>
     <string name="lbl_calendar_xiaomi_installed">Einträge im Mi Calendar sind möglicherweise nicht im Fahrzeug sichtbar</string>
-    <string name="lbl_calendar_detailed_events">Termine ohne Details oder Standorte ausblenden</string>
+    <string name="lbl_calendar_detailed_events">Termine ohne Details oder Ortsangabe ausblenden</string>
     <string name="lbl_calendar_automatic_navigation">Automatisch zu bevorstehenden Terminen navigieren</string>
     <string name="lbl_mapspage">Ein grundlegender Google Maps-Bildschirm kann im Auto angezeigt werden</string>
     <string name="enable_google_maps">Google Maps aktivieren</string>
