@@ -30,7 +30,8 @@ class CalendarAppService: CarAppService() {
 				CalendarProvider(applicationContext, appSettings),
 				AndroidGeocoderSearcher(applicationContext))
 		carappCalendar?.onCreate()
-		handler?.post {
+
+		val startUpcomingNavigation = {
 			if (appSettings[AppSettings.KEYS.CALENDAR_AUTOMATIC_NAVIGATION].toBoolean()) {
 				val carPosition = carInformation.cdsData[CDS.NAVIGATION.GPSPOSITION]
 				val location = LatLong(carPosition?.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("latitude")?.tryAsDouble ?: 0.0,
@@ -38,6 +39,9 @@ class CalendarAppService: CarAppService() {
 				carappCalendar?.navigateNextDestination(location)
 			}
 		}
+		handler?.post(startUpcomingNavigation)
+		handler?.postDelayed(startUpcomingNavigation, 5000)
+		handler?.postDelayed(startUpcomingNavigation, 10000)
 	}
 
 	override fun onCarStop() {
