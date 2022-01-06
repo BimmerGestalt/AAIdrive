@@ -11,7 +11,6 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.phoneui.viewmodels.NavigationStatusModel
 import io.bimmergestalt.idriveconnectkit.CDS
-import me.hufman.androidautoidrive.BuildConfig
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -46,18 +45,18 @@ class NavigationStatusModelTest {
 	@Test
 	fun testNaviSupported() {
 		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false)).apply { update() }
-		assertEquals(false, model.isNaviSupported.value)
-		assertEquals(false, model.isNaviNotSupported.value)
+		assertEquals(false, model.isCarNaviSupported.value)
+		assertEquals(false, model.isCarNaviNotSupported.value)
 
 		capabilities["navi"] = "false"
 		model.update()
-		assertEquals(false, model.isNaviSupported.value)
-		assertEquals(true, model.isNaviNotSupported.value)
+		assertEquals(false, model.isCarNaviSupported.value)
+		assertEquals(true, model.isCarNaviNotSupported.value)
 
 		capabilities["navi"] = "true"
 		model.update()
-		assertEquals(true, model.isNaviSupported.value)
-		assertEquals(false, model.isNaviNotSupported.value)
+		assertEquals(true, model.isCarNaviSupported.value)
+		assertEquals(false, model.isCarNaviNotSupported.value)
 	}
 
 	@Test

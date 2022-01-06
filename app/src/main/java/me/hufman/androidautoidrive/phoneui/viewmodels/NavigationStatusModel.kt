@@ -38,10 +38,13 @@ class NavigationStatusModel(val carInformation: CarInformation,
 	val isCustomNaviSupportedAndPreferred = isCustomNaviSupported.combine(isCustomNaviPreferred) { supported, preferred ->
 		supported && preferred
 	}
-	private val _isNaviSupported = MutableLiveData<Boolean>(false)
-	val isNaviSupported: LiveData<Boolean> = _isNaviSupported
-	private val _isNaviNotSupported = MutableLiveData<Boolean>()
-	val isNaviNotSupported: LiveData<Boolean> = _isNaviNotSupported
+	private val _isCarNaviSupported = MutableLiveData(false)
+	val isCarNaviSupported: LiveData<Boolean> = _isCarNaviSupported
+	private val _isCarNaviNotSupported = MutableLiveData(false)
+	val isCarNaviNotSupported: LiveData<Boolean> = _isCarNaviNotSupported
+	val isNaviNotSupported = isCarNaviNotSupported.combine(isCustomNaviSupportedAndPreferred) {carNot, custom ->
+		carNot && !custom
+	}
 
 	// progress as we are searching and starting navigation
 	private val _isConnected = MutableLiveData(false)
@@ -68,7 +71,7 @@ class NavigationStatusModel(val carInformation: CarInformation,
 		_isConnected.value = carInformation.isConnected
 
 		val capabilities = carInformation.capabilities
-		_isNaviSupported.value = capabilities["navi"]?.lowercase(Locale.ROOT) == "true"
-		_isNaviNotSupported.value = capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
+		_isCarNaviSupported.value = capabilities["navi"]?.lowercase(Locale.ROOT) == "true"
+		_isCarNaviNotSupported.value = capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
 	}
 }
