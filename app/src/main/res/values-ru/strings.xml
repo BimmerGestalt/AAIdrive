@@ -118,6 +118,7 @@
     <string name="lbl_navigationpage_intent">При подключении навигационная система Вашего автомобиля будет отображаться, как один из вариантов, если есть выбор других приложений для навигации</string>
     <string name="lbl_navigationstatus_active">Сейчас движемся к</string>
     <string name="lbl_navigationstatus_inactive">В настоящее время нет навигации</string>
+    <string name="lbl_navigation_prefer_custom">Предпочесть пользовательскую навигацию</string>
     <string name="lbl_addonspage">Дополнения могут работать с вашим автомобилем, чтобы добавить еще больше функциональности</string>
     <string name="lbl_addon_apps">Приложения дополнений</string>
     <string name="lbl_addons_empty">Не найдено</string>
