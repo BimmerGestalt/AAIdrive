@@ -70,9 +70,15 @@ class MainService: Service() {
 
 	// shut down probing after a timeout
 	val handler = Handler(Looper.getMainLooper())
+	var shutdownDeferredOnce = false        // whether we rescheduled shutdown after noticing Bluetooth still connected
 	val shutdownTimeout = Runnable {
 		if (!iDriveConnectionReceiver.isConnected || !securityAccess.isConnected()) {
-			stopSelf()
+			if (btStatus.isBTConnected && !shutdownDeferredOnce) {
+				shutdownDeferredOnce = true
+				scheduleShutdownTimeout()
+			} else {
+				stopSelf()
+			}
 		}
 	}
 
@@ -127,6 +133,12 @@ class MainService: Service() {
 			Analytics.init(applicationContext)
 		}
 
+		// show the notification, so we can be startForegroundService'd
+		createNotificationChannel()
+		startServiceNotification(iDriveConnectionReceiver.brand,
+				ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"),
+				true)
+
 		val action = intent?.action ?: ""
 		if (action == ACTION_START) {
 			handleActionStart()
@@ -165,8 +177,6 @@ class MainService: Service() {
 	 */
 	private fun handleActionStart() {
 		Log.i(TAG, "Starting up service $this")
-		// show the notification, so we can be startForegroundService'd
-		createNotificationChannel()
 		// try connecting to the security service
 		if (!securityServiceThread.isAlive) {
 			securityServiceThread.start()
@@ -216,8 +226,7 @@ class MainService: Service() {
 		}
 	}
 
-	private fun startServiceNotification(brand: String?, chassisCode: ChassisCode?) {
-		Log.i(TAG, "Creating foreground notification")
+	private fun startServiceNotification(brand: String?, chassisCode: ChassisCode?, force: Boolean) {
 		val notifyIntent = Intent(applicationContext, NavHostActivity::class.java).apply {
 			flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 		}
@@ -231,7 +240,6 @@ class MainService: Service() {
 
 		if (!iDriveConnectionReceiver.isConnected) {
 			// show a notification even if we aren't connected, in case we were called with startForegroundService
-			// the combinedCallback will hide it right away, but it's probably enough
 			foregroundNotificationBuilder.setContentText(getString(R.string.connectionStatusWaiting))
 			foregroundNotificationBuilder.setOngoing(false) // able to swipe away if we aren't currently connected
 		} else {
@@ -244,18 +252,21 @@ class MainService: Service() {
 		}
 
 		val foregroundNotification = foregroundNotificationBuilder.build()
-		if (this.foregroundNotification?.extras?.getCharSequence(Notification.EXTRA_TEXT) !=
+		if (force ||
+				this.foregroundNotification?.extras?.getCharSequence(Notification.EXTRA_TEXT) !=
 				foregroundNotification.extras?.getCharSequence(Notification.EXTRA_TEXT)) {
+			Log.i(TAG, "Creating foreground notification")
 			startForeground(ONGOING_NOTIFICATION_ID, foregroundNotification)
+			this.foregroundNotification = foregroundNotification
 		}
-		this.foregroundNotification = foregroundNotification
 	}
 
 	fun combinedCallback() {
-		startServiceNotification(iDriveConnectionReceiver.brand, ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"))
-
 		synchronized(MainService::class.java) {
 			handler.removeCallbacks(shutdownTimeout)
+			startServiceNotification(iDriveConnectionReceiver.brand,
+					ChassisCode.fromCode(carInformationObserver.capabilities["vehicle.type"] ?: "Unknown"),
+					false)
 			if (iDriveConnectionReceiver.isConnected && securityAccess.isConnected()) {
 				// make sure we are subscribed for an instance id
 				if ((iDriveConnectionReceiver.instanceId ?: -1) <= 0) {
@@ -316,12 +327,17 @@ class MainService: Service() {
 				}
 				connectionTime = null
 				stopCarApps()
-				val timeout = if (btStatus.isBTConnected) CONNECTED_PROBE_TIMEOUT else DISCONNECTED_PROBE_TIMEOUT
-				handler.postDelayed(shutdownTimeout, timeout)
+				scheduleShutdownTimeout()
 				handler.post(btfetchUuidsWithSdp)
 			}
+			carInformationUpdater.isConnected = iDriveConnectionReceiver.isConnected && securityAccess.isConnected()
 		}
-		carInformationUpdater.isConnected = iDriveConnectionReceiver.isConnected && securityAccess.isConnected()
+	}
+
+	fun scheduleShutdownTimeout() {
+		val timeout = if (btStatus.isBTConnected) CONNECTED_PROBE_TIMEOUT else DISCONNECTED_PROBE_TIMEOUT
+		handler.removeCallbacks(shutdownTimeout)
+		handler.postDelayed(shutdownTimeout, timeout)
 	}
 
 	fun startModuleService(clsName: String) {
