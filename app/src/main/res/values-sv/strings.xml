@@ -116,6 +116,7 @@
     <string name="lbl_navigationpage_intent">När du är ansluten visas bilens navigationssystem som ett alternativ när andra appar öppnar en app-väljare</string>
     <string name="lbl_navigationstatus_active">Navigerar till</string>
     <string name="lbl_navigationstatus_inactive">Navigerar inte just nu</string>
+    <string name="lbl_navigation_prefer_custom">Föredrar egen kartnavigering</string>
     <string name="lbl_addonspage">Ytterligare appar kan fungera med din bil för ännu fler funktioner</string>
     <string name="lbl_addon_apps">Tillagda appar</string>
     <string name="lbl_addons_empty">Inget hittades</string>
