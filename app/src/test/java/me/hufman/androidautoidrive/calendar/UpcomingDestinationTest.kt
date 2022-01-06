@@ -83,7 +83,7 @@ class UpcomingDestinationTest {
 		verify(calendarProvider).getEvents(2021, 11, 11)
 		verify(addressSearcher).search("Place2")
 		verifyNoMoreInteractions(addressSearcher)
-		verify(navigationTrigger).triggerNavigation(NavigationParser.addressToRHMI(farAddress))
+		verify(navigationTrigger).triggerNavigation(farAddress)
 	}
 
 	@Test
@@ -98,7 +98,7 @@ class UpcomingDestinationTest {
 		verify(calendarProvider).getEvents(2021, 11, 11)
 		verify(addressSearcher).search("Place2")
 		verify(addressSearcher).search("Place3")
-		verify(navigationTrigger).triggerNavigation(NavigationParser.addressToRHMI(farAddress))
+		verify(navigationTrigger).triggerNavigation(farAddress)
 	}
 
 	@Test

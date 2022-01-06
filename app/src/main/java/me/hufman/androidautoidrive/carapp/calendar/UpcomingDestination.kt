@@ -7,6 +7,7 @@ import me.hufman.androidautoidrive.carapp.maps.LatLong
 import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
 import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger
+import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerApp
 import java.util.*
 
 class UpcomingDestination(val calendarProvider: CalendarProvider, val addressSearcher: AddressSearcher, val navigationTrigger: NavigationTrigger) {
@@ -27,7 +28,7 @@ class UpcomingDestination(val calendarProvider: CalendarProvider, val addressSea
 	fun navigateUpcomingDestination(currentPosition: LatLong) {
 		val upcomingDestination = getUpcomingDestination(currentPosition)
 		if (!currentlyNavigating && upcomingDestination != null) {
-			navigationTrigger.triggerNavigation(NavigationParser.addressToRHMI(upcomingDestination))
+			navigationTrigger.triggerNavigation(upcomingDestination)
 		}
 	}
 }

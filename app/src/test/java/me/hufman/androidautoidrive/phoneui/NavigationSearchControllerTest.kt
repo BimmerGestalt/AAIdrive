@@ -1,7 +1,9 @@
 package me.hufman.androidautoidrive.phoneui
 
 import android.content.Context
+import android.location.Address
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonObject
 import com.nhaarman.mockito_kotlin.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,9 +41,15 @@ class NavigationSearchControllerTest {
 		on { cdsData } doReturn cdsData
 	}
 
+	val testAddress = mock<Address> {
+		on {latitude} doReturn 1.0
+		on {longitude} doReturn 2.0
+		on {featureName} doReturn "Test Location"
+	}
+
 	@Test
 	fun testBadSearch() = coroutineTestRule.testDispatcher.runBlockingTest {
-		val model = NavigationStatusModel(carInformation)
+		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false))
 		val controller = NavigationSearchController(this, parser, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
 		whenever(parser.parseUrl(any())) doAnswer {
 			// when the parseUrl is called, the label should say
@@ -76,11 +84,11 @@ class NavigationSearchControllerTest {
 
 	@Test
 	fun testRetries() = coroutineTestRule.testDispatcher.runBlockingTest {
-		val model = NavigationStatusModel(carInformation)
+		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false))
 		val controller = NavigationSearchController(this, parser, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
 
 		// it should retry parseUrl once if the first result is null
-		whenever(parser.parseUrl(any())) doReturn listOf(null, "rhmiCommandString")
+		whenever(parser.parseUrl(any())) doReturn listOf(null, testAddress)
 		controller.startNavigation("test address")
 
 		// should now be trying to send to the car
@@ -89,12 +97,12 @@ class NavigationSearchControllerTest {
 		context.run(model.searchStatus.value!!)
 		verify(context).getString(R.string.lbl_navigation_listener_pending)
 		clearInvocations(context)
-		verify(navigationTrigger).triggerNavigation("rhmiCommandString")
+		verify(navigationTrigger).triggerNavigation(testAddress)
 		clearInvocations(navigationTrigger)
 
 		// the car missed it the first time, try to send again
 		advanceTimeBy(NavigationSearchController.TIMEOUT + 100)
-		verify(navigationTrigger).triggerNavigation("rhmiCommandString")
+		verify(navigationTrigger).triggerNavigation(testAddress)
 		clearInvocations(navigationTrigger)
 
 		// now wait for the car to notice
@@ -118,11 +126,11 @@ class NavigationSearchControllerTest {
 
 	@Test
 	fun testUnsuccess() = coroutineTestRule.testDispatcher.runBlockingTest {
-		val model = NavigationStatusModel(carInformation)
+		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false))
 		val controller = NavigationSearchController(this, parser, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
 
 		// it should retry parseUrl once if the first result is null
-		whenever(parser.parseUrl(any())) doReturn listOf(null, "rhmiCommandString")
+		whenever(parser.parseUrl(any())) doReturn listOf(null, testAddress)
 		controller.startNavigation("test address")
 
 		// should now be trying to send to the car
@@ -131,22 +139,22 @@ class NavigationSearchControllerTest {
 		context.run(model.searchStatus.value!!)
 		verify(context).getString(R.string.lbl_navigation_listener_pending)
 		clearInvocations(context)
-		verify(navigationTrigger).triggerNavigation("rhmiCommandString")
+		verify(navigationTrigger).triggerNavigation(testAddress)
 		clearInvocations(navigationTrigger)
 
 		// the car missed it the first time, try to send again
 		advanceTimeBy(NavigationSearchController.TIMEOUT + 100)
-		verify(navigationTrigger).triggerNavigation("rhmiCommandString")
+		verify(navigationTrigger).triggerNavigation(testAddress)
 		clearInvocations(navigationTrigger)
 
 		// the car missed it the second time, try to send again
 		advanceTimeBy(NavigationSearchController.TIMEOUT + 100)
-		verify(navigationTrigger).triggerNavigation("rhmiCommandString")
+		verify(navigationTrigger).triggerNavigation(testAddress)
 		clearInvocations(navigationTrigger)
 
 		// the car missed it the third time, should not try again
 		advanceTimeBy(NavigationSearchController.TIMEOUT + 100)
-		verify(navigationTrigger, never()).triggerNavigation("rhmiCommandString")
+		verify(navigationTrigger, never()).triggerNavigation(testAddress)
 
 		// UI should update with success
 		assertEquals(false, model.isSearching.value)

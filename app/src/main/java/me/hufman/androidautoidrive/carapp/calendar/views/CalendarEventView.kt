@@ -43,14 +43,14 @@ class CalendarEventView(val state: RHMIState, val addressSearcher: AddressSearch
 		timesList.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 			val address = this.address
 			if (address != null) {
-				navigationTrigger.triggerNavigation(NavigationParser.addressToRHMI(address))
+				navigationTrigger.triggerNavigation(address)
 			}
 		}
 		locationList.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 			// for some reason this doesn't seem to ever trigger from the car
 			val address = this.address
 			if (address != null) {
-				navigationTrigger.triggerNavigation(NavigationParser.addressToRHMI(address))
+				navigationTrigger.triggerNavigation(address)
 			}
 		}
 	}
