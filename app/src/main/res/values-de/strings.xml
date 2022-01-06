@@ -73,11 +73,11 @@
     <string name="lbl_ttsUnsupported">TTS wird von Ihrem Fahrzeug nicht unterstützt</string>
     <string name="lbl_smsPermission">Erteile Zugriff für SMS-Nachrichten um Bilder von Nachrichten im Fahrzeug zu sehen. Text ist immer sichtbar.</string>
     <string name="lbl_calendarpage">Ihr Kalender kann im Fahrzeug angezeigt werden und bietet eine schnelle Navigation zu Terminen</string>
-    <string name="lbl_calendar_description">Termine im Kalender des Telefons, wie in Google Kalender angezeigt, werden im Auto angezeigt. Jeder Arbeitsprofilkalender ist nicht verfügbar.</string>
+    <string name="lbl_calendar_description">Termine im Kalender des Telefons werden im Auto angezeigt, sofern Sie auch in der Google Kalender-App sichtbar sind. Kalendereinträge eines Arbeitsprofils sind nicht verfügbar.</string>
     <string name="lbl_calendar_enabled">Kalender anzeigen</string>
     <string name="lbl_calendar_permissions">Zugriff auf Kalender</string>
     <string name="lbl_calendar_xiaomi_installed">Einträge im Mi Calendar sind möglicherweise nicht im Fahrzeug sichtbar</string>
-    <string name="lbl_calendar_detailed_events">Termine ohne Details oder Standorte ausblenden</string>
+    <string name="lbl_calendar_detailed_events">Termine ohne Details oder Ortsangabe ausblenden</string>
     <string name="lbl_calendar_automatic_navigation">Automatisch zu bevorstehenden Terminen navigieren</string>
     <string name="lbl_mapspage">Ein grundlegender Google Maps-Bildschirm kann im Auto angezeigt werden</string>
     <string name="enable_google_maps">Google Maps aktivieren</string>
