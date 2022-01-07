@@ -347,23 +347,26 @@ class GMapsController(private val context: Context, private val carLocationProvi
 		// make sure we are in the UI thread, and then draw navigation lines onto it
 		// because route search comes back on a network thread
 		val action = {
-			projection?.map?.clear()
+			val map = projection?.map
+			if (map != null) {
+				map.clear()
 
-			// destination flag
-			val dest = currentNavDestination
-			if (dest != null) {
-				val destLatLng = LatLng(dest.latitude, dest.longitude)
-				val marker = MarkerOptions()
-						.position(destLatLng)
-						.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-						.visible(true)
-				projection?.map?.addMarker(marker)
-			}
+				// destination flag
+				val dest = currentNavDestination
+				if (dest != null) {
+					val destLatLng = LatLng(dest.latitude, dest.longitude)
+					val marker = MarkerOptions()
+							.position(destLatLng)
+							.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+							.visible(true)
+					map.addMarker(marker)
+				}
 
-			// routing
-			val currentNavRoute = this.currentNavRoute
-			if (currentNavRoute != null) {
-				projection?.map?.addPolyline(PolylineOptions().color(context.getColor(R.color.mapRouteLine)).addAll(currentNavRoute))
+				// routing
+				val currentNavRoute = this.currentNavRoute
+				if (currentNavRoute != null) {
+					map.addPolyline(PolylineOptions().color(context.getColor(R.color.mapRouteLine)).addAll(currentNavRoute))
+				}
 			}
 		}
 		if (Looper.myLooper() != handler.looper) {
