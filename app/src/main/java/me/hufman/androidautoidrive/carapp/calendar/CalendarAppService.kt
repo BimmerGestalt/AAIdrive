@@ -10,6 +10,7 @@ import me.hufman.androidautoidrive.calendar.CalendarProvider
 import me.hufman.androidautoidrive.carapp.CarAppService
 import me.hufman.androidautoidrive.carapp.maps.LatLong
 import me.hufman.androidautoidrive.carapp.navigation.AndroidGeocoderSearcher
+import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerDeterminator
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive
@@ -28,7 +29,8 @@ class CalendarAppService: CarAppService() {
 		carappCalendar = CalendarApp(iDriveConnectionStatus, securityAccess,
 				CarAppAssetResources(applicationContext, "calendar"),
 				CalendarProvider(applicationContext, appSettings),
-				AndroidGeocoderSearcher(applicationContext))
+				AndroidGeocoderSearcher(applicationContext),
+				NavigationTriggerDeterminator(applicationContext))
 		carappCalendar?.onCreate()
 
 		val startUpcomingNavigation = {

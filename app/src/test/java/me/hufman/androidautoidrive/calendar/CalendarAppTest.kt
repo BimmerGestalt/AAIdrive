@@ -13,6 +13,7 @@ import me.hufman.androidautoidrive.MockBMWRemotingServer
 import me.hufman.androidautoidrive.carapp.calendar.RHMIDateUtils
 import me.hufman.androidautoidrive.carapp.calendar.CalendarApp
 import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
+import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -47,6 +48,7 @@ class CalendarAppTest {
 	val addressSearcher = mock<AddressSearcher> {
 		on {search(any())} doReturn null
 	}
+	val navigationTrigger = mock<NavigationTrigger> ()
 
 	@Before
 	fun setUp() {
@@ -82,7 +84,7 @@ class CalendarAppTest {
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher, navigationTrigger)
 
 		assertEquals("Richtext", app.viewEvent.descriptionList.getModel()?.modelType)
 	}
@@ -93,7 +95,7 @@ class CalendarAppTest {
 
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher, navigationTrigger)
 		app.viewMonth.selectedDate = makeCalendar(2021, 11, 1)
 		// check that the hmi event listener is set
 		IDriveConnection.mockRemotingClient!!.rhmi_onHmiEvent(0, "", app.viewMonth.state.id, 1, mapOf(4.toByte() to true))
@@ -107,7 +109,7 @@ class CalendarAppTest {
 	fun testMonthView() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher, navigationTrigger)
 		app.viewMonth.selectedDate = makeCalendar(2021, 11, 1)
 		// check that the hmi event listener is set
 		IDriveConnection.mockRemotingClient!!.rhmi_onHmiEvent(0, "", app.viewMonth.state.id, 1, mapOf(4.toByte() to true))
@@ -122,7 +124,7 @@ class CalendarAppTest {
 	fun testMonthScroll() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher, navigationTrigger)
 		app.viewMonth.selectedDate = makeCalendar(2021, 11, 1)
 		app.viewMonth.update()
 
@@ -139,7 +141,7 @@ class CalendarAppTest {
 	fun testMonthClick() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher, navigationTrigger)
 		val monthState = app.viewMonth.state.asCalendarMonthState()!!
 
 		app.viewMonth.selectedDate = makeCalendar(2021, 11, 1)
@@ -157,7 +159,7 @@ class CalendarAppTest {
 	fun testDayView() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher, navigationTrigger)
 		app.viewDay.selectedDate = makeCalendar(2021, 11, 11)
 		// check that the hmi event listener is set
 		IDriveConnection.mockRemotingClient!!.rhmi_onHmiEvent(0, "", app.viewDay.state.id, 1, mapOf(4.toByte() to true))
@@ -179,7 +181,7 @@ class CalendarAppTest {
 	fun testDayClick() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher, navigationTrigger)
 		app.viewDay.selectedDate = makeCalendar(2021, 11, 11)
 		val dayComponent = app.viewDay.calendarDay
 
@@ -197,7 +199,7 @@ class CalendarAppTest {
 	fun testEventViewNull() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher, navigationTrigger)
 		val viewEvent = app.viewEvent
 
 		// RHMIIdempotentApp thinks the data is "" and will ignore requests to set it to ""
@@ -228,7 +230,7 @@ class CalendarAppTest {
 	fun testEventView() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher, navigationTrigger)
 		val viewEvent = app.viewEvent
 		viewEvent.selectedEvent = calendarProvider.getEvents(2021, 11, 11)[1]
 
@@ -259,7 +261,7 @@ class CalendarAppTest {
 	fun testEventViewAllDay() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher, navigationTrigger)
 		val viewEvent = app.viewEvent
 		viewEvent.selectedEvent = calendarProvider.getEvents(2021, 11, 25)[0]
 
@@ -286,11 +288,12 @@ class CalendarAppTest {
 	@Test
 	fun testEventAddress() {
 		// address lookup works
-		whenever(addressSearcher.search(any())) doReturn mock<Address>()
+		val address = mock<Address>()
+		whenever(addressSearcher.search(any())) doReturn address
 
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher)
+		val app = CalendarApp(iDriveConnectionStatus, securityAccess, carAppResources, calendarProvider, addressSearcher, navigationTrigger)
 		val viewEvent = app.viewEvent
 		viewEvent.selectedEvent = calendarProvider.getEvents(2021, 11, 11)[1]
 
@@ -321,9 +324,6 @@ class CalendarAppTest {
 		IDriveConnection.mockRemotingClient?.rhmi_onActionEvent(0, "", viewEvent.locationList.getAction()!!.asRAAction()!!.id, mapOf(0.toByte() to 0))
 
 		// navigation handler should be triggered
-		val navEvent = app.carApp.events.values.filterIsInstance<RHMIEvent.ActionEvent>().first {
-			it.getAction()?.asLinkAction()?.actionType == "navigate"
-		}
-		assertTrue(mockServer.triggeredEvents.containsKey(navEvent.id))
+		verify(navigationTrigger).triggerNavigation(address)
 	}
 }
