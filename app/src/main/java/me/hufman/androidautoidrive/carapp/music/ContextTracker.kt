@@ -26,8 +26,8 @@ class ContextTracker(val timeProvider: () -> Long = {System.currentTimeMillis()}
 		const val CONTEXT_CHANGED_THRESHOLD = 2500  // how long should we consider the user to be idle and then ignore Spotify entrybutton
 		const val MENU_CHANGED_THRESHOLD = 1200   // how long after entering the menu do we ignore Spotify entrybutton
 	}
-	var contextChangedTime = timeProvider()
-	var menuChangedTime = timeProvider()
+	var contextChangedTime = 0L     // when we received a context update
+	var menuChangedTime = 0L        // when we changed to a different screen
 	var menuTitle = ""
 	var currentLine = 0
 	var linesScrolled = 0
@@ -59,6 +59,11 @@ class ContextTracker(val timeProvider: () -> Long = {System.currentTimeMillis()}
 
 	fun isIntentionalSpotifyClick(): Boolean = synchronized(this) {
 		if (wasUnintentional) {
+			return false
+		}
+		if (contextChangedTime == 0L) {
+			// car hasn't sent us a context update yet
+			wasUnintentional = true
 			return false
 		}
 		val time = timeProvider()
