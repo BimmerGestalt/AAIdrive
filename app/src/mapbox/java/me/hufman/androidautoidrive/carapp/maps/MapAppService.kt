@@ -23,7 +23,7 @@ class MapAppService: CarAppService() {
 	var mapListener: MapsInteractionControllerListener? = null
 
 	override fun shouldStartApp(): Boolean {
-		return appSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
+		return appSettings[AppSettings.KEYS.ENABLED_MAPS].toBoolean()
 	}
 
 	override fun onCarStart() {

@@ -2,11 +2,8 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android" >
     <data class="MapPageSettingsBinding">
         <variable
-            name="settings"
-            type="me.hufman.androidautoidrive.phoneui.viewmodels.MapSettingsModel" />
-        <variable
-            name="controller"
-            type="me.hufman.androidautoidrive.phoneui.controllers.MapsPageController" />
+            name="viewmodel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.MapPageModel" />
     </data>
     <ScrollView
         android:layout_width="match_parent"
@@ -31,16 +28,16 @@
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swMapsEnabled"
-                android:checked="@={settings.mapEnabled}"
+                android:checked="@={viewmodel.mapEnabled}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
                 android:paddingBottom="@dimen/settings_vertical_margin"
-                android:text="@string/enable_google_maps" />
+                android:text="@string/enable_custom_maps" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/paneMaps"
-                android:visibility="@{settings.mapEnabled}"
+                android:visibility="@{viewmodel.mapEnabled}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
