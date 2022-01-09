@@ -71,12 +71,7 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 		when (letter) {
 			"delall" -> input = ""
 			"del" -> input = input.dropLast(1)
-			else -> if (letter.length > 1) {
-				// workaround for when result model has been set to a non-empty value the "letter" that is passed into the SpellerCallback is the entire modified input string
-				input = letter
-			} else {
-				input += letter
-			}
+			else -> input += letter
 		}
 		inputComponent.getResultModel()?.asRaDataModel()?.value = input
 		onEntry(input)

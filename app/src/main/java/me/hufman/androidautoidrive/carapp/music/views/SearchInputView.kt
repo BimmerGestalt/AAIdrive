@@ -64,6 +64,21 @@ class SearchInputView(val state: RHMIState,
 				search(input)
 			}
 
+			override fun onInput(letter: String) {
+				when (letter) {
+					"delall" -> input = ""
+					"del" -> input = input.dropLast(1)
+					else -> if (letter.length > 1) {
+						// workaround for when result model has been set to a non-empty value the "letter" that is passed into the SpellerCallback is the entire modified input string
+						input = letter
+					} else {
+						input += letter
+					}
+				}
+				inputComponent.getResultModel()?.asRaDataModel()?.value = input
+				onEntry(input)
+			}
+
 			/**
 			 * Performs the search on the input asynchronously and returns the list of [MusicMetadata]
 			 * results. If the search times out then it is retried for the specific amount of times
