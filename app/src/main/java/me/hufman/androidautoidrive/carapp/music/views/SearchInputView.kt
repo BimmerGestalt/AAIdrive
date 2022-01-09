@@ -66,17 +66,17 @@ class SearchInputView(val state: RHMIState,
 
 			override fun onInput(letter: String) {
 				when (letter) {
-					"delall" -> input = ""
-					"del" -> input = input.dropLast(1)
+					"delall" -> this.input = ""
+					"del" -> this.input = this.input.dropLast(1)
 					else -> if (letter.length > 1) {
 						// workaround for when result model has been set to a non-empty value the "letter" that is passed into the SpellerCallback is the entire modified input string
-						input = letter
+						this.input = letter
 					} else {
-						input += letter
+						this.input += letter
 					}
 				}
-				inputComponent.getResultModel()?.asRaDataModel()?.value = input
-				onEntry(input)
+				inputComponent.getResultModel()?.asRaDataModel()?.value = this.input
+				onEntry(this.input)
 			}
 
 			/**
@@ -196,9 +196,9 @@ class SearchInputView(val state: RHMIState,
 			 * search query history collection or moves it to the top if has been searched before
 			 * and saves the collection to the [AppSettings].
 			 *
-			 * Note: The collection can only have a maximum of 8 total queries. If the collection is
-			 * at max capacity and a new unique search query is being added the oldest search query
-			 * will be dropped from the collection.
+			 * Note: The collection can only have a maximum of [SEARCH_HISTORY_QUERY_MAX_COUNT] total
+			 * queries. If the collection is at max capacity and a new unique search query is being
+			 * added the oldest search query will be dropped from the collection.
 			 */
 			private fun updateSearchQueryHistory(input: String) {
 				if (searchQueryHistory.contains(input)) {
