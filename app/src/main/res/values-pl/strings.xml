@@ -118,6 +118,7 @@
     <string name="lbl_navigationpage_intent">Po nawiązaniu połączenia z samochodem, system nawigacyjny pojawi się jako opcja</string>
     <string name="lbl_navigationstatus_active">Obecnie prowadzę do </string>
     <string name="lbl_navigationstatus_inactive">Nawigacja nieaktywna</string>
+    <string name="lbl_navigation_prefer_custom">Preferuj niestandardową nawigację</string>
     <string name="lbl_addonspage">Dodatkowe aplikacje mogą współracować z samochodem, aby dodać jeszcze więcej funkcjonalności</string>
     <string name="lbl_addon_apps">Aplikacje dodatków</string>
     <string name="lbl_addons_empty">Nic nie znaleziono</string>

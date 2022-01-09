@@ -116,6 +116,7 @@
     <string name="lbl_navigationpage_intent">Quando connesso, il sistema di navigazione dell\'auto verrà visualizzato come opzione quando altre app vorranno inizializzare una navigazione verso un luogo</string>
     <string name="lbl_navigationstatus_active">Navigazione attiva verso</string>
     <string name="lbl_navigationstatus_inactive">Navigazione attualmente non attiva</string>
+    <string name="lbl_navigation_prefer_custom">Preferisci la navigazione personalizzata delle mappe</string>
     <string name="lbl_addonspage">App aggiuntive possono funzionare con la tua auto per aggiungere maggiori funzionalità</string>
     <string name="lbl_addon_apps">Applicazioni aggiuntive</string>
     <string name="lbl_addons_empty">Non trovate</string>

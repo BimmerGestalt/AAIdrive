@@ -116,6 +116,7 @@
     <string name="lbl_navigationpage_intent">Wenn eine Verbindung besteht, wird das Navigationssystem Ihres Autos als Option in der App Auswahl angezeigt, wenn in anderen Apps ein Navigationsbutton betätigt wird</string>
     <string name="lbl_navigationstatus_active">Navigiere aktuell zu</string>
     <string name="lbl_navigationstatus_inactive">Derzeit wird nicht navigiert</string>
+    <string name="lbl_navigation_prefer_custom">Benutzerdefinierte Kartennavigation bevorzugen</string>
     <string name="lbl_addonspage">Diese zusätzlichen Apps können sich mit dem Auto verbinden, um noch mehr Funktionalität hinzuzufügen</string>
     <string name="lbl_addon_apps">Addon-Apps</string>
     <string name="lbl_addons_empty">Keine Addons gefunden</string>
