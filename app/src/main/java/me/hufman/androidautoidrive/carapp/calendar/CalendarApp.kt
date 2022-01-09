@@ -4,6 +4,7 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
+import io.bimmergestalt.idriveconnectkit.CDS
 import io.bimmergestalt.idriveconnectkit.IDriveConnection
 import io.bimmergestalt.idriveconnectkit.Utils.rhmi_setResourceCached
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
@@ -11,31 +12,32 @@ import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.calendar.CalendarProvider
-import me.hufman.androidautoidrive.carapp.FocusTriggerController
-import me.hufman.androidautoidrive.carapp.RHMIActionAbort
+import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.calendar.views.CalendarDayView
 import me.hufman.androidautoidrive.carapp.calendar.views.CalendarMonthView
 import me.hufman.androidautoidrive.carapp.calendar.views.CalendarEventView
 import me.hufman.androidautoidrive.carapp.calendar.views.PermissionView
+import me.hufman.androidautoidrive.carapp.maps.LatLong
 import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger
-import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerApp
 
 class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, carAppResources: CarAppResources,
-                  val calendarProvider: CalendarProvider, val addressSearcher: AddressSearcher) {
+                  val calendarProvider: CalendarProvider, val addressSearcher: AddressSearcher, val navigationTrigger: NavigationTrigger) {
 	companion object {
 		const val TAG = "CalendarApp"
 	}
 
 	val carConnection: BMWRemotingServer
 	val carApp: RHMIApplication
+	val upcomingDestination: UpcomingDestination
 	val viewPermission: PermissionView      // show a message if permissions are missing
 	val viewMonth: CalendarMonthView
 	val viewDay: CalendarDayView
 	val viewEvent: CalendarEventView
 
 	init {
-		val listener = CalendarAppCarListener()
+		val cdsData = CDSDataProvider()
+		val listener = CalendarAppCarListener(cdsData)
 		carConnection = IDriveConnection.getEtchConnection(iDriveConnectionStatus.host ?: "127.0.0.1", iDriveConnectionStatus.port ?: 8003, listener)
 		val appCert = carAppResources.getAppCertificate(iDriveConnectionStatus.brand ?: "")!!.readBytes()
 		val sas_challenge = carConnection.sas_certificate(appCert)
@@ -49,14 +51,16 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 
 		val focusEvent = carApp.events.values.filterIsInstance<RHMIEvent.FocusEvent>().first()
 		val focusTriggerController = FocusTriggerController(focusEvent) {}
-		val navigationTrigger = NavigationTriggerApp(carApp)
 
 		viewPermission = PermissionView(carApp.states.values.first { PermissionView.fits(it) })
 		viewMonth = CalendarMonthView(carApp.states.values.first { CalendarMonthView.fits(it) }, focusTriggerController, calendarProvider)
 		viewDay = CalendarDayView(carApp.states.values.first { CalendarDayView.fits(it) }, calendarProvider)
 		viewEvent = CalendarEventView(carApp.states.values.first { CalendarEventView.fits(it) }, addressSearcher, navigationTrigger)
-
+		upcomingDestination = UpcomingDestination(calendarProvider, addressSearcher, navigationTrigger)
 		initWidgets()
+
+		// update UpcomingDestination with the current guidance status
+		initializeCdsListener(carConnection, cdsData)
 	}
 
 	fun createRhmiApp(iDriveConnectionStatus: IDriveConnectionStatus, carAppAssets: CarAppResources): RHMIApplication {
@@ -77,7 +81,16 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 		return carApp
 	}
 
-	class CalendarAppCarListener: BaseBMWRemotingClient() {
+	fun initializeCdsListener(carConnection: BMWRemotingServer, cdsData: CDSDataProvider): CDSDataProvider {
+		cdsData.setConnection(CDSConnectionEtch(carConnection))
+		cdsData.subscriptions.defaultIntervalLimit = 2200
+		cdsData.subscriptions[CDS.NAVIGATION.GUIDANCESTATUS] = {
+			upcomingDestination.currentlyNavigating = it["guidanceStatus"]?.asInt == 1
+		}
+		return cdsData
+	}
+
+	class CalendarAppCarListener(val cdsEventHandler: CDSEventHandler): BaseBMWRemotingClient() {
 		var server: BMWRemotingServer? = null
 		var app: RHMIApplication? = null
 
@@ -111,6 +124,10 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 			val component = app?.components?.get(componentId)
 			component?.onHmiEvent(eventId, args)
 		}
+
+		override fun cds_onPropertyChangedEvent(handle: Int?, ident: String?, propertyName: String?, propertyValue: String?) {
+			cdsEventHandler.onPropertyChangedEvent(ident, propertyValue)
+		}
 	}
 
 	fun onCreate() {
@@ -124,6 +141,10 @@ class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess
 		viewMonth.initWidgets(viewPermission, viewDay)
 		viewDay.initWidgets(viewEvent)
 		viewEvent.initWidgets()
+	}
+
+	fun navigateNextDestination(currentPosition: LatLong) {
+		upcomingDestination.navigateUpcomingDestination(currentPosition)
 	}
 
 	fun disconnect() {

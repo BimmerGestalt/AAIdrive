@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.phoneui.controllers
 
+import android.location.Address
 import androidx.lifecycle.Observer
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.DefaultDispatcherProvider
@@ -35,7 +36,7 @@ class NavigationSearchController(val scope: CoroutineScope, val parser: Navigati
 			navigationStatusModel.isSearching.value = true
 			navigationStatusModel.searchStatus.value = { getString(R.string.lbl_navigation_listener_searching) }
 			navigationStatusModel.searchFailed.value = false
-			val result = searchToRHMI(query)
+			val result = searchAddress(query)
 
 			// start navigation in the car
 			if (result == null) {
@@ -48,7 +49,8 @@ class NavigationSearchController(val scope: CoroutineScope, val parser: Navigati
 				triggerNavigation(result)
 
 				// update the result label
-				if (navigationStatusModel.isNavigating.value == true) {
+				if (navigationStatusModel.isNavigating.value == true ||
+						navigationStatusModel.isCustomNaviSupportedAndPreferred.value == true) {
 					navigationStatusModel.searchStatus.value = { getString(R.string.lbl_navigation_listener_success) }
 				} else {
 					navigationStatusModel.searchStatus.value = { getString(R.string.lbl_navigation_listener_unsuccess) }
@@ -63,7 +65,7 @@ class NavigationSearchController(val scope: CoroutineScope, val parser: Navigati
 		return false    // hide the keyboard after clicking the search button
 	}
 
-	suspend fun searchToRHMI(query: CharSequence): String? {
+	suspend fun searchAddress(query: CharSequence): Address? {
 		val url = if (query.startsWith("geo:") ||
 				query.startsWith("google.navigation:") ||
 				query.startsWith("http")) {
@@ -79,30 +81,34 @@ class NavigationSearchController(val scope: CoroutineScope, val parser: Navigati
 		return result
 	}
 
-	suspend fun triggerNavigation(rhmiDestination: String) {
+	suspend fun triggerNavigation(destination: Address) {
 		val observer = Observer<Boolean> {}
 		try {
 			// register for navigation status
 			navigationStatusModel.isNavigating.observeForever(observer)
+			navigationStatusModel.isCustomNaviSupportedAndPreferred.observeForever(observer)
 			// try a few times
 			for (i in 0 until TRIES) {
 				withContext(dispatchers.IO) {
-					navigationTrigger.triggerNavigation(rhmiDestination)
+					navigationTrigger.triggerNavigation(destination)
 				}
 				for (t in 0 until TIMEOUT / 1000) {
 					delay(1000)
 					// wait up to TIMEOUT or until car begins navigation
-					if (navigationStatusModel.isNavigating.value == true) {
+					if (navigationStatusModel.isNavigating.value == true ||
+							navigationStatusModel.isCustomNaviSupportedAndPreferred.value == true) {
 						break
 					}
 				}
 				// if the car is navigating, don't try again
-				if (navigationStatusModel.isNavigating.value == true) {
+				if (navigationStatusModel.isNavigating.value == true ||
+						navigationStatusModel.isCustomNaviSupportedAndPreferred.value == true) {
 					break
 				}
 			}
 		} finally {
 			navigationStatusModel.isNavigating.removeObserver(observer)
+			navigationStatusModel.isCustomNaviSupportedAndPreferred.removeObserver(observer)
 		}
 	}
 }

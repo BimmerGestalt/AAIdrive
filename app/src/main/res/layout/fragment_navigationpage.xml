@@ -30,6 +30,19 @@
             android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
         <LinearLayout
+            android:orientation="vertical" android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{viewModel.isCustomNaviSupported()}">
+            <androidx.appcompat.widget.SwitchCompat
+                android:checked="@={viewModel.isCustomNaviPreferred}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingBottom="@dimen/settings_vertical_margin"
+                android:text="@string/lbl_navigation_prefer_custom" />
+        </LinearLayout>
+
+        <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/pane_vertical_margin"
-                android:visibility="@{viewModel.isNaviNotSupported()}"
+                android:visibility="@{viewModel.isCarNaviNotSupported()}"
                 android:text="@string/txt_capabilities_navi_no" />
 
             <LinearLayout
@@ -104,7 +117,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="@{viewModel.isConnected()}">
+            android:visibility="@{viewModel.isConnected() &amp;&amp; viewModel.isCarNaviSupported()}">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -78,6 +78,7 @@
     <string name="lbl_calendar_permissions">Accesso al calendario</string>
     <string name="lbl_calendar_xiaomi_installed">Gli appuntamenti del Mi Calendar potrebbero non essere visualizzati</string>
     <string name="lbl_calendar_detailed_events">Nascondi gli eventi senza dettagli o posizioni</string>
+    <string name="lbl_calendar_automatic_navigation">Vai automaticamente ai prossimi appuntamenti</string>
     <string name="lbl_mapspage">Una schermata standard di Google Maps può essere visualizzata nell\'auto</string>
     <string name="enable_google_maps">Abilita Google Maps</string>
     <string name="lbl_map_phone_gps">Usa il GPS del telefono invece di quello dell\'auto</string>

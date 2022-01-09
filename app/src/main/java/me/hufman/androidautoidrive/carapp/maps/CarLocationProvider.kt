@@ -8,8 +8,24 @@ import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive
 import java.io.Serializable
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sqrt
 
-data class LatLong(val latitude: Double, val longitude: Double): Serializable
+data class LatLong(val latitude: Double, val longitude: Double): Serializable {
+	/**
+	 * Returns the distance to the other point in KM
+	 */
+	fun distanceFrom(other: LatLong): Double {
+		// from https://stackoverflow.com/a/1253545
+		// hilariously inaccurate, but probably good enough
+		val latDistance = abs(other.latitude - this.latitude) * 110.574
+		val latRadians = this.latitude * PI / 180
+		val longDistance = abs(other.longitude - this.longitude) * cos(latRadians)
+		return sqrt(latDistance*latDistance + longDistance*longDistance)
+	}
+}
 data class CarHeading(val heading: Float, val speed: Float): Serializable
 
 class CarLocationProvider(val cdsData: CDSData) {

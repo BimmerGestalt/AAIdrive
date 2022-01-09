@@ -325,16 +325,34 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	/** Any updates that should happen in the background */
 	fun backgroundRedraw() {
 		if (!initialized && initializationDeferredTime < System.currentTimeMillis()) {
-			initWidgetsLater()
+			try {
+				initWidgetsLater()
+			} catch (e: BMWRemoting.ServiceException) {
+				// something went wrong during background initialization
+				// but don't crash, instead wait to initialize on first view
+			}
 		}
 
 		// Redraw these in the background, for AudioHmiState's global metadata
 		if (state is RHMIState.AudioHmiState) {
 			if (displayedSong != controller.getMetadata() ||
 					displayedConnected != controller.isConnected()) {
-				redrawSong()
+				try {
+					redrawSong()
+				} catch (e: BMWRemoting.ServiceException) {
+					// something went wrong during background update
+					// sometimes seen when updating the AudioHmiState Playlist model
+					// but don't crash, instead continue on and try to redraw again on next view
+					// analytics says only a single user (ID4 running ID5 AudioHmiState somehow)
+					// experiences this, so we'll accept the inefficiency of repeatedly trying to update
+				}
 			}
-			redrawPosition()
+			try {
+				redrawPosition()
+			} catch (e: BMWRemoting.ServiceException) {
+				// something went wrong during background update
+				// but don't crash about it
+			}
 		}
 	}
 

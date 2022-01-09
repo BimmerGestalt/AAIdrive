@@ -86,5 +86,26 @@
             android:text="@string/lbl_calendar_detailed_events"
             android:checked="@={settings.detailedEvents}"/>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:animationDuration="300"
+            android:alpha="@{settings.isNaviNotSupported() ? 0.5f : 1.0f}">
+            <androidx.appcompat.widget.SwitchCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingBottom="@dimen/settings_vertical_margin"
+                android:text="@string/lbl_calendar_automatic_navigation"
+                android:checked="@={settings.autonav}"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="@dimen/settings_vertical_margin"
+                android:visibility="@{settings.isNaviNotSupported()}"
+                android:text="@string/txt_capabilities_navi_no" />
+        </LinearLayout>
     </LinearLayout>
 </layout>

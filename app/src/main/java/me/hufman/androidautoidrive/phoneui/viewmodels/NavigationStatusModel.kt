@@ -8,14 +8,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.bimmergestalt.idriveconnectkit.CDS
-import me.hufman.androidautoidrive.CarInformation
-import me.hufman.androidautoidrive.CarInformationObserver
-import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.liveData
+import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.combine
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 import java.util.*
 
-class NavigationStatusModel(val carInformation: CarInformation): ViewModel() {
+class NavigationStatusModel(val carInformation: CarInformation,
+                            var isCustomNaviSupported: LiveData<Boolean>, var isCustomNaviPreferred: MutableLiveData<Boolean>): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -27,16 +27,24 @@ class NavigationStatusModel(val carInformation: CarInformation): ViewModel() {
 					viewModel?.update()
 				}
 			}
-			viewModel = NavigationStatusModel(carInformation)
+			val isCustomNaviSupported = MutableLiveData(BuildConfig.FLAVOR_map != "nomap")
+			val isCustomNaviPreferred = BooleanLiveSetting(appContext, AppSettings.KEYS.NAV_PREFER_CUSTOM_MAP)
+			viewModel = NavigationStatusModel(carInformation, isCustomNaviSupported, isCustomNaviPreferred)
 			viewModel.update()
 			return viewModel as T
 		}
 	}
 
-	private val _isNaviSupported = MutableLiveData<Boolean>(false)
-	val isNaviSupported: LiveData<Boolean> = _isNaviSupported
-	private val _isNaviNotSupported = MutableLiveData<Boolean>()
-	val isNaviNotSupported: LiveData<Boolean> = _isNaviNotSupported
+	val isCustomNaviSupportedAndPreferred = isCustomNaviSupported.combine(isCustomNaviPreferred) { supported, preferred ->
+		supported && preferred
+	}
+	private val _isCarNaviSupported = MutableLiveData(false)
+	val isCarNaviSupported: LiveData<Boolean> = _isCarNaviSupported
+	private val _isCarNaviNotSupported = MutableLiveData(false)
+	val isCarNaviNotSupported: LiveData<Boolean> = _isCarNaviNotSupported
+	val isNaviNotSupported = isCarNaviNotSupported.combine(isCustomNaviSupportedAndPreferred) {carNot, custom ->
+		carNot && !custom
+	}
 
 	// progress as we are searching and starting navigation
 	private val _isConnected = MutableLiveData(false)
@@ -63,7 +71,7 @@ class NavigationStatusModel(val carInformation: CarInformation): ViewModel() {
 		_isConnected.value = carInformation.isConnected
 
 		val capabilities = carInformation.capabilities
-		_isNaviSupported.value = capabilities["navi"]?.lowercase(Locale.ROOT) == "true"
-		_isNaviNotSupported.value = capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
+		_isCarNaviSupported.value = capabilities["navi"]?.lowercase(Locale.ROOT) == "true"
+		_isCarNaviNotSupported.value = capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
 	}
 }

@@ -67,7 +67,7 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 	 * Handles processing the input from the RHMIActionSpellerCallback and sets the input result model
 	 * to the updated input.
 	 */
-	private fun onInput(letter: String) {
+	open fun onInput(letter: String) {
 		when (letter) {
 			"delall" -> input = ""
 			"del" -> input = input.dropLast(1)

@@ -80,6 +80,7 @@
     <string name="lbl_calendar_permissions">Доступ к просмотру календаря</string>
     <string name="lbl_calendar_xiaomi_installed">События в Mi Календаре могут не отображаться в автомобиле</string>
     <string name="lbl_calendar_detailed_events">Скрывать события без подробностей или местоположения</string>
+    <string name="lbl_calendar_automatic_navigation">Автоматически переходить к предстоящим встречам</string>
     <string name="lbl_mapspage">Базовый экран карт Google может отображаться в автомобиле</string>
     <string name="enable_google_maps">Включить Google Maps</string>
     <string name="lbl_map_phone_gps">Использовать GPS телефона вместо GPS автомобиля</string>

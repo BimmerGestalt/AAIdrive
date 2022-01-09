@@ -34,7 +34,7 @@ class ContextTracker(val timeProvider: () -> Long = {System.currentTimeMillis()}
 	var wasIdle = false     // whether the user was idle before the latest hmiContext update
 	var wasUnintentional = false    // whether the previous spotify click was unintentional
 
-	fun onHmiContextUpdate(hmiContext: JsonObject) {
+	fun onHmiContextUpdate(hmiContext: JsonObject) = synchronized(this) {
 		val time = timeProvider()
 		wasIdle = false
 		wasUnintentional = false
@@ -57,13 +57,13 @@ class ContextTracker(val timeProvider: () -> Long = {System.currentTimeMillis()}
 		}
 	}
 
-	fun isIntentionalSpotifyClick(): Boolean {
+	fun isIntentionalSpotifyClick(): Boolean = synchronized(this) {
 		if (wasUnintentional) {
 			return false
 		}
 		val time = timeProvider()
-		if (menuChangedTime + MENU_CHANGED_THRESHOLD > time && linesScrolled == 0) {
-			// user entered the menu too recently
+		if (menuChangedTime + MENU_CHANGED_THRESHOLD > time && linesScrolled <= 1) {
+			// user entered the menu too recently and didn't scroll enough
 			wasUnintentional = true
 			return false
 		}
