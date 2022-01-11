@@ -205,6 +205,11 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 			}
 		}
 
+		// add the flag for the music sessions permission
+		for (app in apps) {
+			app.possiblyControllable = MusicSessions.hasPermission
+		}
+
 		synchronized(this.combinedApps) {
 			this.combinedApps.clear()
 			this.combinedApps.addAll(apps)

@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap
 class MusicSessions(val context: Context) {
 	companion object {
 		const val TAG = "MusicSessions"
+		var hasPermission = false
 
 		private fun isControllable(actions: Long): Boolean {
 			return ((actions and ACTION_PLAY) or (actions and ACTION_PAUSE) or (actions and ACTION_PLAY_FROM_SEARCH)) > 0
@@ -68,9 +69,11 @@ class MusicSessions(val context: Context) {
 					return MediaControllerCompat(context, MediaSessionCompat.Token.fromToken(session.sessionToken))
 				}
 			}
+			hasPermission = true
 		} catch (e: SecurityException) {
 			// user hasn't granted Notification Access yet
 			Log.w(TAG, "Can't connect to ${desiredApp.name}, user hasn't granted Notification Access yet")
+			hasPermission = false
 		}
 		return null
 	}
@@ -113,6 +116,7 @@ class MusicSessions(val context: Context) {
 	fun discoverApps(): List<MusicAppInfo> {
 		return try {
 			val sessions = mediaManager.getActiveSessions(ComponentName(context, NotificationListenerServiceImpl::class.java))
+			hasPermission = true
 			return sessions.filter {
 				isControllable(it.playbackState?.actions ?: 0)
 			}.mapNotNull {
@@ -124,6 +128,7 @@ class MusicSessions(val context: Context) {
 			}
 		} catch (e: SecurityException) {
 			// user hasn't granted Notification Access yet
+			hasPermission = false
 			Log.i(TAG, "Can't discoverApps, user hasn't granted Notification Access yet")
 			LinkedList()
 		}

@@ -89,7 +89,7 @@
                         android:contentDescription="@string/musicAppControllable"
                         app:tint="?android:attr/textColorSecondary"
                         app:srcCompat="@drawable/ic_slow_motion_video_black_24dp"
-                        android:visibility="@{data.controllable &amp;&amp; !data.connectable}"/>
+                        android:visibility="@{(data.controllable || data.possiblyControllable) &amp;&amp; !data.connectable}"/>
 
                     <ImageView
                         android:id="@+id/imgConnectable"
@@ -126,7 +126,7 @@
                         app:tint="?android:attr/textColorSecondary"
                         android:alpha="0.5"
                         app:srcCompat="@drawable/ic_block_black_24dp"
-                        android:visibility="@{!(data.connectable || data.connectable)}" />
+                        android:visibility="@{!(data.connectable || data.controllable || data.possiblyControllable)}" />
                 </LinearLayout>
 
             </LinearLayout>
