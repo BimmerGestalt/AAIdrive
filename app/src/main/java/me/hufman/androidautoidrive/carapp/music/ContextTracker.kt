@@ -36,25 +36,35 @@ class ContextTracker(val timeProvider: () -> Long = {System.currentTimeMillis()}
 
 	fun onHmiContextUpdate(hmiContext: JsonObject) = synchronized(this) {
 		val time = timeProvider()
-		wasIdle = false
-		wasUnintentional = false
-		if (contextChangedTime + CONTEXT_CHANGED_THRESHOLD < time) {
-			wasIdle = true
-		}
-		contextChangedTime = timeProvider()
 
+		var interacted = false
+		// if the user changed scroll index
 		val line = hmiContext.tryAsJsonObject("graphicalContext")?.tryAsJsonPrimitive("listIndex")?.tryAsInt ?: -1
 		if (line != currentLine) {
 			linesScrolled += 1
 			currentLine = line
+			interacted = true
 		}
 
+		// if the user changed menu
 		val title = hmiContext.tryAsJsonObject("graphicalContext")?.tryAsJsonPrimitive("menuTitle")?.tryAsString ?: ""
 		if (title != menuTitle) {
 			menuChangedTime = timeProvider()
 			menuTitle = title
 			linesScrolled = 0
+			interacted = true
 		}
+
+		// user interacted, clear some flags
+		if (interacted) {
+			wasIdle = false
+			wasUnintentional = false
+		}
+
+		if (contextChangedTime + CONTEXT_CHANGED_THRESHOLD < time) {
+			wasIdle = true
+		}
+		contextChangedTime = timeProvider()
 	}
 
 	fun isIntentionalSpotifyClick(): Boolean = synchronized(this) {

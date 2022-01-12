@@ -106,6 +106,24 @@ class ContextTrackerTest {
 	}
 
 	@Test
+	/** Media button after idling in Media, sometimes it sends multiple identical updates */
+	fun testMediaDwellDuplicate() {
+		contextTracker.onHmiContextUpdate("Home", -1)
+		time.passTime(10000)
+		contextTracker.onHmiContextUpdate("Media", 3)
+		time.passTime(500)
+		contextTracker.onHmiContextUpdate("Media", 4)
+		time.passTime(100)
+		contextTracker.onHmiContextUpdate("Media", 5)
+		time.passTime(10000)
+		contextTracker.onHmiContextUpdate("Media", 6)
+		time.passTime(100)
+		contextTracker.onHmiContextUpdate("Media", 6)
+		time.passTime(100)
+		assertFalse(contextTracker.isIntentionalSpotifyClick())
+	}
+
+	@Test
 	/** Media button unintentionally clicks Spotify, after previously timing out the previous Media button press */
 	fun testMediaDoubleEntry() {
 		contextTracker.onHmiContextUpdate("Home", -1)
