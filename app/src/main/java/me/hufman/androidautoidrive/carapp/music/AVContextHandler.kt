@@ -53,7 +53,6 @@ class AVContextHandler(val iDriveConnectionStatus: IDriveConnectionStatus, val c
 				// start playback if we are the current AV context
 				// or play anyways if we don't know the context yet
 				enactPlayerState(BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
-				av_playerStateChanged(avHandle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 			}
 		} else {
 			// acting as just a fancy controller for Bluetooth music, just play the app
