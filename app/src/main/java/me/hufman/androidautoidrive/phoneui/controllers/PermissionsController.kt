@@ -60,9 +60,7 @@ class PermissionsController(val activity: Activity) {
 	}
 
 	fun openSelfPermissions() {
-		ActivityCompat.requestPermissions(activity,
-				arrayOf(Manifest.permission.READ_CALENDAR),
-				REQUEST_CALENDAR)
+		openApplicationPermissions(activity.packageName)
 	}
 
 	fun promptNotification() {
