@@ -142,7 +142,13 @@ open class MusicMetadata(val mediaId: String? = null,
 		if (trackNumber != other.trackNumber) return false
 		if (trackCount != other.trackCount) return false
 		if (coverArtUri != other.coverArtUri) return false
-		if ((coverArt == null) != (other.coverArt == null)) return false
+
+		/** CoverArt equality is tricky
+		 * First check if they have the same null or notnull state
+		 * If both are null, the sameAs is null
+		 * If both are notnull, the sameAs is a boolean
+		 */
+		if (((coverArt == null) != (other.coverArt == null)) || (coverArt?.sameAs(other.coverArt) == false)) return false
 
 		return true
 	}
