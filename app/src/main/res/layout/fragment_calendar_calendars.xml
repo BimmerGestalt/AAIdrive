@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/lbl_calendar_upcoming_events"
+        android:text="@string/lbl_calendar_calendars"
         android:layout_marginBottom="8dp"/>
 
     <me.hufman.androidautoidrive.phoneui.NestedListView
-        android:id="@+id/listCalendarEvents"
+        android:id="@+id/listCalendars"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="8dp" />
 
     <TextView
-        android:id="@+id/txtEmptyCalendarEvents"
+        android:id="@+id/txtEmptyCalendars"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="40dp"
         android:paddingEnd="40dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/lbl_calendar_upcoming_events_empty" />
+        android:text="@string/lbl_calendar_calendars_empty" />
 </LinearLayout>

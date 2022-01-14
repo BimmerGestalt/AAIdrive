@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.calendar
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.database.Cursor
@@ -14,6 +15,12 @@ fun Calendar.copy(): Calendar {
 		out.timeZone = this.timeZone
 	}
 }
+
+data class PhoneCalendar(
+		val name: String,
+		val visible: Boolean,
+		val color: Int
+)
 
 data class CalendarEvent(
 		val title: String,
@@ -63,6 +70,15 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 		const val INDEX_BEGIN = 5
 		const val INDEX_END = 6
 		const val INDEX_COLOR = 7
+
+		val CALENDAR_PROJECTION = arrayOf(
+				CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+				CalendarContract.Calendars.VISIBLE,
+				CalendarContract.Calendars.CALENDAR_COLOR,
+		)
+		const val INDEX_CALENDAR_NAME = 0
+		const val INDEX_CALENDAR_VISIBLE = 1
+		const val INDEX_CALENDAR_COLOR = 2
 
 		fun parseEvent(cursor: Cursor): CalendarEvent {
 			val title = cursor.getString(INDEX_TITLE) ?: ""
@@ -123,6 +139,27 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 
 	fun getNow(): Calendar {
 		return Calendar.getInstance()
+	}
+
+	@SuppressLint("Recycle")
+	fun getCalendars(): List<PhoneCalendar> {
+		val cursor = try {
+			context.contentResolver.query(CalendarContract.Calendars.CONTENT_URI, CALENDAR_PROJECTION, null, null, null)
+		} catch (e: SecurityException) { null }
+
+		val calendars = ArrayList<PhoneCalendar>()
+		if (cursor != null) {
+			cursor.moveToFirst()
+			while (cursor.moveToNext()) {
+				val name = cursor.getString(INDEX_CALENDAR_NAME)
+				val visible = cursor.getInt(INDEX_CALENDAR_VISIBLE) != 0
+				val color = cursor.getInt(INDEX_CALENDAR_COLOR)
+				calendars.add(PhoneCalendar(name, visible, color))
+			}
+		}
+		cursor?.close()
+		calendars.sortBy { it.name }
+		return calendars
 	}
 
 	fun getEvents(year: Int, month: Int, day: Int?): List<CalendarEvent> {
