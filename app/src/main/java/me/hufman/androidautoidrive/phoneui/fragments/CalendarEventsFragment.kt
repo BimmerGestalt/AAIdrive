@@ -6,6 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BooleanLiveSetting
 import me.hufman.androidautoidrive.R
@@ -42,7 +46,12 @@ class CalendarEventsFragment: Fragment() {
 
 	fun redraw() {
 		// update list of upcoming events
-		calendarEventsModel.update()
-		eventsAdapter.notifyDataSetChanged()
+		viewLifecycleOwner.lifecycleScope.launch {
+			// calendar events are supposed to only be queried from a background thread
+			withContext(Dispatchers.IO) {
+				calendarEventsModel.update()
+			}
+			eventsAdapter.notifyDataSetChanged()
+		}
 	}
 }

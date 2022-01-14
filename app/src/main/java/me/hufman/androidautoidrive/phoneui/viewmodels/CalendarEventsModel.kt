@@ -28,9 +28,11 @@ class CalendarEventsModel(val provider: CalendarProvider): ViewModel() {
 			it.start[Calendar.DAY_OF_MONTH] >= today[Calendar.DAY_OF_MONTH]
 		}.take(8)
 
-		calendars.clear()
-		calendars.addAll(provider.getCalendars())
-		upcomingEvents.clear()
-		upcomingEvents.addAll(futureEvents)
+		synchronized(this) {
+			calendars.clear()
+			calendars.addAll(provider.getCalendars())
+			upcomingEvents.clear()
+			upcomingEvents.addAll(futureEvents)
+		}
 	}
 }
