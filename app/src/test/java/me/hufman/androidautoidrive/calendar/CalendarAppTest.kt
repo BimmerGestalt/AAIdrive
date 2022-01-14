@@ -33,12 +33,12 @@ class CalendarAppTest {
 	}
 
 	val calendarEvents = listOf(
-		CalendarEvent("A", makeCalendar(2021, 11, 10, 9, 15), makeCalendar(2021, 11, 10, 16, 45), "", ""),
-		CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 15), makeCalendar(2021, 11, 11, 16, 45), "", ""),
-		CalendarEvent("C", makeCalendar(2021, 11, 11, 18, 0), makeCalendar(2021, 11, 11, 20, 0), "Home", "Full Description"),
-		CalendarEvent("Holiday", makeCalendar(2021, 11, 25, 0, 0), makeCalendar(2021, 11, 26, 0, 0), "", ""),
-		CalendarEvent("Holiday", makeCalendar(2021, 12, 25, 0, 0), makeCalendar(2021, 12, 26, 0, 0), "", ""),
-		CalendarEvent("Holiday", makeCalendar(2022, 1, 1, 0, 0), makeCalendar(2022, 1, 2, 0, 0), "", ""),
+		CalendarEvent("A", makeCalendar(2021, 11, 10, 9, 15), makeCalendar(2021, 11, 10, 16, 45), "", "", 0),
+		CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 15), makeCalendar(2021, 11, 11, 16, 45), "", "", 0),
+		CalendarEvent("C", makeCalendar(2021, 11, 11, 18, 0), makeCalendar(2021, 11, 11, 20, 0), "Home", "Full Description", 0),
+		CalendarEvent("Holiday", makeCalendar(2021, 11, 25, 0, 0), makeCalendar(2021, 11, 26, 0, 0), "", "", 0),
+		CalendarEvent("Holiday", makeCalendar(2021, 12, 25, 0, 0), makeCalendar(2021, 12, 26, 0, 0), "", "", 0),
+		CalendarEvent("Holiday", makeCalendar(2022, 1, 1, 0, 0), makeCalendar(2022, 1, 2, 0, 0), "", "", 0),
 	)
 	val calendarProvider = mock<CalendarProvider> {
 		on {hasPermission()} doReturn true
