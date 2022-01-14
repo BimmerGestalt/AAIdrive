@@ -85,7 +85,6 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 			val description = cursor.getString(INDEX_DESCRIPTION) ?: ""
 			val location = cursor.getString(INDEX_LOCATION) ?: ""
 			val color = cursor.getInt(INDEX_COLOR)
-			println("Loaded event color $color")
 
 			val eventStart = Calendar.getInstance().apply {
 				timeInMillis = cursor.getLong(INDEX_BEGIN)
