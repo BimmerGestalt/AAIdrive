@@ -1,0 +1,48 @@
+package me.hufman.androidautoidrive.phoneui.fragments
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.BooleanLiveSetting
+import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.phoneui.NestedListView
+import me.hufman.androidautoidrive.phoneui.adapters.DataBoundArrayAdapter
+import me.hufman.androidautoidrive.phoneui.viewmodels.CalendarEventsModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
+
+class CalendarEventsFragment: Fragment() {
+	val calendarEventsModel by viewModels<CalendarEventsModel> { CalendarEventsModel.Factory(requireContext().applicationContext) }
+	val eventsAdapter by lazy {
+		DataBoundArrayAdapter(requireContext(), R.layout.calendarevent_listitem, calendarEventsModel.upcomingEvents, null)
+	}
+	val calendarDetailedEventsSettings by lazy {BooleanLiveSetting(requireContext().applicationContext, AppSettings.KEYS.CALENDAR_DETAILED_EVENTS)}
+
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+		return inflater.inflate(R.layout.fragment_calendar_events, container, false)
+	}
+
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		view.findViewById<NestedListView>(R.id.listCalendarEvents).apply {
+			emptyView = view.findViewById<TextView>(R.id.txtEmptyCalendarEvents)
+			adapter = eventsAdapter
+		}
+		calendarDetailedEventsSettings.observe(viewLifecycleOwner) {
+			redraw()
+		}
+	}
+
+	override fun onResume() {
+		super.onResume()
+		redraw()
+	}
+
+	fun redraw() {
+		// update list of upcoming events
+		calendarEventsModel.update()
+		eventsAdapter.notifyDataSetChanged()
+	}
+}

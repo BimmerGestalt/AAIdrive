@@ -5,6 +5,7 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.database.Cursor
 import android.provider.CalendarContract
 import me.hufman.androidautoidrive.AppSettings
+import java.text.DateFormat
 import java.util.*
 
 fun Calendar.copy(): Calendar {
@@ -19,8 +20,28 @@ data class CalendarEvent(
 		val start: Calendar,
 		val end: Calendar,
 		val location: String,
-		val description: String
-)
+		val description: String,
+		val color: Int
+) {
+	fun isAllDay(): Boolean {
+		return start[Calendar.HOUR_OF_DAY] == 0 &&
+				start[Calendar.MINUTE] == 0 &&
+				end[Calendar.HOUR_OF_DAY] == 0 &&
+				end[Calendar.MINUTE] == 0
+	}
+	fun formatDay(): String {
+		val format = DateFormat.getDateInstance(DateFormat.SHORT)
+		return format.format(start.time)
+	}
+	fun formatStartTime(): String {
+		val format = DateFormat.getTimeInstance(DateFormat.SHORT)
+		return format.format(start.time)
+	}
+	fun formatEndTime(): String {
+		val format = DateFormat.getTimeInstance(DateFormat.SHORT)
+		return format.format(end.time)
+	}
+}
 
 class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 	companion object {
@@ -32,7 +53,8 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 				CalendarContract.Instances.ALL_DAY,
 				CalendarContract.Instances.EVENT_TIMEZONE,
 				CalendarContract.Instances.BEGIN,
-				CalendarContract.Instances.END,)
+				CalendarContract.Instances.END,
+				CalendarContract.Instances.DISPLAY_COLOR)
 		const val INDEX_TITLE = 0
 		const val INDEX_DESCRIPTION = 1
 		const val INDEX_LOCATION = 2
@@ -40,11 +62,14 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 		const val INDEX_TIMEZONE = 4
 		const val INDEX_BEGIN = 5
 		const val INDEX_END = 6
+		const val INDEX_COLOR = 7
 
 		fun parseEvent(cursor: Cursor): CalendarEvent {
 			val title = cursor.getString(INDEX_TITLE) ?: ""
 			val description = cursor.getString(INDEX_DESCRIPTION) ?: ""
 			val location = cursor.getString(INDEX_LOCATION) ?: ""
+			val color = cursor.getInt(INDEX_COLOR)
+			println("Loaded event color $color")
 
 			val eventStart = Calendar.getInstance().apply {
 				timeInMillis = cursor.getLong(INDEX_BEGIN)
@@ -66,7 +91,7 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 			}
 
 			return CalendarEvent(
-					title, eventStart, eventEnd, location, description
+					title, eventStart, eventEnd, location, description, color
 			)
 		}
 
@@ -123,7 +148,9 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 			add(Calendar.DATE, 1)
 		}
 
-		val cursor = CalendarContract.Instances.query(context.contentResolver, PROJECTION, queryStart.timeInMillis, queryEnd.timeInMillis)
+		val cursor = try {
+			CalendarContract.Instances.query(context.contentResolver, PROJECTION, queryStart.timeInMillis, queryEnd.timeInMillis)
+		} catch (e: SecurityException) { null }
 		if (cursor != null) {
 			cursor.moveToFirst()
 			while (cursor.moveToNext()) {
@@ -145,6 +172,7 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 			}
 		}
 		cursor?.close()
+		events.sortBy { it.start }
 		return events
 	}
 }
