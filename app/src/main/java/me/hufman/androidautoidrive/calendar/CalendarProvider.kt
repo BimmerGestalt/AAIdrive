@@ -19,7 +19,10 @@ fun Calendar.copy(): Calendar {
 data class PhoneCalendar(
 		val name: String,
 		val visible: Boolean,
-		val color: Int
+		val color: Int,
+		val accountType: String,
+		val accountName: String,
+		val synced: Boolean,
 )
 
 data class CalendarEvent(
@@ -75,10 +78,16 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 				CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
 				CalendarContract.Calendars.VISIBLE,
 				CalendarContract.Calendars.CALENDAR_COLOR,
+				CalendarContract.Calendars.ACCOUNT_TYPE,
+				CalendarContract.Calendars.ACCOUNT_NAME,
+				CalendarContract.Calendars.SYNC_EVENTS,
 		)
 		const val INDEX_CALENDAR_NAME = 0
 		const val INDEX_CALENDAR_VISIBLE = 1
 		const val INDEX_CALENDAR_COLOR = 2
+		const val INDEX_CALENDAR_ACCOUNT_TYPE = 3
+		const val INDEX_CALENDAR_ACCOUNT_NAME = 4
+		const val INDEX_CALENDAR_SYNCED = 5
 
 		fun parseEvent(cursor: Cursor): CalendarEvent {
 			val title = cursor.getString(INDEX_TITLE) ?: ""
@@ -153,7 +162,10 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 				val name = cursor.getString(INDEX_CALENDAR_NAME)
 				val visible = cursor.getInt(INDEX_CALENDAR_VISIBLE) != 0
 				val color = cursor.getInt(INDEX_CALENDAR_COLOR)
-				calendars.add(PhoneCalendar(name, visible, color))
+				val accountType = cursor.getString(INDEX_CALENDAR_ACCOUNT_TYPE)
+				val accountName = cursor.getString(INDEX_CALENDAR_ACCOUNT_NAME)
+				val synced = cursor.getInt(INDEX_CALENDAR_SYNCED) == 1
+				calendars.add(PhoneCalendar(name, visible, color, accountType, accountName, synced))
 			}
 		}
 		cursor?.close()
