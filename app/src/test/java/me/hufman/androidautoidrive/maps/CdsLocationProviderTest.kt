@@ -3,12 +3,12 @@ package me.hufman.androidautoidrive.maps
 import com.google.gson.JsonObject
 import io.bimmergestalt.idriveconnectkit.CDS
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
-import me.hufman.androidautoidrive.carapp.maps.CarLocationProvider
+import me.hufman.androidautoidrive.carapp.maps.CdsLocationProvider
 import me.hufman.androidautoidrive.carapp.subscriptions
 import org.junit.Assert.*
 import org.junit.Test
 
-class CarLocationProviderTest {
+class CdsLocationProviderTest {
 	val cdsData = CDSDataProvider()
 
 	val gpsPosition = JsonObject().apply {
@@ -28,7 +28,7 @@ class CarLocationProviderTest {
 
 	@Test
 	fun testParseEmpty() {
-		val provider = CarLocationProvider(cdsData)
+		val provider = CdsLocationProvider(cdsData)
 		assertNull(provider.currentLatLong)
 		assertNull(provider.currentHeading)
 		assertNull(provider.currentLocation)
@@ -39,7 +39,7 @@ class CarLocationProviderTest {
 		cdsData.onPropertyChangedEvent(CDS.NAVIGATION.GPSPOSITION, gpsPosition)
 		cdsData.onPropertyChangedEvent(CDS.NAVIGATION.GPSEXTENDEDINFO, gpsHeading)
 
-		val provider = CarLocationProvider(cdsData)
+		val provider = CdsLocationProvider(cdsData)
 		assertNotNull(provider.currentLatLong)
 		assertNotNull(provider.currentHeading)
 		assertNotNull(provider.currentLocation)
@@ -57,7 +57,7 @@ class CarLocationProviderTest {
 
 	@Test
 	fun testStart() {
-		val provider = CarLocationProvider(cdsData)
+		val provider = CdsLocationProvider(cdsData)
 		assertNull(provider.currentLatLong)
 		assertNull(provider.currentHeading)
 		assertNull(provider.currentLocation)

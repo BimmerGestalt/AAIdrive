@@ -42,18 +42,11 @@ class GMapsController(private val context: Context, private val carLocationProvi
 	private val SEARCH_SESSION_TTL = 180000L    // number of milliseconds that a search session can live   https://stackoverflow.com/a/52339858
 
 	private val placesClient: PlacesClient
-	private val geoClient = GeoApiContext().setQueryRateLimit(3)
-			.setApiKey(context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-					.metaData.getString("com.google.android.geo.API_KEY"))
-			.setConnectTimeout(2, TimeUnit.SECONDS)
-			.setReadTimeout(2, TimeUnit.SECONDS)
-			.setWriteTimeout(2, TimeUnit.SECONDS)
+	private val geoClient: GeoApiContext
 
 	private var lastSettingsTime = 0L   // the last time we checked settings, for day/night check
 	private val SETTINGS_TIME_INTERVAL = 5 * 60000  // milliseconds between checking day/night
 
-	val locationProvider = LocationServices.getFusedLocationProviderClient(context)
-	val locationCallback = LocationCallbackImpl()
 	val gMapLocationSource = GMapLocationSource()
 	var currentLocation: Location? = null
 
@@ -82,12 +75,15 @@ class GMapsController(private val context: Context, private val carLocationProvi
 				.metaData.getString("com.google.android.geo.API_KEY") ?: ""
 		Places.initialize(context, api_key)
 		placesClient = Places.createClient(context)
+		geoClient = GeoApiContext().setQueryRateLimit(3)
+				.setApiKey(api_key)
+				.setConnectTimeout(2, TimeUnit.SECONDS)
+				.setReadTimeout(2, TimeUnit.SECONDS)
+				.setWriteTimeout(2, TimeUnit.SECONDS)
 
 		carLocationProvider.callback = { location ->
-			if (!appSettings[AppSettings.KEYS.MAP_USE_PHONE_GPS].toBoolean()) {
-				handler.post {
-					onLocationUpdate(location)
-				}
+			handler.post {
+				onLocationUpdate(location)
 			}
 		}
 	}
@@ -118,20 +114,10 @@ class GMapsController(private val context: Context, private val carLocationProvi
 		}
 
 		// register for location updates
-		if (appSettings[AppSettings.KEYS.MAP_USE_PHONE_GPS].toBoolean() &&
-				ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-			val locationRequest = LocationRequest.create()
-			locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-			locationRequest.interval = 3000
-			locationRequest.fastestInterval = 500
-
-			locationProvider.requestLocationUpdates(locationRequest, locationCallback, context.mainLooper)
-		}
 		carLocationProvider.start()
 	}
 
 	override fun pauseMap() {
-		locationProvider.removeLocationUpdates(locationCallback)
 		carLocationProvider.stop()
 
 		handler.postDelayed(shutdownMapRunnable, SHUTDOWN_WAIT_INTERVAL)
@@ -141,14 +127,6 @@ class GMapsController(private val context: Context, private val carLocationProvi
 		Log.i(TAG, "Shutting down GMapProjection due to inactivity of ${SHUTDOWN_WAIT_INTERVAL}ms")
 		projection?.hide()
 		projection = null
-	}
-
-	inner class LocationCallbackImpl: LocationCallback() {
-		override fun onLocationResult(result: LocationResult?) {
-			if (result?.lastLocation != null && appSettings[AppSettings.KEYS.MAP_USE_PHONE_GPS].toBoolean()) {
-				onLocationUpdate(result.lastLocation)
-			}
-		}
 	}
 
 	private fun onLocationUpdate(location: Location) {
