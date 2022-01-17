@@ -1,47 +1,33 @@
 package me.hufman.androidautoidrive.carapp.maps
 
-import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.display.VirtualDisplay
 import android.location.Location
 import android.os.Handler
 import android.os.Looper
-import androidx.core.content.ContextCompat
 import android.util.Log
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.*
-import com.google.android.libraries.places.api.net.FetchPlaceRequest
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
-import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.maps.DirectionsApi
 import com.google.maps.GeoApiContext
 import com.google.maps.PendingResult
 import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
-import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.AppSettingsObserver
 import me.hufman.androidautoidrive.R
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
 
-class GMapsController(private val context: Context, private val carLocationProvider: CarLocationProvider, private val resultsController: MapResultsController, private val virtualDisplay: VirtualDisplay, val appSettings: AppSettingsObserver): MapInteractionController {
+class GMapsController(private val context: Context, private val carLocationProvider: CarLocationProvider, private val virtualDisplay: VirtualDisplay, val appSettings: AppSettingsObserver): MapInteractionController {
 	val TAG = "GMapsController"
 	var handler = Handler(context.mainLooper)
 	var projection: GMapsProjection? = null
 
 	private val SHUTDOWN_WAIT_INTERVAL = 120000L   // milliseconds of inactivity before shutting down map
-	private val SEARCH_SESSION_TTL = 180000L    // number of milliseconds that a search session can live   https://stackoverflow.com/a/52339858
 
-	private val placesClient: PlacesClient
 	private val geoClient: GeoApiContext
 
 	private var lastSettingsTime = 0L   // the last time we checked settings, for day/night check
@@ -64,17 +50,12 @@ class GMapsController(private val context: Context, private val carLocationProvi
 	}
 	private var startZoom = 6f  // what zoom level we start the projection with
 	private var currentZoom = 15f
-	private var searchSessionStart: Long = 0    // when the search session started
-	private var searchSessionConsumed = true    // if we used the search session for a Place Info lookup
-	private var searchSession: AutocompleteSessionToken? = null // the search session token
 	private var currentNavDestination: LatLong? = null
 	var currentNavRoute: List<LatLng>? = null
 
 	init {
 		val api_key = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
 				.metaData.getString("com.google.android.geo.API_KEY") ?: ""
-		Places.initialize(context, api_key)
-		placesClient = Places.createClient(context)
 		geoClient = GeoApiContext().setQueryRateLimit(3)
 				.setApiKey(api_key)
 				.setConnectTimeout(2, TimeUnit.SECONDS)
@@ -180,70 +161,6 @@ class GMapsController(private val context: Context, private val carLocationProvi
 			projection?.map?.stopAnimation()
 			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(cameraLocation, currentZoom), animationFinishedCallback)
 			animatingCamera = true
-		}
-	}
-
-	override fun searchLocations(query: String) {
-		val latlngBounds = projection?.map?.projection?.visibleRegion?.latLngBounds ?: return
-		searchLocations(query, latlngBounds)
-	}
-
-	private fun generateSearchSession() {
-		// the search session only should live for 3 minutes
-		if (searchSessionStart + SEARCH_SESSION_TTL < System.currentTimeMillis()) {
-			searchSession = null
-		}
-		if (searchSession == null) {
-			searchSession = AutocompleteSessionToken.newInstance()
-			searchSessionStart = System.currentTimeMillis()
-			searchSessionConsumed = false
-		}
-	}
-	fun searchLocations(query: String, location: LatLngBounds) {
-		generateSearchSession()
-
-		val bounds = RectangularBounds.newInstance(location)
-		Log.i(TAG, "Starting Place search for $query near $bounds")
-		val autocompleteRequest = FindAutocompletePredictionsRequest.builder()
-				.setLocationBias(bounds)
-				.setSessionToken(searchSession)
-				.setQuery(query)
-				.build()
-		placesClient.findAutocompletePredictions(autocompleteRequest).addOnSuccessListener { result ->
-			val results = result?.autocompletePredictions ?: return@addOnSuccessListener
-			Log.i(TAG, "Received ${results.size} results for query $query")
-
-			val mapResults = results.map {
-				MapResult(it.placeId, it.getPrimaryText(null).toString(), it.getSecondaryText(null).toString())
-			}
-			resultsController.onSearchResults(mapResults.toTypedArray())
-		}.addOnFailureListener {
-			Log.w(TAG, "Unsuccessful result when loading results for $query: $it")
-		}
-	}
-
-	override fun resultInformation(resultId: String) {
-		val requestedFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS)
-		val requestBuilder = FetchPlaceRequest.builder(resultId, requestedFields)
-		if (!searchSessionConsumed) {
-			requestBuilder.setSessionToken(searchSession)
-			searchSessionConsumed = true
-		}
-		val request = requestBuilder.build()
-
-		placesClient.fetchPlace(request).addOnSuccessListener { result ->
-			Log.i(TAG, "Received Place result for resultId $resultId: ${result?.place}")
-			val place = result?.place ?: return@addOnSuccessListener
-			val latLng = place.latLng
-			if (latLng == null) {
-				Log.w(TAG, "Place does not have a latlng location!")
-				return@addOnSuccessListener
-			}
-			val mapResult = MapResult(resultId, place.name.toString(), place.address.toString(),
-					LatLong(latLng.latitude, latLng.longitude))
-			resultsController.onPlaceResult(mapResult)
-		}.addOnFailureListener {
-			Log.w(TAG, "Did not find Place info for Place ID $resultId: $it")
 		}
 	}
 
