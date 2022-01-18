@@ -74,6 +74,10 @@
     <string name="lbl_calendar_xiaomi_installed">Események a Mi Naptárban esetleg nem láthatóak az autóban</string>
     <string name="lbl_calendar_detailed_events">Részleteket vagy helyszíneket nem tartalmazó események elrejtése</string>
     <string name="lbl_calendar_automatic_navigation">Automatikus navigáció a soron következő találkozóra</string>
+    <string name="lbl_calendar_calendars">Naptárak:</string>
+    <string name="lbl_calendar_calendars_empty">Nem találtunk naptárakat</string>
+    <string name="lbl_calendar_upcoming_events">Közelgő események:</string>
+    <string name="lbl_calendar_upcoming_events_empty">Nem találtunk közelgő eseményt ebben a hónapban</string>
     <string name="lbl_mapspage">Alapvető Google Térkép megjelenítése az autóban</string>
     <string name="enable_google_maps">Google Térkép bekapcsolása</string>
     <string name="lbl_map_phone_gps">Telefon GPS-ének használata az autó GPS-e helyett</string>
