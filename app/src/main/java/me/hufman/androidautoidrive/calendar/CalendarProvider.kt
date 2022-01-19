@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.calendar
 
 import android.annotation.SuppressLint
+import android.content.ContentUris
 import android.content.Context
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.database.Cursor
@@ -151,7 +152,7 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 			cursor.moveToFirst()
 			while (cursor.moveToNext()) {
 				val name = cursor.getString(INDEX_CALENDAR_NAME)
-				val visible = cursor.getInt(INDEX_CALENDAR_VISIBLE) != 0
+				val visible = cursor.getInt(INDEX_CALENDAR_VISIBLE) == 1
 				val color = cursor.getInt(INDEX_CALENDAR_COLOR)
 				calendars.add(PhoneCalendar(name, visible, color))
 			}
@@ -161,6 +162,7 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 		return calendars
 	}
 
+	@SuppressLint("Recycle")
 	fun getEvents(year: Int, month: Int, day: Int?): List<CalendarEvent> {
 		val events = ArrayList<CalendarEvent>()
 		val start = Calendar.getInstance()
@@ -185,7 +187,12 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 		}
 
 		val cursor = try {
-			CalendarContract.Instances.query(context.contentResolver, PROJECTION, queryStart.timeInMillis, queryEnd.timeInMillis)
+			// manually querying Instances table, ignoring VISIBLE flag
+			val builder = CalendarContract.Instances.CONTENT_URI.buildUpon()
+			ContentUris.appendId(builder, queryStart.timeInMillis)
+			ContentUris.appendId(builder, queryEnd.timeInMillis)
+			context.contentResolver.query(builder.build(), PROJECTION,
+					null,null, "begin ASC")
 		} catch (e: SecurityException) { null }
 		if (cursor != null) {
 			cursor.moveToFirst()
