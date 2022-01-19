@@ -26,14 +26,17 @@ class MapAppService: CarAppService() {
 		Log.i(MainService.TAG, "Starting GMaps")
 		val cdsData = CDSDataProvider()
 		cdsData.setConnection(CarInformation.cdsData.asConnection(cdsData))
-		val carLocationProvider = CarLocationProvider(cdsData)
+		val carLocationProvider = CombinedLocationProvider(
+				appSettings, AndroidLocationProvider.getInstance(this), CdsLocationProvider(cdsData)
+		)
 		val mapAppMode = MapAppMode(RHMIDimensions.create(carInformation.capabilities), AppSettingsViewer(), MusicAppMode.TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port) ?: MusicAppMode.TRANSPORT_PORTS.BT)
 		val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.fullDimensions.visibleWidth, mapAppMode.fullDimensions.visibleHeight, mapAppMode.compressQuality)
 		this.mapScreenCapture = mapScreenCapture
 		val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(applicationContext, mapScreenCapture.imageCapture, 250)
 		this.virtualDisplay = virtualDisplay
-		val mapController = GMapsController(applicationContext, carLocationProvider, MapResultsSender(applicationContext), virtualDisplay, MutableAppSettingsReceiver(applicationContext, null /* specifically main thread */))
+		val mapController = GMapsController(applicationContext, carLocationProvider, virtualDisplay, MutableAppSettingsReceiver(applicationContext, null /* specifically main thread */))
 		this.mapController = mapController
+		val mapPlaceSearch = GmapsPlaceSearch.getInstance(this, carLocationProvider)
 		val mapListener = MapsInteractionControllerListener(applicationContext, mapController)
 		mapListener.onCreate()
 		this.mapListener = mapListener
@@ -41,10 +44,10 @@ class MapAppService: CarAppService() {
 		val mapApp = MapApp(iDriveConnectionStatus, securityAccess,
 				CarAppAssetResources(applicationContext, "smartthings"),
 				mapAppMode,
-				MapInteractionControllerIntent(applicationContext), mapScreenCapture)
+				MapInteractionControllerIntent(applicationContext), mapPlaceSearch, mapScreenCapture)
 		this.mapApp = mapApp
 		val handler = this.handler!!
-		mapApp.onCreate(applicationContext, handler)
+		mapApp.onCreate(handler)
 	}
 
 	override fun onCarStop() {
@@ -55,7 +58,7 @@ class MapAppService: CarAppService() {
 			virtualDisplay?.release()
 			// nothing to stop in mapController
 			mapListener?.onDestroy()
-			mapApp?.onDestroy(applicationContext)
+			mapApp?.onDestroy()
 
 			mapScreenCapture = null
 			virtualDisplay = null
@@ -65,7 +68,7 @@ class MapAppService: CarAppService() {
 			Log.w(TAG, "Encountered an exception while shutting down Maps", e)
 		}
 
-		mapApp?.onDestroy(applicationContext)
+		mapApp?.onDestroy()
 		mapApp?.disconnect()
 		mapApp = null
 	}

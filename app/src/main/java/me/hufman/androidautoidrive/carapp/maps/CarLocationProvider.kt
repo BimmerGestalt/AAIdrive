@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.carapp.maps
 
 import android.location.Location
 import io.bimmergestalt.idriveconnectkit.CDS
+import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.carapp.CDSData
 import me.hufman.androidautoidrive.carapp.subscriptions
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble
@@ -28,37 +29,30 @@ data class LatLong(val latitude: Double, val longitude: Double): Serializable {
 }
 data class CarHeading(val heading: Float, val speed: Float): Serializable
 
-class CarLocationProvider(val cdsData: CDSData) {
-	var currentLatLong: LatLong? = null
-		private set
-	var currentHeading: CarHeading? = null
-		private set
-	val currentLocation: Location?
-		get() {
-			val latLong = currentLatLong
-			val heading = currentHeading
-			return if (latLong != null) {
-				Location("CarLocationProvider").also {
-					it.latitude = latLong.latitude
-					it.longitude = latLong.longitude
-					if (heading != null) {
-						it.bearing = heading.heading
-						it.speed = heading.speed
-					}
-				}
-			} else {
-				null
-			}
-		}
+abstract class CarLocationProvider {
+	var currentLocation: Location? = null
+		protected set
 
 	var callback: ((Location) -> Unit)? = null
+
+	protected fun sendCallback() {
+		currentLocation?.also { location -> callback?.invoke(location) }
+	}
+
+	abstract fun start()
+	abstract fun stop()
+}
+
+class CdsLocationProvider(val cdsData: CDSData): CarLocationProvider() {
+	var currentLatLong: LatLong? = null
+	var currentHeading: CarHeading? = null
 
 	init {
 		parseGPS()
 		parseHeading()
 	}
 
-	fun start() {
+	override fun start() {
 		cdsData.subscriptions[CDS.NAVIGATION.GPSPOSITION] = {
 			parseGPS()
 		}
@@ -74,7 +68,7 @@ class CarLocationProvider(val cdsData: CDSData) {
 		val longitude = position?.tryAsJsonPrimitive("longitude")?.tryAsDouble
 		if (longitude != null && latitude != null) {
 			currentLatLong = LatLong(latitude, longitude)
-			currentLocation?.also { location -> callback?.invoke(location) }
+			onLocationUpdate()
 		}
 	}
 
@@ -86,12 +80,61 @@ class CarLocationProvider(val cdsData: CDSData) {
 		val validSpeed = if (speed < 4000) speed else 0
 		if (heading != null) {
 			currentHeading = CarHeading(-heading.toFloat(), validSpeed.toFloat() / 3.6f)
-			currentLocation?.also { location -> callback?.invoke(location) }
+			onLocationUpdate()
 		}
 	}
 
-	fun stop() {
+	private fun onLocationUpdate() {
+		val latLong = currentLatLong
+		val heading = currentHeading
+		currentLocation = if (latLong != null) {
+			Location("CarLocationProvider").also {
+				it.latitude = latLong.latitude
+				it.longitude = latLong.longitude
+				if (heading != null) {
+					it.bearing = heading.heading
+					it.speed = heading.speed
+				}
+			}
+		} else {
+			null
+		}
+		sendCallback()
+	}
+
+	override fun stop() {
 		cdsData.subscriptions[CDS.NAVIGATION.GPSPOSITION] = null
 		cdsData.subscriptions[CDS.NAVIGATION.GPSEXTENDEDINFO] = null
+	}
+}
+
+class CombinedLocationProvider(val appSettings: AppSettings,
+                               val phoneLocationProvider: CarLocationProvider,
+                               val carLocationProvider: CarLocationProvider): CarLocationProvider() {
+	private val preferPhoneLocation: Boolean
+		get() = appSettings[AppSettings.KEYS.MAP_USE_PHONE_GPS].toBoolean()
+
+	init {
+		phoneLocationProvider.callback = {
+			currentLocation = it
+			sendCallback()
+		}
+		carLocationProvider.callback = {
+			currentLocation = it
+			sendCallback()
+		}
+	}
+
+	override fun start() {
+		if (preferPhoneLocation) {
+			phoneLocationProvider.start()
+		} else {
+			carLocationProvider.start()
+		}
+	}
+
+	override fun stop() {
+		phoneLocationProvider.stop()
+		carLocationProvider.stop()
 	}
 }

@@ -30,8 +30,6 @@ interface MapInteractionController {
 	fun pauseMap()
 	fun zoomIn(steps: Int = 1)
 	fun zoomOut(steps: Int = 1)
-	fun searchLocations(query: String)
-	fun resultInformation(resultId: String)
 	fun navigateTo(dest: LatLong)
 	fun stopNavigation()
 }
@@ -60,14 +58,6 @@ class MapInteractionControllerIntent(val context: Context): MapInteractionContro
 
 	override fun zoomOut(steps: Int) {
 		send(INTERACTION_ZOOM_OUT, Bundle().apply { putInt(EXTRA_ZOOM_AMOUNT, steps) })
-	}
-
-	override fun searchLocations(query: String) {
-		send(INTERACTION_SEARCH, Bundle().apply { putString(EXTRA_QUERY, query) })
-	}
-
-	override fun resultInformation(resultId: String) {
-		send(INTERACTION_SEARCH_DETAILS, Bundle().apply { putString(EXTRA_ID, resultId) })
 	}
 
 	override fun navigateTo(dest: LatLong) {
@@ -101,8 +91,6 @@ class MapsInteractionControllerListener(val context: Context, val controller: Ma
 				INTERACTION_PAUSE_MAP -> controller.pauseMap()
 				INTERACTION_ZOOM_IN -> controller.zoomIn(intent.getIntExtra(EXTRA_ZOOM_AMOUNT, 1))
 				INTERACTION_ZOOM_OUT -> controller.zoomOut(intent.getIntExtra(EXTRA_ZOOM_AMOUNT, 1))
-				INTERACTION_SEARCH -> controller.searchLocations(intent.getStringExtra(EXTRA_QUERY) ?: "")
-				INTERACTION_SEARCH_DETAILS -> controller.resultInformation(intent.getStringExtra(EXTRA_ID) ?: "")
 				INTERACTION_NAV_START -> controller.navigateTo(intent.getSerializableExtra(EXTRA_LATLONG) as? LatLong ?: return)
 				INTERACTION_NAV_STOP -> controller.stopNavigation()
 				else -> Log.i(TAG, "Unknown interaction ${intent.getStringExtra(EXTRA_INTERACTION_TYPE)}")
