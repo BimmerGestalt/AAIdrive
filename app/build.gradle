@@ -73,6 +73,18 @@ android {
         signingConfigs.release.keyPassword = System.getenv("KEYSTORE_ALIAS_PASSWORD")
     }
 
+    sourceSets {
+        main {
+            // split resources into not-nested dirs, per https://stackoverflow.com/a/36214314/169035
+            res.srcDirs += [
+                    "src/main/res",
+                    "src/main/res-facets/music_player",
+                    "src/main/res-facets/tips",
+                    "src/main/res-facets/welcome",
+            ]
+        }
+    }
+
     buildFeatures {
         dataBinding true
     }
