@@ -107,5 +107,15 @@
                 android:visibility="@{settings.isNaviNotSupported()}"
                 android:text="@string/txt_capabilities_navi_no" />
         </LinearLayout>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:text="@string/lbl_calendar_ignore_visibility"
+            android:visibility="@{settings.advancedSettings}"
+            android:checked="@={settings.ignoreVisibility}"/>
+
     </LinearLayout>
 </layout>

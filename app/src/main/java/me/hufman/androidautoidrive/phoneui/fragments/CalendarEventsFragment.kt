@@ -23,7 +23,8 @@ class CalendarEventsFragment: Fragment() {
 	val eventsAdapter by lazy {
 		DataBoundArrayAdapter(requireContext(), R.layout.calendarevent_listitem, calendarEventsModel.upcomingEvents, null)
 	}
-	val calendarDetailedEventsSettings by lazy {BooleanLiveSetting(requireContext().applicationContext, AppSettings.KEYS.CALENDAR_DETAILED_EVENTS)}
+	val calendarDetailedEventsSetting by lazy {BooleanLiveSetting(requireContext().applicationContext, AppSettings.KEYS.CALENDAR_DETAILED_EVENTS)}
+	val calendarIgnoreVisibilitySetting by lazy {BooleanLiveSetting(requireContext().applicationContext, AppSettings.KEYS.CALENDAR_IGNORE_VISIBILITY)}
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.fragment_calendar_events, container, false)
@@ -34,7 +35,10 @@ class CalendarEventsFragment: Fragment() {
 			emptyView = view.findViewById<TextView>(R.id.txtEmptyCalendarEvents)
 			adapter = eventsAdapter
 		}
-		calendarDetailedEventsSettings.observe(viewLifecycleOwner) {
+		calendarDetailedEventsSetting.observe(viewLifecycleOwner) {
+			redraw()
+		}
+		calendarIgnoreVisibilitySetting.observe(viewLifecycleOwner) {
 			redraw()
 		}
 	}

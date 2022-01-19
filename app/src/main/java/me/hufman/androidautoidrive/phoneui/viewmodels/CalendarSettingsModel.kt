@@ -22,8 +22,10 @@ class CalendarSettingsModel(appContext: Context, carInformation: CarInformation,
 		}
 	}
 
+	val advancedSettings = BooleanLiveSetting(appContext, AppSettings.KEYS.SHOW_ADVANCED_SETTINGS)
 	val calendarEnabled = BooleanLiveSetting(appContext, AppSettings.KEYS.ENABLED_CALENDAR)
 	val detailedEvents = BooleanLiveSetting(appContext, AppSettings.KEYS.CALENDAR_DETAILED_EVENTS)
+	val ignoreVisibility = BooleanLiveSetting(appContext, AppSettings.KEYS.CALENDAR_IGNORE_VISIBILITY)
 	val autonav = BooleanLiveSetting(appContext, AppSettings.KEYS.CALENDAR_AUTOMATIC_NAVIGATION)
 	val isNaviNotSupported = FunctionalLiveData {
 		carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "false"

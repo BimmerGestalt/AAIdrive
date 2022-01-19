@@ -187,12 +187,16 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 		}
 
 		val cursor = try {
-			// manually querying Instances table, ignoring VISIBLE flag
-			val builder = CalendarContract.Instances.CONTENT_URI.buildUpon()
-			ContentUris.appendId(builder, queryStart.timeInMillis)
-			ContentUris.appendId(builder, queryEnd.timeInMillis)
-			context.contentResolver.query(builder.build(), PROJECTION,
-					null,null, "begin ASC")
+			if (appSettings[AppSettings.KEYS.CALENDAR_IGNORE_VISIBILITY].toBoolean()) {
+				// manually query Instances table, ignoring VISIBLE flag
+				val builder = CalendarContract.Instances.CONTENT_URI.buildUpon()
+				ContentUris.appendId(builder, queryStart.timeInMillis)
+				ContentUris.appendId(builder, queryEnd.timeInMillis)
+				context.contentResolver.query(builder.build(), PROJECTION,
+						null, null, "begin ASC")
+			} else {
+				CalendarContract.Instances.query(context.contentResolver, PROJECTION, queryStart.timeInMillis, queryEnd.timeInMillis)
+			}
 		} catch (e: SecurityException) { null }
 		if (cursor != null) {
 			cursor.moveToFirst()
