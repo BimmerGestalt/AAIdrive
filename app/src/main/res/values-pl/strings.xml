@@ -81,6 +81,7 @@
     <string name="lbl_calendar_xiaomi_installed">Wydarzenia z aplikacji Mi kalendarzu mogą nie być widoczne w samochodzie</string>
     <string name="lbl_calendar_detailed_events">Ukryj wydarzenia bez szczegółów lub lokalizacji</string>
     <string name="lbl_calendar_automatic_navigation">Automatycznie prowadź do zbliżających się spotkań</string>
+    <string name="lbl_calendar_ignore_visibility">Uwzględnij wydarzenia z ukrytych kalendarzy</string>
     <string name="lbl_calendar_calendars">Kalendarze:</string>
     <string name="lbl_calendar_calendars_empty">Nie znaleziono kalendarzy</string>
     <string name="lbl_calendar_upcoming_events">Nadchodzące wydarzenia:</string>
