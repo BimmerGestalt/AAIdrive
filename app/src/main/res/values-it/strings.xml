@@ -79,6 +79,7 @@
     <string name="lbl_calendar_xiaomi_installed">Gli appuntamenti del Mi Calendar potrebbero non essere visualizzati</string>
     <string name="lbl_calendar_detailed_events">Nascondi gli eventi senza dettagli o posizioni</string>
     <string name="lbl_calendar_automatic_navigation">Vai automaticamente ai prossimi appuntamenti</string>
+    <string name="lbl_calendar_ignore_visibility">Includi gli eventi dei calendari nascosti</string>
     <string name="lbl_calendar_upcoming_events">Prossimi eventi:</string>
     <string name="lbl_calendar_upcoming_events_empty">Nessun evento trovato questo mese</string>
     <string name="lbl_mapspage">Una schermata standard di Google Maps può essere visualizzata nell\'auto</string>
