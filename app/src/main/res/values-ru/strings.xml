@@ -81,6 +81,7 @@
     <string name="lbl_calendar_xiaomi_installed">События в Mi Календаре могут не отображаться в автомобиле</string>
     <string name="lbl_calendar_detailed_events">Скрывать события без подробностей или местоположения</string>
     <string name="lbl_calendar_automatic_navigation">Автоматически переходить к предстоящим встречам</string>
+    <string name="lbl_calendar_ignore_visibility">Включить события из скрытых календарей</string>
     <string name="lbl_calendar_upcoming_events">Предстоящие события:</string>
     <string name="lbl_calendar_upcoming_events_empty">В этом месяце предстоящих событий не найдено</string>
     <string name="lbl_mapspage">Базовый экран карт Google может отображаться в автомобиле</string>
