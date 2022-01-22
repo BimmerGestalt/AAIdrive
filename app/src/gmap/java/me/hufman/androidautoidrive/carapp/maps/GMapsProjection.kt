@@ -5,13 +5,11 @@ import android.app.Presentation
 import android.content.Context
 import android.graphics.Point
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import android.util.Log
 import android.view.Display
 import android.view.WindowManager
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
 import io.bimmergestalt.idriveconnectkit.SubsetRHMIDimensions
@@ -19,7 +17,7 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.utils.TimeUtils
 import java.util.*
 
-class GMapsProjection(val parentContext: Context, display: Display, val appSettings: AppSettingsObserver, val locationSource: GMapLocationSource): Presentation(parentContext, display) {
+class GMapsProjection(val parentContext: Context, display: Display, val appSettings: AppSettingsObserver, val locationSource: GMapsLocationSource): Presentation(parentContext, display) {
 	val TAG = "GMapsProjection"
 	var map: GoogleMap? = null
 	var mapListener: Runnable? = null

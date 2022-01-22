@@ -33,7 +33,7 @@ class GMapsController(private val context: Context, private val carLocationProvi
 	private var lastSettingsTime = 0L   // the last time we checked settings, for day/night check
 	private val SETTINGS_TIME_INTERVAL = 5 * 60000  // milliseconds between checking day/night
 
-	val gMapLocationSource = GMapLocationSource()
+	val gMapLocationSource = GMapsLocationSource()
 	var currentLocation: Location? = null
 
 	var animatingCamera = false

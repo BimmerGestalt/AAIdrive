@@ -14,15 +14,15 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 
-class GmapsPlaceSearch(private val placesClient: PlacesClient, private val locationProvider: CarLocationProvider, private val timeProvider: () -> Long = {System.currentTimeMillis()}): MapPlaceSearch {
+class GMapsPlaceSearch(private val placesClient: PlacesClient, private val locationProvider: CarLocationProvider, private val timeProvider: () -> Long = {System.currentTimeMillis()}): MapPlaceSearch {
 	companion object {
 		private const val SEARCH_SESSION_TTL = 180000L    // number of milliseconds that a search session can live   https://stackoverflow.com/a/52339858
-		fun getInstance(context: Context, locationProvider: CarLocationProvider): GmapsPlaceSearch {
+		fun getInstance(context: Context, locationProvider: CarLocationProvider): GMapsPlaceSearch {
 			val api_key = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
 					.metaData.getString("com.google.android.geo.API_KEY") ?: ""
 			Places.initialize(context, api_key)
 			val placesClient = Places.createClient(context)
-			return GmapsPlaceSearch(placesClient, locationProvider)
+			return GMapsPlaceSearch(placesClient, locationProvider)
 		}
 	}
 

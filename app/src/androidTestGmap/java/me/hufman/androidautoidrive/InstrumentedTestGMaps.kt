@@ -39,7 +39,7 @@ class InstrumentedTestGMaps {
 	@Test
 	fun testGmapSearch() {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-		val search = GmapsPlaceSearch.getInstance(appContext, locationProvider)
+		val search = GMapsPlaceSearch.getInstance(appContext, locationProvider)
 		runBlocking {
 			val results = search.searchLocationsAsync("test", LatLng(37.333, -122.416)).await()
 

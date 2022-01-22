@@ -11,7 +11,7 @@ import com.google.android.libraries.places.api.net.*
 import com.nhaarman.mockito_kotlin.*
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.carapp.maps.CarLocationProvider
-import me.hufman.androidautoidrive.carapp.maps.GmapsPlaceSearch
+import me.hufman.androidautoidrive.carapp.maps.GMapsPlaceSearch
 import me.hufman.androidautoidrive.carapp.maps.LatLong
 import me.hufman.androidautoidrive.carapp.maps.MapResult
 import org.junit.Assert.*
@@ -23,7 +23,7 @@ private infix fun OngoingStubbing<SpannableString>.doReturn(s: String): OngoingS
 	mock<SpannableString> { on {toString()} doReturn s }
 }
 
-class GmapsPlaceSearchTest {
+class GMapsPlaceSearchTest {
 	var time = 0L
 	val timeProvider: () -> Long = { time }
 	val mockLocationProvider = mock<CarLocationProvider>()
@@ -48,7 +48,7 @@ class GmapsPlaceSearchTest {
 		on { fetchPlace(placeQueryArgs.capture()) } doReturn placeResultTask
 	}
 
-	val placeSearch = GmapsPlaceSearch(mockPlacesClient, mockLocationProvider, timeProvider)
+	val placeSearch = GMapsPlaceSearch(mockPlacesClient, mockLocationProvider, timeProvider)
 
 	@Test
 	fun testSearchUnknownLocation(): Unit = runBlocking {

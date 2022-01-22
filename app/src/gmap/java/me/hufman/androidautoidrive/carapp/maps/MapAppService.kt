@@ -36,7 +36,7 @@ class MapAppService: CarAppService() {
 		this.virtualDisplay = virtualDisplay
 		val mapController = GMapsController(applicationContext, carLocationProvider, virtualDisplay, MutableAppSettingsReceiver(applicationContext, null /* specifically main thread */))
 		this.mapController = mapController
-		val mapPlaceSearch = GmapsPlaceSearch.getInstance(this, carLocationProvider)
+		val mapPlaceSearch = GMapsPlaceSearch.getInstance(this, carLocationProvider)
 		val mapListener = MapsInteractionControllerListener(applicationContext, mapController)
 		mapListener.onCreate()
 		this.mapListener = mapListener
