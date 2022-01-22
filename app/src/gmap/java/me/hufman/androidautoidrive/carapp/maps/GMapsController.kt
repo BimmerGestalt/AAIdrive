@@ -1,7 +1,6 @@
 package me.hufman.androidautoidrive.carapp.maps
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.hardware.display.VirtualDisplay
 import android.location.Location
 import android.os.Handler
@@ -10,14 +9,8 @@ import android.util.Log
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
-import com.google.maps.DirectionsApi
-import com.google.maps.GeoApiContext
-import com.google.maps.PendingResult
-import com.google.maps.model.DirectionsResult
-import com.google.maps.model.TravelMode
 import me.hufman.androidautoidrive.AppSettingsObserver
 import me.hufman.androidautoidrive.R
-import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
 
@@ -28,11 +21,12 @@ class GMapsController(private val context: Context, private val carLocationProvi
 
 	private val SHUTDOWN_WAIT_INTERVAL = 120000L   // milliseconds of inactivity before shutting down map
 
-	private val geoClient: GeoApiContext
-
 	private var lastSettingsTime = 0L   // the last time we checked settings, for day/night check
 	private val SETTINGS_TIME_INTERVAL = 5 * 60000  // milliseconds between checking day/night
 
+	val navController = GMapsNavController.getInstance(context, carLocationProvider) {
+		drawNavigation()
+	}
 	val gMapLocationSource = GMapLocationSource()
 	var currentLocation: Location? = null
 
@@ -50,18 +44,8 @@ class GMapsController(private val context: Context, private val carLocationProvi
 	}
 	private var startZoom = 6f  // what zoom level we start the projection with
 	private var currentZoom = 15f
-	private var currentNavDestination: LatLong? = null
-	var currentNavRoute: List<LatLng>? = null
 
 	init {
-		val api_key = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-				.metaData.getString("com.google.android.geo.API_KEY") ?: ""
-		geoClient = GeoApiContext().setQueryRateLimit(3)
-				.setApiKey(api_key)
-				.setConnectTimeout(2, TimeUnit.SECONDS)
-				.setReadTimeout(2, TimeUnit.SECONDS)
-				.setWriteTimeout(2, TimeUnit.SECONDS)
-
 		carLocationProvider.callback = { location ->
 			handler.post {
 				onLocationUpdate(location)
@@ -169,11 +153,7 @@ class GMapsController(private val context: Context, private val carLocationProvi
 		// clear out previous nav
 		projection?.map?.clear()
 		// show new nav destination icon
-		currentNavDestination = dest
-		drawNavigation()
-
-		// search for a route
-		routeNavigation()
+		navController.navigateTo(dest)
 
 		// start zoom animation
 		animateNavigation()
@@ -181,7 +161,7 @@ class GMapsController(private val context: Context, private val carLocationProvi
 
 	private fun animateNavigation() {
 		// show a camera animation to zoom out to the whole navigation route
-		val dest = currentNavDestination ?: return
+		val dest = navController.currentNavDestination ?: return
 		val lastLocation = currentLocation ?: return
 		animatingCamera = true
 		// zoom out to the full view
@@ -206,38 +186,6 @@ class GMapsController(private val context: Context, private val carLocationProvi
 		}, NAVIGATION_MAP_STARTZOOM_TIME.toLong())
 	}
 
-	private fun routeNavigation() {
-		// start a route search
-		val lastLocation = currentLocation ?: return
-		val dest = currentNavDestination ?: return
-		val origin = com.google.maps.model.LatLng(lastLocation.latitude, lastLocation.longitude)
-		val routeDest = com.google.maps.model.LatLng(dest.latitude, dest.longitude)
-
-		val directionsRequest = DirectionsApi.newRequest(geoClient)
-				.mode(TravelMode.DRIVING)
-				.origin(origin)
-				.destination(routeDest)
-		directionsRequest.setCallback(object: PendingResult.Callback<DirectionsResult> {
-			override fun onFailure(e: Throwable?) {
-				Log.w(TAG, "Failed to find route! $e")
-//				throw e ?: return
-			}
-
-			override fun onResult(result: DirectionsResult?) {
-				if (result == null || result.routes.isEmpty()) { return }
-				Log.i(TAG, "Adding route to map")
-				// this needs to be on the main thread
-				val decodedPath = result.routes[0].overviewPolyline.decodePath()
-				val currentNavRoute = decodedPath.map {
-					// convert from route LatLng to map LatLng
-					LatLng(it.lat, it.lng)
-				}
-				this@GMapsController.currentNavRoute = currentNavRoute
-				drawNavigation()
-			}
-		})
-	}
-
 	private fun drawNavigation() {
 		// make sure we are in the UI thread, and then draw navigation lines onto it
 		// because route search comes back on a network thread
@@ -247,7 +195,7 @@ class GMapsController(private val context: Context, private val carLocationProvi
 				map.clear()
 
 				// destination flag
-				val dest = currentNavDestination
+				val dest = navController.currentNavDestination
 				if (dest != null) {
 					val destLatLng = LatLng(dest.latitude, dest.longitude)
 					val marker = MarkerOptions()
@@ -258,7 +206,7 @@ class GMapsController(private val context: Context, private val carLocationProvi
 				}
 
 				// routing
-				val currentNavRoute = this.currentNavRoute
+				val currentNavRoute = navController.currentNavRoute
 				if (currentNavRoute != null) {
 					map.addPolyline(PolylineOptions().color(context.getColor(R.color.mapRouteLine)).addAll(currentNavRoute))
 				}
@@ -273,8 +221,6 @@ class GMapsController(private val context: Context, private val carLocationProvi
 
 	override fun stopNavigation() {
 		// clear out previous nav
-		currentNavDestination = null
-		currentNavRoute = null
-		drawNavigation()
+		navController.stopNavigation()
 	}
 }
