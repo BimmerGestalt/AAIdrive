@@ -8,6 +8,10 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.carapp.CarAppService
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.maps.AndroidLocationProvider
+import me.hufman.androidautoidrive.maps.CdsLocationProvider
+import me.hufman.androidautoidrive.maps.CombinedLocationProvider
+import me.hufman.androidautoidrive.maps.GMapsPlaceSearch
 import java.lang.Exception
 
 class MapAppService: CarAppService() {

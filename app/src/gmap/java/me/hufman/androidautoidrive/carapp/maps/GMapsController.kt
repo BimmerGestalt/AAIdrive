@@ -17,6 +17,8 @@ import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
 import me.hufman.androidautoidrive.AppSettingsObserver
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.maps.CarLocationProvider
+import me.hufman.androidautoidrive.maps.LatLong
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min

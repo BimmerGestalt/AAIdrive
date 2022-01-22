@@ -8,7 +8,7 @@ import me.hufman.androidautoidrive.MainService
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.calendar.CalendarProvider
 import me.hufman.androidautoidrive.carapp.CarAppService
-import me.hufman.androidautoidrive.carapp.maps.LatLong
+import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.carapp.navigation.AndroidGeocoderSearcher
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerDeterminator
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble

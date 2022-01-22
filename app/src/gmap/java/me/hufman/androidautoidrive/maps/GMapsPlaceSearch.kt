@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.carapp.maps
+package me.hufman.androidautoidrive.maps
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -13,6 +13,7 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
+import me.hufman.androidautoidrive.carapp.maps.TAG
 
 class GMapsPlaceSearch(private val placesClient: PlacesClient, private val locationProvider: CarLocationProvider, private val timeProvider: () -> Long = {System.currentTimeMillis()}): MapPlaceSearch {
 	companion object {

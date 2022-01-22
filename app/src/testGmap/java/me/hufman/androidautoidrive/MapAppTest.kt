@@ -14,6 +14,7 @@ import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.maps.MapPlaceSearch
 import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.ArgumentCaptor

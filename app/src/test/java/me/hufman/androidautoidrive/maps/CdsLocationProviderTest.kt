@@ -3,7 +3,6 @@ package me.hufman.androidautoidrive.maps
 import com.google.gson.JsonObject
 import io.bimmergestalt.idriveconnectkit.CDS
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
-import me.hufman.androidautoidrive.carapp.maps.CdsLocationProvider
 import me.hufman.androidautoidrive.carapp.subscriptions
 import org.junit.Assert.*
 import org.junit.Test

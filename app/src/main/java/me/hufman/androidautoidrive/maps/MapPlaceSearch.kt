@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.carapp.maps
+package me.hufman.androidautoidrive.maps
 
 import kotlinx.coroutines.Deferred
 import java.io.Serializable

@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.carapp.maps
+package me.hufman.androidautoidrive.maps
 
 import android.location.Location
 import io.bimmergestalt.idriveconnectkit.CDS

@@ -1,6 +1,5 @@
 package me.hufman.androidautoidrive.maps
 
-import me.hufman.androidautoidrive.carapp.maps.LatLong
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
