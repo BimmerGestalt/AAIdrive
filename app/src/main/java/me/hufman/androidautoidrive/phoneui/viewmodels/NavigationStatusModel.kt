@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import io.bimmergestalt.idriveconnectkit.CDS
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.liveData
+import me.hufman.androidautoidrive.maps.MapResult
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.combine
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 import java.util.*
@@ -45,6 +46,10 @@ class NavigationStatusModel(val carInformation: CarInformation,
 	val isNaviNotSupported = isCarNaviNotSupported.combine(isCustomNaviSupportedAndPreferred) {carNot, custom ->
 		carNot && !custom
 	}
+
+	// autocomplete results
+	val query = MutableLiveData("")
+	val autocompleteResults = ArrayList<MapResult>()
 
 	// progress as we are searching and starting navigation
 	private val _isConnected = MutableLiveData(false)

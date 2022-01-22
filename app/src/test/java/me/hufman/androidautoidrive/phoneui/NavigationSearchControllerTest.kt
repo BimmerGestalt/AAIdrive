@@ -17,6 +17,7 @@ import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger
 import me.hufman.androidautoidrive.phoneui.controllers.NavigationSearchController
 import me.hufman.androidautoidrive.phoneui.viewmodels.NavigationStatusModel
 import io.bimmergestalt.idriveconnectkit.CDS
+import me.hufman.androidautoidrive.maps.MapPlaceSearch
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -34,6 +35,7 @@ class NavigationSearchControllerTest {
 	val context = mock<Context> {
 		on { getString(any()) } doReturn "test"
 	}
+	val searcher = mock<MapPlaceSearch>()
 	val parser = mock<NavigationParser>()
 	val navigationTrigger = mock<NavigationTrigger>()
 	val cdsData = CDSDataProvider()
@@ -50,7 +52,7 @@ class NavigationSearchControllerTest {
 	@Test
 	fun testBadSearch() = coroutineTestRule.testDispatcher.runBlockingTest {
 		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false))
-		val controller = NavigationSearchController(this, parser, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
+		val controller = NavigationSearchController(this, parser, searcher, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
 		whenever(parser.parseUrl(any())) doAnswer {
 			// when the parseUrl is called, the label should say
 			context.run(model.searchStatus.value!!)
@@ -61,7 +63,7 @@ class NavigationSearchControllerTest {
 			// then return the address
 			null
 		}
-		controller.query = "test address"
+		model.query.value = "test address"
 		controller.startNavigation()
 		verify(parser, times(2)).parseUrl("geo:0,0?q=test+address")
 
@@ -76,16 +78,12 @@ class NavigationSearchControllerTest {
 		advanceTimeBy(NavigationSearchController.SUCCESS)
 		assertEquals("", context.run(model.searchStatus.value!!))
 		verify(context, never()).getString(any())
-
-		// changing the input text should clear the error
-		controller.query = "changed"
-		assertEquals(false, model.searchFailed.value)
 	}
 
 	@Test
 	fun testRetries() = coroutineTestRule.testDispatcher.runBlockingTest {
 		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false))
-		val controller = NavigationSearchController(this, parser, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
+		val controller = NavigationSearchController(this, parser, searcher, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
 
 		// it should retry parseUrl once if the first result is null
 		whenever(parser.parseUrl(any())) doReturn listOf(null, testAddress)
@@ -127,7 +125,7 @@ class NavigationSearchControllerTest {
 	@Test
 	fun testUnsuccess() = coroutineTestRule.testDispatcher.runBlockingTest {
 		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false))
-		val controller = NavigationSearchController(this, parser, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
+		val controller = NavigationSearchController(this, parser, searcher, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
 
 		// it should retry parseUrl once if the first result is null
 		whenever(parser.parseUrl(any())) doReturn listOf(null, testAddress)

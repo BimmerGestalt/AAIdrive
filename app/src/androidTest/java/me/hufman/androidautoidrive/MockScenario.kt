@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
@@ -20,6 +21,7 @@ infix fun <T> OngoingStubbing<LiveData<T>>.doReturn(value: T): OngoingStubbing<L
 infix fun OngoingStubbing<BooleanLiveSetting>.doReturn(value: Boolean): OngoingStubbing<BooleanLiveSetting> = thenAnswer{ mock<BooleanLiveSetting> { on {getValue()} doReturn value } }
 infix fun OngoingStubbing<StringLiveSetting>.doReturn(value: String): OngoingStubbing<StringLiveSetting> = thenAnswer{ mock<StringLiveSetting> { on {getValue()} doReturn value } }
 infix fun <T> OngoingStubbing<LiveData<Context.() -> T>>.doReturnContexted(value: Context.() -> T): OngoingStubbing<LiveData<Context.() -> T>> = thenReturn(MutableLiveData(value))
+infix fun <T> OngoingStubbing<MutableLiveData<Context.() -> T>>.doReturnMutableContexted(value: Context.() -> T): OngoingStubbing<MutableLiveData<Context.() -> T>> = thenReturn(MutableLiveData(value))
 
 class MockScenario(context: Context) {
 	val connectionDebugging = mock<CarConnectionDebugging> {
@@ -98,7 +100,10 @@ class MockScenario(context: Context) {
 
 	val navigationStatusModel = mock<NavigationStatusModel> {
 		on {isConnected} doReturn true
+		on {query} doAnswer {MutableLiveData("")}
 		on {navigationStatus} doReturnContexted {getString(R.string.lbl_navigationstatus_inactive)}
+		on {searchStatus} doReturnMutableContexted {getString(R.string.lbl_navigation_listener_pending)}
+		on {searchFailed} doAnswer {MutableLiveData(false)}
 	}
 
 	val notificationSettingsModel = mock<NotificationSettingsModel> {
