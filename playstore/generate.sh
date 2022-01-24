@@ -41,11 +41,7 @@ echo "$output_name"
 echo > "$output_name"
 for lang_dir in res/values res/values-*; do
     [ -n "$(lang_line playstore_release_desc)" ] || continue
-    if [ "$lang_dir" == "res/values" ]; then
-        lang="en"
-    else
-        lang="${lang_dir#res/values-}"
-    fi
+    lang=$(cat "$lang_dir"/ISO)
     cat >>"$output_name" <<EOF
 <$lang>
 `lang_line playstore_release_desc`
