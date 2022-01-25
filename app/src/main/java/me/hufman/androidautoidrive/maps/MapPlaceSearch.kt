@@ -5,7 +5,8 @@ import java.io.Serializable
 
 data class MapResult(val id: String, val name: String,
                      val address: String? = null,
-                     val location: LatLong? = null): Serializable {
+                     val location: LatLong? = null,
+                     val distanceKm: Float? = null): Serializable {
 	override fun toString(): String {
 		return if (address != null) {
 			if (name.isNotBlank()) {

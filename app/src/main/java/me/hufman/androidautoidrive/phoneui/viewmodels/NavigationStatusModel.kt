@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.bimmergestalt.idriveconnectkit.CDS
 import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.carapp.CDSVehicleUnits
 import me.hufman.androidautoidrive.carapp.liveData
 import me.hufman.androidautoidrive.maps.MapResult
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.combine
@@ -49,7 +50,7 @@ class NavigationStatusModel(val carInformation: CarInformation,
 
 	// autocomplete results
 	val query = MutableLiveData("")
-	val autocompleteResults = ArrayList<MapResult>()
+	val autocompleteResults = ArrayList<MapResultViewModel>()
 
 	// progress as we are searching and starting navigation
 	private val _isConnected = MutableLiveData(false)
@@ -79,4 +80,33 @@ class NavigationStatusModel(val carInformation: CarInformation,
 		_isCarNaviSupported.value = capabilities["navi"]?.lowercase(Locale.ROOT) == "true"
 		_isCarNaviNotSupported.value = capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
 	}
+}
+
+class MapResultViewModel(val carInfo: CarInformation, val result: MapResult) {
+	val units: CDSVehicleUnits = carInfo.cachedCdsData[CDS.VEHICLE.UNITS]?.let {
+		CDSVehicleUnits.fromCdsProperty(it)
+	} ?: CDSVehicleUnits.UNKNOWN
+	val unitsDistanceLabel: Context.() -> String = units.let {
+		when (it.distanceUnits) {
+			CDSVehicleUnits.Distance.Kilometers -> {{ getString(R.string.lbl_carinfo_units_km) }}
+			CDSVehicleUnits.Distance.Miles -> {{ getString(R.string.lbl_carinfo_units_mi) }}
+		}
+	}
+
+	val name = result.name
+	val address = result.address
+	val distance = result.distanceKm?.let {
+		val unitDistance = units.distanceUnits.fromCarUnit(it)
+		if (unitDistance < 10.0) {
+			String.format("%.1f", unitDistance)
+		} else {
+			String.format("%.0f", unitDistance)
+		}
+	}
+
+	override fun toString(): String {
+		return result.toString()
+	}
+
+
 }

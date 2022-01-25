@@ -10,6 +10,7 @@ import android.widget.Filter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.runBlocking
+import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.navigation.*
 import me.hufman.androidautoidrive.databinding.NavigationStatusBindingImpl
@@ -19,6 +20,7 @@ import me.hufman.androidautoidrive.maps.PlaceSearchProvider
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundArrayAdapter
 import me.hufman.androidautoidrive.phoneui.controllers.NavigationSearchController
 import me.hufman.androidautoidrive.phoneui.viewmodels.NavigationStatusModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.MapResultViewModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
 class NavigationPageFragment: Fragment() {
@@ -45,8 +47,8 @@ class NavigationPageFragment: Fragment() {
 		val autocomplete = binding.root.findViewById<AutoCompleteTextView>(R.id.txtNavigationAddress)
 		autocomplete.setAdapter(adapter)
 		autocomplete.onItemClickListener = AdapterView.OnItemClickListener { adapterView, _view, index, _id ->
-			val item = adapterView.getItemAtPosition(index) as? MapResult
-			item?.also { triggerNavigation(it) }
+			val item = adapterView.getItemAtPosition(index) as? MapResultViewModel
+			item?.also { triggerNavigation(it.result) }
 		}
 		// when NavController updates the query with the full result address
 		// it triggers the autocomplete popup, so close it
@@ -60,7 +62,7 @@ class NavigationPageFragment: Fragment() {
 		controller.startNavigation(result)
 	}
 
-	inner class NavSearchFilter(val api: MapPlaceSearch, val output: MutableList<MapResult>): Filter() {
+	inner class NavSearchFilter(val api: MapPlaceSearch, val output: MutableList<MapResultViewModel>): Filter() {
 		override fun performFiltering(constraint: CharSequence?): FilterResults {
 			if (constraint?.isNotBlank() != true) {
 				return FilterResults().also {
@@ -80,7 +82,10 @@ class NavigationPageFragment: Fragment() {
 		override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
 			output.clear()
 			val resultList = (results?.values as? List<*>)?.mapNotNull { it as? MapResult } ?: emptyList()
-			output.addAll(resultList)
+			val resultModelList = resultList.map {
+				MapResultViewModel(CarInformation(),  it)
+			}
+			output.addAll(resultModelList)
 			adapter.notifyDataSetChanged()
 		}
 	}

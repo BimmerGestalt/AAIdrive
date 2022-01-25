@@ -53,6 +53,7 @@ class GMapsPlaceSearch(private val placesClient: PlacesClient, private val locat
 		val bounds = RectangularBounds.newInstance(location, location)
 		Log.i(TAG, "Starting Place search for $query near $bounds")
 		val autocompleteRequest = FindAutocompletePredictionsRequest.builder()
+				.setOrigin(location)
 				.setLocationBias(bounds)
 				.setSessionToken(searchSession)
 				.setQuery(query)
@@ -63,7 +64,8 @@ class GMapsPlaceSearch(private val placesClient: PlacesClient, private val locat
 			Log.i(TAG, "Received ${autocompleteResults.size} results for query $query")
 
 			val mapResults = autocompleteResults.map {
-				MapResult(it.placeId, it.getPrimaryText(null).toString(), it.getSecondaryText(null).toString())
+				MapResult(it.placeId, it.getPrimaryText(null).toString(), it.getSecondaryText(null).toString(),
+				distanceKm = it.distanceMeters?.toFloat()?.div(1000))
 			}
 			results.complete(mapResults)
 		}.addOnFailureListener {
