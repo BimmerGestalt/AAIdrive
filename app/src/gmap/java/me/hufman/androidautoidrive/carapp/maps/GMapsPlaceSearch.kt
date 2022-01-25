@@ -44,7 +44,7 @@ class GMapsPlaceSearch(private val placesClient: PlacesClient, private val locat
 	}
 	override fun searchLocationsAsync(query: String): Deferred<List<MapResult>> {
 		val location = locationProvider.currentLocation ?: return CompletableDeferred(emptyList())
-		return searchLocationsAsync(query, LatLng(location.latitude, location.latitude))
+		return searchLocationsAsync(query, LatLng(location.latitude, location.longitude))
 	}
 	fun searchLocationsAsync(query: String, location: LatLng): Deferred<List<MapResult>> {
 		generateSearchSession()
