@@ -65,7 +65,7 @@ class InstrumentedTestGMaps {
 			}
 			mapController.navigateTo(LatLong(37.429167, -122.138056))
 		}
-		await().until { mapController.currentNavRoute != null }
+		await().until { mapController.navController.currentNavRoute != null }
 		imageCapture.onDestroy()
 		virtualDisplay.release()
 	}
