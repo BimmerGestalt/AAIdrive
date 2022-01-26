@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
 import io.bimmergestalt.idriveconnectkit.SubsetRHMIDimensions
 import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.utils.TimeUtils
 import java.util.*
 

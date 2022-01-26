@@ -8,8 +8,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
-import me.hufman.androidautoidrive.carapp.maps.MapResult
-import me.hufman.androidautoidrive.carapp.maps.MapPlaceSearch
+import me.hufman.androidautoidrive.maps.MapResult
+import me.hufman.androidautoidrive.maps.MapPlaceSearch
 import kotlin.coroutines.CoroutineContext
 
 class PlaceSearchView(state: RHMIState, val mapPlaceSearch: MapPlaceSearch, val interaction: MapInteractionController): InputState<MapResult>(state), CoroutineScope {

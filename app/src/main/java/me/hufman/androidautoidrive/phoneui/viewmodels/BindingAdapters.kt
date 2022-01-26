@@ -41,6 +41,10 @@ fun setImageViewResource(view: ImageView, drawable: Context.() -> Drawable?) {
 fun setViewVisibility(view: View, visible: Boolean) {
 	view.visible = visible
 }
+@BindingAdapter("android:visibility")
+fun setViewVisibility(view: View, value: String) {
+	view.visible = value.isNotBlank()
+}
 
 /**
  * Finds the index of the given item in an Adapter

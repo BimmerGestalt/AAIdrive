@@ -11,6 +11,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
 import me.hufman.androidautoidrive.AppSettingsObserver
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.maps.CarLocationProvider
+import me.hufman.androidautoidrive.maps.LatLong
+import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
 

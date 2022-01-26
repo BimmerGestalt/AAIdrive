@@ -12,8 +12,6 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
-import me.hufman.androidautoidrive.carapp.maps.MapPlaceSearch
-import me.hufman.androidautoidrive.carapp.maps.MapResult
 import me.hufman.androidautoidrive.carapp.maps.views.PlaceSearchView
 import org.junit.Assert.*
 import org.junit.Test

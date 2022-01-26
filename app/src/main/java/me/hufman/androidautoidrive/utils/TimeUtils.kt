@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive.utils
 
 import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator
 import com.luckycatlabs.sunrisesunset.dto.Location
-import me.hufman.androidautoidrive.carapp.maps.LatLong
+import me.hufman.androidautoidrive.maps.LatLong
 import java.util.*
 
 object TimeUtils {

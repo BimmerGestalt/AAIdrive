@@ -17,7 +17,7 @@ import me.hufman.androidautoidrive.carapp.calendar.views.CalendarDayView
 import me.hufman.androidautoidrive.carapp.calendar.views.CalendarMonthView
 import me.hufman.androidautoidrive.carapp.calendar.views.CalendarEventView
 import me.hufman.androidautoidrive.carapp.calendar.views.PermissionView
-import me.hufman.androidautoidrive.carapp.maps.LatLong
+import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger
 

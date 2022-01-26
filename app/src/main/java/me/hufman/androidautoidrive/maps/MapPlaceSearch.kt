@@ -1,16 +1,22 @@
-package me.hufman.androidautoidrive.carapp.maps
+package me.hufman.androidautoidrive.maps
 
 import kotlinx.coroutines.Deferred
 import java.io.Serializable
 
 data class MapResult(val id: String, val name: String,
                      val address: String? = null,
-                     val location: LatLong? = null): Serializable {
+                     val location: LatLong? = null,
+                     val distanceKm: Float? = null): Serializable {
 	override fun toString(): String {
-		if (address != null) {
-			return "$name\n$address"
+		return if (address != null) {
+			if (name.isNotBlank()) {
+				"$name\n$address"
+			} else {
+				address
+			}
+		} else {
+			name
 		}
-		return name
 	}
 }
 

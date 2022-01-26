@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.navigation.*
+import me.hufman.androidautoidrive.maps.PlaceSearchProvider
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 import me.hufman.androidautoidrive.phoneui.controllers.NavigationSearchController
 import me.hufman.androidautoidrive.phoneui.viewmodels.NavigationStatusModel
@@ -97,8 +98,9 @@ class NavIntentActivity: AppCompatActivity() {
 		if (query != null) {
 			findViewById<TextView>(R.id.txtNavError).text = query.toString()       // in case we need to show it for parse errors
 			val navParser = NavigationParser(AndroidGeocoderSearcher(this.applicationContext), URLRedirector())
+			val navSearch = PlaceSearchProvider(applicationContext).getInstance()
 			val navTrigger = NavigationTriggerDeterminator(this.applicationContext)
-			val controller = NavigationSearchController(lifecycleScope, navParser, navTrigger, viewModel)
+			val controller = NavigationSearchController(lifecycleScope, navParser, navSearch, navTrigger, viewModel)
 			controller.startNavigation(query.toString())
 		}
 	}

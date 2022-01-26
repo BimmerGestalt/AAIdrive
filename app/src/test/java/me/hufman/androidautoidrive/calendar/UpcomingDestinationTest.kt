@@ -3,9 +3,8 @@ package me.hufman.androidautoidrive.calendar
 import android.location.Address
 import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.carapp.calendar.UpcomingDestination
-import me.hufman.androidautoidrive.carapp.maps.LatLong
+import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
-import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger
 import org.junit.Test
 import java.util.*

@@ -16,6 +16,8 @@ import me.hufman.androidautoidrive.carapp.FullImageView
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.maps.views.MenuView
 import me.hufman.androidautoidrive.carapp.maps.views.PlaceSearchView
+import me.hufman.androidautoidrive.maps.MapPlaceSearch
+import me.hufman.androidautoidrive.maps.MapResult
 import me.hufman.androidautoidrive.utils.removeFirst
 import java.util.*
 import kotlin.collections.ArrayList

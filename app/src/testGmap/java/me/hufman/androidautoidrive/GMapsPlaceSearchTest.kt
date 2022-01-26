@@ -10,10 +10,10 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.*
 import com.nhaarman.mockito_kotlin.*
 import kotlinx.coroutines.runBlocking
-import me.hufman.androidautoidrive.carapp.maps.CarLocationProvider
-import me.hufman.androidautoidrive.carapp.maps.GMapsPlaceSearch
-import me.hufman.androidautoidrive.carapp.maps.LatLong
-import me.hufman.androidautoidrive.carapp.maps.MapResult
+import me.hufman.androidautoidrive.maps.CarLocationProvider
+import me.hufman.androidautoidrive.maps.GMapsPlaceSearch
+import me.hufman.androidautoidrive.maps.LatLong
+import me.hufman.androidautoidrive.maps.MapResult
 import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.stubbing.OngoingStubbing

@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.carapp.maps
+package me.hufman.androidautoidrive.maps
 
 import android.annotation.SuppressLint
 import android.content.Context

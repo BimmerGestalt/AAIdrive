@@ -65,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp">
-                    <EditText
+                    <AutoCompleteTextView
                         android:id="@+id/txtNavigationAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
                         android:inputType="text"
                         android:imeOptions="actionSearch"
                         android:enabled="@{viewModel.isConnected()}"
-                        android:text="@={controller.query}"
+                        android:text="@={viewModel.query}"
                         android:onEditorAction="@{(v, id, event) -> event != null ? controller.startNavigation(v.text) : false}"/>
                     <ProgressBar
                         style="?android:attr/progressBarStyleSmall"

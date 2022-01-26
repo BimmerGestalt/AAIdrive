@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.carapp.maps
+package me.hufman.androidautoidrive.maps
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -13,6 +13,7 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
+import me.hufman.androidautoidrive.carapp.maps.TAG
 
 class GMapsPlaceSearch(private val placesClient: PlacesClient, private val locationProvider: CarLocationProvider, private val timeProvider: () -> Long = {System.currentTimeMillis()}): MapPlaceSearch {
 	companion object {
@@ -52,6 +53,7 @@ class GMapsPlaceSearch(private val placesClient: PlacesClient, private val locat
 		val bounds = RectangularBounds.newInstance(location, location)
 		Log.i(TAG, "Starting Place search for $query near $bounds")
 		val autocompleteRequest = FindAutocompletePredictionsRequest.builder()
+				.setOrigin(location)
 				.setLocationBias(bounds)
 				.setSessionToken(searchSession)
 				.setQuery(query)
@@ -62,7 +64,8 @@ class GMapsPlaceSearch(private val placesClient: PlacesClient, private val locat
 			Log.i(TAG, "Received ${autocompleteResults.size} results for query $query")
 
 			val mapResults = autocompleteResults.map {
-				MapResult(it.placeId, it.getPrimaryText(null).toString(), it.getSecondaryText(null).toString())
+				MapResult(it.placeId, it.getPrimaryText(null).toString(), it.getSecondaryText(null).toString(),
+				distanceKm = it.distanceMeters?.toFloat()?.div(1000))
 			}
 			results.complete(mapResults)
 		}.addOnFailureListener {

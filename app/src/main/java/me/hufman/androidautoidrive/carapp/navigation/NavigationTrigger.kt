@@ -14,6 +14,7 @@ import me.hufman.androidautoidrive.BooleanLiveSetting
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger.Companion.TAG
+import me.hufman.androidautoidrive.maps.LatLong
 
 interface NavigationTrigger {
 	companion object {
