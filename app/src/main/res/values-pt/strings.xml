@@ -71,6 +71,13 @@
     <string name="lbl_popupVersion">Popups apenas trabalham com IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS não é suportado pelo seu carro</string>
     <string name="lbl_smsPermission">Garantir permissão de SMS para ver imagens de SMS recebidas. O texto em si é sempre visível.</string>
+    <string name="lbl_calendar_enabled">Mostrar Calendário</string>
+    <string name="lbl_calendar_detailed_events">Esconder eventos sem detalhes ou locais</string>
+    <string name="lbl_calendar_ignore_visibility">Incluir eventos de calendários ocultos</string>
+    <string name="lbl_calendar_calendars">Calendários:</string>
+    <string name="lbl_calendar_calendars_empty">Não foram encontrados calendários</string>
+    <string name="lbl_calendar_upcoming_events">Próximos eventos:</string>
+    <string name="lbl_calendar_upcoming_events_empty">Nenhum evento encontrado para este mês</string>
     <string name="lbl_mapspage">Uma tela básica do Google Maps pode ser exibida no carro</string>
     <string name="enable_google_maps">Activar Google Maps</string>
     <string name="lbl_widescreen_map">Mapa Panorâmico</string>
