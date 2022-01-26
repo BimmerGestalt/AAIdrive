@@ -23,7 +23,7 @@ data class LatLong(val latitude: Double, val longitude: Double): Serializable {
 		// hilariously inaccurate, but probably good enough
 		val latDistance = abs(other.latitude - this.latitude) * 110.574
 		val latRadians = this.latitude * PI / 180
-		val longDistance = abs(other.longitude - this.longitude) * cos(latRadians)
+		val longDistance = abs(other.longitude - this.longitude) * 111.320 * cos(latRadians)
 		return sqrt(latDistance*latDistance + longDistance*longDistance)
 	}
 }
