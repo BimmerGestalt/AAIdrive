@@ -42,6 +42,7 @@
     <string name="menu_music">Música</string>
     <string name="menu_notifications">Notificações</string>
     <string name="menu_assistants">Assistentes</string>
+    <string name="menu_calendar">Calendário</string>
     <string name="menu_maps">Mapas</string>
     <string name="menu_navigation">Navegação</string>
     <string name="menu_addons">Extensões</string>
@@ -71,8 +72,13 @@
     <string name="lbl_popupVersion">Popups apenas trabalham com IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS não é suportado pelo seu carro</string>
     <string name="lbl_smsPermission">Garantir permissão de SMS para ver imagens de SMS recebidas. O texto em si é sempre visível.</string>
+    <string name="lbl_calendarpage">Seu calendário pode ser exibido no carro, oferecendo navegação rápida para compromissos</string>
+    <string name="lbl_calendar_description">Eventos no calendário do telefone, conforme visto no Google Calendário, aparecerão no carro. Quaisquer calendários do perfil de trabalho não estarão disponíveis.</string>
     <string name="lbl_calendar_enabled">Mostrar Calendário</string>
+    <string name="lbl_calendar_permissions">Aceder ao calendário</string>
+    <string name="lbl_calendar_xiaomi_installed">Eventos no Mi Calendar podem não ser visíveis no carro</string>
     <string name="lbl_calendar_detailed_events">Esconder eventos sem detalhes ou locais</string>
+    <string name="lbl_calendar_automatic_navigation">Navegar automaticamente para os próximos compromissos</string>
     <string name="lbl_calendar_ignore_visibility">Incluir eventos de calendários ocultos</string>
     <string name="lbl_calendar_calendars">Calendários:</string>
     <string name="lbl_calendar_calendars_empty">Não foram encontrados calendários</string>
@@ -80,6 +86,7 @@
     <string name="lbl_calendar_upcoming_events_empty">Nenhum evento encontrado para este mês</string>
     <string name="lbl_mapspage">Uma tela básica do Google Maps pode ser exibida no carro</string>
     <string name="enable_google_maps">Activar Google Maps</string>
+    <string name="lbl_map_phone_gps">Usar GPS do telefone em vez do GPS do carro</string>
     <string name="lbl_widescreen_map">Mapa Panorâmico</string>
     <string name="lbl_map_invert_zoom">Inverter direção do zoom</string>
     <string name="lbl_map_tilt">Inclinação do mapa</string>
@@ -114,6 +121,7 @@
     <string name="lbl_navigationpage_intent">Enquanto conectado, o sistema de navegação do seu carro aparecerá como uma opção quando os botões de navegação de outras apps abrirem um seletor de apps</string>
     <string name="lbl_navigationstatus_active">Atualmente navegando para</string>
     <string name="lbl_navigationstatus_inactive">Atualmente não está navegando</string>
+    <string name="lbl_navigation_prefer_custom">Preferir navegação personalizada de mapa</string>
     <string name="lbl_addonspage">Apps adicionais podem funcionar com o seu carro para adicionar ainda mais funcionalidades</string>
     <string name="lbl_addon_apps">Apps adicionais</string>
     <string name="lbl_addons_empty">Nada encontrado</string>
@@ -143,6 +151,7 @@
     <string name="lbl_support_feedback">Fornecer feedback</string>
     <string name="lbl_support_issues">Reportar problemas</string>
     <string name="lbl_support_share">Partilhar</string>
+    <string name="lbl_support_privacy">A privacidade importa, e é por isso que a AAIdrive não guarda, armazena ou compartilha dados pessoais. Clique aqui para saber mais…</string>
     <string name="lbl_support_thanks">Obrigado por usar o AAIdrive!</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancelar</string>
@@ -201,6 +210,8 @@
     <string name="txt_setup_bcl_waiting">Aguarda ligação à viatura</string>
     <string name="txt_setup_enable_bclspp_bt">Tente ativar a música por luetooth</string>
     <string name="txt_setup_enable_bclspp_usb">Tente religar Musica Bluetooth ou ligar por USB</string>
+    <string name="txt_setup_enable_bmwmine">Certifique-se que está logado na app MyBMW</string>
+    <string name="txt_setup_enable_minimine">Certifique-se que está logado na app Mini</string>
     <string name="txt_setup_bcl_connecting">Ligação às Apps em execução</string>
     <string name="txt_setup_bcl_connected">Ligação às Apps em execução</string>
     <string name="txt_setup_bcl_connected_transport">Ligação às Apps em execução em %s</string>
@@ -319,6 +330,7 @@
     <string name="notification_assistant_description">Apenas necessário quando ecrã ligado</string>
     <string name="donation_title">Gosta desta app?</string>
     <string name="donation_text">Considera mostrar suporte com pequeno donativo</string>
+    <string name="donation_text_onetime">Pedido único</string>
     <string name="txt_spotify_auth_notification">O Spotify Web API precisa ser autorizado. Clique aqui para autorizar.</string>
     <string name="txt_spotify_app_remote_last_error">Último erro no Spotify App Remote:</string>
     <string name="txt_spotify_api_authorization_needed">Necessário autorização da Web API Spotify.</string>
@@ -343,6 +355,11 @@
     <string name="NOTIFICATION_PERMISSION_NEEDED">Esta app precisa de ter acesso a notificações</string>
     <string name="NOTIFICATION_CENTER_APP">Esta app é usada para enviar mensagens para o centro de notificações do carro</string>
     <string name="READOUT_DESCRIPTION">Esta app é utilizada para fins de leitura</string>
+    <string name="CALENDAR_TIME_START">Início</string>
+    <string name="CALENDAR_TIME_END">Fim</string>
+    <string name="CALENDAR_TIME_DURATION">Duração</string>
+    <string name="CALENDAR_TIME_ALLDAY">Dia Inteiro</string>
+    <string name="CALENDAR_NAVIGATE">Navegar</string>
     <string name="MAP_ACTION_VIEWMAP">Ver Mapa Completo</string>
     <string name="MAP_ACTION_SEARCH">Procurar por Local</string>
     <string name="MAP_ACTION_CLEARNAV">Limpar Navigação</string>
