@@ -80,6 +80,11 @@
     <string name="lbl_calendar_xiaomi_installed">Evenimentele din Mi Calendar ar putea să nu fie vizibile în mașină</string>
     <string name="lbl_calendar_detailed_events">Ascunde evenimentele fără detalii sau locații</string>
     <string name="lbl_calendar_automatic_navigation">Navigați automat catre întâlnirile viitoarele</string>
+    <string name="lbl_calendar_ignore_visibility">Includeți evenimente din calendare ascunse</string>
+    <string name="lbl_calendar_calendars">Calendare:</string>
+    <string name="lbl_calendar_calendars_empty">Nici un calendar găsit</string>
+    <string name="lbl_calendar_upcoming_events">Evenimente viitoare:</string>
+    <string name="lbl_calendar_upcoming_events_empty">Nu s-au găsit evenimente viitoare în această lună</string>
     <string name="lbl_mapspage">Un ecran simplu Google Maps poate fi afișat în mașină</string>
     <string name="enable_google_maps">Activează Google Maps</string>
     <string name="lbl_map_phone_gps">Utilizează GPS de telefon în loc de GPS masinii</string>
@@ -117,6 +122,7 @@
     <string name="lbl_navigationpage_intent">Cât timp sunteți conectat, sistemul de navigare al mașinii va apărea ca o opțiune când alte aplicații trimit o locație spre navigare</string>
     <string name="lbl_navigationstatus_active">Navigare către</string>
     <string name="lbl_navigationstatus_inactive">Navigație oprită</string>
+    <string name="lbl_navigation_prefer_custom">Preferă navigare pe hartă personalizată</string>
     <string name="lbl_addonspage">Aplicațiile suplimentare pot funcționa cu mașina dvs. pentru a adăuga și mai multe funcționalități</string>
     <string name="lbl_addon_apps">Addon Apps</string>
     <string name="lbl_addons_empty">Nici unul găsit</string>

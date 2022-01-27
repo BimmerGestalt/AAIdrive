@@ -14,4 +14,9 @@
     <string name="playstore_desc_nativeapps_protocol">Folosind protocolul nativ de aplicații BMW, exact ca vechea aplicație Spotify, această aplicație nu vă modifică mașina în niciun fel, si toate capabilitatile extinse sunt furnizate doar in timp ce telefonul este conectat.</string>
     <string name="playstore_desc_depends_mybmw">Aplicațiile BMW/Mini Connected necesită ca aplicația MyBMW sau MINI pentru mașina dvs. să fie instalată și să se poată activa cu succes caseta de selectare a aplicațiilor IDrive5+, sau ca mașina dvs. cu IDrive4 are opțiunea Asistentă pentru conexiune ConnectedDrive.</string>
     <string name="playstore_desc_depends_bmw_subscription">Acest lucru necesită de obicei un abonament activ BMW ConnectedDrive, care este inclus timp de câțiva ani după ce ați cumpărat mașina nouă.</string>
+    <string name="playstore_release_desc">O versiune cu integrarea calendarului și unele îmbunătățiri ale serviciului de fundal</string>
+    <string name="playstore_release_point1">Readuce funcționalitatea BMW/Mini Calendar, inclusiv navigarea automată la viitoarele programări</string>
+    <string name="playstore_release_point2">Elimină defectele ANR din implementarea Serviciului de prim-plan</string>
+    <string name="playstore_release_point3">Îmbunătățește performanța aplicației atunci când primeste date de la autoturism și descoperă aplicații muzicale</string>
+    <string name="playstore_release_point4">Repară erorile UX atunci când se utilizează butonul Media și activează butonul OK când răspundeți la notificări</string>
 </resources>
