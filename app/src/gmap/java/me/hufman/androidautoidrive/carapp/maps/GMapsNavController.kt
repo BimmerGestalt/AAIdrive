@@ -9,6 +9,8 @@ import com.google.maps.GeoApiContext
 import com.google.maps.PendingResult
 import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
+import me.hufman.androidautoidrive.maps.CarLocationProvider
+import me.hufman.androidautoidrive.maps.LatLong
 import java.util.concurrent.TimeUnit
 
 class GMapsNavController(val geoClient: GeoApiContext, val locationProvider: CarLocationProvider, var callback: () -> Unit) {
