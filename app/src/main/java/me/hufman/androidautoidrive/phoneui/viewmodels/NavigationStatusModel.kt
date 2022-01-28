@@ -29,7 +29,7 @@ class NavigationStatusModel(val carInformation: CarInformation,
 					viewModel?.update()
 				}
 			}
-			val isCustomNaviSupported = MutableLiveData(BuildConfig.FLAVOR_map != "nomap")
+			val isCustomNaviSupported = MutableLiveData(BuildConfig.FLAVOR_map == "gmap")
 			val isCustomNaviPreferred = BooleanLiveSetting(appContext, AppSettings.KEYS.NAV_PREFER_CUSTOM_MAP)
 			viewModel = NavigationStatusModel(carInformation, isCustomNaviSupported, isCustomNaviPreferred)
 			viewModel.update()

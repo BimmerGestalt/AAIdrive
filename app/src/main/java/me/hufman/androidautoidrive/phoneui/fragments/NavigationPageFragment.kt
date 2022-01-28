@@ -9,6 +9,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.Filter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.R
@@ -71,6 +72,7 @@ class NavigationPageFragment: Fragment() {
 				}
 			}
 			return runBlocking {
+				delay(1500)     // debounce input, will be cancelled by the FilterResults processing if new input arrives
 				val results = api.searchLocationsAsync(constraint.toString()).await()
 				FilterResults().also {
 					it.count = results.size
