@@ -5,7 +5,7 @@ import android.location.Address
 import android.location.Geocoder
 import android.util.Log
 import com.google.openlocationcode.OpenLocationCode
-import me.hufman.androidautoidrive.carapp.maps.LatLong
+import me.hufman.androidautoidrive.maps.LatLong
 import java.io.IOException
 import java.net.*
 import java.util.*

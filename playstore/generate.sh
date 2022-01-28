@@ -13,7 +13,7 @@ for lang_dir in res/values*; do
     lang="${lang_dir#res/values}"
     output_name="listing$lang.txt"
     echo "$output_name"
-    cat >$output_name <<EOF
+    cat >"$output_name" <<EOF
 Short Description:
 `lang_line playstore_tagline`
 
@@ -34,4 +34,22 @@ Full Description:
 
 ⚠️ `lang_line playstore_desc_depends_mybmw` `lang_line playstore_desc_depends_bmw_subscription`
 EOF
+done
+
+output_name="release_notes.txt"
+echo "$output_name"
+echo > "$output_name"
+for lang_dir in res/values res/values-*; do
+    [ -n "$(lang_line playstore_release_desc)" ] || continue
+    lang=$(cat "$lang_dir"/ISO)
+    cat >>"$output_name" <<EOF
+<$lang>
+`lang_line playstore_release_desc`
+EOF
+    for i in `seq 1 9`; do
+        line=$(lang_line playstore_release_point$i)
+        [ -n "$line" ] && echo "- $line" >> "$output_name"
+    done
+    echo "</$lang>" >> "$output_name"
+    echo >> "$output_name"
 done

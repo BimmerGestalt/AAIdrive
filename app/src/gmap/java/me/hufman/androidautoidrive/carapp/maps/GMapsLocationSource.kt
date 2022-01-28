@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive.carapp.maps
 import android.location.Location
 import com.google.android.gms.maps.LocationSource
 
-class GMapLocationSource: LocationSource {
+class GMapsLocationSource: LocationSource {
 	private var listener: LocationSource.OnLocationChangedListener? = null
 	var location: Location? = null
 		private set

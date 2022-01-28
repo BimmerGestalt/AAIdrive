@@ -36,6 +36,13 @@ class ContextTrackerTest {
 	val contextTracker = ContextTracker(time.timeProvider)
 
 	@Test
+	/** The app starts with the car already showing Media menu, and skips the HMI Context update */
+	fun testInitialState() {
+		time.passTime(5000)
+		assertFalse(contextTracker.isIntentionalSpotifyClick())
+	}
+
+	@Test
 	/** User intentional clicks Spotify by scrolling to it, but too fast */
 	fun testSpotifyLines() {
 		contextTracker.onHmiContextUpdate("Home", -1)
@@ -93,6 +100,24 @@ class ContextTrackerTest {
 		time.passTime(100)
 		contextTracker.onHmiContextUpdate("Media", 5)
 		time.passTime(10000)
+		contextTracker.onHmiContextUpdate("Media", 6)
+		time.passTime(100)
+		assertFalse(contextTracker.isIntentionalSpotifyClick())
+	}
+
+	@Test
+	/** Media button after idling in Media, sometimes it sends multiple identical updates */
+	fun testMediaDwellDuplicate() {
+		contextTracker.onHmiContextUpdate("Home", -1)
+		time.passTime(10000)
+		contextTracker.onHmiContextUpdate("Media", 3)
+		time.passTime(500)
+		contextTracker.onHmiContextUpdate("Media", 4)
+		time.passTime(100)
+		contextTracker.onHmiContextUpdate("Media", 5)
+		time.passTime(10000)
+		contextTracker.onHmiContextUpdate("Media", 6)
+		time.passTime(100)
 		contextTracker.onHmiContextUpdate("Media", 6)
 		time.passTime(100)
 		assertFalse(contextTracker.isIntentionalSpotifyClick())

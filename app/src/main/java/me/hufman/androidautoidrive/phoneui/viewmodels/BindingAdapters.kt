@@ -41,6 +41,10 @@ fun setImageViewResource(view: ImageView, drawable: Context.() -> Drawable?) {
 fun setViewVisibility(view: View, visible: Boolean) {
 	view.visible = visible
 }
+@BindingAdapter("android:visibility")
+fun setViewVisibility(view: View, value: String) {
+	view.visible = value.isNotBlank()
+}
 
 /**
  * Finds the index of the given item in an Adapter
@@ -108,6 +112,10 @@ fun setVisibilityByTextGetter(view: View, value: (Context.() -> String)?) {
 fun setBackgroundTint(view: View, value: (Context.() -> Int)?) {
 	value ?: return
 	val color = view.context.run(value)
+	setBackgroundTint(view, color)
+}
+@BindingAdapter("android:backgroundTint")
+fun setBackgroundTint(view: View, color: Int) {
 	val startColor = view.backgroundTintList?.defaultColor
 	if (startColor != color) {
 		if (startColor == null) {
@@ -115,6 +123,46 @@ fun setBackgroundTint(view: View, value: (Context.() -> Int)?) {
 		} else {
 			ValueAnimator.ofObject(ArgbEvaluatorCompat(), startColor, color).apply {
 				addUpdateListener { view.backgroundTintList = ColorStateList.valueOf(it.animatedValue as Int) }
+				start()
+			}
+		}
+	}
+}
+@BindingAdapter("android:foregroundTint")
+fun setForegroundTint(view: View, value: (Context.() -> Int)?) {
+	value ?: return
+	val color = view.context.run(value)
+	setForegroundTint(view, color)
+}
+@BindingAdapter("android:foregroundTint")
+fun setForegroundTint(view: View, color: Int) {
+	val startColor = view.foregroundTintList?.defaultColor
+	if (startColor != color) {
+		if (startColor == null) {
+			view.foregroundTintList = ColorStateList.valueOf(color)
+		} else {
+			ValueAnimator.ofObject(ArgbEvaluatorCompat(), startColor, color).apply {
+				addUpdateListener { view.foregroundTintList = ColorStateList.valueOf(it.animatedValue as Int) }
+				start()
+			}
+		}
+	}
+}
+@BindingAdapter("tint")
+fun setImageTint(view: ImageView, value: (Context.() -> Int)?) {
+	value ?: return
+	val color = view.context.run(value)
+	setImageTint(view, color)
+}
+@BindingAdapter("tint")
+fun setImageTint(view: ImageView, color: Int) {
+	val startColor = view.imageTintList?.defaultColor
+	if (startColor != color) {
+		if (startColor == null) {
+			view.imageTintList = ColorStateList.valueOf(color)
+		} else {
+			ValueAnimator.ofObject(ArgbEvaluatorCompat(), startColor, color).apply {
+				addUpdateListener { view.imageTintList = ColorStateList.valueOf(it.animatedValue as Int) }
 				start()
 			}
 		}

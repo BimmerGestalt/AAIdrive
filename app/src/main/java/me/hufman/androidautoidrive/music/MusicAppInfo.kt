@@ -15,6 +15,7 @@ data class MusicAppInfo(override val name: String, override val icon: Drawable,
 	var hidden = false          // whether to show this app in the car, applied by MusicAppDiscovery settings
 	var connectable = false     // whether MediaBrowser can connect
 	var controllable = false    // whether MediaSession can control it
+	var possiblyControllable = false    // whether MediaSession access is granted
 	var browseable = false      // whether any media items were discovered
 	var searchable = false      // whether any search results came back
 	var playsearchable = false  // whether the controller indicated PlayFromSearch supportm
@@ -135,11 +136,11 @@ data class MusicAppInfo(override val name: String, override val icon: Drawable,
 		val appInfo = this
 		return {
 			listOfNotNull(
-				if (appInfo.controllable && !appInfo.connectable) this.getString(R.string.musicAppControllable) else null,
+				if ((appInfo.controllable || appInfo.possiblyControllable) && !appInfo.connectable) this.getString(R.string.musicAppControllable) else null,
 				if (appInfo.connectable) this.getString(R.string.musicAppConnectable) else null,
 				if (appInfo.browseable) this.getString(R.string.musicAppBrowseable) else null,
 				if (appInfo.searchable || appInfo.playsearchable) this.getString(R.string.musicAppSearchable) else null,
-				if (appInfo.controllable || appInfo.connectable) null else this.getString(R.string.musicAppUnavailable),
+				if (appInfo.controllable || appInfo.connectable || appInfo.possiblyControllable) null else this.getString(R.string.musicAppUnavailable),
 				if (appInfo.hidden) this.getString(R.string.musicAppHidden) else null
 			).joinToString(", ")
 		}

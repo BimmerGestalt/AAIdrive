@@ -26,8 +26,8 @@ class ContextTracker(val timeProvider: () -> Long = {System.currentTimeMillis()}
 		const val CONTEXT_CHANGED_THRESHOLD = 2500  // how long should we consider the user to be idle and then ignore Spotify entrybutton
 		const val MENU_CHANGED_THRESHOLD = 1200   // how long after entering the menu do we ignore Spotify entrybutton
 	}
-	var contextChangedTime = timeProvider()
-	var menuChangedTime = timeProvider()
+	var contextChangedTime = 0L     // when we received a context update
+	var menuChangedTime = 0L        // when we changed to a different screen
 	var menuTitle = ""
 	var currentLine = 0
 	var linesScrolled = 0
@@ -36,29 +36,44 @@ class ContextTracker(val timeProvider: () -> Long = {System.currentTimeMillis()}
 
 	fun onHmiContextUpdate(hmiContext: JsonObject) = synchronized(this) {
 		val time = timeProvider()
-		wasIdle = false
-		wasUnintentional = false
-		if (contextChangedTime + CONTEXT_CHANGED_THRESHOLD < time) {
-			wasIdle = true
-		}
-		contextChangedTime = timeProvider()
 
+		var interacted = false
+		// if the user changed scroll index
 		val line = hmiContext.tryAsJsonObject("graphicalContext")?.tryAsJsonPrimitive("listIndex")?.tryAsInt ?: -1
 		if (line != currentLine) {
 			linesScrolled += 1
 			currentLine = line
+			interacted = true
 		}
 
+		// if the user changed menu
 		val title = hmiContext.tryAsJsonObject("graphicalContext")?.tryAsJsonPrimitive("menuTitle")?.tryAsString ?: ""
 		if (title != menuTitle) {
 			menuChangedTime = timeProvider()
 			menuTitle = title
 			linesScrolled = 0
+			interacted = true
 		}
+
+		// user interacted, clear some flags
+		if (interacted) {
+			wasIdle = false
+			wasUnintentional = false
+		}
+
+		if (contextChangedTime + CONTEXT_CHANGED_THRESHOLD < time) {
+			wasIdle = true
+		}
+		contextChangedTime = timeProvider()
 	}
 
 	fun isIntentionalSpotifyClick(): Boolean = synchronized(this) {
 		if (wasUnintentional) {
+			return false
+		}
+		if (contextChangedTime == 0L) {
+			// car hasn't sent us a context update yet
+			wasUnintentional = true
 			return false
 		}
 		val time = timeProvider()

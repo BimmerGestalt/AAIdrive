@@ -73,6 +73,18 @@ android {
         signingConfigs.release.keyPassword = System.getenv("KEYSTORE_ALIAS_PASSWORD")
     }
 
+    sourceSets {
+        main {
+            // split resources into not-nested dirs, per https://stackoverflow.com/a/36214314/169035
+            res.srcDirs += [
+                    "src/main/res",
+                    "src/main/res-facets/music_player",
+                    "src/main/res-facets/tips",
+                    "src/main/res-facets/welcome",
+            ]
+        }
+    }
+
     buildFeatures {
         dataBinding true
     }
@@ -117,7 +129,8 @@ android {
             dimension "map"
             // load api keys from ~/.gradle/gradle.properties
             manifestPlaceholders = [spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey,
-                                    gmaps_api_key: System.env.AndroidAutoIdrive_GmapsApiKey ? System.env.AndroidAutoIdrive_GmapsApiKey : AndroidAutoIdrive_GmapsApiKey]
+                                    gmaps_api_key: System.env.AndroidAutoIdrive_GmapsApiKey ? System.env.AndroidAutoIdrive_GmapsApiKey : AndroidAutoIdrive_GmapsApiKey,
+                                    appAuthRedirectScheme: defaultConfig.applicationId]
         }
         full {
             dimension "storefront"

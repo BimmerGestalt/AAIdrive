@@ -5,9 +5,8 @@ import android.content.Intent
 import android.os.Handler
 import android.util.Log
 import androidx.media.MediaBrowserServiceCompat
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.android.asCoroutineDispatcher
-import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.Analytics
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
@@ -30,6 +29,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 	val appSettings = MutableAppSettingsReceiver(context, handler)
 	val hiddenApps = StoredSet(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS)
 
+	private var discoveryJob: Job? = null
 	private val browseApps: MutableList<MusicAppInfo> = LinkedList()
 	private val combinedApps: MutableList<MusicAppInfo> = Collections.synchronizedList(LinkedList())
 
@@ -205,6 +205,11 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 			}
 		}
 
+		// add the flag for the music sessions permission
+		for (app in apps) {
+			app.possiblyControllable = MusicSessions.hasPermission
+		}
+
 		synchronized(this.combinedApps) {
 			this.combinedApps.clear()
 			this.combinedApps.addAll(apps)
@@ -221,9 +226,18 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 	 */
 	fun probeApps(force: Boolean = true) {
 		// probe all apps
-		for (app in this.browseApps) {
-			if (force || !app.probed) {
-				probeApp(app)
+		discoveryJob?.cancel()
+		discoveryJob = launch {
+			for (app in this@MusicAppDiscovery.browseApps) {
+				if (force || !app.probed) {
+					probeApp(app)
+					withTimeoutOrNull(2000) {
+						// wait for the probe process to complete for this app
+						while (activeConnections.containsKey(app)) {
+							delay(100)
+						}
+					}
+				}
 			}
 		}
 	}
@@ -233,6 +247,8 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 			disconnectApp(app)
 		}
 		musicSessions.unregisterCallback()
+		discoveryJob?.cancel()
+		discoveryJob = null
 
 		appSettings.callback = null
 	}

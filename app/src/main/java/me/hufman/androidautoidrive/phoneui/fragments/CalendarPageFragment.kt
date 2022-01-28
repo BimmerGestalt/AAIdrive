@@ -30,6 +30,7 @@ class CalendarPageFragment: Fragment() {
 	override fun onResume() {
 		super.onResume()
 		// update the model, used in the controller to know to show the prompt
+		calendarSettingsModel.update()
 		permissionsModel.update()
 	}
 }

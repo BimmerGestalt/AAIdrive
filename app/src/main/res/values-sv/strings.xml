@@ -79,6 +79,11 @@
     <string name="lbl_calendar_xiaomi_installed">Händelser i Mi Kalender kanske inte syns i bilen</string>
     <string name="lbl_calendar_detailed_events">Dölj händelser utan information eller adresser</string>
     <string name="lbl_calendar_automatic_navigation">Navigera automatiskt till kommande möten</string>
+    <string name="lbl_calendar_ignore_visibility">Inkludera händelser från dolda kalendrar</string>
+    <string name="lbl_calendar_calendars">Kalendrar:</string>
+    <string name="lbl_calendar_calendars_empty">Inga kalendrar hittade</string>
+    <string name="lbl_calendar_upcoming_events">Kommande händelser:</string>
+    <string name="lbl_calendar_upcoming_events_empty">Inga kommande händelser hittades denna månad</string>
     <string name="lbl_mapspage">Ett enkelt Google Maps fönster kan visas i bilen</string>
     <string name="enable_google_maps">Aktivera Google Maps</string>
     <string name="lbl_map_phone_gps">Använd telefonens GPS istället för bilens GPS</string>
@@ -116,6 +121,7 @@
     <string name="lbl_navigationpage_intent">När du är ansluten visas bilens navigationssystem som ett alternativ när andra appar öppnar en app-väljare</string>
     <string name="lbl_navigationstatus_active">Navigerar till</string>
     <string name="lbl_navigationstatus_inactive">Navigerar inte just nu</string>
+    <string name="lbl_navigation_prefer_custom">Föredrar egen kartnavigering</string>
     <string name="lbl_addonspage">Ytterligare appar kan fungera med din bil för ännu fler funktioner</string>
     <string name="lbl_addon_apps">Tillagda appar</string>
     <string name="lbl_addons_empty">Inget hittades</string>

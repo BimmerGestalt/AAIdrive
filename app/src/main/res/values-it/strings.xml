@@ -79,6 +79,9 @@
     <string name="lbl_calendar_xiaomi_installed">Gli appuntamenti del Mi Calendar potrebbero non essere visualizzati</string>
     <string name="lbl_calendar_detailed_events">Nascondi gli eventi senza dettagli o posizioni</string>
     <string name="lbl_calendar_automatic_navigation">Vai automaticamente ai prossimi appuntamenti</string>
+    <string name="lbl_calendar_ignore_visibility">Includi gli eventi dei calendari nascosti</string>
+    <string name="lbl_calendar_upcoming_events">Prossimi eventi:</string>
+    <string name="lbl_calendar_upcoming_events_empty">Nessun evento trovato questo mese</string>
     <string name="lbl_mapspage">Una schermata standard di Google Maps può essere visualizzata nell\'auto</string>
     <string name="enable_google_maps">Abilita Google Maps</string>
     <string name="lbl_map_phone_gps">Usa il GPS del telefono invece di quello dell\'auto</string>
@@ -116,6 +119,7 @@
     <string name="lbl_navigationpage_intent">Quando connesso, il sistema di navigazione dell\'auto verrà visualizzato come opzione quando altre app vorranno inizializzare una navigazione verso un luogo</string>
     <string name="lbl_navigationstatus_active">Navigazione attiva verso</string>
     <string name="lbl_navigationstatus_inactive">Navigazione attualmente non attiva</string>
+    <string name="lbl_navigation_prefer_custom">Preferisci la navigazione personalizzata delle mappe</string>
     <string name="lbl_addonspage">App aggiuntive possono funzionare con la tua auto per aggiungere maggiori funzionalità</string>
     <string name="lbl_addon_apps">Applicazioni aggiuntive</string>
     <string name="lbl_addons_empty">Non trovate</string>

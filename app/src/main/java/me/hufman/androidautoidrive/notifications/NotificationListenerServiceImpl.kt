@@ -175,6 +175,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
 			} catch (e: SecurityException) {
 				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
+			} catch (e: PendingIntent.CanceledException) {
+				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
 			}
 		}
 		@SuppressLint("WrongConstant")

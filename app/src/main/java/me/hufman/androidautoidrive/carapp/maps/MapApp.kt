@@ -1,7 +1,5 @@
 package me.hufman.androidautoidrive.carapp.maps
 
-import android.content.Context
-import android.content.IntentFilter
 import android.os.Handler
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
@@ -16,19 +14,21 @@ import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.carapp.FullImageInteraction
 import me.hufman.androidautoidrive.carapp.FullImageView
 import me.hufman.androidautoidrive.carapp.InputState
-import me.hufman.androidautoidrive.carapp.RHMIUtils
 import me.hufman.androidautoidrive.carapp.maps.views.MenuView
+import me.hufman.androidautoidrive.carapp.maps.views.PlaceSearchView
+import me.hufman.androidautoidrive.maps.MapPlaceSearch
+import me.hufman.androidautoidrive.maps.MapResult
 import me.hufman.androidautoidrive.utils.removeFirst
 import java.util.*
 import kotlin.collections.ArrayList
 
 const val TAG = "MapView"
 
-class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val mapAppMode: MapAppMode, val interaction: MapInteractionController, val map: VirtualDisplayScreenCapture) {
+class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, val carAppAssets: CarAppResources,
+             val mapAppMode: MapAppMode, val interaction: MapInteractionController, val mapPlaceSearch: MapPlaceSearch, val map: VirtualDisplayScreenCapture) {
 
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
-	var mapResultsUpdater = MapResultsReceiver(MapResultsUpdater())
 	val carApp: RHMIApplication
 	var searchResults = ArrayList<MapResult>()
 	var selectedResult: MapResult? = null
@@ -81,8 +81,8 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 			}
 		}, frameUpdater)
 
-		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first {
-			it.componentsList.filterIsInstance<RHMIComponent.Input>().filter { it.suggestAction > 0 }.isNotEmpty()
+		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first { state ->
+			state.componentsList.filterIsInstance<RHMIComponent.Input>().any { it.suggestAction > 0 }
 		}
 
 		// connect buttons together
@@ -96,21 +96,7 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 		menuView.initWidgets(fullImageView.state, stateInput)
 		fullImageView.initWidgets()
 		// set up the components for the input widget
-		stateInputState = object: InputState<MapResult>(stateInput) {
-			override fun onEntry(input: String) {
-				interaction.searchLocations(input)
-			}
-
-			override fun onSelect(item: MapResult, index: Int) {
-				selectedResult = item
-				interaction.stopNavigation()
-				if (item.location == null) {
-					interaction.resultInformation(item.id)    // ask for LatLong, to navigate to
-				} else {
-					interaction.navigateTo(item.location)
-				}
-			}
-		}
+		stateInputState = PlaceSearchView(stateInput, mapPlaceSearch, interaction)
 
 		stateInputState.inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
 		stateInputState.inputComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
@@ -120,16 +106,11 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.mapview", -1, -1)
 	}
 
-	fun onCreate(context: Context, handler: Handler) {
+	fun onCreate(handler: Handler) {
 		Log.i(TAG, "Setting up map transfer")
-		context.registerReceiver(mapResultsUpdater, IntentFilter(INTENT_MAP_RESULTS), null, handler)
-		context.registerReceiver(mapResultsUpdater, IntentFilter(INTENT_MAP_RESULT), null, handler)
 		frameUpdater.start(handler)
 	}
-	fun onDestroy(context: Context) {
-		try {
-			context.unregisterReceiver(mapResultsUpdater)
-		} catch (e: IllegalArgumentException) {}
+	fun onDestroy() {
 		frameUpdater.shutDown()
 	}
 	fun disconnect() {
@@ -158,37 +139,6 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 			// generic event handler
 			app?.states?.get(componentId)?.onHmiEvent(eventId, args)
 			app?.components?.get(componentId)?.onHmiEvent(eventId, args)
-		}
-	}
-
-	/** Receives updates about the map search results and delegates to the given controller */
-	inner class MapResultsUpdater: MapResultsController {
-		override fun onSearchResults(results: Array<MapResult>) {
-			Log.i(TAG, "Received query results")
-			searchResults.clear()
-			searchResults.addAll(results)
-			stateInputState.sendSuggestions(searchResults)
-		}
-
-		override fun onPlaceResult(result: MapResult) {
-			var updated = false
-			searchResults.forEachIndexed { index, searchResult ->
-				if (searchResult.id == result.id) {
-					Log.i(TAG, "Updating address information for ${searchResult.name}")
-					updated = true
-					searchResults[index] = result
-				}
-			}
-			if (updated) {
-				stateInputState.sendSuggestions(searchResults)
-			}
-			// check if we were trying to navigate to this destination
-			if (result.id == selectedResult?.id) {
-				if (result.location != null)
-					interaction.navigateTo(result.location)
-			} else if (!updated) {
-				Log.i(TAG, "Received unexpected result info ${result.name}, but expected selectedResult ${selectedResult?.name}")
-			}
 		}
 	}
 }

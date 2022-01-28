@@ -1,10 +1,13 @@
 package me.hufman.androidautoidrive.calendar
 
+import android.annotation.SuppressLint
+import android.content.ContentUris
 import android.content.Context
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.database.Cursor
 import android.provider.CalendarContract
 import me.hufman.androidautoidrive.AppSettings
+import java.text.DateFormat
 import java.util.*
 
 fun Calendar.copy(): Calendar {
@@ -14,13 +17,39 @@ fun Calendar.copy(): Calendar {
 	}
 }
 
+data class PhoneCalendar(
+		val name: String,
+		val visible: Boolean,
+		val color: Int
+)
+
 data class CalendarEvent(
 		val title: String,
 		val start: Calendar,
 		val end: Calendar,
 		val location: String,
-		val description: String
-)
+		val description: String,
+		val color: Int
+) {
+	fun isAllDay(): Boolean {
+		return start[Calendar.HOUR_OF_DAY] == 0 &&
+				start[Calendar.MINUTE] == 0 &&
+				end[Calendar.HOUR_OF_DAY] == 0 &&
+				end[Calendar.MINUTE] == 0
+	}
+	fun formatDay(): String {
+		val format = DateFormat.getDateInstance(DateFormat.SHORT)
+		return format.format(start.time)
+	}
+	fun formatStartTime(): String {
+		val format = DateFormat.getTimeInstance(DateFormat.SHORT)
+		return format.format(start.time)
+	}
+	fun formatEndTime(): String {
+		val format = DateFormat.getTimeInstance(DateFormat.SHORT)
+		return format.format(end.time)
+	}
+}
 
 class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 	companion object {
@@ -32,7 +61,8 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 				CalendarContract.Instances.ALL_DAY,
 				CalendarContract.Instances.EVENT_TIMEZONE,
 				CalendarContract.Instances.BEGIN,
-				CalendarContract.Instances.END,)
+				CalendarContract.Instances.END,
+				CalendarContract.Instances.DISPLAY_COLOR)
 		const val INDEX_TITLE = 0
 		const val INDEX_DESCRIPTION = 1
 		const val INDEX_LOCATION = 2
@@ -40,11 +70,22 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 		const val INDEX_TIMEZONE = 4
 		const val INDEX_BEGIN = 5
 		const val INDEX_END = 6
+		const val INDEX_COLOR = 7
+
+		val CALENDAR_PROJECTION = arrayOf(
+				CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+				CalendarContract.Calendars.VISIBLE,
+				CalendarContract.Calendars.CALENDAR_COLOR,
+		)
+		const val INDEX_CALENDAR_NAME = 0
+		const val INDEX_CALENDAR_VISIBLE = 1
+		const val INDEX_CALENDAR_COLOR = 2
 
 		fun parseEvent(cursor: Cursor): CalendarEvent {
 			val title = cursor.getString(INDEX_TITLE) ?: ""
 			val description = cursor.getString(INDEX_DESCRIPTION) ?: ""
 			val location = cursor.getString(INDEX_LOCATION) ?: ""
+			val color = cursor.getInt(INDEX_COLOR)
 
 			val eventStart = Calendar.getInstance().apply {
 				timeInMillis = cursor.getLong(INDEX_BEGIN)
@@ -66,7 +107,7 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 			}
 
 			return CalendarEvent(
-					title, eventStart, eventEnd, location, description
+					title, eventStart, eventEnd, location, description, color
 			)
 		}
 
@@ -100,6 +141,28 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 		return Calendar.getInstance()
 	}
 
+	@SuppressLint("Recycle")
+	fun getCalendars(): List<PhoneCalendar> {
+		val cursor = try {
+			context.contentResolver.query(CalendarContract.Calendars.CONTENT_URI, CALENDAR_PROJECTION, null, null, null)
+		} catch (e: SecurityException) { null }
+
+		val calendars = ArrayList<PhoneCalendar>()
+		if (cursor != null) {
+			cursor.moveToFirst()
+			while (cursor.moveToNext()) {
+				val name = cursor.getString(INDEX_CALENDAR_NAME)
+				val visible = cursor.getInt(INDEX_CALENDAR_VISIBLE) == 1
+				val color = cursor.getInt(INDEX_CALENDAR_COLOR)
+				calendars.add(PhoneCalendar(name, visible, color))
+			}
+		}
+		cursor?.close()
+		calendars.sortBy { it.name }
+		return calendars
+	}
+
+	@SuppressLint("Recycle")
 	fun getEvents(year: Int, month: Int, day: Int?): List<CalendarEvent> {
 		val events = ArrayList<CalendarEvent>()
 		val start = Calendar.getInstance()
@@ -123,7 +186,18 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 			add(Calendar.DATE, 1)
 		}
 
-		val cursor = CalendarContract.Instances.query(context.contentResolver, PROJECTION, queryStart.timeInMillis, queryEnd.timeInMillis)
+		val cursor = try {
+			if (appSettings[AppSettings.KEYS.CALENDAR_IGNORE_VISIBILITY].toBoolean()) {
+				// manually query Instances table, ignoring VISIBLE flag
+				val builder = CalendarContract.Instances.CONTENT_URI.buildUpon()
+				ContentUris.appendId(builder, queryStart.timeInMillis)
+				ContentUris.appendId(builder, queryEnd.timeInMillis)
+				context.contentResolver.query(builder.build(), PROJECTION,
+						null, null, "begin ASC")
+			} else {
+				CalendarContract.Instances.query(context.contentResolver, PROJECTION, queryStart.timeInMillis, queryEnd.timeInMillis)
+			}
+		} catch (e: SecurityException) { null }
 		if (cursor != null) {
 			cursor.moveToFirst()
 			while (cursor.moveToNext()) {
@@ -145,6 +219,7 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 			}
 		}
 		cursor?.close()
+		events.sortBy { it.start }
 		return events
 	}
 }

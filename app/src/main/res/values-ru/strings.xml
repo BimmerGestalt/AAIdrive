@@ -81,6 +81,9 @@
     <string name="lbl_calendar_xiaomi_installed">События в Mi Календаре могут не отображаться в автомобиле</string>
     <string name="lbl_calendar_detailed_events">Скрывать события без подробностей или местоположения</string>
     <string name="lbl_calendar_automatic_navigation">Автоматически переходить к предстоящим встречам</string>
+    <string name="lbl_calendar_ignore_visibility">Включить события из скрытых календарей</string>
+    <string name="lbl_calendar_upcoming_events">Предстоящие события:</string>
+    <string name="lbl_calendar_upcoming_events_empty">В этом месяце предстоящих событий не найдено</string>
     <string name="lbl_mapspage">Базовый экран карт Google может отображаться в автомобиле</string>
     <string name="enable_google_maps">Включить Google Maps</string>
     <string name="lbl_map_phone_gps">Использовать GPS телефона вместо GPS автомобиля</string>
@@ -118,6 +121,7 @@
     <string name="lbl_navigationpage_intent">При подключении навигационная система Вашего автомобиля будет отображаться, как один из вариантов, если есть выбор других приложений для навигации</string>
     <string name="lbl_navigationstatus_active">Сейчас движемся к</string>
     <string name="lbl_navigationstatus_inactive">В настоящее время нет навигации</string>
+    <string name="lbl_navigation_prefer_custom">Предпочесть пользовательскую навигацию</string>
     <string name="lbl_addonspage">Дополнения могут работать с вашим автомобилем, чтобы добавить еще больше функциональности</string>
     <string name="lbl_addon_apps">Приложения дополнений</string>
     <string name="lbl_addons_empty">Не найдено</string>

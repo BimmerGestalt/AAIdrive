@@ -30,6 +30,7 @@ interface AppSettings {
 		ENABLED_CALENDAR("Enabled_Calendar", "false", "Show Calendar in the car"),
 		CALENDAR_DETAILED_EVENTS("Calendar_Detailed_Events", "false", "Only show detailed appointments"),
 		CALENDAR_AUTOMATIC_NAVIGATION("Calendar_Automatic_Navigation", "false", "Automatically navigate to upcoming appointments"),
+		CALENDAR_IGNORE_VISIBILITY("Calendar_Ignore_Visibility", "false", "Ignore calendar visibility for events"),
 		ENABLED_GMAPS("Enabled_GMaps", "false", "Show Google Maps in the car"),
 		MAP_WIDESCREEN("Map_Widescreen", "false", "Show Map in widescreen"),
 		MAP_INVERT_SCROLL("Map_Invert_Scroll", "false", "Invert zoom direction"),

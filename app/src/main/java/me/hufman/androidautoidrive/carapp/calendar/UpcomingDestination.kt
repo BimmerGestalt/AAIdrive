@@ -3,11 +3,9 @@ package me.hufman.androidautoidrive.carapp.calendar
 import android.location.Address
 import me.hufman.androidautoidrive.calendar.CalendarProvider
 import me.hufman.androidautoidrive.calendar.copy
-import me.hufman.androidautoidrive.carapp.maps.LatLong
+import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
-import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger
-import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerApp
 import java.util.*
 
 class UpcomingDestination(val calendarProvider: CalendarProvider, val addressSearcher: AddressSearcher, val navigationTrigger: NavigationTrigger) {

@@ -70,7 +70,7 @@
                 android:layout_height="48dp"
                 android:padding="12dp"
                 android:visibility="@{viewModel.hasSmsPermission}"
-                android:onClick="@{() -> controller.openApplicationPermissions(&quot;me.hufman.androidautoidrive&quot;)}"
+                android:onClick="@{() -> controller.openSelfPermissions()}"
                 app:srcCompat="@android:drawable/checkbox_on_background" />
 
             <TextView

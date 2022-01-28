@@ -318,16 +318,23 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 	}
 
 	private fun initWidgets() {
-		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
-			it.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIActionButtonCallback {
+		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach { entryButton ->
+			entryButton.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIActionButtonCallback {
 				override fun onAction(invokedBy: Int?) {
 					val bookmarkButton = invokedBy == 2
-					if (musicController.currentAppController == null) {
-						it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
-					} else {
-						// set the destination state for the entrybutton
-						it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = currentPlaybackView.state.id
 
+					// set the destination state for the entrybutton
+					val stateId = if (musicController.currentAppController == null) {
+						appSwitcherView.state.id
+					} else {
+						currentPlaybackView.state.id
+					}
+					// manually check for itempotency, so we aren't blocked by redrawProgress updates
+					if (entryButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value != stateId) {
+						entryButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateId
+					}
+
+					if (musicController.currentAppController != null) {
 						// wait for any hmi context changes to filter through
 						if (musicAppMode.supportsId5Playback() && !bookmarkButton) {
 							Thread.sleep(50)

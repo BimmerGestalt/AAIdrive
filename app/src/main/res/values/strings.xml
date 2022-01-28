@@ -87,6 +87,11 @@
     <string name="lbl_calendar_xiaomi_installed">Events in Mi Calendar may not be visible in the car</string>
     <string name="lbl_calendar_detailed_events">Hide events without details or locations</string>
     <string name="lbl_calendar_automatic_navigation">Automatically navigate to upcoming appointments</string>
+    <string name="lbl_calendar_ignore_visibility">Include events from hidden calendars</string>
+    <string name="lbl_calendar_calendars">Calendars:</string>
+    <string name="lbl_calendar_calendars_empty">No calendars found</string>
+    <string name="lbl_calendar_upcoming_events">Upcoming events:</string>
+    <string name="lbl_calendar_upcoming_events_empty">No upcoming events found this month</string>
 
     <string name="lbl_mapspage">A basic Google Maps screen can be displayed in the car</string>
     <string name="enable_google_maps">Enable Google Maps</string>

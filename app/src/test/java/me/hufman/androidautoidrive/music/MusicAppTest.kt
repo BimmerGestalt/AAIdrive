@@ -684,6 +684,42 @@ class MusicAppTest {
 	}
 
 	@Test
+	fun testCoverartRedraw() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val state = app.states[IDs.PLAYBACK_STATE] as RHMIState.ToolbarState
+		val playbackView = PlaybackView(state, musicController, mapOf("147.png" to "Placeholder".toByteArray()), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia)
+
+		whenever(musicController.getQueue()).doAnswer {null}
+		whenever(musicController.currentAppInfo).doReturn(MusicAppInfo("Test2", mock(), "package", "class"))
+
+		playbackView.initWidgetsLater()
+		playbackView.redraw()
+		assertEquals("Bitmap{320x320}", ((mockServer.data[IDs.COVERART_LARGE_MODEL] as BMWRemoting.RHMIResourceData).data as ByteArray).toString(Charset.defaultCharset()))
+		assertEquals("Bitmap{200x200}", ((mockServer.data[IDs.COVERART_SMALL_MODEL] as BMWRemoting.RHMIResourceData).data as ByteArray).toString(Charset.defaultCharset()))
+
+		// redraw should not replace metadata or coverart
+		mockServer.data.clear()
+		playbackView.redraw()
+		assertEquals(null, mockServer.data[IDs.ARTIST_LARGE_MODEL])
+		assertEquals(null, mockServer.data[IDs.ALBUM_LARGE_MODEL])
+		assertEquals(null, mockServer.data[IDs.TRACK_LARGE_MODEL])
+		assertEquals(null, mockServer.data[IDs.COVERART_LARGE_MODEL])
+		assertEquals(null, mockServer.data[IDs.COVERART_SMALL_MODEL])
+
+		// now test a different song with different cover art
+		whenever(musicController.getMetadata()).doAnswer {
+			MusicMetadata("testId", duration = 180000L, queueId=10,
+					icon = mock(), coverArt = mock(),
+					artist = "Artist", album = "Album", title = "Title")
+		}
+		playbackView.redraw()
+		assertEquals("Bitmap{320x320}", ((mockServer.data[IDs.COVERART_LARGE_MODEL] as BMWRemoting.RHMIResourceData).data as ByteArray).toString(Charset.defaultCharset()))
+		assertEquals("Bitmap{200x200}", ((mockServer.data[IDs.COVERART_SMALL_MODEL] as BMWRemoting.RHMIResourceData).data as ByteArray).toString(Charset.defaultCharset()))
+	}
+
+	@Test
 	fun testMusicControl() {
 		val app = RHMIApplicationConcrete()
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)

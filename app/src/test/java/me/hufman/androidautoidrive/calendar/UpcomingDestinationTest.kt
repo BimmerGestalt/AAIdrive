@@ -3,9 +3,8 @@ package me.hufman.androidautoidrive.calendar
 import android.location.Address
 import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.carapp.calendar.UpcomingDestination
-import me.hufman.androidautoidrive.carapp.maps.LatLong
+import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
-import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger
 import org.junit.Test
 import java.util.*
@@ -13,12 +12,12 @@ import java.util.*
 class UpcomingDestinationTest {
 
 	var calendarEvents = listOf(
-			CalendarEvent("A", makeCalendar(2021, 11, 10, 9, 15), makeCalendar(2021, 11, 10, 16, 45), "Place1", ""),
-			CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 15), makeCalendar(2021, 11, 11, 16, 45), "Place2", ""),
-			CalendarEvent("C", makeCalendar(2021, 11, 11, 18, 0), makeCalendar(2021, 11, 11, 20, 0), "Place3", ""),
-			CalendarEvent("Holiday", makeCalendar(2021, 11, 25, 0, 0), makeCalendar(2021, 11, 26, 0, 0), "Place4", ""),
-			CalendarEvent("Holiday", makeCalendar(2021, 12, 25, 0, 0), makeCalendar(2021, 12, 26, 0, 0), "Place5", ""),
-			CalendarEvent("Holiday", makeCalendar(2022, 1, 1, 0, 0), makeCalendar(2022, 1, 2, 0, 0), "Place6", ""),
+			CalendarEvent("A", makeCalendar(2021, 11, 10, 9, 15), makeCalendar(2021, 11, 10, 16, 45), "Place1", "", 0),
+			CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 15), makeCalendar(2021, 11, 11, 16, 45), "Place2", "", 0),
+			CalendarEvent("C", makeCalendar(2021, 11, 11, 18, 0), makeCalendar(2021, 11, 11, 20, 0), "Place3", "", 0),
+			CalendarEvent("Holiday", makeCalendar(2021, 11, 25, 0, 0), makeCalendar(2021, 11, 26, 0, 0), "Place4", "", 0),
+			CalendarEvent("Holiday", makeCalendar(2021, 12, 25, 0, 0), makeCalendar(2021, 12, 26, 0, 0), "Place5", "", 0),
+			CalendarEvent("Holiday", makeCalendar(2022, 1, 1, 0, 0), makeCalendar(2022, 1, 2, 0, 0), "Place6", "", 0),
 	)
 	val calendarProvider = mock<CalendarProvider> {
 		on {hasPermission()} doReturn true
@@ -74,8 +73,8 @@ class UpcomingDestinationTest {
 	@Test
 	fun testStartNavigation() {
 		calendarEvents = listOf(
-				CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 45), makeCalendar(2021, 11, 11, 16, 45), "Place3", ""),
-				CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 15), makeCalendar(2021, 11, 11, 16, 45), "Place2", ""),
+				CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 45), makeCalendar(2021, 11, 11, 16, 45), "Place3", "", 0),
+				CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 15), makeCalendar(2021, 11, 11, 16, 45), "Place2", "", 0),
 		)
 		whenever(addressSearcher.search("Place2")) doReturn farAddress
 		whenever(addressSearcher.search("Place3")) doReturn otherAddress
@@ -89,8 +88,8 @@ class UpcomingDestinationTest {
 	@Test
 	fun testStartNavigationSkippingMissingAddress() {
 		calendarEvents = listOf(
-				CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 45), makeCalendar(2021, 11, 11, 16, 45), "Place3", ""),
-				CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 15), makeCalendar(2021, 11, 11, 16, 45), "Place2", ""),
+				CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 45), makeCalendar(2021, 11, 11, 16, 45), "Place3", "", 0),
+				CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 15), makeCalendar(2021, 11, 11, 16, 45), "Place2", "", 0),
 		)
 		whenever(addressSearcher.search("Place2")) doReturn null
 		whenever(addressSearcher.search("Place3")) doReturn farAddress
@@ -104,7 +103,7 @@ class UpcomingDestinationTest {
 	@Test
 	fun testSkipTooClose() {
 		calendarEvents = listOf(
-				CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 15), makeCalendar(2021, 11, 11, 16, 45), "Place2", ""),
+				CalendarEvent("B", makeCalendar(2021, 11, 11, 9, 15), makeCalendar(2021, 11, 11, 16, 45), "Place2", "", 0),
 		)
 		whenever(addressSearcher.search(any())) doReturn closeAddress
 		upcomingDestination.navigateUpcomingDestination(currentLatLong)
@@ -116,7 +115,7 @@ class UpcomingDestinationTest {
 	@Test
 	fun testSkipPrevious() {
 		calendarEvents = listOf(
-				CalendarEvent("B", makeCalendar(2021, 11, 11, 8, 15), makeCalendar(2021, 11, 11, 16, 45), "Place2", ""),
+				CalendarEvent("B", makeCalendar(2021, 11, 11, 8, 15), makeCalendar(2021, 11, 11, 16, 45), "Place2", "", 0),
 		)
 		whenever(addressSearcher.search(any())) doReturn farAddress
 		upcomingDestination.navigateUpcomingDestination(currentLatLong)
@@ -128,7 +127,7 @@ class UpcomingDestinationTest {
 	@Test
 	fun testSkipTooLongAway() {
 		calendarEvents = listOf(
-				CalendarEvent("B", makeCalendar(2021, 11, 11, 10, 45), makeCalendar(2021, 11, 11, 16, 45), "Place2", ""),
+				CalendarEvent("B", makeCalendar(2021, 11, 11, 10, 45), makeCalendar(2021, 11, 11, 16, 45), "Place2", "", 0),
 		)
 		whenever(addressSearcher.search(any())) doReturn farAddress
 		upcomingDestination.navigateUpcomingDestination(currentLatLong)

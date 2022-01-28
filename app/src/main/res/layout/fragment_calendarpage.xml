@@ -54,6 +54,20 @@
                 android:id="@+id/paneCalendarSettings"
                 android:name="me.hufman.androidautoidrive.phoneui.fragments.CalendarSettingsFragment"
                 android:visibility="@{settingsModel.calendarEnabled}"/>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/paneCalendars"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.CalendarCalendarsFragment"
+                android:visibility="@{settingsModel.calendarEnabled}"/>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/paneCalendarEvents"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.CalendarEventsFragment"
+                android:visibility="@{settingsModel.calendarEnabled &amp;&amp; settingsModel.areCalendarsFound}"/>
         </LinearLayout>
     </ScrollView>
 
