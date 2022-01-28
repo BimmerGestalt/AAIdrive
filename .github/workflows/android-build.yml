@@ -40,7 +40,7 @@ jobs:
       #- name: Validate Gradle Wrapper
       #  uses: gradle/wrapper-validation-action@v1
       - name: Build the project
-        run: ./gradlew compileDebug --stacktrace
+        run: ./gradlew compile${{ matrix.map }}${{ matrix.analytics }}FullDebugKotlin --stacktrace
       - name: Run unit tests
         run: ./gradlew test${{ matrix.map }}${{ matrix.analytics }}FullDebugUnitTestCoverage  --stacktrace
       - name: Upload CodeCov report
@@ -81,7 +81,7 @@ jobs:
       - name: Download build dependencies
         uses: ./.github/actions/download-externals-action
       - name: Build the project
-        run: ./gradlew compileDebug --stacktrace
+        run: ./gradlew compile${{ matrix.map }}NonalyticsFullDebugKotlin --stacktrace
       - name: Prepare emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
