@@ -421,7 +421,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				.setContentTitle(context.getString(R.string.notification_title))
 				.setContentText(context.getString(R.string.txt_spotify_auth_notification))
 				.setSmallIcon(R.drawable.ic_notify)
-				.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQ_ID, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+				.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQ_ID, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 				.build()
 		val notificationManager = context.getSystemService(NotificationManager::class.java)
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

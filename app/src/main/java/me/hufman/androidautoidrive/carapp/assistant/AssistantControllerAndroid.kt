@@ -95,7 +95,7 @@ open class AssistantControllerAndroid(val context: Context, val phoneAppResource
 	 */
 	fun triggerFullScreen(assistant: AssistantAppInfo, intent: Intent) {
 		val pendingIntent = PendingIntent.getActivity(context.applicationContext,
-				0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+				0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
 		val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
 				.setAutoCancel(true)

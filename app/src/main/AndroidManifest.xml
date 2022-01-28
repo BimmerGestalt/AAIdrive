@@ -17,7 +17,9 @@
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
     <!-- View Bluetooth status -->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <!-- But don't require Bluetooth support -->
     <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
 
@@ -79,7 +81,8 @@
 
         <activity-alias
             android:name=".phoneui.MainActivity"
-            android:targetActivity=".phoneui.NavHostActivity" >
+            android:targetActivity=".phoneui.NavHostActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -104,6 +107,7 @@
             android:name=".phoneui.NavActivityBMW"
             android:targetActivity=".phoneui.NavIntentActivity"
             android:label="@string/navigation_listener_bmw"
+            android:exported="true"
             android:enabled="false"
             >
             <intent-filter>
@@ -570,6 +574,7 @@
             android:name=".phoneui.NavActivityMINI"
             android:targetActivity=".phoneui.NavIntentActivity"
             android:label="@string/navigation_listener_mini"
+            android:exported="true"
             android:enabled="false"
             >
             <intent-filter>
@@ -1072,7 +1077,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".CarConnectionListener">
+        <receiver android:name=".CarConnectionListener" android:exported="false">
             <intent-filter>
                 <action android:name="com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_ATTACHED" />
                 <action android:name="com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_DETACHED" />
@@ -1084,7 +1089,8 @@
         <receiver android:name=".phoneui.fragments.NotificationPageFragment$CustomActionListener" />
 
         <receiver
-            android:name=".A2DPBroadcastReceiver">
+            android:name=".A2DPBroadcastReceiver"
+            android:exported="true">
 
             <intent-filter>
                 <action
@@ -1102,6 +1108,7 @@
 
         <service android:name=".notifications.NotificationListenerServiceImpl"
             android:label="@string/app_name"
+            android:exported="true"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />

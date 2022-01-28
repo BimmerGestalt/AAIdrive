@@ -92,7 +92,7 @@ class DonationRequest(val context: Context) {
 				.setSmallIcon(R.drawable.ic_notify)
 				.setPriority(NotificationCompat.PRIORITY_LOW)
 				.setAutoCancel(true)
-				.setContentIntent(PendingIntent.getActivity(context, 50, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+				.setContentIntent(PendingIntent.getActivity(context, 50, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 
 		val notificationManager = context.getSystemService(NotificationManager::class.java)
 		notificationManager.notify(50, notificationBuilder.build())

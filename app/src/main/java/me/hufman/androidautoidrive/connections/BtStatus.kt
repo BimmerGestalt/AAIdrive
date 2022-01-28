@@ -14,6 +14,15 @@ import java.util.*
 fun BluetoothDevice?.isCar(): Boolean {
 	return this?.name?.startsWith("BMW") == true || this?.name?.startsWith("MINI") == true
 }
+val BluetoothProfile.safeConnectedDevices: List<BluetoothDevice>
+	get() {
+		return try {
+			this.connectedDevices
+		} catch (e: SecurityException) {
+			// missing BLUETOOTH_CONNECT permission
+			emptyList()
+		}
+	}
 
 class BtStatus(val context: Context, val callback: () -> Unit) {
 	companion object {
@@ -25,15 +34,15 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 
 	// the resulting state
 	val isHfConnected
-		get() = hfListener.profile?.connectedDevices?.any { it.isCar() } == true
+		get() = hfListener.profile?.safeConnectedDevices?.any { it.isCar() } == true
 	private val hfListener = ProfileListener(BluetoothProfile.HEADSET)
 
 	val isA2dpConnected
-		get() = a2dpListener.profile?.connectedDevices?.any { it.isCar() } == true
+		get() = a2dpListener.profile?.safeConnectedDevices?.any { it.isCar() } == true
 	private val a2dpListener = ProfileListener(BluetoothProfile.A2DP)
 
 	val isSPPAvailable
-		get() = (a2dpListener.profile?.connectedDevices?.filter { it.isCar() } ?: listOf()).any { device ->
+		get() = (a2dpListener.profile?.safeConnectedDevices?.filter { it.isCar() } ?: listOf()).any { device ->
 			device.uuids?.any {
 				it?.uuid == UUID_SPP
 			} ?: false
@@ -43,7 +52,7 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 		get() = isHfConnected || isA2dpConnected
 
 	val carBrand: String?
-		get() = a2dpListener.profile?.connectedDevices?.filter { it.isCar() }?.map {
+		get() = a2dpListener.profile?.safeConnectedDevices?.filter { it.isCar() }?.map {
 			when {
 				it?.name?.startsWith("BMW") == true -> "BMW"
 				it?.name?.startsWith("MINI") == true -> "MINI"
@@ -73,7 +82,7 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 		}
 
 		fun fetchUuidsWithSdp() {
-			val cars = profile?.connectedDevices?.filter { it.isCar() } ?: listOf()
+			val cars = profile?.safeConnectedDevices?.filter { it.isCar() } ?: listOf()
 			cars.forEach {
 				it.fetchUuidsWithSdp()
 			}

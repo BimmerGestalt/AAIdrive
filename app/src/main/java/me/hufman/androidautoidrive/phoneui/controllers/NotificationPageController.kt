@@ -39,10 +39,10 @@ class NotificationPageController(val notificationSettingsModel: NotificationSett
 				.build()
 
 		val action = NotificationCompat.Action.Builder(null, "Custom Action",
-				PendingIntent.getBroadcast(context, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+				PendingIntent.getBroadcast(context, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 				.build()
 		val inputAction = NotificationCompat.Action.Builder(null, "Reply",
-				PendingIntent.getBroadcast(context, 1, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+				PendingIntent.getBroadcast(context, 1, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 				.addRemoteInput(replyInput)
 				.build()
 		val notificationBuilder = NotificationCompat.Builder(context, NotificationPageFragment.NOTIFICATION_CHANNEL_ID)

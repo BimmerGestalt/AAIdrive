@@ -429,7 +429,7 @@ class SpotifyWebApiTest {
 
 		val contentIntent: PendingIntent = mock()
 		PowerMockito.mockStatic(PendingIntent::class.java)
-		PowerMockito.`when`(PendingIntent.getActivity(context, SpotifyWebApi.NOTIFICATION_REQ_ID, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT)).thenAnswer { contentIntent }
+		PowerMockito.`when`(PendingIntent.getActivity(context, SpotifyWebApi.NOTIFICATION_REQ_ID, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)).thenAnswer { contentIntent }
 
 		val notification: Notification = mock()
 		val notificationBuilder: NotificationCompat.Builder = mock()

@@ -236,7 +236,7 @@ class MainService: Service() {
 				.setContentText(getText(R.string.notification_description))
 				.setSmallIcon(R.drawable.ic_notify)
 				.setPriority(NotificationCompat.PRIORITY_LOW)
-				.setContentIntent(PendingIntent.getActivity(applicationContext, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+				.setContentIntent(PendingIntent.getActivity(applicationContext, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 
 		if (!iDriveConnectionReceiver.isConnected) {
 			// show a notification even if we aren't connected, in case we were called with startForegroundService
