@@ -72,6 +72,7 @@
     <string name="lbl_ttsUnsupported">TTS wordt niet ondersteund door uw auto</string>
     <string name="lbl_smsPermission">Geef de SMS toegang om afbeeldingen weer te geven van inkomende SMS berichten in de auto. De tekst blijft altijd zichtbaar.</string>
     <string name="lbl_calendar_automatic_navigation">Automatisch navigeren naar aankomende afspraken</string>
+    <string name="lbl_calendar_ignore_visibility">Afspraken van verborgen kalenders toevoegen</string>
     <string name="lbl_mapspage">Een eenvoudig Google Maps scherm kan worden weergegeven in de auto</string>
     <string name="enable_google_maps">Google Maps inschakelen</string>
     <string name="lbl_map_phone_gps">Telefoon GPS gebruiken in plaats van auto GPS</string>
