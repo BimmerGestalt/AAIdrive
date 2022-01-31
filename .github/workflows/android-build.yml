@@ -7,13 +7,23 @@ on:
   pull_request:
     types: [opened, synchronize]
 
+env:
+  KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+  KEYSTORE_ALIAS: upload
+  KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
+  AndroidAutoIdrive_SpotifyApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_SPOTIFYAPIKEY }}
+  AndroidAutoIdrive_SentryDsn: ${{ secrets.ANDROIDAUTOIDRIVE_SENTRYDSN }}
+  AndroidAutoIdrive_GmapsApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_GMAPSAPIKEY }}
+  AndroidAutoIdrive_MapboxAccessToken: ${{ secrets.ANDROIDAUTOIDRIVE_MAPBOXACCESSTOKEN }}
+  AndroidAutoIdrive_MapboxDownloadToken: ${{ secrets.ANDROIDAUTOIDRIVE_MAPBOXDOWNLOADTOKEN }}
+
 jobs:
   unitTest:
     runs-on: ubuntu-18.04
     strategy:
       fail-fast: false
       matrix:
-        map: [Nomap, Gmap]
+        map: [Nomap, Gmap, Mapbox]
         analytics: [Nonalytics, Sentry]
 
     steps:
@@ -56,12 +66,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        map: [Nomap, Gmap]
+        map: [Nomap, Gmap, Mapbox]
         hasSecret:
           - ${{ github.repository == 'BimmerGestalt/AAIdrive' && github.event_name == 'push' }}
         exclude:  # don't run Gmap tests if we are in a context that doesn't have the gmap secret
           - hasSecret: false
             map: Gmap
+          - hasSecret: false
+            map: Mapbox   # Mapbox requires secrets to build
     steps:
       - name: Checkout the project
         uses: actions/checkout@v2
@@ -91,8 +103,6 @@ jobs:
           script: adb install external/BMW_Connected_v3.1.1.3078_apkpure.com.apk
       - name: Run instrumented tests
         uses: reactivecircus/android-emulator-runner@v2
-        env:
-          AndroidAutoIdrive_GmapsApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_GMAPSAPIKEY }}
         with:
           force-avd-creation: false
           api-level: 28
@@ -100,7 +110,7 @@ jobs:
           target: google_apis
           script: ./gradlew connected${{ matrix.map }}NonalyticsFullDebugAndroidTestCoverage --stacktrace
       - name: Upload CodeCov report
-        if: matrix.map != 'Gmap' && github.event.pull_request.title != 'New Crowdin updates' && github.event.ref != 'refs/heads/l10n_main'   # don't upload Gmap test results, which don't run during PRs
+        if: matrix.map == 'Nomap' && github.event.pull_request.title != 'New Crowdin updates' && github.event.ref != 'refs/heads/l10n_main'   # don't upload Gmap test results, which don't run during PRs
         uses: codecov/codecov-action@v1
         with:
           file: app/build/reports/jacoco/jacoco.xml
@@ -110,8 +120,6 @@ jobs:
 # so we have to invoke it manually
       - name: Generate screenshots
         uses: reactivecircus/android-emulator-runner@v2
-        env:
-          AndroidAutoIdrive_GmapsApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_GMAPSAPIKEY }}
         with:
           force-avd-creation: false
           api-level: 28
@@ -155,12 +163,6 @@ jobs:
         run: "echo ${{ secrets.KEYSTORE_BASE64 }} | base64 -d > keystore.jks"
       - name: Build production artifacts
         run: ./gradlew assembleNomap --stacktrace
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_ALIAS: upload
-          KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
-          AndroidAutoIdrive_SpotifyApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_SPOTIFYAPIKEY }}
-          AndroidAutoIdrive_SentryDsn: ${{ secrets.ANDROIDAUTOIDRIVE_SENTRYDSN }}
 
       - name: Calculate APK hashes
         run: "find app/build/outputs/apk -name '*.apk' -execdir sha1sum {} \\;"
