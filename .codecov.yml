@@ -1,5 +1,4 @@
 coverage:
-  branch: main
   status:
     project:
       default:
