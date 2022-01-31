@@ -40,6 +40,6 @@ class AddressPlaceSearch(val geocoder: Geocoder, private val locationProvider: C
 	}
 
 	override fun resultInformationAsync(resultId: String): Deferred<MapResult?> {
-		return CompletableDeferred(null)
+		return CompletableDeferred(null as? MapResult?)
 	}
 }

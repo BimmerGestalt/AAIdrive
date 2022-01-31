@@ -132,6 +132,10 @@ android {
                                     gmaps_api_key: System.env.AndroidAutoIdrive_GmapsApiKey ? System.env.AndroidAutoIdrive_GmapsApiKey : AndroidAutoIdrive_GmapsApiKey,
                                     appAuthRedirectScheme: defaultConfig.applicationId]
         }
+        mapbox {
+            dimension "map"
+            buildConfigField 'String', "MapboxAccessToken", '"' + (System.env.AndroidAutoIdrive_MapboxAccessToken ? System.env.AndroidAutoIdrive_MapboxAccessToken : AndroidAutoIdrive_MapboxAccessToken) + '"'
+        }
         full {
             dimension "storefront"
         }
@@ -257,6 +261,7 @@ dependencies {
     gmapImplementation 'com.google.android.gms:play-services-location:18.0.0'
     gmapImplementation 'com.google.android.libraries.places:places:2.4.0'
     gmapImplementation 'com.google.maps:google-maps-services:0.1.20'
+    mapboxImplementation "com.mapbox.mapboxsdk:mapbox-sdk-services:5.8.0"
 
     sentryImplementation 'io.sentry:sentry-android:1.7.16'
     sentryImplementation 'org.slf4j:slf4j-nop:1.7.25'
