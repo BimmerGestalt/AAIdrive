@@ -17,7 +17,7 @@
 
     <string name="playstore_release_desc">A quick release featuring calendar integration and some background service improvements</string>
     <string name="playstore_release_point1">Brings back the BMW/Mini Calendar functionality, including automatically navigating to upcoming appointments</string>
-    <string name="playstore_release_point2">Removes ANR crashes from the Foreground Service implementation</string>
+    <string name="playstore_release_point2">Fixes more background crashes from the Android Service implementation</string>
     <string name="playstore_release_point3">Improves app performance when caching car data and when discovering music apps</string>
-    <string name="playstore_release_point4">Fixes UX bugs when using the Media shortcut button and enables the OK button when replying to notifications</string>
+    <string name="playstore_release_point4">Adds autocompletion for address input in the Navigation tab</string>
 </resources>
