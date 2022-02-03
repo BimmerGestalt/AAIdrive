@@ -16,7 +16,5 @@
     <string name="playstore_desc_depends_bmw_subscription">Detta kräver vanligtvis att du har ett aktivt BMW ConnectedDrive-abonnemang, vilket vanligtvis ingår i några år efter att du köpt din nya bil.</string>
     <string name="playstore_release_desc">En snabbrelease med kalenderintegration och några förbättringar i bakgrundsservice</string>
     <string name="playstore_release_point1">Tar tillbaka BMW/Mini kalenderfunktion, inklusive automatiskt navigering till kommande möten</string>
-    <string name="playstore_release_point2">Tar bort ANR kraschar från Förgrunds Service implementering</string>
     <string name="playstore_release_point3">Förbättrar appens prestanda vid cachelagring av bildata och när du upptäcker musikappar</string>
-    <string name="playstore_release_point4">Fixar UX buggar när du använder knappen Media genväg och aktiverar OK-knappen när du svarar på aviseringar</string>
 </resources>
