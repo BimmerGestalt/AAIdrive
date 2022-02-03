@@ -7,6 +7,9 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.memberProperties
 
 object L {
+	// which locale we have loaded from translation files
+	var loadedLocale = ""
+
 	// all of the strings used in the car app
 	// these default string values are used in tests, Android resources are used for real
 	var NOTIFICATIONS_TITLE = "Notifications"
@@ -88,6 +91,15 @@ object L {
 			localeConf.setLocale(locale)
 			context.createConfigurationContext(localeConf)
 		}
+
+		@Suppress("DEPRECATION")
+		val loadingLocale = thisContext.resources.configuration.locale.language
+		if (loadingLocale == loadedLocale) {
+			// already loaded this locale, can skip
+			return
+		}
+		loadedLocale = loadingLocale
+
 		val stringProperties = L::class.memberProperties.filterIsInstance<KMutableProperty1<L, String>>()
 		for (member in stringProperties) {
 			if (member.name.matches(Regex("[A-Z_]+$"))) {
