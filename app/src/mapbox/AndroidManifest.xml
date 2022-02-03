@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="me.hufman.androidautoidrive">
+
+    <!-- Use phone location -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application>
+        <service android:name=".carapp.maps.MapAppService" android:exported="false">
+            <intent-filter>
+                <action android:name="me.hufman.androidautoidrive.carconnection.service" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>
