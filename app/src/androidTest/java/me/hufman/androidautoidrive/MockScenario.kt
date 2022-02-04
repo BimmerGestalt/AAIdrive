@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
+import me.hufman.androidautoidrive.calendar.CalendarEvent
+import me.hufman.androidautoidrive.calendar.PhoneCalendar
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.connections.CarConnectionDebugging
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
@@ -15,6 +17,8 @@ import me.hufman.androidautoidrive.music.MusicSessions
 import me.hufman.androidautoidrive.phoneui.MusicAppDiscoveryThread
 import me.hufman.androidautoidrive.phoneui.viewmodels.*
 import org.mockito.stubbing.OngoingStubbing
+import java.util.*
+import kotlin.collections.ArrayList
 
 // Helpers for mocking LiveData/Context values
 infix fun <T> OngoingStubbing<LiveData<T>>.doReturn(value: T): OngoingStubbing<LiveData<T>> = thenReturn(MutableLiveData(value))
@@ -56,6 +60,31 @@ class MockScenario(context: Context) {
 	val connectionTipsModel = ConnectionTipsModel(connectionDebugging)
 	val capabilitiesTipsModel = CapabilitiesTipsModel(carInfo)
 
+	val calendarSettingsModel = mock<CalendarSettingsModel> {
+		on {calendarEnabled} doReturn true
+		on {areCalendarsFound} doReturn true
+		on {autonav} doReturn true
+	}
+	val calendarEventsModel = mock<CalendarEventsModel> {
+		on {calendars} doReturn ArrayList(listOf(
+				PhoneCalendar("Holidays", false, 0xcff9eb),
+				PhoneCalendar("Personal", true, 0xdbe6fd),
+		))
+		on {upcomingEvents} doReturn ArrayList(listOf(
+				CalendarEvent("Dinner", Calendar.getInstance().also {
+						it[Calendar.MONTH] = 2
+						it[Calendar.DAY_OF_MONTH] = 19
+						it[Calendar.HOUR_OF_DAY] = 18
+						it[Calendar.MINUTE] = 0
+					}, Calendar.getInstance().also {
+						it[Calendar.MONTH] = 2
+						it[Calendar.DAY_OF_MONTH] = 19
+						it[Calendar.HOUR_OF_DAY] = 20
+						it[Calendar.MINUTE] = 0
+					}, "", "", 0xdbe6fd)
+		))
+	}
+
 	val musicApps = ObservableArrayList<MusicAppInfo>().apply {
 		add(MusicAppInfo("Green Player", context.getDrawable(R.drawable.ic_test_music_app2)!!, "mock", null).apply {
 			connectable = true
@@ -85,6 +114,7 @@ class MockScenario(context: Context) {
 		on {hasSpotify} doReturn true
 		on {hasSpotifyControlPermission} doReturn true
 		on {isSpotifyWebApiAuthorized} doReturn true
+		on {hasCalendarPermission} doReturn true
 		on {hasNotificationPermission} doReturn true
 		on {hasSmsPermission} doReturn true
 		on {hasLocationPermission} doReturn true
@@ -124,6 +154,8 @@ class MockScenario(context: Context) {
 
 	val viewModels = MockViewModels().also {
 		it[CarCapabilitiesViewModel::class.java] = carCapabilitiesViewModel
+		it[CalendarSettingsModel::class.java] = calendarSettingsModel
+		it[CalendarEventsModel::class.java] = calendarEventsModel
 		it[ConnectionStatusModel::class.java] = connectionStatusModel
 		it[DependencyInfoModel::class.java] = dependencyInfoModel
 		it[LanguageSettingsModel::class.java] = languageSettingsModel
