@@ -4,6 +4,7 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
+import de.bmw.idrive.RemoteBMWRemotingServer
 import io.bimmergestalt.idriveconnectkit.CDS
 import io.bimmergestalt.idriveconnectkit.IDriveConnection
 import io.bimmergestalt.idriveconnectkit.Utils.rhmi_setResourceCached
@@ -73,9 +74,9 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 					?: "common"))
 			val unclaimedStates = ArrayList(carApp.states.values)
 			playbackId5View =  carApp.states.values.filterIsInstance<RHMIState.AudioHmiState>().firstOrNull()?.let {
-				PlaybackView(it, musicController, carAppImages, phoneAppResources, graphicsHelpers, musicImageIDs)
+				PlaybackView(it, musicController, carAppImages, phoneAppResources, graphicsHelpers, musicImageIDs, musicAppMode)
 			}
-			playbackView = PlaybackView(unclaimedStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources, graphicsHelpers, musicImageIDs)
+			playbackView = PlaybackView(unclaimedStates.removeFirst { PlaybackView.fits(it) }, musicController, carAppImages, phoneAppResources, graphicsHelpers, musicImageIDs, musicAppMode)
 			appSwitcherView = AppSwitcherView(unclaimedStates.removeFirst { AppSwitcherView.fits(it) }, musicAppDiscovery, avContext, graphicsHelpers, musicImageIDs)
 			enqueuedView = EnqueuedView(unclaimedStates.removeFirst { EnqueuedView.fits(it) }, musicController, graphicsHelpers, musicImageIDs)
 			browseView = BrowseView(listOf(unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }, unclaimedStates.removeFirst { BrowseView.fits(it) }), musicController, musicImageIDs, graphicsHelpers)
@@ -159,7 +160,11 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1, -1)
 
 		// return a convenient adapter
-		return RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle))
+		return if (carConnection is RemoteBMWRemotingServer) {
+			RHMIApplicationIdempotent(RHMIApplicationEtchBackground(carConnection, rhmiHandle))
+		} else {
+			RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle))
+		}
 	}
 
 	private fun recreateRhmiApp() {

@@ -10,6 +10,7 @@ import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
 import me.hufman.androidautoidrive.carapp.RHMIUtils.findAdjacentComponent
+import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.carapp.music.components.PlaylistItem
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGauge
@@ -20,7 +21,7 @@ import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.TimeUtils.formatTime
 import me.hufman.androidautoidrive.utils.Utils
 
-class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
+class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs, val musicAppMode: MusicAppMode) {
 	companion object {
 		const val INITIALIZATION_DEFERRED_TIMEOUT = 6000
 		const val POSITION_ACTION_DEBOUNCE = 500
@@ -65,7 +66,6 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	var displayedApp: MusicAppInfo? = null  // the app that was last redrawn
 	var displayedSong: MusicMetadata? = null    // the song  that was last redrawn
 	var displayedConnected: Boolean = false     // whether the controller was connected during redraw
-	var isNewerIDrive: Boolean = false
 	var isBuffering: Boolean = false
 	var skipBackEnabled: Boolean = true
 	var skipNextEnabled: Boolean = true
@@ -489,20 +489,11 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 				shuffleButton.getTooltipModel()?.asRaDataModel()?.value = L.MUSIC_TURN_SHUFFLE_UNAVAILABLE
 				shuffleButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.SHUFFLE_OFF
 			}
-			else if (isNewerIDrive) {   // Audioplayer layout on id5
+			else if (!musicAppMode.isId4()) {   // Audioplayer layout on id5
 				shuffleButton.setVisible(false)
 			} else {                    // Audioplayer on id4
-				try {
-					shuffleButton.getImageModel()?.asImageIdModel()?.imageId = 0
-				} catch (e: BMWRemoting.ServiceException) {
-					isNewerIDrive = true
-					shuffleButton.setVisible(false)
-
-					// the car has cleared the icon even though it threw an exception
-					// so set the icon to a valid imageId again
-					// to make sure the idempotent layer properly sets the icon in the future
-					shuffleButton.getImageModel()?.asImageIdModel()?.imageId = musicImageIDs.SONG
-				}
+				// hide the icon but keep the slot
+				shuffleButton.getImageModel()?.asImageIdModel()?.imageId = 0
 			}
 		}
 	}
