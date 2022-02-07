@@ -8,7 +8,10 @@ import android.os.Looper
 import android.util.Log
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.ResourceOptionsManager
+import com.mapbox.maps.ScreenCoordinate
+import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
 import me.hufman.androidautoidrive.AppSettingsObserver
 import me.hufman.androidautoidrive.BuildConfig
@@ -26,8 +29,14 @@ class MapboxController(private val context: Context,
 
 	var handler = Handler(Looper.getMainLooper())
 	var projection: MapboxProjection? = null
+
+	val navController = MapboxNavController.getInstance(carLocationProvider) {
+		drawNavigation()
+	}
 	private val mapboxLocationSource = MapboxLocationSource()
 	var currentLocation: Location? = null
+	var animatingCamera = false
+	private val scrollZoomAnimation = MapAnimationOptions.Builder().duration(1000).build()
 	private var startZoom = 6f  // what zoom level we start the projection with
 	private var currentZoom = 15f
 
@@ -55,15 +64,28 @@ class MapboxController(private val context: Context,
 	}
 
 	override fun showMap() {
+		// cancel a shutdown timer
+		handler.removeCallbacks(shutdownMapRunnable)
+
 		if (projection == null) {
 			Log.i(TAG, "First showing of the map")
-			this.projection = MapboxProjection(context, virtualDisplay.display, appSettings, mapboxLocationSource)
+			this.projection = MapboxProjection(context, virtualDisplay.display, appSettings, mapboxLocationSource).apply {
+				mapListener = Runnable {
+					drawNavigation()
+				}
+			}
 		}
 
 		if (projection?.isShowing == false) {
 			projection?.show()
 		}
 
+		drawNavigation()
+
+		// nudge the camera to trigger a redraw, in case we changed windows
+		if (!animatingCamera) {
+			projection?.map?.camera?.moveBy(ScreenCoordinate(1.0, 1.0))
+		}
 		// register for location updates
 		carLocationProvider.start()
 	}
@@ -102,19 +124,79 @@ class MapboxController(private val context: Context,
 	}
 
 	private fun updateCamera() {
+		if (animatingCamera) {
+			return
+		}
 		val location = currentLocation ?: return
 		val cameraPosition = CameraOptions.Builder()
 				.center(Point.fromLngLat(location.longitude, location.latitude))
 				.zoom(currentZoom.toDouble())
 				.build()
-		projection?.map?.camera?.flyTo(cameraPosition)
+		projection?.map?.camera?.flyTo(cameraPosition, scrollZoomAnimation)
 	}
 
 	override fun navigateTo(dest: LatLong) {
-		TODO("Not yet implemented")
+		navController.navigateTo(dest)
+		animateNavigation()
 	}
 
 	override fun stopNavigation() {
-		TODO("Not yet implemented")
+		navController.stopNavigation()
+	}
+
+	private fun animateNavigation() {
+		// show a camera animation to zoom out to the whole navigation route
+		val dest = navController.currentNavDestination ?: return
+		val startLocation = currentLocation ?: return
+		// zoom out to the full view
+		val startPoint = Point.fromLngLat(startLocation.longitude, startLocation.latitude)
+		val destPoint = Point.fromLngLat(dest.longitude, dest.latitude)
+
+		val camera = projection?.map?.getMapboxMap()?.cameraState?.let {
+			CameraOptions.Builder()
+					.center(it.center)
+					.zoom(it.zoom)
+					.bearing(it.bearing)
+					.pitch(it.pitch)
+					.padding(it.padding)
+					.build()
+		} ?: return
+		val navZoomAnimation = MapAnimationOptions.Builder().duration(3000).build()
+		val currentVisibleRegion = projection?.map?.getMapboxMap()?.coordinateBoundsForCamera(camera)
+		if (currentVisibleRegion == null || !currentVisibleRegion.contains(startPoint, false) || !currentVisibleRegion.contains(destPoint, false)) {
+			animatingCamera = true
+			handler.postDelayed({
+				val cameraPosition = projection?.map?.getMapboxMap()?.cameraForCoordinates(listOf(
+						startPoint,
+						destPoint
+				), EdgeInsets(150.0, 100.0, 100.0, 100.0))
+				if (cameraPosition != null) {
+					projection?.map?.camera?.flyTo(cameraPosition, navZoomAnimation)
+				}
+			}, 100)
+		}
+
+		// then zoom back in to the user's chosen zoom
+		handler.postDelayed({
+			animatingCamera = false
+			val location = currentLocation ?: return@postDelayed
+			val cameraPosition = CameraOptions.Builder()
+					.center(Point.fromLngLat(location.longitude, location.latitude))
+					.zoom(currentZoom.toDouble())
+					.build()
+			projection?.map?.camera?.flyTo(cameraPosition, navZoomAnimation)
+		}, NAVIGATION_MAP_STARTZOOM_TIME.toLong())
+	}
+
+	private fun drawNavigation() {
+		// make sure we are in the UI thread, and then draw navigation lines onto it
+		// because route search comes back on a network thread
+		if (Looper.myLooper() != handler.looper) {
+			handler.post {
+				projection?.drawNavigation(navController)
+			}
+		} else {
+			projection?.drawNavigation(navController)
+		}
 	}
 }
