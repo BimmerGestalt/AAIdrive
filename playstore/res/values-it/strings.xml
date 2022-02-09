@@ -16,7 +16,7 @@
     <string name="playstore_desc_depends_bmw_subscription">In sostanza è richiesto di avere un abbonamento BMW ConnectedDrive attivo, che è in genere incluso per alcuni anni dopo aver acquistato la vostra nuova auto.</string>
     <string name="playstore_release_desc">Un piccolo aggiornamento con l\'integrazione del calendario e alcuni miglioramenti nel funzionamento in background</string>
     <string name="playstore_release_point1">Ripristina la funzionalità BMW/Mini Calendar, inclusa la possibilità di impostare la navigazione verso il luogo degli appuntamenti imminenti in maniera automatica</string>
-    <string name="playstore_release_point2">Rimuove i crash ANR dall\'implementazione del servizio in primo piano</string>
+    <string name="playstore_release_point2">Corregge più crash dell\'implementazione del Servizio Android eseguita in secondo piano</string>
     <string name="playstore_release_point3">Migliora le prestazioni delle app nella memorizzazione in cache dei dati dell\'auto e nel rilevamento delle app musicali</string>
-    <string name="playstore_release_point4">Corregge i bug UX quando si utilizza il tasto di scelta rapida Media e abilita il pulsante OK quando si risponde alle notifiche</string>
+    <string name="playstore_release_point4">Aggiunge il completamento automatico per l\'indirizzo inserito nella scheda Navigazione</string>
 </resources>
