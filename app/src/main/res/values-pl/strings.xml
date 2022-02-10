@@ -86,8 +86,6 @@
     <string name="lbl_calendar_calendars_empty">Nie znaleziono kalendarzy</string>
     <string name="lbl_calendar_upcoming_events">Nadchodzące wydarzenia:</string>
     <string name="lbl_calendar_upcoming_events_empty">Brak nadchodzących wydarzeń w tym miesiącu</string>
-    <string name="lbl_mapspage">W samochodzie można wyświetlić podstawowy ekran Google Maps (proof of concept)</string>
-    <string name="enable_google_maps">Włącz Google Maps</string>
     <string name="lbl_map_phone_gps">Użyj lokalizacji telefonu zamiast samochodu</string>
     <string name="lbl_widescreen_map">Mapy w trybie pełnoekranowym</string>
     <string name="lbl_map_invert_zoom">Odwróć kierunek powiększenia</string>
