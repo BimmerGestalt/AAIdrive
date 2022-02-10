@@ -71,8 +71,6 @@
     <string name="lbl_popupVersion">Las ventanass emergentes sólo funcionan con IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS no está soportado por tu coche</string>
     <string name="lbl_smsPermission">Otorgue el permiso de SMS para ver las imágenes entrantes de imágenes SMS en el automóvil. El texto siempre será visible.</string>
-    <string name="lbl_mapspage">Se puede mostrar una pantalla básica de Google Maps en el coche</string>
-    <string name="enable_google_maps">Activar Google Maps</string>
     <string name="lbl_widescreen_map">Mapa a pantalla completa</string>
     <string name="lbl_map_invert_zoom">Invertir la dirección del zoom</string>
     <string name="lbl_map_tilt">Inclinar mapa</string>
