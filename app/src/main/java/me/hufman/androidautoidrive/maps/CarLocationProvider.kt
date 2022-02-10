@@ -124,6 +124,7 @@ class CombinedLocationProvider(val appSettings: AppSettings,
 		get() = appSettings[AppSettings.KEYS.MAP_USE_PHONE_GPS].toBoolean()
 
 	init {
+		currentLocation = carLocationProvider.currentLocation ?: phoneLocationProvider.currentLocation
 		phoneLocationProvider.callback = {
 			currentLocation = it
 			sendCallback()
