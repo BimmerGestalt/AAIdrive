@@ -14,6 +14,9 @@ import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicSessions
 import me.hufman.androidautoidrive.phoneui.MusicAppDiscoveryThread
 import me.hufman.androidautoidrive.phoneui.viewmodels.*
+import org.mockito.Mockito
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 import org.mockito.stubbing.OngoingStubbing
 
 // Helpers for mocking LiveData/Context values
@@ -91,11 +94,20 @@ class MockScenario(context: Context) {
 		on {hasBackgroundPermission} doReturn true
 	}
 
-	val mapSettingsModel = mock<MapSettingsModel> {
+	// https://stackoverflow.com/a/60119030/169035
+	val nonNullStringAnswer = Answer { invocation ->
+		// println("Returning default answer for $invocation with type ${invocation.method.returnType}")
+		when (invocation.method.returnType) {
+			String::class.java -> ""
+			StringLiveSetting::class.java -> mock<StringLiveSetting> { on { value } doReturn "" }
+			else -> Mockito.RETURNS_DEFAULTS.answer(invocation)
+		}
+	}
+
+	val mapSettingsModel = mock<MapSettingsModel>(defaultAnswer=nonNullStringAnswer) {
 		on {mapEnabled} doReturn true
-		on {mapStyle} doReturn ""
+		on {mapPhoneGps} doReturn false
 		on {mapWidescreen} doReturn true
-		on {mapTraffic} doReturn true
 	}
 
 	val navigationStatusModel = mock<NavigationStatusModel> {

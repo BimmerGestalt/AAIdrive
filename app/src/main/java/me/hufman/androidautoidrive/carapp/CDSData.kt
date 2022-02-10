@@ -46,6 +46,10 @@ class CDSConnectionEtch(private val carConnection: BMWRemotingServer): CDSConnec
 class CDSDataConnectionWrapper(private val cdsData: CDSData, private val eventHandler: CDSEventHandler): CDSConnection {
 	override fun subscribeProperty(property: CDSProperty, intervalLimit: Int) {
 		cdsData.addEventHandler(property, intervalLimit, eventHandler)
+		val existing = cdsData[property]
+		if (existing != null) {
+			eventHandler.onPropertyChangedEvent(property, existing)
+		}
 	}
 
 	override fun unsubscribeProperty(property: CDSProperty) {

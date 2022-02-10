@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BooleanLiveSetting
-import me.hufman.androidautoidrive.StringLiveSetting
 
 class MapSettingsModel(appContext: Context): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
@@ -15,12 +14,9 @@ class MapSettingsModel(appContext: Context): ViewModel() {
 		}
 	}
 
+	val mapEnabled = BooleanLiveSetting(appContext, AppSettings.KEYS.ENABLED_MAPS)
 	val showAdvancedSettings = BooleanLiveSetting(appContext, AppSettings.KEYS.SHOW_ADVANCED_SETTINGS)
 	val mapPhoneGps = BooleanLiveSetting(appContext, AppSettings.KEYS.MAP_USE_PHONE_GPS)
-	val mapEnabled = BooleanLiveSetting(appContext, AppSettings.KEYS.ENABLED_GMAPS)
-	val mapStyle  = StringLiveSetting(appContext, AppSettings.KEYS.GMAPS_STYLE)
 	val mapWidescreen = BooleanLiveSetting(appContext, AppSettings.KEYS.MAP_WIDESCREEN)
 	val mapInvertZoom = BooleanLiveSetting(appContext, AppSettings.KEYS.MAP_INVERT_SCROLL)
-	val mapTraffic = BooleanLiveSetting(appContext, AppSettings.KEYS.MAP_TRAFFIC)
-	val gmapBuildings = BooleanLiveSetting(appContext, AppSettings.KEYS.GMAPS_BUILDINGS)
 }

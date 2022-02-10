@@ -1,9 +1,12 @@
 package me.hufman.androidautoidrive.maps
 
 import android.location.Location
+import com.google.gson.JsonObject
 import io.bimmergestalt.idriveconnectkit.CDS
+import io.bimmergestalt.idriveconnectkit.CDSProperty
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.carapp.CDSData
+import me.hufman.androidautoidrive.carapp.CDSEventHandler
 import me.hufman.androidautoidrive.carapp.subscriptions
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
@@ -50,6 +53,11 @@ class CdsLocationProvider(val cdsData: CDSData): CarLocationProvider() {
 	init {
 		parseGPS()
 		parseHeading()
+		cdsData.addEventHandler(CDS.NAVIGATION.GPSPOSITION, 10000, object: CDSEventHandler {
+			override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
+				parseGPS()
+			}
+		})
 	}
 
 	override fun start() {
@@ -59,6 +67,7 @@ class CdsLocationProvider(val cdsData: CDSData): CarLocationProvider() {
 		cdsData.subscriptions[CDS.NAVIGATION.GPSEXTENDEDINFO] = {
 			parseHeading()
 		}
+		sendCallback()
 	}
 
 	private fun parseGPS() {
@@ -115,6 +124,7 @@ class CombinedLocationProvider(val appSettings: AppSettings,
 		get() = appSettings[AppSettings.KEYS.MAP_USE_PHONE_GPS].toBoolean()
 
 	init {
+		currentLocation = carLocationProvider.currentLocation ?: phoneLocationProvider.currentLocation
 		phoneLocationProvider.callback = {
 			currentLocation = it
 			sendCallback()

@@ -78,6 +78,7 @@ class CdsLocationProviderTest {
 		assertEquals(-144f, provider.currentLocation?.bearing)
 		assertEquals(0f, provider.currentLocation?.speed)
 
+		// test if location updates still come through
 		provider.stop()
 		assertNull(cdsData.subscriptions[CDS.NAVIGATION.GPSPOSITION])
 		assertNull(cdsData.subscriptions[CDS.NAVIGATION.GPSEXTENDEDINFO])
@@ -89,9 +90,9 @@ class CdsLocationProviderTest {
 			})
 		}
 		cdsData.onPropertyChangedEvent(CDS.NAVIGATION.GPSPOSITION, gpsPositionNew)
-		assertEquals(12.345678, provider.currentLatLong?.latitude)
-		assertEquals(-12.345678, provider.currentLatLong?.longitude)
-		assertEquals(12.345678, provider.currentLocation?.latitude)
-		assertEquals(-12.345678, provider.currentLocation?.longitude)
+		assertEquals(32.345678, provider.currentLatLong?.latitude)
+		assertEquals(-32.345678, provider.currentLatLong?.longitude)
+		assertEquals(32.345678, provider.currentLocation?.latitude)
+		assertEquals(-32.345678, provider.currentLocation?.longitude)
 	}
 }

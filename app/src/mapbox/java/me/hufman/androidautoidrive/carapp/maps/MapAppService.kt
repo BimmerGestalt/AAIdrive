@@ -11,7 +11,7 @@ import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.maps.AndroidLocationProvider
 import me.hufman.androidautoidrive.maps.CdsLocationProvider
 import me.hufman.androidautoidrive.maps.CombinedLocationProvider
-import me.hufman.androidautoidrive.maps.GMapsPlaceSearch
+import me.hufman.androidautoidrive.maps.MapboxPlaceSearch
 import java.lang.Exception
 
 class MapAppService: CarAppService() {
@@ -19,7 +19,7 @@ class MapAppService: CarAppService() {
 	var mapApp: MapApp? = null
 	var mapScreenCapture: VirtualDisplayScreenCapture? = null
 	var virtualDisplay: VirtualDisplay? = null
-	var mapController: GMapsController? = null
+	var mapController: MapboxController? = null
 	var mapListener: MapsInteractionControllerListener? = null
 
 	override fun shouldStartApp(): Boolean {
@@ -27,7 +27,7 @@ class MapAppService: CarAppService() {
 	}
 
 	override fun onCarStart() {
-		Log.i(MainService.TAG, "Starting GMaps")
+		Log.i(MainService.TAG, "Starting Mapbox")
 		val cdsData = CDSDataProvider()
 		cdsData.setConnection(CarInformation.cdsData.asConnection(cdsData))
 		val carLocationProvider = CombinedLocationProvider(
@@ -38,9 +38,9 @@ class MapAppService: CarAppService() {
 		this.mapScreenCapture = mapScreenCapture
 		val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(applicationContext, mapScreenCapture.imageCapture, 250)
 		this.virtualDisplay = virtualDisplay
-		val mapController = GMapsController(applicationContext, carLocationProvider, virtualDisplay, MutableAppSettingsReceiver(applicationContext, null /* specifically main thread */))
+		val mapController = MapboxController(applicationContext, carLocationProvider, virtualDisplay, MutableAppSettingsReceiver(applicationContext, null /* specifically main thread */))
 		this.mapController = mapController
-		val mapPlaceSearch = GMapsPlaceSearch.getInstance(this, carLocationProvider)
+		val mapPlaceSearch = MapboxPlaceSearch.getInstance(carLocationProvider)
 		val mapListener = MapsInteractionControllerListener(applicationContext, mapController)
 		mapListener.onCreate()
 		this.mapListener = mapListener

@@ -1,1 +1,0 @@
-# For some reason, the testNomap directory needs to exist to pull in the mocked android.util.Log
