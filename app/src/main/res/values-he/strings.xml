@@ -67,8 +67,6 @@
     <string name="lbl_popupVersion">התראות קופצות עובדות רק עם IDrive 4</string>
     <string name="lbl_ttsUnsupported">TTS לא נתמך על ידי הרכב שלך</string>
     <string name="lbl_smsPermission">אפשר הרשאת SMS כדי לצפות בתמונות מהודעות נכנסות ברכב. הטקסט תמיד יוצג.</string>
-    <string name="lbl_mapspage">הצגת גוגל מפות בסיסי במסך הרכב</string>
-    <string name="enable_google_maps">הפעל גוגל מפות</string>
     <string name="lbl_widescreen_map">מפה במסך רחב</string>
     <string name="lbl_map_invert_zoom">הפוך כיוון זום</string>
     <string name="lbl_map_tilt">הטיית מפה</string>
