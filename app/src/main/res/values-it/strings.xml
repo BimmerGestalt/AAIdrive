@@ -84,6 +84,8 @@
     <string name="lbl_calendar_calendars_empty">Nessun calendario trovato</string>
     <string name="lbl_calendar_upcoming_events">Prossimi eventi:</string>
     <string name="lbl_calendar_upcoming_events_empty">Nessun evento trovato questo mese</string>
+    <string name="lbl_mapspage">AAIdrive include una mappa personalizzata che viene resa internamente sul telefono e visualizzata nell\'auto</string>
+    <string name="enable_custom_maps">Abilita Mappa Personalizzata</string>
     <string name="lbl_map_phone_gps">Usa il GPS del telefono invece di quello dell\'auto</string>
     <string name="lbl_widescreen_map">Mappa a tutto schermo</string>
     <string name="lbl_map_invert_zoom">Inverti direzione zoom</string>
