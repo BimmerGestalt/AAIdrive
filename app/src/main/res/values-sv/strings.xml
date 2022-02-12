@@ -84,6 +84,8 @@
     <string name="lbl_calendar_calendars_empty">Inga kalendrar hittade</string>
     <string name="lbl_calendar_upcoming_events">Kommande händelser:</string>
     <string name="lbl_calendar_upcoming_events_empty">Inga kommande händelser hittades denna månad</string>
+    <string name="lbl_mapspage">AAIdrive innehåller en anpassad karta som återges internt på telefonen och visas i bilen</string>
+    <string name="enable_custom_maps">Aktivera anpassad karta</string>
     <string name="lbl_map_phone_gps">Använd telefonens GPS istället för bilens GPS</string>
     <string name="lbl_widescreen_map">Widescreen karta</string>
     <string name="lbl_map_invert_zoom">Zooma ut</string>
