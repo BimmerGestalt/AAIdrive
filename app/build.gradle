@@ -27,6 +27,7 @@ apply from: 'buildtools/preprocess_resources.gradle'
 
 def GITHUB_BRANCH = System.env.GITHUB_REF?.replaceFirst("^refs/.*/", "")
 
+def runProguardInDebug = false
 def isRunningOnCI = System.getenv("CI") == "true"
 
 android {
@@ -90,11 +91,23 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            postprocessing {
+                removeUnusedCode true
+                obfuscate false
+                optimizeCode true
+                proguardFile 'proguard-rules.pro'
+            }
             signingConfig signingConfigs.release
         }
         debug {
+            if (runProguardInDebug || isRunningOnCI) {        // make sure to run tests against minified code in CI, but local dev can be fast
+                postprocessing {
+                    removeUnusedCode true
+                    obfuscate false
+                    optimizeCode true
+                    proguardFile 'proguard-rules.pro'
+                }
+            }
             testCoverageEnabled true
             pseudoLocalesEnabled true
         }
