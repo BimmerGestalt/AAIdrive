@@ -79,8 +79,8 @@
     <string name="lbl_calendar_calendars_empty">Nem találtunk naptárakat</string>
     <string name="lbl_calendar_upcoming_events">Közelgő események:</string>
     <string name="lbl_calendar_upcoming_events_empty">Nem találtunk közelgő eseményt ebben a hónapban</string>
-    <string name="lbl_mapspage">Alapvető Google Térkép megjelenítése az autóban</string>
-    <string name="enable_google_maps">Google Térkép bekapcsolása</string>
+    <string name="lbl_mapspage">AAIdrive tartalmaz egy egyedi térképet, amely a telefonon kerül renderelésre, és az autóban megjelenik</string>
+    <string name="enable_custom_maps">Egyedi térkép bekapcsolása</string>
     <string name="lbl_map_phone_gps">Telefon GPS-ének használata az autó GPS-e helyett</string>
     <string name="lbl_widescreen_map">Szélesképernyős térkép</string>
     <string name="lbl_map_invert_zoom">Nagyítás irányának megfordítása</string>

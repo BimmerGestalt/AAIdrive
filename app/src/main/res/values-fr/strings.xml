@@ -68,8 +68,6 @@
     <string name="lbl_popupVersion">Les popups ne fonctionnent qu\'avec IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS n\'est pas pris en charge par votre voiture</string>
     <string name="lbl_smsPermission">Autorise l\'accès aux images contenues dans les SMS depuis la voiture. Le text est quant à lui toujours visible.</string>
-    <string name="lbl_mapspage">Un écran Google Maps basic peut être affiché dans la voiture</string>
-    <string name="enable_google_maps">Activer Google Maps</string>
     <string name="lbl_widescreen_map">Carte Elargie</string>
     <string name="lbl_map_invert_zoom">Inverser la direction du zoom</string>
     <string name="lbl_map_tilt">Incliner la carte</string>

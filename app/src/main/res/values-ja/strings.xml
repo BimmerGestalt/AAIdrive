@@ -67,8 +67,6 @@
     <string name="lbl_popupVersion">ポップアップはIDrive4でのみ機能します</string>
     <string name="lbl_ttsUnsupported">TTSはお使いの車ではサポートされていません</string>
     <string name="lbl_smsPermission">車内の着信SMS画像から画像を表示するためのSMS権限を付与します。テキスト自体は常に表示されます。</string>
-    <string name="lbl_mapspage">基本的なGoogleマップ画面を車内に表示できます</string>
-    <string name="enable_google_maps">Googleマップを有効にする</string>
     <string name="lbl_widescreen_map">ワイドスクリーンマップ</string>
     <string name="lbl_map_invert_zoom">ズーム方向を反転</string>
     <string name="lbl_map_tilt">傾斜マップ</string>

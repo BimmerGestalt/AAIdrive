@@ -84,8 +84,8 @@
     <string name="lbl_calendar_calendars_empty">Keine Kalender gefunden</string>
     <string name="lbl_calendar_upcoming_events">Bevorstehende Ereignisse:</string>
     <string name="lbl_calendar_upcoming_events_empty">Keine anstehenden Termine in diesem Monat gefunden</string>
-    <string name="lbl_mapspage">Ein grundlegender Google Maps-Bildschirm kann im Auto angezeigt werden</string>
-    <string name="enable_google_maps">Google Maps aktivieren</string>
+    <string name="lbl_mapspage">AAIdrive enthält eine benutzerdefinierte Karte, die intern am Telefon dargestellt und im Auto angezeigt wird</string>
+    <string name="enable_custom_maps">Benutzerdefinierte Karte aktivieren</string>
     <string name="lbl_map_phone_gps">GPS vom Telefon anstelle der GPS Signale des Autos verwenden</string>
     <string name="lbl_widescreen_map">Breitbild (Widescreen) Karte</string>
     <string name="lbl_map_invert_zoom">Zoom-Richtung umkehren</string>

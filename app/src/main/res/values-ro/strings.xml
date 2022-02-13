@@ -85,8 +85,6 @@
     <string name="lbl_calendar_calendars_empty">Nici un calendar găsit</string>
     <string name="lbl_calendar_upcoming_events">Evenimente viitoare:</string>
     <string name="lbl_calendar_upcoming_events_empty">Nu s-au găsit evenimente viitoare în această lună</string>
-    <string name="lbl_mapspage">Un ecran simplu Google Maps poate fi afișat în mașină</string>
-    <string name="enable_google_maps">Activează Google Maps</string>
     <string name="lbl_map_phone_gps">Utilizează GPS de telefon în loc de GPS masinii</string>
     <string name="lbl_widescreen_map">Hartă widescreen</string>
     <string name="lbl_map_invert_zoom">Inversează direcția de zoom</string>
