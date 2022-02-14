@@ -161,8 +161,10 @@ jobs:
         uses: ./.github/actions/download-externals-action
       - name: Extract signing key
         run: "echo ${{ secrets.KEYSTORE_BASE64 }} | base64 -d > keystore.jks"
-      - name: Build production artifacts
+      - name: Build nomap artifacts
         run: ./gradlew assembleNomap --stacktrace
+      - name: Build mapbox artifacts
+        run: ./gradlew assembleMapbox --stacktrace
 
       - name: Calculate APK hashes
         run: "find app/build/outputs/apk -name '*.apk' -execdir sha1sum {} \\;"
@@ -178,6 +180,10 @@ jobs:
             app/build/outputs/apk/nomapNonalyticsFull/release/*apk.sha1
             app/build/outputs/apk/nomapSentryFull/release/*apk
             app/build/outputs/apk/nomapSentryFull/release/*apk.sha1
+            app/build/outputs/apk/mapboxNonalyticsFull/release/*apk
+            app/build/outputs/apk/mapboxNonalyticsFull/release/*apk.sha1
+            app/build/outputs/apk/mapboxSentryFull/release/*apk
+            app/build/outputs/apk/mapboxSentryFull/release/*apk.sha1
 
   upload_s3:
     if: github.event_name == 'push'
@@ -195,6 +201,8 @@ jobs:
           mkdir dist
           cp nomapNonalyticsFull/release/*apk dist/androidautoidrive-latest-${BRANCH_NAME}-nomap-nonalytics-release.apk
           cp nomapSentryFull/release/*apk dist/androidautoidrive-latest-${BRANCH_NAME}-nomap-sentry-release.apk
+          cp mapboxNonalyticsFull/release/*apk dist/androidautoidrive-latest-${BRANCH_NAME}-mapbox-nonalytics-release.apk
+          cp mapboxSentryFull/release/*apk dist/androidautoidrive-latest-${BRANCH_NAME}-mapbox-sentry-release.apk
       - name: Upload to S3
         uses: shallwefootball/s3-upload-action@v1.1.3
         with:
