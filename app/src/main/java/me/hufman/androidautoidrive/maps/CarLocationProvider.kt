@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.maps
 
 import android.location.Location
 import com.google.gson.JsonObject
+import com.soywiz.kmem.isNanOrInfinite
 import io.bimmergestalt.idriveconnectkit.CDS
 import io.bimmergestalt.idriveconnectkit.CDSProperty
 import me.hufman.androidautoidrive.AppSettings
@@ -75,7 +76,7 @@ class CdsLocationProvider(val cdsData: CDSData): CarLocationProvider() {
 		val position = gpsPosition.tryAsJsonObject("GPSPosition")
 		val latitude = position?.tryAsJsonPrimitive("latitude")?.tryAsDouble
 		val longitude = position?.tryAsJsonPrimitive("longitude")?.tryAsDouble
-		if (longitude != null && latitude != null) {
+		if (longitude != null && latitude != null && !longitude.isNanOrInfinite() && !latitude.isNanOrInfinite()) {
 			currentLatLong = LatLong(latitude, longitude)
 			onLocationUpdate()
 		}
@@ -97,7 +98,7 @@ class CdsLocationProvider(val cdsData: CDSData): CarLocationProvider() {
 		val latLong = currentLatLong
 		val heading = currentHeading
 		currentLocation = if (latLong != null) {
-			Location("CarLocationProvider").also {
+			Location("CdsLocationProvider").also {
 				it.latitude = latLong.latitude
 				it.longitude = latLong.longitude
 				if (heading != null) {
