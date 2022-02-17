@@ -75,7 +75,9 @@ class NotificationAppTest {
 	val carNotificationController = mock<CarNotificationController> {}
 	val audioPlayer = mock<AudioPlayer>()
 	val readoutController = mock<ReadoutController>()
+	val appSettings = MockAppSettings()
 	val notificationSettings = mock<NotificationSettings> {
+		on { appSettings } doReturn appSettings
 		on { getSettings() } doAnswer { listOf(
 				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER, AppSettings.KEYS.NOTIFICATIONS_SOUND,
 				AppSettings.KEYS.NOTIFICATIONS_READOUT, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
@@ -1301,16 +1303,16 @@ class NotificationAppTest {
 
 		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
 
-		whenever(notificationSettings.isChecked(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP)) doReturn true
-		whenever(notificationSettings.isChecked(AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER)) doReturn false
-		whenever(notificationSettings.isChecked(AppSettings.KEYS.NOTIFICATIONS_READOUT)) doReturn true
-		whenever(notificationSettings.isChecked(AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP)) doReturn true
-		whenever(notificationSettings.isChecked(AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER)) doReturn false
-		val appSettingsCallback = argumentCaptor<() -> Unit>()
+		appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP] = "true"
+		appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER] = "false"
+		appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT] = "true"
+		appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP] = "true"
+		appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER] = "false"
 
 		// the car shows the view state
 		val callbacks = IDriveConnection.mockRemotingClient as BMWRemotingClient
 		callbacks.rhmi_onHmiEvent(1, "unused", 8, 1, mapOf(4.toByte() to true))
+		val appSettingsCallback = argumentCaptor<() -> Unit>()
 		verify(notificationSettings).callback = appSettingsCallback.capture()
 
 		// check the correct displayed entries
@@ -1327,8 +1329,7 @@ class NotificationAppTest {
 		// click a menu entry
 		callbacks.rhmi_onActionEvent(1, "Dont care", 173, mapOf(1.toByte() to 1))
 		verify(mockServer).rhmi_ackActionEvent(1, 173, 1, false)    // don't click to the next screen
-		verify(notificationSettings).toggleSetting(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER)
-		whenever(notificationSettings.isChecked(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER)) doReturn true
+		assertEquals("true", appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER])
 
 		// the callback should trigger because of the changed setting
 		appSettingsCallback.lastValue.invoke()

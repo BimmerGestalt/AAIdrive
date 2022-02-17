@@ -73,14 +73,4 @@ class NotificationSettingsTest {
 		appSettings.callback?.invoke()
 		assertTrue(callbackRan)
 	}
-
-	@Test
-	fun testToggle() {
-		val settings = NotificationSettings(mapOf("hmi.type" to "MINI ID4++", "tts" to "true"), btStatus, appSettings)
-		assertEquals("false", appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER])
-		assertFalse(settings.isChecked(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER))
-
-		settings.toggleSetting(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER)
-		assertEquals("true", appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER])
-	}
 }
