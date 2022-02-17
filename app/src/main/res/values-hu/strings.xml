@@ -343,6 +343,10 @@
     <string name="MAP_ACTION_VIEWMAP">Teljes térkép méret</string>
     <string name="MAP_ACTION_SEARCH">Hely keresése</string>
     <string name="MAP_ACTION_CLEARNAV">Navigáció törlése</string>
+    <string name="MAP_WIDESCREEN">Szélesképernyős térkép</string>
+    <string name="MAP_INVERT_ZOOM">Nagyítás irányának megfordítása</string>
+    <string name="MAP_TRAFFIC">Forgalom mutatása</string>
+    <string name="MAP_BUILDINGS">Épületek 3D megjelenítése</string>
     <string name="MUSIC_APPLIST_TITLE">Alkalmazások</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Nincs alkalmazás&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Műveletek</string>

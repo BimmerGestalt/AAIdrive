@@ -362,6 +362,10 @@
     <string name="MAP_ACTION_VIEWMAP">Vezi harta întreagă</string>
     <string name="MAP_ACTION_SEARCH">Caută loc</string>
     <string name="MAP_ACTION_CLEARNAV">Curăță navigare</string>
+    <string name="MAP_WIDESCREEN">Hartă widescreen</string>
+    <string name="MAP_INVERT_ZOOM">Inversează direcția de zoom</string>
+    <string name="MAP_TRAFFIC">Afișează trafic</string>
+    <string name="MAP_BUILDINGS">Activează clădiri 3D</string>
     <string name="MUSIC_APPLIST_TITLE">Aplicații</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Nu există aplicații&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acțiuni</string>

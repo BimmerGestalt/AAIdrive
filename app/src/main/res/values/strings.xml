@@ -398,6 +398,10 @@
     <string name="MAP_ACTION_VIEWMAP">View Full Map</string>
     <string name="MAP_ACTION_SEARCH">Search for Place</string>
     <string name="MAP_ACTION_CLEARNAV">Clear Navigation</string>
+    <string name="MAP_WIDESCREEN">Widescreen map</string>
+    <string name="MAP_INVERT_ZOOM">Invert zoom direction</string>
+    <string name="MAP_TRAFFIC">Show traffic</string>
+    <string name="MAP_BUILDINGS">Show 3D buildings</string>
 
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;No Apps&gt;</string>

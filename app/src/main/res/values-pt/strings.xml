@@ -361,6 +361,10 @@
     <string name="MAP_ACTION_VIEWMAP">Ver Mapa Completo</string>
     <string name="MAP_ACTION_SEARCH">Procurar por Local</string>
     <string name="MAP_ACTION_CLEARNAV">Limpar Navigação</string>
+    <string name="MAP_WIDESCREEN">Mapa Panorâmico</string>
+    <string name="MAP_INVERT_ZOOM">Inverter direção do zoom</string>
+    <string name="MAP_TRAFFIC">Mostrar tráfego</string>
+    <string name="MAP_BUILDINGS">Ativar edifícios 3D</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Sem Apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acções</string>
