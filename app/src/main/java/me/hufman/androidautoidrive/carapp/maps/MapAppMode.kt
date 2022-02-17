@@ -3,10 +3,14 @@ package me.hufman.androidautoidrive.carapp.maps
 import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.MutableAppSettingsObserver
 import me.hufman.androidautoidrive.carapp.FullImageConfig
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 
-class MapAppMode(val fullDimensions: RHMIDimensions, val appSettings: AppSettings, val carTransport: MusicAppMode.TRANSPORT_PORTS): FullImageConfig {
+class MapAppMode(val fullDimensions: RHMIDimensions, val appSettings: MutableAppSettingsObserver, val carTransport: MusicAppMode.TRANSPORT_PORTS): FullImageConfig {
+	// toggleable settings
+	val settings = MapToggleSettings.settings
+
 	// the default jpg quality to use based on carTransport
 	val compressQuality: Int = if (carTransport == MusicAppMode.TRANSPORT_PORTS.USB) 65 else 40
 

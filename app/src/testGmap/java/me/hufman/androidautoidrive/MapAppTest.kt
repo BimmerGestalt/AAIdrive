@@ -12,6 +12,8 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.maps.MapPlaceSearch
@@ -69,6 +71,12 @@ class MapAppTest {
 			assertEquals("Entry button goes to menu screen", app.menuView.state.id, it.getAction()?.asHMIAction()?.getTargetState()?.id)
 		}
 		assertNotNull("Scroll listener registered", app.fullImageView.inputList.getSelectAction()?.asRAAction()?.rhmiActionCallback)
+
+		assertEquals(true, mockServer.properties[app.menuView.menuMap.id]!![RHMIProperty.PropertyId.VISIBLE.id])
+		assertEquals(true, mockServer.properties[app.menuView.menuList.id]!![RHMIProperty.PropertyId.VISIBLE.id])
+		assertEquals(true, mockServer.properties[app.menuView.labelSettings.id]!![RHMIProperty.PropertyId.VISIBLE.id])
+		assertEquals(true, mockServer.properties[app.menuView.labelSettings.id]!![RHMIProperty.PropertyId.VISIBLE.id])
+		assertEquals(L.MAP_OPTIONS, mockServer.data[app.menuView.labelSettings.model])
 	}
 
 	@Test

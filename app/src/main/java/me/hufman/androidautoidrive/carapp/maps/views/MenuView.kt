@@ -3,16 +3,18 @@ package me.hufman.androidautoidrive.carapp.maps.views
 import android.util.Log
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.carapp.L
+import me.hufman.androidautoidrive.carapp.SettingsToggleList
 import me.hufman.androidautoidrive.carapp.maps.FrameUpdater
+import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
 
-class MenuView(val state: RHMIState, val interaction: MapInteractionController, val frameUpdater: FrameUpdater) {
+class MenuView(val state: RHMIState, val interaction: MapInteractionController, val frameUpdater: FrameUpdater, val mapAppMode: MapAppMode) {
 	companion object {
 		val TAG = "MapMenu"
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.PlainState &&
 				state.componentsList.filterIsInstance<RHMIComponent.Label>().isNotEmpty() &&   // show whether currently navigating
-				state.componentsList.filterIsInstance<RHMIComponent.List>().size > 1
+				state.componentsList.filterIsInstance<RHMIComponent.List>().size > 2
 		}
 	}
 
@@ -22,7 +24,20 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 	val mapModel = menuMap.getModel()!!
 	val menuList = state.componentsList.filterIsInstance<RHMIComponent.List>()[1]
 
+	val labelSettings: RHMIComponent.Label
+	val menuSettings = state.componentsList.filterIsInstance<RHMIComponent.List>()[2]
+	val settingsView: SettingsToggleList = SettingsToggleList(menuSettings, mapAppMode.appSettings, mapAppMode.settings, 149)
+
+	init {
+		val listIndex = state.componentsList.indexOf(menuSettings)
+		labelSettings = state.componentsList.filterIndexed { index, rhmiComponent ->
+			index < listIndex && rhmiComponent is RHMIComponent.Label
+		}.filterIsInstance<RHMIComponent.Label>().last()
+	}
 	fun initWidgets(stateMap: RHMIState, stateInput: RHMIState) {
+		mapAppMode.appSettings.callback = {
+			settingsView.redraw()
+		}
 		menuList.getModel()?.setValue(rhmiMenuEntries,0, menuEntries.size, menuEntries.size)
 		state.componentsList.forEach {
 			it.setVisible(false)
@@ -60,5 +75,11 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 		}
 		// it seems that menuMap and menuList share the same HMI Action values, so use the same RA handler
 		menuMap.getAction()?.asRAAction()?.rhmiActionCallback = menuList.getAction()?.asRAAction()?.rhmiActionCallback
+
+		// decorate the settings
+		labelSettings.setVisible(true)
+		labelSettings.getModel()?.asRaDataModel()?.value = L.MAP_OPTIONS
+
+		settingsView.initWidgets()
 	}
 }

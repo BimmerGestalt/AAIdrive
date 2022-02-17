@@ -345,6 +345,10 @@
     <string name="MAP_ACTION_VIEWMAP">Toon volledige map</string>
     <string name="MAP_ACTION_SEARCH">Locatie zoeken</string>
     <string name="MAP_ACTION_CLEARNAV">Wis bestemming</string>
+    <string name="MAP_WIDESCREEN">Breedbeeld map</string>
+    <string name="MAP_INVERT_ZOOM">Zoomrichting omkeren</string>
+    <string name="MAP_TRAFFIC">Toon verkeer</string>
+    <string name="MAP_BUILDINGS">3D-gebouwen inschakelen</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Geen apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acties</string>

@@ -37,14 +37,6 @@ class NotificationSettings(val capabilities: Map<String, String?>, val btStatus:
 		return popupSettings + soundSettings + readoutSettings
 	}
 
-	fun toggleSetting(setting: AppSettings.KEYS) {
-		appSettings[setting] = (!appSettings[setting].toBoolean()).toString()
-	}
-
-	fun isChecked(setting: AppSettings.KEYS): Boolean {
-		return appSettings[setting].toBoolean()
-	}
-
 	fun shouldPopup(passengerSeated: Boolean): Boolean {
 		return appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP].toBoolean() &&
 			(appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER].toBoolean() ||

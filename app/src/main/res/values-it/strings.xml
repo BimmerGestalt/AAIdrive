@@ -363,6 +363,10 @@
     <string name="MAP_ACTION_VIEWMAP">Visualizza la mappa fullscreen</string>
     <string name="MAP_ACTION_SEARCH">Cerca un luogo</string>
     <string name="MAP_ACTION_CLEARNAV">Cancella la navigazione</string>
+    <string name="MAP_WIDESCREEN">Mappa a tutto schermo</string>
+    <string name="MAP_INVERT_ZOOM">Inverti direzione zoom</string>
+    <string name="MAP_TRAFFIC">Mostra il traffico</string>
+    <string name="MAP_BUILDINGS">Abilita edifici 3D</string>
     <string name="MUSIC_APPLIST_TITLE">App</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Nessuna App</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Azioni</string>

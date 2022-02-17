@@ -13,15 +13,17 @@ import kotlinx.coroutines.withContext
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BooleanLiveSetting
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.calendar.CalendarEvent
 import me.hufman.androidautoidrive.phoneui.NestedListView
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundArrayAdapter
 import me.hufman.androidautoidrive.phoneui.viewmodels.CalendarEventsModel
-import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
+import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 
 class CalendarEventsFragment: Fragment() {
-	val calendarEventsModel by viewModels<CalendarEventsModel> { CalendarEventsModel.Factory(requireContext().applicationContext) }
+	val calendarEventsModel by activityViewModels<CalendarEventsModel> { CalendarEventsModel.Factory(requireContext().applicationContext) }
+	val displayedEvents = ArrayList<CalendarEvent>()
 	val eventsAdapter by lazy {
-		DataBoundArrayAdapter(requireContext(), R.layout.calendarevent_listitem, calendarEventsModel.upcomingEvents, null)
+		DataBoundArrayAdapter(requireContext(), R.layout.calendarevent_listitem, displayedEvents, null)
 	}
 	val calendarDetailedEventsSetting by lazy {BooleanLiveSetting(requireContext().applicationContext, AppSettings.KEYS.CALENDAR_DETAILED_EVENTS)}
 	val calendarIgnoreVisibilitySetting by lazy {BooleanLiveSetting(requireContext().applicationContext, AppSettings.KEYS.CALENDAR_IGNORE_VISIBILITY)}
@@ -55,6 +57,9 @@ class CalendarEventsFragment: Fragment() {
 			withContext(Dispatchers.IO) {
 				calendarEventsModel.update()
 			}
+			// but the ListView needs to be updated on the UI thread
+			displayedEvents.clear()
+			displayedEvents.addAll(calendarEventsModel.upcomingEvents)
 			eventsAdapter.notifyDataSetChanged()
 		}
 	}
