@@ -302,6 +302,10 @@
     <string name="MAP_ACTION_VIEWMAP">Plein Ecran</string>
     <string name="MAP_ACTION_SEARCH">Rechercher un endroit</string>
     <string name="MAP_ACTION_CLEARNAV">Effacer Itinéraire</string>
+    <string name="MAP_WIDESCREEN">Carte Elargie</string>
+    <string name="MAP_INVERT_ZOOM">Inverser la direction du zoom</string>
+    <string name="MAP_TRAFFIC">Afficher la circulation</string>
+    <string name="MAP_BUILDINGS">Activer les bâtiments 3D</string>
     <string name="MUSIC_APPLIST_TITLE">Applications</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Liste Vide&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Actions</string>

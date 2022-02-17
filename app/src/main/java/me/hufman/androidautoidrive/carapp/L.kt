@@ -39,6 +39,11 @@ object L {
 	val MAP_ACTION_VIEWMAP by StringResourceDelegate("View Full Map")
 	val MAP_ACTION_SEARCH by StringResourceDelegate("Search for Place")
 	val MAP_ACTION_CLEARNAV by StringResourceDelegate("Clear Navigation")
+	val MAP_OPTIONS = NOTIFICATION_OPTIONS
+	val MAP_WIDESCREEN by StringResourceDelegate("Widescreen map")
+	val MAP_INVERT_ZOOM by StringResourceDelegate("Invert zoom direction")
+	val MAP_TRAFFIC by StringResourceDelegate("Show traffic")
+	val MAP_BUILDINGS by StringResourceDelegate("Show 3D buildings")
 
 	val MUSIC_APPLIST_TITLE by StringResourceDelegate("Apps")
 	val MUSIC_APPLIST_EMPTY by StringResourceDelegate("<No Apps>")

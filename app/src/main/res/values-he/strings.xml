@@ -261,6 +261,10 @@
     <string name="MAP_ACTION_VIEWMAP">צפה במפה מלאה</string>
     <string name="MAP_ACTION_SEARCH">חפש מקום</string>
     <string name="MAP_ACTION_CLEARNAV">נקה ניווט</string>
+    <string name="MAP_WIDESCREEN">מפה במסך רחב</string>
+    <string name="MAP_INVERT_ZOOM">הפוך כיוון זום</string>
+    <string name="MAP_TRAFFIC">הצג תנועה</string>
+    <string name="MAP_BUILDINGS">הצג בניינים 3D</string>
     <string name="MUSIC_APPLIST_TITLE">אפליקציות</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">פעולות</string>
     <string name="MUSIC_BROWSE_TITLE">עיין</string>

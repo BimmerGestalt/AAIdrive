@@ -363,6 +363,10 @@
     <string name="MAP_ACTION_VIEWMAP">Volle Karte zeigen</string>
     <string name="MAP_ACTION_SEARCH">Ort suchen</string>
     <string name="MAP_ACTION_CLEARNAV">Navigation leeren</string>
+    <string name="MAP_WIDESCREEN">Breitbild (Widescreen) Karte</string>
+    <string name="MAP_INVERT_ZOOM">Zoom-Richtung umkehren</string>
+    <string name="MAP_TRAFFIC">Verkehr anzeigen</string>
+    <string name="MAP_BUILDINGS">3D-Gebäude aktivieren</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Keine Apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Aktionen</string>

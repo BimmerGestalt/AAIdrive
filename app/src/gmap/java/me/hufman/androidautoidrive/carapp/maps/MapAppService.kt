@@ -33,7 +33,7 @@ class MapAppService: CarAppService() {
 		val carLocationProvider = CombinedLocationProvider(
 				appSettings, AndroidLocationProvider.getInstance(this), CdsLocationProvider(cdsData)
 		)
-		val mapAppMode = MapAppMode(RHMIDimensions.create(carInformation.capabilities), AppSettingsViewer(), MusicAppMode.TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port) ?: MusicAppMode.TRANSPORT_PORTS.BT)
+		val mapAppMode = MapAppMode(RHMIDimensions.create(carInformation.capabilities), MutableAppSettingsReceiver(this, handler), MusicAppMode.TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port) ?: MusicAppMode.TRANSPORT_PORTS.BT)
 		val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.fullDimensions.visibleWidth, mapAppMode.fullDimensions.visibleHeight, mapAppMode.compressQuality)
 		this.mapScreenCapture = mapScreenCapture
 		val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(applicationContext, mapScreenCapture.imageCapture, 250)

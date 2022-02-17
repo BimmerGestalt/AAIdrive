@@ -14,6 +14,7 @@ import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.carapp.FullImageInteraction
 import me.hufman.androidautoidrive.carapp.FullImageView
 import me.hufman.androidautoidrive.carapp.InputState
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.maps.views.MenuView
 import me.hufman.androidautoidrive.carapp.maps.views.PlaceSearchView
 import me.hufman.androidautoidrive.maps.MapPlaceSearch
@@ -66,7 +67,7 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 		// figure out the components to use
 		Log.i(TAG, "Locating components to use")
 		val unclaimedStates = LinkedList(carApp.states.values)
-		menuView = MenuView(unclaimedStates.removeFirst { MenuView.fits(it) }, interaction, frameUpdater)
+		menuView = MenuView(unclaimedStates.removeFirst { MenuView.fits(it) }, interaction, frameUpdater, mapAppMode)
 		fullImageView = FullImageView(unclaimedStates.removeFirst { FullImageView.fits(it) }, "Map", mapAppMode, object : FullImageInteraction {
 			override fun navigateUp() {
 				interaction.zoomIn(1)
@@ -126,10 +127,20 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 			Log.w(TAG, "Received rhmi_onActionEvent: handle=$handle ident=$ident actionId=$actionId args=$args")
 			try {
 				app?.actions?.get(actionId)?.asRAAction()?.rhmiActionCallback?.onActionEvent(args)
+				synchronized(server!!) {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
+				}
+			} catch (e: RHMIActionAbort) {
+				// Action handler requested that we don't claim success
+				synchronized(server!!) {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, false)
+				}
 			} catch (e: Exception) {
 				Log.e(me.hufman.androidautoidrive.carapp.notifications.TAG, "Exception while calling onActionEvent handler!", e)
+				synchronized(server!!) {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
+				}
 			}
-			server?.rhmi_ackActionEvent(handle, actionId, 1, true)
 		}
 
 		override fun rhmi_onHmiEvent(handle: Int?, ident: String?, componentId: Int?, eventId: Int?, args: MutableMap<*, *>?) {

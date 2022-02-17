@@ -311,6 +311,10 @@
     <string name="MAP_ACTION_VIEWMAP">完全な地図を表示</string>
     <string name="MAP_ACTION_SEARCH">場所を検索</string>
     <string name="MAP_ACTION_CLEARNAV">ナビゲーションをクリア</string>
+    <string name="MAP_WIDESCREEN">ワイドスクリーンマップ</string>
+    <string name="MAP_INVERT_ZOOM">ズーム方向を反転</string>
+    <string name="MAP_TRAFFIC">トラフィックを表示</string>
+    <string name="MAP_BUILDINGS">3D建物を有効にする</string>
     <string name="MUSIC_APPLIST_TITLE">アプリ</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;アプリなし&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">アクション</string>
