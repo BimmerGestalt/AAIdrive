@@ -95,7 +95,7 @@ object L {
 			context.createConfigurationContext(localeConf)
 		}
 
-		loadedResources = thisContext.applicationContext.resources
+		loadedResources = thisContext.resources
 	}
 }
 
