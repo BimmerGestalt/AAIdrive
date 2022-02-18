@@ -119,6 +119,8 @@
     <string name="musicAppNotes_spotify_backgroundDisabled">Не удалось открыть Spotify. Пожалуйста, убедитесь, что Spotify разрешено стартовать из фона</string>
     <string name="lbl_navigationpage_address">Укажите адрес для запуска системы навигации автомобиля с вашего телефона</string>
     <string name="lbl_navigationpage_intent">При подключении навигационная система Вашего автомобиля будет отображаться, как один из вариантов, если есть выбор других приложений для навигации</string>
+    <string name="lbl_navigation_car_status">Автонавигация:</string>
+    <string name="lbl_navigation_custom_status">Пользовательская карта:</string>
     <string name="lbl_navigationstatus_active">Сейчас движемся к</string>
     <string name="lbl_navigationstatus_inactive">В настоящее время нет навигации</string>
     <string name="lbl_navigation_prefer_custom">Предпочесть пользовательскую навигацию</string>
@@ -355,6 +357,7 @@
     <string name="CALENDAR_NAVIGATE">&amp;Навигация</string>
     <string name="MAP_ACTION_VIEWMAP">Посмотреть полную карту</string>
     <string name="MAP_ACTION_SEARCH">Поиск места</string>
+    <string name="MAP_ACTION_RECALC_NAV">Пересчитать навигацию</string>
     <string name="MAP_ACTION_CLEARNAV">Удалить маршрут</string>
     <string name="MAP_WIDESCREEN">Широкоэкранные карты</string>
     <string name="MAP_INVERT_ZOOM">Инвертировать масштаб</string>
