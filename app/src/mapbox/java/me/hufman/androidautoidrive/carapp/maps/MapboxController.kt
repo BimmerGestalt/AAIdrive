@@ -104,17 +104,20 @@ class MapboxController(private val context: Context,
 	}
 
 	override fun zoomIn(steps: Int) {
+		mapAppMode.startInteraction()
 		currentZoom = min(20f, currentZoom + steps)
 		updateCamera()
 	}
 
 	override fun zoomOut(steps: Int) {
+		mapAppMode.startInteraction()
 		currentZoom = max(0f, currentZoom - steps)
 		updateCamera()
 	}
 
 	private fun initCamera() {
 		// set the camera to the starting position
+		mapAppMode.startInteraction()
 		val location = currentLocation
 		if (location != null) {
 			val cameraPosition = CameraOptions.Builder()
@@ -138,6 +141,7 @@ class MapboxController(private val context: Context,
 	}
 
 	override fun navigateTo(dest: LatLong) {
+		mapAppMode.startInteraction(NAVIGATION_MAP_STARTZOOM_TIME + 4000)
 		navController.navigateTo(dest)
 		animateNavigation()
 	}

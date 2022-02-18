@@ -122,12 +122,14 @@ class GMapsController(private val context: Context,
 
 	override fun zoomIn(steps: Int) {
 		Log.i(TAG, "Zooming map in $steps steps")
+		mapAppMode.startInteraction()
 		zoomingCamera = true
 		currentZoom = min(20f, currentZoom + steps)
 		updateCamera()
 	}
 	override fun zoomOut(steps: Int) {
 		Log.i(TAG, "Zooming map out $steps steps")
+		mapAppMode.startInteraction()
 		zoomingCamera = true
 		currentZoom = max(0f, currentZoom - steps)
 		updateCamera()
@@ -135,6 +137,7 @@ class GMapsController(private val context: Context,
 
 	private fun initCamera() {
 		// set the camera to the starting position
+		mapAppMode.startInteraction()
 		val location = currentLocation
 		if (location != null) {
 			val cameraLocation = LatLng(location.latitude, location.longitude)
@@ -157,6 +160,7 @@ class GMapsController(private val context: Context,
 
 	override fun navigateTo(dest: LatLong) {
 		Log.i(TAG, "Beginning navigation to $dest")
+		mapAppMode.startInteraction(NAVIGATION_MAP_STARTZOOM_TIME + 4000)
 		// clear out previous nav
 		projection?.map?.clear()
 		// show new nav destination icon

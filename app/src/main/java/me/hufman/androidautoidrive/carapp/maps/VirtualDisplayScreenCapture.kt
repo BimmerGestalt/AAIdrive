@@ -11,18 +11,30 @@ import android.os.Looper
 import android.util.Log
 import java.io.ByteArrayOutputStream
 
+interface ScreenCaptureConfig {
+	val maxWidth: Int
+	val maxHeight: Int
+	val compressFormat: Bitmap.CompressFormat
+	val compressQuality: Int
+}
+
+data class StaticScreenCaptureConfig(override val maxWidth: Int,
+                                     override val maxHeight: Int,
+                                     override var compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
+                                     override var compressQuality: Int = 65  //quality 65 is fine, and you get readable small texts, below that it was sometimes hard to read
+): ScreenCaptureConfig
+
 /**
  * Generates images from an ImageReader, handily resized and compressed to JPG
  * VirtualDisplayScreenCapture.createVirtualDisplay can take this imageCapture and render to it
  */
-class VirtualDisplayScreenCapture(val imageCapture: ImageReader, val bitmapConfig: Bitmap.Config, val compressFormat: Bitmap.CompressFormat, var compressQuality: Int = 65) {
+class VirtualDisplayScreenCapture(val imageCapture: ImageReader, val bitmapConfig: Bitmap.Config, val screenCaptureConfig: ScreenCaptureConfig) {
 	companion object {
-		fun build(width: Int, height: Int, compressQuality: Int = 65): VirtualDisplayScreenCapture {
+		fun build(config: ScreenCaptureConfig): VirtualDisplayScreenCapture {
 			return VirtualDisplayScreenCapture(
-					ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2),
+					ImageReader.newInstance(config.maxWidth, config.maxHeight, PixelFormat.RGBA_8888, 2),
 					Bitmap.Config.ARGB_8888,
-					Bitmap.CompressFormat.JPEG,
-					compressQuality)
+					config)
 		}
 
 		fun createVirtualDisplay(context: Context, imageCapture: ImageReader, dpi:Int = 100, name: String = "IDriveVirtualDisplay"): VirtualDisplay {
@@ -115,7 +127,7 @@ class VirtualDisplayScreenCapture(val imageCapture: ImageReader, val bitmapConfi
 	fun compressBitmap(bitmap: Bitmap): ByteArray {
 		// send to car
 		outputFile.reset()
-		bitmap.compress(compressFormat, compressQuality, outputFile)  //quality 65 is fine, and you get readable small texts, below that it was sometimes hard to read
+		bitmap.compress(screenCaptureConfig.compressFormat, screenCaptureConfig.compressQuality, outputFile)
 		return outputFile.toByteArray()
 	}
 
