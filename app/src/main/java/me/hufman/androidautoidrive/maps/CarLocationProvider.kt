@@ -30,6 +30,10 @@ data class LatLong(val latitude: Double, val longitude: Double): Serializable {
 		val longDistance = abs(other.longitude - this.longitude) * 111.320 * cos(latRadians)
 		return sqrt(latDistance*latDistance + longDistance*longDistance)
 	}
+
+	override fun toString(): String {
+		return "%.6f,%.6f".format(latitude, longitude)
+	}
 }
 data class CarHeading(val heading: Float, val speed: Float): Serializable
 

@@ -130,6 +130,8 @@
 
     <string name="lbl_navigationpage_address">Paste in an address to start the car\'s navigation system from your phone</string>
     <string name="lbl_navigationpage_intent">While connected, your car\'s navigation system will show up as an option when other apps\' Navigation buttons open an app chooser</string>
+    <string name="lbl_navigation_car_status">Car Navigation:</string>
+    <string name="lbl_navigation_custom_status">Custom Map:</string>
     <string name="lbl_navigationstatus_active">Currently navigating to</string>
     <string name="lbl_navigationstatus_inactive">Not currently navigating</string>
     <string name="lbl_navigation_prefer_custom">Prefer custom map navigation</string>

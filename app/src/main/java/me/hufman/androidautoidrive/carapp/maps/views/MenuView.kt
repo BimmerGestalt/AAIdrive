@@ -18,7 +18,9 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 		}
 	}
 
-	val menuEntries = listOf(L.MAP_ACTION_VIEWMAP, L.MAP_ACTION_SEARCH, L.MAP_ACTION_RECALC_NAV, L.MAP_ACTION_CLEARNAV)
+	val alwaysMenuEntries = listOf(L.MAP_ACTION_VIEWMAP, L.MAP_ACTION_SEARCH)
+	val duringNavMenuEntries = listOf(L.MAP_ACTION_RECALC_NAV, L.MAP_ACTION_CLEARNAV)
+	val menuEntries = ArrayList<String>()
 	val rhmiMenuEntries = object: RHMIModel.RaListModel.RHMIListAdapter<String>(3, menuEntries) {}
 	val menuMap = state.componentsList.filterIsInstance<RHMIComponent.List>()[0]
 	val mapModel = menuMap.getModel()!!
@@ -38,13 +40,14 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 		mapAppMode.appSettings.callback = {
 			settingsView.redraw()
 		}
-		menuList.getModel()?.setValue(rhmiMenuEntries,0, menuEntries.size, menuEntries.size)
 		state.componentsList.forEach {
 			it.setVisible(false)
 		}
+		redrawCommands()
 
 		state.focusCallback = FocusCallback { focused ->
 			if (focused) {
+				redrawCommands()
 				Log.i(TAG, "Showing map on menu")
 				frameUpdater.showWindow(350, 90, mapModel)
 			} else {
@@ -75,6 +78,9 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 			if (listIndex == 3) {
 				// clear navigation
 				interaction.stopNavigation()
+				// the interaction is async, but we trust that it will clear the destination so we can redraw to hide the commands
+				mapAppMode.currentNavDestination = null
+				redrawCommands()
 			}
 		}
 		// it seems that menuMap and menuList share the same HMI Action values, so use the same RA handler
@@ -85,5 +91,14 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 		labelSettings.getModel()?.asRaDataModel()?.value = L.MAP_OPTIONS
 
 		settingsView.initWidgets()
+	}
+
+	fun redrawCommands() {
+		menuEntries.clear()
+		menuEntries.addAll(alwaysMenuEntries)
+		if (mapAppMode.currentNavDestination != null) {
+			menuEntries.addAll(duringNavMenuEntries)
+		}
+		menuList.getModel()?.setValue(rhmiMenuEntries,0, menuEntries.size, menuEntries.size)
 	}
 }

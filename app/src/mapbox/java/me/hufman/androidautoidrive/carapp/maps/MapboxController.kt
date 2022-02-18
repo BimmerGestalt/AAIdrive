@@ -23,7 +23,8 @@ import kotlin.math.min
 class MapboxController(private val context: Context,
                        private val carLocationProvider: CarLocationProvider,
                        private val virtualDisplay: VirtualDisplay,
-                       private val appSettings: AppSettingsObserver): MapInteractionController {
+                       private val appSettings: AppSettingsObserver,
+                       private val mapAppMode: MapAppMode): MapInteractionController {
 
 	private val SHUTDOWN_WAIT_INTERVAL = 120000L   // milliseconds of inactivity before shutting down map
 
@@ -32,6 +33,7 @@ class MapboxController(private val context: Context,
 
 	val navController = MapboxNavController.getInstance(carLocationProvider) {
 		drawNavigation()
+		mapAppMode.currentNavDestination = it.currentNavDestination
 	}
 	private val mapboxLocationSource = MapboxLocationSource()
 	var currentLocation: Location? = null

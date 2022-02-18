@@ -7,8 +7,10 @@ import androidx.test.internal.runner.junit4.statement.UiThreadStatement.runOnUiT
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.android.gms.maps.model.LatLng
 import com.nhaarman.mockito_kotlin.*
+import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.carapp.maps.*
+import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.maps.CarLocationProvider
 import me.hufman.androidautoidrive.maps.GMapsPlaceSearch
 import me.hufman.androidautoidrive.maps.LatLong
@@ -56,7 +58,8 @@ class InstrumentedTestGMaps {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 		val imageCapture = VirtualDisplayScreenCapture.build(1000, 400)
 		val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(getContext(), imageCapture.imageCapture)
-		val mapController = GMapsController(appContext, locationProvider, virtualDisplay, MutableAppSettingsReceiver(appContext))
+		val mapAppMode = MapAppMode(RHMIDimensions.create(emptyMap()), MutableAppSettingsReceiver(appContext), MusicAppMode.TRANSPORT_PORTS.BT)
+		val mapController = GMapsController(appContext, locationProvider, virtualDisplay, MutableAppSettingsReceiver(appContext), mapAppMode)
 		runOnUiThread {
 			mapController.showMap()
 		}

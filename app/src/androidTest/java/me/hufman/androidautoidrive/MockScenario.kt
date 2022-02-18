@@ -17,7 +17,6 @@ import me.hufman.androidautoidrive.music.MusicSessions
 import me.hufman.androidautoidrive.phoneui.MusicAppDiscoveryThread
 import me.hufman.androidautoidrive.phoneui.viewmodels.*
 import org.mockito.Mockito
-import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.mockito.stubbing.OngoingStubbing
 import java.util.*
@@ -143,7 +142,7 @@ class MockScenario(context: Context) {
 	val navigationStatusModel = mock<NavigationStatusModel> {
 		on {isConnected} doReturn true
 		on {query} doAnswer {MutableLiveData("")}
-		on {navigationStatus} doReturnContexted {getString(R.string.lbl_navigationstatus_inactive)}
+		on {carNavigationStatus} doReturnContexted {getString(R.string.lbl_navigationstatus_inactive)}
 		on {searchStatus} doReturnMutableContexted {getString(R.string.lbl_navigation_listener_pending)}
 		on {searchFailed} doAnswer {MutableLiveData(false)}
 	}
