@@ -222,6 +222,12 @@ class GMapsController(private val context: Context, private val carLocationProvi
 		}
 	}
 
+	override fun recalcNavigation() {
+		navController.currentNavDestination?.let {
+			navController.navigateTo(it)
+		}
+	}
+
 	override fun stopNavigation() {
 		// clear out previous nav
 		navController.stopNavigation()

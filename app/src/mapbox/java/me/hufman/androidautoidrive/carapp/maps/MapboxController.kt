@@ -140,6 +140,12 @@ class MapboxController(private val context: Context,
 		animateNavigation()
 	}
 
+	override fun recalcNavigation() {
+		navController.currentNavDestination?.let {
+			navController.navigateTo(it)
+		}
+	}
+
 	override fun stopNavigation() {
 		navController.stopNavigation()
 	}

@@ -18,7 +18,7 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 		}
 	}
 
-	val menuEntries = listOf(L.MAP_ACTION_VIEWMAP, L.MAP_ACTION_SEARCH, L.MAP_ACTION_CLEARNAV)
+	val menuEntries = listOf(L.MAP_ACTION_VIEWMAP, L.MAP_ACTION_SEARCH, L.MAP_ACTION_RECALC_NAV, L.MAP_ACTION_CLEARNAV)
 	val rhmiMenuEntries = object: RHMIModel.RaListModel.RHMIListAdapter<String>(3, menuEntries) {}
 	val menuMap = state.componentsList.filterIsInstance<RHMIComponent.List>()[0]
 	val mapModel = menuMap.getModel()!!
@@ -68,7 +68,11 @@ class MenuView(val state: RHMIState, val interaction: MapInteractionController, 
 			}
 			Log.i(TAG, "User pressed menu item $listIndex ${menuEntries.getOrNull(listIndex)}, setting target ${menuList.getAction()?.asHMIAction()?.getTargetModel()?.id} to $destStateId")
 			menuList.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = destStateId
-			if (listIndex == 2) {
+			if (listIndex== 2) {
+				// recalculate nav
+				interaction.recalcNavigation()
+			}
+			if (listIndex == 3) {
 				// clear navigation
 				interaction.stopNavigation()
 			}

@@ -38,6 +38,7 @@ object L {
 
 	val MAP_ACTION_VIEWMAP by StringResourceDelegate("View Full Map")
 	val MAP_ACTION_SEARCH by StringResourceDelegate("Search for Place")
+	val MAP_ACTION_RECALC_NAV by StringResourceDelegate("Recalculate Navigation")
 	val MAP_ACTION_CLEARNAV by StringResourceDelegate("Clear Navigation")
 	val MAP_OPTIONS = NOTIFICATION_OPTIONS
 	val MAP_WIDESCREEN by StringResourceDelegate("Widescreen map")
