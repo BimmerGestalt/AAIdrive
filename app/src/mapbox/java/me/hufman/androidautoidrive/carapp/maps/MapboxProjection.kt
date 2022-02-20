@@ -10,21 +10,23 @@ import android.view.Display
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import com.mapbox.maps.MapView
+import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
-import com.mapbox.maps.plugin.locationcomponent.LocationProvider
 import com.mapbox.maps.plugin.locationcomponent.location
 import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
 import io.bimmergestalt.idriveconnectkit.SubsetRHMIDimensions
 import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.maps.LatLong
+import me.hufman.androidautoidrive.utils.TimeUtils
 import me.hufman.androidautoidrive.utils.Utils
 
 @SuppressLint("Lifecycle")
 class MapboxProjection(val parentContext: Context, display: Display, private val appSettings: AppSettingsObserver,
-                       private val locationProvider: LocationProvider): Presentation(parentContext, display) {
+                       private val locationProvider: MapboxLocationSource): Presentation(parentContext, display) {
 
 	val TAG = "MapboxProjection"
 	val map by lazy { findViewById<MapView>(R.id.mapView) }
@@ -52,11 +54,9 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 	override fun onStart() {
 		super.onStart()
 		Log.i(TAG, "Projection Start")
-		map.location.setLocationProvider(locationProvider)
-		map.location.enabled = true
+		map.onStart()
 		// watch for map settings
 		appSettings.callback = {applySettings()}
-		map.onStart()
 		applySettings()
 		mapListener?.run()
 	}
@@ -66,6 +66,20 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 		// so update the map's margin to match
 		val margin = (fullDimensions.appWidth - sidebarDimensions.appWidth) / 2 + 30
 		map.setPadding(margin, fullDimensions.paddingTop, margin, 0)
+
+		val location = this.locationProvider.location
+		val daytime = location == null || TimeUtils.getDayMode(LatLong(location.latitude, location.longitude))
+		val style = if (appSettings[AppSettings.KEYS.MAP_TRAFFIC].toBoolean()) {
+			if (daytime) Style.TRAFFIC_DAY else Style.TRAFFIC_NIGHT
+		} else {
+			Style.MAPBOX_STREETS
+		}
+		map.getMapboxMap().loadStyleUri(style) {
+			map.location.updateSettings {
+				map.location.setLocationProvider(locationProvider)
+				map.location.enabled = true
+			}
+		}
 	}
 
 	fun drawNavigation(navController: MapboxNavController) {
