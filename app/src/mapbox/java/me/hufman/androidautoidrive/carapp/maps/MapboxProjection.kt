@@ -5,6 +5,7 @@ import android.app.Presentation
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Point
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.Display
@@ -31,11 +32,38 @@ import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.utils.TimeUtils
 import me.hufman.androidautoidrive.utils.Utils
 
+data class MapboxSettings(
+		val mapDaytime: Boolean,
+		val mapTraffic: Boolean,
+		val mapBuildings: Boolean,
+) {
+	companion object {
+		fun build(appSettings: AppSettings, location: LatLong?): MapboxSettings {
+			val daytime = location == null || TimeUtils.getDayMode(location)
+			return MapboxSettings(
+					daytime,
+					appSettings[AppSettings.KEYS.MAP_TRAFFIC].toBoolean(),
+					appSettings[AppSettings.KEYS.MAP_BUILDINGS].toBoolean(),
+			)
+		}
+	}
+
+	val mapStyleUri: String
+		get() = if (mapTraffic) {
+			if (mapDaytime) Style.TRAFFIC_DAY else Style.TRAFFIC_NIGHT
+		} else {
+			Style.MAPBOX_STREETS
+		}
+}
+
+private fun Location.toLatLong(): LatLong = LatLong(this.latitude, this.longitude)
+
 @SuppressLint("Lifecycle")
 class MapboxProjection(val parentContext: Context, display: Display, private val appSettings: AppSettingsObserver,
                        private val locationProvider: MapboxLocationSource): Presentation(parentContext, display) {
 
 	val TAG = "MapboxProjection"
+	var appliedSettings: MapboxSettings? = null      // last applied settings
 	val map by lazy { findViewById<MapView>(R.id.mapView) }
 	val iconAnnotations by lazy { map.annotations.createPointAnnotationManager() }
 	val lineAnnotations by lazy { map.annotations.createPolylineAnnotationManager() }
@@ -74,22 +102,21 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 		val margin = (fullDimensions.appWidth - sidebarDimensions.appWidth) / 2 + 30
 		map.setPadding(margin, fullDimensions.paddingTop, margin, 0)
 
-		val location = this.locationProvider.location
-		val daytime = location == null || TimeUtils.getDayMode(LatLong(location.latitude, location.longitude))
-		val style = if (appSettings[AppSettings.KEYS.MAP_TRAFFIC].toBoolean()) {
-			if (daytime) Style.TRAFFIC_DAY else Style.TRAFFIC_NIGHT
-		} else {
-			Style.MAPBOX_STREETS
-		}
-		map.getMapboxMap().loadStyleUri(style) {
-			map.location.updateSettings {
-				map.location.setLocationProvider(locationProvider)
-				map.location.enabled = true
-			}
+		// AppSettings updates every ~10s from cachedCds updates
+		// so check if anything relevant has changed before redrawing map
+		val currentSettings = MapboxSettings.build(appSettings, this.locationProvider.location?.toLatLong())
+		if (appliedSettings != currentSettings) {
+			map.getMapboxMap().loadStyleUri(currentSettings.mapStyleUri) {
+				map.location.updateSettings {
+					map.location.setLocationProvider(locationProvider)
+					map.location.enabled = true
+				}
 
-			if (appSettings[AppSettings.KEYS.MAP_BUILDINGS].toBoolean()) {
-				drawBuildings(it)
+				if (appSettings[AppSettings.KEYS.MAP_BUILDINGS].toBoolean()) {
+					drawBuildings(it)
+				}
 			}
+			appliedSettings = currentSettings
 		}
 	}
 
