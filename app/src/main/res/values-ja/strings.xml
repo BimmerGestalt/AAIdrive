@@ -71,7 +71,7 @@
     <string name="lbl_map_invert_zoom">ズーム方向を反転</string>
     <string name="lbl_map_tilt">傾斜マップ</string>
     <string name="lbl_map_traffic">トラフィックを表示</string>
-    <string name="lbl_gmap_buildings">3D建物を有効にする</string>
+    <string name="lbl_map_buildings">3D建物を有効にする</string>
     <string name="gmapStyleLabel">マップスタイル</string>
     <string name="lbl_musicpage">お使いの携帯電話の音楽アプリは車内のメディアソースとして選択できます</string>
     <string name="lbl_music_apps">音楽アプリ</string>

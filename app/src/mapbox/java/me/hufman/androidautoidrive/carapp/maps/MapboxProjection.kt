@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.carapp.maps
 import android.annotation.SuppressLint
 import android.app.Presentation
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Point
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,12 @@ import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
+import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.eq
+import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.get
+import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.literal
+import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.layers.generated.FillExtrusionLayer
+import com.mapbox.maps.extension.style.light.generated.getLight
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
@@ -79,7 +86,26 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 				map.location.setLocationProvider(locationProvider)
 				map.location.enabled = true
 			}
+
+			if (appSettings[AppSettings.KEYS.MAP_BUILDINGS].toBoolean()) {
+				drawBuildings(it)
+			}
 		}
+	}
+
+	fun drawBuildings(style: Style) {
+		val fillExtrusionLayer = FillExtrusionLayer("3d-buildings", "composite")
+		fillExtrusionLayer.sourceLayer("building")
+		fillExtrusionLayer.filter(eq(get("extrude"), literal("true")))
+		fillExtrusionLayer.minZoom(15.0)
+		fillExtrusionLayer.fillExtrusionColor(Color.parseColor("#aaaaaa"))
+		fillExtrusionLayer.fillExtrusionHeight(get("height"))
+		fillExtrusionLayer.fillExtrusionBase(get("min_height"))
+		fillExtrusionLayer.fillExtrusionOpacity(0.6)
+		style.addLayer(fillExtrusionLayer)
+
+		val light = style.getLight()
+		light.position(1.15, 210.0, 30.0)
 	}
 
 	fun drawNavigation(navController: MapboxNavController) {

@@ -86,7 +86,7 @@
     <string name="lbl_map_invert_zoom">Nagyítás irányának megfordítása</string>
     <string name="lbl_map_tilt">Térkép döntése</string>
     <string name="lbl_map_traffic">Forgalom mutatása</string>
-    <string name="lbl_gmap_buildings">Épületek 3D megjelenítése</string>
+    <string name="lbl_map_buildings">Épületek 3D megjelenítése</string>
     <string name="gmapStyleLabel">Térkép stílus</string>
     <string name="lbl_musicpage">A telefonodon lévő zene alkalmazások kiválaszthatóak mint média forrás az autóban</string>
     <string name="lbl_music_apps">Zene applikációk</string>

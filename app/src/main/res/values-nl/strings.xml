@@ -78,7 +78,7 @@
     <string name="lbl_map_invert_zoom">Zoomrichting omkeren</string>
     <string name="lbl_map_tilt">Kaart kantelen</string>
     <string name="lbl_map_traffic">Toon verkeer</string>
-    <string name="lbl_gmap_buildings">3D-gebouwen inschakelen</string>
+    <string name="lbl_map_buildings">3D-gebouwen inschakelen</string>
     <string name="gmapStyleLabel">Map stijl</string>
     <string name="lbl_musicpage">De muziek-apps van uw telefoon zijn selecteerbaar als mediabronnen in de auto</string>
     <string name="lbl_music_apps">Muziek apps</string>

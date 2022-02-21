@@ -91,7 +91,7 @@
     <string name="lbl_map_invert_zoom">Инвертировать масштаб</string>
     <string name="lbl_map_tilt">Наклонить карту</string>
     <string name="lbl_map_traffic">Показывать пробки</string>
-    <string name="lbl_gmap_buildings">Включить 3D здания</string>
+    <string name="lbl_map_buildings">Включить 3D здания</string>
     <string name="gmapStyleLabel">Стиль карты</string>
     <string name="lbl_musicpage">Ваши музыкальные приложения на телефоне выбираются в качестве медиа источника в автомобиле</string>
     <string name="lbl_music_apps">Музыкальные приложения</string>

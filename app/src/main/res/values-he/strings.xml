@@ -71,7 +71,7 @@
     <string name="lbl_map_invert_zoom">הפוך כיוון זום</string>
     <string name="lbl_map_tilt">הטיית מפה</string>
     <string name="lbl_map_traffic">הצג תנועה</string>
-    <string name="lbl_gmap_buildings">הצג בניינים 3D</string>
+    <string name="lbl_map_buildings">הצג בניינים 3D</string>
     <string name="gmapStyleLabel">סגנון מפה</string>
     <string name="lbl_musicpage">אפליקציות המוזיקה בטלפון שלך נבחרו כ-מקור השמעה ברכב</string>
     <string name="lbl_music_apps">מוזיקה: אפליקציות</string>

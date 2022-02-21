@@ -75,7 +75,7 @@
     <string name="lbl_map_invert_zoom">Invertir la dirección del zoom</string>
     <string name="lbl_map_tilt">Inclinar mapa</string>
     <string name="lbl_map_traffic">Mostrar el tráfico</string>
-    <string name="lbl_gmap_buildings">Habilitar edificios 3D</string>
+    <string name="lbl_map_buildings">Habilitar edificios 3D</string>
     <string name="gmapStyleLabel">Estilo del mapa</string>
     <string name="lbl_musicpage">Las aplicaciones de música de tu coche pueden seleccionarse como fuentes multimedia en el coche</string>
     <string name="lbl_music_apps">Apps de música</string>

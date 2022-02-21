@@ -46,12 +46,12 @@
             android:text="@string/lbl_map_invert_zoom" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:checked="@={settings.gmapBuildings}"
+            android:checked="@={settings.mapBuildings}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:paddingBottom="@dimen/settings_vertical_margin"
-            android:text="@string/lbl_gmap_buildings" />
+            android:text="@string/lbl_map_buildings" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:checked="@={settings.mapTraffic}"

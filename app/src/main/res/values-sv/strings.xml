@@ -91,7 +91,7 @@
     <string name="lbl_map_invert_zoom">Zooma ut</string>
     <string name="lbl_map_tilt">Luta kartvyn</string>
     <string name="lbl_map_traffic">Visa trafik</string>
-    <string name="lbl_gmap_buildings">Aktivera 3D-byggnader</string>
+    <string name="lbl_map_buildings">Aktivera 3D-byggnader</string>
     <string name="gmapStyleLabel">Kart utseende</string>
     <string name="lbl_musicpage">Telefonens musikappar är valbara mediakällor i bilen</string>
     <string name="lbl_music_apps">Musikappar</string>
