@@ -32,6 +32,7 @@ class SettingsToggleList(val component: RHMIComponent.List, val appSettings: Mut
 				AppSettings.KEYS.MAP_INVERT_SCROLL -> L.MAP_INVERT_ZOOM
 				AppSettings.KEYS.MAP_TRAFFIC -> L.MAP_TRAFFIC
 				AppSettings.KEYS.MAP_BUILDINGS -> L.MAP_BUILDINGS
+				AppSettings.KEYS.MAP_CUSTOM_STYLE -> L.MAP_CUSTOM_STYLE
 				else -> ""
 			}
 		}

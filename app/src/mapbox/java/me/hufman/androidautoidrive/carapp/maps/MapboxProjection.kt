@@ -36,6 +36,8 @@ data class MapboxSettings(
 		val mapDaytime: Boolean,
 		val mapTraffic: Boolean,
 		val mapBuildings: Boolean,
+		val mapCustomStyle: Boolean,
+		val mapboxStyleUrl: String,
 ) {
 	companion object {
 		fun build(appSettings: AppSettings, location: LatLong?): MapboxSettings {
@@ -44,15 +46,23 @@ data class MapboxSettings(
 					daytime,
 					appSettings[AppSettings.KEYS.MAP_TRAFFIC].toBoolean(),
 					appSettings[AppSettings.KEYS.MAP_BUILDINGS].toBoolean(),
+					appSettings[AppSettings.KEYS.MAP_CUSTOM_STYLE].toBoolean(),
+					appSettings[AppSettings.KEYS.MAPBOX_STYLE_URL],
 			)
 		}
+
+		const val MAPBOX_GUIDANCE_NIGHT = "mapbox://styles/mapbox/navigation-guidance-night-v4"
 	}
 
 	val mapStyleUri: String
-		get() = if (mapTraffic) {
-			if (mapDaytime) Style.TRAFFIC_DAY else Style.TRAFFIC_NIGHT
+		get() = if (mapCustomStyle && mapboxStyleUrl.isNotBlank()) {
+			mapboxStyleUrl
 		} else {
-			Style.MAPBOX_STREETS
+			if (mapTraffic) {
+				if (mapDaytime) Style.TRAFFIC_DAY else Style.TRAFFIC_NIGHT
+			} else {
+				if (mapDaytime) Style.MAPBOX_STREETS else MAPBOX_GUIDANCE_NIGHT
+			}
 		}
 }
 

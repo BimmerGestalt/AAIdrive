@@ -45,6 +45,7 @@ object L {
 	val MAP_INVERT_ZOOM by StringResourceDelegate("Invert zoom direction")
 	val MAP_TRAFFIC by StringResourceDelegate("Show traffic")
 	val MAP_BUILDINGS by StringResourceDelegate("Show 3D buildings")
+	val MAP_CUSTOM_STYLE by StringResourceDelegate("Use custom map style")
 
 	val MUSIC_APPLIST_TITLE by StringResourceDelegate("Apps")
 	val MUSIC_APPLIST_EMPTY by StringResourceDelegate("<No Apps>")

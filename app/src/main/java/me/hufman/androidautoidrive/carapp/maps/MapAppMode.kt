@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.MutableAppSettingsObserver
 import me.hufman.androidautoidrive.carapp.FullImageConfig
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
@@ -70,7 +71,11 @@ class MapAppMode(val fullDimensions: RHMIDimensions,
 		get() = MapAppMode.currentNavDestinationObservable
 
 	// toggleable settings
-	val settings = MapToggleSettings.settings
+	val settings = MapToggleSettings.settings + listOfNotNull(
+			// add the Mapbox style toggle if it is filled in
+			if (BuildConfig.FLAVOR_map=="mapbox" && appSettings[AppSettings.KEYS.MAPBOX_STYLE_URL].isNotBlank())
+				AppSettings.KEYS.MAP_CUSTOM_STYLE else null
+	)
 
 	// the current appDimensions depending on the widescreen setting
 	val appDimensions = SidebarRHMIDimensions(fullDimensions) {isWidescreen}

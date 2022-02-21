@@ -102,6 +102,7 @@
     <string name="lbl_map_traffic">Show traffic</string>
     <string name="lbl_map_buildings">Enable 3D buildings</string>
     <string name="gmapStyleLabel">Map Style</string>
+    <string name="lbl_mapbox_custom_style">Use a custom Mapbox style url</string>
 
     <string name="lbl_musicpage">Your phone\'s music apps are selectable as media sources in the car</string>
     <string name="lbl_music_apps">Music Apps</string>
@@ -405,6 +406,7 @@
     <string name="MAP_INVERT_ZOOM">Invert zoom direction</string>
     <string name="MAP_TRAFFIC">Show traffic</string>
     <string name="MAP_BUILDINGS">Show 3D buildings</string>
+    <string name="MAP_CUSTOM_STYLE">Use custom map style</string>
 
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;No Apps&gt;</string>
