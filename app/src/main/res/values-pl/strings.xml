@@ -121,6 +121,8 @@
     <string name="musicAppNotes_spotify_backgroundDisabled">Nie można otworzyć Spotify. Upewnij się, że Spotify może uruchamiać się w tle</string>
     <string name="lbl_navigationpage_address">Wklej dokadny adres, aby uruchomić system nawigacji w samochodzie</string>
     <string name="lbl_navigationpage_intent">Po nawiązaniu połączenia z samochodem, system nawigacyjny pojawi się jako opcja</string>
+    <string name="lbl_navigation_car_status">Nawigacja samochodu:</string>
+    <string name="lbl_navigation_custom_status">Niestandardowa mapa:</string>
     <string name="lbl_navigationstatus_active">Obecnie prowadzę do </string>
     <string name="lbl_navigationstatus_inactive">Nawigacja nieaktywna</string>
     <string name="lbl_navigation_prefer_custom">Preferuj niestandardową nawigację</string>
@@ -364,6 +366,7 @@
     <string name="CALENDAR_NAVIGATE">Nawiguj</string>
     <string name="MAP_ACTION_VIEWMAP">Zobacz całą mapę</string>
     <string name="MAP_ACTION_SEARCH">Szukaj miejsca</string>
+    <string name="MAP_ACTION_RECALC_NAV">Przeliczam trasę</string>
     <string name="MAP_ACTION_CLEARNAV">Wyczyść nawigacja</string>
     <string name="MAP_WIDESCREEN">Mapy w trybie pełnoekranowym</string>
     <string name="MAP_INVERT_ZOOM">Odwróć kierunek powiększenia</string>

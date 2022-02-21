@@ -106,6 +106,8 @@
     <string name="musicAppNotes_spotify_backgroundDisabled">Kan Spotify niet openen. Zorg ervoor dat Spotify op de achtergrond mag starten</string>
     <string name="lbl_navigationpage_address">Plak een adres om het navigatiesysteem van de auto te starten vanaf uw telefoon</string>
     <string name="lbl_navigationpage_intent">Tijdens het verbinden zal het navigatiesysteem van uw auto verschijnen als een optie wanneer de navigatieknoppen van andere apps een app-kiezer openen</string>
+    <string name="lbl_navigation_car_status">Auto Navigatie:</string>
+    <string name="lbl_navigation_custom_status">Aangepaste Kaart:</string>
     <string name="lbl_navigationstatus_active">Momenteel navigeren naar</string>
     <string name="lbl_navigationstatus_inactive">Momenteel niet aan het navigeren</string>
     <string name="lbl_navigation_prefer_custom">Gebruik aangepaste kaartnavigatie</string>
@@ -344,6 +346,7 @@
     <string name="READOUT_DESCRIPTION">Deze app wordt gebruikt voor readout doeleinden</string>
     <string name="MAP_ACTION_VIEWMAP">Toon volledige map</string>
     <string name="MAP_ACTION_SEARCH">Locatie zoeken</string>
+    <string name="MAP_ACTION_RECALC_NAV">Herberekenen Navigatie</string>
     <string name="MAP_ACTION_CLEARNAV">Wis bestemming</string>
     <string name="MAP_WIDESCREEN">Breedbeeld map</string>
     <string name="MAP_INVERT_ZOOM">Zoomrichting omkeren</string>

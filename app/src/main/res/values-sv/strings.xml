@@ -119,6 +119,8 @@
     <string name="musicAppNotes_spotify_backgroundDisabled">Kunde ej öppna Spotify. Se till att Spotify tillåts starta i bakgrunden</string>
     <string name="lbl_navigationpage_address">Klistra in en adress för att starta bilens navigationssystem från din telefon</string>
     <string name="lbl_navigationpage_intent">När du är ansluten visas bilens navigationssystem som ett alternativ när andra appar öppnar en app-väljare</string>
+    <string name="lbl_navigation_car_status">Bilnavigering:</string>
+    <string name="lbl_navigation_custom_status">Anpassad karta:</string>
     <string name="lbl_navigationstatus_active">Navigerar till</string>
     <string name="lbl_navigationstatus_inactive">Navigerar inte just nu</string>
     <string name="lbl_navigation_prefer_custom">Föredrar egen kartnavigering</string>
@@ -362,6 +364,7 @@
     <string name="CALENDAR_NAVIGATE">Navigera</string>
     <string name="MAP_ACTION_VIEWMAP">Se hela kartan</string>
     <string name="MAP_ACTION_SEARCH">Sök efter plats</string>
+    <string name="MAP_ACTION_RECALC_NAV">Beräkna om navigeringen</string>
     <string name="MAP_ACTION_CLEARNAV">Ta bort navigering</string>
     <string name="MAP_WIDESCREEN">Widescreen karta</string>
     <string name="MAP_INVERT_ZOOM">Zooma ut</string>
