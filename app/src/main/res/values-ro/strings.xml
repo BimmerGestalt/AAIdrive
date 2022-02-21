@@ -120,6 +120,8 @@
     <string name="musicAppNotes_spotify_backgroundDisabled">Spotify nu a putut fi deschis. Vă rugăm să vă asiguraţi că Spotify are permisiunea de a lansa din fundal</string>
     <string name="lbl_navigationpage_address">Scrieți o adresă pentru a o trimite către sistemul de navigare al mașinii</string>
     <string name="lbl_navigationpage_intent">Cât timp sunteți conectat, sistemul de navigare al mașinii va apărea ca o opțiune când alte aplicații trimit o locație spre navigare</string>
+    <string name="lbl_navigation_car_status">Navigare BMW:</string>
+    <string name="lbl_navigation_custom_status">Hartă personalizată:</string>
     <string name="lbl_navigationstatus_active">Navigare către</string>
     <string name="lbl_navigationstatus_inactive">Navigație oprită</string>
     <string name="lbl_navigation_prefer_custom">Preferă navigare pe hartă personalizată</string>
@@ -363,6 +365,7 @@
     <string name="CALENDAR_NAVIGATE">Navigare</string>
     <string name="MAP_ACTION_VIEWMAP">Vezi harta întreagă</string>
     <string name="MAP_ACTION_SEARCH">Caută loc</string>
+    <string name="MAP_ACTION_RECALC_NAV">Recalculează ruta</string>
     <string name="MAP_ACTION_CLEARNAV">Curăță navigare</string>
     <string name="MAP_WIDESCREEN">Hartă widescreen</string>
     <string name="MAP_INVERT_ZOOM">Inversează direcția de zoom</string>
