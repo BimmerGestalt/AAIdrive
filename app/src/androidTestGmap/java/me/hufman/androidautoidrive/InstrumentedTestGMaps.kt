@@ -56,9 +56,9 @@ class InstrumentedTestGMaps {
 	@Test
 	fun testNavigation() {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-		val imageCapture = VirtualDisplayScreenCapture.build(1000, 400)
+		val mapAppMode = MapAppMode.build(RHMIDimensions.create(emptyMap()), MutableAppSettingsReceiver(appContext), MusicAppMode.TRANSPORT_PORTS.BT)
+		val imageCapture = VirtualDisplayScreenCapture.build(mapAppMode)
 		val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(getContext(), imageCapture.imageCapture)
-		val mapAppMode = MapAppMode(RHMIDimensions.create(emptyMap()), MutableAppSettingsReceiver(appContext), MusicAppMode.TRANSPORT_PORTS.BT)
 		val mapController = GMapsController(appContext, locationProvider, virtualDisplay, MutableAppSettingsReceiver(appContext), mapAppMode)
 		runOnUiThread {
 			mapController.showMap()

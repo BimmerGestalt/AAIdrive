@@ -36,7 +36,7 @@ class MapAppTest {
 	}
 
 	val appSettings = MockAppSettings()
-	val mapAppMode = MapAppMode(GenericRHMIDimensions(1280, 480), appSettings, MusicAppMode.TRANSPORT_PORTS.USB)
+	val mapAppMode = MapAppMode.build(GenericRHMIDimensions(1280, 480), appSettings, MusicAppMode.TRANSPORT_PORTS.USB)
 	val mockImageReader = mock<ImageReader> {
 		on { width } doReturn 1000
 		on { height } doReturn 500
