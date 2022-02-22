@@ -80,6 +80,7 @@
     <string name="lbl_map_traffic">Toon verkeer</string>
     <string name="lbl_map_buildings">3D-gebouwen inschakelen</string>
     <string name="gmapStyleLabel">Map stijl</string>
+    <string name="lbl_mapbox_custom_style">Gebruik een aangepaste Mapbox stijl URL</string>
     <string name="lbl_musicpage">De muziek-apps van uw telefoon zijn selecteerbaar als mediabronnen in de auto</string>
     <string name="lbl_music_apps">Muziek apps</string>
     <string name="musicAppIcon">App icoon</string>
@@ -352,6 +353,7 @@
     <string name="MAP_INVERT_ZOOM">Zoomrichting omkeren</string>
     <string name="MAP_TRAFFIC">Toon verkeer</string>
     <string name="MAP_BUILDINGS">3D-gebouwen inschakelen</string>
+    <string name="MAP_CUSTOM_STYLE">Gebruik aangepaste kaart stijl</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Geen apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acties</string>
