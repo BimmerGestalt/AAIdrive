@@ -93,6 +93,7 @@
     <string name="lbl_map_traffic">Visa trafik</string>
     <string name="lbl_map_buildings">Aktivera 3D-byggnader</string>
     <string name="gmapStyleLabel">Kart utseende</string>
+    <string name="lbl_mapbox_custom_style">Använd en anpassad Mapbox stil URL</string>
     <string name="lbl_musicpage">Telefonens musikappar är valbara mediakällor i bilen</string>
     <string name="lbl_music_apps">Musikappar</string>
     <string name="musicAppIcon">Appikon</string>
@@ -370,6 +371,7 @@
     <string name="MAP_INVERT_ZOOM">Zooma ut</string>
     <string name="MAP_TRAFFIC">Visa trafik</string>
     <string name="MAP_BUILDINGS">Aktivera 3D-byggnader</string>
+    <string name="MAP_CUSTOM_STYLE">Använd anpassad kartstil</string>
     <string name="MUSIC_APPLIST_TITLE">Appar</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Inga Appar&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Åtgärder</string>

@@ -347,6 +347,7 @@
     <string name="MAP_INVERT_ZOOM">Nagyítás irányának megfordítása</string>
     <string name="MAP_TRAFFIC">Forgalom mutatása</string>
     <string name="MAP_BUILDINGS">Épületek 3D megjelenítése</string>
+    <string name="MAP_CUSTOM_STYLE">Egyedi térkép stílus használata</string>
     <string name="MUSIC_APPLIST_TITLE">Alkalmazások</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Nincs alkalmazás&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Műveletek</string>
