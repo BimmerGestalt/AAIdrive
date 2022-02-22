@@ -94,6 +94,7 @@
     <string name="lbl_map_traffic">Afișează trafic</string>
     <string name="lbl_map_buildings">Activează clădiri 3D</string>
     <string name="gmapStyleLabel">Stil hartă</string>
+    <string name="lbl_mapbox_custom_style">Folosește un URL personalizat pentru Mapbox</string>
     <string name="lbl_musicpage">Aplicațiile de muzică din telefon sunt disponibile ca surse media în mașină</string>
     <string name="lbl_music_apps">Aplicații de muzică</string>
     <string name="musicAppIcon">Icon aplicație</string>
@@ -371,6 +372,7 @@
     <string name="MAP_INVERT_ZOOM">Inversează direcția de zoom</string>
     <string name="MAP_TRAFFIC">Afișează trafic</string>
     <string name="MAP_BUILDINGS">Activează clădiri 3D</string>
+    <string name="MAP_CUSTOM_STYLE">Folosește modul hărții personalizate</string>
     <string name="MUSIC_APPLIST_TITLE">Aplicații</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Nu există aplicații&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acțiuni</string>
