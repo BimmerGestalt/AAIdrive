@@ -93,7 +93,7 @@
     <string name="lbl_map_invert_zoom">Odwróć kierunek powiększenia</string>
     <string name="lbl_map_tilt">Pochylenie mapy</string>
     <string name="lbl_map_traffic">Pokaż natężenie ruchu</string>
-    <string name="lbl_gmap_buildings">Włącz budynki 3D</string>
+    <string name="lbl_map_buildings">Włącz budynki 3D</string>
     <string name="gmapStyleLabel">Styl map</string>
     <string name="lbl_musicpage">Aplikacje muzyczną z telefonu można wybrać jako źródła multimediów w samochodzie</string>
     <string name="lbl_music_apps">Aplikacje muzyczne</string>

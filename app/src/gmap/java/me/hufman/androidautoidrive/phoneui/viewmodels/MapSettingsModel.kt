@@ -21,6 +21,6 @@ class MapSettingsModel(appContext: Context): ViewModel() {
 	val mapStyle  = StringLiveSetting(appContext, AppSettings.KEYS.GMAPS_STYLE)
 	val mapWidescreen = BooleanLiveSetting(appContext, AppSettings.KEYS.MAP_WIDESCREEN)
 	val mapInvertZoom = BooleanLiveSetting(appContext, AppSettings.KEYS.MAP_INVERT_SCROLL)
+	val mapBuildings = BooleanLiveSetting(appContext, AppSettings.KEYS.MAP_BUILDINGS)
 	val mapTraffic = BooleanLiveSetting(appContext, AppSettings.KEYS.MAP_TRAFFIC)
-	val gmapBuildings = BooleanLiveSetting(appContext, AppSettings.KEYS.GMAPS_BUILDINGS)
 }

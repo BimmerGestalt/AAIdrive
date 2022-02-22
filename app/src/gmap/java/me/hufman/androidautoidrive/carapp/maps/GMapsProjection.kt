@@ -100,7 +100,7 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 		} else {
 			map?.mapType = GoogleMap.MAP_TYPE_NORMAL
 		}
-		map?.isBuildingsEnabled = appSettings[AppSettings.KEYS.GMAPS_BUILDINGS] == "true"
+		map?.isBuildingsEnabled = appSettings[AppSettings.KEYS.MAP_BUILDINGS] == "true"
 		map?.isTrafficEnabled = appSettings[AppSettings.KEYS.MAP_TRAFFIC] == "true"
 		currentStyleId = mapstyleId
 	}

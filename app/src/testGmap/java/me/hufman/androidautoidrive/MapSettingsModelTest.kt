@@ -32,7 +32,7 @@ class MapSettingsModelTest {
 				model.mapWidescreen to AppSettings.KEYS.MAP_WIDESCREEN,
 				model.mapInvertZoom to AppSettings.KEYS.MAP_INVERT_SCROLL,
 				model.mapTraffic to AppSettings.KEYS.MAP_TRAFFIC,
-				model.gmapBuildings to AppSettings.KEYS.GMAPS_BUILDINGS
+				model.mapBuildings to AppSettings.KEYS.MAP_BUILDINGS
 		)
 		bindings.forEach { (viewModel, setting) ->
 			AppSettings.tempSetSetting(setting, "true")

@@ -91,7 +91,7 @@
     <string name="lbl_map_invert_zoom">Zoom-Richtung umkehren</string>
     <string name="lbl_map_tilt">Neigung der Karte</string>
     <string name="lbl_map_traffic">Verkehr anzeigen</string>
-    <string name="lbl_gmap_buildings">3D-Gebäude aktivieren</string>
+    <string name="lbl_map_buildings">3D-Gebäude aktivieren</string>
     <string name="gmapStyleLabel">Kartenstil</string>
     <string name="lbl_musicpage">Die Musik-Apps Ihres Telefons können als Medienquellen im Auto ausgewählt werden</string>
     <string name="lbl_music_apps">Musik Apps</string>

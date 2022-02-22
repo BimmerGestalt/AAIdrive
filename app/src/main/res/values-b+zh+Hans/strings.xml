@@ -71,7 +71,7 @@
     <string name="lbl_map_invert_zoom">反转缩放</string>
     <string name="lbl_map_tilt">倾斜地图</string>
     <string name="lbl_map_traffic">显示</string>
-    <string name="lbl_gmap_buildings">激活 3D 建筑</string>
+    <string name="lbl_map_buildings">激活 3D 建筑</string>
     <string name="gmapStyleLabel">地图风格</string>
     <string name="lbl_musicpage">您的手机音乐app可以选为车辆的音频源</string>
     <string name="lbl_music_apps">音乐 App</string>
