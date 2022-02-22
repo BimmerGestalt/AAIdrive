@@ -93,6 +93,7 @@
     <string name="lbl_map_traffic">Verkehr anzeigen</string>
     <string name="lbl_map_buildings">3D-Gebäude aktivieren</string>
     <string name="gmapStyleLabel">Kartenstil</string>
+    <string name="lbl_mapbox_custom_style">Benutzerdefinierte Mapbox URL verwenden</string>
     <string name="lbl_musicpage">Die Musik-Apps Ihres Telefons können als Medienquellen im Auto ausgewählt werden</string>
     <string name="lbl_music_apps">Musik Apps</string>
     <string name="musicAppIcon">App Symbol</string>
@@ -370,6 +371,7 @@
     <string name="MAP_INVERT_ZOOM">Zoom-Richtung umkehren</string>
     <string name="MAP_TRAFFIC">Verkehr anzeigen</string>
     <string name="MAP_BUILDINGS">3D-Gebäude aktivieren</string>
+    <string name="MAP_CUSTOM_STYLE">Eigenen Kartenstil verwenden</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Keine Apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Aktionen</string>
