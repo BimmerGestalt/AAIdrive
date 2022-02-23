@@ -240,6 +240,7 @@
                         android:layout_weight="1"
                         android:paddingStart="36dp"
                         android:paddingEnd="36dp"
+                        android:paddingBottom="12dp"
                         android:text="@string/txt_setup_enable_usbmtp" />
                 </LinearLayout>
 
@@ -275,6 +276,7 @@
                         android:layout_weight="1"
                         android:paddingStart="36dp"
                         android:paddingEnd="36dp"
+                        android:paddingBottom="12dp"
                         android:text="@{viewModel.hintUsbAccessory}" />
                 </LinearLayout>
 
@@ -349,6 +351,7 @@
                     android:layout_weight="1"
                     android:paddingStart="36dp"
                     android:paddingEnd="36dp"
+                    android:paddingBottom="12dp"
                     android:visibility="@{viewModel.hintBclDisconnected}"
                     android:text="@{viewModel.hintBclDisconnected}"  />
             </LinearLayout>
@@ -407,6 +410,7 @@
                     android:layout_weight="1"
                     android:paddingStart="36dp"
                     android:paddingEnd="36dp"
+                    android:paddingBottom="12dp"
                     android:text="@{viewModel.hintBclMode}" />
             </LinearLayout>
 
