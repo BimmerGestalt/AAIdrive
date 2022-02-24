@@ -92,5 +92,11 @@
                 android:text="@={settings.mapboxStyleUrl}"
                 tools:ignore="HardcodedText" />
         </LinearLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:padding="32dp"
+            android:src="@drawable/mapbox_logo_icon" />
     </LinearLayout>
 </layout>
