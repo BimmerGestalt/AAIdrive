@@ -274,7 +274,14 @@ dependencies {
     gmapImplementation 'com.google.android.libraries.places:places:2.4.0'
     gmapImplementation 'com.google.maps:google-maps-services:0.1.20'
     mapboxImplementation "com.mapbox.mapboxsdk:mapbox-sdk-services:5.8.0"
-    mapboxImplementation 'com.mapbox.maps:android:10.2.0'
+    mapboxImplementation 'com.mapbox.maps:android:10.2.0', {
+        exclude group: 'com.mapbox.plugin', module: 'maps-attribution'    // can't click the (i) button from the car screen
+        exclude group: 'com.mapbox.plugin', module: 'maps-compass'        // we always point north
+        exclude group: 'com.mapbox.plugin', module: 'maps-gesture'        // no touch input provided by the car
+        exclude group: 'com.mapbox.plugin', module: 'maps-lifecycle'      // doesn't provide a benefit to our Presentation class
+        exclude group: 'com.mapbox.plugin', module: 'maps-overlay'        // not helpful in our case
+        exclude group: 'com.mapbox.plugin', module: 'maps-viewport'       // we animate the camera manually
+    }
     mapboxImplementation 'com.google.android.gms:play-services-location:18.0.0'
 
     sentryImplementation 'io.sentry:sentry-android:1.7.16'
