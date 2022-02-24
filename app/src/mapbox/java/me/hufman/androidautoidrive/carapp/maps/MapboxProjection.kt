@@ -9,6 +9,7 @@ import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.Display
+import android.view.Gravity
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import com.mapbox.maps.MapView
@@ -25,6 +26,7 @@ import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.plugin.scalebar.scalebar
 import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
 import io.bimmergestalt.idriveconnectkit.SubsetRHMIDimensions
 import me.hufman.androidautoidrive.*
@@ -120,6 +122,12 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 				map.location.updateSettings {
 					map.location.setLocationProvider(locationProvider)
 					map.location.enabled = true
+				}
+				map.scalebar.updateSettings {
+					// it seems that the scalebar ignores the map padding, so we must center it
+					position = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+					ratio = 0.25f
+					textSize = 16f
 				}
 
 				if (appSettings[AppSettings.KEYS.MAP_BUILDINGS].toBoolean()) {
