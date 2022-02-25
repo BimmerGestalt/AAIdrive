@@ -15,10 +15,8 @@ class AndroidLocationProvider(val locationProvider: FusedLocationProviderClient)
 	private val locationCallback = LocationCallbackImpl()
 
 	inner class LocationCallbackImpl: LocationCallback() {
-		override fun onLocationResult(result: LocationResult?) {
-			if (result?.lastLocation != null) {
-				onLocationUpdate(result.lastLocation)
-			}
+		override fun onLocationResult(result: LocationResult) {
+			onLocationUpdate(result.lastLocation)
 		}
 	}
 
