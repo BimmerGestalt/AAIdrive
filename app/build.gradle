@@ -310,11 +310,11 @@ dependencies {
     androidTestImplementation 'com.github.tmurakami:dexopener:2.0.5'
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
 
-    implementation 'io.bimmergestalt.idriveconnectkit:idriveconnectkit:0.7'
-    implementation 'io.bimmergestalt:IDriveConnectKitAndroid:0.7'
-    testImplementation 'io.bimmergestalt.idriveconnectkit:idriveconnectkit:0.7'
-    androidTestImplementation 'io.bimmergestalt.idriveconnectkit:idriveconnectkit:0.7'
-    androidTestImplementation 'io.bimmergestalt:IDriveConnectKitAndroid:0.7'
+    implementation 'io.bimmergestalt.idriveconnectkit:idriveconnectkit'
+    implementation 'io.bimmergestalt:IDriveConnectKitAndroid'
+    testImplementation 'io.bimmergestalt.idriveconnectkit:idriveconnectkit'
+    androidTestImplementation 'io.bimmergestalt.idriveconnectkit:idriveconnectkit'
+    androidTestImplementation 'io.bimmergestalt:IDriveConnectKitAndroid'
     androidTestImplementation "org.bouncycastle:bcmail-jdk16:1.46"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
     testImplementation "org.powermock:powermock-core:2.0.9"

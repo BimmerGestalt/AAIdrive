@@ -1,1 +1,3 @@
 include ':app', ':spotify-app-remote'
+includeBuild 'IDriveConnectKit'
+includeBuild 'IDriveConnectKitAndroid'
