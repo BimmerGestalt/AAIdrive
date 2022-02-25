@@ -6,6 +6,7 @@ import android.provider.Settings
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
 import io.bimmergestalt.idriveconnectkit.android.security.KnownSecurityServices
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 
 /**
  * Assists in determining prerequisites and difficulties in the car connection
@@ -123,7 +124,7 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 		get() = idriveListener.isConnected
 
 	val bclTransport
-		get() = bclListener.transport
+		get() = bclListener.transport ?: MusicAppMode.TRANSPORT_PORTS.fromPort(idriveListener.port)?.toString()
 
 	val carBrand
 		get() = idriveListener.brand
