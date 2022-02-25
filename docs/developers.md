@@ -66,3 +66,41 @@ The Github Download Zip option is not recommended, because it does not include t
     - `./gradlew assembleNomapNonalyticsFullDebug`
     
 The built APKs should be found in `app/build/outputs/apk/*/*/*.apk`
+
+## Developing IDriveConnectKit
+
+For the convenience and speed of building the app, the project is set up to rely on pre-built releases of the IDriveConnectKit and IDriveConnectKitAndroid helper libraries.
+However, some advanced development tasks (such as editing these libraries and testing the overall app with the changes) are facilitated by using a local development copy of these libraries instead.
+To convert an AAIdrive checkout to use local submodule clones of these libraries, a few steps must be done:
+
+  - Optionally move to a separate development branch: `git checkout -b branch_name`
+  - git submodule add https://github.com/BimmerGestalt/IDriveConnectKit.git
+  - git submodule add https://github.com/BimmerGestalt/IDriveConnectKitAndroid.git
+  - Change the top-level `settings.gradle` file to include these new modules:
+    `include ':app', ':spotify-app-remote', ':IDriveConnectKit', ':IDriveConnectKitAndroid'`
+  - Change the `app/build.gradle` file to use the modules instead of the Gradle artifacts:
+```
+-    implementation 'io.bimmergestalt:IDriveConnectKit:0.3'
+-    implementation 'io.bimmergestalt:IDriveConnectKitAndroid:0.2'
+-    testImplementation 'io.bimmergestalt:IDriveConnectKit:0.3'
+-    androidTestImplementation 'io.bimmergestalt:IDriveConnectKit:0.3'
+-    androidTestImplementation 'io.bimmergestalt:IDriveConnectKitAndroid:0.2'
++    implementation project(path: ':IDriveConnectKit')
++    implementation project(path: ':IDriveConnectKitAndroid')
++    testImplementation project(path: ':IDriveConnectKit')
++    androidTestImplementation project(path: ':IDriveConnectKit')
++    androidTestImplementation project(path: ':IDriveConnectKitAndroid')
+```
+  - Tell Android Studio to File > Sync Project with Gradle Files
+
+Most of these steps are provided by a [helpful commit](https://github.com/BimmerGestalt/AAIdrive/commit/example-submodules) in the AAIdrive repo:
+
+  - Optionally move to a separate development branch: `git checkout -b branch_name`
+  - Apply the change to use submodules for these libraries:
+    `git cherry-pick origin/example-submodules`
+  - Update the submodules to make sure they are at the latest version:
+    `git submodule update --remote`
+  - Tell Android Studio to File > Sync Project with Gradle Files
+
+Now, the IDriveConnectKit and IDriveConnectKitAndroid directories will be used to build the project, and so any changes there will be included during development.
+Regular submodule caveats apply: They are (by default) on Detached Heads, so they'll need to be moved to a branch for development and patch submission.
