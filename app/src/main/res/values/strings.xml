@@ -95,6 +95,7 @@
 
     <string name="lbl_mapspage">AAIdrive includes a custom map that is rendered internally on the phone and displayed in the car</string>
     <string name="enable_custom_maps">Enable Custom Map</string>
+    <string name="lbl_map_bt_hint">Map performance and quality when connected over Bluetooth will be poor</string>
     <string name="lbl_map_phone_gps">Use Phone GPS instead of Car GPS</string>
     <string name="lbl_widescreen_map">Widescreen Map</string>
     <string name="lbl_map_invert_zoom">Invert zoom direction</string>
