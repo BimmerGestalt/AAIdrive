@@ -10,6 +10,8 @@ import android.view.Display
 import android.view.WindowManager
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.MapsInitializer
+import com.google.android.gms.maps.OnMapsSdkInitializedCallback
 import com.google.android.gms.maps.model.MapStyleOptions
 import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
 import io.bimmergestalt.idriveconnectkit.SubsetRHMIDimensions
@@ -18,7 +20,7 @@ import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.utils.TimeUtils
 import java.util.*
 
-class GMapsProjection(val parentContext: Context, display: Display, val appSettings: AppSettingsObserver, val locationSource: GMapsLocationSource): Presentation(parentContext, display) {
+class GMapsProjection(val parentContext: Context, display: Display, val appSettings: AppSettingsObserver, val locationSource: GMapsLocationSource): Presentation(parentContext, display), OnMapsSdkInitializedCallback {
 	val TAG = "GMapsProjection"
 	var map: GoogleMap? = null
 	var mapListener: Runnable? = null
@@ -36,6 +38,9 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 	@SuppressLint("MissingPermission")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		// specifically request the new renderer
+		// can be removed after the new renderer is the default, Summer of 2022
+		MapsInitializer.initialize(context.applicationContext, MapsInitializer.Renderer.LATEST, this);
 
 		window?.setType(WindowManager.LayoutParams.TYPE_PRIVATE_PRESENTATION)
 		setContentView(R.layout.gmaps_projection)
@@ -120,5 +125,12 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 		val gmapView = findViewById<MapView>(R.id.gmapView)
 		gmapView.onSaveInstanceState(output)
 		return output
+	}
+
+	override fun onMapsSdkInitialized(renderer: MapsInitializer.Renderer) {
+		when (renderer) {
+			MapsInitializer.Renderer.LATEST -> Log.d("MapsDemo", "The latest version of the renderer is used.")
+			MapsInitializer.Renderer.LEGACY -> Log.d("MapsDemo", "The legacy version of the renderer is used.")
+		}
 	}
 }
