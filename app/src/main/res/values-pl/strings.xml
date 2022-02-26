@@ -88,6 +88,7 @@
     <string name="lbl_calendar_upcoming_events_empty">Brak nadchodzących wydarzeń w tym miesiącu</string>
     <string name="lbl_mapspage">AAIdrive zawiera niestandardową mapę, która jest renderowana wewnętrznie na telefonie i wyświetlana w samochodzie</string>
     <string name="enable_custom_maps">Włącz niestandardową mapę</string>
+    <string name="lbl_map_bt_hint">Wydajność i jakość mapy podczas połączenia przez Bluetooth będą słabe</string>
     <string name="lbl_map_phone_gps">Użyj lokalizacji telefonu zamiast samochodu</string>
     <string name="lbl_widescreen_map">Mapy w trybie pełnoekranowym</string>
     <string name="lbl_map_invert_zoom">Odwróć kierunek powiększenia</string>
