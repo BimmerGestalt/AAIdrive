@@ -14,9 +14,4 @@
     <string name="playstore_desc_nativeapps_protocol">Utilizzando il protocollo nativo BMW App, lo stesso utilizzato dalla vecchia app Spotify, questa app non modifica la tua auto in alcun modo: tutte le funzionalità estese sono fornite soltanto mentre il telefono è connesso.</string>
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps richiede che sul telefono sia installata l\'\'app MyBMW o MINI per la tua auto, e che la stessa possa abilitare correttamente la casella di controllo App dell\'auto IDrive5+, oppure che la vostra auto IDrive4 abbia l\'\'optional ConnectedDrive Connection Assistant.</string>
     <string name="playstore_desc_depends_bmw_subscription">In sostanza è richiesto di avere un abbonamento BMW ConnectedDrive attivo, che è in genere incluso per alcuni anni dopo aver acquistato la vostra nuova auto.</string>
-    <string name="playstore_release_desc">Un piccolo aggiornamento con l\'integrazione del calendario e alcuni miglioramenti nel funzionamento in background</string>
-    <string name="playstore_release_point1">Ripristina la funzionalità BMW/Mini Calendar, inclusa la possibilità di impostare la navigazione verso il luogo degli appuntamenti imminenti in maniera automatica</string>
-    <string name="playstore_release_point2">Corregge più crash dell\'implementazione del Servizio Android eseguita in secondo piano</string>
-    <string name="playstore_release_point3">Migliora le prestazioni delle app nella memorizzazione in cache dei dati dell\'auto e nel rilevamento delle app musicali</string>
-    <string name="playstore_release_point4">Aggiunge il completamento automatico per l\'indirizzo inserito nella scheda Navigazione</string>
 </resources>
