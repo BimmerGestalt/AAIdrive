@@ -86,6 +86,7 @@
     <string name="lbl_calendar_upcoming_events_empty">В этом месяце предстоящих событий не найдено</string>
     <string name="lbl_mapspage">AAIdrive включает в себя пользовательскую карту, которая визуализируется на телефоне и отображается в автомобиле</string>
     <string name="enable_custom_maps">Включить пользовательскую карту</string>
+    <string name="lbl_map_bt_hint">Производительность и качество карты при подключении по Bluetooth будут низкими</string>
     <string name="lbl_map_phone_gps">Использовать GPS телефона вместо GPS автомобиля</string>
     <string name="lbl_widescreen_map">Широкоэкранные карты</string>
     <string name="lbl_map_invert_zoom">Инвертировать масштаб</string>
