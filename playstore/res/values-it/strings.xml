@@ -11,6 +11,7 @@
     <string name="playstore_desc_features_carinfo">Leggi varie informazioni diagnostiche e statistiche della tua auto</string>
     <string name="playstore_desc_features_addons_mirroring">Estendi le funzionalità tramite i plugin opzionali (come lo screen mirroring)</string>
     <string name="playstore_desc_features_custommap_soon">E\'\' prevista in futuro l\'\'implementazione di una funzionalità di navigazione</string>
+    <string name="playstore_desc_features_custommap">Mappa e navigazione personalizzata basata su Mapbox</string>
     <string name="playstore_desc_nativeapps_protocol">Utilizzando il protocollo nativo BMW App, lo stesso utilizzato dalla vecchia app Spotify, questa app non modifica la tua auto in alcun modo: tutte le funzionalità estese sono fornite soltanto mentre il telefono è connesso.</string>
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps richiede che sul telefono sia installata l\'\'app MyBMW o MINI per la tua auto, e che la stessa possa abilitare correttamente la casella di controllo App dell\'auto IDrive5+, oppure che la vostra auto IDrive4 abbia l\'\'optional ConnectedDrive Connection Assistant.</string>
     <string name="playstore_desc_depends_bmw_subscription">In sostanza è richiesto di avere un abbonamento BMW ConnectedDrive attivo, che è in genere incluso per alcuni anni dopo aver acquistato la vostra nuova auto.</string>
