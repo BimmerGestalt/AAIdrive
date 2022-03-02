@@ -18,4 +18,5 @@
     <string name="playstore_release_desc">Slutligen har kartfunktionen som alla har bett om!</string>
     <string name="playstore_release_point1">Lägger till en anpassad karta, återges på telefonen och visas i bilen</string>
     <string name="playstore_release_point2">Använder Mapbox för karta, platssökning och ruttnavigering</string>
+    <string name="playstore_release_point3">Lägger till intressepunkter för navigeringsfliken</string>
 </resources>
