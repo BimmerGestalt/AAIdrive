@@ -121,6 +121,8 @@
     <string name="musicAppNotes_spotify_backgroundDisabled">Impossibile aprire Spotify. Assicurarsi che Spotify abbia l\'autorizzazione per l\'avvio automatico in background</string>
     <string name="lbl_navigationpage_address">Incolla in un indirizzo per avviare il sistema di navigazione dell\'auto dal telefono</string>
     <string name="lbl_navigationpage_intent">Quando connesso, il sistema di navigazione dell\'auto verrà visualizzato come opzione quando altre app vorranno inizializzare una navigazione verso un luogo</string>
+    <string name="lbl_navigation_car_status">Navigatore:</string>
+    <string name="lbl_navigation_custom_status">Mappa Personalizzata:</string>
     <string name="lbl_navigationstatus_active">Navigazione attiva verso</string>
     <string name="lbl_navigationstatus_inactive">Navigazione attualmente non attiva</string>
     <string name="lbl_navigation_prefer_custom">Preferisci la navigazione personalizzata delle mappe</string>
@@ -364,6 +366,7 @@
     <string name="CALENDAR_NAVIGATE">Naviga</string>
     <string name="MAP_ACTION_VIEWMAP">Visualizza la mappa fullscreen</string>
     <string name="MAP_ACTION_SEARCH">Cerca un luogo</string>
+    <string name="MAP_ACTION_RECALC_NAV">Ricalcola il percorso</string>
     <string name="MAP_ACTION_CLEARNAV">Cancella la navigazione</string>
     <string name="MAP_WIDESCREEN">Mappa a tutto schermo</string>
     <string name="MAP_INVERT_ZOOM">Inverti direzione zoom</string>
