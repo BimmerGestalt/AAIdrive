@@ -36,17 +36,6 @@ object L {
 	val CALENDAR_TIME_ALLDAY by StringResourceDelegate("All Day")
 	val CALENDAR_NAVIGATE by StringResourceDelegate("Navigate")
 
-	val MAP_ACTION_VIEWMAP by StringResourceDelegate("View Full Map")
-	val MAP_ACTION_SEARCH by StringResourceDelegate("Search for Place")
-	val MAP_ACTION_RECALC_NAV by StringResourceDelegate("Recalculate Navigation")
-	val MAP_ACTION_CLEARNAV by StringResourceDelegate("Clear Navigation")
-	val MAP_OPTIONS = NOTIFICATION_OPTIONS
-	val MAP_WIDESCREEN by StringResourceDelegate("Widescreen map")
-	val MAP_INVERT_ZOOM by StringResourceDelegate("Invert zoom direction")
-	val MAP_TRAFFIC by StringResourceDelegate("Show traffic")
-	val MAP_BUILDINGS by StringResourceDelegate("Show 3D buildings")
-	val MAP_CUSTOM_STYLE by StringResourceDelegate("Use custom map style")
-
 	val MUSIC_APPLIST_TITLE by StringResourceDelegate("Apps")
 	val MUSIC_APPLIST_EMPTY by StringResourceDelegate("<No Apps>")
 	val MUSIC_CUSTOMACTIONS_TITLE by StringResourceDelegate("Actions")
@@ -93,6 +82,21 @@ object L {
 	val MUSIC_SPOTIFY_THUMBS_UP_SELECTED by StringResourceDelegate("Thumbed Up")
 	val MUSIC_SPOTIFY_THUMB_DOWN by StringResourceDelegate("Thumb Down")
 	val MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED by StringResourceDelegate("Thumbed Down")    // not sure if this exists, but just to be complete
+
+	val MAP_ACTION_VIEWMAP by StringResourceDelegate("View Full Map")
+	val MAP_ACTION_SEARCH by StringResourceDelegate("Search for Place")
+	val MAP_ACTION_RECALC_NAV by StringResourceDelegate("Recalculate Navigation")
+	val MAP_ACTION_CLEARNAV by StringResourceDelegate("Clear Navigation")
+	val MAP_OPTIONS = NOTIFICATION_OPTIONS
+	val MAP_SEARCH_RESULTS_TITLE = MUSIC_SEARCH_RESULTS_LABEL
+	val MAP_SEARCH_RESULTS_SEARCHING = MUSIC_BROWSE_SEARCHING
+	val MAP_SEARCH_RESULTS_EMPTY = MUSIC_BROWSE_EMPTY
+	val MAP_SEARCH_RESULTS_VIEW_FULL_RESULTS = MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS
+	val MAP_WIDESCREEN by StringResourceDelegate("Widescreen map")
+	val MAP_INVERT_ZOOM by StringResourceDelegate("Invert zoom direction")
+	val MAP_TRAFFIC by StringResourceDelegate("Show traffic")
+	val MAP_BUILDINGS by StringResourceDelegate("Show 3D buildings")
+	val MAP_CUSTOM_STYLE by StringResourceDelegate("Use custom map style")
 
 	fun loadResources(context: Context, locale: Locale? = null) {
 		val thisContext = if (locale == null) { context } else {

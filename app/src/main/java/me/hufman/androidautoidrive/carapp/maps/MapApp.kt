@@ -17,6 +17,7 @@ import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.maps.views.MenuView
 import me.hufman.androidautoidrive.carapp.maps.views.PlaceSearchView
+import me.hufman.androidautoidrive.carapp.maps.views.SearchResultsView
 import me.hufman.androidautoidrive.maps.MapPlaceSearch
 import me.hufman.androidautoidrive.maps.MapResult
 import me.hufman.androidautoidrive.utils.removeFirst
@@ -38,6 +39,7 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 	val fullImageView: FullImageView
 	val stateInput: RHMIState.PlainState
 	val stateInputState: InputState<MapResult>
+	val searchResultsView: SearchResultsView
 
 	// map state
 	var frameUpdater = FrameUpdater(map, object: FrameModeListener {
@@ -85,6 +87,8 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first { state ->
 			state.componentsList.filterIsInstance<RHMIComponent.Input>().any { it.suggestAction > 0 }
 		}
+		stateInputState = PlaceSearchView(stateInput, mapPlaceSearch, interaction)
+		searchResultsView = SearchResultsView(unclaimedStates.removeFirst { SearchResultsView.fits(it) }, mapPlaceSearch, interaction)
 
 		// connect buttons together
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach{
@@ -96,11 +100,8 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 		Log.i(TAG, "Setting up component behaviors")
 		menuView.initWidgets(fullImageView.state, stateInput)
 		fullImageView.initWidgets()
-		// set up the components for the input widget
-		stateInputState = PlaceSearchView(stateInput, mapPlaceSearch, interaction)
-
-		stateInputState.inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
-		stateInputState.inputComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
+		stateInputState.initWidgets(fullImageView, searchResultsView)
+		searchResultsView.initWidgets(fullImageView)
 
 		// register for events from the car
 		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.mapview", -1)
