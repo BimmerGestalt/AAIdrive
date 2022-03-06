@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.maps
 
+import android.location.Location
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.rhmi.*
@@ -43,11 +44,14 @@ class SearchResultsViewTest {
 	val mapAppMode = mock<MapAppMode> {
 		on {distanceUnits} doReturn CDSVehicleUnits.Distance.Kilometers
 	}
+	val locationProvider = mock<CarLocationProvider> {
+		on {currentLocation} doReturn null
+	}
 	val fullImageView = mock<FullImageView> {
 		on {state} doReturn RHMIState.PlainState(mockApp, 6)
 	}
 
-	val view = SearchResultsView(searchResultsState, mapPlaceSearch, mapInteractionController, mapAppMode).apply {
+	val view = SearchResultsView(searchResultsState, mapPlaceSearch, mapInteractionController, mapAppMode, locationProvider).apply {
 		initWidgets(fullImageView)
 	}
 
@@ -116,7 +120,7 @@ class SearchResultsViewTest {
 		assertEquals(3, doneData.totalRows)
 		assertEquals("", doneData.data[0][0])
 		assertEquals("Coffee Corner\n123 Main St", doneData.data[0][1])
-		assertEquals("50 km", doneData.data[1][0])
+		assertEquals("50 km\n", doneData.data[1][0])
 		assertEquals("Cuppa\n404 Somewhere Blvd", doneData.data[1][1])
 		assertEquals("", doneData.data[2][0])
 		assertEquals("Coffee and Cream\n", doneData.data[2][1])
@@ -138,7 +142,41 @@ class SearchResultsViewTest {
 		assertEquals(2, doneData.totalRows)
 		assertEquals("", doneData.data[0][0])
 		assertEquals("Coffee Corner\n123 Main St", doneData.data[0][1])
-		assertEquals("31 mi", doneData.data[1][0])
+		assertEquals("31 mi\n", doneData.data[1][0])
+		assertEquals("Cuppa\n404 Somewhere Blvd", doneData.data[1][1])
+	}
+
+	@Test
+	fun testBearingArrow() {
+		val bearingArrow = {angle: Float? -> SearchResultsView.MapResultListAdapter.bearingArrow(angle) }
+		assertEquals("", bearingArrow(null))
+		assertEquals("↑", bearingArrow(0f))
+		assertEquals("↑", bearingArrow(359f))
+		assertEquals("↖", bearingArrow(330f))
+	}
+
+	@Test
+	fun testShowResultsDirection() = runBlocking {
+		val location = mock<Location> {
+			on {latitude} doReturn 37.3728018
+			on {longitude} doReturn -122.2072274
+			on {bearing} doReturn 310f       // car bearing NE
+		}
+		whenever(locationProvider.currentLocation) doReturn location
+		val results = CompletableDeferred(listOf(
+				MapResult("1", "Coffee Corner", "123 Main St", LatLong(37.3866955, -122.2653444), 5f),
+				MapResult("2", "Cuppa", "404 Somewhere Blvd", LatLong(37.3526909, -122.0513095), 50f),
+		))
+		view.setContents(results)
+		searchResultsState.onHmiEvent(1, mapOf(4.toByte() to true))
+
+		await().until { (mockApp.modelData[25] as? BMWRemoting.RHMIDataTable)?.totalRows == 2 }
+		val doneData = mockApp.modelData[25] as BMWRemoting.RHMIDataTable
+		assertEquals(2, doneData.totalColumns)
+		assertEquals(2, doneData.totalRows)
+		assertEquals("5 km\n↖", doneData.data[0][0])
+		assertEquals("Coffee Corner\n123 Main St", doneData.data[0][1])
+		assertEquals("50 km\n↘", doneData.data[1][0])       // rotated arrow because of car heading
 		assertEquals("Cuppa\n404 Somewhere Blvd", doneData.data[1][1])
 	}
 

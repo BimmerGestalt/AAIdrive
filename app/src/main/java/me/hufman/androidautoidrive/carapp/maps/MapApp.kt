@@ -18,6 +18,7 @@ import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.maps.views.MenuView
 import me.hufman.androidautoidrive.carapp.maps.views.PlaceSearchView
 import me.hufman.androidautoidrive.carapp.maps.views.SearchResultsView
+import me.hufman.androidautoidrive.maps.CarLocationProvider
 import me.hufman.androidautoidrive.maps.MapPlaceSearch
 import me.hufman.androidautoidrive.maps.MapResult
 import me.hufman.androidautoidrive.utils.removeFirst
@@ -27,7 +28,8 @@ import kotlin.collections.ArrayList
 const val TAG = "MapView"
 
 class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, val carAppAssets: CarAppResources,
-             val mapAppMode: MapAppMode, val interaction: MapInteractionController, val mapPlaceSearch: MapPlaceSearch, val map: VirtualDisplayScreenCapture) {
+             val mapAppMode: MapAppMode, val locationProvider: CarLocationProvider,
+             val interaction: MapInteractionController, val mapPlaceSearch: MapPlaceSearch, val map: VirtualDisplayScreenCapture) {
 
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
@@ -88,7 +90,7 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 			state.componentsList.filterIsInstance<RHMIComponent.Input>().any { it.suggestAction > 0 }
 		}
 		stateInputState = PlaceSearchView(stateInput, mapPlaceSearch, interaction)
-		searchResultsView = SearchResultsView(unclaimedStates.removeFirst { SearchResultsView.fits(it) }, mapPlaceSearch, interaction, mapAppMode)
+		searchResultsView = SearchResultsView(unclaimedStates.removeFirst { SearchResultsView.fits(it) }, mapPlaceSearch, interaction, mapAppMode, locationProvider)
 
 		// connect buttons together
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach{

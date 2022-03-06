@@ -17,6 +17,7 @@ import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.maps.CarLocationProvider
 import me.hufman.androidautoidrive.maps.MapPlaceSearch
 import org.junit.Assert.*
 import org.junit.Test
@@ -38,6 +39,7 @@ class MapAppTest {
 
 	val appSettings = MockAppSettings()
 	val mapAppMode = MapAppMode.build(GenericRHMIDimensions(1280, 480), appSettings, CDSDataProvider(), MusicAppMode.TRANSPORT_PORTS.USB)
+	val locationProvider = mock<CarLocationProvider>()
 	val mockImageReader = mock<ImageReader> {
 		on { width } doReturn 1000
 		on { height } doReturn 500
@@ -62,7 +64,7 @@ class MapAppTest {
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mapAppMode, mockController, mockPlaceSearch, mockMap)
+		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mapAppMode, locationProvider, mockController, mockPlaceSearch, mockMap)
 		assertEquals(9, app.menuView.state.id)
 		assertEquals(19, app.fullImageView.state.id)
 		assertEquals(132, app.fullImageView.imageComponent.id)
@@ -84,7 +86,7 @@ class MapAppTest {
 	fun testMenuMap() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mapAppMode, mockController, mockPlaceSearch, mockMap)
+		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mapAppMode, locationProvider, mockController, mockPlaceSearch, mockMap)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 		val mockHandlerRunnable = ArgumentCaptor.forClass(Runnable::class.java)
 		val mockHandler = mock<Handler>()
@@ -127,7 +129,7 @@ class MapAppTest {
 		appSettings[AppSettings.KEYS.MAP_WIDESCREEN] = "false"
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mapAppMode, mockController, mockPlaceSearch, mockMap)
+		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mapAppMode, locationProvider, mockController, mockPlaceSearch, mockMap)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 		val mockHandlerRunnable = ArgumentCaptor.forClass(Runnable::class.java)
 		val mockHandler = mock<Handler>()

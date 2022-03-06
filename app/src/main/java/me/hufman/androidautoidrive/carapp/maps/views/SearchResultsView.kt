@@ -9,12 +9,14 @@ import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
+import me.hufman.androidautoidrive.maps.CarLocationProvider
+import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.maps.MapPlaceSearch
 import me.hufman.androidautoidrive.maps.MapResult
 import me.hufman.androidautoidrive.utils.truncate
 import kotlin.coroutines.CoroutineContext
 
-class SearchResultsView(val state: RHMIState, val mapPlaceSearch: MapPlaceSearch, val interaction: MapInteractionController, val mapAppMode: MapAppMode): CoroutineScope {
+class SearchResultsView(val state: RHMIState, val mapPlaceSearch: MapPlaceSearch, val interaction: MapInteractionController, val mapAppMode: MapAppMode, val locationProvider: CarLocationProvider): CoroutineScope {
 	companion object {
 		// current default row width only supports 22 chars before rolling over
 		private const val ROW_LINE_MAX_LENGTH = 22
@@ -81,17 +83,51 @@ class SearchResultsView(val state: RHMIState, val mapPlaceSearch: MapPlaceSearch
 				listModel.value = emptyList
 			} else {
 				listComponent.setEnabled(true)
-				listModel.value = MapResultListAdapter(mapAppMode, contents)
+				listModel.value = MapResultListAdapter(mapAppMode, locationProvider, contents)
 			}
 		}
 	}
 
-	class MapResultListAdapter(mapAppMode: MapAppMode, contents: List<MapResult>): RHMIModel.RaListModel.RHMIListAdapter<MapResult>(2, contents) {
+	class MapResultListAdapter(mapAppMode: MapAppMode, locationProvider: CarLocationProvider, contents: List<MapResult>): RHMIModel.RaListModel.RHMIListAdapter<MapResult>(2, contents) {
+		companion object {
+			fun bearingArrow(angle: Float?): String {
+				angle ?: return ""
+				val ranges = listOf(
+						(0f..22.5f) to "↑",
+						(22.5f..67.5f) to "↗",
+						(67.5f..112.5f) to "→",
+						(112.5f..157.5f) to "↘",
+						(157.5f..202.5f) to "↓",
+						(202.5f..247.5f) to "↙",
+						(247.5f..292.5f) to "←",
+						(292.5f..337.5f) to "↖",
+						(337.5f..360f) to "↑"
+				)
+				for ((range, symbol) in ranges) {
+					if (range.contains(angle)) {
+						return symbol
+					}
+				}
+				return ""
+			}
+		}
+
+		val currentLocation = locationProvider.currentLocation
+		val currentLatLong = currentLocation?.let { LatLong(it.latitude, it.longitude) }
 		val distanceUnits = mapAppMode.distanceUnits        // cache across each row for this set of results
 		override fun convertRow(index: Int, item: MapResult): Array<Any> {
+			val bearing = item.location?.let {
+				currentLatLong?.bearingTowards(it)
+			}
+			val relativeToCarBearing = bearing
+					?.minus(currentLocation?.bearing ?: 0f)
+					?.plus(360f)
+					?.mod(360f)
+			val bearingArrow = bearingArrow(relativeToCarBearing)
 			val distance = item.distanceKm?.let {
+				val distance = distanceUnits.fromCarUnit(it).toInt()
 				val label = if (distanceUnits == CDSVehicleUnits.Distance.Miles) "mi" else "km"
-				"${distanceUnits.fromCarUnit(it).toInt()} $label"
+				"$distance $label\n$bearingArrow"
 			}
 			val title = "${item.name.truncate(ROW_LINE_MAX_LENGTH)}\n${item.address ?: ""}"
 

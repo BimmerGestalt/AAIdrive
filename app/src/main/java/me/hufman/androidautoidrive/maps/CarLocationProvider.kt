@@ -13,10 +13,7 @@ import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive
 import java.io.Serializable
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.sqrt
+import kotlin.math.*
 
 data class LatLong(val latitude: Double, val longitude: Double): Serializable {
 	/**
@@ -29,6 +26,25 @@ data class LatLong(val latitude: Double, val longitude: Double): Serializable {
 		val latRadians = this.latitude * PI / 180
 		val longDistance = abs(other.longitude - this.longitude) * 111.320 * cos(latRadians)
 		return sqrt(latDistance*latDistance + longDistance*longDistance)
+	}
+
+	/**
+	 * Returns angle towards the other point
+	 * 0 pointing North, increasing clockwise
+	 */
+	fun bearingTowards(other: LatLong): Float {
+		// From https://stackoverflow.com/a/69822454/169035
+		val currentLat = Math.toRadians(latitude)
+		val currentLong = Math.toRadians(longitude)
+		val destLat = Math.toRadians(other.latitude)
+		val destLong = Math.toRadians(other.longitude)
+
+		val x = cos(destLat) * sin(destLong - currentLong)
+		val y = (cos(currentLat) * sin(destLat)) -
+				(sin(currentLat) * cos(destLat) * cos(destLong - currentLong))
+
+		val radBearing = atan2(x, y)
+		return (Math.toDegrees(radBearing).toFloat() + 360f) % 360f
 	}
 
 	override fun toString(): String {
@@ -61,6 +77,11 @@ class CdsLocationProvider(val cdsData: CDSData): CarLocationProvider() {
 		cdsData.addEventHandler(CDS.NAVIGATION.GPSPOSITION, 10000, object: CDSEventHandler {
 			override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
 				parseGPS()
+			}
+		})
+		cdsData.addEventHandler(CDS.NAVIGATION.GPSEXTENDEDINFO, 10000, object: CDSEventHandler {
+			override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
+				parseHeading()
 			}
 		})
 	}

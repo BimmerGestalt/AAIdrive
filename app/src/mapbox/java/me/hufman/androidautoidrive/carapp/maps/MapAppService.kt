@@ -49,7 +49,7 @@ class MapAppService: CarAppService() {
 
 		val mapApp = MapApp(iDriveConnectionStatus, securityAccess,
 				CarAppAssetResources(applicationContext, "smartthings"),
-				mapAppMode,
+				mapAppMode, carLocationProvider,
 				MapInteractionControllerIntent(applicationContext), mapPlaceSearch, mapScreenCapture)
 		this.mapApp = mapApp
 		val handler = this.handler!!
