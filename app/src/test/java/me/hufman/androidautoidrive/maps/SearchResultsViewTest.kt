@@ -6,9 +6,11 @@ import io.bimmergestalt.idriveconnectkit.rhmi.*
 import io.bimmergestalt.idriveconnectkit.rhmi.mocking.RHMIApplicationMock
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
+import me.hufman.androidautoidrive.carapp.CDSVehicleUnits
 import me.hufman.androidautoidrive.carapp.FullImageView
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
+import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
 import me.hufman.androidautoidrive.carapp.maps.views.SearchResultsView
 import org.awaitility.Awaitility.await
@@ -38,11 +40,14 @@ class SearchResultsViewTest {
 	}
 	val mapPlaceSearch = mock<MapPlaceSearch>()
 	val mapInteractionController = mock<MapInteractionController>()
+	val mapAppMode = mock<MapAppMode> {
+		on {distanceUnits} doReturn CDSVehicleUnits.Distance.Kilometers
+	}
 	val fullImageView = mock<FullImageView> {
 		on {state} doReturn RHMIState.PlainState(mockApp, 6)
 	}
 
-	val view = SearchResultsView(searchResultsState, mapPlaceSearch, mapInteractionController).apply {
+	val view = SearchResultsView(searchResultsState, mapPlaceSearch, mapInteractionController, mapAppMode).apply {
 		initWidgets(fullImageView)
 	}
 
@@ -115,6 +120,26 @@ class SearchResultsViewTest {
 		assertEquals("Cuppa\n404 Somewhere Blvd", doneData.data[1][1])
 		assertEquals("", doneData.data[2][0])
 		assertEquals("Coffee and Cream\n", doneData.data[2][1])
+	}
+
+	@Test
+	fun testShowResultsMiles() = runBlocking {
+		whenever(mapAppMode.distanceUnits) doReturn CDSVehicleUnits.Distance.Miles
+		val results = CompletableDeferred(listOf(
+				MapResult("1", "Coffee Corner", "123 Main St"),
+				MapResult("2", "Cuppa", "404 Somewhere Blvd", LatLong(1.0, 2.0), 50f),
+		))
+		view.setContents(results)
+		searchResultsState.onHmiEvent(1, mapOf(4.toByte() to true))
+
+		await().until { (mockApp.modelData[25] as? BMWRemoting.RHMIDataTable)?.totalRows == 2 }
+		val doneData = mockApp.modelData[25] as BMWRemoting.RHMIDataTable
+		assertEquals(2, doneData.totalColumns)
+		assertEquals(2, doneData.totalRows)
+		assertEquals("", doneData.data[0][0])
+		assertEquals("Coffee Corner\n123 Main St", doneData.data[0][1])
+		assertEquals("31 mi", doneData.data[1][0])
+		assertEquals("Cuppa\n404 Somewhere Blvd", doneData.data[1][1])
 	}
 
 	@Test

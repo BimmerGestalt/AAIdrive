@@ -2,11 +2,17 @@ package me.hufman.androidautoidrive.carapp.maps
 
 import android.graphics.Bitmap
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.JsonObject
+import io.bimmergestalt.idriveconnectkit.CDS
+import io.bimmergestalt.idriveconnectkit.CDSProperty
 import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.MutableAppSettingsObserver
+import me.hufman.androidautoidrive.carapp.CDSData
+import me.hufman.androidautoidrive.carapp.CDSEventHandler
+import me.hufman.androidautoidrive.carapp.CDSVehicleUnits
 import me.hufman.androidautoidrive.carapp.FullImageConfig
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.maps.LatLong
@@ -42,6 +48,7 @@ class DynamicScreenCaptureConfig(val fullDimensions: RHMIDimensions,
 
 class MapAppMode(val fullDimensions: RHMIDimensions,
                  val appSettings: MutableAppSettingsObserver,
+                 val cdsData: CDSData,
                  val screenCaptureConfig: DynamicScreenCaptureConfig): FullImageConfig, ScreenCaptureConfig by screenCaptureConfig {
 	companion object {
 		// whether the custom map is currently navigating somewhere
@@ -54,10 +61,19 @@ class MapAppMode(val fullDimensions: RHMIDimensions,
 
 		fun build(fullDimensions: RHMIDimensions,
 		          appSettings: MutableAppSettingsObserver,
+		          cdsData: CDSData,
 		          carTransport: MusicAppMode.TRANSPORT_PORTS): MapAppMode {
 			val screenCaptureConfig = DynamicScreenCaptureConfig(fullDimensions, carTransport)
-			return MapAppMode(fullDimensions, appSettings, screenCaptureConfig)
+			return MapAppMode(fullDimensions, appSettings, cdsData, screenCaptureConfig)
 		}
+	}
+
+	init {
+		cdsData.addEventHandler(CDS.VEHICLE.UNITS, 10000, object: CDSEventHandler {
+			override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
+				// just subscribing in order to ensure that distanceUnits is updated
+			}
+		})
 	}
 
 	// current navigation status, for the UI to observe
@@ -69,6 +85,10 @@ class MapAppMode(val fullDimensions: RHMIDimensions,
 		}
 	val currentNavDestinationObservable: MutableLiveData<LatLong>
 		get() = MapAppMode.currentNavDestinationObservable
+
+	// navigation distance units
+	val distanceUnits: CDSVehicleUnits.Distance
+		get() = CDSVehicleUnits.fromCdsProperty(cdsData[CDSProperty.VEHICLE_UNITS]).distanceUnits
 
 	// toggleable settings
 	val settings = listOfNotNull(

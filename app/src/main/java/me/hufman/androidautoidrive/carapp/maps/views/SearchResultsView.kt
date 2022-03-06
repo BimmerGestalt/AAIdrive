@@ -3,16 +3,18 @@ package me.hufman.androidautoidrive.carapp.maps.views
 import androidx.annotation.VisibleForTesting
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import kotlinx.coroutines.*
+import me.hufman.androidautoidrive.carapp.CDSVehicleUnits
 import me.hufman.androidautoidrive.carapp.FullImageView
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
+import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
 import me.hufman.androidautoidrive.maps.MapPlaceSearch
 import me.hufman.androidautoidrive.maps.MapResult
 import me.hufman.androidautoidrive.utils.truncate
 import kotlin.coroutines.CoroutineContext
 
-class SearchResultsView(val state: RHMIState, val mapPlaceSearch: MapPlaceSearch, val interaction: MapInteractionController): CoroutineScope {
+class SearchResultsView(val state: RHMIState, val mapPlaceSearch: MapPlaceSearch, val interaction: MapInteractionController, val mapAppMode: MapAppMode): CoroutineScope {
 	companion object {
 		// current default row width only supports 22 chars before rolling over
 		private const val ROW_LINE_MAX_LENGTH = 22
@@ -79,14 +81,18 @@ class SearchResultsView(val state: RHMIState, val mapPlaceSearch: MapPlaceSearch
 				listModel.value = emptyList
 			} else {
 				listComponent.setEnabled(true)
-				listModel.value = MapResultListAdapter(contents)
+				listModel.value = MapResultListAdapter(mapAppMode, contents)
 			}
 		}
 	}
 
-	class MapResultListAdapter(contents: List<MapResult>): RHMIModel.RaListModel.RHMIListAdapter<MapResult>(2, contents) {
+	class MapResultListAdapter(mapAppMode: MapAppMode, contents: List<MapResult>): RHMIModel.RaListModel.RHMIListAdapter<MapResult>(2, contents) {
+		val distanceUnits = mapAppMode.distanceUnits        // cache across each row for this set of results
 		override fun convertRow(index: Int, item: MapResult): Array<Any> {
-			val distance = item.distanceKm?.toInt()?.let { "$it km" }
+			val distance = item.distanceKm?.let {
+				val label = if (distanceUnits == CDSVehicleUnits.Distance.Miles) "mi" else "km"
+				"${distanceUnits.fromCarUnit(it).toInt()} $label"
+			}
 			val title = "${item.name.truncate(ROW_LINE_MAX_LENGTH)}\n${item.address ?: ""}"
 
 			return arrayOf(distance ?: "", title)

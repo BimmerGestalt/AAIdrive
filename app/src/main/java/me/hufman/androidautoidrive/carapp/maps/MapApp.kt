@@ -88,7 +88,7 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 			state.componentsList.filterIsInstance<RHMIComponent.Input>().any { it.suggestAction > 0 }
 		}
 		stateInputState = PlaceSearchView(stateInput, mapPlaceSearch, interaction)
-		searchResultsView = SearchResultsView(unclaimedStates.removeFirst { SearchResultsView.fits(it) }, mapPlaceSearch, interaction)
+		searchResultsView = SearchResultsView(unclaimedStates.removeFirst { SearchResultsView.fits(it) }, mapPlaceSearch, interaction, mapAppMode)
 
 		// connect buttons together
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach{

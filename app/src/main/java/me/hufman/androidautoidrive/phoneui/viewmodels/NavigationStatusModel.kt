@@ -33,7 +33,7 @@ class NavigationStatusModel(val carInformation: CarInformation,
 			}
 			val isCustomNaviSupported = MutableLiveData(BuildConfig.FLAVOR_map == "gmap" || BuildConfig.FLAVOR_map == "mapbox")
 			val isCustomNaviPreferred = BooleanLiveSetting(appContext, AppSettings.KEYS.NAV_PREFER_CUSTOM_MAP)
-			val mapAppMode = MapAppMode.build(RHMIDimensions.create(emptyMap()), MutableAppSettingsReceiver(appContext), MusicAppMode.TRANSPORT_PORTS.BT)
+			val mapAppMode = MapAppMode.build(RHMIDimensions.create(emptyMap()), MutableAppSettingsReceiver(appContext), carInformation.cdsData, MusicAppMode.TRANSPORT_PORTS.BT)
 			viewModel = NavigationStatusModel(carInformation, isCustomNaviSupported, isCustomNaviPreferred, mapAppMode.currentNavDestinationObservable)
 			viewModel.update()
 			return viewModel as T

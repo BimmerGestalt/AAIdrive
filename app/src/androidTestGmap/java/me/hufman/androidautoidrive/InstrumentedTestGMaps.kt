@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.nhaarman.mockito_kotlin.*
 import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import kotlinx.coroutines.runBlocking
+import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.maps.CarLocationProvider
@@ -56,7 +57,7 @@ class InstrumentedTestGMaps {
 	@Test
 	fun testNavigation() {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-		val mapAppMode = MapAppMode.build(RHMIDimensions.create(emptyMap()), MutableAppSettingsReceiver(appContext), MusicAppMode.TRANSPORT_PORTS.BT)
+		val mapAppMode = MapAppMode.build(RHMIDimensions.create(emptyMap()), MutableAppSettingsReceiver(appContext), CDSDataProvider(), MusicAppMode.TRANSPORT_PORTS.BT)
 		val imageCapture = VirtualDisplayScreenCapture.build(mapAppMode)
 		val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(getContext(), imageCapture.imageCapture)
 		val mapController = GMapsController(appContext, locationProvider, virtualDisplay, MutableAppSettingsReceiver(appContext), mapAppMode)
