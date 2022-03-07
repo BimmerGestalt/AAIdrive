@@ -257,10 +257,10 @@ dependencies {
     androidTestImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     androidTestImplementation 'com.github.tmurakami:dexopener:2.0.5'
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
-    implementation 'io.bimmergestalt:IDriveConnectKit:0.3'
+    implementation 'io.bimmergestalt:IDriveConnectKit:dimensions-test-SNAPSHOT'
     implementation 'io.bimmergestalt:IDriveConnectKitAndroid:0.2'
     testImplementation 'io.bimmergestalt:IDriveConnectKit:0.3'
-    androidTestImplementation 'io.bimmergestalt:IDriveConnectKit:0.3'
+    androidTestImplementation 'io.bimmergestalt:IDriveConnectKit:dimensions-test-SNAPSHOT'
     androidTestImplementation 'io.bimmergestalt:IDriveConnectKitAndroid:0.2'
     androidTestImplementation "org.bouncycastle:bcmail-jdk16:1.46"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
