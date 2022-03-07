@@ -81,7 +81,7 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 	fun applySettings() {
 		// the narrow-screen option centers the viewport to the middle of the display
 		// so update the map's margin to match
-		val margin = (fullDimensions.appWidth - sidebarDimensions.appWidth) / 2 + 30
+		val margin = (fullDimensions.appWidth - sidebarDimensions.appWidth) / 2
 		map?.setPadding(margin, 0, margin, 0)
 
 		val style = appSettings[AppSettings.KEYS.GMAPS_STYLE].lowercase(Locale.ROOT)

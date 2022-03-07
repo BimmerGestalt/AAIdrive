@@ -111,7 +111,7 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 	fun applySettings() {
 		// the narrow-screen option centers the viewport to the middle of the display
 		// so update the map's margin to match
-		val margin = (fullDimensions.appWidth - sidebarDimensions.appWidth) / 2 + 30
+		val margin = (fullDimensions.appWidth - sidebarDimensions.appWidth) / 2
 		map.setPadding(margin, fullDimensions.paddingTop, margin, 0)
 
 		// AppSettings updates every ~10s from cachedCds updates
