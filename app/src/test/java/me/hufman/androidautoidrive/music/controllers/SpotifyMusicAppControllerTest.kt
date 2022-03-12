@@ -1544,13 +1544,17 @@ class SpotifyMusicAppControllerTest {
 			}
 			delay(1000)
 			assertFalse(deferredResults.isCompleted)
-			verify(contentApi).getRecommendedContentItems("default-cars")
+			verify(contentApi).getRecommendedContentItems("default")
 			contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
 					ListItem("id", "uri", null, "Title", "Subtitle", true, false)
 			)))
 			val results = deferredResults.await()
 			assertTrue(deferredResults.isCompleted)
+			assertEquals(3, results.size)
 			assertEquals("Title", results[0].title)
+			// these entries are hardcoded to appear here, if they are missing
+			assertEquals("Your Library", results[1].title)
+			assertEquals("Browse", results[2].title)
 		}
 
 		runBlocking {

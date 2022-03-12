@@ -10,6 +10,7 @@ import android.util.Base64
 import android.util.Log
 import android.util.LruCache
 import com.google.gson.Gson
+import com.soywiz.kds.iterators.fastForEachReverse
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
@@ -168,6 +169,18 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			context.getDrawable(R.drawable.spotify_added_library))
 	val CUSTOM_ACTION_START_RADIO = CustomAction.fromSpotify("START_RADIO",
 			context.getDrawable(R.drawable.spotify_start_radio))
+
+	// always add these entries in the root, if they are missing
+	val includedRootEntries = listOf(
+			ListItem("com.spotify.your-library", "com.spotify.your-library",
+					ImageUri("android.resource://com.spotify.music/drawable/ic_eis_your_library"),
+					L.MUSIC_SPOTIFY_BROWSEROOT_LIBRARY, "", false, true
+			),
+			ListItem("com.spotify.browse", "com.spotify.browse",
+					ImageUri("android.resource://com.spotify.music/drawable/ic_eis_browse"),
+					L.MUSIC_SPOTIFY_BROWSEROOT_BROWSE, "", false, true
+			),
+	)
 
 	var connected = true
 
@@ -741,10 +754,17 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		val isArtistDirectory: (MusicMetadata?) -> Boolean = {it?.mediaId?.contains(":artists:") == true}
 		val deferred = CompletableDeferred<List<MusicMetadata>>()
 		if (directory?.mediaId == null) {
-			remote.contentApi.getRecommendedContentItems("default-cars").setResultCallback { results ->
-				deferred.complete(results?.items?.map {
+			remote.contentApi.getRecommendedContentItems("default").setResultCallback { results ->
+				val items = (results?.items ?: emptyArray()).toMutableList()
+				includedRootEntries.fastForEachReverse { item ->
+					if (!items.any { it.id == item.id }) {
+						items.add(1, item)  // add at #1 because #0 is recently-played
+					}
+				}
+
+				deferred.complete(items.map {
 					SpotifyMusicMetadata.fromBrowseItem(this, it)
-				} ?: LinkedList())
+				})
 			}.setErrorCallback {
 				deferred.complete(LinkedList())
 			}

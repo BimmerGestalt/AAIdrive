@@ -82,6 +82,8 @@ object L {
 	val MUSIC_SPOTIFY_THUMBS_UP_SELECTED by StringResourceDelegate("Thumbed Up")
 	val MUSIC_SPOTIFY_THUMB_DOWN by StringResourceDelegate("Thumb Down")
 	val MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED by StringResourceDelegate("Thumbed Down")    // not sure if this exists, but just to be complete
+	val MUSIC_SPOTIFY_BROWSEROOT_LIBRARY by StringResourceDelegate("Your Library")
+	val MUSIC_SPOTIFY_BROWSEROOT_BROWSE by StringResourceDelegate("Browse")
 
 	val MAP_ACTION_VIEWMAP by StringResourceDelegate("View Full Map")
 	val MAP_ACTION_SEARCH by StringResourceDelegate("Search for Place")
