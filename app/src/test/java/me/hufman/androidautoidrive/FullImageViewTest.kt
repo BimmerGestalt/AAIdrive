@@ -34,7 +34,7 @@ class FullImageViewTest {
 		val fullImageConfig = MapAppMode.build(GenericRHMIDimensions(1280, 480), appSettings, CDSDataProvider(), MusicAppMode.TRANSPORT_PORTS.USB)
 		val fullImageView = FullImageView(this.fullImageState, "Map", fullImageConfig, mock(), mock())
 		fullImageView.initWidgets()
-		assertEquals(743, fullImageView.imageComponent.properties[RHMIProperty.PropertyId.WIDTH.id]?.value)
+		assertEquals(703, fullImageView.imageComponent.properties[RHMIProperty.PropertyId.WIDTH.id]?.value)
 		assertEquals(480, fullImageView.imageComponent.properties[RHMIProperty.PropertyId.HEIGHT.id]?.value)
 
 		appSettings[AppSettings.KEYS.MAP_WIDESCREEN] = "true"
