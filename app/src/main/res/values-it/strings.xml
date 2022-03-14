@@ -416,4 +416,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Thumb Down</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Thumbed Down</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">La Tua Collezione</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Sfoglia</string>
 </resources>
