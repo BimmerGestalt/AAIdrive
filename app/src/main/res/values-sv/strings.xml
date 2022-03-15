@@ -416,4 +416,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Tummen upp</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Tumme Ned</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Tummen ner</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">Ditt Biblioteket</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Utforska</string>
 </resources>
