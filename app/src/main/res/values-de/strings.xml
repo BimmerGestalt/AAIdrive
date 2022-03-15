@@ -416,4 +416,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Hochgevoted</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Daumen runter</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Runtergevoted</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">Deine Bibliothek</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Durchsuchen</string>
 </resources>

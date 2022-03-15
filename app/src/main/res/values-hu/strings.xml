@@ -391,4 +391,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Tetszik</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Nem tetszik</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Nem tetszik</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">Könyvtárad</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Böngészés</string>
 </resources>

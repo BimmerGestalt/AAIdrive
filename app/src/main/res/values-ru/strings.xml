@@ -412,4 +412,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Понравилась</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Удалить</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Не понравилась</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">Ваша библиотека</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Обзор</string>
 </resources>

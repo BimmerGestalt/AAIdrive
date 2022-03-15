@@ -422,4 +422,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Kciuk w górę</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Kciuk w dół</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Kciuk w dół</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">Twoja Biblioteka</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Przeglądaj</string>
 </resources>
