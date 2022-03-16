@@ -17,8 +17,10 @@ import me.hufman.androidautoidrive.AppSettingsObserver
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.maps.CarLocationProvider
 import me.hufman.androidautoidrive.maps.LatLong
+import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.sin
 
 class MapboxController(private val context: Context,
                        private val carLocationProvider: CarLocationProvider,
@@ -136,8 +138,18 @@ class MapboxController(private val context: Context,
 		val cameraPosition = CameraOptions.Builder()
 				.center(Point.fromLngLat(location.longitude, location.latitude))
 				.zoom(currentZoom.toDouble())
+				.padding(calculateBearingOffset(location.bearing))
 				.build()
 		projection?.map?.camera?.flyTo(cameraPosition, scrollZoomAnimation)
+	}
+
+	private fun calculateBearingOffset(bearing: Float): EdgeInsets {
+		val bearingRads = Math.toRadians(bearing.toDouble())
+		val leftPadding = max(0.0, -sin(bearingRads)) * mapAppMode.appDimensions.appWidth / 2
+		val rightPadding = max(0.0, sin(bearingRads)) * mapAppMode.appDimensions.appWidth / 2
+		val topPadding = max(0.0, cos(bearingRads)) * mapAppMode.appDimensions.appHeight / 2
+		val bottomPadding = max(0.0, -cos(bearingRads)) * mapAppMode.appDimensions.appHeight / 2
+		return EdgeInsets(topPadding, leftPadding, bottomPadding, rightPadding)
 	}
 
 	override fun navigateTo(dest: LatLong) {
