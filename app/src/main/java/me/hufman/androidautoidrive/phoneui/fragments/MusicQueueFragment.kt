@@ -15,6 +15,7 @@ import me.hufman.androidautoidrive.databinding.MusicQueuePageBinding
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.QueueMetadata
 import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
+import me.hufman.androidautoidrive.phoneui.UIState
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicPlayerQueueItem
@@ -26,7 +27,7 @@ class MusicQueueFragment: Fragment() {
 	private val contents = ArrayList<MusicPlayerQueueItem>()
 	private var currentQueueMetadata: QueueMetadata? = null
 
-	val viewModel by activityViewModels<MusicActivityModel>()
+	val viewModel by activityViewModels<MusicActivityModel> { MusicActivityModel.Factory(requireContext().applicationContext, UIState.selectedMusicApp) }
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		val binding = MusicQueuePageBinding.inflate(layoutInflater)

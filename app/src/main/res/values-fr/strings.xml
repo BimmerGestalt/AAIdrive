@@ -68,13 +68,11 @@
     <string name="lbl_popupVersion">Les popups ne fonctionnent qu\'avec IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS n\'est pas pris en charge par votre voiture</string>
     <string name="lbl_smsPermission">Autorise l\'accès aux images contenues dans les SMS depuis la voiture. Le text est quant à lui toujours visible.</string>
-    <string name="lbl_mapspage">Un écran Google Maps basic peut être affiché dans la voiture</string>
-    <string name="enable_google_maps">Activer Google Maps</string>
     <string name="lbl_widescreen_map">Carte Elargie</string>
     <string name="lbl_map_invert_zoom">Inverser la direction du zoom</string>
     <string name="lbl_map_tilt">Incliner la carte</string>
     <string name="lbl_map_traffic">Afficher la circulation</string>
-    <string name="lbl_gmap_buildings">Activer les bâtiments 3D</string>
+    <string name="lbl_map_buildings">Activer les bâtiments 3D</string>
     <string name="gmapStyleLabel">Style de Carte</string>
     <string name="lbl_musicpage">Les applications de musique de votre téléphone sont sélectionnables comme sources multimédia dans la voiture</string>
     <string name="lbl_music_apps">Applications de Musique</string>
@@ -304,6 +302,10 @@
     <string name="MAP_ACTION_VIEWMAP">Plein Ecran</string>
     <string name="MAP_ACTION_SEARCH">Rechercher un endroit</string>
     <string name="MAP_ACTION_CLEARNAV">Effacer Itinéraire</string>
+    <string name="MAP_WIDESCREEN">Carte Elargie</string>
+    <string name="MAP_INVERT_ZOOM">Inverser la direction du zoom</string>
+    <string name="MAP_TRAFFIC">Afficher la circulation</string>
+    <string name="MAP_BUILDINGS">Activer les bâtiments 3D</string>
     <string name="MUSIC_APPLIST_TITLE">Applications</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Liste Vide&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Actions</string>

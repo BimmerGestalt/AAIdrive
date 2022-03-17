@@ -11,12 +11,12 @@
     <string name="playstore_desc_features_carinfo">Citește diverse informații de diagnosticare și statistici din mașina ta</string>
     <string name="playstore_desc_features_addons_mirroring">Extindeți capacitățile prin add-ons (cum ar fi oglindirea ecranului)</string>
     <string name="playstore_desc_features_custommap_soon">Implementarea hărții personalizate în curând</string>
+    <string name="playstore_desc_features_custommap">Hartă personalizată și navigare pe baza Mapbox</string>
     <string name="playstore_desc_nativeapps_protocol">Folosind protocolul nativ de aplicații BMW, exact ca vechea aplicație Spotify, această aplicație nu vă modifică mașina în niciun fel, si toate capabilitatile extinse sunt furnizate doar in timp ce telefonul este conectat.</string>
     <string name="playstore_desc_depends_mybmw">Aplicațiile BMW/Mini Connected necesită ca aplicația MyBMW sau MINI pentru mașina dvs. să fie instalată și să se poată activa cu succes caseta de selectare a aplicațiilor IDrive5+, sau ca mașina dvs. cu IDrive4 are opțiunea Asistentă pentru conexiune ConnectedDrive.</string>
     <string name="playstore_desc_depends_bmw_subscription">Acest lucru necesită de obicei un abonament activ BMW ConnectedDrive, care este inclus timp de câțiva ani după ce ați cumpărat mașina nouă.</string>
-    <string name="playstore_release_desc">O versiune cu integrarea calendarului și unele îmbunătățiri ale serviciului de fundal</string>
-    <string name="playstore_release_point1">Readuce funcționalitatea BMW/Mini Calendar, inclusiv navigarea automată la viitoarele programări</string>
-    <string name="playstore_release_point2">Elimină defectele ANR din implementarea Serviciului de prim-plan</string>
-    <string name="playstore_release_point3">Îmbunătățește performanța aplicației atunci când primeste date de la autoturism și descoperă aplicații muzicale</string>
-    <string name="playstore_release_point4">Repară erorile UX atunci când se utilizează butonul Media și activează butonul OK când răspundeți la notificări</string>
+    <string name="playstore_release_desc">În cele din urmă, caracteristica hărții solicitată de toată lumea!</string>
+    <string name="playstore_release_point1">Adaugă o hartă personalizată, redată pe telefon și afișată în mașină</string>
+    <string name="playstore_release_point2">Folosește Mapbox pentru hartă, căutare locație și navigare pe traseu</string>
+    <string name="playstore_release_point3">Adaugă un punct de interes la navigatie</string>
 </resources>

@@ -28,7 +28,7 @@ Full Description:
 🗺️ `lang_line playstore_desc_features_carnav`
 👀 `lang_line playstore_desc_features_carinfo`
 🧩 `lang_line playstore_desc_features_addons_mirroring`
-🚧 `lang_line playstore_desc_features_custommap_soon`
+🗺️ `lang_line playstore_desc_features_custommap`
 
 ✨ `lang_line playstore_desc_nativeapps_protocol`
 

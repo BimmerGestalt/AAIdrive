@@ -16,6 +16,7 @@ import java.lang.Exception
 
 class MapAppService: CarAppService() {
 	val appSettings = AppSettingsViewer()
+	var mapAppMode: MapAppMode? = null
 	var mapApp: MapApp? = null
 	var mapScreenCapture: VirtualDisplayScreenCapture? = null
 	var virtualDisplay: VirtualDisplay? = null
@@ -23,7 +24,7 @@ class MapAppService: CarAppService() {
 	var mapListener: MapsInteractionControllerListener? = null
 
 	override fun shouldStartApp(): Boolean {
-		return appSettings[AppSettings.KEYS.ENABLED_GMAPS].toBoolean()
+		return appSettings[AppSettings.KEYS.ENABLED_MAPS].toBoolean()
 	}
 
 	override fun onCarStart() {
@@ -33,12 +34,13 @@ class MapAppService: CarAppService() {
 		val carLocationProvider = CombinedLocationProvider(
 				appSettings, AndroidLocationProvider.getInstance(this), CdsLocationProvider(cdsData)
 		)
-		val mapAppMode = MapAppMode(RHMIDimensions.create(carInformation.capabilities), AppSettingsViewer(), MusicAppMode.TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port) ?: MusicAppMode.TRANSPORT_PORTS.BT)
-		val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode.fullDimensions.visibleWidth, mapAppMode.fullDimensions.visibleHeight, mapAppMode.compressQuality)
+		val mapAppMode = MapAppMode.build(RHMIDimensions.create(carInformation.capabilities), MutableAppSettingsReceiver(this, handler), cdsData, MusicAppMode.TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port) ?: MusicAppMode.TRANSPORT_PORTS.BT)
+		this.mapAppMode = mapAppMode
+		val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode)
 		this.mapScreenCapture = mapScreenCapture
 		val virtualDisplay = VirtualDisplayScreenCapture.createVirtualDisplay(applicationContext, mapScreenCapture.imageCapture, 250)
 		this.virtualDisplay = virtualDisplay
-		val mapController = GMapsController(applicationContext, carLocationProvider, virtualDisplay, MutableAppSettingsReceiver(applicationContext, null /* specifically main thread */))
+		val mapController = GMapsController(applicationContext, carLocationProvider, virtualDisplay, MutableAppSettingsReceiver(applicationContext, null /* specifically main thread */), mapAppMode)
 		this.mapController = mapController
 		val mapPlaceSearch = GMapsPlaceSearch.getInstance(this, carLocationProvider)
 		val mapListener = MapsInteractionControllerListener(applicationContext, mapController)
@@ -47,7 +49,7 @@ class MapAppService: CarAppService() {
 
 		val mapApp = MapApp(iDriveConnectionStatus, securityAccess,
 				CarAppAssetResources(applicationContext, "smartthings"),
-				mapAppMode,
+				mapAppMode, carLocationProvider,
 				MapInteractionControllerIntent(applicationContext), mapPlaceSearch, mapScreenCapture)
 		this.mapApp = mapApp
 		val handler = this.handler!!
@@ -55,6 +57,8 @@ class MapAppService: CarAppService() {
 	}
 
 	override fun onCarStop() {
+		mapAppMode?.currentNavDestination = null
+
 		// shut down maps functionality right away
 		// when the car disconnects, the threadGMaps handler shuts down
 		try {

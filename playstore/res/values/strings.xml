@@ -11,13 +11,13 @@
     <string name="playstore_desc_features_carinfo">Read various diagnostic info and statistics from your car</string>
     <string name="playstore_desc_features_addons_mirroring">Extend capabilities through optional add-ons (such as screen mirroring)</string>
     <string name="playstore_desc_features_custommap_soon">Custom map implementation coming soon</string>
+    <string name="playstore_desc_features_custommap">Custom map and navigation based on Mapbox</string>
     <string name="playstore_desc_nativeapps_protocol">By using the native BMW Apps protocol, exactly like the old Spotify app, this app does not modify your car in any way, and all of the extended capabilities are only provided while your phone is connected.</string>
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps requires that the MyBMW or MINI app for your car is installed and that it can successfully enable your IDrive5+ car's Apps checkbox, or that your IDrive4 car has the ConnectedDrive Connection Assistant option.</string>
     <string name="playstore_desc_depends_bmw_subscription">This usually requires having an active BMW ConnectedDrive subscription, which is typically included for a few years after you bought your new car.</string>
 
-    <string name="playstore_release_desc">A quick release featuring calendar integration and some background service improvements</string>
-    <string name="playstore_release_point1">Brings back the BMW/Mini Calendar functionality, including automatically navigating to upcoming appointments</string>
-    <string name="playstore_release_point2">Removes ANR crashes from the Foreground Service implementation</string>
-    <string name="playstore_release_point3">Improves app performance when caching car data and when discovering music apps</string>
-    <string name="playstore_release_point4">Fixes UX bugs when using the Media shortcut button and enables the OK button when replying to notifications</string>
+    <string name="playstore_release_desc">Finally, the map feature that everyone has been asking for!</string>
+    <string name="playstore_release_point1">Adds a custom map, rendered on the phone and displayed in the car</string>
+    <string name="playstore_release_point2">Uses Mapbox for the map, place search, and route navigation</string>
+    <string name="playstore_release_point3">Adds Point of Interest completion for the Navigation tab</string>
 </resources>

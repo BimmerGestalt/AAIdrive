@@ -33,10 +33,10 @@ class CombinedLocationProviderTest(private val preferPhoneLocation: Boolean) {
 		combinedLocationProvider.start()
 		if (preferPhoneLocation) {
 			verify(phoneLocationProvider, times(1)).start()
-			verifyNoMoreInteractions(phoneLocationProvider, carLocationProvider)
+			verify(carLocationProvider, times(0)).start()
 		} else {
 			verify(carLocationProvider, times(1)).start()
-			verifyNoMoreInteractions(phoneLocationProvider, carLocationProvider)
+			verify(phoneLocationProvider, times(0)).start()
 		}
 
 		combinedLocationProvider.stop()

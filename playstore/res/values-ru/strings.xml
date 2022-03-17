@@ -11,12 +11,12 @@
     <string name="playstore_desc_features_carinfo">Читайте различные данные диагностики и статистику вашего автомобиля</string>
     <string name="playstore_desc_features_addons_mirroring">Расширьте возможности через необязательные дополнения (например, зеркалирование экрана)</string>
     <string name="playstore_desc_features_custommap_soon">Реализация карт пользователя в разработке</string>
+    <string name="playstore_desc_features_custommap">Пользовательская карта и навигация на основе Mapbox</string>
     <string name="playstore_desc_nativeapps_protocol">Используя оригинальные протоколы приложений BMW, как и старое приложение Spotify, AAIdrive ничего не меняет в вашем автомобиле и все расширенные возможности предоставляются только при подключении телефона.</string>
     <string name="playstore_desc_depends_mybmw">Для успешной работы требуется, чтобы было установлено приложение для вашего автомобиля MyBMW или MINI и был отмечен чекбокс IDrive5+ \"Приложения\" или у вашего авто IDrive4 была опция ConnectedDrive Connection Assistant.</string>
     <string name="playstore_desc_depends_bmw_subscription">Для этого требуется наличие активной подписки BMW ConnectedDrive, которая обычно включена на несколько лет при покупке новой машины.</string>
-    <string name="playstore_release_desc">Быстрый релиз с интеграцией календаря и некоторыми улучшениями фонового режима</string>
-    <string name="playstore_release_point1">Возвращает функциональность календаря BMW/Mini, включая автоматический переход к предстоящим встречам</string>
-    <string name="playstore_release_point2">Удаляет падения ANR из-за внедрения Foreground Service</string>
-    <string name="playstore_release_point3">Улучшение производительности приложения при кэшировании данных автомобиля и обнаружении музыкальных приложений</string>
-    <string name="playstore_release_point4">Исправляет ошибки UX при использовании кнопки Media и включает кнопку ОК при ответе на уведомления</string>
+    <string name="playstore_release_desc">И, наконец, функция карты, о которой все спрашивали!</string>
+    <string name="playstore_release_point1">Добавляет пользовательскую карту, визуализированную на телефоне и отображаемую в автомобиле</string>
+    <string name="playstore_release_point2">Использует Mapbox для карты, поиска мест и навигации</string>
+    <string name="playstore_release_point3">Добавляет дополнение \"POI\" во вкладке навигации</string>
 </resources>

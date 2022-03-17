@@ -11,12 +11,12 @@
     <string name="playstore_desc_features_carinfo">Zeigt verschiedene Diagnostik-Informationen und Statistiken von deinem Auto an</string>
     <string name="playstore_desc_features_addons_mirroring">Erweitere die Fähigkeiten durch optionale Add-ons (wie z.B. Screen Mirroring)</string>
     <string name="playstore_desc_features_custommap_soon">Eine benutzerdefinierte Kartenimplementierung wird in Kürze integriert</string>
+    <string name="playstore_desc_features_custommap">Benutzerdefinierte Karte und Navigation basierend auf Mapbox</string>
     <string name="playstore_desc_nativeapps_protocol">Durch die Verwendung des nativen BMW App-Protokolls, genau wie eine ältere Version der Spotify-App, ändert diese App dein Auto in keiner Weise und alle erweiterten Funktionen werden nur zur Verfügung gestellt, wenn das Telefon verbunden ist.</string>
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps erfordert, dass die MyBMW oder MINI App für dein Auto installiert ist und dass sie erfolgreich die IDrive5+ Auto-App-Checkbox aktivieren kann oder dass dein IDrive4 Auto über den ConnectedDrive Connection Assistant verfügt.</string>
     <string name="playstore_desc_depends_bmw_subscription">Dies erfordert in der Regel ein aktives BMW ConnectedDrive-Abonnement, das normalerweise für ein paar Jahre nach dem Kauf des neuen Autos enthalten ist.</string>
-    <string name="playstore_release_desc">Eine neue Version welche eine Kalender-Integration und einige Verbesserungen beim Hintergrunddienst bietet</string>
-    <string name="playstore_release_point1">Stellt die BMW/Mini Kalender-Funktionalität wieder her, einschließlich der automatischen Navigation zu kommenden Terminen</string>
-    <string name="playstore_release_point2">Entfernt ANR-Abstürze bei der Implementierung des Foreground-Service</string>
-    <string name="playstore_release_point3">Verbessert die Performance der App beim Zwischenspeichern von Fahrzeugdaten und bei der Suche von Musik-Apps</string>
-    <string name="playstore_release_point4">Behebt UX-Fehler bei der Verwendung der Medien-Verknüpfung und aktiviert die OK-Taste beim Antworten auf Benachrichtigungen</string>
+    <string name="playstore_release_desc">Und schließlich das Feature das jeder gefordert hatte: Darstellung einer Navigationskarte!</string>
+    <string name="playstore_release_point1">Fügt eine benutzerdefinierte Navigationskarte hinzu, welche auf dem Telefon gerendert und im Auto angezeigt wird</string>
+    <string name="playstore_release_point2">Verwendet Mapbox für Karten, Ortssuche und Routennavigation</string>
+    <string name="playstore_release_point3">Fügt die Vervollständigung für \"Points of Interests\" für den Navigations-Tab hinzu</string>
 </resources>

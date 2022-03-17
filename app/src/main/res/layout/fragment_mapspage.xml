@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android" >
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
     <data class="MapPageSettingsBinding">
         <variable
-            name="settings"
-            type="me.hufman.androidautoidrive.phoneui.viewmodels.MapSettingsModel" />
+            name="viewmodel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.MapPageModel" />
         <variable
-            name="controller"
-            type="me.hufman.androidautoidrive.phoneui.controllers.MapsPageController" />
+            name="connectionmodel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel" />
     </data>
     <ScrollView
         android:layout_width="match_parent"
@@ -31,16 +32,37 @@
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swMapsEnabled"
-                android:checked="@={settings.mapEnabled}"
+                android:checked="@={viewmodel.mapEnabled}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
                 android:paddingBottom="@dimen/settings_vertical_margin"
-                android:text="@string/enable_google_maps" />
+                android:text="@string/enable_custom_maps" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/checkbox_vertical_margin"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:visibility="@{connectionmodel.isBclTransportBT()}">
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_error_outline_black_24dp"
+                    app:tint="?android:attr/textColorSecondary"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:text="@string/lbl_map_bt_hint" />
+            </LinearLayout>
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/paneMaps"
-                android:visibility="@{settings.mapEnabled}"
+                android:visibility="@{viewmodel.mapEnabled}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"

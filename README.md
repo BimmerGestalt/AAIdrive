@@ -36,6 +36,9 @@ Download the APK of the latest stable release from the [Releases page](https://g
 Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-nomap-sentry-release.apk) to automatically report crashes.
 The [nonalytics](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-nomap-nonalytics-release.apk) build is available too.
 
+- Navigation tab includes address completion (and POI search in map-enabled builds)
+- Mapbox-powered custom map [in a separate build](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-mapbox-sentry-release.apk)
+
 Check out the [FAQ](https://bimmergestalt.github.io/AAIdrive/faq.html) if you run into problems.
 
 User Guide
@@ -91,6 +94,7 @@ Implemented Features
         - [Acast Podcast Player](https://play.google.com/store/apps/details?id=com.acast.nativeapp)
         - [AntennaPod](https://play.google.com/store/apps/details?id=de.danoeh.antennapod)
         - [Audecibel](https://play.google.com/store/apps/details?id=com.podcastsapp)
+        - [Blinkest](https://play.google.com/store/apps/details?id=com.blinkslabs.blinkist.android)
         - [The Bob & Tom Show](https://play.google.com/store/apps/details?id=com.radio.station.BOB.TOM)
         - [Castbox](https://play.google.com/store/apps/details?id=fm.castbox.audiobook.radio.podcast)
         - [Google Play Books](https://play.google.com/store/apps/details?id=com.google.android.apps.books)
@@ -146,6 +150,7 @@ Implemented Features
         - [SiriusXM](https://play.google.com/store/apps/details?id=com.sirius)
         - [Simple Radio](https://play.google.com/store/apps/details?id=com.streema.simpleradio)
         - [SomaFM](https://play.google.com/store/apps/details?id=com.dgmltn.radiomg.somafm)
+        - [SWR3](https://play.google.com/store/apps/details?id=de.swr.swr3radio)
         - [sunshine live](https://play.google.com/store/apps/details?id=app.sunshinelive.de.sunshinelive)
         - [Versuz Radio](https://play.google.com/store/apps/details?id=com.versuzradio)
         - [Virgin Radio Italy](https://play.google.com/store/apps/details?id=it.froggy.android.virginradio)
@@ -154,7 +159,7 @@ Implemented Features
         - [Anghami](https://play.google.com/store/apps/details?id=com.anghami)
         - [Gaana Music](https://play.google.com/store/apps/details?id=com.gaana)
         - [JioSaavn](https://play.google.com/store/apps/details?id=com.jio.media.jiobeats)
-        - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android) up to version [v2021.08.11](https://apkpure.com/sound-cloud-android/com.soundcloud.android/download/87080-APK-500e8e116f80cf0c2113c6a1863427fc?from=versions%2Fversion)
+        - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android)
         - [Spotify](https://play.google.com/store/apps/details?id=com.spotify.music)
         - [Tidal](https://play.google.com/store/apps/details?id=com.aspiro.tidal)
 
