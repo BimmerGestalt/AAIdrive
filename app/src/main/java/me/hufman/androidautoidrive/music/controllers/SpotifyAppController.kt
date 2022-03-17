@@ -34,12 +34,12 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 
 		fun getClientId(context: Context): String {
 			return context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-					.metaData.getString("com.spotify.music.API_KEY", "unavailable")
+					.metaData.getString("com.spotify.music.API_KEY", "unset")
 		}
 
 		fun hasSupport(context: Context): Boolean {
 			val clientId = getClientId(context)
-			return clientId != "unavailable" && clientId != ""
+			return clientId != "unset" && clientId != "invalid" && clientId != ""
 		}
 
 		fun isSpotifyInstalled(context: Context): Boolean {
