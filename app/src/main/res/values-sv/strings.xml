@@ -95,6 +95,8 @@
     <string name="lbl_map_buildings">Aktivera 3D-byggnader</string>
     <string name="gmapStyleLabel">Kart utseende</string>
     <string name="lbl_mapbox_custom_style">Använd en anpassad Mapbox stil URL</string>
+    <string name="lbl_gmap_invalid_apikey">GMaps API-nyckel är ogiltig och kartfunktionaliteten kommer begränsas. Vänligen meddela utvecklaren av detta fel och vänta på en uppdatering</string>
+    <string name="lbl_mapbox_invalid_token">Mapbox-lösen är ogiltigt och kartfunktionaliteten kommer att begränsas. Vänligen meddela utvecklaren av denna bugg och titta efter en uppdatering</string>
     <string name="lbl_musicpage">Telefonens musikappar är valbara mediakällor i bilen</string>
     <string name="lbl_music_apps">Musikappar</string>
     <string name="musicAppIcon">Appikon</string>
@@ -416,4 +418,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Tummen upp</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Tumme Ned</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Tummen ner</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">Ditt Biblioteket</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Utforska</string>
 </resources>
