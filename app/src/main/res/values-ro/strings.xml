@@ -96,6 +96,8 @@
     <string name="lbl_map_buildings">Activează clădiri 3D</string>
     <string name="gmapStyleLabel">Stil hartă</string>
     <string name="lbl_mapbox_custom_style">Folosește un URL personalizat pentru Mapbox</string>
+    <string name="lbl_gmap_invalid_apikey">Cheia Gmaps API este invalidă și funcționalitatea hărții va fi redusă. Vă rugăm să notificați dezvoltatorul pentru această eroare și să urmăriți o actualizare</string>
+    <string name="lbl_mapbox_invalid_token">Token-ul Mapbox este invalid și funcționalitatea hărții va fi redusă. Vă rugăm să notificați dezvoltatorul pentru această eroare și să urmăriți o actualizare</string>
     <string name="lbl_musicpage">Aplicațiile de muzică din telefon sunt disponibile ca surse media în mașină</string>
     <string name="lbl_music_apps">Aplicații de muzică</string>
     <string name="musicAppIcon">Icon aplicație</string>
@@ -419,4 +421,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Thumb Down</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Thumbed Down</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">Biblioteca ta</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Căutare</string>
 </resources>
