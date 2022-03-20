@@ -225,7 +225,7 @@ class MapboxController(private val context: Context,
 				val cameraPosition = projection?.map?.getMapboxMap()?.cameraForCoordinates(listOf(
 						startPoint,
 						destPoint
-				), EdgeInsets(150.0, 100.0, 100.0, 100.0))
+				), EdgeInsets(150.0, 100.0, 100.0, 100.0), 0.0, 0.0)
 				if (cameraPosition != null) {
 					projection?.map?.camera?.flyTo(cameraPosition, navZoomAnimation)
 				}
@@ -239,8 +239,18 @@ class MapboxController(private val context: Context,
 			val cameraPosition = CameraOptions.Builder()
 					.center(Point.fromLngLat(location.longitude, location.latitude))
 					.zoom(currentZoom.toDouble())
-					.build()
-			projection?.map?.camera?.flyTo(cameraPosition, navZoomAnimation)
+			if (location.hasBearing() && currentSettings.mapTilt) {
+				cameraPosition
+						.padding(EdgeInsets(0.5 * mapAppMode.appDimensions.appHeight / 2, 0.0, 0.0, 0.0))
+						.pitch(60.0)
+						.bearing(location.bearing.toDouble())
+			} else {
+				cameraPosition
+						.padding(calculateBearingOffset(location.bearing))
+						.pitch(0.0)
+						.bearing(0.0)
+			}
+			projection?.map?.camera?.flyTo(cameraPosition.build(), navZoomAnimation)
 		}, NAVIGATION_MAP_STARTZOOM_TIME.toLong())
 	}
 
