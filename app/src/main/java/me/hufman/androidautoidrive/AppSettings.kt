@@ -32,6 +32,7 @@ interface AppSettings {
 		CALENDAR_AUTOMATIC_NAVIGATION("Calendar_Automatic_Navigation", "false", "Automatically navigate to upcoming appointments"),
 		CALENDAR_IGNORE_VISIBILITY("Calendar_Ignore_Visibility", "false", "Ignore calendar visibility for events"),
 		ENABLED_MAPS("Enabled_Maps", "false", "Show Custom Maps in the car"),
+		MAP_QUICK_DESTINATIONS("Map_Quick_Destinations", "[]", "A list of quick destinations"),
 		MAP_WIDESCREEN("Map_Widescreen", "false", "Show Map in widescreen"),
 		MAP_INVERT_SCROLL("Map_Invert_Scroll", "false", "Invert zoom direction"),
 		MAP_TRAFFIC("Map_Traffic", "true", "Show traffic"),

@@ -104,6 +104,7 @@
     <string name="lbl_map_buildings">Enable 3D buildings</string>
     <string name="gmapStyleLabel">Map Style</string>
     <string name="lbl_mapbox_custom_style">Use a custom Mapbox style url</string>
+    <string name="lbl_map_quickdestinations">Favorite nav destinations:</string>
     <string name="lbl_gmap_invalid_apikey">The GMaps API Key is invalid and map functionality will be reduced. Please notify the developer of this bug and watch for an update</string>
     <string name="lbl_mapbox_invalid_token">The Mapbox Token is invalid and map functionality will be reduced. Please notify the developer of this bug and watch for an update</string>
 
@@ -405,6 +406,7 @@
     <string name="MAP_ACTION_SEARCH">Search for Place</string>
     <string name="MAP_ACTION_RECALC_NAV">Recalculate Navigation</string>
     <string name="MAP_ACTION_CLEARNAV">Clear Navigation</string>
+    <string name="MAP_DESTINATIONS">Favorite destinations</string>
     <string name="MAP_WIDESCREEN">Widescreen map</string>
     <string name="MAP_INVERT_ZOOM">Invert zoom direction</string>
     <string name="MAP_TRAFFIC">Show traffic</string>

@@ -12,28 +12,28 @@ import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.StoredList
-import me.hufman.androidautoidrive.databinding.NotificationQuickRepliesBinding
+import me.hufman.androidautoidrive.databinding.MapQuickDestinationsBinding
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
 import me.hufman.androidautoidrive.phoneui.adapters.ReorderableItemsCallback
 import me.hufman.androidautoidrive.phoneui.controllers.QuickEditListController
 
-class NotificationQuickRepliesFragment: Fragment() {
+class MapQuickDestinationsFragment: Fragment() {
 	// the model of data to show
 	val appSettings by lazy { MutableAppSettingsReceiver(requireContext().applicationContext) }
-	val replies by lazy { StoredList(appSettings, AppSettings.KEYS.NOTIFICATIONS_QUICK_REPLIES) }
+	val destinations by lazy { StoredList(appSettings, AppSettings.KEYS.MAP_QUICK_DESTINATIONS) }
 
 	// swiping interactions
-	val itemTouchCallback by lazy { ReorderableItemsCallback(replies) }
+	val itemTouchCallback by lazy { ReorderableItemsCallback(destinations) }
 	val itemTouchHelper by lazy { ItemTouchHelper(itemTouchCallback) }
 
 	// the controller to handle UI actions
-	val controller by lazy { QuickEditListController(replies, itemTouchHelper) }
+	val controller by lazy { QuickEditListController(destinations, itemTouchHelper) }
 
 	// the RecyclerView.Adapter to display
-	val adapter by lazy { DataBoundListAdapter(replies, R.layout.quickeditlist_listitem, controller) }
+	val adapter by lazy { DataBoundListAdapter(destinations, R.layout.quickeditlist_listitem, controller) }
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-		val binding = NotificationQuickRepliesBinding.inflate(inflater, container, false)
+		val binding = MapQuickDestinationsBinding.inflate(inflater, container, false)
 		binding.lifecycleOwner = viewLifecycleOwner
 		binding.controller = controller
 		return binding.root
@@ -41,10 +41,10 @@ class NotificationQuickRepliesFragment: Fragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		val listNotificationQuickReplies = view.findViewById<RecyclerView>(R.id.listNotificationQuickReplies)
-		listNotificationQuickReplies.layoutManager = LinearLayoutManager(requireActivity())
-		listNotificationQuickReplies.adapter = adapter
-		itemTouchHelper.attachToRecyclerView(listNotificationQuickReplies)  // enable drag/swipe
+		val listMapQuickDestinations = view.findViewById<RecyclerView>(R.id.listMapQuickDestinations)
+		listMapQuickDestinations.layoutManager = LinearLayoutManager(requireActivity())
+		listMapQuickDestinations.adapter = adapter
+		itemTouchHelper.attachToRecyclerView(listMapQuickDestinations)  // enable drag/swipe
 		controller.adapter = adapter        // allow the controller to notifyDataSetChanged
 	}
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <data class="NotificationQuickRepliesBinding">
+    <data class="MapQuickDestinationsBinding">
         <import type="android.view.View"/>
         <variable
             name="controller"
@@ -18,14 +18,14 @@
             android:minHeight="48dp"
             android:gravity="center_vertical"
             android:textColor="?android:attr/textColorPrimary"
-            android:text="@string/notification_quickreplies"
+            android:text="@string/lbl_map_quickdestinations"
             android:layout_marginBottom="@dimen/settings_vertical_margin" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listNotificationQuickReplies"
+            android:id="@+id/listMapQuickDestinations"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="140dp"
+            android:minHeight="40dp"
             android:layout_marginStart="4dp"/>
 
         <LinearLayout

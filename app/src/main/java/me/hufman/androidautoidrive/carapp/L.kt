@@ -89,6 +89,7 @@ object L {
 	val MAP_ACTION_SEARCH by StringResourceDelegate("Search for Place")
 	val MAP_ACTION_RECALC_NAV by StringResourceDelegate("Recalculate Navigation")
 	val MAP_ACTION_CLEARNAV by StringResourceDelegate("Clear Navigation")
+	val MAP_DESTINATIONS by StringResourceDelegate("Favorite Destinations")
 	val MAP_OPTIONS = NOTIFICATION_OPTIONS
 	val MAP_SEARCH_RESULTS_TITLE = MUSIC_SEARCH_RESULTS_LABEL
 	val MAP_SEARCH_RESULTS_SEARCHING = MUSIC_BROWSE_SEARCHING

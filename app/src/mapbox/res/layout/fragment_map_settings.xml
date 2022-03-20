@@ -101,6 +101,13 @@
                 tools:ignore="HardcodedText" />
         </LinearLayout>
 
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/paneMapQuickDestinations"
+            android:visibility="@{settings.mapEnabled}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="me.hufman.androidautoidrive.phoneui.fragments.MapQuickDestinationsFragment"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
