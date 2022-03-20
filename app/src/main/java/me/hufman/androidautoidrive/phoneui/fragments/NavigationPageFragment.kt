@@ -6,12 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AutoCompleteTextView
-import android.widget.Filter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.navigation.*
 import me.hufman.androidautoidrive.databinding.NavigationStatusBindingImpl
@@ -19,6 +15,7 @@ import me.hufman.androidautoidrive.maps.MapPlaceSearch
 import me.hufman.androidautoidrive.maps.MapResult
 import me.hufman.androidautoidrive.maps.PlaceSearchProvider
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundArrayAdapter
+import me.hufman.androidautoidrive.phoneui.controllers.NavSearchFilter
 import me.hufman.androidautoidrive.phoneui.controllers.NavigationSearchController
 import me.hufman.androidautoidrive.phoneui.viewmodels.NavigationStatusModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MapResultViewModel
@@ -63,32 +60,11 @@ class NavigationPageFragment: Fragment() {
 		controller.startNavigation(result)
 	}
 
-	inner class NavSearchFilter(val api: MapPlaceSearch, val output: MutableList<MapResultViewModel>): Filter() {
-		override fun performFiltering(constraint: CharSequence?): FilterResults {
-			if (constraint?.isNotBlank() != true) {
-				return FilterResults().also {
-					it.count = 0
-					it.values = ArrayList<MapResult>()
-				}
-			}
-			return runBlocking {
-				delay(1500)     // debounce input, will be cancelled by the FilterResults processing if new input arrives
-				val results = api.searchLocationsAsync(constraint.toString()).await()
-				FilterResults().also {
-					it.count = results.size
-					it.values = results
-				}
-			}
-		}
-
+	inner class NavPageSearchFilter(api: MapPlaceSearch, output: MutableList<MapResultViewModel>): NavSearchFilter(api, output) {
 		override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-			output.clear()
-			val resultList = (results?.values as? List<*>)?.mapNotNull { it as? MapResult } ?: emptyList()
-			val resultModelList = resultList.map {
-				MapResultViewModel(CarInformation(),  it)
-			}
-			output.addAll(resultModelList)
+			super.publishResults(constraint, results)
 			adapter.notifyDataSetChanged()
 		}
 	}
+
 }

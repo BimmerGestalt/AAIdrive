@@ -33,13 +33,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical">
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/txtInput"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:minHeight="48dp"
+                android:paddingEnd="24dp"
                 android:inputType="text"
+                android:imeOptions="actionDone"
                 android:text="@={controller.currentInput}"
                 android:onEditorAction="@{(v, id, event) -> event != null ? controller.addItem() : true}"/>
             <ImageButton
