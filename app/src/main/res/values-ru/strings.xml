@@ -366,6 +366,7 @@
     <string name="MAP_INVERT_ZOOM">Инвертировать масштаб</string>
     <string name="MAP_TRAFFIC">Показывать пробки</string>
     <string name="MAP_BUILDINGS">Включить 3D здания</string>
+    <string name="MAP_TILT">Наклонить карту</string>
     <string name="MAP_CUSTOM_STYLE">Использовать пользовательский стиль карты</string>
     <string name="MUSIC_APPLIST_TITLE">Приложения</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Нет приложений&gt;</string>

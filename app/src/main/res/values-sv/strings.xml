@@ -374,6 +374,7 @@
     <string name="MAP_INVERT_ZOOM">Zooma ut</string>
     <string name="MAP_TRAFFIC">Visa trafik</string>
     <string name="MAP_BUILDINGS">Aktivera 3D-byggnader</string>
+    <string name="MAP_TILT">Luta kartvyn</string>
     <string name="MAP_CUSTOM_STYLE">Använd anpassad kartstil</string>
     <string name="MUSIC_APPLIST_TITLE">Appar</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Inga Appar&gt;</string>

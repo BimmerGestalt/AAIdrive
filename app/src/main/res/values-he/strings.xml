@@ -265,6 +265,7 @@
     <string name="MAP_INVERT_ZOOM">הפוך כיוון זום</string>
     <string name="MAP_TRAFFIC">הצג תנועה</string>
     <string name="MAP_BUILDINGS">הצג בניינים 3D</string>
+    <string name="MAP_TILT">הטיית מפה</string>
     <string name="MUSIC_APPLIST_TITLE">אפליקציות</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">פעולות</string>
     <string name="MUSIC_BROWSE_TITLE">עיין</string>

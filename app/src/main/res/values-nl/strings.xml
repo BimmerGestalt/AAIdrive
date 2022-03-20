@@ -356,6 +356,7 @@
     <string name="MAP_INVERT_ZOOM">Zoomrichting omkeren</string>
     <string name="MAP_TRAFFIC">Toon verkeer</string>
     <string name="MAP_BUILDINGS">3D-gebouwen inschakelen</string>
+    <string name="MAP_TILT">Kaart kantelen</string>
     <string name="MAP_CUSTOM_STYLE">Gebruik aangepaste kaart stijl</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Geen apps&gt;</string>

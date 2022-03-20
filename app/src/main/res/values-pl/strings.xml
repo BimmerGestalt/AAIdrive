@@ -376,6 +376,7 @@
     <string name="MAP_INVERT_ZOOM">Odwróć kierunek powiększenia</string>
     <string name="MAP_TRAFFIC">Pokaż natężenie ruchu</string>
     <string name="MAP_BUILDINGS">Włącz budynki 3D</string>
+    <string name="MAP_TILT">Pochylenie mapy</string>
     <string name="MAP_CUSTOM_STYLE">Użyj niestandardowego stylu mapy</string>
     <string name="MUSIC_APPLIST_TITLE">Aplikacje</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Brak aplikacji&gt;</string>

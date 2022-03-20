@@ -372,6 +372,7 @@
     <string name="MAP_INVERT_ZOOM">Zoom-Richtung umkehren</string>
     <string name="MAP_TRAFFIC">Verkehr anzeigen</string>
     <string name="MAP_BUILDINGS">3D-Gebäude aktivieren</string>
+    <string name="MAP_TILT">Neigung der Karte</string>
     <string name="MAP_CUSTOM_STYLE">Eigenen Kartenstil verwenden</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Keine Apps&gt;</string>

@@ -22,6 +22,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 
+fun Location.toLatLong(): LatLong = LatLong(this.latitude, this.longitude)
 class MapboxController(private val context: Context,
                        private val carLocationProvider: CarLocationProvider,
                        private val virtualDisplay: VirtualDisplay,
@@ -39,6 +40,9 @@ class MapboxController(private val context: Context,
 	}
 	private val mapboxLocationSource = MapboxLocationSource()
 	var currentLocation: Location? = null
+
+	var currentSettings: MapboxSettings = MapboxSettings.build(appSettings, currentLocation?.toLatLong())
+
 	var animatingCamera = false
 	private val scrollZoomAnimation = MapAnimationOptions.Builder().duration(1000).build()
 	private var startZoom = 6f  // what zoom level we start the projection with
@@ -92,17 +96,36 @@ class MapboxController(private val context: Context,
 		}
 		// register for location updates
 		carLocationProvider.start()
+
+		// watch for map settings
+		appSettings.callback = {applySettings()}
+		applySettings() // which also updates the settings in the projection for first draw
 	}
 
 	override fun pauseMap() {
 		carLocationProvider.stop()
 
 		handler.postDelayed(shutdownMapRunnable, SHUTDOWN_WAIT_INTERVAL)
+
+		appSettings.callback = null
 	}
 	private val shutdownMapRunnable = Runnable {
 		Log.i(TAG, "Shutting down MapboxProjection due to inactivity of ${SHUTDOWN_WAIT_INTERVAL}ms")
 		projection?.hide()
 		projection = null
+	}
+
+	fun applySettings() {
+		// AppSettings updates every ~10s from cachedCds updates
+		// so check if anything relevant has changed before redrawing map
+		val newSettings = MapboxSettings.build(appSettings, currentLocation?.toLatLong())
+		if (currentSettings != newSettings) {
+			projection?.applySettings(newSettings)
+
+			// these functions read from the currentSettings
+			currentSettings = newSettings
+			updateCamera()      // apply tilt settings
+		}
 	}
 
 	override fun zoomIn(steps: Int) {
@@ -138,9 +161,18 @@ class MapboxController(private val context: Context,
 		val cameraPosition = CameraOptions.Builder()
 				.center(Point.fromLngLat(location.longitude, location.latitude))
 				.zoom(currentZoom.toDouble())
-				.padding(calculateBearingOffset(location.bearing))
-				.build()
-		projection?.map?.camera?.flyTo(cameraPosition, scrollZoomAnimation)
+		if (location.hasBearing() && currentSettings.mapTilt) {
+			cameraPosition
+					.padding(EdgeInsets(0.5 * mapAppMode.appDimensions.appHeight / 2, 0.0, 0.0, 0.0))
+					.pitch(60.0)
+					.bearing(location.bearing.toDouble())
+		} else {
+			cameraPosition
+					.padding(calculateBearingOffset(location.bearing))
+					.pitch(0.0)
+					.bearing(0.0)
+		}
+		projection?.map?.camera?.flyTo(cameraPosition.build(), scrollZoomAnimation)
 	}
 
 	private fun calculateBearingOffset(bearing: Float): EdgeInsets {

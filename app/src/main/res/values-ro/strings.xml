@@ -376,6 +376,7 @@
     <string name="MAP_TRAFFIC">Afișează trafic</string>
     <string name="MAP_BUILDINGS">Activează clădiri 3D</string>
     <string name="MAP_CUSTOM_STYLE">Folosește modul hărții personalizate</string>
+    <string name="MAP_TILT">Înclinare hartă</string>
     <string name="MUSIC_APPLIST_TITLE">Aplicații</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Nu există aplicații&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acțiuni</string>

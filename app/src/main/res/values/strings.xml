@@ -409,6 +409,7 @@
     <string name="MAP_INVERT_ZOOM">Invert zoom direction</string>
     <string name="MAP_TRAFFIC">Show traffic</string>
     <string name="MAP_BUILDINGS">Show 3D buildings</string>
+    <string name="MAP_TILT">Tilt map</string>
     <string name="MAP_CUSTOM_STYLE">Use custom map style</string>
 
     <string name="MUSIC_APPLIST_TITLE">Apps</string>

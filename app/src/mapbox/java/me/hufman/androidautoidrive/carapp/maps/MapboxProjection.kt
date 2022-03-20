@@ -5,7 +5,6 @@ import android.app.Presentation
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Point
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.Display
@@ -30,52 +29,14 @@ import com.mapbox.maps.plugin.scalebar.scalebar
 import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
 import io.bimmergestalt.idriveconnectkit.SubsetRHMIDimensions
 import me.hufman.androidautoidrive.*
-import me.hufman.androidautoidrive.maps.LatLong
-import me.hufman.androidautoidrive.utils.TimeUtils
 import me.hufman.androidautoidrive.utils.Utils
 
-data class MapboxSettings(
-		val mapDaytime: Boolean,
-		val mapTraffic: Boolean,
-		val mapBuildings: Boolean,
-		val mapCustomStyle: Boolean,
-		val mapboxStyleUrl: String,
-) {
-	companion object {
-		fun build(appSettings: AppSettings, location: LatLong?): MapboxSettings {
-			val daytime = location == null || TimeUtils.getDayMode(location)
-			return MapboxSettings(
-					daytime,
-					appSettings[AppSettings.KEYS.MAP_TRAFFIC].toBoolean(),
-					appSettings[AppSettings.KEYS.MAP_BUILDINGS].toBoolean(),
-					appSettings[AppSettings.KEYS.MAP_CUSTOM_STYLE].toBoolean(),
-					appSettings[AppSettings.KEYS.MAPBOX_STYLE_URL],
-			)
-		}
-
-		const val MAPBOX_GUIDANCE_NIGHT = "mapbox://styles/mapbox/navigation-guidance-night-v4"
-	}
-
-	val mapStyleUri: String
-		get() = if (mapCustomStyle && mapboxStyleUrl.isNotBlank()) {
-			mapboxStyleUrl
-		} else {
-			if (mapTraffic) {
-				if (mapDaytime) Style.TRAFFIC_DAY else Style.TRAFFIC_NIGHT
-			} else {
-				if (mapDaytime) Style.MAPBOX_STREETS else MAPBOX_GUIDANCE_NIGHT
-			}
-		}
-}
-
-private fun Location.toLatLong(): LatLong = LatLong(this.latitude, this.longitude)
 
 @SuppressLint("Lifecycle")
-class MapboxProjection(val parentContext: Context, display: Display, private val appSettings: AppSettingsObserver,
+class MapboxProjection(val parentContext: Context, display: Display, private val appSettings: AppSettings,
                        private val locationProvider: MapboxLocationSource): Presentation(parentContext, display) {
 
 	val TAG = "MapboxProjection"
-	var appliedSettings: MapboxSettings? = null      // last applied settings
 	val map by lazy { findViewById<MapView>(R.id.mapView) }
 	val iconAnnotations by lazy { map.annotations.createPointAnnotationManager() }
 	val lineAnnotations by lazy { map.annotations.createPolylineAnnotationManager() }
@@ -102,39 +63,36 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 		super.onStart()
 		Log.i(TAG, "Projection Start")
 		map.onStart()
-		// watch for map settings
-		appSettings.callback = {applySettings()}
-		applySettings()
+		// need to enable the dot right away, before any location updates
+		map.location.updateSettings {
+			map.location.setLocationProvider(locationProvider)
+			map.location.enabled = true
+		}
 		mapListener?.run()
 	}
 
-	fun applySettings() {
+	/** Call this function whenever we think the settings have been changed and need to be applied */
+	fun applySettings(settings: MapboxSettings) {
 		// the narrow-screen option centers the viewport to the middle of the display
 		// so update the map's margin to match
 		val margin = (fullDimensions.appWidth - sidebarDimensions.appWidth) / 2
 		map.setPadding(margin, fullDimensions.paddingTop, margin, 0)
 
-		// AppSettings updates every ~10s from cachedCds updates
-		// so check if anything relevant has changed before redrawing map
-		val currentSettings = MapboxSettings.build(appSettings, this.locationProvider.location?.toLatLong())
-		if (appliedSettings != currentSettings) {
-			map.getMapboxMap().loadStyleUri(currentSettings.mapStyleUri) {
-				map.location.updateSettings {
-					map.location.setLocationProvider(locationProvider)
-					map.location.enabled = true
-				}
-				map.scalebar.updateSettings {
-					// it seems that the scalebar ignores the map padding, so we must center it
-					position = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-					ratio = 0.25f
-					textSize = 16f
-				}
-
-				if (appSettings[AppSettings.KEYS.MAP_BUILDINGS].toBoolean()) {
-					drawBuildings(it)
-				}
+		map.getMapboxMap().loadStyleUri(settings.mapStyleUri) {
+			map.location.updateSettings {
+				map.location.setLocationProvider(locationProvider)
+				map.location.enabled = true
 			}
-			appliedSettings = currentSettings
+			map.scalebar.updateSettings {
+				// it seems that the scalebar ignores the map padding, so we must center it
+				position = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+				ratio = 0.25f
+				textSize = 16f
+			}
+
+			if (settings.mapBuildings) {
+				drawBuildings(it)
+			}
 		}
 	}
 
@@ -180,6 +138,5 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 		super.onStop()
 		Log.i(TAG, "Projection Stopped")
 		map.onStop()
-		appSettings.callback = null
 	}
 }

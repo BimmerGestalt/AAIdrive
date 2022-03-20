@@ -98,6 +98,7 @@ object L {
 	val MAP_INVERT_ZOOM by StringResourceDelegate("Invert zoom direction")
 	val MAP_TRAFFIC by StringResourceDelegate("Show traffic")
 	val MAP_BUILDINGS by StringResourceDelegate("Show 3D buildings")
+	val MAP_TILT by StringResourceDelegate("Tilt map")
 	val MAP_CUSTOM_STYLE by StringResourceDelegate("Use custom map style")
 
 	fun loadResources(context: Context, locale: Locale? = null) {
