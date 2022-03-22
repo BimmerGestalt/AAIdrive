@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
-class NotificationQuickRepliesController(val items: MutableList<String>, val itemTouchHelper: ItemTouchHelper) {
+class QuickEditListController(val items: MutableList<String>, val itemTouchHelper: ItemTouchHelper) {
 	// the adapter to notify when adding data
 	var adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>? = null
 

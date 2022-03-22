@@ -51,7 +51,7 @@ class NavigationSearchControllerTest {
 
 	@Test
 	fun testBadSearch() = coroutineTestRule.testDispatcher.runBlockingTest {
-		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false))
+		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false), MutableLiveData(null))
 		val controller = NavigationSearchController(this, parser, searcher, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
 		whenever(parser.parseUrl(any())) doAnswer {
 			// when the parseUrl is called, the label should say
@@ -82,7 +82,7 @@ class NavigationSearchControllerTest {
 
 	@Test
 	fun testRetries() = coroutineTestRule.testDispatcher.runBlockingTest {
-		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false))
+		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false), MutableLiveData(null))
 		val controller = NavigationSearchController(this, parser, searcher, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
 
 		// it should retry parseUrl once if the first result is null
@@ -124,7 +124,7 @@ class NavigationSearchControllerTest {
 
 	@Test
 	fun testUnsuccess() = coroutineTestRule.testDispatcher.runBlockingTest {
-		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false))
+		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false), MutableLiveData(null))
 		val controller = NavigationSearchController(this, parser, searcher, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
 
 		// it should retry parseUrl once if the first result is null

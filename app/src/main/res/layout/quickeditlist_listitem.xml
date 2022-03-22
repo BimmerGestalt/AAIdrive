@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data class="NotificationQuickReplyBinding" >
-        <import type="me.hufman.androidautoidrive.phoneui.controllers.NotificationQuickRepliesController" />
+        <import type="me.hufman.androidautoidrive.phoneui.controllers.QuickEditListController" />
         <variable
             name="data"
             type="String" />
         <variable
             name="callback"
-            type="NotificationQuickRepliesController" />
+            type="QuickEditListController" />
     </data>
     <LinearLayout
         android:orientation="horizontal"

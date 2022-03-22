@@ -19,9 +19,9 @@ fun LatLong.toPoint(): Point {
 	return Point.fromLngLat(this.longitude, this.latitude)
 }
 
-class MapboxNavController(val client: MapboxDirections.Builder, val locationProvider: CarLocationProvider, val callback: () -> Unit) {
+class MapboxNavController(val client: MapboxDirections.Builder, val locationProvider: CarLocationProvider, val callback: (MapboxNavController) -> Unit) {
 	companion object {
-		fun getInstance(locationProvider: CarLocationProvider, callback: () -> Unit): MapboxNavController {
+		fun getInstance(locationProvider: CarLocationProvider, callback: (MapboxNavController) -> Unit): MapboxNavController {
 			val client = MapboxDirections.builder()
 					.overview(DirectionsCriteria.OVERVIEW_FULL)
 					.profile(DirectionsCriteria.PROFILE_DRIVING_TRAFFIC)
@@ -51,7 +51,7 @@ class MapboxNavController(val client: MapboxDirections.Builder, val locationProv
 		Log.i(TAG, "Stopping navigation")
 		currentNavDestination = null
 		currentNavRoute = null
-		callback()
+		callback(this)
 	}
 
 	private fun routeNavigation(start: LatLong, dest: LatLong, bearing: Float) {
@@ -73,7 +73,7 @@ class MapboxNavController(val client: MapboxDirections.Builder, val locationProv
 				}
 				currentNavRoute = LineString.fromPolyline(geometry, PRECISION_6)
 				Log.i(TAG, "Decoded polyline $currentNavRoute")
-				callback()
+				callback(this@MapboxNavController)
 			}
 
 			override fun onFailure(call: Call<DirectionsResponse>, t: Throwable) {

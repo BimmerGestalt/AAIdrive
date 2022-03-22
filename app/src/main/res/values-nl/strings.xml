@@ -73,15 +73,17 @@
     <string name="lbl_smsPermission">Geef de SMS toegang om afbeeldingen weer te geven van inkomende SMS berichten in de auto. De tekst blijft altijd zichtbaar.</string>
     <string name="lbl_calendar_automatic_navigation">Automatisch navigeren naar aankomende afspraken</string>
     <string name="lbl_calendar_ignore_visibility">Afspraken van verborgen kalenders toevoegen</string>
-    <string name="lbl_mapspage">Een eenvoudig Google Maps scherm kan worden weergegeven in de auto</string>
-    <string name="enable_google_maps">Google Maps inschakelen</string>
+    <string name="lbl_map_bt_hint">Kaart prestaties en kwaliteit bij een Bluetooth verbinding zal slecht zijn</string>
     <string name="lbl_map_phone_gps">Telefoon GPS gebruiken in plaats van auto GPS</string>
     <string name="lbl_widescreen_map">Breedbeeld map</string>
     <string name="lbl_map_invert_zoom">Zoomrichting omkeren</string>
     <string name="lbl_map_tilt">Kaart kantelen</string>
     <string name="lbl_map_traffic">Toon verkeer</string>
-    <string name="lbl_gmap_buildings">3D-gebouwen inschakelen</string>
+    <string name="lbl_map_buildings">3D-gebouwen inschakelen</string>
     <string name="gmapStyleLabel">Map stijl</string>
+    <string name="lbl_mapbox_custom_style">Gebruik een aangepaste Mapbox stijl URL</string>
+    <string name="lbl_gmap_invalid_apikey">De GMaps API Key is ongeldig en de kaartfunctionaliteit zal verminderd worden. Informeer de ontwikkelaar om dit te verhelpen</string>
+    <string name="lbl_mapbox_invalid_token">De Mapbox Token is ongeldig en de kaartfunctionaliteit zal verminderd worden. Informeer de ontwikkelaar om dit te verhelpen</string>
     <string name="lbl_musicpage">De muziek-apps van uw telefoon zijn selecteerbaar als mediabronnen in de auto</string>
     <string name="lbl_music_apps">Muziek apps</string>
     <string name="musicAppIcon">App icoon</string>
@@ -108,6 +110,8 @@
     <string name="musicAppNotes_spotify_backgroundDisabled">Kan Spotify niet openen. Zorg ervoor dat Spotify op de achtergrond mag starten</string>
     <string name="lbl_navigationpage_address">Plak een adres om het navigatiesysteem van de auto te starten vanaf uw telefoon</string>
     <string name="lbl_navigationpage_intent">Tijdens het verbinden zal het navigatiesysteem van uw auto verschijnen als een optie wanneer de navigatieknoppen van andere apps een app-kiezer openen</string>
+    <string name="lbl_navigation_car_status">Auto Navigatie:</string>
+    <string name="lbl_navigation_custom_status">Aangepaste Kaart:</string>
     <string name="lbl_navigationstatus_active">Momenteel navigeren naar</string>
     <string name="lbl_navigationstatus_inactive">Momenteel niet aan het navigeren</string>
     <string name="lbl_navigation_prefer_custom">Gebruik aangepaste kaartnavigatie</string>
@@ -346,7 +350,14 @@
     <string name="READOUT_DESCRIPTION">Deze app wordt gebruikt voor readout doeleinden</string>
     <string name="MAP_ACTION_VIEWMAP">Toon volledige map</string>
     <string name="MAP_ACTION_SEARCH">Locatie zoeken</string>
+    <string name="MAP_ACTION_RECALC_NAV">Herberekenen Navigatie</string>
     <string name="MAP_ACTION_CLEARNAV">Wis bestemming</string>
+    <string name="MAP_WIDESCREEN">Breedbeeld map</string>
+    <string name="MAP_INVERT_ZOOM">Zoomrichting omkeren</string>
+    <string name="MAP_TRAFFIC">Toon verkeer</string>
+    <string name="MAP_BUILDINGS">3D-gebouwen inschakelen</string>
+    <string name="MAP_TILT">Kaart kantelen</string>
+    <string name="MAP_CUSTOM_STYLE">Gebruik aangepaste kaart stijl</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Geen apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acties</string>
@@ -390,4 +401,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Leuk gevonden</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Vind ik niet leuk</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Niet leuk gevonden</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">Je Bibliotheek</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Bladeren</string>
 </resources>

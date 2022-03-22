@@ -67,13 +67,11 @@
     <string name="lbl_popupVersion">ポップアップはIDrive4でのみ機能します</string>
     <string name="lbl_ttsUnsupported">TTSはお使いの車ではサポートされていません</string>
     <string name="lbl_smsPermission">車内の着信SMS画像から画像を表示するためのSMS権限を付与します。テキスト自体は常に表示されます。</string>
-    <string name="lbl_mapspage">基本的なGoogleマップ画面を車内に表示できます</string>
-    <string name="enable_google_maps">Googleマップを有効にする</string>
     <string name="lbl_widescreen_map">ワイドスクリーンマップ</string>
     <string name="lbl_map_invert_zoom">ズーム方向を反転</string>
     <string name="lbl_map_tilt">傾斜マップ</string>
     <string name="lbl_map_traffic">トラフィックを表示</string>
-    <string name="lbl_gmap_buildings">3D建物を有効にする</string>
+    <string name="lbl_map_buildings">3D建物を有効にする</string>
     <string name="gmapStyleLabel">マップスタイル</string>
     <string name="lbl_musicpage">お使いの携帯電話の音楽アプリは車内のメディアソースとして選択できます</string>
     <string name="lbl_music_apps">音楽アプリ</string>
@@ -313,6 +311,11 @@
     <string name="MAP_ACTION_VIEWMAP">完全な地図を表示</string>
     <string name="MAP_ACTION_SEARCH">場所を検索</string>
     <string name="MAP_ACTION_CLEARNAV">ナビゲーションをクリア</string>
+    <string name="MAP_WIDESCREEN">ワイドスクリーンマップ</string>
+    <string name="MAP_INVERT_ZOOM">ズーム方向を反転</string>
+    <string name="MAP_TRAFFIC">トラフィックを表示</string>
+    <string name="MAP_BUILDINGS">3D建物を有効にする</string>
+    <string name="MAP_TILT">傾斜マップ</string>
     <string name="MUSIC_APPLIST_TITLE">アプリ</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;アプリなし&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">アクション</string>

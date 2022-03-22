@@ -17,13 +17,17 @@ import me.hufman.androidautoidrive.AppSettingsObserver
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.maps.CarLocationProvider
 import me.hufman.androidautoidrive.maps.LatLong
+import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.sin
 
+fun Location.toLatLong(): LatLong = LatLong(this.latitude, this.longitude)
 class MapboxController(private val context: Context,
                        private val carLocationProvider: CarLocationProvider,
                        private val virtualDisplay: VirtualDisplay,
-                       private val appSettings: AppSettingsObserver): MapInteractionController {
+                       private val appSettings: AppSettingsObserver,
+                       private val mapAppMode: MapAppMode): MapInteractionController {
 
 	private val SHUTDOWN_WAIT_INTERVAL = 120000L   // milliseconds of inactivity before shutting down map
 
@@ -32,9 +36,13 @@ class MapboxController(private val context: Context,
 
 	val navController = MapboxNavController.getInstance(carLocationProvider) {
 		drawNavigation()
+		mapAppMode.currentNavDestination = it.currentNavDestination
 	}
 	private val mapboxLocationSource = MapboxLocationSource()
 	var currentLocation: Location? = null
+
+	var currentSettings: MapboxSettings = MapboxSettings.build(appSettings, currentLocation?.toLatLong())
+
 	var animatingCamera = false
 	private val scrollZoomAnimation = MapAnimationOptions.Builder().duration(1000).build()
 	private var startZoom = 6f  // what zoom level we start the projection with
@@ -88,12 +96,18 @@ class MapboxController(private val context: Context,
 		}
 		// register for location updates
 		carLocationProvider.start()
+
+		// watch for map settings
+		appSettings.callback = {applySettings()}
+		applySettings() // which also updates the settings in the projection for first draw
 	}
 
 	override fun pauseMap() {
 		carLocationProvider.stop()
 
 		handler.postDelayed(shutdownMapRunnable, SHUTDOWN_WAIT_INTERVAL)
+
+		appSettings.callback = null
 	}
 	private val shutdownMapRunnable = Runnable {
 		Log.i(TAG, "Shutting down MapboxProjection due to inactivity of ${SHUTDOWN_WAIT_INTERVAL}ms")
@@ -101,18 +115,34 @@ class MapboxController(private val context: Context,
 		projection = null
 	}
 
+	fun applySettings() {
+		// AppSettings updates every ~10s from cachedCds updates
+		// so check if anything relevant has changed before redrawing map
+		val newSettings = MapboxSettings.build(appSettings, currentLocation?.toLatLong())
+		if (currentSettings != newSettings) {
+			projection?.applySettings(newSettings)
+
+			// these functions read from the currentSettings
+			currentSettings = newSettings
+			updateCamera()      // apply tilt settings
+		}
+	}
+
 	override fun zoomIn(steps: Int) {
+		mapAppMode.startInteraction()
 		currentZoom = min(20f, currentZoom + steps)
 		updateCamera()
 	}
 
 	override fun zoomOut(steps: Int) {
+		mapAppMode.startInteraction()
 		currentZoom = max(0f, currentZoom - steps)
 		updateCamera()
 	}
 
 	private fun initCamera() {
 		// set the camera to the starting position
+		mapAppMode.startInteraction()
 		val location = currentLocation
 		if (location != null) {
 			val cameraPosition = CameraOptions.Builder()
@@ -131,13 +161,39 @@ class MapboxController(private val context: Context,
 		val cameraPosition = CameraOptions.Builder()
 				.center(Point.fromLngLat(location.longitude, location.latitude))
 				.zoom(currentZoom.toDouble())
-				.build()
-		projection?.map?.camera?.flyTo(cameraPosition, scrollZoomAnimation)
+		if (location.hasBearing() && currentSettings.mapTilt) {
+			cameraPosition
+					.padding(EdgeInsets(0.5 * mapAppMode.appDimensions.appHeight / 2, 0.0, 0.0, 0.0))
+					.pitch(60.0)
+					.bearing(location.bearing.toDouble())
+		} else {
+			cameraPosition
+					.padding(calculateBearingOffset(location.bearing))
+					.pitch(0.0)
+					.bearing(0.0)
+		}
+		projection?.map?.camera?.flyTo(cameraPosition.build(), scrollZoomAnimation)
+	}
+
+	private fun calculateBearingOffset(bearing: Float): EdgeInsets {
+		val bearingRads = Math.toRadians(bearing.toDouble())
+		val leftPadding = max(0.0, -sin(bearingRads)) * mapAppMode.appDimensions.appWidth / 2
+		val rightPadding = max(0.0, sin(bearingRads)) * mapAppMode.appDimensions.appWidth / 2
+		val topPadding = max(0.0, cos(bearingRads)) * mapAppMode.appDimensions.appHeight / 2
+		val bottomPadding = max(0.0, -cos(bearingRads)) * mapAppMode.appDimensions.appHeight / 2
+		return EdgeInsets(topPadding, leftPadding, bottomPadding, rightPadding)
 	}
 
 	override fun navigateTo(dest: LatLong) {
+		mapAppMode.startInteraction(NAVIGATION_MAP_STARTZOOM_TIME + 4000)
 		navController.navigateTo(dest)
 		animateNavigation()
+	}
+
+	override fun recalcNavigation() {
+		navController.currentNavDestination?.let {
+			navController.navigateTo(it)
+		}
 	}
 
 	override fun stopNavigation() {
@@ -169,7 +225,7 @@ class MapboxController(private val context: Context,
 				val cameraPosition = projection?.map?.getMapboxMap()?.cameraForCoordinates(listOf(
 						startPoint,
 						destPoint
-				), EdgeInsets(150.0, 100.0, 100.0, 100.0))
+				), EdgeInsets(150.0, 100.0, 100.0, 100.0), 0.0, 0.0)
 				if (cameraPosition != null) {
 					projection?.map?.camera?.flyTo(cameraPosition, navZoomAnimation)
 				}
@@ -183,8 +239,18 @@ class MapboxController(private val context: Context,
 			val cameraPosition = CameraOptions.Builder()
 					.center(Point.fromLngLat(location.longitude, location.latitude))
 					.zoom(currentZoom.toDouble())
-					.build()
-			projection?.map?.camera?.flyTo(cameraPosition, navZoomAnimation)
+			if (location.hasBearing() && currentSettings.mapTilt) {
+				cameraPosition
+						.padding(EdgeInsets(0.5 * mapAppMode.appDimensions.appHeight / 2, 0.0, 0.0, 0.0))
+						.pitch(60.0)
+						.bearing(location.bearing.toDouble())
+			} else {
+				cameraPosition
+						.padding(calculateBearingOffset(location.bearing))
+						.pitch(0.0)
+						.bearing(0.0)
+			}
+			projection?.map?.camera?.flyTo(cameraPosition.build(), navZoomAnimation)
 		}, NAVIGATION_MAP_STARTZOOM_TIME.toLong())
 	}
 

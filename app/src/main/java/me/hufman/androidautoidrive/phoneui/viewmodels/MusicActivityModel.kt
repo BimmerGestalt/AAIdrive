@@ -12,28 +12,37 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.music.MusicAppInfo
-import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.androidautoidrive.music.QueueMetadata
+import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 
 class MusicActivityModel(val musicApp: MusicAppInfo, val musicController: MusicController, val spotifyWebApi: SpotifyWebApi): ViewModel() {
-	class Factory(val appContext: Context, val musicApp: MusicAppInfo): ViewModelProvider.Factory {
+	class Factory(val appContext: Context, val musicApp: MusicAppInfo?): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel?> create(modelClass: Class<T>): T {
 			var model: MusicActivityModel? = null
 			val controller = MusicController(appContext, Handler(Looper.getMainLooper()))
 			val spotifyWebApi = SpotifyWebApi.getInstance(appContext, MutableAppSettingsReceiver(appContext))
-			controller.connectAppManually(musicApp)
+			val finalApp = musicApp ?: loadPreviousApp(controller)
+			controller.connectAppManually(finalApp)
 			controller.listener = Runnable {
 				model?.update()
 			}
-			model = MusicActivityModel(musicApp, controller, spotifyWebApi)
+			model = MusicActivityModel(finalApp, controller, spotifyWebApi)
 			// prepare initial data
 			model.update()
 			return model as T
+		}
+
+		fun loadPreviousApp(controller: MusicController): MusicAppInfo {
+			// this will almost certainly find a previous app
+			// because this function is only used when the MusicPlayerActivity is closed and re-opened
+			// and thus when UIState.selectedMusicApp is cleared
+			// because it was opened before, the controller will have a desired app saved
+			val desiredApp = controller.loadDesiredApp()
+			val discovery = MusicAppDiscovery(appContext, Handler(Looper.getMainLooper()))
+			discovery.loadInstalledMusicApps()
+			return discovery.allApps.first { it.packageName == desiredApp }
 		}
 	}
 

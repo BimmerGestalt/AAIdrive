@@ -132,6 +132,16 @@ class MainScreenshotTest {
 	}
 
 	@Test
+	fun calendarTab() {
+		onView(withId(R.id.nav_view)).perform(NavigationViewActions
+				.navigateTo(
+						R.id.nav_calendar
+				))
+
+		screenshot("calendar")
+	}
+
+	@Test
 	fun mapsTab() {
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 				.navigateTo(

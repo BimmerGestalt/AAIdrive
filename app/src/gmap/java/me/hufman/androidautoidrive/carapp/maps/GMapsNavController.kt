@@ -13,9 +13,9 @@ import me.hufman.androidautoidrive.maps.CarLocationProvider
 import me.hufman.androidautoidrive.maps.LatLong
 import java.util.concurrent.TimeUnit
 
-class GMapsNavController(val geoClient: GeoApiContext, val locationProvider: CarLocationProvider, var callback: () -> Unit) {
+class GMapsNavController(val geoClient: GeoApiContext, val locationProvider: CarLocationProvider, var callback: (GMapsNavController) -> Unit) {
 	companion object {
-		fun getInstance(context: Context, locationProvider: CarLocationProvider, callback: () -> Unit): GMapsNavController {
+		fun getInstance(context: Context, locationProvider: CarLocationProvider, callback: (GMapsNavController) -> Unit): GMapsNavController {
 			val api_key = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
 					.metaData.getString("com.google.android.geo.API_KEY") ?: ""
 			val geoClient = GeoApiContext().setQueryRateLimit(3)
@@ -42,7 +42,7 @@ class GMapsNavController(val geoClient: GeoApiContext, val locationProvider: Car
 	fun stopNavigation() {
 		currentNavDestination = null
 		currentNavRoute = null
-		callback()
+		callback(this)
 	}
 
 	private fun routeNavigation(start: LatLong, dest: LatLong) {
@@ -69,7 +69,7 @@ class GMapsNavController(val geoClient: GeoApiContext, val locationProvider: Car
 					// convert from route LatLng to map LatLng
 					LatLng(it.lat, it.lng)
 				}
-				callback()
+				callback(this@GMapsNavController)
 			}
 		})
 	}

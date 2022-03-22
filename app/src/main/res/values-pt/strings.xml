@@ -84,14 +84,12 @@
     <string name="lbl_calendar_calendars_empty">Não foram encontrados calendários</string>
     <string name="lbl_calendar_upcoming_events">Próximos eventos:</string>
     <string name="lbl_calendar_upcoming_events_empty">Nenhum evento encontrado para este mês</string>
-    <string name="lbl_mapspage">Uma tela básica do Google Maps pode ser exibida no carro</string>
-    <string name="enable_google_maps">Activar Google Maps</string>
     <string name="lbl_map_phone_gps">Usar GPS do telefone em vez do GPS do carro</string>
     <string name="lbl_widescreen_map">Mapa Panorâmico</string>
     <string name="lbl_map_invert_zoom">Inverter direção do zoom</string>
     <string name="lbl_map_tilt">Inclinação do mapa</string>
     <string name="lbl_map_traffic">Mostrar tráfego</string>
-    <string name="lbl_gmap_buildings">Ativar edifícios 3D</string>
+    <string name="lbl_map_buildings">Ativar edifícios 3D</string>
     <string name="gmapStyleLabel">Estilo de Mapa</string>
     <string name="lbl_musicpage">Os aplicativos de música do seu telefone são selecionáveis como fontes de mídia no carro</string>
     <string name="lbl_music_apps">App de Música</string>
@@ -363,6 +361,11 @@
     <string name="MAP_ACTION_VIEWMAP">Ver Mapa Completo</string>
     <string name="MAP_ACTION_SEARCH">Procurar por Local</string>
     <string name="MAP_ACTION_CLEARNAV">Limpar Navigação</string>
+    <string name="MAP_WIDESCREEN">Mapa Panorâmico</string>
+    <string name="MAP_INVERT_ZOOM">Inverter direção do zoom</string>
+    <string name="MAP_TRAFFIC">Mostrar tráfego</string>
+    <string name="MAP_BUILDINGS">Ativar edifícios 3D</string>
+    <string name="MAP_TILT">Inclinação do mapa</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Sem Apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acções</string>
