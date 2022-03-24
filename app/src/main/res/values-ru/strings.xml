@@ -94,6 +94,7 @@
     <string name="lbl_map_traffic">Показывать пробки</string>
     <string name="lbl_map_buildings">Включить 3D здания</string>
     <string name="gmapStyleLabel">Стиль карты</string>
+    <string name="lbl_map_quickdestinations">Избранные назначения навигации:</string>
     <string name="lbl_gmap_invalid_apikey">Ключ API GMaps недействителен и функциональность карты будет уменьшена. Пожалуйста, сообщите разработчику об этой ошибке и следите за обновлениями</string>
     <string name="lbl_mapbox_invalid_token">Токен Mapbox недействителен и функциональность карты будет уменьшена. Пожалуйста, сообщите разработчику об этой ошибке и следите за обновлениями</string>
     <string name="lbl_musicpage">Ваши музыкальные приложения на телефоне выбираются в качестве медиа источника в автомобиле</string>
@@ -362,6 +363,7 @@
     <string name="MAP_ACTION_SEARCH">Поиск места</string>
     <string name="MAP_ACTION_RECALC_NAV">Пересчитать навигацию</string>
     <string name="MAP_ACTION_CLEARNAV">Удалить маршрут</string>
+    <string name="MAP_DESTINATIONS">Избранные назначения</string>
     <string name="MAP_WIDESCREEN">Широкоэкранные карты</string>
     <string name="MAP_INVERT_ZOOM">Инвертировать масштаб</string>
     <string name="MAP_TRAFFIC">Показывать пробки</string>

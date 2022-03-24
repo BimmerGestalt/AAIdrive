@@ -88,6 +88,7 @@
     <string name="lbl_map_traffic">Forgalom mutatása</string>
     <string name="lbl_map_buildings">Épületek 3D megjelenítése</string>
     <string name="gmapStyleLabel">Térkép stílus</string>
+    <string name="lbl_map_quickdestinations">Kedvenc navigációs célpontok:</string>
     <string name="lbl_musicpage">A telefonodon lévő zene alkalmazások kiválaszthatóak mint média forrás az autóban</string>
     <string name="lbl_music_apps">Zene applikációk</string>
     <string name="musicAppIcon">Applikáció ikon</string>
@@ -343,6 +344,7 @@
     <string name="MAP_ACTION_VIEWMAP">Teljes térkép méret</string>
     <string name="MAP_ACTION_SEARCH">Hely keresése</string>
     <string name="MAP_ACTION_CLEARNAV">Navigáció törlése</string>
+    <string name="MAP_DESTINATIONS">Kedvenc célpontok</string>
     <string name="MAP_WIDESCREEN">Szélesképernyős térkép</string>
     <string name="MAP_INVERT_ZOOM">Nagyítás irányának megfordítása</string>
     <string name="MAP_TRAFFIC">Forgalom mutatása</string>
