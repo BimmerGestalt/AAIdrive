@@ -41,7 +41,7 @@ class MapboxController(private val context: Context,
 	private val mapboxLocationSource = MapboxLocationSource()
 	var currentLocation: Location? = null
 
-	var currentSettings: MapboxSettings = MapboxSettings.build(appSettings, currentLocation?.toLatLong())
+	var currentSettings: MapboxSettings? = null
 
 	var animatingCamera = false
 	private val scrollZoomAnimation = MapAnimationOptions.Builder().duration(1000).build()
@@ -161,7 +161,7 @@ class MapboxController(private val context: Context,
 		val cameraPosition = CameraOptions.Builder()
 				.center(Point.fromLngLat(location.longitude, location.latitude))
 				.zoom(currentZoom.toDouble())
-		if (location.hasBearing() && currentSettings.mapTilt) {
+		if (location.hasBearing() && currentSettings?.mapTilt == true) {
 			cameraPosition
 					.padding(EdgeInsets(0.5 * mapAppMode.appDimensions.appHeight / 2, 0.0, 0.0, 0.0))
 					.pitch(60.0)
@@ -239,7 +239,7 @@ class MapboxController(private val context: Context,
 			val cameraPosition = CameraOptions.Builder()
 					.center(Point.fromLngLat(location.longitude, location.latitude))
 					.zoom(currentZoom.toDouble())
-			if (location.hasBearing() && currentSettings.mapTilt) {
+			if (location.hasBearing() && currentSettings?.mapTilt == true) {
 				cameraPosition
 						.padding(EdgeInsets(0.5 * mapAppMode.appDimensions.appHeight / 2, 0.0, 0.0, 0.0))
 						.pitch(60.0)

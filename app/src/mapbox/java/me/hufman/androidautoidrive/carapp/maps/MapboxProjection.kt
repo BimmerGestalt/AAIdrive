@@ -63,11 +63,6 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 		super.onStart()
 		Log.i(TAG, "Projection Start")
 		map.onStart()
-		// need to enable the dot right away, before any location updates
-		map.location.updateSettings {
-			map.location.setLocationProvider(locationProvider)
-			map.location.enabled = true
-		}
 		mapListener?.run()
 	}
 
