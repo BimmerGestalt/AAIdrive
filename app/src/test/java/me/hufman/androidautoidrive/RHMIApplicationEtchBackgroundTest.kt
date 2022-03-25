@@ -28,6 +28,7 @@ class RHMIApplicationEtchBackgroundTest {
 	val asyncConnection = mock<RemoteBMWRemotingServer._Async> {
 		on {_begin_rhmi_setData(any(), any(), any())} doAnswer {
 			val pending = TestMailbox()
+			println("_begin_rhmi_setData(${it.arguments[0]}, ${it.arguments[1]}, ${it.arguments[2]}")
 			pendingSetData.add(pending)
 			pending
 		}
@@ -99,7 +100,7 @@ class RHMIApplicationEtchBackgroundTest {
 	fun testTargetModel() = runBlocking(Dispatchers.IO) { withTimeout(5000) {
 		// should use sync to set an HMIAction's targetModel and block until done
 		val setJob = launch { subject.setModel(6, 9) }
-		await().untilAsserted { verify(connection).rhmi_setData(1, 6, 9) }
+		await().untilAsserted { verify(asyncConnection)._begin_rhmi_setData(1, 6, 9) }
 		assertEquals(1, pendingSetData.size)
 		val response = Message(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_setData, ValueFactoryBMWRemoting(""))
 		pendingSetData[0].message(null, response)
@@ -116,15 +117,15 @@ class RHMIApplicationEtchBackgroundTest {
 		// second set is fenced
 		val secondTable = BMWRemoting.RHMIDataTable(emptyArray(), false, 0, 4, 4, 0, 1, 1)
 		val setJob2 = launch { subject.setModel(7, secondTable) }
-		Thread.sleep(200)
+		delay(200)
 		assertEquals(1, pendingSetData.size)
 
 		// other models are unaffected
 		subject.setModel(35, "Name")
 		verify(asyncConnection)._begin_rhmi_setData(1, 35, "Name")
 		assertEquals(2, pendingSetData.size)
-		subject.setModel(35, "Two")
-		verify(asyncConnection)._begin_rhmi_setData(1, 35, "Two")
+		subject.setModel(36, "Two")
+		verify(asyncConnection)._begin_rhmi_setData(1, 36, "Two")
 		assertEquals(3, pendingSetData.size)
 
 		// resolve the first
@@ -142,7 +143,7 @@ class RHMIApplicationEtchBackgroundTest {
 	fun testEventFlushEmpty() = runBlocking(Dispatchers.IO) { withTimeout(5000) {
 		// no pending data for triggerEvent to wait for
 		val triggerJob = launch { subject.triggerHMIEvent(1, emptyMap()) }
-		await().untilAsserted { verify(connection).rhmi_triggerEvent(1, 1, emptyMap<Any, Any>()) }
+		await().untilAsserted { verify(asyncConnection)._begin_rhmi_triggerEvent(1, 1, emptyMap<Any, Any>()) }
 		assertEquals(1, pendingTriggerEvent.size)
 		pendingTriggerEvent[0].message(null, Message(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_triggerEvent, ValueFactoryBMWRemoting("")))
 		triggerJob.join()
@@ -156,19 +157,19 @@ class RHMIApplicationEtchBackgroundTest {
 
 		// try the trigger
 		val triggerJob = launch { subject.triggerHMIEvent(1, emptyMap()) }
-		Thread.sleep(200)
-		verify(connection, never()).rhmi_triggerEvent(any(), any(), any())
+		delay(200)
+		verify(asyncConnection, never())._begin_rhmi_triggerEvent(any(), any(), any())
 
 		// resolve the first setData
 		pendingSetData[0].message(null, Message(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_setData, ValueFactoryBMWRemoting("")))
-		Thread.sleep(200)
-		verify(connection, never()).rhmi_triggerEvent(any(), any(), any())
+		delay(200)
+		verify(asyncConnection, never())._begin_rhmi_triggerEvent(any(), any(), any())
 
 		// resolve the second setData
 		pendingSetData[1].message(null, Message(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_setData, ValueFactoryBMWRemoting("")))
 
 		// the trigger should continue
-		await().untilAsserted { verify(connection).rhmi_triggerEvent(1, 1, emptyMap<Any, Any>()) }
+		await().untilAsserted { verify(asyncConnection)._begin_rhmi_triggerEvent(1, 1, emptyMap<Any, Any>()) }
 		pendingTriggerEvent[0].message(null, Message(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_triggerEvent, ValueFactoryBMWRemoting("")))
 		triggerJob.join()
 	} }
@@ -181,14 +182,14 @@ class RHMIApplicationEtchBackgroundTest {
 
 		// try the trigger
 		val triggerJob = launch { subject.triggerHMIEvent(70, mapOf(0.toByte() to 71)) }
-		Thread.sleep(200)
+		delay(200)
 		verify(connection, never()).rhmi_triggerEvent(any(), any(), any())
 
 		// resolve the list setData
 		pendingSetData[1].message(null, Message(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_setData, ValueFactoryBMWRemoting("")))
 
 		// the trigger should continue, even though the text setModel isn't resolved
-		await().untilAsserted { verify(connection).rhmi_triggerEvent(1, 70, mapOf(0.toByte() to 71)) }
+		await().untilAsserted { verify(asyncConnection)._begin_rhmi_triggerEvent(1, 70, mapOf(0.toByte() to 71)) }
 		pendingTriggerEvent[0].message(null, Message(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_triggerEvent, ValueFactoryBMWRemoting("")))
 		triggerJob.join()
 	} }
@@ -204,14 +205,14 @@ class RHMIApplicationEtchBackgroundTest {
 
 		// try the trigger
 		val triggerJob = launch { subject.triggerHMIEvent(70, mapOf(0.toByte() to 71)) }
-		Thread.sleep(200)
+		delay(200)
 		verify(connection, never()).rhmi_triggerEvent(any(), any(), any())
 
 		// resolve the list setData
 		pendingSetData[3].message(null, Message(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_setData, ValueFactoryBMWRemoting("")))
 
 		// the trigger should continue, even though the text setModel isn't resolved
-		await().untilAsserted { verify(connection).rhmi_triggerEvent(1, 70, mapOf(0.toByte() to 71)) }
+		await().untilAsserted { verify(asyncConnection)._begin_rhmi_triggerEvent(1, 70, mapOf(0.toByte() to 71)) }
 		pendingTriggerEvent[0].message(null, Message(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_triggerEvent, ValueFactoryBMWRemoting("")))
 		triggerJob.join()
 	} }

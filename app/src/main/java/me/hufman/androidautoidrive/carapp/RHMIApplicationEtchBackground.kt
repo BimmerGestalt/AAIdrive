@@ -37,18 +37,19 @@ class RHMIApplicationEtchBackground(val remoteServer: RemoteBMWRemotingServer, v
 				if (p1 is Int) synchronized(this) {
 					pendingModels.remove(p1)
 				}
+
 				val message = p0.read()?.msg
-				if (p1 in models) {
-					val setDataResponse = message?.get(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_setData.responseField)
-					if (setDataResponse is Exception) {
-						println("Exception setting data $p1: $setDataResponse")
-					}
+				val setDataResponse = message?.get(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_setData.responseField)
+				if (setDataResponse is Exception) {
+					println("Exception setting data $p1: $setDataResponse")
 				}
-				if (p1 in components) {
-					val setPropertyResponse = message?.get(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_setProperty.responseField)
-					if (setPropertyResponse is Exception) {
-						println("Exception setting property on $p1: $setPropertyResponse")
-					}
+				val setPropertyResponse = message?.get(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_setProperty.responseField)
+				if (setPropertyResponse is Exception) {
+					println("Exception setting property on $p1: $setPropertyResponse")
+				}
+				val triggerEventResponse = message?.get(ValueFactoryBMWRemoting._mt_de_bmw_idrive_BMWRemoting__result_rhmi_triggerEvent.responseField)
+				if (triggerEventResponse is Exception) {
+					println("Exception triggering event $p1: $triggerEventResponse")
 				}
 			}
 		}
@@ -57,18 +58,21 @@ class RHMIApplicationEtchBackground(val remoteServer: RemoteBMWRemotingServer, v
 	@Throws(BMWRemoting.SecurityException::class, BMWRemoting.IllegalArgumentException::class, BMWRemoting.ServiceException::class)
 	override fun setModel(modelId: Int, value: Any) {
 		if (ignoreUpdates) return
+		// wait for previous sets of this model to finish
+		fence(synchronized(this) { pendingModels[modelId] })
+
+		// start the call
+		val mailbox = synchronized(remoteServer) {
+			this.remoteServer._async._begin_rhmi_setData(this.rhmiHandle, modelId, value)
+		}
+		synchronized(this) {
+			pendingModels[modelId] = mailbox
+		}
+		mailbox.registerNotify(MailboxCloser, modelId, 0)
+
+		// wait for certain models to finish before returning
 		if (isSynchronousModel(modelId)) {
-			this.remoteServer.rhmi_setData(this.rhmiHandle, modelId, value)
-		} else {
-			if (models[modelId] is RHMIModel.RaListModel) {
-				// wait for previous list updates to finish
-				fence(synchronized(this) { pendingModels[modelId] })
-			}
-			val mailbox = this.remoteServer._async._begin_rhmi_setData(this.rhmiHandle, modelId, value)
-			synchronized(this) {
-				pendingModels[modelId] = mailbox
-			}
-			mailbox.registerNotify(MailboxCloser, modelId, 0)
+			fence(mailbox, 100, 100)
 		}
 	}
 
@@ -77,25 +81,20 @@ class RHMIApplicationEtchBackground(val remoteServer: RemoteBMWRemotingServer, v
 		if (ignoreUpdates) return
 		val propertyValue = HashMap<Int, Any?>()
 		propertyValue[0] = value
-		val mailbox = this.remoteServer._async._begin_rhmi_setProperty(rhmiHandle, componentId, propertyId, propertyValue)
+		val mailbox = synchronized(remoteServer) {
+			this.remoteServer._async._begin_rhmi_setProperty(rhmiHandle, componentId, propertyId, propertyValue)
+		}
 		mailbox.registerNotify(MailboxCloser, componentId, 5000)
 	}
 
 	@Throws(BMWRemoting.SecurityException::class, BMWRemoting.IllegalArgumentException::class, BMWRemoting.ServiceException::class)
 	override fun triggerHMIEvent(eventId: Int, args: Map<Any, Any?>) {
-		if (events[eventId] is RHMIEvent.FocusEvent) {
-			// only need to wait for model related to the focus target component
-			val component = components[(args[0.toByte()] as? Int) ?: (args[0] as? Int) ?: -1]
-			val dependencyId = if (component is RHMIComponent.List) { component.model } else { -1 }
-			if (dependencyId >= 0) {
-				fence(synchronized(this) {pendingModels[dependencyId]})
-			} else {
-				fence()
-			}
-		} else {
-			fence()
+		fence()
+		val mailbox = synchronized(remoteServer) {
+			this.remoteServer._async._begin_rhmi_triggerEvent(rhmiHandle, eventId, args)
 		}
-		this.remoteServer.rhmi_triggerEvent(rhmiHandle, eventId, args)
+		mailbox.registerNotify(MailboxCloser, mailbox, 5000)
+		fence(mailbox, 100, 100)
 	}
 
 	/** Some models are used by non-RHMIApplication rpc calls, and must be synchronous */

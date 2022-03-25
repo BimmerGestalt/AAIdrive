@@ -63,7 +63,11 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 
 		synchronized(carConnection) {
 			carAppSwappable = RHMIApplicationSwappable(createRhmiApp())
-			carApp = RHMIApplicationSynchronized(carAppSwappable, carConnection)
+			carApp = if (carAppSwappable.unwrap() is RHMIApplicationEtchBackground) {
+				carAppSwappable
+			} else {
+				RHMIApplicationSynchronized(carAppSwappable, carConnection)
+			}
 			carappListener.app = carApp
 			carApp.loadFromXML(carAppAssets.getUiDescription()?.readBytes() as ByteArray)
 
