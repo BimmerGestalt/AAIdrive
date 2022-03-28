@@ -13,12 +13,18 @@ import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
+import com.mapbox.maps.extension.style.StyleExtensionImpl
+import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.match
 import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.eq
 import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.get
+import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.interpolate
 import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.literal
-import com.mapbox.maps.extension.style.layers.addLayer
-import com.mapbox.maps.extension.style.layers.generated.FillExtrusionLayer
-import com.mapbox.maps.extension.style.light.generated.getLight
+import com.mapbox.maps.extension.style.layers.generated.fillExtrusionLayer
+import com.mapbox.maps.extension.style.layers.generated.lineLayer
+import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin
+import com.mapbox.maps.extension.style.light.generated.light
+import com.mapbox.maps.extension.style.sources.generated.vectorSource
+import com.mapbox.maps.extension.style.style
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
@@ -30,7 +36,6 @@ import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
 import io.bimmergestalt.idriveconnectkit.SubsetRHMIDimensions
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.utils.Utils
-
 
 @SuppressLint("Lifecycle")
 class MapboxProjection(val parentContext: Context, display: Display, private val appSettings: AppSettings,
@@ -73,37 +78,161 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 		val margin = (fullDimensions.appWidth - sidebarDimensions.appWidth) / 2
 		map.setPadding(margin, fullDimensions.paddingTop, margin, 0)
 
-		map.getMapboxMap().loadStyleUri(settings.mapStyleUri) {
-			map.location.updateSettings {
-				map.location.setLocationProvider(locationProvider)
-				map.location.enabled = true
-			}
-			map.scalebar.updateSettings {
-				// it seems that the scalebar ignores the map padding, so we must center it
-				position = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-				ratio = 0.25f
-				textSize = 16f
+		map.location.updateSettings {
+			map.location.setLocationProvider(locationProvider)
+			map.location.enabled = true
+		}
+		map.scalebar.updateSettings {
+			// it seems that the scalebar ignores the map padding, so we must center it
+			position = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+			ratio = 0.25f
+			textSize = 16f
+		}
+
+		map.getMapboxMap().loadStyle(style(settings.mapStyleUri) {
+			if (settings.mapTraffic) {
+				drawTraffic(this, settings)
 			}
 
 			if (settings.mapBuildings) {
-				drawBuildings(it)
+				drawBuildings(this)
+			}
+		})
+	}
+
+	fun drawTraffic(style: StyleExtensionImpl.Builder, settings: MapboxSettings) {
+		val darkMode = !settings.mapDaytime
+		style.apply {
+			+vectorSource("mapbox-traffic") {
+				url("mapbox://mapbox.mapbox-traffic-v1")
+			}
+			val trafficLayer = lineLayer("traffic-layer", "mapbox-traffic") {
+				// style converted from https://api.mapbox.com/styles/v1/mapbox/traffic-day-v2
+				// dark mode from https://api.mapbox.com/styles/v1/mapbox/traffic-night-v2
+				// couldn't figure out how to do switchCase for the varying line widths, so we have some matches instead
+				sourceLayer("traffic")
+				lineJoin(LineJoin.ROUND)
+				lineOffset(interpolate {
+					exponential { literal(1.75) }
+					zoom()
+					stop {
+						literal(7)
+						literal(0.3)
+					}
+					stop {
+						literal(18)
+						literal(6)
+					}
+					stop {
+						literal(22)
+						literal(100)
+					}
+				})
+
+				lineWidth(interpolate {
+					exponential { literal(1.5) }
+					zoom()
+					stop {
+						literal(10)
+						match {
+							get("class")
+							stop { literal("motorway"); literal(1.5) }
+							stop { literal("trunk"); literal(1.5) }
+							stop { literal("primary"); literal(1.5) }
+							stop { literal("primary_link"); literal(0.6) }
+							stop { literal("secondary"); literal(0.6) }
+							stop { literal("tertiary"); literal(0.6) }
+							literal(0)
+						}
+					}
+					stop {
+						literal(15)
+						match {
+							get("class")
+							stop { literal("motorway"); literal(8) }
+							stop { literal("trunk"); literal(8) }
+							stop { literal("primary"); literal(8) }
+							stop { literal("primary_link"); literal(2.75) }
+							stop { literal("secondary"); literal(2.75) }
+							stop { literal("tertiary"); literal(2.75) }
+							literal(1.5)
+						}
+					}
+					stop {
+						literal(18)
+						match {
+							get("class")
+							stop { literal("motorway"); literal(16) }
+							stop { literal("trunk"); literal(16) }
+							stop { literal("primary"); literal(16) }
+							stop { literal("primary_link"); literal(7) }
+							stop { literal("secondary"); literal(7) }
+							stop { literal("tertiary"); literal(7) }
+							literal(2.75)
+						}
+					}
+					stop {
+						literal(22)
+						literal(37.5)
+					}
+				})
+				lineColor(match {
+					get("congestion")
+					stop {
+						literal("low")
+						if (darkMode)
+							color(Color.parseColor("#1D4E32"))
+						else
+							color(Color.parseColor("#4DCB82"))
+					}
+					stop {
+						literal("moderate")
+						if (darkMode)
+							color(Color.parseColor("#8D552A"))
+						else
+							color(Color.parseColor("#FFA34D"))
+					}
+					stop {
+						literal("heavy")
+						if (darkMode)
+							color(Color.parseColor("#A72A2A"))
+						else
+							color(Color.parseColor("#E64747"))
+					}
+					stop {
+						literal("severe")
+						if (darkMode)
+							color(Color.parseColor("#80001A"))
+						else
+							color(Color.parseColor("#99001A"))
+					}
+					rgba(0.0, 0.0, 0.0, 0.0)
+				})
+			}
+			// only add below the road-label if we are using an official layer with road-labels
+			when (settings.mapStyleUri) {
+				Style.MAPBOX_STREETS -> +layerAtPosition(trafficLayer, below = "road-label")
+				MapboxSettings.MAPBOX_GUIDANCE_NIGHT -> +layerAtPosition(trafficLayer, below = "road-label-small")
+				else -> +trafficLayer
 			}
 		}
 	}
 
-	fun drawBuildings(style: Style) {
-		val fillExtrusionLayer = FillExtrusionLayer("3d-buildings", "composite")
-		fillExtrusionLayer.sourceLayer("building")
-		fillExtrusionLayer.filter(eq(get("extrude"), literal("true")))
-		fillExtrusionLayer.minZoom(15.0)
-		fillExtrusionLayer.fillExtrusionColor(Color.parseColor("#aaaaaa"))
-		fillExtrusionLayer.fillExtrusionHeight(get("height"))
-		fillExtrusionLayer.fillExtrusionBase(get("min_height"))
-		fillExtrusionLayer.fillExtrusionOpacity(0.6)
-		style.addLayer(fillExtrusionLayer)
-
-		val light = style.getLight()
-		light.position(1.15, 210.0, 30.0)
+	fun drawBuildings(style: StyleExtensionImpl.Builder) {
+		style.apply {
+			+fillExtrusionLayer("3d-buildings", "composite") {
+				sourceLayer("building")
+				filter(eq(get("extrude"), literal("true")))
+				minZoom(15.0)
+				fillExtrusionColor("#aaaaaa")
+				fillExtrusionHeight(get("height"))
+				fillExtrusionBase(get("min_height"))
+				fillExtrusionOpacity(0.6)
+			}
+			+light {
+				position(1.15, 210.0, 30.0)
+			}
+		}
 	}
 
 	fun drawNavigation(navController: MapboxNavController) {

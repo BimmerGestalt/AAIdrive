@@ -35,10 +35,6 @@ data class MapboxSettings(
 		get() = if (mapCustomStyle && mapboxStyleUrl.isNotBlank()) {
 			mapboxStyleUrl
 		} else {
-			if (mapTraffic) {
-				if (mapDaytime) Style.TRAFFIC_DAY else Style.TRAFFIC_NIGHT
-			} else {
-				if (mapDaytime) Style.MAPBOX_STREETS else MAPBOX_GUIDANCE_NIGHT
-			}
+			if (mapDaytime) Style.MAPBOX_STREETS else MAPBOX_GUIDANCE_NIGHT
 		}
 }

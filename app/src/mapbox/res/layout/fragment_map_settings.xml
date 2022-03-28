@@ -68,7 +68,6 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:paddingBottom="@dimen/settings_vertical_margin"
-            android:enabled="@{!settings.mapboxCustomStyle}"
             android:text="@string/lbl_map_traffic" />
 
         <androidx.appcompat.widget.SwitchCompat
