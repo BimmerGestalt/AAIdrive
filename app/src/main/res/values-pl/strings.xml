@@ -94,6 +94,7 @@
     <string name="lbl_map_invert_zoom">Odwróć kierunek powiększenia</string>
     <string name="lbl_map_tilt">Pochylenie mapy</string>
     <string name="lbl_map_traffic">Pokaż natężenie ruchu</string>
+    <string name="lbl_map_satellite">Pokaż obraz satelitarny</string>
     <string name="lbl_map_buildings">Włącz budynki 3D</string>
     <string name="gmapStyleLabel">Styl map</string>
     <string name="lbl_mapbox_custom_style">Użyj niestandardowego adresu Url w stylu mapu Mapbox</string>
@@ -376,6 +377,7 @@
     <string name="MAP_DESTINATIONS">Ulubione miejsca</string>
     <string name="MAP_WIDESCREEN">Mapy w trybie pełnoekranowym</string>
     <string name="MAP_INVERT_ZOOM">Odwróć kierunek powiększenia</string>
+    <string name="MAP_SATELLITE">Pokaż obraz satelitarny</string>
     <string name="MAP_TRAFFIC">Pokaż natężenie ruchu</string>
     <string name="MAP_BUILDINGS">Włącz budynki 3D</string>
     <string name="MAP_TILT">Pochylenie mapy</string>
