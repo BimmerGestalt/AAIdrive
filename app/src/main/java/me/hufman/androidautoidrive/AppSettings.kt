@@ -35,6 +35,7 @@ interface AppSettings {
 		MAP_QUICK_DESTINATIONS("Map_Quick_Destinations", "[]", "A list of quick destinations"),
 		MAP_WIDESCREEN("Map_Widescreen", "false", "Show Map in widescreen"),
 		MAP_INVERT_SCROLL("Map_Invert_Scroll", "false", "Invert zoom direction"),
+		MAP_SATELLITE("Map_Satellite", "false", "Show satellite imagery"),
 		MAP_TRAFFIC("Map_Traffic", "true", "Show traffic"),
 		MAP_USE_PHONE_GPS("Map_Use_Phone_GPS", "false", "Use Phone GPS"),
 		NAV_PREFER_CUSTOM_MAP("Nav_Prefer_Custom_Map", "false", "Prefer custom map nav over car nav"),

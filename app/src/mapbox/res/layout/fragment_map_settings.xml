@@ -47,6 +47,14 @@
             android:text="@string/lbl_map_invert_zoom" />
 
         <androidx.appcompat.widget.SwitchCompat
+            android:checked="@={settings.mapTilt}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:text="@string/lbl_map_tilt" />
+
+        <androidx.appcompat.widget.SwitchCompat
             android:checked="@={settings.mapBuildings}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,12 +63,12 @@
             android:text="@string/lbl_map_buildings" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:checked="@={settings.mapTilt}"
+            android:checked="@={settings.mapSatellite}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:paddingBottom="@dimen/settings_vertical_margin"
-            android:text="@string/lbl_map_tilt" />
+            android:text="@string/lbl_map_satellite" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:checked="@={settings.mapTraffic}"

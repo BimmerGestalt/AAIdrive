@@ -212,6 +212,7 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 			// only add below the road-label if we are using an official layer with road-labels
 			when (settings.mapStyleUri) {
 				Style.MAPBOX_STREETS -> +layerAtPosition(trafficLayer, below = "road-label")
+				Style.SATELLITE_STREETS -> +layerAtPosition(trafficLayer, below = "road-label")
 				MapboxSettings.MAPBOX_GUIDANCE_NIGHT -> +layerAtPosition(trafficLayer, below = "road-label-small")
 				else -> +trafficLayer
 			}
