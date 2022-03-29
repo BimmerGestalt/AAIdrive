@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.Display
 import android.view.Gravity
 import android.view.WindowManager
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
@@ -25,6 +26,7 @@ import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin
 import com.mapbox.maps.extension.style.light.generated.light
 import com.mapbox.maps.extension.style.sources.generated.vectorSource
 import com.mapbox.maps.extension.style.style
+import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
@@ -83,6 +85,10 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 		}
 		map.location.updateSettings {
 			map.location.setLocationProvider(locationProvider)
+			map.location.locationPuck = LocationPuck2D(
+					bearingImage = AppCompatResources.getDrawable(context, R.drawable.ic_mapbox_bearing),
+					shadowImage = AppCompatResources.getDrawable(context, R.drawable.ic_mapbox_shadow)
+			)
 			map.location.enabled = true
 		}
 		map.scalebar.updateSettings {
