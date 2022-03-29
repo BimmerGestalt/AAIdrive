@@ -925,9 +925,9 @@ class SpotifyWebApiTest {
 
 		assertNotNull(searchResults)
 		assertEquals(2, searchResults!!.size)
-		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:artist:${uriId1}", coverArtCode1, artistName1, null, artistName1, "Artist", false, true)
+		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:artist:${uriId1}", coverArtCode1, artistName1, null, artistName1, "Artist", true, false)
 		assertEquals(metadata1, searchResults[0])
-		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:artist:${uriId2}", coverArtCode2, artistName2, null, artistName2, "Artist", false, true)
+		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:artist:${uriId2}", coverArtCode2, artistName2, null, artistName2, "Artist", true, false)
 		assertEquals(metadata2, searchResults[1])
 	}
 
@@ -966,9 +966,9 @@ class SpotifyWebApiTest {
 
 		assertNotNull(searchResults)
 		assertEquals(2, searchResults!!.size)
-		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:show:${uriId1}", coverArtCode1, publisherName1, null, showName1, "Show", false, true)
+		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:show:${uriId1}", coverArtCode1, publisherName1, null, showName1, "Show", true, false)
 		assertEquals(metadata1, searchResults[0])
-		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:show:${uriId2}", coverArtCode2, publisherName2, null, showName2, "Show", false, true)
+		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:show:${uriId2}", coverArtCode2, publisherName2, null, showName2, "Show", true, false)
 		assertEquals(metadata2, searchResults[1])
 	}
 
@@ -1097,9 +1097,9 @@ class SpotifyWebApiTest {
 		assertEquals(metadata1, searchResults[0])
 		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${trackUriId}", trackCoverArtCode, trackArtistName, "spotify:album:${trackAlbumUriId}", trackName, "Track", true, false)
 		assertEquals(metadata2, searchResults[1])
-		val metadata3 = createSpotifyMusicMetadata(spotifyAppController, "spotify:artist:${artistUriId}", artistCoverArtCode, artistName, null, artistName, "Artist", false, true)
+		val metadata3 = createSpotifyMusicMetadata(spotifyAppController, "spotify:artist:${artistUriId}", artistCoverArtCode, artistName, null, artistName, "Artist", true, false)
 		assertEquals(metadata3, searchResults[2])
-		val metadata4 = createSpotifyMusicMetadata(spotifyAppController, "spotify:show:${showUriId}", showCoverArtCode, showPublisherName, null, showName, "Show", false, true)
+		val metadata4 = createSpotifyMusicMetadata(spotifyAppController, "spotify:show:${showUriId}", showCoverArtCode, showPublisherName, null, showName, "Show", true, false)
 		assertEquals(metadata4, searchResults[3])
 		val metadata5 = createSpotifyMusicMetadata(spotifyAppController, "spotify:episode:${episodeUriId}", episodeCoverArtCode, null, null, episodeName, "Episode", true, false)
 		assertEquals(metadata5, searchResults[4])

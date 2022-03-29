@@ -221,7 +221,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				val coverArtUri = getCoverArtUri(result.images, 320)
 				val type = result.type.replaceFirstChar(Char::uppercase)
 
-				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.name, null, result.name, type, playable=false, browseable=true)
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.name, null, result.name, type, playable=true, browseable=false)
 			})
 		}
 
@@ -232,7 +232,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				val coverArtUri = getCoverArtUri(result.images, 320)
 				val type = result.type.replaceFirstChar(Char::uppercase)
 
-				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.name, null, result.name, type, playable=false, browseable=true)
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.name, null, result.name, type, playable=true, browseable=false)
 			})
 		}
 
@@ -243,7 +243,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				val coverArtUri = getCoverArtUri(result.images)
 				val subtitle = result.type.replaceFirstChar(Char::uppercase)
 
-				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.publisher, null, result.name, subtitle, playable=false, browseable=true)
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.publisher, null, result.name, subtitle, playable=true, browseable=false)
 			})
 		}
 
