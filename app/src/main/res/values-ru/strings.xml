@@ -92,6 +92,7 @@
     <string name="lbl_map_invert_zoom">Инвертировать масштаб</string>
     <string name="lbl_map_tilt">Наклонить карту</string>
     <string name="lbl_map_traffic">Показывать пробки</string>
+    <string name="lbl_map_satellite">Показывать снимки со спутника</string>
     <string name="lbl_map_buildings">Включить 3D здания</string>
     <string name="gmapStyleLabel">Стиль карты</string>
     <string name="lbl_map_quickdestinations">Избранные назначения навигации:</string>
@@ -366,6 +367,7 @@
     <string name="MAP_DESTINATIONS">Избранные назначения</string>
     <string name="MAP_WIDESCREEN">Широкоэкранные карты</string>
     <string name="MAP_INVERT_ZOOM">Инвертировать масштаб</string>
+    <string name="MAP_SATELLITE">Показывать снимки со спутника</string>
     <string name="MAP_TRAFFIC">Показывать пробки</string>
     <string name="MAP_BUILDINGS">Включить 3D здания</string>
     <string name="MAP_TILT">Наклонить карту</string>

@@ -92,6 +92,7 @@
     <string name="lbl_map_invert_zoom">Zooma ut</string>
     <string name="lbl_map_tilt">Luta kartvyn</string>
     <string name="lbl_map_traffic">Visa trafik</string>
+    <string name="lbl_map_satellite">Visa satellitbilder</string>
     <string name="lbl_map_buildings">Aktivera 3D-byggnader</string>
     <string name="gmapStyleLabel">Kart utseende</string>
     <string name="lbl_mapbox_custom_style">Använd en anpassad Mapbox stil URL</string>
@@ -374,6 +375,7 @@
     <string name="MAP_DESTINATIONS">Favoritdestinationer</string>
     <string name="MAP_WIDESCREEN">Widescreen karta</string>
     <string name="MAP_INVERT_ZOOM">Zooma ut</string>
+    <string name="MAP_SATELLITE">Visa satellitbilder</string>
     <string name="MAP_TRAFFIC">Visa trafik</string>
     <string name="MAP_BUILDINGS">Aktivera 3D-byggnader</string>
     <string name="MAP_TILT">Luta kartvyn</string>

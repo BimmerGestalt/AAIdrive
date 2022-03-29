@@ -93,6 +93,7 @@
     <string name="lbl_map_invert_zoom">Inversează direcția de zoom</string>
     <string name="lbl_map_tilt">Înclinare hartă</string>
     <string name="lbl_map_traffic">Afișează trafic</string>
+    <string name="lbl_map_satellite">Arată imagini prin satelit</string>
     <string name="lbl_map_buildings">Activează clădiri 3D</string>
     <string name="gmapStyleLabel">Stil hartă</string>
     <string name="lbl_mapbox_custom_style">Folosește un URL personalizat pentru Mapbox</string>
@@ -375,6 +376,7 @@
     <string name="MAP_DESTINATIONS">Destinații favorite</string>
     <string name="MAP_WIDESCREEN">Hartă widescreen</string>
     <string name="MAP_INVERT_ZOOM">Inversează direcția de zoom</string>
+    <string name="MAP_SATELLITE">Arată imagini prin satelit</string>
     <string name="MAP_TRAFFIC">Afișează trafic</string>
     <string name="MAP_BUILDINGS">Activează clădiri 3D</string>
     <string name="MAP_TILT">Înclinare hartă</string>
