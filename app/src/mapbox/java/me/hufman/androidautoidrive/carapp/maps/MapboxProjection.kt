@@ -30,6 +30,7 @@ import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
+import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.scalebar.scalebar
 import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
@@ -68,16 +69,18 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 		super.onStart()
 		Log.i(TAG, "Projection Start")
 		map.onStart()
+		applyCommonSettings()
 		mapListener?.run()
 	}
 
-	/** Call this function whenever we think the settings have been changed and need to be applied */
-	fun applySettings(settings: MapboxSettings) {
-		// the narrow-screen option centers the viewport to the middle of the display
-		// so update the map's margin to match
-		val margin = (fullDimensions.appWidth - sidebarDimensions.appWidth) / 2
-		map.setPadding(margin, fullDimensions.paddingTop, margin, 0)
-
+	@SuppressLint("RtlHardcoded")
+	/** Display settings that don't change based on user settings */
+	fun applyCommonSettings() {
+		map.compass.updateSettings {
+			fadeWhenFacingNorth = false
+			position = Gravity.BOTTOM or Gravity.RIGHT
+			enabled = true
+		}
 		map.location.updateSettings {
 			map.location.setLocationProvider(locationProvider)
 			map.location.enabled = true
@@ -88,8 +91,18 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 			ratio = 0.25f
 			textSize = 16f
 		}
+	}
+
+	/** Call this function whenever we think the settings have been changed and need to be applied */
+	fun applySettings(settings: MapboxSettings) {
+		// the narrow-screen option centers the viewport to the middle of the display
+		// so update the map's margin to match
+		val margin = (fullDimensions.appWidth - sidebarDimensions.appWidth) / 2
+		map.setPadding(margin, fullDimensions.paddingTop, margin, 0)
 
 		map.getMapboxMap().loadStyle(style(settings.mapStyleUri) {
+			applyCommonSettings()
+
 			if (settings.mapTraffic) {
 				drawTraffic(this, settings)
 			}
