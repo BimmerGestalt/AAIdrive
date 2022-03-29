@@ -218,7 +218,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		if (artistResults != null && artistResults.isNotEmpty()) {
 			searchResultMusicMetadata.addAll(artistResults.items.map { result ->
 				val mediaId = result.uri.uri
-				val coverArtUri = getCoverArtUri(result.images, 320)
+				val coverArtUri = getCoverArtUri(result.images)
 				val type = result.type.replaceFirstChar(Char::uppercase)
 
 				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.name, null, result.name, type, playable=true, browseable=false)
@@ -229,7 +229,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		if (playlistResults != null && playlistResults.isNotEmpty()) {
 			searchResultMusicMetadata.addAll(playlistResults.items.map { result ->
 				val mediaId = result.uri.uri
-				val coverArtUri = getCoverArtUri(result.images, 320)
+				val coverArtUri = getCoverArtUri(result.images)
 				val type = result.type.replaceFirstChar(Char::uppercase)
 
 				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.name, null, result.name, type, playable=true, browseable=false)
@@ -439,9 +439,13 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 * returned.
 	 */
 	private fun getCoverArtUri(images: List<SpotifyImage>, heightToMatch: Int = 300): String? {
-		val coverArtIndex = images.indexOfFirst { it.height == heightToMatch }
+		val sortedImages = images.sortedBy { it.height }
+		var coverArtIndex = sortedImages.indexOfFirst { it.height ?: 0 >= heightToMatch }
+		if (coverArtIndex == -1 && images.size == 1) {
+			coverArtIndex = 0
+		}
 		return if (coverArtIndex != -1) {
-			val imageUrl = images[coverArtIndex].url
+			val imageUrl = sortedImages[coverArtIndex].url
 			val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
 			"spotify:image:$coverArtCode"
 		} else {

@@ -643,7 +643,7 @@ class SpotifyWebApiTest {
 		val metadata1 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId1}", coverArtCode1, artistName1, albumName1, trackName1, null, false, false)
 		assertEquals(metadata1, likedSongs[0])
 
-		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId2}", null, artistName2, albumName2, trackName2, null, false, false)
+		val metadata2 = createSpotifyMusicMetadata(spotifyAppController, "spotify:track:${uriId2}", coverArtCode2, artistName2, albumName2, trackName2, null, false, false)
 		assertEquals(metadata2, likedSongs[1])
 	}
 
