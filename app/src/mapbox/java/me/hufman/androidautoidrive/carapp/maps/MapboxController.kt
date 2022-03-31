@@ -41,7 +41,7 @@ class MapboxController(private val context: Context,
 	private val mapboxLocationSource = MapboxLocationSource()
 	var currentLocation: Location? = null
 
-	var currentSettings: MapboxSettings? = null
+	var currentSettings: MapboxSettings = MapboxSettings.build(appSettings, currentLocation?.toLatLong())
 
 	var animatingCamera = false
 	private val scrollZoomAnimation = MapAnimationOptions.Builder().duration(1000).build()
@@ -65,6 +65,7 @@ class MapboxController(private val context: Context,
 		mapboxLocationSource.onLocationUpdate(location)
 
 		if (firstView) {  // first view
+			applySettings(true)
 			initCamera()
 		} else {
 			updateCamera()
@@ -99,7 +100,7 @@ class MapboxController(private val context: Context,
 
 		// watch for map settings
 		appSettings.callback = {applySettings()}
-		applySettings() // which also updates the settings in the projection for first draw
+		applySettings(force = true) // which also updates the settings in the projection for first draw
 	}
 
 	override fun pauseMap() {
@@ -115,11 +116,11 @@ class MapboxController(private val context: Context,
 		projection = null
 	}
 
-	fun applySettings() {
+	fun applySettings(force: Boolean = false) {
 		// AppSettings updates every ~10s from cachedCds updates
 		// so check if anything relevant has changed before redrawing map
 		val newSettings = MapboxSettings.build(appSettings, currentLocation?.toLatLong())
-		if (currentSettings != newSettings) {
+		if (currentSettings != newSettings || force) {
 			projection?.applySettings(newSettings)
 
 			// these functions read from the currentSettings
@@ -161,7 +162,7 @@ class MapboxController(private val context: Context,
 		val cameraPosition = CameraOptions.Builder()
 				.center(Point.fromLngLat(location.longitude, location.latitude))
 				.zoom(currentZoom.toDouble())
-		if (location.hasBearing() && currentSettings?.mapTilt == true) {
+		if (location.hasBearing() && currentSettings.mapTilt) {
 			cameraPosition
 					.padding(EdgeInsets(0.5 * mapAppMode.appDimensions.appHeight / 2, 0.0, 0.0, 0.0))
 					.pitch(60.0)
@@ -239,7 +240,7 @@ class MapboxController(private val context: Context,
 			val cameraPosition = CameraOptions.Builder()
 					.center(Point.fromLngLat(location.longitude, location.latitude))
 					.zoom(currentZoom.toDouble())
-			if (location.hasBearing() && currentSettings?.mapTilt == true) {
+			if (location.hasBearing() && currentSettings.mapTilt) {
 				cameraPosition
 						.padding(EdgeInsets(0.5 * mapAppMode.appDimensions.appHeight / 2, 0.0, 0.0, 0.0))
 						.pitch(60.0)
