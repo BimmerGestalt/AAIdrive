@@ -33,11 +33,13 @@ This app requires that the MyBMW or MINI app for your car is installed and that 
 
 Download the APK of the latest stable release from the [Releases page](https://github.com/BimmerGestalt/AAIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. It is also available on the [Google Play Store](https://play.google.com/store/apps/details?id=me.hufman.androidautoidrive). After starting, the app should detect the MyBMW app and start waiting for the car connection.
 
-Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-nomap-sentry-release.apk) to automatically report crashes.
-The [nonalytics](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-nomap-nonalytics-release.apk) build is available too.
+Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-mapbox-sentry-release.apk) to automatically report crashes.
+The [nonalytics](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-mapbox-nonalytics-release.apk) build is available too.
 
+- Fixes Calendar app in ID4
+- Mapbox-powered custom map
 - Navigation tab includes address completion (and POI search in map-enabled builds)
-- Mapbox-powered custom map [in a separate build](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-mapbox-sentry-release.apk)
+- Spotify tweaks, including adding the Library entry back in Spotify 8.7
 
 Check out the [FAQ](https://bimmergestalt.github.io/AAIdrive/faq.html) if you run into problems.
 
@@ -61,6 +63,9 @@ Several new entries will be added to the Media section of the control screen. Th
 Implemented Features
 --------------------
 
+  - Calendar integration
+    - View the phone's calendar in the car
+    - Automatically trigger the car's navigation to upcoming appointments
   - Car Information
     - Remembers fuel level, window status, and car's location after parking
     - Shows live-updating speed and compass while connected
@@ -174,10 +179,11 @@ Besides showing a self-contained remote UI, the IDrive system offers many exciti
   - New notifications trigger a statusbar icon
   - New notifications can trigger a popup
   - New notification popups can be disabled if a passenger is detected in the seat
+  - Notifications can be read out by the car's TTS when received or when selected
   - The car's navigation system is available to handle Android Navigation Intents
   - The currently-playing app is displayed along the top of the IDrive screen
   - The currently-playing song title is shown in the IDrive4 Multimedia side panel
-  - The currently-playing song coverart and progress is shown in the IDrive5 Multimedia side panel
+  - The currently-playing song coverart and progress is shown in the IDrive5 Home screen and Multimedia side panel
   - On a MY2017+ car supporting Bluetooth Apps, audio focus will be enabled which grants the following extra features:
     - The Media shortcut button opens this app when it is in control of the music
     - Automatically resumes playback when reconnecting to the car
