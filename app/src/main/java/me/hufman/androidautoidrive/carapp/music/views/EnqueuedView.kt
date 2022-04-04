@@ -101,12 +101,12 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	}
 
 	fun show() {
-		currentSong = musicController.getMetadata()
 		val newQueueMetadata = musicController.getQueue()
 
 		// same queue as before, just select currently playing song
 		if (queueMetadata != null && queueMetadata == newQueueMetadata) {
-			showCurrentlyPlayingSong()
+			showCurrentlyPlayingSong(true)
+			setSelectionToCurrentSong()
 			return
 		}
 
@@ -126,7 +126,8 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 				visibleRowsOriginalMusicMetadata = visibleRows.map { MusicMetadata.copy(it) }
 			}
 
-			showCurrentlyPlayingSong()
+			showCurrentlyPlayingSong(true)
+			setSelectionToCurrentSong()
 		} else {
 			listComponent.setEnabled(false)
 			listComponent.setSelectable(false)
@@ -166,23 +167,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			return
 		}
 
-		// song actually playing is different than what the current song is then update checkmark
-		if (currentSong?.mediaId != musicController.getMetadata()?.mediaId) {
-			val oldPlayingIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
-			currentSong = musicController.getMetadata()
-			val playingIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
-
-			// remove checkmark from old song
-			showList(oldPlayingIndex, 1)
-
-			// add checkmark to new song
-			showList(playingIndex, 1)
-
-			// move the selection if the previous song was selected
-			if (oldPlayingIndex == selectedIndex) {
-				setSelectionToCurrentSong(playingIndex)
-			}
-		}
+		showCurrentlyPlayingSong(false)
 
 		// redraw all currently visible rows if one of them has a cover art that was retrieved
 		for ((index, metadata) in visibleRowsOriginalMusicMetadata.withIndex()) {
@@ -197,7 +182,8 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	/**
 	 * Sets the list selection to the current song.
 	 */
-	private fun setSelectionToCurrentSong(index: Int) {
+	private fun setSelectionToCurrentSong() {
+		val index = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
 		if (index >= 0) {
 			state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
 					mapOf(0.toByte() to listComponent.id, 41.toByte() to index)
@@ -231,12 +217,32 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	}
 
 	/**
-	 * Shows and sets the selection to the currently playing song.
+	 * Shows the currently playing song.
 	 */
-	private fun showCurrentlyPlayingSong() {
-		val selectedIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
-		showList(selectedIndex)
-		setSelectionToCurrentSong(selectedIndex)
+	private fun showCurrentlyPlayingSong(showNeighbors: Boolean) {
+		val oldPlayingIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
+		currentSong = musicController.getMetadata()
+		val playingIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
+
+		// song actually playing is different than what the current song is, then update checkmark
+		if (oldPlayingIndex != playingIndex) {
+			// remove checkmark from old song
+			if (oldPlayingIndex >= 0) {
+				showList(oldPlayingIndex, 1)
+			}
+		}
+
+		// add checkmark to new song
+		if (showNeighbors) {
+			showList(max(0, playingIndex - 5), 10)
+		} else {
+			showList(playingIndex, 1)
+		}
+
+		// move the selection if the previous song was selected
+		if (oldPlayingIndex == selectedIndex) {
+			setSelectionToCurrentSong()
+		}
 	}
 
 	/**

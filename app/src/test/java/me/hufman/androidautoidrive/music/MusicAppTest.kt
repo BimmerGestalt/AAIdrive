@@ -734,6 +734,13 @@ class MusicAppTest {
 		verify(musicController).skipToPrevious()
 	}
 
+	fun isChecked(shouldBeDataTable: Any, rowIndex: Int): Boolean {
+		if (shouldBeDataTable !is BMWRemoting.RHMIDataTable) return false
+		val cell = shouldBeDataTable.data[rowIndex-shouldBeDataTable.fromRow][0]
+		if (cell !is BMWRemoting.RHMIResourceIdentifier) return false
+		return cell.type == BMWRemoting.RHMIResourceType.IMAGEID && cell.id == 149
+	}
+
 	@Test
 	fun testQueueView_NullQueue() {
 		val mockServer = MockBMWRemotingServer()
@@ -864,10 +871,8 @@ class MusicAppTest {
 		val queueList = mockServer.data[IDs.QUEUE_LIST_MODEL] as BMWRemoting.RHMIDataTable
 		assertEquals(3, queueList.totalRows)
 
-		val checkmarkResource = queueList.data[0][0] as BMWRemoting.RHMIResourceIdentifier
 		val song1Row = queueList.data[0]
-		assertEquals(149, checkmarkResource.id)
-		assertEquals(BMWRemoting.RHMIResourceType.IMAGEID, checkmarkResource.type)
+		assertTrue(isChecked(queueList, 0))
 		assertEquals("", song1Row[1])
 		assertEquals("", song1Row[2])
 		assertEquals(musicMetadata1.title+"\n"+musicMetadata1.artist, song1Row[3])
@@ -894,6 +899,8 @@ class MusicAppTest {
 
 		assertEquals(queueTitle, mockServer.data[IDs.QUEUE_TITLE_MODEL])
 		assertEquals(queueSubtitle, mockServer.data[IDs.QUEUE_SUBTITLE_MODEL])
+
+		assertEquals(mapOf(0.toByte() to IDs.QUEUE_LIST_COMPONENT, 41.toByte() to 0), mockServer.triggeredEvents[IDs.FOCUS_EVENT])
 	}
 
 	@Test
@@ -928,10 +935,8 @@ class MusicAppTest {
 		val queueList = mockServer.data[IDs.QUEUE_LIST_MODEL] as BMWRemoting.RHMIDataTable
 		assertEquals(2, queueList.totalRows)
 
-		val checkmarkResource = queueList.data[0][0] as BMWRemoting.RHMIResourceIdentifier
 		val song1Row = queueList.data[0]
-		assertEquals(149, checkmarkResource.id)
-		assertEquals(BMWRemoting.RHMIResourceType.IMAGEID, checkmarkResource.type)
+		assertTrue(isChecked(queueList, 0))
 		assertEquals("", song1Row[1])
 		assertEquals("", song1Row[2])
 		assertEquals(musicMetadata1.title+"\n"+musicMetadata1.artist, song1Row[3])
@@ -974,13 +979,42 @@ class MusicAppTest {
 
 		val queueList = mockServer.data[IDs.QUEUE_LIST_MODEL] as BMWRemoting.RHMIDataTable
 
-		val checkmarkResource = queueList.data[0][0] as BMWRemoting.RHMIResourceIdentifier
-		assertEquals(149, checkmarkResource.id)
-		assertEquals(BMWRemoting.RHMIResourceType.IMAGEID, checkmarkResource.type)
+		assertTrue(isChecked(queueList, 2))
 		val song3Row = queueList.data[0]
 		assertEquals("", song3Row[1])
 		assertEquals("", song3Row[2])
 		assertEquals(musicMetadata3.title+"\n"+musicMetadata3.artist, song3Row[3])
+	}
+
+	/** EnqueuedView sometimes doesn't clear the previous song's checkmark when being shown */
+	@Test
+	fun testQueueShow_DifferentSongPlayingThanCurrent() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val state = app.states[IDs.QUEUE_STATE] as RHMIState.PlainState
+		val queueView = EnqueuedView(state, musicController, graphicsHelpers, MusicImageIDsMultimedia)
+		val metadatas = (0..50).map {
+			MusicMetadata(queueId=it.toLong(), title="Song $it", artist="Artist $it", mediaId="mediaId$it")
+		}
+		whenever(musicController.getQueue()) doAnswer { QueueMetadata(null, null, metadatas, null) }
+		val firstSelectionIndex = 26
+		whenever(musicController.getMetadata()) doAnswer { metadatas[firstSelectionIndex] }
+
+		queueView.show()
+		val initialPart = mockServer.listData[IDs.QUEUE_LIST_MODEL]!!.last { it.fromRow <= firstSelectionIndex && it.fromRow + it.numRows >= firstSelectionIndex }
+		assertTrue(isChecked(initialPart, firstSelectionIndex))
+
+		val secondSelectionIndex = 40
+		whenever(musicController.getMetadata()) doAnswer { metadatas[secondSelectionIndex] }
+		queueView.show()
+
+		val listParts = mockServer.listData[IDs.QUEUE_LIST_MODEL]!!
+		val previousPart = listParts.last { it.fromRow <= firstSelectionIndex && it.fromRow + it.numRows >= firstSelectionIndex }
+		val currentPart = listParts.last { it.fromRow <= secondSelectionIndex && it.fromRow + it.numRows >= secondSelectionIndex }
+
+		assertFalse(isChecked(previousPart, firstSelectionIndex))
+		assertTrue(isChecked(currentPart, secondSelectionIndex))
 	}
 
 	@Test
