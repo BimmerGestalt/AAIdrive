@@ -131,7 +131,7 @@ class MapboxController(private val context: Context,
 
 	override fun zoomIn(steps: Int) {
 		mapAppMode.startInteraction()
-		currentZoom = min(20f, currentZoom + steps)
+		currentZoom = min(18f, currentZoom + steps)
 		updateCamera()
 	}
 
