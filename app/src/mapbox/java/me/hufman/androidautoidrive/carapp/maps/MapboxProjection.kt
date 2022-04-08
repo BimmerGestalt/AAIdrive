@@ -35,9 +35,9 @@ import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManag
 import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.scalebar.scalebar
-import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
 import io.bimmergestalt.idriveconnectkit.SubsetRHMIDimensions
 import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.carapp.UpdatingSidebarRHMIDimensions
 import me.hufman.androidautoidrive.utils.Utils
 
 @SuppressLint("Lifecycle")
@@ -56,7 +56,7 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 		display.getSize(dimension)
 		SubsetRHMIDimensions(dimension.x, dimension.y)
 	}
-	val sidebarDimensions = SidebarRHMIDimensions(fullDimensions) {
+	val sidebarDimensions = UpdatingSidebarRHMIDimensions(fullDimensions) {
 		appSettings[AppSettings.KEYS.MAP_WIDESCREEN].toBoolean()
 	}
 

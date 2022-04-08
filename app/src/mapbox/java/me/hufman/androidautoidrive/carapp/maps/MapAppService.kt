@@ -7,6 +7,7 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.carapp.CarAppService
+import me.hufman.androidautoidrive.carapp.CustomRHMIDimensions
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.maps.AndroidLocationProvider
 import me.hufman.androidautoidrive.maps.CdsLocationProvider
@@ -34,7 +35,8 @@ class MapAppService: CarAppService() {
 		val carLocationProvider = CombinedLocationProvider(
 				appSettings, AndroidLocationProvider.getInstance(this), CdsLocationProvider(cdsData)
 		)
-		val mapAppMode = MapAppMode.build(RHMIDimensions.create(carInformation.capabilities), MutableAppSettingsReceiver(this, handler), cdsData, MusicAppMode.TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port) ?: MusicAppMode.TRANSPORT_PORTS.BT)
+		val dimensions = CustomRHMIDimensions(RHMIDimensions.create(carInformation.capabilities), appSettings)
+		val mapAppMode = MapAppMode.build(dimensions, MutableAppSettingsReceiver(this, handler), cdsData, MusicAppMode.TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port) ?: MusicAppMode.TRANSPORT_PORTS.BT)
 		this.mapAppMode = mapAppMode
 		val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode)
 		this.mapScreenCapture = mapScreenCapture

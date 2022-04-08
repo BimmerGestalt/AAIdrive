@@ -51,6 +51,8 @@ class FullImageView(val state: RHMIState, val title: String, val config: FullIma
 		state.focusCallback = FocusCallback { focused ->
 			if (focused) {
 				Log.i(TAG, "Showing map on full screen")
+				imageComponent.setProperty(RHMIProperty.PropertyId.POSITION_X.id, -config.rhmiDimensions.paddingLeft)    // positionX
+				imageComponent.setProperty(RHMIProperty.PropertyId.POSITION_Y.id, -config.rhmiDimensions.paddingTop)    // positionY
 				imageComponent.setProperty(RHMIProperty.PropertyId.WIDTH.id, config.rhmiDimensions.visibleWidth)
 				imageComponent.setProperty(RHMIProperty.PropertyId.HEIGHT.id, config.rhmiDimensions.visibleHeight)
 				frameUpdater.showWindow(config.rhmiDimensions.visibleWidth, config.rhmiDimensions.visibleHeight, imageModel)

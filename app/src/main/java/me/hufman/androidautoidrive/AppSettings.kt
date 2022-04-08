@@ -62,7 +62,14 @@ interface AppSettings {
 		CACHED_CAR_DATA("Cached_Car_Data", "{}", "JSON Object of any previously-cached cds properties"),
 		PREFER_CAR_LANGUAGE("Prefer_Car_Language", "true", "Prefer the car's language instead of the phone's language"),
 		FORCE_CAR_LANGUAGE("Force_Car_Language", "", "Force a specific language for the car apps"),
-		ENABLED_ANALYTICS("Enable_Analytics", "false", "Enable Analytics module")
+		ENABLED_ANALYTICS("Enable_Analytics", "false", "Enable Analytics module"),
+
+		DIMENSIONS_RHMI_WIDTH("Dimensions_RHMI_Width", "", "Force RHMIDimensions to a specific rhmiWidth"),
+		DIMENSIONS_RHMI_HEIGHT("Dimensions_RHMI_Height", "", "Force RHMIDimensions to a specific rhmiHeight"),
+		DIMENSIONS_MARGIN_LEFT("Dimensions_Margin_Left", "", "Force RHMIDimensions to a specific marginLeft"),
+		DIMENSIONS_PADDING_LEFT("Dimensions_Padding_Left", "", "Force RHMIDimensions to a specific paddingLeft"),
+		DIMENSIONS_PADDING_TOP("Dimensions_Padding_Top", "", "Force RHMIDimensions to a specific paddingTop"),
+		DIMENSIONS_MARGIN_RIGHT("Dimensions_Margin_Right", "", "Force RHMIDimensions to a specific marginRight"),
 	}
 
 	/** Store the active preferences in a singleton */
