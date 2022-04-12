@@ -96,6 +96,7 @@
     <string name="lbl_map_buildings">3D-Gebäude aktivieren</string>
     <string name="gmapStyleLabel">Kartenstil</string>
     <string name="lbl_mapbox_custom_style">Benutzerdefinierte Mapbox URL verwenden</string>
+    <string name="lbl_map_quickdestinations">Lieblingsnavigationsziele:</string>
     <string name="lbl_musicpage">Die Musik-Apps Ihres Telefons können als Medienquellen im Auto ausgewählt werden</string>
     <string name="lbl_music_apps">Musik Apps</string>
     <string name="musicAppIcon">App Symbol</string>
