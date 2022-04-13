@@ -96,6 +96,9 @@
     <string name="lbl_map_buildings">3D-Gebäude aktivieren</string>
     <string name="gmapStyleLabel">Kartenstil</string>
     <string name="lbl_mapbox_custom_style">Benutzerdefinierte Mapbox URL verwenden</string>
+    <string name="lbl_map_quickdestinations">Lieblingsnavigationsziele:</string>
+    <string name="lbl_gmap_invalid_apikey">Der GMaps API-Schlüssel ist ungültig und die Kartenfunktionalität wird reduziert. Bitte informieren Sie den Entwickler und halten Sie Ausschau nach einem Update</string>
+    <string name="lbl_mapbox_invalid_token">Der Mapbox Token ist ungültig und die Kartenfunktionalität wird reduziert. Bitte informieren Sie den Entwickler und halten Sie Ausschau nach einem Update</string>
     <string name="lbl_musicpage">Die Musik-Apps Ihres Telefons können als Medienquellen im Auto ausgewählt werden</string>
     <string name="lbl_music_apps">Musik Apps</string>
     <string name="musicAppIcon">App Symbol</string>
@@ -369,6 +372,7 @@
     <string name="MAP_ACTION_SEARCH">Ort suchen</string>
     <string name="MAP_ACTION_RECALC_NAV">Navigation neu berechnen</string>
     <string name="MAP_ACTION_CLEARNAV">Navigation leeren</string>
+    <string name="MAP_DESTINATIONS">Lieblings-Ziele</string>
     <string name="MAP_WIDESCREEN">Breitbild (Widescreen) Karte</string>
     <string name="MAP_INVERT_ZOOM">Zoom-Richtung umkehren</string>
     <string name="MAP_SATELLITE">Satellitenbild anzeigen</string>
