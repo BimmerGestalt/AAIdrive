@@ -2,8 +2,8 @@ name: build  # used as the badge name
 
 on:
   push:
-    branches: '*'
-    tags: '*'
+    branches: ['*']
+    tags: ['*']
   pull_request:
     types: [opened, synchronize]
 
