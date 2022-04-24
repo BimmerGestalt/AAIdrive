@@ -3,11 +3,13 @@ package me.hufman.androidautoidrive
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import me.hufman.androidautoidrive.phoneui.viewmodels.MapSettingsModel
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
@@ -28,7 +30,8 @@ class MapSettingsModelTest {
 	fun testSettings() {
 		val context = mock<Context>()
 		val carInformation = mock<CarCapabilitiesSummarized>()
-		val model = MapSettingsModel(context, MutableLiveData(carInformation))
+		val carInformationLiveData = MutableLiveData(carInformation)
+		val model = MapSettingsModel(context, carInformationLiveData)
 
 		AppSettings.loadDefaultSettings()
 		val bindings = mapOf(
@@ -47,19 +50,33 @@ class MapSettingsModelTest {
 		AppSettings.tempSetSetting(AppSettings.KEYS.GMAPS_STYLE, "night1")
 		Assert.assertEquals("night1", model.mapStyle.value)
 
-		Assert.assertEquals(false, model.mapWidescreenSupported)
-		Assert.assertEquals(false, model.mapWidescreenUnsupported)
-		Assert.assertEquals(false, model.mapWidescreenCrashes)
+		// make the LiveData start working
+		val liveDataObserver = Observer<Boolean> {}
+		model.mapWidescreenSupported.observeForever(liveDataObserver)
+		model.mapWidescreenUnsupported.observeForever(liveDataObserver)
+		model.mapWidescreenCrashes.observeForever(liveDataObserver)
+
+		assertEquals(false, model.mapWidescreenSupported.value)
+		assertEquals(false, model.mapWidescreenUnsupported.value)
+		assertEquals(false, model.mapWidescreenCrashes.value)
 
 		whenever(carInformation.mapWidescreenSupported) doReturn true
+		whenever(carInformation.mapWidescreenUnsupported) doReturn false
 		whenever(carInformation.mapWidescreenCrashes) doReturn true
-		Assert.assertEquals(true, model.mapWidescreenSupported)
-		Assert.assertEquals(false, model.mapWidescreenUnsupported)
-		Assert.assertEquals(true, model.mapWidescreenCrashes)
+		carInformationLiveData.value = carInformation
+		assertEquals(true, model.mapWidescreenSupported.value)
+		assertEquals(false, model.mapWidescreenUnsupported.value)
+		assertEquals(true, model.mapWidescreenCrashes.value)
 
-		whenever(carInformation.mapWidescreenSupported) doReturn true
-		Assert.assertEquals(false, model.mapWidescreenSupported)
-		Assert.assertEquals(true, model.mapWidescreenUnsupported)
-		Assert.assertEquals(true, model.mapWidescreenCrashes)
+		whenever(carInformation.mapWidescreenSupported) doReturn false
+		whenever(carInformation.mapWidescreenUnsupported) doReturn true
+		carInformationLiveData.value = carInformation
+		assertEquals(false, model.mapWidescreenSupported.value)
+		assertEquals(true, model.mapWidescreenUnsupported.value)
+		assertEquals(true, model.mapWidescreenCrashes.value)
+
+		model.mapWidescreenSupported.removeObserver(liveDataObserver)
+		model.mapWidescreenUnsupported.removeObserver(liveDataObserver)
+		model.mapWidescreenCrashes.removeObserver(liveDataObserver)
 	}
 }
