@@ -52,7 +52,7 @@ jobs:
       - name: Build the project
         run: ./gradlew compile${{ matrix.map }}${{ matrix.analytics }}FullDebugKotlin --stacktrace
       - name: Run unit tests
-        run: ./gradlew test${{ matrix.map }}${{ matrix.analytics }}FullDebugUnitTestCoverage  --stacktrace
+        run: ./gradlew test${{ matrix.map }}${{ matrix.analytics }}FullDebugUnitTestCoverage
       - name: Upload CodeCov report
         if: github.event.pull_request.title != 'New Crowdin updates' && github.event.ref != 'refs/heads/l10n_main'   # don't upload coverage for Crowdin pushes
         uses: codecov/codecov-action@v1

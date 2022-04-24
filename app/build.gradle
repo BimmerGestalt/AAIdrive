@@ -123,6 +123,11 @@ android {
         animationsDisabled = true
         unitTests {
             includeAndroidResources = true
+            all {
+                testLogging {
+                    exceptionFormat = 'full'
+                }
+            }
         }
     }
 
