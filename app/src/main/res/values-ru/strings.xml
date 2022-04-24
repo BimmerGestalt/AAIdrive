@@ -89,6 +89,8 @@
     <string name="lbl_map_bt_hint">Производительность и качество карты при подключении по Bluetooth будут низкими</string>
     <string name="lbl_map_phone_gps">Использовать GPS телефона вместо GPS автомобиля</string>
     <string name="lbl_widescreen_map">Широкоэкранные карты</string>
+    <string name="lbl_map_widescreen_unsupported">Этот параметр не поддерживается вашей машиной, которая будет всегда работать в полноэкранном режиме</string>
+    <string name="lbl_map_widescreen_crashes">Режим расширенного экрана вызывает нестабильность подключения приложения на некоторых автомобилях</string>
     <string name="lbl_map_invert_zoom">Инвертировать масштаб</string>
     <string name="lbl_map_tilt">Наклонить карту</string>
     <string name="lbl_map_traffic">Показывать пробки</string>
