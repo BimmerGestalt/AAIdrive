@@ -99,7 +99,7 @@ class TipsListFragment: Fragment() {
 			pane.postDelayed(200) {
 				if (visible) {
 					val position = pane.scrollTop
-					(pane.findParent { it is ScrollView } as ScrollView).smoothScrollTo(0, position)
+					(pane.findParent { it is ScrollView } as? ScrollView)?.smoothScrollTo(0, position)
 				}
 			}
 		}
