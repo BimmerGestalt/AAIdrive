@@ -89,6 +89,8 @@
     <string name="lbl_map_bt_hint">Die Performance bei der Darstellung der Karten und die Qualität der Karten ist schlecht, wenn das Gerät über Bluetooth verbunden ist</string>
     <string name="lbl_map_phone_gps">GPS vom Telefon anstelle der GPS Signale des Autos verwenden</string>
     <string name="lbl_widescreen_map">Breitbild (Widescreen) Karte</string>
+    <string name="lbl_map_widescreen_unsupported">Diese Einstellung wird von Ihrem Auto nicht unterstützt, das immer im Vollbildmodus läuft</string>
+    <string name="lbl_map_widescreen_crashes">Breitbild-Modus bewirkt, dass die App-Verbindung auf einigen Autos instabil ist</string>
     <string name="lbl_map_invert_zoom">Zoom-Richtung umkehren</string>
     <string name="lbl_map_tilt">Neigung der Karte</string>
     <string name="lbl_map_traffic">Verkehr anzeigen</string>
