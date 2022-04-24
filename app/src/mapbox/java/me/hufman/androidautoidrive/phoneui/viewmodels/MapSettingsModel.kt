@@ -1,23 +1,25 @@
 package me.hufman.androidautoidrive.phoneui.viewmodels
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.liveData
-import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.BooleanLiveSetting
-import me.hufman.androidautoidrive.BuildConfig
-import me.hufman.androidautoidrive.StringLiveSetting
+import androidx.lifecycle.*
+import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.maps.MapboxTokenValidation
 import me.hufman.androidautoidrive.phoneui.FunctionalLiveData
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.combine
+import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 
-class MapSettingsModel(appContext: Context): ViewModel() {
+class MapSettingsModel(appContext: Context, carCapabilitiesSummarized: LiveData<CarCapabilitiesSummarized>): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
-			return MapSettingsModel(appContext) as T
+			val carCapabilitiesSummarized = MutableLiveData<CarCapabilitiesSummarized>()
+			val carInformation = CarInformationObserver()
+			carInformation.callback = {
+				carCapabilitiesSummarized.postValue(CarCapabilitiesSummarized(carInformation))
+			}
+			carCapabilitiesSummarized.value = CarCapabilitiesSummarized(carInformation)
+
+			return MapSettingsModel(appContext, carCapabilitiesSummarized) as T
 		}
 	}
 
@@ -40,6 +42,16 @@ class MapSettingsModel(appContext: Context): ViewModel() {
 	}.combine(mapboxCustomStyle) { sticky, enabled ->
 		// also show the option if the option is toggled in the car menu
 		sticky || enabled
+	}
+
+	val mapWidescreenSupported = carCapabilitiesSummarized.map(false) {
+		it.mapWidescreenSupported
+	}
+	val mapWidescreenUnsupported = carCapabilitiesSummarized.map(false) {
+		it.mapWidescreenUnsupported
+	}
+	val mapWidescreenCrashes = carCapabilitiesSummarized.map(false) {
+		it.mapWidescreenCrashes
 	}
 
 	val invalidAccessToken: LiveData<Boolean?> = liveData {

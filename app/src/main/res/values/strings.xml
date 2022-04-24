@@ -98,6 +98,8 @@
     <string name="lbl_map_bt_hint">Map performance and quality when connected over Bluetooth will be poor</string>
     <string name="lbl_map_phone_gps">Use Phone GPS instead of Car GPS</string>
     <string name="lbl_widescreen_map">Widescreen Map</string>
+    <string name="lbl_map_widescreen_unsupported">This setting is not supported by your car, which will always run in fullscreen mode</string>
+    <string name="lbl_map_widescreen_crashes">Widescreen mode causes the app connection to be unstable on some cars</string>
     <string name="lbl_map_invert_zoom">Invert zoom direction</string>
     <string name="lbl_map_tilt">Tilt map</string>
     <string name="lbl_map_traffic">Show traffic</string>

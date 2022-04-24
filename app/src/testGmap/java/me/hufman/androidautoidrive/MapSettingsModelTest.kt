@@ -2,7 +2,10 @@ package me.hufman.androidautoidrive
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.MutableLiveData
+import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.whenever
 import me.hufman.androidautoidrive.phoneui.viewmodels.MapSettingsModel
 import org.junit.Assert
 import org.junit.Rule
@@ -24,7 +27,8 @@ class MapSettingsModelTest {
 	@Test
 	fun testSettings() {
 		val context = mock<Context>()
-		val model = MapSettingsModel(context)
+		val carInformation = mock<CarCapabilitiesSummarized>()
+		val model = MapSettingsModel(context, MutableLiveData(carInformation))
 
 		AppSettings.loadDefaultSettings()
 		val bindings = mapOf(
@@ -42,5 +46,20 @@ class MapSettingsModelTest {
 		}
 		AppSettings.tempSetSetting(AppSettings.KEYS.GMAPS_STYLE, "night1")
 		Assert.assertEquals("night1", model.mapStyle.value)
+
+		Assert.assertEquals(false, model.mapWidescreenSupported)
+		Assert.assertEquals(false, model.mapWidescreenUnsupported)
+		Assert.assertEquals(false, model.mapWidescreenCrashes)
+
+		whenever(carInformation.mapWidescreenSupported) doReturn true
+		whenever(carInformation.mapWidescreenCrashes) doReturn true
+		Assert.assertEquals(true, model.mapWidescreenSupported)
+		Assert.assertEquals(false, model.mapWidescreenUnsupported)
+		Assert.assertEquals(true, model.mapWidescreenCrashes)
+
+		whenever(carInformation.mapWidescreenSupported) doReturn true
+		Assert.assertEquals(false, model.mapWidescreenSupported)
+		Assert.assertEquals(true, model.mapWidescreenUnsupported)
+		Assert.assertEquals(true, model.mapWidescreenCrashes)
 	}
 }
