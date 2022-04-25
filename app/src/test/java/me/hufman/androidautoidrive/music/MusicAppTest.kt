@@ -748,7 +748,7 @@ class MusicAppTest {
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val state = app.states[IDs.QUEUE_STATE] as RHMIState.PlainState
 		val queueView = EnqueuedView(state, musicController, graphicsHelpers, MusicImageIDsMultimedia)
-		val emptyQueueRow = arrayOf("", "", "<Empty Queue>")
+		val emptyQueueRow = arrayOf("", "", "", "<Empty Queue>")
 		whenever(musicController.getQueue()) doAnswer { null }
 		queueView.show()
 
@@ -757,6 +757,7 @@ class MusicAppTest {
 		assertArrayEquals(emptyQueueRow, queueList.data[0])
 		assertEquals(false, mockServer.properties[IDs.QUEUE_LIST_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id])
 		assertEquals(false, mockServer.properties[IDs.QUEUE_LIST_COMPONENT]!![RHMIProperty.PropertyId.SELECTABLE.id])
+		assertEquals("57,0,10,*", mockServer.properties[IDs.QUEUE_LIST_COMPONENT]!![RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id])
 
 		assertEquals("Now Playing", mockServer.data[IDs.QUEUE_STATE_TEXT_MODEL])
 
@@ -770,7 +771,7 @@ class MusicAppTest {
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val state = app.states[IDs.QUEUE_STATE] as RHMIState.PlainState
 		val queueView = EnqueuedView(state, musicController, graphicsHelpers, MusicImageIDsMultimedia)
-		val emptyQueueRow = arrayOf("", "", "<Empty Queue>")
+		val emptyQueueRow = arrayOf("", "", "", "<Empty Queue>")
 		val queueTitle = "queue title"
 		val queueCoverArt: Bitmap = mock()
 		whenever(musicController.getQueue()) doAnswer { QueueMetadata(queueTitle, null, emptyList(), queueCoverArt) }
@@ -800,7 +801,7 @@ class MusicAppTest {
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val state = app.states[IDs.QUEUE_STATE] as RHMIState.PlainState
 		val queueView = EnqueuedView(state, musicController, graphicsHelpers, MusicImageIDsMultimedia)
-		val emptyQueueRow = arrayOf("", "", "<Empty Queue>")
+		val emptyQueueRow = arrayOf("", "", "", "<Empty Queue>")
 		val queueTitle = "queue title"
 		whenever(musicController.getQueue()) doAnswer { QueueMetadata(queueTitle, null, emptyList(), null) }
 		queueView.show()
@@ -824,7 +825,7 @@ class MusicAppTest {
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val state = app.states[IDs.QUEUE_STATE] as RHMIState.PlainState
 		val queueView = EnqueuedView(state, musicController, graphicsHelpers, MusicImageIDsMultimedia)
-		val emptyQueueRow = arrayOf("", "", "<Empty Queue>")
+		val emptyQueueRow = arrayOf("", "", "", "<Empty Queue>")
 		val queueCoverArt: Bitmap = mock()
 		whenever(musicController.getQueue()) doAnswer { QueueMetadata(null, null, emptyList(), queueCoverArt) }
 		val queueCoverArtByteArray = ByteArray(2)
@@ -1040,6 +1041,10 @@ class MusicAppTest {
 		whenever(mockMusicMetadata2.mediaId) doAnswer { "mediaId2" }
 
 		queueView.show()
+
+		// collapsed coverart column at first, because no coverart
+		assertEquals("57,0,10,*", mockServer.properties[IDs.QUEUE_LIST_COMPONENT]!![RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id])
+
 		// trigger the request data callback
 		app.components[IDs.QUEUE_LIST_COMPONENT]?.requestDataCallback?.onRequestData(0, 10)
 
@@ -1049,6 +1054,9 @@ class MusicAppTest {
 		whenever(graphicsHelpers.compress(coverArt, 90, 90, quality = 30)) doAnswer { song2CoverArtImage }
 
 		queueView.redraw()
+
+		// shows coverart column
+		assertEquals("57,90,10,*", mockServer.properties[IDs.QUEUE_LIST_COMPONENT]!![RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id])
 
 		val queueList = mockServer.data[IDs.QUEUE_LIST_MODEL] as BMWRemoting.RHMIDataTable
 		val song2Row = queueList.data[1]

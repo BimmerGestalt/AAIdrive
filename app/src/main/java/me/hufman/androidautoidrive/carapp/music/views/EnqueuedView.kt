@@ -11,6 +11,7 @@ import me.hufman.androidautoidrive.music.QueueMetadata
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.truncate
 import kotlin.math.max
+import kotlin.math.min
 
 class EnqueuedView(val state: RHMIState, val musicController: MusicController, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {
@@ -76,7 +77,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		titleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[0]
 		subtitleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[1]
 
-		songsEmptyList.addRow(arrayOf("", "", L.MUSIC_QUEUE_EMPTY))
+		songsEmptyList.addRow(arrayOf("", "", "", L.MUSIC_QUEUE_EMPTY))
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {
@@ -112,8 +113,13 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 		queueMetadata = newQueueMetadata
 		songsList.clear()
-		val songs = queueMetadata?.songs
-		if (songs?.isNotEmpty() == true) {
+		val songs = queueMetadata?.songs ?: emptyList()
+		if (songs.any {it.coverArt != null || it.coverArtUri != null}) {
+			listComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,90,10,*")
+		} else {
+			listComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,0,10,*")
+		}
+		if (songs.isNotEmpty()) {
 			listComponent.setEnabled(true)
 			listComponent.setSelectable(true)
 			songsList.addAll(songs)
@@ -211,6 +217,11 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	 * Shows the list component content from the start index for the specified number of rows.
 	 */
 	private fun showList(startIndex: Int = 0, numRows: Int = 10) {
+		val updatedList = ArrayList(songsList.subList(startIndex, min(songsList.size, startIndex + numRows)))
+		if (updatedList.any {it.coverArt != null || it.coverArtUri != null}) {
+			listComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,90,10,*")
+		}   // don't collapse the column if this window of data happens to not have coverart, so no else branch here
+
 		if (startIndex >= 0) {
 			listComponent.getModel()?.setValue(songsListAdapter, startIndex, numRows, songsListAdapter.height)
 		}
