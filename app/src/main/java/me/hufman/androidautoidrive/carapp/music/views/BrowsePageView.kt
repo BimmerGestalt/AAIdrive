@@ -146,9 +146,11 @@ class BrowsePageView(val state: RHMIState,
 				currentListModel = loadingList
 				showList()
 			}
+			folderNameLabel.setProperty(RHMIProperty.PropertyId.LABEL_WAITINGANIMATION, true)
 			val musicListDeferred = browsePageModel.contents
 			val musicList = musicListDeferred.await() ?: emptyList()
 			this@BrowsePageView.musicList = ArrayList(musicList)
+			folderNameLabel.setProperty(RHMIProperty.PropertyId.LABEL_WAITINGANIMATION, false)
 			Log.d(TAG, "Browsing ${browsePageModel.title} resulted in ${musicList.count()} items")
 
 			if (musicList.isEmpty()) {
