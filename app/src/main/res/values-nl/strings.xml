@@ -86,6 +86,8 @@
     <string name="lbl_map_bt_hint">Kaart prestaties en kwaliteit bij een Bluetooth verbinding zal slecht zijn</string>
     <string name="lbl_map_phone_gps">Telefoon GPS gebruiken in plaats van auto GPS</string>
     <string name="lbl_widescreen_map">Breedbeeld map</string>
+    <string name="lbl_map_widescreen_unsupported">Deze instelling wordt niet ondersteund door je auto, die altijd wordt uitgevoerd in volledig scherm modus</string>
+    <string name="lbl_map_widescreen_crashes">Breedbeeld mode zorgt ervoor dat de app verbinding bij sommige auto\'s instabiel is</string>
     <string name="lbl_map_invert_zoom">Zoomrichting omkeren</string>
     <string name="lbl_map_tilt">Kaart kantelen</string>
     <string name="lbl_map_traffic">Toon verkeer</string>
