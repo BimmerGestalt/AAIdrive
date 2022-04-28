@@ -90,7 +90,7 @@
     <string name="lbl_map_phone_gps">Usa il GPS del telefono invece di quello dell\'auto</string>
     <string name="lbl_widescreen_map">Mappa a tutto schermo</string>
     <string name="lbl_map_widescreen_unsupported">Questa impostazione non è supportata dalla tua auto, che funzionerà sempre a schermo intero</string>
-    <string name="lbl_map_widescreen_crashes">La modalità Widescreen rende la connessione app instabile su alcune auto</string>
+    <string name="lbl_map_widescreen_crashes">La modalità Widescreen rende la connessione dell\'app instabile su alcune auto</string>
     <string name="lbl_map_invert_zoom">Inverti direzione zoom</string>
     <string name="lbl_map_tilt">Inclina la mappa</string>
     <string name="lbl_map_traffic">Mostra il traffico</string>
