@@ -89,6 +89,8 @@
     <string name="lbl_map_bt_hint">Vid blåtandsanslutning är kartans prestanda och kvalitet dålig</string>
     <string name="lbl_map_phone_gps">Använd telefonens GPS istället för bilens GPS</string>
     <string name="lbl_widescreen_map">Widescreen karta</string>
+    <string name="lbl_map_widescreen_unsupported">Denna inställning stöds inte av din bil, som alltid kommer att köras i helskärmsläge</string>
+    <string name="lbl_map_widescreen_crashes">Widescreenläge gör att appanslutningen är instabil på vissa bilar</string>
     <string name="lbl_map_invert_zoom">Zooma ut</string>
     <string name="lbl_map_tilt">Luta kartvyn</string>
     <string name="lbl_map_traffic">Visa trafik</string>
