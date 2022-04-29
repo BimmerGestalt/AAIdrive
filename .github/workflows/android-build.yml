@@ -25,7 +25,11 @@ jobs:
       matrix:
         map: [Nomap, Gmap, Mapbox]
         analytics: [Nonalytics, Sentry]
-
+        hasSecret:
+          - ${{ github.repository == 'BimmerGestalt/AAIdrive' && github.event_name == 'push' }}
+        exclude:  # don't run Mapbox tests if we are in a context that doesn't have the Mapbox secret
+          - hasSecret: false
+            map: Mapbox   # Mapbox requires secrets to build
     steps:
       - name: Checkout the project
         uses: actions/checkout@v2
