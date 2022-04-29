@@ -61,7 +61,13 @@ class SearchInputView(val state: RHMIState,
 					sendSuggestions(emptyList())
 				}
 
-				search(input)
+				if (input.isNotEmpty()) {
+					search(input)
+				} else {
+					super.sendSuggestions(searchQueryHistory.map {
+						MusicMetadata(mediaId=SEARCH_HISTORY_ITEM_MEDIAID, title=it)
+					})
+				}
 			}
 
 			override fun onInput(letter: String) {
@@ -95,9 +101,9 @@ class SearchInputView(val state: RHMIState,
 					Log.d(TAG, "Searching ${musicController.currentAppInfo?.name} for \"$input\" timed out, retry attempts remaining: ${retries-1}")
 					return getSearchResults(input, retries-1)
 				}
-				deferredSearchResults = deferredResults
 
-				Log.d(TAG, "Results for \"$input\" found")
+				deferredSearchResults = deferredResults
+				Log.d(TAG, "Results for \"$input\" updated")
 
 				return suggestions
 			}
@@ -123,18 +129,17 @@ class SearchInputView(val state: RHMIState,
 			 * with the returned results.
 			 */
 			fun search(input: String) {
-				if (input.length >= 2) {
-					searchJob?.cancel()
-					searchJob = launch(Dispatchers.IO) {
-						sendSuggestions(listOf(SEARCH_RESULT_SEARCHING))
-						val suggestions = getSearchResults(input, MAX_RETRIES)
+				searchJob?.cancel()
+				searchJob = launch(Dispatchers.IO) {
+					sendSuggestions(listOf(SEARCH_RESULT_SEARCHING))
+					val suggestions = getSearchResults(input, MAX_RETRIES)
+
+					//update suggestions if search job hasn't been cancelled
+					if (isActive) {
 						val trimmedSuggestions = trimSuggestions(suggestions)
 						sendSuggestions(trimmedSuggestions)
 					}
-				} else {
-					sendSuggestions(searchQueryHistory.map {
-						MusicMetadata(mediaId=SEARCH_HISTORY_ITEM_MEDIAID, title=it)
-					})
+
 				}
 			}
 
@@ -144,7 +149,7 @@ class SearchInputView(val state: RHMIState,
 				} else {
 					newSuggestions
 				}
-				val fullSuggestions = if (newSuggestions.isNotEmpty() && newSuggestions[0].mediaId != SEARCH_HISTORY_ITEM_MEDIAID && newSuggestions[0] != SEARCH_RESULT_SEARCHING && newSuggestions[0] != SEARCH_RESULT_EMPTY) {
+				val fullSuggestions = if (newSuggestions.isNotEmpty() && newSuggestions[0] != SEARCH_RESULT_SEARCHING && newSuggestions[0] != SEARCH_RESULT_EMPTY) {
 					listOf(SEARCH_RESULT_VIEW_FULL_RESULTS) + suggestions
 				} else {
 					suggestions
