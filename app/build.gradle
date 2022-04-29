@@ -179,38 +179,39 @@ android {
         }
     }
 
-    def assertSpotifyKey = tasks.create(name: "assertSpotifyApiKey") { doLast {
-        if ((System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey) == "invalid") {
-            throw new GradleException("Please configure a Spotify API key in your gradle.properties, or set it to \"unset\" to disable the Spotify functionality\nSee https://bimmergestalt.github.io/AAIdrive/developers")
-        }
-    }}
-    preBuild.dependsOn assertSpotifyKey
+    if (!isRunningOnCI) {
+        def assertSpotifyKey = tasks.create(name: "assertSpotifyApiKey") { doLast {
+            if ((System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey) == "invalid") {
+                throw new GradleException("Please configure a Spotify API key in your gradle.properties, or set it to \"unset\" to disable the Spotify functionality\nSee https://bimmergestalt.github.io/AAIdrive/developers")
+            }
+        }}
+        preBuild.dependsOn assertSpotifyKey
 
-    def assertGmapKey = tasks.create(name: "assertGmapKey") { doLast {
-        if ((System.env.AndroidAutoIdrive_GmapsApiKey ? System.env.AndroidAutoIdrive_GmapsApiKey : AndroidAutoIdrive_GmapsApiKey) == "unset") {
-            throw new GradleException("Please configure a Google Maps API key in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
+        def assertGmapKey = tasks.create(name: "assertGmapKey") { doLast {
+            if ((System.env.AndroidAutoIdrive_GmapsApiKey ? System.env.AndroidAutoIdrive_GmapsApiKey : AndroidAutoIdrive_GmapsApiKey) == "unset") {
+                throw new GradleException("Please configure a Google Maps API key in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
+            }
+        }}
+        applicationVariants.all { variant ->
+            if (variant.name.contains("gmap")) {
+                tasks["assemble${variant.name.capitalize()}"].dependsOn assertGmapKey
+            }
         }
-    }}
-    applicationVariants.all { variant ->
-        if (variant.name.contains("gmap")) {
-            tasks["assemble${variant.name.capitalize()}"].dependsOn assertGmapKey
+
+        def assertMapboxKey = tasks.create(name: "assertMapboxKey") { doLast {
+            if ((System.env.AndroidAutoIdrive_MapboxDownloadToken ? System.env.AndroidAutoIdrive_MapboxDownloadToken : AndroidAutoIdrive_MapboxDownloadToken) == "unset") {
+                throw new GradleException("Please configure a secret Mapbox download token in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
+            }
+            if ((System.env.AndroidAutoIdrive_MapboxAccessToken ? System.env.AndroidAutoIdrive_MapboxAccessToken : AndroidAutoIdrive_MapboxAccessToken) == "unset") {
+                throw new GradleException("Please configure a Mapbox access token in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
+            }
+        }}
+        applicationVariants.all { variant ->
+            if (variant.name.contains("mapbox")) {
+                tasks["assemble${variant.name.capitalize()}"].dependsOn assertMapboxKey
+            }
         }
     }
-
-    def assertMapboxKey = tasks.create(name: "assertMapboxKey") { doLast {
-        if ((System.env.AndroidAutoIdrive_MapboxDownloadToken ? System.env.AndroidAutoIdrive_MapboxDownloadToken : AndroidAutoIdrive_MapboxDownloadToken) == "unset") {
-            throw new GradleException("Please configure a secret Mapbox download token in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
-        }
-        if ((System.env.AndroidAutoIdrive_MapboxAccessToken ? System.env.AndroidAutoIdrive_MapboxAccessToken : AndroidAutoIdrive_MapboxAccessToken) == "unset") {
-            throw new GradleException("Please configure a Mapbox access token in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
-        }
-    }}
-    applicationVariants.all { variant ->
-        if (variant.name.contains("mapbox")) {
-            tasks["assemble${variant.name.capitalize()}"].dependsOn assertMapboxKey
-        }
-    }
-
 }
 
 // compile all the debug variants
