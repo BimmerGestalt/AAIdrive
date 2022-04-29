@@ -94,9 +94,13 @@
     <string name="lbl_map_invert_zoom">Odwróć kierunek powiększenia</string>
     <string name="lbl_map_tilt">Pochylenie mapy</string>
     <string name="lbl_map_traffic">Pokaż natężenie ruchu</string>
+    <string name="lbl_map_satellite">Pokaż obraz satelitarny</string>
     <string name="lbl_map_buildings">Włącz budynki 3D</string>
     <string name="gmapStyleLabel">Styl map</string>
     <string name="lbl_mapbox_custom_style">Użyj niestandardowego adresu Url w stylu mapu Mapbox</string>
+    <string name="lbl_map_quickdestinations">Ulubione miejsce:</string>
+    <string name="lbl_gmap_invalid_apikey">Klucz GMaps API jest nieprawidłowy i funkcja mapy zostaną ograniczone. Powiadom twórcę o tym błędzie i zaczekaj na aktualizację</string>
+    <string name="lbl_mapbox_invalid_token">Klucz Mapbox Token jest nieprawidłowy i funkcja mapy zostaną ograniczone. Powiadom twórcę o tym błędzie i zaczekaj na aktualizację</string>
     <string name="lbl_musicpage">Aplikacje muzyczną z telefonu można wybrać jako źródła multimediów w samochodzie</string>
     <string name="lbl_music_apps">Aplikacje muzyczne</string>
     <string name="musicAppIcon">Ikony aplikacji</string>
@@ -370,10 +374,13 @@
     <string name="MAP_ACTION_SEARCH">Szukaj miejsca</string>
     <string name="MAP_ACTION_RECALC_NAV">Przeliczam trasę</string>
     <string name="MAP_ACTION_CLEARNAV">Wyczyść nawigacja</string>
+    <string name="MAP_DESTINATIONS">Ulubione miejsca</string>
     <string name="MAP_WIDESCREEN">Mapy w trybie pełnoekranowym</string>
     <string name="MAP_INVERT_ZOOM">Odwróć kierunek powiększenia</string>
+    <string name="MAP_SATELLITE">Pokaż obraz satelitarny</string>
     <string name="MAP_TRAFFIC">Pokaż natężenie ruchu</string>
     <string name="MAP_BUILDINGS">Włącz budynki 3D</string>
+    <string name="MAP_TILT">Pochylenie mapy</string>
     <string name="MAP_CUSTOM_STYLE">Użyj niestandardowego stylu mapy</string>
     <string name="MUSIC_APPLIST_TITLE">Aplikacje</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Brak aplikacji&gt;</string>

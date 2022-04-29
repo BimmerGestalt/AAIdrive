@@ -173,7 +173,8 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		// prepare the notification text
 		val listData = RHMIModel.RaListModel.RHMIListConcrete(1)
 		val trimmedText = notification.text.substring(0, min(MAX_LENGTH, notification.text.length))
-		listData.addRow(arrayOf(trimmedText))
+		val sanitizedText = trimmedText.replace("<", "<\u200b")     // break up any incidental <info or <color= sequences with a zero-width-space
+		listData.addRow(arrayOf(sanitizedText))
 
 		state.getTextModel()?.asRaDataModel()?.value = appName
 		iconWidget.getModel()?.value = iconListData

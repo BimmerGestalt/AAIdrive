@@ -338,6 +338,7 @@
     <string name="MAP_INVERT_ZOOM">Invertir la dirección del zoom</string>
     <string name="MAP_TRAFFIC">Mostrar el tráfico</string>
     <string name="MAP_BUILDINGS">Habilitar edificios 3D</string>
+    <string name="MAP_TILT">Inclinar mapa</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;No hay apps disponibles&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acciones</string>

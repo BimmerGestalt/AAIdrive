@@ -15,7 +15,7 @@ import me.hufman.androidautoidrive.StoredList
 import me.hufman.androidautoidrive.databinding.NotificationQuickRepliesBinding
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
 import me.hufman.androidautoidrive.phoneui.adapters.ReorderableItemsCallback
-import me.hufman.androidautoidrive.phoneui.controllers.NotificationQuickRepliesController
+import me.hufman.androidautoidrive.phoneui.controllers.QuickEditListController
 
 class NotificationQuickRepliesFragment: Fragment() {
 	// the model of data to show
@@ -27,10 +27,10 @@ class NotificationQuickRepliesFragment: Fragment() {
 	val itemTouchHelper by lazy { ItemTouchHelper(itemTouchCallback) }
 
 	// the controller to handle UI actions
-	val controller by lazy { NotificationQuickRepliesController(replies, itemTouchHelper) }
+	val controller by lazy { QuickEditListController(replies, itemTouchHelper) }
 
 	// the RecyclerView.Adapter to display
-	val adapter by lazy { DataBoundListAdapter(replies, R.layout.listitem_notification_quickreply, controller) }
+	val adapter by lazy { DataBoundListAdapter(replies, R.layout.quickeditlist_listitem, controller) }
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 		val binding = NotificationQuickRepliesBinding.inflate(inflater, container, false)

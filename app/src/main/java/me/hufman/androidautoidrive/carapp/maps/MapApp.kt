@@ -71,7 +71,7 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 		// figure out the components to use
 		Log.i(TAG, "Locating components to use")
 		val unclaimedStates = LinkedList(carApp.states.values)
-		menuView = MenuView(unclaimedStates.removeFirst { MenuView.fits(it) }, interaction, frameUpdater, mapAppMode)
+		menuView = MenuView(unclaimedStates.removeFirst { MenuView.fits(it) }, interaction, mapPlaceSearch, frameUpdater, mapAppMode)
 		fullImageView = FullImageView(unclaimedStates.removeFirst { FullImageView.fits(it) }, "Map", mapAppMode, object : FullImageInteraction {
 			override fun navigateUp() {
 				interaction.zoomIn(1)

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data class="MapSettingsBinding">
         <variable
@@ -35,7 +36,36 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:paddingBottom="@dimen/settings_vertical_margin"
+            android:alpha="@{settings.mapWidescreenUnsupported ? 0.5f : 1.0f}"
             android:text="@string/lbl_widescreen_map" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:text="@string/lbl_map_widescreen_unsupported"
+            android:visibility="@{settings.mapWidescreenUnsupported}" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:gravity="center_vertical"
+            android:visibility="@{settings.mapWidescreenSupported &amp;&amp; settings.mapWidescreenCrashes}">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:paddingEnd="12dp"
+                android:src="@drawable/ic_error_outline_black_24dp"
+                app:tint="?android:attr/textColorSecondary"
+                tools:ignore="RtlSymmetry" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_map_widescreen_crashes" />
+        </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
             android:checked="@={settings.mapInvertZoom}"
@@ -83,6 +113,13 @@
                 android:layout_height="wrap_content"
                 android:entries="@array/gmaps_styles" />
         </LinearLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/paneMapQuickDestinations"
+            android:visibility="@{settings.mapEnabled}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="me.hufman.androidautoidrive.phoneui.fragments.MapQuickDestinationsFragment"/>
 
         <LinearLayout
             android:layout_width="match_parent"

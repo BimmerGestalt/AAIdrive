@@ -171,12 +171,16 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			context.getDrawable(R.drawable.spotify_start_radio))
 
 	// always add these entries in the root, if they are missing
+	class ReplacementListItem(id: String, val alternativeIds: List<String>, uri: String, imageUri: ImageUri,
+	                          title: String, subtitle: String,
+	                          playable: Boolean, hasChildren: Boolean):
+			ListItem(id, uri, imageUri, title, subtitle, playable, hasChildren)
 	val includedRootEntries = listOf(
-			ListItem("com.spotify.your-library", "com.spotify.your-library",
+			ReplacementListItem("com.spotify.your-library", listOf("com.spotify.your-music"), "com.spotify.your-library",
 					ImageUri("android.resource://com.spotify.music/drawable/ic_eis_your_library"),
 					L.MUSIC_SPOTIFY_BROWSEROOT_LIBRARY, "", false, true
 			),
-			ListItem("com.spotify.browse", "com.spotify.browse",
+			ReplacementListItem("com.spotify.browse", listOf("spotify.browse"), "com.spotify.browse",
 					ImageUri("android.resource://com.spotify.music/drawable/ic_eis_browse"),
 					L.MUSIC_SPOTIFY_BROWSEROOT_BROWSE, "", false, true
 			),
@@ -757,7 +761,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			remote.contentApi.getRecommendedContentItems("default").setResultCallback { results ->
 				val items = (results?.items ?: emptyArray()).toMutableList()
 				includedRootEntries.fastForEachReverse { item ->
-					if (!items.any { it.id == item.id }) {
+					if (items.size > 0 && !items.any { it.id == item.id || item.alternativeIds.contains(it.id) }) {
 						items.add(1, item)  // add at #1 because #0 is recently-played
 					}
 				}

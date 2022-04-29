@@ -315,6 +315,7 @@
     <string name="MAP_INVERT_ZOOM">ズーム方向を反転</string>
     <string name="MAP_TRAFFIC">トラフィックを表示</string>
     <string name="MAP_BUILDINGS">3D建物を有効にする</string>
+    <string name="MAP_TILT">傾斜マップ</string>
     <string name="MUSIC_APPLIST_TITLE">アプリ</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;アプリなし&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">アクション</string>

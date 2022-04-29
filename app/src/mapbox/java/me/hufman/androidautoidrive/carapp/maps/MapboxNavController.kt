@@ -65,7 +65,7 @@ class MapboxNavController(val client: MapboxDirections.Builder, val locationProv
 			override fun onResponse(call: Call<DirectionsResponse>, response: Response<DirectionsResponse>) {
 				val data = response.body()
 				Log.i(TAG, data.toString())
-				val route = data?.routes()?.get(0)
+				val route = data?.routes()?.getOrNull(0)
 				val geometry = route?.geometry()
 				if (geometry == null) {
 					Log.w(TAG, "Failed to find route! ${data?.message()}")

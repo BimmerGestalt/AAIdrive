@@ -89,6 +89,7 @@ object L {
 	val MAP_ACTION_SEARCH by StringResourceDelegate("Search for Place")
 	val MAP_ACTION_RECALC_NAV by StringResourceDelegate("Recalculate Navigation")
 	val MAP_ACTION_CLEARNAV by StringResourceDelegate("Clear Navigation")
+	val MAP_DESTINATIONS by StringResourceDelegate("Favorite Destinations")
 	val MAP_OPTIONS = NOTIFICATION_OPTIONS
 	val MAP_SEARCH_RESULTS_TITLE = MUSIC_SEARCH_RESULTS_LABEL
 	val MAP_SEARCH_RESULTS_SEARCHING = MUSIC_BROWSE_SEARCHING
@@ -96,8 +97,10 @@ object L {
 	val MAP_SEARCH_RESULTS_VIEW_FULL_RESULTS = MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS
 	val MAP_WIDESCREEN by StringResourceDelegate("Widescreen map")
 	val MAP_INVERT_ZOOM by StringResourceDelegate("Invert zoom direction")
+	val MAP_SATELLITE by StringResourceDelegate("Show satellite imagery")
 	val MAP_TRAFFIC by StringResourceDelegate("Show traffic")
 	val MAP_BUILDINGS by StringResourceDelegate("Show 3D buildings")
+	val MAP_TILT by StringResourceDelegate("Tilt map")
 	val MAP_CUSTOM_STYLE by StringResourceDelegate("Use custom map style")
 
 	fun loadResources(context: Context, locale: Locale? = null) {

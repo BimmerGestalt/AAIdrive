@@ -6,7 +6,7 @@ import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 
 class FocusTriggerController(val focusEvent: RHMIEvent.FocusEvent, val recreateCallback: () -> Unit) {
-	var hasFocusedState = false
+	var hasFocusedState = false     // whether we have triggered an HMI FocusEvent in the car
 
 	fun focusState(state: RHMIState, recreate: Boolean): Boolean {
 		hasFocusedState = true

@@ -311,6 +311,11 @@
     <string name="MAP_ACTION_VIEWMAP">查看完整地图</string>
     <string name="MAP_ACTION_SEARCH">搜索地址</string>
     <string name="MAP_ACTION_CLEARNAV">清除导航</string>
+    <string name="MAP_WIDESCREEN">宽屏地图</string>
+    <string name="MAP_INVERT_ZOOM">反转缩放</string>
+    <string name="MAP_TRAFFIC">显示</string>
+    <string name="MAP_BUILDINGS">激活 3D 建筑</string>
+    <string name="MAP_TILT">倾斜地图</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;无Apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">操作</string>

@@ -738,6 +738,13 @@ class MusicAppTest {
 		verify(musicController).skipToPrevious()
 	}
 
+	fun isChecked(shouldBeDataTable: Any, rowIndex: Int): Boolean {
+		if (shouldBeDataTable !is BMWRemoting.RHMIDataTable) return false
+		val cell = shouldBeDataTable.data[rowIndex-shouldBeDataTable.fromRow][0]
+		if (cell !is BMWRemoting.RHMIResourceIdentifier) return false
+		return cell.type == BMWRemoting.RHMIResourceType.IMAGEID && cell.id == 149
+	}
+
 	@Test
 	fun testQueueView_NullQueue() {
 		val mockServer = MockBMWRemotingServer()
@@ -745,7 +752,7 @@ class MusicAppTest {
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val state = app.states[IDs.QUEUE_STATE] as RHMIState.PlainState
 		val queueView = EnqueuedView(state, musicController, graphicsHelpers, MusicImageIDsMultimedia)
-		val emptyQueueRow = arrayOf("", "", "<Empty Queue>")
+		val emptyQueueRow = arrayOf("", "", "", "<Empty Queue>")
 		whenever(musicController.getQueue()) doAnswer { null }
 		queueView.show()
 
@@ -754,6 +761,7 @@ class MusicAppTest {
 		assertArrayEquals(emptyQueueRow, queueList.data[0])
 		assertEquals(false, mockServer.properties[IDs.QUEUE_LIST_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id])
 		assertEquals(false, mockServer.properties[IDs.QUEUE_LIST_COMPONENT]!![RHMIProperty.PropertyId.SELECTABLE.id])
+		assertEquals("57,0,10,*", mockServer.properties[IDs.QUEUE_LIST_COMPONENT]!![RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id])
 
 		assertEquals("Now Playing", mockServer.data[IDs.QUEUE_STATE_TEXT_MODEL])
 
@@ -767,7 +775,7 @@ class MusicAppTest {
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val state = app.states[IDs.QUEUE_STATE] as RHMIState.PlainState
 		val queueView = EnqueuedView(state, musicController, graphicsHelpers, MusicImageIDsMultimedia)
-		val emptyQueueRow = arrayOf("", "", "<Empty Queue>")
+		val emptyQueueRow = arrayOf("", "", "", "<Empty Queue>")
 		val queueTitle = "queue title"
 		val queueCoverArt: Bitmap = mock()
 		whenever(musicController.getQueue()) doAnswer { QueueMetadata(queueTitle, null, emptyList(), queueCoverArt) }
@@ -797,7 +805,7 @@ class MusicAppTest {
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val state = app.states[IDs.QUEUE_STATE] as RHMIState.PlainState
 		val queueView = EnqueuedView(state, musicController, graphicsHelpers, MusicImageIDsMultimedia)
-		val emptyQueueRow = arrayOf("", "", "<Empty Queue>")
+		val emptyQueueRow = arrayOf("", "", "", "<Empty Queue>")
 		val queueTitle = "queue title"
 		whenever(musicController.getQueue()) doAnswer { QueueMetadata(queueTitle, null, emptyList(), null) }
 		queueView.show()
@@ -821,7 +829,7 @@ class MusicAppTest {
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val state = app.states[IDs.QUEUE_STATE] as RHMIState.PlainState
 		val queueView = EnqueuedView(state, musicController, graphicsHelpers, MusicImageIDsMultimedia)
-		val emptyQueueRow = arrayOf("", "", "<Empty Queue>")
+		val emptyQueueRow = arrayOf("", "", "", "<Empty Queue>")
 		val queueCoverArt: Bitmap = mock()
 		whenever(musicController.getQueue()) doAnswer { QueueMetadata(null, null, emptyList(), queueCoverArt) }
 		val queueCoverArtByteArray = ByteArray(2)
@@ -868,10 +876,8 @@ class MusicAppTest {
 		val queueList = mockServer.data[IDs.QUEUE_LIST_MODEL] as BMWRemoting.RHMIDataTable
 		assertEquals(3, queueList.totalRows)
 
-		val checkmarkResource = queueList.data[0][0] as BMWRemoting.RHMIResourceIdentifier
 		val song1Row = queueList.data[0]
-		assertEquals(149, checkmarkResource.id)
-		assertEquals(BMWRemoting.RHMIResourceType.IMAGEID, checkmarkResource.type)
+		assertTrue(isChecked(queueList, 0))
 		assertEquals("", song1Row[1])
 		assertEquals("", song1Row[2])
 		assertEquals(musicMetadata1.title+"\n"+musicMetadata1.artist, song1Row[3])
@@ -898,6 +904,8 @@ class MusicAppTest {
 
 		assertEquals(queueTitle, mockServer.data[IDs.QUEUE_TITLE_MODEL])
 		assertEquals(queueSubtitle, mockServer.data[IDs.QUEUE_SUBTITLE_MODEL])
+
+		assertEquals(mapOf(0.toByte() to IDs.QUEUE_LIST_COMPONENT, 41.toByte() to 0), mockServer.triggeredEvents[IDs.FOCUS_EVENT])
 	}
 
 	@Test
@@ -932,10 +940,8 @@ class MusicAppTest {
 		val queueList = mockServer.data[IDs.QUEUE_LIST_MODEL] as BMWRemoting.RHMIDataTable
 		assertEquals(2, queueList.totalRows)
 
-		val checkmarkResource = queueList.data[0][0] as BMWRemoting.RHMIResourceIdentifier
 		val song1Row = queueList.data[0]
-		assertEquals(149, checkmarkResource.id)
-		assertEquals(BMWRemoting.RHMIResourceType.IMAGEID, checkmarkResource.type)
+		assertTrue(isChecked(queueList, 0))
 		assertEquals("", song1Row[1])
 		assertEquals("", song1Row[2])
 		assertEquals(musicMetadata1.title+"\n"+musicMetadata1.artist, song1Row[3])
@@ -978,13 +984,42 @@ class MusicAppTest {
 
 		val queueList = mockServer.data[IDs.QUEUE_LIST_MODEL] as BMWRemoting.RHMIDataTable
 
-		val checkmarkResource = queueList.data[0][0] as BMWRemoting.RHMIResourceIdentifier
-		assertEquals(149, checkmarkResource.id)
-		assertEquals(BMWRemoting.RHMIResourceType.IMAGEID, checkmarkResource.type)
+		assertTrue(isChecked(queueList, 2))
 		val song3Row = queueList.data[0]
 		assertEquals("", song3Row[1])
 		assertEquals("", song3Row[2])
 		assertEquals(musicMetadata3.title+"\n"+musicMetadata3.artist, song3Row[3])
+	}
+
+	/** EnqueuedView sometimes doesn't clear the previous song's checkmark when being shown */
+	@Test
+	fun testQueueShow_DifferentSongPlayingThanCurrent() {
+		val mockServer = MockBMWRemotingServer()
+		val app = RHMIApplicationEtch(mockServer, 1)
+		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
+		val state = app.states[IDs.QUEUE_STATE] as RHMIState.PlainState
+		val queueView = EnqueuedView(state, musicController, graphicsHelpers, MusicImageIDsMultimedia)
+		val metadatas = (0..50).map {
+			MusicMetadata(queueId=it.toLong(), title="Song $it", artist="Artist $it", mediaId="mediaId$it")
+		}
+		whenever(musicController.getQueue()) doAnswer { QueueMetadata(null, null, metadatas, null) }
+		val firstSelectionIndex = 26
+		whenever(musicController.getMetadata()) doAnswer { metadatas[firstSelectionIndex] }
+
+		queueView.show()
+		val initialPart = mockServer.listData[IDs.QUEUE_LIST_MODEL]!!.last { it.fromRow <= firstSelectionIndex && it.fromRow + it.numRows >= firstSelectionIndex }
+		assertTrue(isChecked(initialPart, firstSelectionIndex))
+
+		val secondSelectionIndex = 40
+		whenever(musicController.getMetadata()) doAnswer { metadatas[secondSelectionIndex] }
+		queueView.show()
+
+		val listParts = mockServer.listData[IDs.QUEUE_LIST_MODEL]!!
+		val previousPart = listParts.last { it.fromRow <= firstSelectionIndex && it.fromRow + it.numRows >= firstSelectionIndex }
+		val currentPart = listParts.last { it.fromRow <= secondSelectionIndex && it.fromRow + it.numRows >= secondSelectionIndex }
+
+		assertFalse(isChecked(previousPart, firstSelectionIndex))
+		assertTrue(isChecked(currentPart, secondSelectionIndex))
 	}
 
 	@Test
@@ -1010,6 +1045,10 @@ class MusicAppTest {
 		whenever(mockMusicMetadata2.mediaId) doAnswer { "mediaId2" }
 
 		queueView.show()
+
+		// collapsed coverart column at first, because no coverart
+		assertEquals("57,0,10,*", mockServer.properties[IDs.QUEUE_LIST_COMPONENT]!![RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id])
+
 		// trigger the request data callback
 		app.components[IDs.QUEUE_LIST_COMPONENT]?.requestDataCallback?.onRequestData(0, 10)
 
@@ -1019,6 +1058,9 @@ class MusicAppTest {
 		whenever(graphicsHelpers.compress(coverArt, 90, 90, quality = 30)) doAnswer { song2CoverArtImage }
 
 		queueView.redraw()
+
+		// shows coverart column
+		assertEquals("57,90,10,*", mockServer.properties[IDs.QUEUE_LIST_COMPONENT]!![RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id])
 
 		val queueList = mockServer.data[IDs.QUEUE_LIST_MODEL] as BMWRemoting.RHMIDataTable
 		val song2Row = queueList.data[1]
@@ -1471,6 +1513,7 @@ class MusicAppTest {
 
 		assertEquals(false, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.VALID.id] as Boolean?)  // request dynamic paging
 		assertEquals(false, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id] as Boolean?)   // not clickable
+		assertEquals(true, mockServer.properties[IDs.BROWSE1_LABEL_COMPONENT]!![RHMIProperty.PropertyId.LABEL_WAITINGANIMATION.id] as Boolean?)   // spinning
 		assertEquals("<Loading>", (mockServer.data[IDs.BROWSE1_MUSIC_MODEL] as BMWRemoting.RHMIDataTable).data[0][3])
 
 		// finish loading
@@ -1498,6 +1541,7 @@ class MusicAppTest {
 				}.toTypedArray()
 		)
 		assertEquals(true, mockServer.properties[IDs.BROWSE1_MUSIC_COMPONENT]!![RHMIProperty.PropertyId.ENABLED.id] as Boolean?)    // clickable+
+		assertEquals(false, mockServer.properties[IDs.BROWSE1_LABEL_COMPONENT]!![RHMIProperty.PropertyId.LABEL_WAITINGANIMATION.id] as Boolean?)   // stopped spinning
 		assertArrayEquals(arrayOf("Filter"),
 				(mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable).data.map {
 					it[2]
@@ -2093,6 +2137,9 @@ class MusicAppTest {
 		))
 
 		// clicking the search action
+		await().untilAsserted {
+			assertNotNull((mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable?))
+		}
 		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
 		await().untilAsserted {
 			assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
@@ -2175,8 +2222,13 @@ class MusicAppTest {
 		))
 
 		// clicking the search action
+		await().untilAsserted {
+			assertNotNull((mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable?))
+		}
 		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
-		assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+		await().untilAsserted {
+			assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+		}
 
 		// search with a query
 		val query = "valid query"
@@ -2238,8 +2290,13 @@ class MusicAppTest {
 		))
 
 		// clicking the search action
+		await().untilAsserted {
+			assertNotNull((mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable?))
+		}
 		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
-		assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+		await().untilAsserted {
+			assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+		}
 
 		// search with a query
 		val query = "query"
@@ -2297,8 +2354,13 @@ class MusicAppTest {
 		))
 
 		// clicking the search action
+		await().untilAsserted {
+			assertNotNull((mockServer.data[IDs.BROWSE1_ACTIONS_MODEL] as BMWRemoting.RHMIDataTable?))
+		}
 		app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 0))
-		assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+		await().untilAsserted {
+			assertEquals(IDs.INPUT_STATE, app.components[IDs.BROWSE1_ACTIONS_COMPONENT]?.asList()?.getAction()?.asHMIAction()?.getTargetState()?.id)
+		}
 
 		// search with a query
 		val query = "query"
