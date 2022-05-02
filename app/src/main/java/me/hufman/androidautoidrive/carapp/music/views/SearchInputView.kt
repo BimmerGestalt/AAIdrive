@@ -210,9 +210,9 @@ class SearchInputView(val state: RHMIState,
 					searchQueryHistory.remove(input)
 				}
 				if (searchQueryHistory.size == SEARCH_HISTORY_QUERY_MAX_COUNT) {
-					searchQueryHistory.remove(searchQueryHistory.first())
+					searchQueryHistory.remove(searchQueryHistory.last())
 				}
-				searchQueryHistory.add(input)
+				searchQueryHistory.add(0, input)
 				musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY] = gson.toJson(searchQueryHistory)
 			}
 		}

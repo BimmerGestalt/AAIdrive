@@ -2597,8 +2597,8 @@ class MusicAppTest {
 		// search history should be updated
 		val searchQueryHistory = gson.fromJson(musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY], Array<String>::class.java)
 		assertEquals(searchQueryHistory.size, 2)
-		assertEquals(searchQueryHistory[0], oldQuery)
-		assertEquals(searchQueryHistory[1], query)
+		assertEquals(searchQueryHistory[0], query)
+		assertEquals(searchQueryHistory[1], oldQuery)
 	}
 
 	@Suppress("DeferredResultUnused")
@@ -2679,8 +2679,8 @@ class MusicAppTest {
 		// search history should be updated
 		val searchQueryHistory = gson.fromJson(musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY], Array<String>::class.java)
 		assertEquals(searchQueryHistory.size, 2)
-		assertEquals(searchQueryHistory[0], oldQuery2)
-		assertEquals(searchQueryHistory[1], oldQuery1)
+		assertEquals(searchQueryHistory[0], oldQuery1)
+		assertEquals(searchQueryHistory[1], oldQuery2)
 	}
 
 	@Suppress("DeferredResultUnused")
@@ -2768,7 +2768,7 @@ class MusicAppTest {
 		assertEquals("${item2Title}\n", songs[1][3])
 
 		// search history should be updated
-		val newQueryHistory = queryHistory.subList(1, queryHistory.size) + listOf(query)
+		val newQueryHistory = listOf(query) + queryHistory.subList(0, queryHistory.size-1)
 
 		val searchQueryHistory = gson.fromJson(musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY], Array<String>::class.java)
 		assertEquals(searchQueryHistory.size, 8)
@@ -2847,9 +2847,9 @@ class MusicAppTest {
 		// search history should be updated
 		val searchQueryHistory = gson.fromJson(musicController.appSettings[AppSettings.KEYS.MUSIC_SEARCH_QUERY_HISTORY], Array<String>::class.java)
 		assertEquals(searchQueryHistory.size, 3)
-		assertEquals(searchQueryHistory[0], oldQuery1)
-		assertEquals(searchQueryHistory[1], oldQuery3)
-		assertEquals(searchQueryHistory[2], oldQuery2)
+		assertEquals(searchQueryHistory[0], oldQuery2)
+		assertEquals(searchQueryHistory[1], oldQuery1)
+		assertEquals(searchQueryHistory[2], oldQuery3)
 	}
 
 	@Suppress("DeferredResultUnused")
