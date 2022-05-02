@@ -171,7 +171,7 @@ class MusicAppTest {
 		on { loadDesiredApp() } doReturn ""
 		on { musicSessions } doReturn mock<MusicSessions>()
 		on { isConnected() } doReturn true
-		on { appSettings } doReturn MockAppSettingsReceiver(mock())
+		on { appSettings } doReturn MockAppSettings()
 	}
 
 	val inputState = mock<RHMIState> {

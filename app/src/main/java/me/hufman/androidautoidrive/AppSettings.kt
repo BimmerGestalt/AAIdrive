@@ -171,27 +171,11 @@ class MockAppSettings(vararg settings: Pair<AppSettings.KEYS, String> = emptyArr
 }
 
 /**
- * An isolated MutableAppSettings object that can be used in place of a [MutableAppSettingsReceiver].
- * By default it returns all the default settings values.
- */
-class MockAppSettingsReceiver(context: Context, vararg settings: Pair<AppSettings.KEYS, String> = emptyArray()): MutableAppSettingsReceiver(context) {
-	override var callback: (() -> Unit)? = null
-	val settings = mutableMapOf(*settings)
-	override operator fun get(key: AppSettings.KEYS): String {
-		return settings[key] ?: key.default
-	}
-	override operator fun set(key: AppSettings.KEYS, value: String) {
-		settings[key] = value
-		callback?.invoke()
-	}
-}
-
-/**
  * A MutableAppSettings object that modifies the global singleton and notifies other instances
  * Clients should set a callback to subscribe, and they should set it to null to unsubscribe to avoid leaking
  * Clients can specify a custom handler on which to receive the callback
  */
-open class MutableAppSettingsReceiver(val context: Context, val handler: Handler? = null): MutableAppSettingsObserver {
+class MutableAppSettingsReceiver(val context: Context, val handler: Handler? = null): MutableAppSettingsObserver {
 	companion object {
 		val INTENT_SETTINGS_CHANGED = "me.hufman.androidautoidrive.INTENT_SETTINGS_CHANGED"
 	}
