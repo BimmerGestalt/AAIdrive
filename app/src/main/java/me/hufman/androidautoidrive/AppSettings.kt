@@ -62,7 +62,8 @@ interface AppSettings {
 		CACHED_CAR_DATA("Cached_Car_Data", "{}", "JSON Object of any previously-cached cds properties"),
 		PREFER_CAR_LANGUAGE("Prefer_Car_Language", "true", "Prefer the car's language instead of the phone's language"),
 		FORCE_CAR_LANGUAGE("Force_Car_Language", "", "Force a specific language for the car apps"),
-		ENABLED_ANALYTICS("Enable_Analytics", "false", "Enable Analytics module")
+		ENABLED_ANALYTICS("Enable_Analytics", "false", "Enable Analytics module"),
+		MUSIC_SEARCH_QUERY_HISTORY("Music_Search_Query_History","", "Music service search query history")
 	}
 
 	/** Store the active preferences in a singleton */
