@@ -8,16 +8,21 @@ import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 
 class MapSettingsModel(appContext: Context, carCapabilitiesSummarized: LiveData<CarCapabilitiesSummarized>): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
+		val carInformation = CarInformationObserver()
+
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
 			val carCapabilitiesSummarized = MutableLiveData<CarCapabilitiesSummarized>()
-			val carInformation = CarInformationObserver()
 			carInformation.callback = {
 				carCapabilitiesSummarized.postValue(CarCapabilitiesSummarized(carInformation))
 			}
 			carCapabilitiesSummarized.value = CarCapabilitiesSummarized(carInformation)
 
 			return MapSettingsModel(appContext, carCapabilitiesSummarized) as T
+		}
+
+		fun unsubscribe() {
+			carInformation.callback = {}
 		}
 	}
 
