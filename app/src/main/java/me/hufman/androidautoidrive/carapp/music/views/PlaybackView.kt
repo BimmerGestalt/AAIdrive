@@ -11,6 +11,7 @@ import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
 import me.hufman.androidautoidrive.carapp.RHMIUtils.findAdjacentComponent
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
+import me.hufman.androidautoidrive.carapp.music.TextScroller
 import me.hufman.androidautoidrive.carapp.music.components.PlaylistItem
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGauge
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeAudioState
@@ -22,6 +23,7 @@ import me.hufman.androidautoidrive.utils.Utils
 
 class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {
+		const val MAX_LINE_LENGTH = 33
 		const val INITIALIZATION_DEFERRED_TIMEOUT = 6000
 		const val POSITION_ACTION_DEBOUNCE = 500
 		fun fits(state: RHMIState): Boolean {
@@ -70,6 +72,14 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	var skipBackEnabled: Boolean = true
 	var skipNextEnabled: Boolean = true
 	var lastPositionActionTime: Long = 0
+
+	var longArtistTitle = false
+	var longAlbumTitle = false
+	var longTrackTitle = false
+
+	lateinit var artistTextScroller: TextScroller
+	lateinit var albumTextScroller: TextScroller
+	lateinit var trackTextScroller: TextScroller
 
 	init {
 		// discover widgets
@@ -368,12 +378,31 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		if (displayedSong != controller.getMetadata() ||
 				displayedConnected != controller.isConnected()) {
 			redrawSong()
+		} else {
+			redrawLongTitles()
 		}
 		redrawPosition()
 		redrawQueueButton()
 		redrawShuffleButton()
 		redrawRepeatButton()
 		redrawActions()
+	}
+
+	/**
+	 * Redraw long titles with current state of the text scrolling
+	 */
+	private fun redrawLongTitles() {
+		if (longArtistTitle) {
+			artistModel.value = artistTextScroller.getText()
+		}
+		if (longAlbumTitle) {
+			albumModel.value = albumTextScroller.getText()
+		}
+		if (longTrackTitle) {
+			val trackText = trackTextScroller.getText()
+			redrawAudiostatePlaylist(trackText)
+			trackModel.value = trackText
+		}
 	}
 
 	private fun redrawApp() {
@@ -386,11 +415,30 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 	private fun redrawSong() {
 		val song = controller.getMetadata()
-		artistModel.value = if (controller.isConnected()) {
+
+		val artistTitle = if (controller.isConnected()) {
 			UnicodeCleaner.clean(song?.artist ?: "")
 		} else { L.MUSIC_DISCONNECTED }
-		albumModel.value = UnicodeCleaner.clean(song?.album ?: "")
-		trackModel.value = UnicodeCleaner.clean(song?.title ?: "")
+		longArtistTitle = artistTitle.length > MAX_LINE_LENGTH
+		if (longArtistTitle) {
+			artistTextScroller = TextScroller(artistTitle)
+		}
+		artistModel.value = artistTitle
+
+		val albumTitle = UnicodeCleaner.clean(song?.album ?: "")
+		longAlbumTitle = albumTitle.length > MAX_LINE_LENGTH
+		if (longAlbumTitle) {
+			albumTextScroller = TextScroller(albumTitle)
+		}
+		albumModel.value = albumTitle
+
+		val trackTitle = UnicodeCleaner.clean(song?.title ?: "")
+		longTrackTitle = trackTitle.length > MAX_LINE_LENGTH
+		if (longTrackTitle) {
+			trackTextScroller = TextScroller(trackTitle)
+		}
+		trackModel.value = trackTitle
+
 		val songCoverArt = song?.coverArt
 		if (songCoverArt != null) {
 			albumArtBigModel.value = graphicsHelpers.compress(songCoverArt, 320, 320, quality = 65)
@@ -416,7 +464,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		}
 
 		// update the audio state playlist
-		redrawAudiostatePlaylist(song?.title ?: "")
+		redrawAudiostatePlaylist(trackTitle)
 
 		displayedSong = song
 		displayedConnected = controller.isConnected()
@@ -553,5 +601,4 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			maximumTimeModel.value = formatTime(progress.maximumPosition)
 		}
 	}
-
 }
