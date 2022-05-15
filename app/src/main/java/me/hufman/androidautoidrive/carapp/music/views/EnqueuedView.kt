@@ -217,7 +217,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	 * Shows the list component content from the start index for the specified number of rows.
 	 */
 	private fun showList(startIndex: Int = 0, numRows: Int = 10) {
-		val updatedList = ArrayList(songsList.subList(startIndex, min(songsList.size, startIndex + numRows)))
+		val updatedList = ArrayList(songsList.subList(max(0, startIndex), min(songsList.size, startIndex + numRows)))
 		if (updatedList.any {it.coverArt != null || it.coverArtUri != null}) {
 			listComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,90,10,*")
 		}   // don't collapse the column if this window of data happens to not have coverart, so no else branch here
