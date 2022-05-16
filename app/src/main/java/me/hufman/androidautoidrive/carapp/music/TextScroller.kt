@@ -10,12 +10,14 @@ class TextScroller(private val originalText: String) {
 		const val INDEX_JUMP_VALUE = 3
 	}
 
+	val shouldScroll: Boolean
 	var scrollText: Boolean = false
 	var startIndex: Int = 0
 	var previousTimestamp: Long
 
 	init {
 		previousTimestamp = System.currentTimeMillis()
+		shouldScroll = originalText.length > MAX_LINE_LENGTH
 	}
 
 	/**
@@ -24,8 +26,14 @@ class TextScroller(private val originalText: String) {
 	 * of the text and shift the displayed slice at rate of [INDEX_JUMP_VALUE]. Once the slice reaches
 	 * the end of the original text, it will reset the slice back to the beginning and begin the
 	 * cooldown interval.
+	 *
+	 * If the original text is not long enough to need scrolling the original will
+	 * be returned.
 	 */
 	fun getText(): String {
+		if (!shouldScroll) {
+			return originalText
+		}
 		var displayText = originalText
 		val endIndex = MAX_LINE_LENGTH+startIndex
 		if (scrollText) {

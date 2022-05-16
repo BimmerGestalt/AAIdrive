@@ -23,7 +23,6 @@ import me.hufman.androidautoidrive.utils.Utils
 
 class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {
-		const val MAX_LINE_LENGTH = 33
 		const val INITIALIZATION_DEFERRED_TIMEOUT = 6000
 		const val POSITION_ACTION_DEBOUNCE = 500
 		fun fits(state: RHMIState): Boolean {
@@ -73,13 +72,9 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	var skipNextEnabled: Boolean = true
 	var lastPositionActionTime: Long = 0
 
-	var longArtistTitle = false
-	var longAlbumTitle = false
-	var longTrackTitle = false
-
-	lateinit var artistTextScroller: TextScroller
-	lateinit var albumTextScroller: TextScroller
-	lateinit var trackTextScroller: TextScroller
+	var artistTextScroller: TextScroller = TextScroller("")
+	var albumTextScroller: TextScroller = TextScroller("")
+	var trackTextScroller: TextScroller = TextScroller("")
 
 	init {
 		// discover widgets
@@ -392,17 +387,11 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	 * Redraw long titles with current state of the text scrolling
 	 */
 	private fun redrawLongTitles() {
-		if (longArtistTitle) {
-			artistModel.value = artistTextScroller.getText()
-		}
-		if (longAlbumTitle) {
-			albumModel.value = albumTextScroller.getText()
-		}
-		if (longTrackTitle) {
-			val trackText = trackTextScroller.getText()
-			redrawAudiostatePlaylist(trackText)
-			trackModel.value = trackText
-		}
+		artistModel.value = artistTextScroller.getText()
+		albumModel.value = albumTextScroller.getText()
+		val trackText = trackTextScroller.getText()
+		redrawAudiostatePlaylist(trackText)
+		trackModel.value = trackText
 	}
 
 	private fun redrawApp() {
@@ -419,24 +408,15 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		val artistTitle = if (controller.isConnected()) {
 			UnicodeCleaner.clean(song?.artist ?: "")
 		} else { L.MUSIC_DISCONNECTED }
-		longArtistTitle = artistTitle.length > MAX_LINE_LENGTH
-		if (longArtistTitle) {
-			artistTextScroller = TextScroller(artistTitle)
-		}
+		artistTextScroller = TextScroller(artistTitle)
 		artistModel.value = artistTitle
 
 		val albumTitle = UnicodeCleaner.clean(song?.album ?: "")
-		longAlbumTitle = albumTitle.length > MAX_LINE_LENGTH
-		if (longAlbumTitle) {
-			albumTextScroller = TextScroller(albumTitle)
-		}
+		albumTextScroller = TextScroller(albumTitle)
 		albumModel.value = albumTitle
 
 		val trackTitle = UnicodeCleaner.clean(song?.title ?: "")
-		longTrackTitle = trackTitle.length > MAX_LINE_LENGTH
-		if (longTrackTitle) {
-			trackTextScroller = TextScroller(trackTitle)
-		}
+		trackTextScroller = TextScroller(trackTitle)
 		trackModel.value = trackTitle
 
 		val songCoverArt = song?.coverArt
