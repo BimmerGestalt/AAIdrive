@@ -23,6 +23,8 @@ import me.hufman.androidautoidrive.utils.Utils
 
 class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {
+		const val MUSIC_METADATA_MAX_LINE_LENGTH = 30
+		const val AUDIOSTATE_PLAYLIST_MAX_LINE_LENGTH = 28
 		const val INITIALIZATION_DEFERRED_TIMEOUT = 6000
 		const val POSITION_ACTION_DEBOUNCE = 500
 		fun fits(state: RHMIState): Boolean {
@@ -72,9 +74,9 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	var skipNextEnabled: Boolean = true
 	var lastPositionActionTime: Long = 0
 
-	var artistTextScroller: TextScroller = TextScroller("")
-	var albumTextScroller: TextScroller = TextScroller("")
-	var trackTextScroller: TextScroller = TextScroller("")
+	var artistTextScroller: TextScroller = TextScroller("", 0)
+	var albumTextScroller: TextScroller = TextScroller("", 0)
+	var trackTextScroller: TextScroller = TextScroller("", 0)
 
 	init {
 		// discover widgets
@@ -408,16 +410,21 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		val artistTitle = if (controller.isConnected()) {
 			UnicodeCleaner.clean(song?.artist ?: "")
 		} else { L.MUSIC_DISCONNECTED }
-		artistTextScroller = TextScroller(artistTitle)
-		artistModel.value = artistTitle
+		artistTextScroller = TextScroller(artistTitle, MUSIC_METADATA_MAX_LINE_LENGTH)
+		artistModel.value = artistTextScroller.getText()
 
 		val albumTitle = UnicodeCleaner.clean(song?.album ?: "")
-		albumTextScroller = TextScroller(albumTitle)
-		albumModel.value = albumTitle
+		albumTextScroller = TextScroller(albumTitle, MUSIC_METADATA_MAX_LINE_LENGTH)
+		albumModel.value = albumTextScroller.getText()
 
 		val trackTitle = UnicodeCleaner.clean(song?.title ?: "")
-		trackTextScroller = TextScroller(trackTitle)
-		trackModel.value = trackTitle
+		val trackMaxLineLength = if (state is RHMIState.AudioHmiState) {
+			AUDIOSTATE_PLAYLIST_MAX_LINE_LENGTH
+		} else {
+			MUSIC_METADATA_MAX_LINE_LENGTH
+		}
+		trackTextScroller = TextScroller(trackTitle, trackMaxLineLength)
+		trackModel.value = trackTextScroller.getText()
 
 		val songCoverArt = song?.coverArt
 		if (songCoverArt != null) {
