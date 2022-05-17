@@ -36,11 +36,6 @@ Download the APK of the latest stable release from the [Releases page](https://g
 Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-mapbox-sentry-release.apk) to automatically report crashes.
 The [nonalytics](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-mapbox-nonalytics-release.apk) build is available too.
 
-- Fixes Calendar app in ID4
-- Mapbox-powered custom map
-- Navigation tab includes address completion (and POI search in map-enabled builds)
-- Spotify tweaks, including adding the Library entry back in Spotify 8.7
-
 Check out the [FAQ](https://bimmergestalt.github.io/AAIdrive/faq.html) if you run into problems.
 
 User Guide
@@ -87,6 +82,10 @@ Implemented Features
     - Includes some dark themes
     - Poor performance due to the nature of the protocol
     - Not compiled by default, because showing Google Maps in a car is against the Maps API license
+  - Mapbox custom map
+    - Search and routing, satellite imagery and traffic, 3d tilt and buildings
+    - Supports custom Mapbox style urls
+    - Poor performance over Bluetooth
   - Control of Android Auto compatible music apps
     - Supports browsing and searching apps' music libraries, including a special Spotify integration
     - Supports selecting from a list of currently-queued songs, as well as basic back/next control
@@ -181,6 +180,7 @@ Besides showing a self-contained remote UI, the IDrive system offers many exciti
   - New notification popups can be disabled if a passenger is detected in the seat
   - Notifications can be read out by the car's TTS when received or when selected
   - The car's navigation system is available to handle Android Navigation Intents
+  - The car's location and heading is shown in the custom map
   - The currently-playing app is displayed along the top of the IDrive screen
   - The currently-playing song title is shown in the IDrive4 Multimedia side panel
   - The currently-playing song coverart and progress is shown in the IDrive5 Home screen and Multimedia side panel
@@ -251,7 +251,7 @@ The app also needs some other information to function, but does not remember any
   - Any installed Voice Assistants are discovered to be added to the car
   - Apps which act as AAIdrive Addons are discovered and presented in the Addons tab
   - If enabled, notifications are read from the phone while connected to the car and then forgotten when disconnected
-  - If compiled into the app and then enabled, the custom map feature will use the phone's location while displaying the map
+  - If compiled into the app and then enabled, the custom map feature will use the car or phone's location while displaying the map
 
 The analytics-disabled version will never share any information, and no analytics code is compiled into this version of the app.
 The analytics-enabled version provides an option to share some anonymized information to [Sentry](https://www.sentry.io) to assist with debugging and development: If enabled, besides any rare and unfortunate crashes, the app will share any [installed music apps](app/src/sentry/java/me/hufman/androidautoidrive/Analytics.kt) and the capabilities each app provides, as well as the [model and capabilities](app/src/main/java/me/hufman/androidautoidrive/CarInformationDiscovery.kt#L36) of any connected car for usage statistics and feature prioritization.
@@ -298,4 +298,4 @@ Each release provides both an analytics-enabled and analytics-disabled option.
   "voice": "false"
 }
 ```
-
+</details>
