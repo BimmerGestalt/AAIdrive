@@ -1,7 +1,7 @@
 package me.hufman.androidautoidrive.carapp.music
 
 /**
- * Handles the scrolling of text that is too long to fit on a line.
+ * Wrapper around a string that handles scrolling when it is too long to fit on a line.
  */
 class TextScroller(private val originalText: String, private val maxLineLength: Int) {
 	companion object {
