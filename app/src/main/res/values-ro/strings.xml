@@ -91,7 +91,7 @@
     <string name="lbl_map_phone_gps">Utilizează GPS de telefon în loc de GPS masinii</string>
     <string name="lbl_widescreen_map">Hartă widescreen</string>
     <string name="lbl_map_widescreen_unsupported">Această setare nu este suportată de mașina dvs., care va rula întotdeauna în modul ecran complet</string>
-    <string name="lbl_map_widescreen_crashes">Modul ecran lărgit face ca conexiunea aplicației să fie instabilă pe unele mașini</string>
+    <string name="lbl_map_widescreen_crashes">Modul ecran lărgit face conexiunea aplicației să fie instabilă pe unele mașini</string>
     <string name="lbl_map_invert_zoom">Inversează direcția de zoom</string>
     <string name="lbl_map_tilt">Înclinare hartă</string>
     <string name="lbl_map_traffic">Afișează trafic</string>
