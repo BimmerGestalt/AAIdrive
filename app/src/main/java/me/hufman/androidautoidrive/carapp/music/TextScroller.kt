@@ -5,14 +5,14 @@ package me.hufman.androidautoidrive.carapp.music
  */
 class TextScroller(private val originalText: String, private val maxLineLength: Int) {
 	companion object {
-		const val SCROLL_COOLDOWN_SECONDS = 6
+		const val SCROLL_COOLDOWN_SECONDS = 2
 		const val INDEX_JUMP_VALUE = 3
 	}
 
-	val shouldScroll: Boolean
-	var scrollText: Boolean = false
-	var startIndex: Int = 0
-	var previousTimestamp: Long
+	private val shouldScroll: Boolean
+	private var scrollText: Boolean = false
+	private var startIndex: Int = 0
+	private var previousTimestamp: Long
 
 	init {
 		previousTimestamp = System.currentTimeMillis()

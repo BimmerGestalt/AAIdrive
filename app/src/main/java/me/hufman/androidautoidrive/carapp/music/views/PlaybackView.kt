@@ -411,11 +411,9 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			UnicodeCleaner.clean(song?.artist ?: "")
 		} else { L.MUSIC_DISCONNECTED }
 		artistTextScroller = TextScroller(artistTitle, MUSIC_METADATA_MAX_LINE_LENGTH)
-		artistModel.value = artistTextScroller.getText()
 
 		val albumTitle = UnicodeCleaner.clean(song?.album ?: "")
 		albumTextScroller = TextScroller(albumTitle, MUSIC_METADATA_MAX_LINE_LENGTH)
-		albumModel.value = albumTextScroller.getText()
 
 		val trackTitle = UnicodeCleaner.clean(song?.title ?: "")
 		val trackMaxLineLength = if (state is RHMIState.AudioHmiState) {
@@ -424,7 +422,8 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			MUSIC_METADATA_MAX_LINE_LENGTH
 		}
 		trackTextScroller = TextScroller(trackTitle, trackMaxLineLength)
-		trackModel.value = trackTextScroller.getText()
+
+		redrawLongTitles()
 
 		val songCoverArt = song?.coverArt
 		if (songCoverArt != null) {

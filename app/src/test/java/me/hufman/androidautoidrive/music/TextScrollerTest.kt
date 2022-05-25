@@ -33,10 +33,11 @@ class TextScrollerTest {
 		PowerMockito.`when`(System.currentTimeMillis())
 				.doAnswer { 0L } // initialization
 				.doAnswer { 1000L } // elapsed time
+				.doAnswer { 1001L } // elapsed time
 		val textScroller = TextScroller(longText, 40)
 
 		assertEquals(longText, textScroller.getText())
-		assertFalse(textScroller.scrollText)
+		assertEquals(longText, textScroller.getText())
 	}
 
 	@Test
@@ -45,10 +46,11 @@ class TextScrollerTest {
 		PowerMockito.`when`(System.currentTimeMillis())
 				.doAnswer { 0L } // initialization
 				.doAnswer { 10000L } // elapsed time
+				.doAnswer { 10001L } // elapsed time
 		val textScroller = TextScroller(longText, 40)
 
 		assertEquals(longText, textScroller.getText())
-		assertTrue(textScroller.scrollText)
+		assertEquals(longText.substring(0, 40), textScroller.getText())
 	}
 
 	@Test
