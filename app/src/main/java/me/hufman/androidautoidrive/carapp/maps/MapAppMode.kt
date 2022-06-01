@@ -93,7 +93,7 @@ class MapAppMode(val fullDimensions: RHMIDimensions,
 	// toggleable settings
 	val settings = listOfNotNull(
 			// only show the Widescreen option if the car screen is wide
-			if (fullDimensions.rhmiWidth >= 900)        // RHMIDimensions widescreen cut-off
+			if (fullDimensions.rhmiWidth >= 1000)        // RHMIDimensions widescreen cut-off
 				AppSettings.KEYS.MAP_WIDESCREEN else null
 			) + MapToggleSettings.settings + listOfNotNull(
 			// add the Mapbox style toggle if it is filled in
