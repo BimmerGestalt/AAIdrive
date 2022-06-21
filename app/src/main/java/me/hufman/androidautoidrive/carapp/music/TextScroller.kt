@@ -35,12 +35,11 @@ class TextScroller(private val originalText: String, private val maxLineLength: 
 		var displayText = originalText
 		val endIndex = maxLineLength + startIndex
 		if (scrollText) {
+			displayText = originalText.substring(startIndex, originalText.length)
 			if (endIndex <= originalText.length) {
-				displayText = originalText.substring(startIndex, endIndex)
 				startIndex += INDEX_JUMP_VALUE
 			} else {
 				scrollText = false
-				displayText = originalText.substring(startIndex, originalText.length)
 				startIndex = 0
 				previousTimestamp = System.currentTimeMillis()
 			}

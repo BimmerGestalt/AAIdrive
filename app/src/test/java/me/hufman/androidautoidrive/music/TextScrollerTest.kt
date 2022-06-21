@@ -48,9 +48,11 @@ class TextScrollerTest {
 				.doAnswer { 10000L } // elapsed time
 				.doAnswer { 10001L } // elapsed time
 		val textScroller = TextScroller(longText, 40)
+		textScroller.getText()
 
 		assertEquals(longText, textScroller.getText())
-		assertEquals(longText.substring(0, 40), textScroller.getText())
+		assertEquals(longText.substring(3, longText.length), textScroller.getText())
+		assertEquals(longText.substring(6, longText.length), textScroller.getText())
 	}
 
 	@Test
@@ -62,8 +64,9 @@ class TextScrollerTest {
 		val textScroller = TextScroller(longText, 40)
 		textScroller.getText()
 
-		assertEquals(longText.substring(0, 40), textScroller.getText())
-		assertEquals(longText.substring(3, 43), textScroller.getText())
+		assertEquals(longText, textScroller.getText())
+		assertEquals(longText.substring(3, longText.length), textScroller.getText())
+		assertEquals(longText.substring(6, longText.length), textScroller.getText())
 	}
 
 	@Test
