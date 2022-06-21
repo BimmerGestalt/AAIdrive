@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="28dp"
-    android:height="28dp"
+    android:width="46dp"
+    android:height="46dp"
     android:viewportWidth="24"
     android:viewportHeight="24"
     android:tint="@color/icMapboxShadow">

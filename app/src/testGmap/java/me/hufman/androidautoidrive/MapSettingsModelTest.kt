@@ -24,6 +24,7 @@ class MapSettingsModelTest {
 		val factory = MapSettingsModel.Factory(context)
 		val model = factory.create(MapSettingsModel::class.java)
 		Assert.assertNotNull(model)
+		factory.unsubscribe()
 	}
 
 	@Test

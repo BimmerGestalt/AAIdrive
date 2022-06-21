@@ -14,6 +14,7 @@ import com.adamratzman.spotify.endpoints.client.ClientPlaylistApi
 import com.adamratzman.spotify.endpoints.pub.ArtistApi
 import com.adamratzman.spotify.endpoints.pub.SearchApi
 import com.adamratzman.spotify.models.*
+import com.adamratzman.spotify.utils.Market
 import com.nhaarman.mockito_kotlin.*
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
@@ -628,7 +629,7 @@ class SpotifyWebApiTest {
 		whenever(pagingObject.getAllItemsNotNull()).thenReturn(savedTracks)
 
 		val clientLibraryApi: ClientLibraryApi = mock()
-		whenever(clientLibraryApi.getSavedTracks(50)).doAnswer { pagingObject }
+		whenever(clientLibraryApi.getSavedTracks(50, market=Market.FROM_TOKEN)).doAnswer { pagingObject }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.library).thenReturn(clientLibraryApi)
@@ -651,7 +652,7 @@ class SpotifyWebApiTest {
 	fun testGetLikedSongs_AuthenticationException() = runBlocking {
 		val exception = SpotifyException.AuthenticationException("message")
 		val clientLibraryApi: ClientLibraryApi = mock()
-		whenever(clientLibraryApi.getSavedTracks(50)).doAnswer { throw exception }
+		whenever(clientLibraryApi.getSavedTracks(50, market=Market.FROM_TOKEN)).doAnswer { throw exception }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.library).thenReturn(clientLibraryApi)
@@ -720,7 +721,7 @@ class SpotifyWebApiTest {
 		)
 
 		val artistApi: ArtistApi = mock()
-		whenever(artistApi.getArtistTopTracks(artistUri)).doAnswer { topTracks }
+		whenever(artistApi.getArtistTopTracks(artistUri, market=Market.FROM_TOKEN)).doAnswer { topTracks }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.artists).thenReturn(artistApi)
@@ -744,7 +745,7 @@ class SpotifyWebApiTest {
 		val artistUri = "artistUri"
 		val exception = SpotifyException.AuthenticationException("message")
 		val artistApi: ArtistApi = mock()
-		whenever(artistApi.getArtistTopTracks(artistUri)).doAnswer { throw exception }
+		whenever(artistApi.getArtistTopTracks(artistUri, market=Market.FROM_TOKEN)).doAnswer { throw exception }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.artists).thenReturn(artistApi)
@@ -830,7 +831,7 @@ class SpotifyWebApiTest {
 		whenever(spotifySearchResult.albums).doAnswer { pagingObject }
 
 		val clientSearchApi: SearchApi = mock()
-		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8)).doAnswer { spotifySearchResult }
+		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8, market=Market.FROM_TOKEN)).doAnswer { spotifySearchResult }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
@@ -875,7 +876,7 @@ class SpotifyWebApiTest {
 		whenever(spotifySearchResult.tracks).doAnswer { pagingObject }
 
 		val clientSearchApi: SearchApi = mock()
-		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8)).doAnswer { spotifySearchResult }
+		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8, market=Market.FROM_TOKEN)).doAnswer { spotifySearchResult }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
@@ -914,7 +915,7 @@ class SpotifyWebApiTest {
 		whenever(spotifySearchResult.artists).doAnswer { pagingObject }
 
 		val clientSearchApi: SearchApi = mock()
-		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8)).doAnswer { spotifySearchResult }
+		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8, market=Market.FROM_TOKEN)).doAnswer { spotifySearchResult }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
@@ -955,7 +956,7 @@ class SpotifyWebApiTest {
 		whenever(spotifySearchResult.shows).doAnswer { pagingObject }
 
 		val clientSearchApi: SearchApi = mock()
-		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8)).doAnswer { spotifySearchResult }
+		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8, market=Market.FROM_TOKEN)).doAnswer { spotifySearchResult }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
@@ -994,7 +995,7 @@ class SpotifyWebApiTest {
 		whenever(spotifySearchResult.episodes).doAnswer { pagingObject }
 
 		val clientSearchApi: SearchApi = mock()
-		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8)).doAnswer { spotifySearchResult }
+		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8, market=Market.FROM_TOKEN)).doAnswer { spotifySearchResult }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
@@ -1082,7 +1083,7 @@ class SpotifyWebApiTest {
 		whenever(spotifySearchResult.episodes).doAnswer { episodePagingObject }
 
 		val clientSearchApi: SearchApi = mock()
-		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8)).doAnswer { spotifySearchResult }
+		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8, market=Market.FROM_TOKEN)).doAnswer { spotifySearchResult }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
@@ -1112,7 +1113,7 @@ class SpotifyWebApiTest {
 		val exception = SpotifyException.AuthenticationException("message")
 
 		val clientSearchApi: SearchApi = mock()
-		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8)).doAnswer { throw exception }
+		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8, market=Market.FROM_TOKEN)).doAnswer { throw exception }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
@@ -1142,7 +1143,7 @@ class SpotifyWebApiTest {
 		val exception = SpotifyException.BadRequestException("message")
 
 		val clientSearchApi: SearchApi = mock()
-		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8)).doAnswer { throw exception }
+		whenever(clientSearchApi.search(query, *SearchApi.SearchType.values(), limit=8, market=Market.FROM_TOKEN)).doAnswer { throw exception }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
@@ -1628,7 +1629,7 @@ class SpotifyWebApiTest {
 
 		val playlistUri = "playlistUri"
 		val clientPlaylistApi: ClientPlaylistApi = mock()
-		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, null)).doAnswer { pagingObject }
+		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, Market.FROM_TOKEN)).doAnswer { pagingObject }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
@@ -1671,7 +1672,7 @@ class SpotifyWebApiTest {
 
 		val playlistUri = "playlistUri"
 		val clientPlaylistApi: ClientPlaylistApi = mock()
-		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, null)).doAnswer { pagingObject }
+		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, market=Market.FROM_TOKEN)).doAnswer { pagingObject }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
@@ -1711,7 +1712,7 @@ class SpotifyWebApiTest {
 
 		val playlistUri = "playlistUri"
 		val clientPlaylistApi: ClientPlaylistApi = mock()
-		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, null)).doAnswer { pagingObject }
+		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, market=Market.FROM_TOKEN)).doAnswer { pagingObject }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
@@ -1755,7 +1756,7 @@ class SpotifyWebApiTest {
 
 		val playlistUri = "playlistUri"
 		val clientPlaylistApi: ClientPlaylistApi = mock()
-		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, null)).doAnswer { pagingObject }
+		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, market=Market.FROM_TOKEN)).doAnswer { pagingObject }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
@@ -1816,7 +1817,7 @@ class SpotifyWebApiTest {
 
 		val playlistUri = "playlistUri"
 		val clientPlaylistApi: ClientPlaylistApi = mock()
-		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, null)).doAnswer { pagingObject1 }
+		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, market=Market.FROM_TOKEN)).doAnswer { pagingObject1 }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
@@ -1843,7 +1844,7 @@ class SpotifyWebApiTest {
 		val exception = SpotifyException.AuthenticationException("message")
 		val clientPlaylistApi: ClientPlaylistApi = mock()
 		val playlistUri = "playlistUri"
-		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, null)).doAnswer { throw exception }
+		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, Market.FROM_TOKEN)).doAnswer { throw exception }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
@@ -1869,7 +1870,7 @@ class SpotifyWebApiTest {
 		val exception = SpotifyException.BadRequestException("message")
 		val clientPlaylistApi: ClientPlaylistApi = mock()
 		val playlistUri = "playlistUri"
-		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, null)).doAnswer { throw exception }
+		whenever(clientPlaylistApi.getPlaylistTracks(playlistUri, 50, 0, Market.FROM_TOKEN)).doAnswer { throw exception }
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
@@ -1902,7 +1903,7 @@ class SpotifyWebApiTest {
 		val images = listOf(SpotifyImage(300, coverArtCode, 300))
 		val artists = listOf(SimpleArtist(emptyMap(), "href", "id", ArtistUri("artistUri"), artistName, "type"))
 		val album = SimpleAlbum("album", emptyList(), emptyMap(), "href", "id", AlbumUri("albumUri"), artists, images, albumName, "type", null, "1950", "year")
-		val track = PodcastEpisodeTrack(album, artists, emptyList(), 1, 5, true, false, emptyMap(), emptyMap(), "", "", null, false, trackName, 1, "", null, 1,"type", PlayableUri(uriId), null)
+		val track = PodcastEpisodeTrack(album, artists, emptyList(), 1, 5, true, false, emptyMap(), emptyMap(), "", "", null, true, trackName, 1, "", null, 1,"type", PlayableUri(uriId), null)
 		return PlaylistTrack(null, null, null, false, track, null)
 	}
 

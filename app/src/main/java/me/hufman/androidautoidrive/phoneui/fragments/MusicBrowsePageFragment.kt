@@ -40,7 +40,8 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 
 	val viewModel by activityViewModels<MusicActivityModel> { MusicActivityModel.Factory(requireContext().applicationContext, UIState.selectedMusicApp) }
 	val iconsModel by activityViewModels<MusicActivityIconsModel> { MusicActivityIconsModel.Factory(requireActivity()) }
-	lateinit var musicController: MusicController
+	private lateinit var musicController: MusicController
+	private lateinit var _iconsModel: MusicActivityIconsModel
 
 	val contents = ArrayList<MusicPlayerItem>()
 
@@ -50,6 +51,7 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		musicController = viewModel.musicController
+		_iconsModel = iconsModel
 
 		val listBrowse = view.findViewById<RecyclerView>(R.id.listBrowse)
 		val listBrowseRefresh = view.findViewById<SwipeRefreshLayout>(R.id.listBrowseRefresh)

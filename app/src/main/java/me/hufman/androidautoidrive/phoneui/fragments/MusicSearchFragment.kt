@@ -30,7 +30,8 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 
 	val viewModel by activityViewModels<MusicActivityModel> { MusicActivityModel.Factory(requireContext().applicationContext, UIState.selectedMusicApp) }
 	val iconsModel by activityViewModels<MusicActivityIconsModel> { MusicActivityIconsModel.Factory(requireActivity()) }
-	lateinit var musicController: MusicController
+	private lateinit var musicController: MusicController
+	private lateinit var _iconsModel: MusicActivityIconsModel
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return inflater.inflate(R.layout.music_searchpage, container, false)
@@ -38,6 +39,7 @@ class MusicSearchFragment : Fragment(), CoroutineScope {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		musicController = viewModel.musicController
+		_iconsModel = iconsModel
 
 		val listSearchResult = view.findViewById<RecyclerView>(R.id.listSearchResult)
 		viewModel.redrawListener.observe(viewLifecycleOwner, {

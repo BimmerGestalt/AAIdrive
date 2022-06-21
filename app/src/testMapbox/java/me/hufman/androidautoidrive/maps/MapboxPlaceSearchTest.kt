@@ -1,6 +1,5 @@
 package me.hufman.androidautoidrive.maps
 
-import android.location.Location
 import com.google.gson.JsonObject
 import com.mapbox.api.geocoding.v5.MapboxGeocoding
 import com.mapbox.api.geocoding.v5.models.CarmenFeature
@@ -78,6 +77,7 @@ class MapboxPlaceSearchTest {
 	fun testAddressLookupUnknownLocation() {
 		val pendingResult = placeSearch.searchLocationsAsync("123 Test Street")
 		assertFalse(pendingResult.isCompleted)
+		verify(searchBuilder, never()).proximity(any())
 		verify(searchClient).enqueueCall(any())
 		searchCallback.lastValue.onResponse(mock(), makeResponse(
 				makeFeature("placeID1", "address", "123 Test Street, Somewhere, State", "123 Test Street", Point.fromLngLat(2.0, 1.0))
@@ -98,12 +98,13 @@ class MapboxPlaceSearchTest {
 		cdsData.onPropertyChangedEvent(CDSProperty.NAVIGATION_GPSPOSITION, JsonObject().apply {
 			add("GPSPosition", JsonObject().apply {
 				addProperty("latitude", 1.1)
-				addProperty("longitude", 1.1)
+				addProperty("longitude", 1.5)
 			})
 		})
 
 		val pendingResult = placeSearch.searchLocationsAsync("123 Test Street")
 		assertFalse(pendingResult.isCompleted)
+		verify(searchBuilder).proximity(Point.fromLngLat(1.5, 1.1))
 		verify(searchClient).enqueueCall(any())
 		searchCallback.lastValue.onResponse(mock(), makeResponse(
 				makeFeature("placeID1", "address", "123 Test Street, Somewhere, State", "123 Test Street", Point.fromLngLat(2.0, 1.0))
@@ -115,13 +116,14 @@ class MapboxPlaceSearchTest {
 		assertEquals("", results[0].name)
 		assertEquals("123 Test Street, Somewhere, State", results[0].address)
 		assertEquals(LatLong(1.0, 2.0), results[0].location)
-		assertEquals(100.781, results[0].distanceKm!!.toDouble(), .01)
+		assertEquals(56.74, results[0].distanceKm!!.toDouble(), .01)
 	}
 
 	@Test
 	fun testPlaceLookupUnknownLocation() {
 		val pendingResult = placeSearch.searchLocationsAsync("Coffee")
 		assertFalse(pendingResult.isCompleted)
+		verify(searchBuilder, never()).proximity(any())
 		verify(searchClient).enqueueCall(any())
 		searchCallback.lastValue.onResponse(mock(), makeResponse(
 				makeFeature("placeID1", "place", "Place Name, 123 Test Street, Somewhere, State", "123 Test Street", Point.fromLngLat(2.0, 1.0))

@@ -204,9 +204,9 @@ class CarCapabilitiesSummarized(val carInformation: CarInformation) {
 		get() = carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
 
 	val mapWidescreenSupported: Boolean
-		get() = carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 0 > 900
+		get() = carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 0 >= 1000
 	val mapWidescreenUnsupported: Boolean
-		get() = carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 9999 < 900
+		get() = carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 9999 < 1000
 	val mapWidescreenCrashes: Boolean
 		get() = carInformation.capabilities["hmi.version"]?.lowercase(Locale.ROOT)?.startsWith("entryevo_") == true
 }
