@@ -699,12 +699,12 @@ class MusicAppTest {
 		assertEquals("Bitmap{320x320}", ((mockServer.data[IDs.COVERART_LARGE_MODEL] as BMWRemoting.RHMIResourceData).data as ByteArray).toString(Charset.defaultCharset()))
 		assertEquals("Bitmap{200x200}", ((mockServer.data[IDs.COVERART_SMALL_MODEL] as BMWRemoting.RHMIResourceData).data as ByteArray).toString(Charset.defaultCharset()))
 
-		// redraw should not replace metadata or coverart
+		// redraw should not replace coverart
 		mockServer.data.clear()
 		playbackView.redraw()
-		assertEquals(null, mockServer.data[IDs.ARTIST_LARGE_MODEL])
-		assertEquals(null, mockServer.data[IDs.ALBUM_LARGE_MODEL])
-		assertEquals(null, mockServer.data[IDs.TRACK_LARGE_MODEL])
+		assertEquals("Artist", mockServer.data[IDs.ARTIST_LARGE_MODEL])
+		assertEquals("Album", mockServer.data[IDs.ALBUM_LARGE_MODEL])
+		assertEquals("Title", mockServer.data[IDs.TRACK_LARGE_MODEL])
 		assertEquals(null, mockServer.data[IDs.COVERART_LARGE_MODEL])
 		assertEquals(null, mockServer.data[IDs.COVERART_SMALL_MODEL])
 
