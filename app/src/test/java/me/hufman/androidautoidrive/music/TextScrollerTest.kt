@@ -81,8 +81,10 @@ class TextScrollerTest {
 		textScroller.getText()
 		textScroller.getText()
 		textScroller.getText()
+		textScroller.getText()
+		textScroller.getText()
 
-		assertEquals(longText.substring(6, longText.length), textScroller.getText())
+		assertEquals(longText.substring(12, longText.length), textScroller.getText())
 		assertEquals(longText, textScroller.getText())
 	}
 }

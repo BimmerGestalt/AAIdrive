@@ -7,6 +7,7 @@ class TextScroller(private val originalText: String, private val maxLineLength: 
 	companion object {
 		const val SCROLL_COOLDOWN_SECONDS = 2
 		const val INDEX_JUMP_VALUE = 3
+		const val INDEX_PAST_END = 5        // keep scrolling this many extra letters
 	}
 
 	private val shouldScroll: Boolean
@@ -32,11 +33,10 @@ class TextScroller(private val originalText: String, private val maxLineLength: 
 		if (!shouldScroll) {
 			return originalText
 		}
-		var displayText = originalText
-		val endIndex = maxLineLength + startIndex
+		val displayText = originalText.substring(startIndex, originalText.length)
 		if (scrollText) {
-			displayText = originalText.substring(startIndex, originalText.length)
-			if (endIndex <= originalText.length) {
+			val endIndex = maxLineLength + startIndex
+			if (endIndex <= originalText.length + INDEX_PAST_END) {
 				startIndex += INDEX_JUMP_VALUE
 			} else {
 				scrollText = false
