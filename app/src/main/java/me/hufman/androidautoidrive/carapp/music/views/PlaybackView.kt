@@ -353,6 +353,9 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 					// analytics says only a single user (ID4 running ID5 AudioHmiState somehow)
 					// experiences this, so we'll accept the inefficiency of repeatedly trying to update
 				}
+			} else {
+				// if the song is the same, update any scrolling text
+				redrawLongTitles()
 			}
 			try {
 				redrawPosition()
