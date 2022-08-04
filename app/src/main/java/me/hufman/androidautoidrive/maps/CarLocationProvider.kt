@@ -101,7 +101,7 @@ class CdsLocationProvider(val cdsData: CDSData): CarLocationProvider() {
 		val position = gpsPosition.tryAsJsonObject("GPSPosition")
 		val latitude = position?.tryAsJsonPrimitive("latitude")?.tryAsDouble
 		val longitude = position?.tryAsJsonPrimitive("longitude")?.tryAsDouble
-		if (longitude != null && latitude != null && !longitude.isNanOrInfinite() && !latitude.isNanOrInfinite()) {
+		if (longitude != null && latitude != null && !longitude.isNanOrInfinite() && !latitude.isNanOrInfinite() && longitude.absoluteValue < 180 && latitude.absoluteValue < 90) {
 			currentLatLong = LatLong(latitude, longitude)
 			onLocationUpdate()
 		}
