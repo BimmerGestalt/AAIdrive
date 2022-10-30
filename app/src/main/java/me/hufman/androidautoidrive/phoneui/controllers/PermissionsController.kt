@@ -17,6 +17,7 @@ class PermissionsController(val activity: Activity) {
 		const val REQUEST_SMS = 20
 		const val REQUEST_CALENDAR = 30
 		const val REQUEST_LOCATION = 4000
+		const val REQUEST_BLUETOOTH = 50
 	}
 
 	private fun tryOpenActivity(intent: Intent): Boolean {
@@ -85,6 +86,14 @@ class PermissionsController(val activity: Activity) {
 		ActivityCompat.requestPermissions(activity,
 				arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
 				REQUEST_LOCATION)
+	}
+
+	fun promptBluetooth() {
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+			ActivityCompat.requestPermissions(activity,
+					arrayOf(Manifest.permission.BLUETOOTH_CONNECT),
+					REQUEST_BLUETOOTH)
+		}
 	}
 
 	fun promptSpotifyControl() {

@@ -43,6 +43,10 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 	val hasLocationPermission: LiveData<Boolean> = _hasLocationPermission
 	private val _hasBackgroundPermission = MutableLiveData(false)
 	val hasBackgroundPermission: LiveData<Boolean> = _hasBackgroundPermission
+	private val _supportsBluetoothConnectPermission = MutableLiveData(false)
+	val supportsBluetoothConnectPermission: LiveData<Boolean> = _supportsBluetoothConnectPermission
+	private val _hasBluetoothConnectPermission = MutableLiveData(false)
+	val hasBluetoothConnectPermission: LiveData<Boolean> = _hasBluetoothConnectPermission
 
 	private val _hasSpotify = MutableLiveData(false)
 	val hasSpotify: LiveData<Boolean> = _hasSpotify
@@ -65,6 +69,8 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 		} else {
 			true        // old phones just assume true
 		}
+		_supportsBluetoothConnectPermission.value = android.os.Build.VERSION.SDK_INT >= 31
+		_hasBluetoothConnectPermission.value = permissionsState.hasBluetoothConnectPermission
 	}
 
 	/** Try connecting to Spotify */
@@ -164,4 +170,11 @@ class PermissionsState(private val appContext: Context) {
 
 	val hasLocationPermission: Boolean
 		get() = ContextCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+	val hasBluetoothConnectPermission: Boolean
+		get() = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+			ContextCompat.checkSelfPermission(appContext, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+		} else {
+			true
+		}
 }

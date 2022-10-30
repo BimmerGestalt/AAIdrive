@@ -3,7 +3,6 @@ package me.hufman.androidautoidrive.carapp
 import android.util.SparseArray
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.utils.forEach
-import me.hufman.androidautoidrive.utils.set
 import me.hufman.androidautoidrive.utils.setDefault
 
 /** An RHMIApplication wrapper that can change out its wrapped app
@@ -45,7 +44,7 @@ class RHMIApplicationSwappable(var app: RHMIApplication): RHMIApplication() {
 			else -> false
 		}
 		if (memoized) {
-			desiredData[modelId] = value
+			desiredData.put(modelId, value)
 		} else {
 			desiredData.remove(modelId)
 		}
@@ -55,7 +54,7 @@ class RHMIApplicationSwappable(var app: RHMIApplication): RHMIApplication() {
 
 	override fun setProperty(componentId: Int, propertyId: Int, value: Any?) {
 		val properties = desiredProperties.setDefault(componentId) { SparseArray() }
-		properties[propertyId] = value
+		properties.put(propertyId, value)
 
 		if (isConnected) app.setProperty(componentId, propertyId, value)
 	}

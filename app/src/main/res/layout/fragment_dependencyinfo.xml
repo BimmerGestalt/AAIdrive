@@ -121,6 +121,65 @@
                 android:text="@string/txt_setup_background_restrictions_hint" />
         </LinearLayout>
 
+        <!-- Bluetooth Connection -->
+        <LinearLayout
+            android:visibility="@{permissionsModel.supportsBluetoothConnectPermission &amp;&amp; permissionsModel.hasBluetoothConnectPermission}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:onClick="@{() -> permissionsController.openSelfPermissions()}"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@android:drawable/checkbox_on_background" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="@string/txt_setup_bluetooth_permission" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="@{!permissionsModel.hasBluetoothConnectPermission}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:onClick="@{() -> permissionsController.promptBluetooth()}"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
+                    app:tint="?android:attr/textColorSecondary"
+                    android:src="@android:drawable/checkbox_off_background" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:text="@string/txt_setup_bluetooth_impermission" />
+            </LinearLayout>
+            <Button
+                android:onClick="@{() -> permissionsController.promptBluetooth()}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_grant"/>
+        </LinearLayout>
+
         <!-- BMW Connection -->
         <LinearLayout
             android:visibility="@{!viewModel.isBmwReady()}"

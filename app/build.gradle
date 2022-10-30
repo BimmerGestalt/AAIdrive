@@ -30,7 +30,7 @@ def GITHUB_BRANCH = System.env.GITHUB_REF?.replaceFirst("^refs/.*/", "")
 def isRunningOnCI = System.getenv("CI") == "true"
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 32
     androidGitVersion {
         hideBranches = [ 'main' ]
         // include build number for CI builds, omit for local builds
