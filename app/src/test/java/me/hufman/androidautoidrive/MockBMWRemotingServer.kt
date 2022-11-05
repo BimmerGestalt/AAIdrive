@@ -13,6 +13,7 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 	val addedEventHandler = HashMap<String, Boolean>()
 	val properties = HashMap<Int, MutableMap<Int, Any>>()
 	val data = HashMap<Int, Any>()
+	val listData = HashMap<Int, MutableList<BMWRemoting.RHMIDataTable>>()
 	val triggeredEvents = HashMap<Int, Map<*, *>>()
 
 	val amHandles = ArrayList<Int>()
@@ -83,6 +84,13 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 		if (rhmiApp.models[modelId]?.asImageIdModel() != null && value is BMWRemoting.RHMIResourceIdentifier && value.id == 0)
 			throw BMWRemoting.ServiceException(213, "SetData was not successful.")
 		data[modelId!!] = value!!
+		if (value is BMWRemoting.RHMIDataTable) {
+			val existing = listData[modelId]?.let { ArrayList(it) }
+			if (existing == null || existing.any { it.totalRows != value.totalRows || it.totalColumns != value.totalColumns }) {
+				listData[modelId] = ArrayList()
+			}
+			listData[modelId]?.add(value)
+		}
 	}
 
 	override fun rhmi_getCapabilities(component: String?, handle: Int?): Map<*, *> {

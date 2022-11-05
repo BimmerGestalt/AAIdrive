@@ -17,6 +17,7 @@ import me.hufman.androidautoidrive.AppSettingsObserver
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.maps.CarLocationProvider
 import me.hufman.androidautoidrive.maps.LatLong
+import java.lang.Error
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
@@ -65,6 +66,7 @@ class MapboxController(private val context: Context,
 		mapboxLocationSource.onLocationUpdate(location)
 
 		if (firstView) {  // first view
+			applySettings(true)
 			initCamera()
 		} else {
 			updateCamera()
@@ -99,7 +101,7 @@ class MapboxController(private val context: Context,
 
 		// watch for map settings
 		appSettings.callback = {applySettings()}
-		applySettings() // which also updates the settings in the projection for first draw
+		applySettings(force = true) // which also updates the settings in the projection for first draw
 	}
 
 	override fun pauseMap() {
@@ -115,11 +117,11 @@ class MapboxController(private val context: Context,
 		projection = null
 	}
 
-	fun applySettings() {
+	fun applySettings(force: Boolean = false) {
 		// AppSettings updates every ~10s from cachedCds updates
 		// so check if anything relevant has changed before redrawing map
 		val newSettings = MapboxSettings.build(appSettings, currentLocation?.toLatLong())
-		if (currentSettings != newSettings) {
+		if (currentSettings != newSettings || force) {
 			projection?.applySettings(newSettings)
 
 			// these functions read from the currentSettings
@@ -130,7 +132,7 @@ class MapboxController(private val context: Context,
 
 	override fun zoomIn(steps: Int) {
 		mapAppMode.startInteraction()
-		currentZoom = min(20f, currentZoom + steps)
+		currentZoom = min(18f, currentZoom + steps)
 		updateCamera()
 	}
 
@@ -172,7 +174,11 @@ class MapboxController(private val context: Context,
 					.pitch(0.0)
 					.bearing(0.0)
 		}
-		projection?.map?.camera?.flyTo(cameraPosition.build(), scrollZoomAnimation)
+		try {
+			projection?.map?.camera?.flyTo(cameraPosition.build(), scrollZoomAnimation)
+		} catch (e: Error) {
+			// sometimes Mapbox crashes here?
+		}
 	}
 
 	private fun calculateBearingOffset(bearing: Float): EdgeInsets {
@@ -227,7 +233,11 @@ class MapboxController(private val context: Context,
 						destPoint
 				), EdgeInsets(150.0, 100.0, 100.0, 100.0), 0.0, 0.0)
 				if (cameraPosition != null) {
-					projection?.map?.camera?.flyTo(cameraPosition, navZoomAnimation)
+					try {
+						projection?.map?.camera?.flyTo(cameraPosition, navZoomAnimation)
+					} catch (e: Error) {
+						// sometimes Mapbox crashes here?
+					}
 				}
 			}, 100)
 		}
@@ -250,7 +260,11 @@ class MapboxController(private val context: Context,
 						.pitch(0.0)
 						.bearing(0.0)
 			}
-			projection?.map?.camera?.flyTo(cameraPosition.build(), navZoomAnimation)
+			try {
+				projection?.map?.camera?.flyTo(cameraPosition.build(), navZoomAnimation)
+			} catch (e: Error) {
+				// sometimes Mapbox crashes here?
+			}
 		}, NAVIGATION_MAP_STARTZOOM_TIME.toLong())
 	}
 

@@ -63,7 +63,8 @@ class SpotifyAuthorizationActivity: Activity() {
 			SpotifyScope.USER_LIBRARY_READ.uri,
 			SpotifyScope.PLAYLIST_MODIFY_PRIVATE.uri,
 			SpotifyScope.PLAYLIST_READ_PRIVATE.uri,
-			SpotifyScope.UGC_IMAGE_UPLOAD.uri)
+			SpotifyScope.UGC_IMAGE_UPLOAD.uri,
+			SpotifyScope.USER_READ_PRIVATE.uri)
 	private val lazyAuthService = lazy {
 		createAuthorizationService()
 	}

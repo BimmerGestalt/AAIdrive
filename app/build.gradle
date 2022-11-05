@@ -123,6 +123,11 @@ android {
         animationsDisabled = true
         unitTests {
             includeAndroidResources = true
+            all {
+                testLogging {
+                    exceptionFormat = 'full'
+                }
+            }
         }
     }
 
@@ -174,38 +179,39 @@ android {
         }
     }
 
-    def assertSpotifyKey = tasks.create(name: "assertSpotifyApiKey") { doLast {
-        if ((System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey) == "invalid") {
-            throw new GradleException("Please configure a Spotify API key in your gradle.properties, or set it to \"unset\" to disable the Spotify functionality\nSee https://bimmergestalt.github.io/AAIdrive/developers")
-        }
-    }}
-    preBuild.dependsOn assertSpotifyKey
+    if (!isRunningOnCI) {
+        def assertSpotifyKey = tasks.create(name: "assertSpotifyApiKey") { doLast {
+            if ((System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey) == "invalid") {
+                throw new GradleException("Please configure a Spotify API key in your gradle.properties, or set it to \"unset\" to disable the Spotify functionality\nSee https://bimmergestalt.github.io/AAIdrive/developers")
+            }
+        }}
+        preBuild.dependsOn assertSpotifyKey
 
-    def assertGmapKey = tasks.create(name: "assertGmapKey") { doLast {
-        if ((System.env.AndroidAutoIdrive_GmapsApiKey ? System.env.AndroidAutoIdrive_GmapsApiKey : AndroidAutoIdrive_GmapsApiKey) == "unset") {
-            throw new GradleException("Please configure a Google Maps API key in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
+        def assertGmapKey = tasks.create(name: "assertGmapKey") { doLast {
+            if ((System.env.AndroidAutoIdrive_GmapsApiKey ? System.env.AndroidAutoIdrive_GmapsApiKey : AndroidAutoIdrive_GmapsApiKey) == "unset") {
+                throw new GradleException("Please configure a Google Maps API key in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
+            }
+        }}
+        applicationVariants.all { variant ->
+            if (variant.name.contains("gmap")) {
+                tasks["assemble${variant.name.capitalize()}"].dependsOn assertGmapKey
+            }
         }
-    }}
-    applicationVariants.all { variant ->
-        if (variant.name.contains("gmap")) {
-            tasks["assemble${variant.name.capitalize()}"].dependsOn assertGmapKey
+
+        def assertMapboxKey = tasks.create(name: "assertMapboxKey") { doLast {
+            if ((System.env.AndroidAutoIdrive_MapboxDownloadToken ? System.env.AndroidAutoIdrive_MapboxDownloadToken : AndroidAutoIdrive_MapboxDownloadToken) == "unset") {
+                throw new GradleException("Please configure a secret Mapbox download token in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
+            }
+            if ((System.env.AndroidAutoIdrive_MapboxAccessToken ? System.env.AndroidAutoIdrive_MapboxAccessToken : AndroidAutoIdrive_MapboxAccessToken) == "unset") {
+                throw new GradleException("Please configure a Mapbox access token in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
+            }
+        }}
+        applicationVariants.all { variant ->
+            if (variant.name.contains("mapbox")) {
+                tasks["assemble${variant.name.capitalize()}"].dependsOn assertMapboxKey
+            }
         }
     }
-
-    def assertMapboxKey = tasks.create(name: "assertMapboxKey") { doLast {
-        if ((System.env.AndroidAutoIdrive_MapboxDownloadToken ? System.env.AndroidAutoIdrive_MapboxDownloadToken : AndroidAutoIdrive_MapboxDownloadToken) == "unset") {
-            throw new GradleException("Please configure a secret Mapbox download token in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
-        }
-        if ((System.env.AndroidAutoIdrive_MapboxAccessToken ? System.env.AndroidAutoIdrive_MapboxAccessToken : AndroidAutoIdrive_MapboxAccessToken) == "unset") {
-            throw new GradleException("Please configure a Mapbox access token in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
-        }
-    }}
-    applicationVariants.all { variant ->
-        if (variant.name.contains("mapbox")) {
-            tasks["assemble${variant.name.capitalize()}"].dependsOn assertMapboxKey
-        }
-    }
-
 }
 
 // compile all the debug variants
@@ -241,7 +247,6 @@ task checkDebug {
 }
 
 repositories {
-    jcenter()
     maven { url 'https://jitpack.io' }
 }
 
@@ -251,7 +256,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android:flexbox:2.0.1'
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
     implementation "androidx.lifecycle:lifecycle-extensions:$androidx_lifecycle_extensions_version"
@@ -291,10 +296,10 @@ dependencies {
     androidTestImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     androidTestImplementation 'com.github.tmurakami:dexopener:2.0.5'
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
-    implementation 'io.bimmergestalt:IDriveConnectKit:0.3'
+    implementation 'io.bimmergestalt:IDriveConnectKit:0.6'
     implementation 'io.bimmergestalt:IDriveConnectKitAndroid:0.2'
-    testImplementation 'io.bimmergestalt:IDriveConnectKit:0.3'
-    androidTestImplementation 'io.bimmergestalt:IDriveConnectKit:0.3'
+    testImplementation 'io.bimmergestalt:IDriveConnectKit:0.6'
+    androidTestImplementation 'io.bimmergestalt:IDriveConnectKit:0.6'
     androidTestImplementation 'io.bimmergestalt:IDriveConnectKitAndroid:0.2'
     androidTestImplementation "org.bouncycastle:bcmail-jdk16:1.46"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
@@ -308,9 +313,8 @@ dependencies {
     gmapImplementation 'com.google.android.libraries.places:places:2.5.0'
     gmapImplementation 'com.google.maps:google-maps-services:0.1.20'
     mapboxImplementation "com.mapbox.mapboxsdk:mapbox-sdk-services:5.8.0"
-    mapboxImplementation 'com.mapbox.maps:android:10.2.0', {
+    mapboxImplementation 'com.mapbox.maps:android:10.4.0', {
         exclude group: 'com.mapbox.plugin', module: 'maps-attribution'    // can't click the (i) button from the car screen
-        exclude group: 'com.mapbox.plugin', module: 'maps-compass'        // we always point north
         exclude group: 'com.mapbox.plugin', module: 'maps-gesture'        // no touch input provided by the car
         exclude group: 'com.mapbox.plugin', module: 'maps-lifecycle'      // doesn't provide a benefit to our Presentation class
         exclude group: 'com.mapbox.plugin', module: 'maps-overlay'        // not helpful in our case

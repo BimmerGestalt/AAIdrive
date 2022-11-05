@@ -7,6 +7,7 @@ import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.MutableAppSettingsObserver
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
@@ -40,7 +41,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 			musicSessions.Connector(context)
 	)
 	val connector = CombinedMusicAppController.Connector(connectors)
-	val appSettings = MutableAppSettingsReceiver(context, handler)
+	val appSettings: MutableAppSettingsObserver = MutableAppSettingsReceiver(context, handler)
 
 	var disableAutoswitchUntil = 0L
 	var lastConnectTime = 0L

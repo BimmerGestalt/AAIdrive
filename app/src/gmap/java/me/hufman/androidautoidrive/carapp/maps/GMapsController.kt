@@ -124,7 +124,7 @@ class GMapsController(private val context: Context,
 		Log.i(TAG, "Zooming map in $steps steps")
 		mapAppMode.startInteraction()
 		zoomingCamera = true
-		currentZoom = min(20f, currentZoom + steps)
+		currentZoom = min(18f, currentZoom + steps)
 		updateCamera()
 	}
 	override fun zoomOut(steps: Int) {
