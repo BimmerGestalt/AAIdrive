@@ -57,6 +57,9 @@ class MapboxPlaceSearch(val searchEngine: MapboxGeocoding.Builder, val locationP
 	}
 
 	override fun searchLocationsAsync(query: String): Deferred<List<MapResult>> {
+		if (query.length < 3) {
+			return CompletableDeferred(emptyList())
+		}
 		val results = CompletableDeferred<List<MapResult>>()
 		val location = locationProvider.currentLocation
 		val latLong = location?.let { LatLong(it.latitude, it.longitude) }

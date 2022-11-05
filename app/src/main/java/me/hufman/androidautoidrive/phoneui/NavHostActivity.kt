@@ -84,7 +84,7 @@ class NavHostActivity: AppCompatActivity() {
 	}
 
 	fun setupNavMenu() {
-		val themeAttrs = obtainStyledAttributes(R.style.optionGmapVisible, arrayOf(android.R.attr.visibility).toIntArray())
+		val themeAttrs = obtainStyledAttributes(R.style.optionMapVisible, arrayOf(android.R.attr.visibility).toIntArray())
 		val mapVisibility = themeAttrs.getInt(0, 0)
 		themeAttrs.recycle()
 		val navView = findViewById<NavigationView>(R.id.nav_view)

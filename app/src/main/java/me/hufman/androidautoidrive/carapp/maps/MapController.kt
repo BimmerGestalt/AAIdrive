@@ -17,6 +17,7 @@ const val INTERACTION_ZOOM_OUT = "me.hufman.androidautoidrive.maps.INTERACTION.Z
 const val INTERACTION_SEARCH = "me.hufman.androidautoidrive.maps.INTERACTION.SEARCH"
 const val INTERACTION_SEARCH_DETAILS = "me.hufman.androidautoidrive.maps.INTERACTION.SEARCH_DETAILS"
 const val INTERACTION_NAV_START = "me.hufman.androidautoidrive.maps.INTERACTION.NAV_START"
+const val INTERACTION_NAV_RECALCULATE = "me.hufman.androidautoidrive.maps.INTERACTION.NAV_RECALCULATE"
 const val INTERACTION_NAV_STOP = "me.hufman.androidautoidrive.maps.INTERACTION.NAV_STOP"
 const val EXTRA_ZOOM_AMOUNT = "me.hufman.androidautoidrive.maps.INTERACTION.ZOOM_AMOUNT"
 const val EXTRA_QUERY = "me.hufman.androidautoidrive.maps.INTERACTION.QUERY"
@@ -32,6 +33,7 @@ interface MapInteractionController {
 	fun zoomIn(steps: Int = 1)
 	fun zoomOut(steps: Int = 1)
 	fun navigateTo(dest: LatLong)
+	fun recalcNavigation()
 	fun stopNavigation()
 }
 
@@ -65,6 +67,9 @@ class MapInteractionControllerIntent(val context: Context): MapInteractionContro
 		send(INTERACTION_NAV_START, Bundle().apply { putSerializable(EXTRA_LATLONG, dest) })
 	}
 
+	override fun recalcNavigation() {
+		send(INTERACTION_NAV_RECALCULATE)
+	}
 	override fun stopNavigation() {
 		send(INTERACTION_NAV_STOP)
 	}
@@ -94,6 +99,7 @@ class MapsInteractionControllerListener(val context: Context, val controller: Ma
 				INTERACTION_ZOOM_OUT -> controller.zoomOut(intent.getIntExtra(EXTRA_ZOOM_AMOUNT, 1))
 				INTERACTION_NAV_START -> controller.navigateTo(intent.getSerializableExtra(EXTRA_LATLONG) as? LatLong
 						?: return)
+				INTERACTION_NAV_RECALCULATE -> controller.recalcNavigation()
 				INTERACTION_NAV_STOP -> controller.stopNavigation()
 				else -> Log.i(TAG, "Unknown interaction ${intent.getStringExtra(EXTRA_INTERACTION_TYPE)}")
 			}

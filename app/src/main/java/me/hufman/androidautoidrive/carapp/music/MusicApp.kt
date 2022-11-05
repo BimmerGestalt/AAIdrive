@@ -350,11 +350,11 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 							if (spotifyApp != null) {
 								avContext.av_requestContext(spotifyApp)
 							}
-						}
-
-						val currentApp = musicController.currentAppInfo
-						if (currentApp != null) {
-							avContext.av_requestContext(currentApp)
+						} else {
+							val currentApp = musicController.currentAppInfo
+							if (currentApp != null) {
+								avContext.av_requestContext(currentApp)
+							}
 						}
 					}
 				}

@@ -31,14 +31,19 @@ interface AppSettings {
 		CALENDAR_DETAILED_EVENTS("Calendar_Detailed_Events", "false", "Only show detailed appointments"),
 		CALENDAR_AUTOMATIC_NAVIGATION("Calendar_Automatic_Navigation", "false", "Automatically navigate to upcoming appointments"),
 		CALENDAR_IGNORE_VISIBILITY("Calendar_Ignore_Visibility", "false", "Ignore calendar visibility for events"),
-		ENABLED_GMAPS("Enabled_GMaps", "false", "Show Google Maps in the car"),
+		ENABLED_MAPS("Enabled_Maps", "false", "Show Custom Maps in the car"),
+		MAP_QUICK_DESTINATIONS("Map_Quick_Destinations", "[]", "A list of quick destinations"),
 		MAP_WIDESCREEN("Map_Widescreen", "false", "Show Map in widescreen"),
 		MAP_INVERT_SCROLL("Map_Invert_Scroll", "false", "Invert zoom direction"),
+		MAP_SATELLITE("Map_Satellite", "false", "Show satellite imagery"),
 		MAP_TRAFFIC("Map_Traffic", "true", "Show traffic"),
 		MAP_USE_PHONE_GPS("Map_Use_Phone_GPS", "false", "Use Phone GPS"),
 		NAV_PREFER_CUSTOM_MAP("Nav_Prefer_Custom_Map", "false", "Prefer custom map nav over car nav"),
-		GMAPS_BUILDINGS("GMaps_Buildings", "true", "GMaps 3D Buildings"),
+		MAP_BUILDINGS("Map_Buildings", "true", "Maps 3D Buildings"),
+		MAP_TILT("Map_Tilt", "false", "3D tilt and rotate the map"),
 		GMAPS_STYLE("GMaps_Style", "auto", "GMaps style"),
+		MAP_CUSTOM_STYLE("Mapbox_Custom_Style", "", "Mapbox custom style"),
+		MAPBOX_STYLE_URL("Mapbox_Style_Uri", "", "Mapbox style uri"),
 		AUDIO_SUPPORTS_USB("Audio_Supports_USB", (Build.VERSION.SDK_INT < Build.VERSION_CODES.O).toString(), "The phone is old enough to support USB accessory audio"),
 		AUDIO_FORCE_CONTEXT("Audio_Force_Context", "false", "Force audio context"),
 		AUDIO_DESIRED_APP("Audio_Desired_App", "", "Last music app that was playing"),
@@ -57,7 +62,8 @@ interface AppSettings {
 		CACHED_CAR_DATA("Cached_Car_Data", "{}", "JSON Object of any previously-cached cds properties"),
 		PREFER_CAR_LANGUAGE("Prefer_Car_Language", "true", "Prefer the car's language instead of the phone's language"),
 		FORCE_CAR_LANGUAGE("Force_Car_Language", "", "Force a specific language for the car apps"),
-		ENABLED_ANALYTICS("Enable_Analytics", "false", "Enable Analytics module")
+		ENABLED_ANALYTICS("Enable_Analytics", "false", "Enable Analytics module"),
+		MUSIC_SEARCH_QUERY_HISTORY("Music_Search_Query_History","", "Music service search query history")
 	}
 
 	/** Store the active preferences in a singleton */

@@ -11,12 +11,12 @@
     <string name="playstore_desc_features_carinfo">Odczytaj różne informacje diagnostyczne i statystyki z samochodu</string>
     <string name="playstore_desc_features_addons_mirroring">Rozszerz możliwości o opcjonalne dodatki (takie jak screen mirroring)</string>
     <string name="playstore_desc_features_custommap_soon">Niestandardowa implementacja mapy wkrótce</string>
+    <string name="playstore_desc_features_custommap">Niestandardowa mapa i nawigacja na podstawie Mapbox</string>
     <string name="playstore_desc_nativeapps_protocol">Używając natywnego protokołu aplikacji BMW, dokładnie tak jak stara aplikacja Spotify, ta aplikacja nie modyfikuje Twojego samochodu w żaden sposób i wszystkie rozszerzone możliwości są dostarczane tylko wtedy, gdy Twój telefon jest podłączony.</string>
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps wymaga, aby aplikacja MyBMW lub MINI dla twojego samochodu była zainstalowana i aby zostało włączone wsparcie aplikacji IDrive5+ w ustawieniach połączonego telefonu w samochodzie, albo Twój samochód z IDrive4 ma opcję ConnectedDrive Connection Assistant.</string>
     <string name="playstore_desc_depends_bmw_subscription">Zazwyczaj wymaga to aktywnej subskrypcji BMW ConnectedDrive, która jest aktywna przez kilka lat po zakupieniu nowego samochodu.</string>
-    <string name="playstore_release_desc">Szybkie wydanie zawierające integracje z kalendarzem na telefonie i usprawnieniami dzialania usług w tle</string>
-    <string name="playstore_release_point1">Przywraca funkcję BMW/Mini Kalendarz, włącznie z automatycznym nawigowaniem do miejsca nadchodzącego wydarzenia</string>
-    <string name="playstore_release_point2">Usunięcie błędów ANR podczas działania na pierwszym planie</string>
-    <string name="playstore_release_point3">Poprawia wydajność aplikacji podczas buforowania danych samochodu i podczas odkrywania aplikacji muzycznych</string>
-    <string name="playstore_release_point4">Naprawia błędy w interfejsie podczas używania przycisku skrótu do multimediów i włącza przycisk OK przy odpowiadaniu na powiadomienia</string>
+    <string name="playstore_release_desc">Na koniec, funkcja mapy, o którą wszyscy prosili!</string>
+    <string name="playstore_release_point1">Dodaje niestandardową mapę, renderowaną na telefonie i wyświetlaną w samochodzie</string>
+    <string name="playstore_release_point2">Używaj Mapbox do wyświetlania mapy, wyszukiwania miejsc i nawigacji trasy</string>
+    <string name="playstore_release_point3">Dodaje punkt zainteresowania dla karty nawigacyjnej</string>
 </resources>

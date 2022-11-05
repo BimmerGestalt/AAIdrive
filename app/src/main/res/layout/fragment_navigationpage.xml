@@ -118,18 +118,57 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="@{viewModel.isConnected() &amp;&amp; viewModel.isCarNaviSupported()}">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/pane_vertical_margin">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lbl_navigation_car_status" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:text="@{viewModel.carNavigationStatus}" />
+            </LinearLayout>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/pane_vertical_margin"
-                android:text="@{viewModel.navigationStatus}" />
+                android:visibility="@{viewModel.isCarNavigating()}"
+                android:text="@{viewModel.carDestinationLabel}" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{viewModel.isConnected() &amp;&amp; viewModel.isCustomNavigating()}">
+            <View style="@style/Divider"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/pane_vertical_margin">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lbl_navigation_custom_status" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:text="@{viewModel.customNavigationStatus}" />
+            </LinearLayout>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/pane_vertical_margin"
-                android:visibility="@{viewModel.isNavigating()}"
-                android:text="@{viewModel.destination}" />
+                android:visibility="@{viewModel.isCustomNavigating()}"
+                android:text="@{viewModel.customDestinationLabel}" />
         </LinearLayout>
 
         <LinearLayout

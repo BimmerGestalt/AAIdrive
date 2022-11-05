@@ -14,8 +14,11 @@ import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.carapp.FullImageInteraction
 import me.hufman.androidautoidrive.carapp.FullImageView
 import me.hufman.androidautoidrive.carapp.InputState
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.maps.views.MenuView
 import me.hufman.androidautoidrive.carapp.maps.views.PlaceSearchView
+import me.hufman.androidautoidrive.carapp.maps.views.SearchResultsView
+import me.hufman.androidautoidrive.maps.CarLocationProvider
 import me.hufman.androidautoidrive.maps.MapPlaceSearch
 import me.hufman.androidautoidrive.maps.MapResult
 import me.hufman.androidautoidrive.utils.removeFirst
@@ -25,7 +28,8 @@ import kotlin.collections.ArrayList
 const val TAG = "MapView"
 
 class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, val carAppAssets: CarAppResources,
-             val mapAppMode: MapAppMode, val interaction: MapInteractionController, val mapPlaceSearch: MapPlaceSearch, val map: VirtualDisplayScreenCapture) {
+             val mapAppMode: MapAppMode, val locationProvider: CarLocationProvider,
+             val interaction: MapInteractionController, val mapPlaceSearch: MapPlaceSearch, val map: VirtualDisplayScreenCapture) {
 
 	val carappListener = CarAppListener()
 	val carConnection: BMWRemotingServer
@@ -37,6 +41,7 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 	val fullImageView: FullImageView
 	val stateInput: RHMIState.PlainState
 	val stateInputState: InputState<MapResult>
+	val searchResultsView: SearchResultsView
 
 	// map state
 	var frameUpdater = FrameUpdater(map, object: FrameModeListener {
@@ -66,7 +71,7 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 		// figure out the components to use
 		Log.i(TAG, "Locating components to use")
 		val unclaimedStates = LinkedList(carApp.states.values)
-		menuView = MenuView(unclaimedStates.removeFirst { MenuView.fits(it) }, interaction, frameUpdater)
+		menuView = MenuView(unclaimedStates.removeFirst { MenuView.fits(it) }, interaction, mapPlaceSearch, frameUpdater, mapAppMode)
 		fullImageView = FullImageView(unclaimedStates.removeFirst { FullImageView.fits(it) }, "Map", mapAppMode, object : FullImageInteraction {
 			override fun navigateUp() {
 				interaction.zoomIn(1)
@@ -84,6 +89,8 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 		stateInput = carApp.states.values.filterIsInstance<RHMIState.PlainState>().first { state ->
 			state.componentsList.filterIsInstance<RHMIComponent.Input>().any { it.suggestAction > 0 }
 		}
+		stateInputState = PlaceSearchView(stateInput, mapPlaceSearch, interaction)
+		searchResultsView = SearchResultsView(unclaimedStates.removeFirst { SearchResultsView.fits(it) }, mapPlaceSearch, interaction, mapAppMode, locationProvider)
 
 		// connect buttons together
 		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach{
@@ -95,11 +102,8 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 		Log.i(TAG, "Setting up component behaviors")
 		menuView.initWidgets(fullImageView.state, stateInput)
 		fullImageView.initWidgets()
-		// set up the components for the input widget
-		stateInputState = PlaceSearchView(stateInput, mapPlaceSearch, interaction)
-
-		stateInputState.inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
-		stateInputState.inputComponent.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = fullImageView.state.id
+		stateInputState.initWidgets(fullImageView, searchResultsView)
+		searchResultsView.initWidgets(fullImageView)
 
 		// register for events from the car
 		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.mapview", -1)
@@ -126,10 +130,20 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 			Log.w(TAG, "Received rhmi_onActionEvent: handle=$handle ident=$ident actionId=$actionId args=$args")
 			try {
 				app?.actions?.get(actionId)?.asRAAction()?.rhmiActionCallback?.onActionEvent(args)
+				synchronized(server!!) {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
+				}
+			} catch (e: RHMIActionAbort) {
+				// Action handler requested that we don't claim success
+				synchronized(server!!) {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, false)
+				}
 			} catch (e: Exception) {
 				Log.e(me.hufman.androidautoidrive.carapp.notifications.TAG, "Exception while calling onActionEvent handler!", e)
+				synchronized(server!!) {
+					server?.rhmi_ackActionEvent(handle, actionId, 1, true)
+				}
 			}
-			server?.rhmi_ackActionEvent(handle, actionId, 1, true)
 		}
 
 		override fun rhmi_onHmiEvent(handle: Int?, ident: String?, componentId: Int?, eventId: Int?, args: MutableMap<*, *>?) {

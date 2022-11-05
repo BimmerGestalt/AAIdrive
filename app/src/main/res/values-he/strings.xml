@@ -67,13 +67,11 @@
     <string name="lbl_popupVersion">התראות קופצות עובדות רק עם IDrive 4</string>
     <string name="lbl_ttsUnsupported">TTS לא נתמך על ידי הרכב שלך</string>
     <string name="lbl_smsPermission">אפשר הרשאת SMS כדי לצפות בתמונות מהודעות נכנסות ברכב. הטקסט תמיד יוצג.</string>
-    <string name="lbl_mapspage">הצגת גוגל מפות בסיסי במסך הרכב</string>
-    <string name="enable_google_maps">הפעל גוגל מפות</string>
     <string name="lbl_widescreen_map">מפה במסך רחב</string>
     <string name="lbl_map_invert_zoom">הפוך כיוון זום</string>
     <string name="lbl_map_tilt">הטיית מפה</string>
     <string name="lbl_map_traffic">הצג תנועה</string>
-    <string name="lbl_gmap_buildings">הצג בניינים 3D</string>
+    <string name="lbl_map_buildings">הצג בניינים 3D</string>
     <string name="gmapStyleLabel">סגנון מפה</string>
     <string name="lbl_musicpage">אפליקציות המוזיקה בטלפון שלך נבחרו כ-מקור השמעה ברכב</string>
     <string name="lbl_music_apps">מוזיקה: אפליקציות</string>
@@ -263,6 +261,11 @@
     <string name="MAP_ACTION_VIEWMAP">צפה במפה מלאה</string>
     <string name="MAP_ACTION_SEARCH">חפש מקום</string>
     <string name="MAP_ACTION_CLEARNAV">נקה ניווט</string>
+    <string name="MAP_WIDESCREEN">מפה במסך רחב</string>
+    <string name="MAP_INVERT_ZOOM">הפוך כיוון זום</string>
+    <string name="MAP_TRAFFIC">הצג תנועה</string>
+    <string name="MAP_BUILDINGS">הצג בניינים 3D</string>
+    <string name="MAP_TILT">הטיית מפה</string>
     <string name="MUSIC_APPLIST_TITLE">אפליקציות</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">פעולות</string>
     <string name="MUSIC_BROWSE_TITLE">עיין</string>

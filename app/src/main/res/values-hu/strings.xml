@@ -79,15 +79,17 @@
     <string name="lbl_calendar_calendars_empty">Nem találtunk naptárakat</string>
     <string name="lbl_calendar_upcoming_events">Közelgő események:</string>
     <string name="lbl_calendar_upcoming_events_empty">Nem találtunk közelgő eseményt ebben a hónapban</string>
-    <string name="lbl_mapspage">Alapvető Google Térkép megjelenítése az autóban</string>
-    <string name="enable_google_maps">Google Térkép bekapcsolása</string>
+    <string name="lbl_mapspage">AAIdrive tartalmaz egy egyedi térképet, amely a telefonon kerül renderelésre, és az autóban megjelenik</string>
+    <string name="enable_custom_maps">Egyedi térkép bekapcsolása</string>
     <string name="lbl_map_phone_gps">Telefon GPS-ének használata az autó GPS-e helyett</string>
     <string name="lbl_widescreen_map">Szélesképernyős térkép</string>
     <string name="lbl_map_invert_zoom">Nagyítás irányának megfordítása</string>
     <string name="lbl_map_tilt">Térkép döntése</string>
     <string name="lbl_map_traffic">Forgalom mutatása</string>
-    <string name="lbl_gmap_buildings">Épületek 3D megjelenítése</string>
+    <string name="lbl_map_satellite">Műholdkép mutatása</string>
+    <string name="lbl_map_buildings">Épületek 3D megjelenítése</string>
     <string name="gmapStyleLabel">Térkép stílus</string>
+    <string name="lbl_map_quickdestinations">Kedvenc navigációs célpontok:</string>
     <string name="lbl_musicpage">A telefonodon lévő zene alkalmazások kiválaszthatóak mint média forrás az autóban</string>
     <string name="lbl_music_apps">Zene applikációk</string>
     <string name="musicAppIcon">Applikáció ikon</string>
@@ -343,6 +345,14 @@
     <string name="MAP_ACTION_VIEWMAP">Teljes térkép méret</string>
     <string name="MAP_ACTION_SEARCH">Hely keresése</string>
     <string name="MAP_ACTION_CLEARNAV">Navigáció törlése</string>
+    <string name="MAP_DESTINATIONS">Kedvenc célpontok</string>
+    <string name="MAP_WIDESCREEN">Szélesképernyős térkép</string>
+    <string name="MAP_INVERT_ZOOM">Nagyítás irányának megfordítása</string>
+    <string name="MAP_SATELLITE">Műholdkép mutatása</string>
+    <string name="MAP_TRAFFIC">Forgalom mutatása</string>
+    <string name="MAP_BUILDINGS">Épületek 3D megjelenítése</string>
+    <string name="MAP_TILT">Térkép döntése</string>
+    <string name="MAP_CUSTOM_STYLE">Egyedi térkép stílus használata</string>
     <string name="MUSIC_APPLIST_TITLE">Alkalmazások</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Nincs alkalmazás&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Műveletek</string>
@@ -386,4 +396,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Tetszik</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Nem tetszik</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Nem tetszik</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">Könyvtárad</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Böngészés</string>
 </resources>

@@ -3,21 +3,23 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import io.bimmergestalt.idriveconnectkit.CDS
+import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.CDSVehicleUnits
 import me.hufman.androidautoidrive.carapp.liveData
+import me.hufman.androidautoidrive.carapp.maps.MapAppMode
+import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.maps.MapResult
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.combine
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 import java.util.*
 
 class NavigationStatusModel(val carInformation: CarInformation,
-                            var isCustomNaviSupported: LiveData<Boolean>, var isCustomNaviPreferred: MutableLiveData<Boolean>): ViewModel() {
+                            val isCustomNaviSupported: LiveData<Boolean>, val isCustomNaviPreferred: MutableLiveData<Boolean>,
+                            val customNavDestination: LiveData<LatLong>): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -29,9 +31,10 @@ class NavigationStatusModel(val carInformation: CarInformation,
 					viewModel?.update()
 				}
 			}
-			val isCustomNaviSupported = MutableLiveData(BuildConfig.FLAVOR_map == "gmap")
+			val isCustomNaviSupported = MutableLiveData(BuildConfig.FLAVOR_map == "gmap" || BuildConfig.FLAVOR_map == "mapbox")
 			val isCustomNaviPreferred = BooleanLiveSetting(appContext, AppSettings.KEYS.NAV_PREFER_CUSTOM_MAP)
-			viewModel = NavigationStatusModel(carInformation, isCustomNaviSupported, isCustomNaviPreferred)
+			val mapAppMode = MapAppMode.build(RHMIDimensions.create(emptyMap()), MutableAppSettingsReceiver(appContext), carInformation.cdsData, MusicAppMode.TRANSPORT_PORTS.BT)
+			viewModel = NavigationStatusModel(carInformation, isCustomNaviSupported, isCustomNaviPreferred, mapAppMode.currentNavDestinationObservable)
 			viewModel.update()
 			return viewModel as T
 		}
@@ -59,19 +62,33 @@ class NavigationStatusModel(val carInformation: CarInformation,
 	val searchStatus = MutableLiveData<Context.() -> String> { "" }
 	val searchFailed = MutableLiveData(false)
 
-	val isNavigating = carInformation.cdsData.liveData[CDS.NAVIGATION.GUIDANCESTATUS].map(false) {
+	// car's native navigation status
+	val isCarNavigating = carInformation.cdsData.liveData[CDS.NAVIGATION.GUIDANCESTATUS].map(false) {
 		it["guidanceStatus"]?.asInt == 1
 	}
-	val navigationStatus: LiveData<Context.() -> String> = isNavigating.map({ getString(R.string.lbl_navigationstatus_inactive) }) { isNavigating ->
+	val carNavigationStatus: LiveData<Context.() -> String> = isCarNavigating.map({ getString(R.string.lbl_navigationstatus_inactive) }) { isNavigating ->
 		if (isNavigating) {
 			{ getString(R.string.lbl_navigationstatus_active) }
 		} else {
 			{ getString(R.string.lbl_navigationstatus_inactive) }
 		}
 	}
-	val destination = carInformation.cdsData.liveData[CDS.NAVIGATION.NEXTDESTINATION].map("") {
+	val carDestinationLabel = carInformation.cdsData.liveData[CDS.NAVIGATION.NEXTDESTINATION].map("") {
 		it["nextDestination"]?.asJsonObject?.getAsJsonPrimitive("name")?.asString
 	}
+
+	// custom map navigation status
+	val isCustomNavigating = Transformations.map(customNavDestination) {
+		it != null
+	}
+	val customNavigationStatus: LiveData<Context.() -> String> = isCustomNavigating.map({ getString(R.string.lbl_navigationstatus_inactive) }) { isNavigating ->
+		if (isNavigating) {
+			{ getString(R.string.lbl_navigationstatus_active) }
+		} else {
+			{ getString(R.string.lbl_navigationstatus_inactive) }
+		}
+	}
+	val customDestinationLabel: LiveData<String> = customNavDestination.map { it.toString() }
 
 	fun update() {
 		_isConnected.value = carInformation.isConnected

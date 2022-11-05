@@ -12,8 +12,12 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
+import me.hufman.androidautoidrive.carapp.CDSDataProvider
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.maps.CarLocationProvider
 import me.hufman.androidautoidrive.maps.MapPlaceSearch
 import org.junit.Assert.*
 import org.junit.Test
@@ -34,7 +38,8 @@ class MapAppTest {
 	}
 
 	val appSettings = MockAppSettings()
-	val mapAppMode = MapAppMode(GenericRHMIDimensions(1280, 480), appSettings, MusicAppMode.TRANSPORT_PORTS.USB)
+	val mapAppMode = MapAppMode.build(GenericRHMIDimensions(1280, 480), appSettings, CDSDataProvider(), MusicAppMode.TRANSPORT_PORTS.USB)
+	val locationProvider = mock<CarLocationProvider>()
 	val mockImageReader = mock<ImageReader> {
 		on { width } doReturn 1000
 		on { height } doReturn 500
@@ -59,7 +64,7 @@ class MapAppTest {
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mapAppMode, mockController, mockPlaceSearch, mockMap)
+		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mapAppMode, locationProvider, mockController, mockPlaceSearch, mockMap)
 		assertEquals(9, app.menuView.state.id)
 		assertEquals(19, app.fullImageView.state.id)
 		assertEquals(132, app.fullImageView.imageComponent.id)
@@ -69,13 +74,19 @@ class MapAppTest {
 			assertEquals("Entry button goes to menu screen", app.menuView.state.id, it.getAction()?.asHMIAction()?.getTargetState()?.id)
 		}
 		assertNotNull("Scroll listener registered", app.fullImageView.inputList.getSelectAction()?.asRAAction()?.rhmiActionCallback)
+
+		assertEquals(true, mockServer.properties[app.menuView.menuMap.id]!![RHMIProperty.PropertyId.VISIBLE.id])
+		assertEquals(true, mockServer.properties[app.menuView.menuList.id]!![RHMIProperty.PropertyId.VISIBLE.id])
+		assertEquals(true, mockServer.properties[app.menuView.labelSettings.id]!![RHMIProperty.PropertyId.VISIBLE.id])
+		assertEquals(true, mockServer.properties[app.menuView.labelSettings.id]!![RHMIProperty.PropertyId.VISIBLE.id])
+		assertEquals(L.MAP_OPTIONS, mockServer.data[app.menuView.labelSettings.model])
 	}
 
 	@Test
 	fun testMenuMap() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mapAppMode, mockController, mockPlaceSearch, mockMap)
+		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mapAppMode, locationProvider, mockController, mockPlaceSearch, mockMap)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 		val mockHandlerRunnable = ArgumentCaptor.forClass(Runnable::class.java)
 		val mockHandler = mock<Handler>()
@@ -118,7 +129,7 @@ class MapAppTest {
 		appSettings[AppSettings.KEYS.MAP_WIDESCREEN] = "false"
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mapAppMode, mockController, mockPlaceSearch, mockMap)
+		val app = MapApp(iDriveConnectionStatus, securityAccess, carAppResources, mapAppMode, locationProvider, mockController, mockPlaceSearch, mockMap)
 		val mockClient = IDriveConnection.mockRemotingClient as BMWRemotingClient
 		val mockHandlerRunnable = ArgumentCaptor.forClass(Runnable::class.java)
 		val mockHandler = mock<Handler>()
@@ -131,14 +142,14 @@ class MapAppTest {
 
 		// show the map screen
 		mockClient.rhmi_onHmiEvent(1, "", app.fullImageView.state.id, 1, mapOf(4.toByte() to true))
-		verify(mockMap).changeImageSize(703, 480)
+		verify(mockMap).changeImageSize(743, 480)
 		verify(mockController).showMap()
 
 		// Send the fullsize map
 		reset(mockMap)
 		whenever(mockMap.getFrame()).then {
 			mock<Bitmap> {
-				on { width } doReturn 703
+				on { width } doReturn 743
 				on { height } doReturn 480
 			}
 		}.thenReturn(null)

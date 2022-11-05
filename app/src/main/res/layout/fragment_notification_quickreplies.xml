@@ -5,7 +5,7 @@
         <import type="android.view.View"/>
         <variable
             name="controller"
-            type="me.hufman.androidautoidrive.phoneui.controllers.NotificationQuickRepliesController" />
+            type="me.hufman.androidautoidrive.phoneui.controllers.QuickEditListController" />
     </data>
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"

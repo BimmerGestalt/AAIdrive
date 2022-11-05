@@ -10,6 +10,7 @@ import android.util.Base64
 import android.util.Log
 import android.util.LruCache
 import com.google.gson.Gson
+import com.soywiz.kds.iterators.fastForEachReverse
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.client.Subscription
@@ -33,12 +34,12 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 
 		fun getClientId(context: Context): String {
 			return context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-					.metaData.getString("com.spotify.music.API_KEY", "unavailable")
+					.metaData.getString("com.spotify.music.API_KEY", "unset")
 		}
 
 		fun hasSupport(context: Context): Boolean {
 			val clientId = getClientId(context)
-			return clientId != "unavailable" && clientId != ""
+			return clientId != "unset" && clientId != "invalid" && clientId != ""
 		}
 
 		fun isSpotifyInstalled(context: Context): Boolean {
@@ -168,6 +169,22 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 			context.getDrawable(R.drawable.spotify_added_library))
 	val CUSTOM_ACTION_START_RADIO = CustomAction.fromSpotify("START_RADIO",
 			context.getDrawable(R.drawable.spotify_start_radio))
+
+	// always add these entries in the root, if they are missing
+	class ReplacementListItem(id: String, val alternativeIds: List<String>, uri: String, imageUri: ImageUri,
+	                          title: String, subtitle: String,
+	                          playable: Boolean, hasChildren: Boolean):
+			ListItem(id, uri, imageUri, title, subtitle, playable, hasChildren)
+	val includedRootEntries = listOf(
+			ReplacementListItem("com.spotify.your-library", listOf("com.spotify.your-music"), "com.spotify.your-library",
+					ImageUri("android.resource://com.spotify.music/drawable/ic_eis_your_library"),
+					L.MUSIC_SPOTIFY_BROWSEROOT_LIBRARY, "", false, true
+			),
+			ReplacementListItem("com.spotify.browse", listOf("spotify.browse"), "com.spotify.browse",
+					ImageUri("android.resource://com.spotify.music/drawable/ic_eis_browse"),
+					L.MUSIC_SPOTIFY_BROWSEROOT_BROWSE, "", false, true
+			),
+	)
 
 	var connected = true
 
@@ -741,10 +758,17 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		val isArtistDirectory: (MusicMetadata?) -> Boolean = {it?.mediaId?.contains(":artists:") == true}
 		val deferred = CompletableDeferred<List<MusicMetadata>>()
 		if (directory?.mediaId == null) {
-			remote.contentApi.getRecommendedContentItems("default-cars").setResultCallback { results ->
-				deferred.complete(results?.items?.map {
+			remote.contentApi.getRecommendedContentItems("default").setResultCallback { results ->
+				val items = (results?.items ?: emptyArray()).toMutableList()
+				includedRootEntries.fastForEachReverse { item ->
+					if (items.size > 0 && !items.any { it.id == item.id || item.alternativeIds.contains(it.id) }) {
+						items.add(1, item)  // add at #1 because #0 is recently-played
+					}
+				}
+
+				deferred.complete(items.map {
 					SpotifyMusicMetadata.fromBrowseItem(this, it)
-				} ?: LinkedList())
+				})
 			}.setErrorCallback {
 				deferred.complete(LinkedList())
 			}

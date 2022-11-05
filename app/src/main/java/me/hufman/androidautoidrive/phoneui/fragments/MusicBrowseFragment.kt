@@ -7,10 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.music.MusicController
 
 class MusicBrowseFragment: Fragment() {
-	lateinit var musicController: MusicController
 	var fragment: Fragment? = null
 	var fm: FragmentManager? = null
 

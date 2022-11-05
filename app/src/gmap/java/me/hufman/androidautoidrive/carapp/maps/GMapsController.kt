@@ -13,11 +13,14 @@ import me.hufman.androidautoidrive.AppSettingsObserver
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.maps.CarLocationProvider
 import me.hufman.androidautoidrive.maps.LatLong
-import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
 
-class GMapsController(private val context: Context, private val carLocationProvider: CarLocationProvider, private val virtualDisplay: VirtualDisplay, val appSettings: AppSettingsObserver): MapInteractionController {
+class GMapsController(private val context: Context,
+                      private val carLocationProvider: CarLocationProvider,
+                      private val virtualDisplay: VirtualDisplay,
+                      private val appSettings: AppSettingsObserver,
+                      private val mapAppMode: MapAppMode): MapInteractionController {
 	val TAG = "GMapsController"
 	var handler = Handler(context.mainLooper)
 	var projection: GMapsProjection? = null
@@ -29,6 +32,7 @@ class GMapsController(private val context: Context, private val carLocationProvi
 
 	val navController = GMapsNavController.getInstance(context, carLocationProvider) {
 		drawNavigation()
+		mapAppMode.currentNavDestination = it.currentNavDestination
 	}
 	val gMapLocationSource = GMapsLocationSource()
 	var currentLocation: Location? = null
@@ -118,12 +122,14 @@ class GMapsController(private val context: Context, private val carLocationProvi
 
 	override fun zoomIn(steps: Int) {
 		Log.i(TAG, "Zooming map in $steps steps")
+		mapAppMode.startInteraction()
 		zoomingCamera = true
-		currentZoom = min(20f, currentZoom + steps)
+		currentZoom = min(18f, currentZoom + steps)
 		updateCamera()
 	}
 	override fun zoomOut(steps: Int) {
 		Log.i(TAG, "Zooming map out $steps steps")
+		mapAppMode.startInteraction()
 		zoomingCamera = true
 		currentZoom = max(0f, currentZoom - steps)
 		updateCamera()
@@ -131,6 +137,7 @@ class GMapsController(private val context: Context, private val carLocationProvi
 
 	private fun initCamera() {
 		// set the camera to the starting position
+		mapAppMode.startInteraction()
 		val location = currentLocation
 		if (location != null) {
 			val cameraLocation = LatLng(location.latitude, location.longitude)
@@ -153,6 +160,7 @@ class GMapsController(private val context: Context, private val carLocationProvi
 
 	override fun navigateTo(dest: LatLong) {
 		Log.i(TAG, "Beginning navigation to $dest")
+		mapAppMode.startInteraction(NAVIGATION_MAP_STARTZOOM_TIME + 4000)
 		// clear out previous nav
 		projection?.map?.clear()
 		// show new nav destination icon
@@ -219,6 +227,12 @@ class GMapsController(private val context: Context, private val carLocationProvi
 			handler.post(action)
 		} else {
 			action()
+		}
+	}
+
+	override fun recalcNavigation() {
+		navController.currentNavDestination?.let {
+			navController.navigateTo(it)
 		}
 	}
 

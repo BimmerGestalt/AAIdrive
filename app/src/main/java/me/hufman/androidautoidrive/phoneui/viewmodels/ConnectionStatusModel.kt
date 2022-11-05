@@ -14,6 +14,7 @@ import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.ChassisCode
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.connections.CarConnectionDebugging
+import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 import java.util.*
 
 class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo: CarInformation): ViewModel() {
@@ -87,6 +88,9 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		getString(R.string.txt_setup_bcl_connected)
 	}
 	val bclModeText: LiveData<Context.() -> String> = _bclModeText
+	val isBclTransportBT: LiveData<Boolean> = bclTransport.map {
+		it == "BT"
+	}
 
 	// Car
 	val isCarConnected = isBclConnected

@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import com.adamratzman.spotify.*
 import com.adamratzman.spotify.endpoints.pub.SearchApi
 import com.adamratzman.spotify.models.*
+import com.adamratzman.spotify.utils.Market
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettings
@@ -79,16 +80,17 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		}
 
 		val songs: ArrayList<SpotifyMusicMetadata> = ArrayList()
-		var pagedSongs = webApi?.playlists?.getPlaylistTracks(playlistUri, 50, 0, null)
+
+		var pagedSongs = webApi?.playlists?.getPlaylistTracks(playlistUri, 50, 0, Market.FROM_TOKEN)
 		while(pagedSongs != null) {
 			pagedSongs.items.forEach { playlistTrack ->
 				val track = playlistTrack.track?.asTrack
-				if (track != null) {
+				if (track != null && track.isPlayable) {
 					songs.add(createSpotifyMusicMetadataFromTrack(track, spotifyAppController))
 				}
 
 				val episodeTrack = playlistTrack.track?.asPodcastEpisodeTrack
-				if (episodeTrack != null) {
+				if (episodeTrack != null && episodeTrack.isPlayable) {
 					songs.add(createSpotifyMusicMetadataFromPodcastEpisodeTrack(episodeTrack, spotifyAppController))
 				}
 			}
@@ -157,8 +159,8 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			return@executeApiCall emptyList()
 		}
 
-		val likedSongs = webApi?.library?.getSavedTracks(50)?.getAllItemsNotNull()
-		return@executeApiCall likedSongs?.map {
+		val likedSongs = webApi?.library?.getSavedTracks(50, market=Market.FROM_TOKEN)?.getAllItemsNotNull()
+		return@executeApiCall likedSongs?.filter { it.track.isPlayable }?.map {
 			createSpotifyMusicMetadataFromTrack(it.track, spotifyAppController)
 		}
 	}
@@ -173,8 +175,8 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			return@executeApiCall emptyList()
 		}
 
-		val topSongs = webApi?.artists?.getArtistTopTracks(artistUri)
-		return@executeApiCall topSongs?.map {
+		val topSongs = webApi?.artists?.getArtistTopTracks(artistUri, market=Market.FROM_TOKEN)
+		return@executeApiCall topSongs?.filter { it.isPlayable }?.map {
 			createSpotifyMusicMetadataFromTrack(it, spotifyAppController)
 		}
 	}
@@ -184,7 +186,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			return@executeApiCall emptyList()
 		}
 
-		val searchResults = webApi?.search?.search(query, *SearchApi.SearchType.values(), limit=8, market=null)
+		val searchResults = webApi?.search?.search(query, *SearchApi.SearchType.values(), limit=8, market=Market.FROM_TOKEN)
 
 		// run through each of the search result categories and compile full list
 		val searchResultMusicMetadata: ArrayList<SpotifyMusicMetadata> = ArrayList()
@@ -218,10 +220,10 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		if (artistResults != null && artistResults.isNotEmpty()) {
 			searchResultMusicMetadata.addAll(artistResults.items.map { result ->
 				val mediaId = result.uri.uri
-				val coverArtUri = getCoverArtUri(result.images, 320)
+				val coverArtUri = getCoverArtUri(result.images)
 				val type = result.type.replaceFirstChar(Char::uppercase)
 
-				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.name, null, result.name, type, playable=false, browseable=true)
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.name, null, result.name, type, playable=true, browseable=false)
 			})
 		}
 
@@ -229,10 +231,10 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		if (playlistResults != null && playlistResults.isNotEmpty()) {
 			searchResultMusicMetadata.addAll(playlistResults.items.map { result ->
 				val mediaId = result.uri.uri
-				val coverArtUri = getCoverArtUri(result.images, 320)
+				val coverArtUri = getCoverArtUri(result.images)
 				val type = result.type.replaceFirstChar(Char::uppercase)
 
-				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.name, null, result.name, type, playable=false, browseable=true)
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.name, null, result.name, type, playable=true, browseable=false)
 			})
 		}
 
@@ -243,7 +245,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 				val coverArtUri = getCoverArtUri(result.images)
 				val subtitle = result.type.replaceFirstChar(Char::uppercase)
 
-				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.publisher, null, result.name, subtitle, playable=false, browseable=true)
+				SpotifyMusicMetadata(spotifyAppController, mediaId, mediaId.hashCode().toLong(), coverArtUri, result.publisher, null, result.name, subtitle, playable=true, browseable=false)
 			})
 		}
 
@@ -439,9 +441,13 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 * returned.
 	 */
 	private fun getCoverArtUri(images: List<SpotifyImage>, heightToMatch: Int = 300): String? {
-		val coverArtIndex = images.indexOfFirst { it.height == heightToMatch }
+		val sortedImages = images.sortedBy { it.height }
+		var coverArtIndex = sortedImages.indexOfFirst { it.height ?: 0 >= heightToMatch }
+		if (coverArtIndex == -1 && images.size == 1) {
+			coverArtIndex = 0
+		}
 		return if (coverArtIndex != -1) {
-			val imageUrl = images[coverArtIndex].url
+			val imageUrl = sortedImages[coverArtIndex].url
 			val coverArtCode = imageUrl.substring(imageUrl.lastIndexOf("/")+1)
 			"spotify:image:$coverArtCode"
 		} else {

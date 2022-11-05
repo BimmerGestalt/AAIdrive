@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="playstore_tagline">Adicione recursos do Android Auto ao seu painel BMW e Mini IDrive NBT</string>
     <string name="playstore_desc_features_music">Veja apps de música no seu telefone como fontes de multimédia no IDrive</string>
     <string name="playstore_desc_features_carnav">Ativar a navegação através de apps no telefone</string>
     <string name="playstore_desc_features_carinfo">Ler várias informações de diagnóstico e estatísticas do seu carro</string>

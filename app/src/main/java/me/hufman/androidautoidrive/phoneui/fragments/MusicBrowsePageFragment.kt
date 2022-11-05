@@ -15,6 +15,7 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.phoneui.MusicPlayerActivity
+import me.hufman.androidautoidrive.phoneui.UIState
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
 import me.hufman.androidautoidrive.phoneui.viewmodels.*
 import kotlin.coroutines.CoroutineContext
@@ -37,9 +38,10 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 
 	var loaderJob: Job? = null
 
-	val viewModel by activityViewModels<MusicActivityModel>()
-	val iconsModel by activityViewModels<MusicActivityIconsModel>()
-	lateinit var musicController: MusicController
+	val viewModel by activityViewModels<MusicActivityModel> { MusicActivityModel.Factory(requireContext().applicationContext, UIState.selectedMusicApp) }
+	val iconsModel by activityViewModels<MusicActivityIconsModel> { MusicActivityIconsModel.Factory(requireActivity()) }
+	private lateinit var musicController: MusicController
+	private lateinit var _iconsModel: MusicActivityIconsModel
 
 	val contents = ArrayList<MusicPlayerItem>()
 
@@ -49,6 +51,7 @@ class MusicBrowsePageFragment: Fragment(), CoroutineScope {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		musicController = viewModel.musicController
+		_iconsModel = iconsModel
 
 		val listBrowse = view.findViewById<RecyclerView>(R.id.listBrowse)
 		val listBrowseRefresh = view.findViewById<SwipeRefreshLayout>(R.id.listBrowseRefresh)

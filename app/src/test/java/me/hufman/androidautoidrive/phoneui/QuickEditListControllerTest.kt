@@ -6,12 +6,12 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.nhaarman.mockito_kotlin.*
-import me.hufman.androidautoidrive.phoneui.controllers.NotificationQuickRepliesController
+import me.hufman.androidautoidrive.phoneui.controllers.QuickEditListController
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
-class NotificationQuickRepliesControllerTest {
+class QuickEditListControllerTest {
 	@Rule
 	@JvmField
 	val instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -19,7 +19,7 @@ class NotificationQuickRepliesControllerTest {
 	val items = ArrayList<String>()
 	val itemTouchHelper = mock<ItemTouchHelper>()
 	val adapter = mock<RecyclerView.Adapter<RecyclerView.ViewHolder>>()
-	val controller = NotificationQuickRepliesController(items, itemTouchHelper).also {
+	val controller = QuickEditListController(items, itemTouchHelper).also {
 		it.adapter = adapter
 	}
 

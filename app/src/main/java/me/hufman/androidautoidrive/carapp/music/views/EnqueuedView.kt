@@ -11,6 +11,7 @@ import me.hufman.androidautoidrive.music.QueueMetadata
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.truncate
 import kotlin.math.max
+import kotlin.math.min
 
 class EnqueuedView(val state: RHMIState, val musicController: MusicController, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {
@@ -76,7 +77,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		titleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[0]
 		subtitleLabelComponent = state.componentsList.filterIsInstance<RHMIComponent.Label>()[1]
 
-		songsEmptyList.addRow(arrayOf("", "", L.MUSIC_QUEUE_EMPTY))
+		songsEmptyList.addRow(arrayOf("", "", "", L.MUSIC_QUEUE_EMPTY))
 	}
 
 	fun initWidgets(playbackView: PlaybackView) {
@@ -101,19 +102,24 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	}
 
 	fun show() {
-		currentSong = musicController.getMetadata()
 		val newQueueMetadata = musicController.getQueue()
 
 		// same queue as before, just select currently playing song
 		if (queueMetadata != null && queueMetadata == newQueueMetadata) {
-			showCurrentlyPlayingSong()
+			showCurrentlyPlayingSong(true)
+			setSelectionToCurrentSong()
 			return
 		}
 
 		queueMetadata = newQueueMetadata
 		songsList.clear()
-		val songs = queueMetadata?.songs
-		if (songs?.isNotEmpty() == true) {
+		val songs = queueMetadata?.songs ?: emptyList()
+		if (songs.any {it.coverArt != null || it.coverArtUri != null}) {
+			listComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,90,10,*")
+		} else {
+			listComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,0,10,*")
+		}
+		if (songs.isNotEmpty()) {
 			listComponent.setEnabled(true)
 			listComponent.setSelectable(true)
 			songsList.addAll(songs)
@@ -126,7 +132,8 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 				visibleRowsOriginalMusicMetadata = visibleRows.map { MusicMetadata.copy(it) }
 			}
 
-			showCurrentlyPlayingSong()
+			showCurrentlyPlayingSong(true)
+			setSelectionToCurrentSong()
 		} else {
 			listComponent.setEnabled(false)
 			listComponent.setSelectable(false)
@@ -166,23 +173,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			return
 		}
 
-		// song actually playing is different than what the current song is then update checkmark
-		if (currentSong?.mediaId != musicController.getMetadata()?.mediaId) {
-			val oldPlayingIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
-			currentSong = musicController.getMetadata()
-			val playingIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
-
-			// remove checkmark from old song
-			showList(oldPlayingIndex, 1)
-
-			// add checkmark to new song
-			showList(playingIndex, 1)
-
-			// move the selection if the previous song was selected
-			if (oldPlayingIndex == selectedIndex) {
-				setSelectionToCurrentSong(playingIndex)
-			}
-		}
+		showCurrentlyPlayingSong(false)
 
 		// redraw all currently visible rows if one of them has a cover art that was retrieved
 		for ((index, metadata) in visibleRowsOriginalMusicMetadata.withIndex()) {
@@ -197,7 +188,8 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	/**
 	 * Sets the list selection to the current song.
 	 */
-	private fun setSelectionToCurrentSong(index: Int) {
+	private fun setSelectionToCurrentSong() {
+		val index = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
 		if (index >= 0) {
 			state.app.events.values.firstOrNull { it is RHMIEvent.FocusEvent }?.triggerEvent(
 					mapOf(0.toByte() to listComponent.id, 41.toByte() to index)
@@ -225,18 +217,43 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 	 * Shows the list component content from the start index for the specified number of rows.
 	 */
 	private fun showList(startIndex: Int = 0, numRows: Int = 10) {
+		val updatedList = ArrayList(songsList.subList(max(0, startIndex), min(songsList.size, startIndex + numRows)))
+		if (updatedList.any {it.coverArt != null || it.coverArtUri != null}) {
+			listComponent.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH, "57,90,10,*")
+		}   // don't collapse the column if this window of data happens to not have coverart, so no else branch here
+
 		if (startIndex >= 0) {
 			listComponent.getModel()?.setValue(songsListAdapter, startIndex, numRows, songsListAdapter.height)
 		}
 	}
 
 	/**
-	 * Shows and sets the selection to the currently playing song.
+	 * Shows the currently playing song.
 	 */
-	private fun showCurrentlyPlayingSong() {
-		val selectedIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
-		showList(selectedIndex)
-		setSelectionToCurrentSong(selectedIndex)
+	private fun showCurrentlyPlayingSong(showNeighbors: Boolean) {
+		val oldPlayingIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
+		currentSong = musicController.getMetadata()
+		val playingIndex = songsList.indexOfFirst { it.queueId == currentSong?.queueId }
+
+		// song actually playing is different than what the current song is, then update checkmark
+		if (oldPlayingIndex != playingIndex) {
+			// remove checkmark from old song
+			if (oldPlayingIndex >= 0) {
+				showList(oldPlayingIndex, 1)
+			}
+		}
+
+		// add checkmark to new song
+		if (showNeighbors) {
+			showList(max(0, playingIndex - 5), 10)
+		} else {
+			showList(playingIndex, 1)
+		}
+
+		// move the selection if the previous song was selected
+		if (oldPlayingIndex == selectedIndex) {
+			setSelectionToCurrentSong()
+		}
 	}
 
 	/**

@@ -17,6 +17,7 @@ open class CarInformation {
 	companion object {
 		@JvmStatic
 		protected val CACHED_CAPABILITY_KEYS = setOf(
+				"hmi.display-width",
 				"hmi.type",
 				"hmi.version",
 				"navi",
@@ -201,4 +202,11 @@ class CarCapabilitiesSummarized(val carInformation: CarInformation) {
 		get() = carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "true"
 	val isNaviNotSupported: Boolean
 		get() = carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
+
+	val mapWidescreenSupported: Boolean
+		get() = carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 0 >= 1000
+	val mapWidescreenUnsupported: Boolean
+		get() = carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 9999 < 1000
+	val mapWidescreenCrashes: Boolean
+		get() = carInformation.capabilities["hmi.version"]?.lowercase(Locale.ROOT)?.startsWith("entryevo_") == true
 }

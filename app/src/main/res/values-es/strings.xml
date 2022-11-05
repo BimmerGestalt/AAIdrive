@@ -71,13 +71,11 @@
     <string name="lbl_popupVersion">Las ventanass emergentes sólo funcionan con IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS no está soportado por tu coche</string>
     <string name="lbl_smsPermission">Otorgue el permiso de SMS para ver las imágenes entrantes de imágenes SMS en el automóvil. El texto siempre será visible.</string>
-    <string name="lbl_mapspage">Se puede mostrar una pantalla básica de Google Maps en el coche</string>
-    <string name="enable_google_maps">Activar Google Maps</string>
     <string name="lbl_widescreen_map">Mapa a pantalla completa</string>
     <string name="lbl_map_invert_zoom">Invertir la dirección del zoom</string>
     <string name="lbl_map_tilt">Inclinar mapa</string>
     <string name="lbl_map_traffic">Mostrar el tráfico</string>
-    <string name="lbl_gmap_buildings">Habilitar edificios 3D</string>
+    <string name="lbl_map_buildings">Habilitar edificios 3D</string>
     <string name="gmapStyleLabel">Estilo del mapa</string>
     <string name="lbl_musicpage">Las aplicaciones de música de tu coche pueden seleccionarse como fuentes multimedia en el coche</string>
     <string name="lbl_music_apps">Apps de música</string>
@@ -336,6 +334,11 @@
     <string name="MAP_ACTION_VIEWMAP">Ver Mapa Entero</string>
     <string name="MAP_ACTION_SEARCH">Buscar por Lugar</string>
     <string name="MAP_ACTION_CLEARNAV">Limpiar Navegación</string>
+    <string name="MAP_WIDESCREEN">Mapa a pantalla completa</string>
+    <string name="MAP_INVERT_ZOOM">Invertir la dirección del zoom</string>
+    <string name="MAP_TRAFFIC">Mostrar el tráfico</string>
+    <string name="MAP_BUILDINGS">Habilitar edificios 3D</string>
+    <string name="MAP_TILT">Inclinar mapa</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;No hay apps disponibles&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acciones</string>

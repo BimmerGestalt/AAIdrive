@@ -8,6 +8,15 @@ on:
         required: true
         default: "Improvements to stability and performance"
 
+env:
+  KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+  KEYSTORE_ALIAS: upload
+  KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
+  AndroidAutoIdrive_SpotifyApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_SPOTIFYAPIKEY }}
+  AndroidAutoIdrive_SentryDsn: ${{ secrets.ANDROIDAUTOIDRIVE_SENTRYDSN }}
+  AndroidAutoIdrive_MapboxAccessToken: ${{ secrets.ANDROIDAUTOIDRIVE_MAPBOXACCESSTOKEN }}
+  AndroidAutoIdrive_MapboxDownloadToken: ${{ secrets.ANDROIDAUTOIDRIVE_MAPBOXDOWNLOADTOKEN }}
+
 jobs:
   unitTest:
     runs-on: ubuntu-18.04
@@ -33,10 +42,10 @@ jobs:
         uses: ./.github/actions/download-externals-action
 
       - name: Build the project
-        run: ./gradlew compileNomapSentryPlayDebugSources
+        run: ./gradlew compileMapboxSentryPlayDebugSources
 
       - name: Run unit tests
-        run: ./gradlew testNomapSentryPlayDebugUnitTest
+        run: ./gradlew testMapboxSentryPlayDebugUnitTest
 
   package:
     needs: [ unitTest ]  # wait for the tests to succeed
@@ -67,13 +76,7 @@ jobs:
         run: "echo ${{ secrets.KEYSTORE_BASE64 }} | base64 -d > keystore.jks"
 
       - name: Build app bundle
-        run: ./gradlew bundleNomapSentryPlayRelease
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_ALIAS: upload
-          KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
-          AndroidAutoIdrive_SpotifyApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_SPOTIFYAPIKEY }}
-          AndroidAutoIdrive_SentryDsn: ${{ secrets.ANDROIDAUTOIDRIVE_SENTRYDSN }}
+        run: ./gradlew bundleMapboxSentryPlayRelease
 
       - name: Upload bundle
         uses: actions/upload-artifact@v2

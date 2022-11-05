@@ -67,13 +67,11 @@
     <string name="lbl_popupVersion">只有IDrive4支持弹出框</string>
     <string name="lbl_ttsUnsupported">您的车辆不支持TTS</string>
     <string name="lbl_smsPermission">允许在车上查看SMS图片，SMS文字默认可见.</string>
-    <string name="lbl_mapspage">车辆屏幕可显示Google地图</string>
-    <string name="enable_google_maps">激活Google地图</string>
     <string name="lbl_widescreen_map">宽屏地图</string>
     <string name="lbl_map_invert_zoom">反转缩放</string>
     <string name="lbl_map_tilt">倾斜地图</string>
     <string name="lbl_map_traffic">显示</string>
-    <string name="lbl_gmap_buildings">激活 3D 建筑</string>
+    <string name="lbl_map_buildings">激活 3D 建筑</string>
     <string name="gmapStyleLabel">地图风格</string>
     <string name="lbl_musicpage">您的手机音乐app可以选为车辆的音频源</string>
     <string name="lbl_music_apps">音乐 App</string>
@@ -313,6 +311,11 @@
     <string name="MAP_ACTION_VIEWMAP">查看完整地图</string>
     <string name="MAP_ACTION_SEARCH">搜索地址</string>
     <string name="MAP_ACTION_CLEARNAV">清除导航</string>
+    <string name="MAP_WIDESCREEN">宽屏地图</string>
+    <string name="MAP_INVERT_ZOOM">反转缩放</string>
+    <string name="MAP_TRAFFIC">显示</string>
+    <string name="MAP_BUILDINGS">激活 3D 建筑</string>
+    <string name="MAP_TILT">倾斜地图</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;无Apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">操作</string>

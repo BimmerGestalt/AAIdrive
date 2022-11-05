@@ -17,6 +17,10 @@ object TimeUtils {
 		val sunrise = sunsetCalculator.getCivilSunriseCalendarForDate(calendar)
 		val sunset = sunsetCalculator.getCivilSunsetCalendarForDate(calendar)
 
+		if (sunrise == null || sunset == null) {
+			return true     // default to Day if we don't know sunset
+		}
+
 		val afterSunrise = sunrise.get(Calendar.HOUR_OF_DAY) < calendar.get(Calendar.HOUR_OF_DAY) ||
 				(sunrise.get(Calendar.HOUR_OF_DAY) == calendar.get(Calendar.HOUR_OF_DAY) &&
 				sunrise.get(Calendar.MINUTE) < calendar.get(Calendar.MINUTE))

@@ -38,6 +38,7 @@ class MainService: Service() {
 		const val CONNECTED_PROBE_TIMEOUT: Long = 2 * 60 * 1000     // if Bluetooth is connected
 		const val DISCONNECTED_PROBE_TIMEOUT: Long = 20 * 1000      // if Bluetooth is not connected
 		const val STARTUP_DEBOUNCE = 1500
+		const val SERVICE_START_DEBOUNCE = 1500
 	}
 
 	val ONGOING_NOTIFICATION_ID = 20503
@@ -56,7 +57,8 @@ class MainService: Service() {
 	val carInformationUpdater by lazy { CarInformationUpdater(appSettings) }
 	val cdsObserver = CDSEventHandler { _, _ -> combinedCallback() }
 
-	var moduleServiceBindings = HashMap<String, ServiceConnection>()
+	val moduleServiceTimes = HashMap<String, Long>()
+	val moduleServiceBindings = HashMap<String, ServiceConnection>()
 	var addonsService: AddonsService? = null
 
 	// reschedule a combinedCallback to make sure enough time has passed
@@ -349,12 +351,24 @@ class MainService: Service() {
 		connectionIntent.putExtra("EXTRA_INSTANCE_ID", iDriveConnectionReceiver.instanceId)
 
 		synchronized(this) {
-			if (!moduleServiceBindings.containsKey(clsName)) {
-				val serviceConnection = ModuleServiceConnection(clsName)
-				bindService(connectionIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-				moduleServiceBindings[clsName] = serviceConnection
-			} else {
-				startService(connectionIntent)
+			try {
+				if (!moduleServiceBindings.containsKey(clsName)) {
+					val serviceConnection = ModuleServiceConnection(clsName)
+					bindService(connectionIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+					moduleServiceBindings[clsName] = serviceConnection
+					moduleServiceTimes[clsName] = System.currentTimeMillis()
+				} else {
+					// Android seems to get cranky if we start the same service too often
+					// usually happens with the CarInformationDiscoveryService
+					if ((moduleServiceTimes[clsName] ?: 0) + SERVICE_START_DEBOUNCE < System.currentTimeMillis() ) {
+						startService(connectionIntent)
+						moduleServiceTimes[clsName] = System.currentTimeMillis()
+					}
+				}
+			} catch (e: Exception) {
+				// try again later
+				Log.d(TAG, "Error while starting module service $clsName: $e")
+				Unit        // so we aren't using the Log.d return code in the try/if blocks
 			}
 		}
 	}
@@ -368,6 +382,7 @@ class MainService: Service() {
 		connectionIntent.putExtra("EXTRA_INSTANCE_ID", iDriveConnectionReceiver.instanceId)
 
 		synchronized(this) {
+			moduleServiceTimes.remove(clsName)
 			val connection = moduleServiceBindings.remove(clsName)
 			if (connection != null) {
 				unbindService(connection)
@@ -395,7 +410,7 @@ class MainService: Service() {
 		startModuleService(CarInformationDiscoveryService::class.java.name)
 	}
 	fun stopCarCapabilities() {
-		startModuleService(CarInformationDiscoveryService::class.java.name)
+		stopModuleService(CarInformationDiscoveryService::class.java.name)
 	}
 
 	fun startNavigationListener() {

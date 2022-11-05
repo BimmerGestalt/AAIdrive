@@ -86,15 +86,21 @@
     <string name="lbl_calendar_calendars_empty">Nie znaleziono kalendarzy</string>
     <string name="lbl_calendar_upcoming_events">Nadchodzące wydarzenia:</string>
     <string name="lbl_calendar_upcoming_events_empty">Brak nadchodzących wydarzeń w tym miesiącu</string>
-    <string name="lbl_mapspage">W samochodzie można wyświetlić podstawowy ekran Google Maps (proof of concept)</string>
-    <string name="enable_google_maps">Włącz Google Maps</string>
+    <string name="lbl_mapspage">AAIdrive zawiera niestandardową mapę, która jest renderowana wewnętrznie na telefonie i wyświetlana w samochodzie</string>
+    <string name="enable_custom_maps">Włącz niestandardową mapę</string>
+    <string name="lbl_map_bt_hint">Wydajność i jakość mapy podczas połączenia przez Bluetooth będą słabe</string>
     <string name="lbl_map_phone_gps">Użyj lokalizacji telefonu zamiast samochodu</string>
     <string name="lbl_widescreen_map">Mapy w trybie pełnoekranowym</string>
     <string name="lbl_map_invert_zoom">Odwróć kierunek powiększenia</string>
     <string name="lbl_map_tilt">Pochylenie mapy</string>
     <string name="lbl_map_traffic">Pokaż natężenie ruchu</string>
-    <string name="lbl_gmap_buildings">Włącz budynki 3D</string>
+    <string name="lbl_map_satellite">Pokaż obraz satelitarny</string>
+    <string name="lbl_map_buildings">Włącz budynki 3D</string>
     <string name="gmapStyleLabel">Styl map</string>
+    <string name="lbl_mapbox_custom_style">Użyj niestandardowego adresu Url w stylu mapu Mapbox</string>
+    <string name="lbl_map_quickdestinations">Ulubione miejsce:</string>
+    <string name="lbl_gmap_invalid_apikey">Klucz GMaps API jest nieprawidłowy i funkcja mapy zostaną ograniczone. Powiadom twórcę o tym błędzie i zaczekaj na aktualizację</string>
+    <string name="lbl_mapbox_invalid_token">Klucz Mapbox Token jest nieprawidłowy i funkcja mapy zostaną ograniczone. Powiadom twórcę o tym błędzie i zaczekaj na aktualizację</string>
     <string name="lbl_musicpage">Aplikacje muzyczną z telefonu można wybrać jako źródła multimediów w samochodzie</string>
     <string name="lbl_music_apps">Aplikacje muzyczne</string>
     <string name="musicAppIcon">Ikony aplikacji</string>
@@ -121,6 +127,8 @@
     <string name="musicAppNotes_spotify_backgroundDisabled">Nie można otworzyć Spotify. Upewnij się, że Spotify może uruchamiać się w tle</string>
     <string name="lbl_navigationpage_address">Wklej dokadny adres, aby uruchomić system nawigacji w samochodzie</string>
     <string name="lbl_navigationpage_intent">Po nawiązaniu połączenia z samochodem, system nawigacyjny pojawi się jako opcja</string>
+    <string name="lbl_navigation_car_status">Nawigacja samochodu:</string>
+    <string name="lbl_navigation_custom_status">Niestandardowa mapa:</string>
     <string name="lbl_navigationstatus_active">Obecnie prowadzę do </string>
     <string name="lbl_navigationstatus_inactive">Nawigacja nieaktywna</string>
     <string name="lbl_navigation_prefer_custom">Preferuj niestandardową nawigację</string>
@@ -364,7 +372,16 @@
     <string name="CALENDAR_NAVIGATE">Nawiguj</string>
     <string name="MAP_ACTION_VIEWMAP">Zobacz całą mapę</string>
     <string name="MAP_ACTION_SEARCH">Szukaj miejsca</string>
+    <string name="MAP_ACTION_RECALC_NAV">Przeliczam trasę</string>
     <string name="MAP_ACTION_CLEARNAV">Wyczyść nawigacja</string>
+    <string name="MAP_DESTINATIONS">Ulubione miejsca</string>
+    <string name="MAP_WIDESCREEN">Mapy w trybie pełnoekranowym</string>
+    <string name="MAP_INVERT_ZOOM">Odwróć kierunek powiększenia</string>
+    <string name="MAP_SATELLITE">Pokaż obraz satelitarny</string>
+    <string name="MAP_TRAFFIC">Pokaż natężenie ruchu</string>
+    <string name="MAP_BUILDINGS">Włącz budynki 3D</string>
+    <string name="MAP_TILT">Pochylenie mapy</string>
+    <string name="MAP_CUSTOM_STYLE">Użyj niestandardowego stylu mapy</string>
     <string name="MUSIC_APPLIST_TITLE">Aplikacje</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Brak aplikacji&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Akcje</string>
@@ -412,4 +429,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Kciuk w górę</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Kciuk w dół</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Kciuk w dół</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">Twoja Biblioteka</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Przeglądaj</string>
 </resources>

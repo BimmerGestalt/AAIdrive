@@ -2,10 +2,20 @@ name: build  # used as the badge name
 
 on:
   push:
-    branches: '*'
-    tags: '*'
+    branches: ['*']
+    tags: ['*']
   pull_request:
     types: [opened, synchronize]
+
+env:
+  KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+  KEYSTORE_ALIAS: upload
+  KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
+  AndroidAutoIdrive_SpotifyApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_SPOTIFYAPIKEY }}
+  AndroidAutoIdrive_SentryDsn: ${{ secrets.ANDROIDAUTOIDRIVE_SENTRYDSN }}
+  AndroidAutoIdrive_GmapsApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_GMAPSAPIKEY }}
+  AndroidAutoIdrive_MapboxAccessToken: ${{ secrets.ANDROIDAUTOIDRIVE_MAPBOXACCESSTOKEN }}
+  AndroidAutoIdrive_MapboxDownloadToken: ${{ secrets.ANDROIDAUTOIDRIVE_MAPBOXDOWNLOADTOKEN }}
 
 jobs:
   unitTest:
@@ -13,9 +23,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        map: [Nomap, Gmap]
+        map: [Nomap, Gmap, Mapbox]
         analytics: [Nonalytics, Sentry]
-
+        hasSecret:
+          - ${{ github.repository == 'BimmerGestalt/AAIdrive' && github.event_name == 'push' }}
+        exclude:  # don't run Mapbox tests if we are in a context that doesn't have the Mapbox secret
+          - hasSecret: false
+            map: Mapbox   # Mapbox requires secrets to build
     steps:
       - name: Checkout the project
         uses: actions/checkout@v2
@@ -42,7 +56,7 @@ jobs:
       - name: Build the project
         run: ./gradlew compile${{ matrix.map }}${{ matrix.analytics }}FullDebugKotlin --stacktrace
       - name: Run unit tests
-        run: ./gradlew test${{ matrix.map }}${{ matrix.analytics }}FullDebugUnitTestCoverage  --stacktrace
+        run: ./gradlew test${{ matrix.map }}${{ matrix.analytics }}FullDebugUnitTestCoverage
       - name: Upload CodeCov report
         if: github.event.pull_request.title != 'New Crowdin updates' && github.event.ref != 'refs/heads/l10n_main'   # don't upload coverage for Crowdin pushes
         uses: codecov/codecov-action@v1
@@ -56,12 +70,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        map: [Nomap, Gmap]
+        map: [Nomap, Gmap, Mapbox]
         hasSecret:
           - ${{ github.repository == 'BimmerGestalt/AAIdrive' && github.event_name == 'push' }}
         exclude:  # don't run Gmap tests if we are in a context that doesn't have the gmap secret
           - hasSecret: false
             map: Gmap
+          - hasSecret: false
+            map: Mapbox   # Mapbox requires secrets to build
     steps:
       - name: Checkout the project
         uses: actions/checkout@v2
@@ -91,8 +107,6 @@ jobs:
           script: adb install external/BMW_Connected_v3.1.1.3078_apkpure.com.apk
       - name: Run instrumented tests
         uses: reactivecircus/android-emulator-runner@v2
-        env:
-          AndroidAutoIdrive_GmapsApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_GMAPSAPIKEY }}
         with:
           force-avd-creation: false
           api-level: 28
@@ -100,7 +114,7 @@ jobs:
           target: google_apis
           script: ./gradlew connected${{ matrix.map }}NonalyticsFullDebugAndroidTestCoverage --stacktrace
       - name: Upload CodeCov report
-        if: matrix.map != 'Gmap' && github.event.pull_request.title != 'New Crowdin updates' && github.event.ref != 'refs/heads/l10n_main'   # don't upload Gmap test results, which don't run during PRs
+        if: matrix.map == 'Nomap' && github.event.pull_request.title != 'New Crowdin updates' && github.event.ref != 'refs/heads/l10n_main'   # don't upload Gmap test results, which don't run during PRs
         uses: codecov/codecov-action@v1
         with:
           file: app/build/reports/jacoco/jacoco.xml
@@ -110,8 +124,6 @@ jobs:
 # so we have to invoke it manually
       - name: Generate screenshots
         uses: reactivecircus/android-emulator-runner@v2
-        env:
-          AndroidAutoIdrive_GmapsApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_GMAPSAPIKEY }}
         with:
           force-avd-creation: false
           api-level: 28
@@ -153,14 +165,10 @@ jobs:
         uses: ./.github/actions/download-externals-action
       - name: Extract signing key
         run: "echo ${{ secrets.KEYSTORE_BASE64 }} | base64 -d > keystore.jks"
-      - name: Build production artifacts
+      - name: Build nomap artifacts
         run: ./gradlew assembleNomap --stacktrace
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_ALIAS: upload
-          KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
-          AndroidAutoIdrive_SpotifyApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_SPOTIFYAPIKEY }}
-          AndroidAutoIdrive_SentryDsn: ${{ secrets.ANDROIDAUTOIDRIVE_SENTRYDSN }}
+      - name: Build mapbox artifacts
+        run: ./gradlew assembleMapbox --stacktrace
 
       - name: Calculate APK hashes
         run: "find app/build/outputs/apk -name '*.apk' -execdir sha1sum {} \\;"
@@ -176,6 +184,10 @@ jobs:
             app/build/outputs/apk/nomapNonalyticsFull/release/*apk.sha1
             app/build/outputs/apk/nomapSentryFull/release/*apk
             app/build/outputs/apk/nomapSentryFull/release/*apk.sha1
+            app/build/outputs/apk/mapboxNonalyticsFull/release/*apk
+            app/build/outputs/apk/mapboxNonalyticsFull/release/*apk.sha1
+            app/build/outputs/apk/mapboxSentryFull/release/*apk
+            app/build/outputs/apk/mapboxSentryFull/release/*apk.sha1
 
   upload_s3:
     if: github.event_name == 'push'
@@ -193,6 +205,8 @@ jobs:
           mkdir dist
           cp nomapNonalyticsFull/release/*apk dist/androidautoidrive-latest-${BRANCH_NAME}-nomap-nonalytics-release.apk
           cp nomapSentryFull/release/*apk dist/androidautoidrive-latest-${BRANCH_NAME}-nomap-sentry-release.apk
+          cp mapboxNonalyticsFull/release/*apk dist/androidautoidrive-latest-${BRANCH_NAME}-mapbox-nonalytics-release.apk
+          cp mapboxSentryFull/release/*apk dist/androidautoidrive-latest-${BRANCH_NAME}-mapbox-sentry-release.apk
       - name: Upload to S3
         uses: shallwefootball/s3-upload-action@v1.1.3
         with:

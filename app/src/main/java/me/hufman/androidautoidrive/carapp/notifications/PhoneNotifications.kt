@@ -167,10 +167,10 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	 * */
 	fun checkRecreate() {
 		val interval = 500
-		val waitDelay = 10000
+		val waitDelay = 20000
 		if (focusTriggerController.hasFocusedState && focusedStateTracker.getFocused() == null) {
 			for (i in 0..waitDelay step interval) {
-				Thread.sleep(500)
+				Thread.sleep(interval.toLong())
 				if (focusedStateTracker.getFocused() != null) {
 					return
 				}

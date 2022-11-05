@@ -93,15 +93,23 @@
     <string name="lbl_calendar_upcoming_events">Upcoming events:</string>
     <string name="lbl_calendar_upcoming_events_empty">No upcoming events found this month</string>
 
-    <string name="lbl_mapspage">A basic Google Maps screen can be displayed in the car</string>
-    <string name="enable_google_maps">Enable Google Maps</string>
+    <string name="lbl_mapspage">AAIdrive includes a custom map that is rendered internally on the phone and displayed in the car</string>
+    <string name="enable_custom_maps">Enable Custom Map</string>
+    <string name="lbl_map_bt_hint">Map performance and quality when connected over Bluetooth will be poor</string>
     <string name="lbl_map_phone_gps">Use Phone GPS instead of Car GPS</string>
     <string name="lbl_widescreen_map">Widescreen Map</string>
+    <string name="lbl_map_widescreen_unsupported">This setting is not supported by your car, which will always run in fullscreen mode</string>
+    <string name="lbl_map_widescreen_crashes">Widescreen mode causes the app connection to be unstable on some cars</string>
     <string name="lbl_map_invert_zoom">Invert zoom direction</string>
     <string name="lbl_map_tilt">Tilt map</string>
     <string name="lbl_map_traffic">Show traffic</string>
-    <string name="lbl_gmap_buildings">Enable 3D buildings</string>
+    <string name="lbl_map_satellite">Show satellite imagery</string>
+    <string name="lbl_map_buildings">Enable 3D buildings</string>
     <string name="gmapStyleLabel">Map Style</string>
+    <string name="lbl_mapbox_custom_style">Use a custom Mapbox style url</string>
+    <string name="lbl_map_quickdestinations">Favorite nav destinations:</string>
+    <string name="lbl_gmap_invalid_apikey">The GMaps API Key is invalid and map functionality will be reduced. Please notify the developer of this bug and watch for an update</string>
+    <string name="lbl_mapbox_invalid_token">The Mapbox Token is invalid and map functionality will be reduced. Please notify the developer of this bug and watch for an update</string>
 
     <string name="lbl_musicpage">Your phone\'s music apps are selectable as media sources in the car</string>
     <string name="lbl_music_apps">Music Apps</string>
@@ -130,6 +138,8 @@
 
     <string name="lbl_navigationpage_address">Paste in an address to start the car\'s navigation system from your phone</string>
     <string name="lbl_navigationpage_intent">While connected, your car\'s navigation system will show up as an option when other apps\' Navigation buttons open an app chooser</string>
+    <string name="lbl_navigation_car_status">Car Navigation:</string>
+    <string name="lbl_navigation_custom_status">Custom Map:</string>
     <string name="lbl_navigationstatus_active">Currently navigating to</string>
     <string name="lbl_navigationstatus_inactive">Not currently navigating</string>
     <string name="lbl_navigation_prefer_custom">Prefer custom map navigation</string>
@@ -399,7 +409,16 @@
 
     <string name="MAP_ACTION_VIEWMAP">View Full Map</string>
     <string name="MAP_ACTION_SEARCH">Search for Place</string>
+    <string name="MAP_ACTION_RECALC_NAV">Recalculate Navigation</string>
     <string name="MAP_ACTION_CLEARNAV">Clear Navigation</string>
+    <string name="MAP_DESTINATIONS">Favorite destinations</string>
+    <string name="MAP_WIDESCREEN">Widescreen map</string>
+    <string name="MAP_INVERT_ZOOM">Invert zoom direction</string>
+    <string name="MAP_SATELLITE">Show satellite imagery</string>
+    <string name="MAP_TRAFFIC">Show traffic</string>
+    <string name="MAP_BUILDINGS">Show 3D buildings</string>
+    <string name="MAP_TILT">Tilt map</string>
+    <string name="MAP_CUSTOM_STYLE">Use custom map style</string>
 
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;No Apps&gt;</string>
@@ -446,4 +465,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Thumb Down</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Thumbed Down</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">Your Library</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Browse</string>
 </resources>

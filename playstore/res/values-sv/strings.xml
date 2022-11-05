@@ -11,12 +11,12 @@
     <string name="playstore_desc_features_carinfo">Läs olika diagnostiska uppgifter och statistik från din bil</string>
     <string name="playstore_desc_features_addons_mirroring">Utöka funktionerna genom valfria tillägg (t. ex. skärmspegling)</string>
     <string name="playstore_desc_features_custommap_soon">Anpassad kartimplementation kommer snart</string>
+    <string name="playstore_desc_features_custommap">Anpassad karta och navigering baserat på Mapbox</string>
     <string name="playstore_desc_nativeapps_protocol">Genom att använda BMW Apps-protokollet, precis som den gamla Spotify-appen, ändrar denna app inte din bil på något sätt, och alla utökade funktioner tillhandahålls endast när din telefon är ansluten.</string>
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps kräver att appen MyBMW eller MINI för din bil är installerad och att den med framgång kan aktivera din IDrive5+ bils kryssruta, eller att din IDrive4 bil har ConnectedDrive Connection Assistant alternativet.</string>
     <string name="playstore_desc_depends_bmw_subscription">Detta kräver vanligtvis att du har ett aktivt BMW ConnectedDrive-abonnemang, vilket vanligtvis ingår i några år efter att du köpt din nya bil.</string>
-    <string name="playstore_release_desc">En snabbrelease med kalenderintegration och några förbättringar i bakgrundsservice</string>
-    <string name="playstore_release_point1">Tar tillbaka BMW/Mini kalenderfunktion, inklusive automatiskt navigering till kommande möten</string>
-    <string name="playstore_release_point2">Tar bort ANR kraschar från Förgrunds Service implementering</string>
-    <string name="playstore_release_point3">Förbättrar appens prestanda vid cachelagring av bildata och när du upptäcker musikappar</string>
-    <string name="playstore_release_point4">Fixar UX buggar när du använder knappen Media genväg och aktiverar OK-knappen när du svarar på aviseringar</string>
+    <string name="playstore_release_desc">Slutligen har kartfunktionen som alla har bett om!</string>
+    <string name="playstore_release_point1">Lägger till en anpassad karta, återges på telefonen och visas i bilen</string>
+    <string name="playstore_release_point2">Använder Mapbox för karta, platssökning och ruttnavigering</string>
+    <string name="playstore_release_point3">Lägger till intressepunkter för navigeringsfliken</string>
 </resources>

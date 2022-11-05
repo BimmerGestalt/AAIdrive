@@ -31,10 +31,10 @@ class FullImageViewTest {
 	fun testInitialize() {
 		val appSettings = MockAppSettings()
 		appSettings[AppSettings.KEYS.MAP_WIDESCREEN] = "false"
-		val fullImageConfig = MapAppMode(GenericRHMIDimensions(1280, 480), appSettings, MusicAppMode.TRANSPORT_PORTS.USB)
+		val fullImageConfig = MapAppMode.build(GenericRHMIDimensions(1280, 480), appSettings, CDSDataProvider(), MusicAppMode.TRANSPORT_PORTS.USB)
 		val fullImageView = FullImageView(this.fullImageState, "Map", fullImageConfig, mock(), mock())
 		fullImageView.initWidgets()
-		assertEquals(703, fullImageView.imageComponent.properties[RHMIProperty.PropertyId.WIDTH.id]?.value)
+		assertEquals(743, fullImageView.imageComponent.properties[RHMIProperty.PropertyId.WIDTH.id]?.value)
 		assertEquals(480, fullImageView.imageComponent.properties[RHMIProperty.PropertyId.HEIGHT.id]?.value)
 
 		appSettings[AppSettings.KEYS.MAP_WIDESCREEN] = "true"
@@ -47,7 +47,7 @@ class FullImageViewTest {
 	fun testInteraction() {
 		val appSettings = MockAppSettings()
 		appSettings[AppSettings.KEYS.MAP_INVERT_SCROLL] = "false"
-		val fullImageConfig = MapAppMode(GenericRHMIDimensions(1280, 480), appSettings, MusicAppMode.TRANSPORT_PORTS.USB)
+		val fullImageConfig = MapAppMode.build(GenericRHMIDimensions(1280, 480), appSettings, CDSDataProvider(), MusicAppMode.TRANSPORT_PORTS.USB)
 		val mockInteraction = mock<FullImageInteraction> {
 			on { getClickState() } doReturn RHMIState.PlainState(carApp, 99)
 		}

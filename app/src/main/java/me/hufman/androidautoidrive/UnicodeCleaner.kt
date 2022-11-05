@@ -80,7 +80,7 @@ object UnicodeCleaner {
 	// referenced from https://demos.joypixels.com/latest/ascii-smileys.html
 	// with supplement from https://en.wikipedia.org/wiki/List_of_emoticons
 	val EMOTICONS = mapOf(
-			"joy" to ":')",
+			"joy" to "XD",
 			"smiley" to ":D",
 			"slight_smile" to ":)",
 			"sweat_smile" to "':D",

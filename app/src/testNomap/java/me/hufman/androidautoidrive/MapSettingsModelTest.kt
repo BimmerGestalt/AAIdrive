@@ -1,9 +1,8 @@
-package me.hufman.androidautoidrive.phoneui
+package me.hufman.androidautoidrive
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.nhaarman.mockito_kotlin.mock
-import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.phoneui.viewmodels.MapSettingsModel
 import org.junit.Assert
 import org.junit.Rule
@@ -29,11 +28,7 @@ class MapSettingsModelTest {
 
 		AppSettings.loadDefaultSettings()
 		val bindings = mapOf(
-				model.mapEnabled to AppSettings.KEYS.ENABLED_GMAPS,
-				model.mapWidescreen to AppSettings.KEYS.MAP_WIDESCREEN,
-				model.mapInvertZoom to AppSettings.KEYS.MAP_INVERT_SCROLL,
-				model.mapTraffic to AppSettings.KEYS.MAP_TRAFFIC,
-				model.gmapBuildings to AppSettings.KEYS.GMAPS_BUILDINGS
+				model.mapEnabled to AppSettings.KEYS.ENABLED_MAPS
 		)
 		bindings.forEach { (viewModel, setting) ->
 			AppSettings.tempSetSetting(setting, "true")
@@ -41,7 +36,5 @@ class MapSettingsModelTest {
 			AppSettings.tempSetSetting(setting, "false")
 			Assert.assertEquals("$setting is false", false, viewModel.value)
 		}
-		AppSettings.tempSetSetting(AppSettings.KEYS.GMAPS_STYLE, "night1")
-		Assert.assertEquals("night1", model.mapStyle.value)
 	}
 }
