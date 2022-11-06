@@ -16,6 +16,7 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
+import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.notifications.views.*
@@ -194,7 +195,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1)
 		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notifications", -1, -1)
 
-		return if (carConnection is RemoteBMWRemotingServer) {
+		return if (BuildConfig.ASYNC_RHMI_APPLICATION && carConnection is RemoteBMWRemotingServer) {
 			RHMIApplicationIdempotent(RHMIApplicationEtchBackground(carConnection, rhmiHandle))
 		} else {
 			RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle))

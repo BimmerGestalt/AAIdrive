@@ -12,6 +12,7 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
+import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.music.views.*
@@ -164,7 +165,7 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.music", -1, -1)
 
 		// return a convenient adapter
-		return if (carConnection is RemoteBMWRemotingServer) {
+		return if (BuildConfig.ASYNC_RHMI_APPLICATION && carConnection is RemoteBMWRemotingServer) {
 			RHMIApplicationIdempotent(RHMIApplicationEtchBackground(carConnection, rhmiHandle))
 		} else {
 			RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle))
