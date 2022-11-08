@@ -180,6 +180,8 @@
     <string name="txt_setup_background_permission">Această aplicație poate rula în fundal</string>
     <string name="txt_setup_background_impermission">Această aplicație nu poate rula în fundal</string>
     <string name="txt_setup_background_hint">Conexiunile automate funcționează mai bine dacă activitatea de fundal este permisă</string>
+    <string name="txt_setup_bluetooth_permission">Aplicația se poate activa automat atunci când Bluetooth este conectat</string>
+    <string name="txt_setup_bluetooth_impermission">Este posibil ca aplicația să nu se activeze automat atunci când se conectează Bluetooth</string>
     <string name="txt_setup_bmw_ready">Aplicația este gata să se conecteze la un BMW</string>
     <string name="txt_setup_mini_ready">Aplicația este gata să se conecteze la un Mini</string>
     <string name="txt_setup_bmw_missing">Nepregătit pentru conectare la BMW:</string>
