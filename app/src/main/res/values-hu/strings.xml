@@ -163,6 +163,8 @@
     <string name="txt_setup_background_permission">Az alkalmazás futhat a háttérben</string>
     <string name="txt_setup_background_impermission">Az alkalmazás nem futhat a háttérben</string>
     <string name="txt_setup_background_hint">Automatikus kapcsolódás jobban működik, ha a háttérben való működés engedélyezve van</string>
+    <string name="txt_setup_bluetooth_permission">Az alkalmazás automatikusan felébred, ha a bluetooth kapcsolódik</string>
+    <string name="txt_setup_bluetooth_impermission">Az alkalmazás lehet, hogy nem ébred fel automatikusan, ha a bluetooth kapcsolódik</string>
     <string name="txt_setup_bmw_ready">Az alkalmazás készenáll BMW-hez való kapcsolódásra</string>
     <string name="txt_setup_mini_ready">Az alkalmazás készenáll Mini-hez való kapcsolódásra</string>
     <string name="txt_setup_bmw_missing">Az alkalmazás nem áll készen BMW-hez való kapcsolódásra:</string>
