@@ -1,6 +1,10 @@
 package me.hufman.androidautoidrive.music.controllers
 
 import android.graphics.Bitmap
+import android.util.Base64
+import com.adamratzman.spotify.models.PlaylistUri
+import com.adamratzman.spotify.models.SpotifyUri
+import com.google.gson.Gson
 import com.nhaarman.mockito_kotlin.*
 import com.spotify.android.appremote.api.*
 import com.spotify.protocol.client.CallResult
@@ -10,12 +14,15 @@ import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
-import me.hufman.androidautoidrive.music.CustomAction
-import me.hufman.androidautoidrive.music.MusicAction
-import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.androidautoidrive.music.RepeatMode
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.carapp.L
+import me.hufman.androidautoidrive.MockAppSettings
+import me.hufman.androidautoidrive.MutableAppSettings
+import me.hufman.androidautoidrive.music.*
+import me.hufman.androidautoidrive.music.spotify.TemporaryPlaylistState
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
+import me.hufman.androidautoidrive.utils.Utils
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -85,13 +92,15 @@ class SpotifyMusicAppControllerTest {
 	}
 
 	lateinit var controller: SpotifyAppController
+	lateinit var appSettings: MutableAppSettings
 	private val testDispatcher = TestCoroutineDispatcher()
+	private val gson: Gson = Gson()
 
 	@Before
 	fun setup() {
-		controller = SpotifyAppController(mock(), remote, webApi)
+		appSettings = MockAppSettings()
+		controller = SpotifyAppController(mock(), remote, webApi, appSettings, false)
 		controller.defaultDispatcher = testDispatcher
-
 	}
 
 	@After
@@ -575,20 +584,20 @@ class SpotifyMusicAppControllerTest {
 
 	@Test
 	fun testQueue() {
-		val queueTitle = "title"
-		val queueSubtitle = "subtitle"
+		val playerContext = PlayerContext("playlistUri", "title", "subtitle", "playlist")
 		val queueImageUri = ImageUri("imageUri")
 		val queueCoverArtBitmap: Bitmap = mock()
 
 		// load a queue
-		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "playlist"))
-		verify(webApi).clearGetLikedSongsAttemptedFlag()
-		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, queueTitle, queueSubtitle, false, true), 200, 0)
+		playlistCallback.lastValue.onEvent(playerContext)
+		verify(webApi).clearPendingQueueMetadataCreate()
+		verify(contentApi).getChildrenOfItem(ListItem(playerContext.uri, playerContext.uri, null, playerContext.title, playerContext.subtitle, false, true), 200, 0)
 		contentCallback.lastValue.onResult(ListItems(200, 0, 2, arrayOf(
 				ListItem("id", "uri", null, "Title", "Subtitle", true, false)
 		)))
+
 		// it should request again
-		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, queueTitle, queueSubtitle, false, true), 200, 1)
+		verify(contentApi).getChildrenOfItem(ListItem(playerContext.uri, playerContext.uri, null, playerContext.title, playerContext.subtitle, false, true), 200, 1)
 		contentCallback.lastValue.onResult(ListItems(200, 1, 2, arrayOf(
 				ListItem("id2", "uri2", null, "Title2", "Subtitle", true, false)
 		)))
@@ -597,7 +606,7 @@ class SpotifyMusicAppControllerTest {
 		val recentlyPlayedUri = "com.spotify.recently-played"
 		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
 		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
-				ListItem("queueId", "queueUri", queueImageUri, queueTitle, queueSubtitle, false, true)
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
 		)))
 
 		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
@@ -605,8 +614,8 @@ class SpotifyMusicAppControllerTest {
 
 		val queue = controller.getQueue()
 		assertNotNull(queue)
-		assertEquals(queueTitle, queue!!.title)
-		assertEquals(queueSubtitle, queue.subtitle)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
 		assertEquals(queueCoverArtBitmap, queue.coverArt)
 		assertNotNull(queue.songs)
 
@@ -619,32 +628,35 @@ class SpotifyMusicAppControllerTest {
 		// fail to skip
 		controller.playQueue(MusicMetadata(queueId = 345))
 		verify(playerApi, never()).skipToIndex(any(), any())
+
 		// try to skip to it
 		controller.playQueue(songs[0])
-		verify(playerApi).skipToIndex("playlisturi", 0)
+		verify(playerApi).skipToIndex(playerContext.uri, 0)
 	}
 
 	@Test
-	fun testQueue_LikedSongsPlaylist_WebAPILoaded() = runBlockingTest {
-		val queueTitle = "Liked Songs"
-		val queueSubtitle = null
+	fun testQueue_Playlist_WebAPILoaded() = runBlockingTest {
+		val playerContext = PlayerContext("playlistUri", "title", "subtitle", "playlist")
 		val queueImageUri = ImageUri("imageUri")
 		val queueCoverArtBitmap: Bitmap = mock()
 
-		whenever(webApi.getLikedSongs(controller)) doAnswer {
-			listOf(
-					SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
-					SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
-			)
-		}
+		val playlistSongs = listOf(
+				SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
+				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
+		)
 
-		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "your_library_tracks"))
+		whenever(webApi.getPlaylistSongs(controller, playerContext.uri)).thenReturn(playlistSongs)
+
+		// load a queue
+		playlistCallback.lastValue.onEvent(playerContext)
+		verify(webApi).clearPendingQueueMetadataCreate()
+		verify(contentApi, never()).getChildrenOfItem(ListItem(playerContext.uri, playerContext.uri, null, playerContext.title, playerContext.subtitle, false, true), 200, 0)
 
 		// it should get the QueueMetadata information
 		val recentlyPlayedUri = "com.spotify.recently-played"
 		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
 		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
-				ListItem("queueId", "queueUri", queueImageUri, queueTitle, queueSubtitle, false, true)
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
 		)))
 
 		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
@@ -652,8 +664,282 @@ class SpotifyMusicAppControllerTest {
 
 		val queue = controller.getQueue()
 		assertNotNull(queue)
-		assertEquals(queueTitle, queue!!.title)
-		assertEquals(queueSubtitle, queue.subtitle)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_Playlist_WebAPINotLoaded() = runBlockingTest {
+		val playerContext = PlayerContext("playlistUri", "title", "subtitle", "playlist")
+		val queueImageUri = ImageUri("imageUri")
+		val queueCoverArtBitmap: Bitmap = mock()
+
+		whenever(webApi.getPlaylistSongs(controller, playerContext.uri)).thenReturn(emptyList())
+
+		// load a queue
+		playlistCallback.lastValue.onEvent(playerContext)
+		verify(webApi).clearPendingQueueMetadataCreate()
+		verify(webApi).getPlaylistSongs(controller, playerContext.uri)
+		verify(contentApi).getChildrenOfItem(ListItem(playerContext.uri, playerContext.uri, null, playerContext.title, playerContext.subtitle, false, true), 200, 0)
+		contentCallback.lastValue.onResult(ListItems(200, 0, 2, arrayOf(
+				ListItem("mediaId1", "mediaId1", null, "Title 1", "Subtitle 1", true, false),
+				ListItem("mediaId2", "mediaId2", null, "Title 2", "Subtitle 2", true, false)
+		)))
+
+		// it should get the QueueMetadata information
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_LikedSongsPlaylist_WebAPILoaded_NoCachedContent_NoExistingPlaylist() = runBlockingTest {
+		val playerContext = PlayerContext("uri", "Liked Songs", null, "your_library_tracks")
+		val queueImageUriStr = "imageUri"
+		val queueImageUri = ImageUri(queueImageUriStr)
+		val queueCoverArtBitmap: Bitmap = mock()
+		val queueCoverArtBase64 = Base64.encodeToString(Utils.compressBitmapJpg(queueCoverArtBitmap, 85), Base64.NO_WRAP)
+
+		val playlistUriStr = "playlistUri"
+		val playlistId = "playlistId"
+		val playlistUri: PlaylistUri = mock()
+		whenever(playlistUri.id) doAnswer { playlistId }
+		whenever(playlistUri.uri) doAnswer { playlistUriStr }
+
+		val likedSongs = listOf(
+				SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
+				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
+		)
+		whenever(webApi.getLikedSongs(controller)) doAnswer { likedSongs }
+		whenever(webApi.getPlaylistUri(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)) doAnswer { null }
+		whenever(webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)) doAnswer { playlistUri }
+		whenever(webApi.addSongsToPlaylist(playlistId, likedSongs)) doAnswer { }
+		whenever(webApi.setPlaylistImage(playlistId, queueCoverArtBase64)) doAnswer { }
+
+		playlistCallback.lastValue.onEvent(playerContext)
+
+		verify(webApi).addSongsToPlaylist(playlistId, likedSongs)
+
+		assertEquals(controller.currentPlayerContext.uri, playlistUriStr)
+
+		// it should get the QueueMetadata information
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val expectedQueueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, likedSongs, queueCoverArtBitmap, playlistUriStr)
+		assertEquals(controller.queueMetadata, expectedQueueMetadata)
+
+		verify(webApi).setPlaylistImage(playlistId, queueCoverArtBase64)
+
+		val likedSongsPlaylistState = TemporaryPlaylistState(likedSongs.hashCode().toString(), playlistUriStr, playlistId, playerContext.title, playerContext.uri)
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsPlaylistState))
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_LikedSongsPlaylist_WebAPILoaded_NoCachedContent_ExistingPlaylist() = runBlockingTest {
+		val playerContext = PlayerContext("uri", "Liked Songs", null, "your_library_tracks")
+		val queueImageUriStr = "imageUri"
+		val queueImageUri = ImageUri(queueImageUriStr)
+		val queueCoverArtBitmap: Bitmap = mock()
+		val queueCoverArtBase64 = Base64.encodeToString(Utils.compressBitmapJpg(queueCoverArtBitmap, 85), Base64.NO_WRAP)
+
+		val playlistUriStr = "playlistUri"
+		val playlistId = "playlistId"
+		val playlistUri: SpotifyUri = mock()
+		whenever(playlistUri.id) doAnswer { playlistId }
+		whenever(playlistUri.uri) doAnswer { playlistUriStr }
+
+		val likedSongs = listOf(
+				SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
+				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
+		)
+		whenever(webApi.getLikedSongs(controller)) doAnswer { likedSongs }
+		whenever(webApi.getPlaylistUri(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)) doAnswer { playlistUri }
+		whenever(webApi.setPlaylistImage(playlistId, queueCoverArtBase64)) doAnswer { }
+
+		verify(webApi, never()).createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME)
+		verify(webApi, never()).addSongsToPlaylist(playlistId, likedSongs)
+
+		playlistCallback.lastValue.onEvent(playerContext)
+
+		assertEquals(controller.currentPlayerContext.uri, playlistUriStr)
+
+		// it should get the QueueMetadata information
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val expectedQueueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, likedSongs, queueCoverArtBitmap, playlistUriStr)
+		assertEquals(controller.queueMetadata, expectedQueueMetadata)
+
+		verify(webApi).setPlaylistImage(playlistId, queueCoverArtBase64)
+
+		val likedSongsPlaylistState = TemporaryPlaylistState(likedSongs.hashCode().toString(), playlistUriStr, playlistId, playerContext.title, playerContext.uri)
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsPlaylistState))
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_LikedSongsPlaylist_WebAPILoaded_NoCachedContent_PlaylistCreationFailure() = runBlockingTest {
+		val playerContext = PlayerContext("playlistUri", "Liked Songs", null, "your_library_tracks")
+		val queueImageUri = ImageUri("imageUri")
+		val queueCoverArtBitmap: Bitmap = mock()
+
+		val likedSongs = listOf(
+				SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
+				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
+		)
+		whenever(webApi.getLikedSongs(controller)) doAnswer { likedSongs }
+		whenever(webApi.createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)) doAnswer { null }
+
+		playlistCallback.lastValue.onEvent(playerContext)
+
+		verify(webApi, never()).addSongsToPlaylist(any(), any())
+
+		verify(contentApi).getChildrenOfItem(ListItem(playerContext.uri, playerContext.uri, null, playerContext.title, playerContext.subtitle, false, true), 200, 0)
+		contentCallback.lastValue.onResult(ListItems(200, 0, 2, arrayOf(
+				ListItem("mediaId1", "mediaId1", null, "Title 1", "Subtitle 1", true, false),
+				ListItem("mediaId2", "mediaId2", null, "Title 2", "Subtitle 2", true, false)
+		)))
+
+		// it should get the QueueMetadata information when called through the Spotify App Remote
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_LikedSongsPlaylist_WebAPILoaded_CachedContent_PlaylistDataInvalid() = runBlockingTest {
+		val playerContext = PlayerContext("playlistUri", "Liked Songs", null, "your_library_tracks")
+		val queueImageUriStr = "imageUri"
+		val queueImageUri = ImageUri(queueImageUriStr)
+		val queueCoverArtBitmap: Bitmap = mock()
+
+		val playlistId = "playlistId"
+
+		val likedSongs = listOf(
+				SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
+				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
+		)
+		whenever(webApi.getLikedSongs(controller)) doAnswer { likedSongs }
+		whenever(webApi.replacePlaylistSongs(playlistId, likedSongs)) doAnswer { }
+
+		val likedSongsState = TemporaryPlaylistState("invalidHashCode", playerContext.uri, playlistId, playerContext.title, playerContext.uri)
+		appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE] = gson.toJson(likedSongsState)
+
+		playlistCallback.lastValue.onEvent(playerContext)
+
+		verify(webApi, never()).addSongsToPlaylist(playlistId, likedSongs)
+		verify(webApi, never()).createPlaylist(SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)
+		verify(webApi).replacePlaylistSongs(playlistId, likedSongs)
+
+		assertEquals(controller.currentPlayerContext.uri, playerContext.uri)
+
+		// it should get the QueueMetadata information
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val expectedQueueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, likedSongs, queueCoverArtBitmap, playerContext.uri)
+		assertEquals(controller.queueMetadata, expectedQueueMetadata)
+
+		val likedSongsPlaylistState = TemporaryPlaylistState(likedSongs.hashCode().toString(), playerContext.uri, playlistId, playerContext.title, playerContext.uri)
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_LIKED_SONGS_PLAYLIST_STATE], gson.toJson(likedSongsPlaylistState))
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
 		assertEquals(queueCoverArtBitmap, queue.coverArt)
 		assertNotNull(queue.songs)
 
@@ -667,15 +953,16 @@ class SpotifyMusicAppControllerTest {
 
 	@Test
 	fun testQueue_LikedSongsPlaylist_WebAPINotLoaded() = runBlockingTest {
-		val queueTitle = "Liked Songs"
-		val queueSubtitle = null
+		val playerContext = PlayerContext("playlistUri", "Liked Songs", null, "your_library_tracks")
 		val queueImageUri = ImageUri("imageUri")
 		val queueCoverArtBitmap: Bitmap = mock()
 
 		whenever(webApi.getLikedSongs(controller)) doAnswer { emptyList() }
 
-		playlistCallback.lastValue.onEvent(PlayerContext("playlisturi", queueTitle, queueSubtitle, "your_library_tracks"))
-		verify(contentApi).getChildrenOfItem(ListItem("playlisturi", "playlisturi", null, queueTitle, queueSubtitle, false, true), 200, 0)
+		playlistCallback.lastValue.onEvent(playerContext)
+
+		verify(webApi, never()).getPlaylistSongs(controller, playerContext.uri)
+		verify(contentApi).getChildrenOfItem(ListItem(playerContext.uri, playerContext.uri, null, playerContext.title, playerContext.subtitle, false, true), 200, 0)
 		contentCallback.lastValue.onResult(ListItems(200, 0, 2, arrayOf(
 				ListItem("mediaId1", "mediaId1", null, "Title 1", "Subtitle 1", true, false),
 				ListItem("mediaId2", "mediaId2", null, "Title 2", "Subtitle 2", true, false)
@@ -685,7 +972,7 @@ class SpotifyMusicAppControllerTest {
 		val recentlyPlayedUri = "com.spotify.recently-played"
 		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
 		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
-				ListItem("queueId", "queueUri", queueImageUri, queueTitle, queueSubtitle, false, true)
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
 		)))
 
 		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
@@ -693,8 +980,8 @@ class SpotifyMusicAppControllerTest {
 
 		val queue = controller.getQueue()
 		assertNotNull(queue)
-		assertEquals(queueTitle, queue!!.title)
-		assertEquals(queueSubtitle, queue.subtitle)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
 		assertEquals(queueCoverArtBitmap, queue.coverArt)
 		assertNotNull(queue.songs)
 
@@ -704,6 +991,503 @@ class SpotifyMusicAppControllerTest {
 		assertEquals("Title 1", songs[0].title)
 		assertEquals("mediaId2", songs[1].mediaId)
 		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_ArtistPlaylist_WebAPILoaded_NoCachedContent_NoExistingPlaylist() = runBlockingTest {
+		val playerContext = PlayerContext("artistUri", "Artist", null, "artist")
+		val queueImageUriStr = "imageUri"
+		val queueImageUri = ImageUri(queueImageUriStr)
+		val queueCoverArtBitmap: Bitmap = mock()
+		val queueCoverArtBase64 = Base64.encodeToString(Utils.compressBitmapJpg(queueCoverArtBitmap, 85), Base64.NO_WRAP)
+
+		val playlistUriStr = "playlistUri"
+		val playlistId = "playlistId"
+		val playlistUri: PlaylistUri = mock()
+		whenever(playlistUri.id) doAnswer { playlistId }
+		whenever(playlistUri.uri) doAnswer { playlistUriStr }
+
+		val artistSongs = listOf(
+				SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
+				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
+		)
+		whenever(webApi.getArtistTopSongs(controller, playerContext.uri)) doAnswer { artistSongs }
+		whenever(webApi.getPlaylistUri(SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME)) doAnswer { null }
+		whenever(webApi.createPlaylist(SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)) doAnswer { playlistUri }
+		whenever(webApi.addSongsToPlaylist(playlistId, artistSongs)) doAnswer { }
+		whenever(webApi.setPlaylistImage(playlistId, queueCoverArtBase64)) doAnswer { }
+
+		playlistCallback.lastValue.onEvent(playerContext)
+
+		verify(webApi).addSongsToPlaylist(playlistId, artistSongs)
+
+		assertEquals(controller.currentPlayerContext.uri, playlistUriStr)
+
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val expectedQueueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, artistSongs, queueCoverArtBitmap, playlistUriStr)
+		assertEquals(controller.queueMetadata, expectedQueueMetadata)
+
+		verify(webApi).setPlaylistImage(playlistId, queueCoverArtBase64)
+
+		val artistSongsPlaylistState = TemporaryPlaylistState(artistSongs.hashCode().toString(), playlistUriStr, playlistId, playerContext.title, playerContext.uri)
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_ARTIST_SONGS_PLAYLIST_STATE], gson.toJson(artistSongsPlaylistState))
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_ArtistPlaylist_WebAPILoaded_ArtistTitleBlank_NoCachedContent_NoExistingPlaylist() = runBlockingTest {
+		val artistTitle = "Artist"
+		val playerContext = PlayerContext("artistUri", "", null, "artist")
+		val queueImageUriStr = "imageUri"
+		val queueImageUri = ImageUri(queueImageUriStr)
+		val queueCoverArtBitmap: Bitmap = mock()
+		val queueCoverArtBase64 = Base64.encodeToString(Utils.compressBitmapJpg(queueCoverArtBitmap, 85), Base64.NO_WRAP)
+
+		val playlistUriStr = "playlistUri"
+		val playlistId = "playlistId"
+		val playlistUri: PlaylistUri = mock()
+		whenever(playlistUri.id) doAnswer { playlistId }
+		whenever(playlistUri.uri) doAnswer { playlistUriStr }
+
+		val artistSongs = listOf(
+				SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
+				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
+		)
+		whenever(webApi.getArtistTopSongs(controller, playerContext.uri)) doAnswer { artistSongs }
+		whenever(webApi.getPlaylistUri(SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME)) doAnswer { null }
+		whenever(webApi.createPlaylist(SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)) doAnswer { playlistUri }
+		whenever(webApi.addSongsToPlaylist(playlistId, artistSongs)) doAnswer { }
+		whenever(webApi.setPlaylistImage(playlistId, queueCoverArtBase64)) doAnswer { }
+
+		playlistCallback.lastValue.onEvent(playerContext)
+
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		val recentlyPlayedRequestListItem = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
+		val recentlyPlayedListItemResponse = ListItem("queueId", "queueUri", queueImageUri, artistTitle, playerContext.subtitle, false, true)
+		verify(contentApi).getChildrenOfItem(recentlyPlayedRequestListItem, 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(recentlyPlayedListItemResponse)))
+
+		assertEquals(controller.currentPlayerContext.title, artistTitle)
+
+		verify(webApi).addSongsToPlaylist(playlistId, artistSongs)
+
+		assertEquals(controller.currentPlayerContext.uri, playlistUriStr)
+
+		verify(contentApi, times(2)).getChildrenOfItem(recentlyPlayedRequestListItem, 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(recentlyPlayedListItemResponse)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val expectedQueueMetadata = QueueMetadata(artistTitle, playerContext.subtitle, artistSongs, queueCoverArtBitmap, playlistUriStr)
+		assertEquals(controller.queueMetadata, expectedQueueMetadata)
+
+		verify(webApi).setPlaylistImage(playlistId, queueCoverArtBase64)
+
+		val artistSongsPlaylistState = TemporaryPlaylistState(artistSongs.hashCode().toString(), playlistUriStr, playlistId, artistTitle, playerContext.uri)
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_ARTIST_SONGS_PLAYLIST_STATE], gson.toJson(artistSongsPlaylistState))
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(artistTitle, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_ArtistPlaylist_WebAPILoaded_NoCachedContent_ExistingPlaylist() = runBlockingTest {
+		val playerContext = PlayerContext("artistUri", "Artist", null, "artist")
+		val queueImageUriStr = "imageUri"
+		val queueImageUri = ImageUri(queueImageUriStr)
+		val queueCoverArtBitmap: Bitmap = mock()
+		val queueCoverArtBase64 = Base64.encodeToString(Utils.compressBitmapJpg(queueCoverArtBitmap, 85), Base64.NO_WRAP)
+
+		val playlistUriStr = "playlistUri"
+		val playlistId = "playlistId"
+		val playlistUri: PlaylistUri = mock()
+		whenever(playlistUri.id) doAnswer { playlistId }
+		whenever(playlistUri.uri) doAnswer { playlistUriStr }
+
+		val artistSongs = listOf(
+				SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
+				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
+		)
+		whenever(webApi.getArtistTopSongs(controller, playerContext.uri)) doAnswer { artistSongs }
+		whenever(webApi.getPlaylistUri(SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME)) doAnswer { playlistUri }
+		whenever(webApi.setPlaylistImage(playlistId, queueCoverArtBase64)) doAnswer { }
+
+		playlistCallback.lastValue.onEvent(playerContext)
+
+		verify(webApi, never()).createPlaylist(SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)
+		verify(webApi, never()).addSongsToPlaylist(playlistId, artistSongs)
+
+		assertEquals(controller.currentPlayerContext.uri, playlistUriStr)
+
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val expectedQueueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, artistSongs, queueCoverArtBitmap, playlistUriStr)
+		assertEquals(controller.queueMetadata, expectedQueueMetadata)
+
+		verify(webApi).setPlaylistImage(playlistId, queueCoverArtBase64)
+
+		val artistSongsPlaylistState = TemporaryPlaylistState(artistSongs.hashCode().toString(), playlistUriStr, playlistId, playerContext.title, playerContext.uri)
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_ARTIST_SONGS_PLAYLIST_STATE], gson.toJson(artistSongsPlaylistState))
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_ArtistPlaylist_WebAPILoaded_NoCachedContent_PlaylistCreationFailure() = runBlockingTest {
+		val playerContext = PlayerContext("artistUri", "Artist", null, "artist")
+		val queueImageUri = ImageUri("imageUri")
+		val queueCoverArtBitmap: Bitmap = mock()
+
+		val artistSongs = listOf(
+				SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
+				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
+		)
+		whenever(webApi.getArtistTopSongs(controller, playerContext.uri)) doAnswer { artistSongs }
+		whenever(webApi.createPlaylist(SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)) doAnswer { null }
+
+		playlistCallback.lastValue.onEvent(playerContext)
+
+		verify(webApi, never()).addSongsToPlaylist(any(), any())
+
+		verify(contentApi).getChildrenOfItem(ListItem(playerContext.uri, playerContext.uri, null, playerContext.title, playerContext.subtitle, false, true), 200, 0)
+		contentCallback.lastValue.onResult(ListItems(200, 0, 2, arrayOf(
+				ListItem("mediaId1", "mediaId1", null, "Title 1", "Subtitle 1", true, false),
+				ListItem("mediaId2", "mediaId2", null, "Title 2", "Subtitle 2", true, false)
+		)))
+
+		// it should get the QueueMetadata information when called through the Spotify App Remote
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_ArtistPlaylist_WebAPILoaded_CachedContent_PlaylistDataInvalid() = runBlockingTest {
+		val playerContext = PlayerContext("playlistUri", "Artist", null, "artist")
+		val queueImageUriStr = "imageUri"
+		val queueImageUri = ImageUri(queueImageUriStr)
+		val queueCoverArtBitmap: Bitmap = mock()
+
+		val playlistId = "playlistId"
+		val playlistUri: PlaylistUri = mock()
+		whenever(playlistUri.id) doAnswer { playlistId }
+		whenever(playlistUri.uri) doAnswer { playerContext.uri }
+
+		val artistSongs = listOf(
+				SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
+				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
+		)
+		whenever(webApi.getArtistTopSongs(controller, playerContext.uri)) doAnswer { artistSongs }
+		whenever(webApi.replacePlaylistSongs(playlistId, artistSongs)) doAnswer { }
+
+		val artistSongsPlaylistState = TemporaryPlaylistState("invalidHashCode", playerContext.uri, playlistId, playerContext.title, playerContext.uri)
+		appSettings[AppSettings.KEYS.SPOTIFY_ARTIST_SONGS_PLAYLIST_STATE] = gson.toJson(artistSongsPlaylistState)
+
+		playlistCallback.lastValue.onEvent(playerContext)
+
+		verify(webApi, never()).addSongsToPlaylist(playlistId, artistSongs)
+		verify(webApi, never()).createPlaylist(SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)
+		verify(webApi).replacePlaylistSongs(playlistId, artistSongs)
+
+		assertEquals(controller.currentPlayerContext.uri, playerContext.uri)
+
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val expectedQueueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, artistSongs, queueCoverArtBitmap, playerContext.uri)
+		assertEquals(controller.queueMetadata, expectedQueueMetadata)
+
+		val expectedArtistSongsPlaylistState = TemporaryPlaylistState(artistSongs.hashCode().toString(), playerContext.uri, playlistId, playerContext.title, playerContext.uri)
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_ARTIST_SONGS_PLAYLIST_STATE], gson.toJson(expectedArtistSongsPlaylistState))
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_ArtistPlaylist_WebAPILoaded_CachedContent_PlaylistDataInvalid_CachedPlaylistDifferentThanCurrent() = runBlockingTest {
+		val playerContext = PlayerContext("playlistUri", "Artist", null, "artist")
+		val queueImageUriStr = "imageUri"
+		val queueImageUri = ImageUri(queueImageUriStr)
+		val queueCoverArtBitmap: Bitmap = mock()
+
+		val temporaryPlaylistUri = "temporaryPlaylistUri"
+		val originalPlaylistUri = "originalPlaylistUri"
+		val playlistId = "playlistId"
+
+		val artistSongs = listOf(
+				SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
+				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
+		)
+		whenever(webApi.getArtistTopSongs(controller, playerContext.uri)) doAnswer { artistSongs }
+		whenever(webApi.replacePlaylistSongs(playerContext.uri, artistSongs)) doAnswer { }
+
+		val artistSongsPlaylistState = TemporaryPlaylistState("invalidHashCode", temporaryPlaylistUri, playlistId, playerContext.title, originalPlaylistUri)
+		appSettings[AppSettings.KEYS.SPOTIFY_ARTIST_SONGS_PLAYLIST_STATE] = gson.toJson(artistSongsPlaylistState)
+
+		playlistCallback.lastValue.onEvent(playerContext)
+
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		val recentlyPlayedRequestListItem = ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true)
+		val recentlyPlayedListItemResponse = ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
+		verify(contentApi).getChildrenOfItem(recentlyPlayedRequestListItem, 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(recentlyPlayedListItemResponse)))
+
+		assertEquals(controller.currentPlayerContext.title, playerContext.title)
+
+		verify(webApi, never()).addSongsToPlaylist(playlistId, artistSongs)
+		verify(webApi, never()).createPlaylist(SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)
+		verify(webApi).replacePlaylistSongs(playlistId, artistSongs)
+
+		assertEquals(controller.currentPlayerContext.uri, temporaryPlaylistUri)
+
+		verify(contentApi, times(2)).getChildrenOfItem(recentlyPlayedRequestListItem, 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(recentlyPlayedListItemResponse)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val expectedQueueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, artistSongs, queueCoverArtBitmap, temporaryPlaylistUri)
+		assertEquals(controller.queueMetadata, expectedQueueMetadata)
+
+		val expectedArtistSongsPlaylistState = TemporaryPlaylistState(artistSongs.hashCode().toString(), temporaryPlaylistUri, playlistId, playerContext.title, originalPlaylistUri)
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_ARTIST_SONGS_PLAYLIST_STATE], gson.toJson(expectedArtistSongsPlaylistState))
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_ArtistPlaylist_WebAPILoaded_ArtistTemporaryPlaylistInContext_CachedContent() = runBlockingTest {
+		val playerContext = PlayerContext("playlistUri", SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME, null, "artist")
+		val queueImageUriStr = "imageUri"
+		val queueImageUri = ImageUri(queueImageUriStr)
+		val queueCoverArtBitmap: Bitmap = mock()
+
+		val originalPlaylistUri = "originalPlaylistUri"
+		val playlistId = "playlistId"
+
+		val artistSongs = listOf(
+				SpotifyMusicMetadata(controller, "mediaId1", 1, "coverArtUri1", "Artist 1", "Album 1", "Title 1"),
+				SpotifyMusicMetadata(controller, "mediaId2", 2, "coverArtUri2", "Artist 2", "Album 2", "Title 2")
+		)
+		whenever(webApi.getArtistTopSongs(controller, originalPlaylistUri)) doAnswer { artistSongs }
+
+		val artistSongsPlaylistState = TemporaryPlaylistState(artistSongs.hashCode().toString(), playerContext.uri, playlistId, playerContext.title, originalPlaylistUri)
+		appSettings[AppSettings.KEYS.SPOTIFY_ARTIST_SONGS_PLAYLIST_STATE] = gson.toJson(artistSongsPlaylistState)
+
+		playlistCallback.lastValue.onEvent(playerContext)
+
+		verify(webApi, never()).addSongsToPlaylist(playlistId, artistSongs)
+		verify(webApi, never()).createPlaylist(SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME, L.MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION)
+		verify(webApi, never()).replacePlaylistSongs(playlistId, artistSongs)
+
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val expectedQueueMetadata = QueueMetadata(playerContext.title, playerContext.subtitle, artistSongs, queueCoverArtBitmap, playerContext.uri)
+		assertEquals(controller.queueMetadata, expectedQueueMetadata)
+
+		val expectedArtistSongsPlaylistState = TemporaryPlaylistState(artistSongs.hashCode().toString(), playerContext.uri, playlistId, playerContext.title, originalPlaylistUri)
+		assertEquals(appSettings[AppSettings.KEYS.SPOTIFY_ARTIST_SONGS_PLAYLIST_STATE], gson.toJson(expectedArtistSongsPlaylistState))
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_ArtistPlaylist_WebAPINotLoaded() = runBlockingTest {
+		val playerContext = PlayerContext("playlistUri", "Artist", null, "artist")
+		val queueImageUri = ImageUri("imageUri")
+		val queueCoverArtBitmap: Bitmap = mock()
+
+		whenever(webApi.getArtistTopSongs(controller, playerContext.uri)) doAnswer { emptyList() }
+
+		playlistCallback.lastValue.onEvent(playerContext)
+
+		verify(webApi, never()).getPlaylistSongs(controller, playerContext.uri)
+		verify(contentApi).getChildrenOfItem(ListItem(playerContext.uri, playerContext.uri, null, playerContext.title, playerContext.subtitle, false, true), 200, 0)
+		contentCallback.lastValue.onResult(ListItems(200, 0, 2, arrayOf(
+				ListItem("mediaId1", "mediaId1", null, "Title 1", "Subtitle 1", true, false),
+				ListItem("mediaId2", "mediaId2", null, "Title 2", "Subtitle 2", true, false)
+		)))
+
+		// it should get the QueueMetadata information when called through the Spotify App Remote
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(2, songs.size)
+		assertEquals("mediaId1", songs[0].mediaId)
+		assertEquals("Title 1", songs[0].title)
+		assertEquals("mediaId2", songs[1].mediaId)
+		assertEquals("Title 2", songs[1].title)
+	}
+
+	@Test
+	fun testQueue_PodcastPlaylist() = runBlockingTest {
+		val playerContext = PlayerContext("playlistUri", "title", "subtitle", "show")
+		val queueImageUri = ImageUri("imageUri")
+		val queueCoverArtBitmap: Bitmap = mock()
+
+		// load a queue
+		playlistCallback.lastValue.onEvent(playerContext)
+		verify(webApi).clearPendingQueueMetadataCreate()
+		verify(contentApi).getChildrenOfItem(ListItem(playerContext.uri, playerContext.uri, null, playerContext.title, playerContext.subtitle, false, true), 200, 0)
+		contentCallback.lastValue.onResult(ListItems(200, 0, 1, arrayOf(
+				ListItem("id", "uri", null, "Title", "Subtitle", true, false)
+		)))
+
+		// it should get the QueueMetadata information
+		val recentlyPlayedUri = "com.spotify.recently-played"
+		verify(contentApi).getChildrenOfItem(ListItem(recentlyPlayedUri, recentlyPlayedUri, null, null, null, false, true), 1, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
+				ListItem("queueId", "queueUri", queueImageUri, playerContext.title, playerContext.subtitle, false, true)
+		)))
+
+		verify(imagesApi).getImage(queueImageUri, Image.Dimension.THUMBNAIL)
+		imagesCallback.lastValue.onResult(queueCoverArtBitmap)
+
+		val queue = controller.getQueue()
+		assertNotNull(queue)
+		assertEquals(playerContext.title, queue!!.title)
+		assertEquals(playerContext.subtitle, queue.subtitle)
+		assertEquals(queueCoverArtBitmap, queue.coverArt)
+		assertNotNull(queue.songs)
+
+		val songs = queue.songs!!
+		assertEquals(1, songs.size)
+		assertNotEquals(null, songs[0].queueId)
+		assertEquals("Title", songs[0].title)
 	}
 
 	@Test
@@ -760,13 +1544,17 @@ class SpotifyMusicAppControllerTest {
 			}
 			delay(1000)
 			assertFalse(deferredResults.isCompleted)
-			verify(contentApi).getRecommendedContentItems("default-cars")
+			verify(contentApi).getRecommendedContentItems("default")
 			contentCallback.lastValue.onResult(ListItems(1, 0, 1, arrayOf(
 					ListItem("id", "uri", null, "Title", "Subtitle", true, false)
 			)))
 			val results = deferredResults.await()
 			assertTrue(deferredResults.isCompleted)
+			assertEquals(3, results.size)
 			assertEquals("Title", results[0].title)
+			// these entries are hardcoded to appear here, if they are missing
+			assertEquals("Your Library", results[1].title)
+			assertEquals("Browse", results[2].title)
 		}
 
 		runBlocking {
@@ -792,9 +1580,65 @@ class SpotifyMusicAppControllerTest {
 	}
 
 	@Test
+	fun testBrowse_LikedSongsTemporaryPlaylist() = runBlockingTest {
+		val deferredResults = async {
+			controller.browse(MusicMetadata(mediaId = "library", browseable = true))
+		}
+		delay(1000)
+		assertFalse(deferredResults.isCompleted)
+		val listItem = ListItem("library", "library", null, null, null, false, true)
+		verify(contentApi).getChildrenOfItem(listItem, 200, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 3, arrayOf(
+				ListItem("id1", "uri1", null, "Favorite", "Subtitle", true, false)
+		)))
+		verify(contentApi).getChildrenOfItem(listItem, 200, 1)
+		contentCallback.lastValue.onResult(ListItems(1, 1, 3, arrayOf(
+				ListItem("id2", "uri2", null, SpotifyWebApi.LIKED_SONGS_PLAYLIST_NAME, "Subtitle", false, true)
+		)))
+		verify(contentApi).getChildrenOfItem(listItem, 200, 2)
+		contentCallback.lastValue.onResult(ListItems(200, 2, 3, arrayOf(
+				ListItem("id3", "uri3", null, "Favorite2", "Subtitle", true, false)
+		)))
+
+		val results = deferredResults.await()
+		assertTrue(deferredResults.isCompleted)
+		assertEquals(results.size, 2)
+		assertEquals("Favorite", results[0].title)
+		assertEquals("Favorite2", results[1].title)
+	}
+
+	@Test
+	fun testBrowse_ArtistTemporaryPlaylist() = runBlockingTest {
+		val deferredResults = async {
+			controller.browse(MusicMetadata(mediaId = "library", browseable = true))
+		}
+		delay(1000)
+		assertFalse(deferredResults.isCompleted)
+		val listItem = ListItem("library", "library", null, null, null, false, true)
+		verify(contentApi).getChildrenOfItem(listItem, 200, 0)
+		contentCallback.lastValue.onResult(ListItems(1, 0, 3, arrayOf(
+				ListItem("id1", "uri1", null, "Favorite", "Subtitle", true, false)
+		)))
+		verify(contentApi).getChildrenOfItem(listItem, 200, 1)
+		contentCallback.lastValue.onResult(ListItems(1, 1, 3, arrayOf(
+				ListItem("id2", "uri2", null, SpotifyWebApi.ARTIST_SONGS_PLAYLIST_NAME, "Subtitle", false, true)
+		)))
+		verify(contentApi).getChildrenOfItem(listItem, 200, 2)
+		contentCallback.lastValue.onResult(ListItems(200, 2, 3, arrayOf(
+				ListItem("id3", "uri3", null, "Favorite2", "Subtitle", true, false)
+		)))
+
+		val results = deferredResults.await()
+		assertTrue(deferredResults.isCompleted)
+		assertEquals(results.size, 2)
+		assertEquals("Favorite", results[0].title)
+		assertEquals("Favorite2", results[1].title)
+	}
+
+	@Test
 	fun testSearch() {
 		runBlocking {
-			assertEquals(null, controller.search("any"))
+			assertTrue(controller.search("any").isEmpty())
 		}
 	}
 

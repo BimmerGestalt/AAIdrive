@@ -128,7 +128,7 @@ enum class ChassisCode(val brand: String, val chassis: String) {
 
     companion object {
         fun fromCode(chassisCode: String): ChassisCode? {
-            val code = chassisCode.toUpperCase(Locale.ROOT).replace(Regex("[^A-Z0-9]"), "_")
+            val code = chassisCode.uppercase(Locale.ROOT).replace(Regex("[^A-Z0-9]"), "_")
             return values().firstOrNull {
                 it.name == code
             }

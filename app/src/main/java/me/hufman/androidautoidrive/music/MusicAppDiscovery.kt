@@ -7,13 +7,15 @@ import android.util.Log
 import androidx.media.MediaBrowserServiceCompat
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.asCoroutineDispatcher
-import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.Analytics
+import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.MutableAppSettingsReceiver
+import me.hufman.androidautoidrive.StoredSet
 import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
-import java.lang.Runnable
 import java.util.*
 import kotlin.collections.HashSet
 import kotlin.coroutines.CoroutineContext
@@ -27,6 +29,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 	val appSettings = MutableAppSettingsReceiver(context, handler)
 	val hiddenApps = StoredSet(appSettings, AppSettings.KEYS.HIDDEN_MUSIC_APPS)
 
+	private var discoveryJob: Job? = null
 	private val browseApps: MutableList<MusicAppInfo> = LinkedList()
 	private val combinedApps: MutableList<MusicAppInfo> = Collections.synchronizedList(LinkedList())
 
@@ -120,7 +123,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 		val packageManager = context.packageManager
 		val intent = Intent(MediaBrowserServiceCompat.SERVICE_INTERFACE)
 		val services = packageManager.queryIntentServices(intent, 0)
-		discoveredApps.addAll(services.map {
+		discoveredApps.addAll(services.mapNotNull {
 			val appInfo = it.serviceInfo.applicationInfo
 			val name = packageManager.getApplicationLabel(appInfo).toString()
 			Log.i(TAG, "Found music app $name")
@@ -144,7 +147,7 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 		// load previously-probed states
 		loadCache()
 
-		this.browseApps.sortBy { it.name.toLowerCase() }
+		this.browseApps.sortBy { it.name.lowercase() }
 
 		// load the music session apps
 		addSessionApps()
@@ -193,13 +196,18 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 				apps.add(app)
 			}
 		}
-		apps.sortBy { it.name.toLowerCase() }
+		apps.sortBy { it.name.lowercase() }
 
 		// clear out any apps that are no longer active sessions
 		for (app in apps) {
 			if (mediaSessionApps.find {it.packageName == app.packageName} == null) {
 				app.controllable = false
 			}
+		}
+
+		// add the flag for the music sessions permission
+		for (app in apps) {
+			app.possiblyControllable = MusicSessions.hasPermission
 		}
 
 		synchronized(this.combinedApps) {
@@ -218,9 +226,18 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 	 */
 	fun probeApps(force: Boolean = true) {
 		// probe all apps
-		for (app in this.browseApps) {
-			if (force || !app.probed) {
-				probeApp(app)
+		discoveryJob?.cancel()
+		discoveryJob = launch {
+			for (app in this@MusicAppDiscovery.browseApps) {
+				if (force || !app.probed) {
+					probeApp(app)
+					withTimeoutOrNull(2000) {
+						// wait for the probe process to complete for this app
+						while (activeConnections.containsKey(app)) {
+							delay(100)
+						}
+					}
+				}
 			}
 		}
 	}
@@ -230,6 +247,8 @@ class MusicAppDiscovery(val context: Context, val handler: Handler): CoroutineSc
 			disconnectApp(app)
 		}
 		musicSessions.unregisterCallback()
+		discoveryJob?.cancel()
+		discoveryJob = null
 
 		appSettings.callback = null
 	}

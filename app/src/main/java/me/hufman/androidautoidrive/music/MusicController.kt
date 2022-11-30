@@ -7,6 +7,7 @@ import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.MutableAppSettingsObserver
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.music.controllers.CombinedMusicAppController
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
@@ -40,7 +41,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 			musicSessions.Connector(context)
 	)
 	val connector = CombinedMusicAppController.Connector(connectors)
-	val appSettings = MutableAppSettingsReceiver(context, handler)
+	val appSettings: MutableAppSettingsObserver = MutableAppSettingsReceiver(context, handler)
 
 	var disableAutoswitchUntil = 0L
 	var lastConnectTime = 0L
@@ -210,10 +211,24 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 		}
 	}
 	fun skipToPrevious() = asyncControl { controller ->
-		controller.skipToPrevious()
+		val customActionProvided = controller.getCustomActions().firstOrNull { customAction ->
+			customAction.providesAction == MusicAction.SKIP_TO_PREVIOUS
+		}
+		if (!controller.isSupportedAction(MusicAction.SKIP_TO_PREVIOUS) && customActionProvided != null) {
+			controller.customAction(customActionProvided)
+		} else {
+			controller.skipToPrevious()
+		}
 	}
 	fun skipToNext() = asyncControl { controller ->
-		controller.skipToNext()
+		val customActionProvided = controller.getCustomActions().firstOrNull { customAction ->
+			customAction.providesAction == MusicAction.SKIP_TO_NEXT
+		}
+		if (!controller.isSupportedAction(MusicAction.SKIP_TO_NEXT) && customActionProvided != null) {
+			controller.customAction(customActionProvided)
+		} else {
+			controller.skipToNext()
+		}
 	}
 	fun startRewind() {
 		seekingController.startRewind()
@@ -321,7 +336,8 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 
 	fun isSupportedAction(action: MusicAction): Boolean {
 		return withController { controller ->
-			return controller.isSupportedAction(action)
+			return controller.isSupportedAction(action) ||
+					controller.getCustomActions().any { it.providesAction == action }
 		} ?: false
 	}
 

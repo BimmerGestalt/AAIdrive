@@ -25,11 +25,12 @@ import me.hufman.androidautoidrive.carapp.notifications.*
 import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 
-import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import me.hufman.idriveconnectionkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.IDriveConnection
+import io.bimmergestalt.idriveconnectkit.android.CarAppResources
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.rhmi.*
+import me.hufman.androidautoidrive.carapp.L
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -74,12 +75,13 @@ class NotificationAppTest {
 	val carNotificationController = mock<CarNotificationController> {}
 	val audioPlayer = mock<AudioPlayer>()
 	val readoutController = mock<ReadoutController>()
+	val appSettings = MockAppSettings()
 	val notificationSettings = mock<NotificationSettings> {
+		on { appSettings } doReturn appSettings
 		on { getSettings() } doAnswer { listOf(
 				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP, AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER, AppSettings.KEYS.NOTIFICATIONS_SOUND,
 				AppSettings.KEYS.NOTIFICATIONS_READOUT, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP, AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER
 		)}
-		on { notificationListenerConnected } doReturn true
 		on { quickReplies } doAnswer { listOf("\uD83D\uDE3B") }
 		on { shouldPopup(any()) } doReturn true
 		on { shouldPlaySound() } doReturn true
@@ -103,8 +105,13 @@ class NotificationAppTest {
 	@Before
 	fun setUp() {
 		NotificationsState.notifications.clear()
+		NotificationsState.serviceConnected = true
+		UnicodeCleaner._addPlaceholderEmoji("\u00A9", listOf("copyright"), "copyright")
+		UnicodeCleaner._addPlaceholderEmoji("\u2714", listOf("heavy_check_mark"), "heavy_check_mark")
+		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDE00", listOf("grinning"), "grinning face")
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDC08", listOf("cat2"), "cat")
 		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDE3B", listOf("heart_eyes_cat"), "heart_eyes_cat")
+		UnicodeCleaner._addPlaceholderEmoji("\uD83D\uDC97", listOf("heartpulse"), "heartpulse")
 	}
 
 	@After
@@ -451,7 +458,7 @@ class NotificationAppTest {
 	                             sidePicture: Drawable? = null, picture: Drawable? = null, pictureUri: String? = null,
 	                             actions: List<CarNotification.Action>? = null): CarNotification {
 		val usedNotifications = actions ?: listOf(CarNotification.Action(
-				"Custom Action", false, emptyList()
+				"Custom Action \uD83D\uDC97", false, emptyList()
 		))
 
 		return CarNotification("me.hufman.androidautoidrive", "test$title", "Test AppName", mock(), clearable, usedNotifications,
@@ -769,7 +776,7 @@ class NotificationAppTest {
 	 */
 	@Test
 	fun testViewNotificationsMissingPermission() {
-		whenever(notificationSettings.notificationListenerConnected) doReturn false
+		NotificationsState.serviceConnected = false
 
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
@@ -1021,7 +1028,7 @@ class NotificationAppTest {
 		assertEquals(true, mockServer.properties[123]?.get(RHMIProperty.PropertyId.ENABLED.id))
 		assertEquals(true, mockServer.properties[123]?.get(RHMIProperty.PropertyId.SELECTABLE.id))
 		assertEquals(true, mockServer.properties[123]?.get(RHMIProperty.PropertyId.VISIBLE.id))
-		assertEquals("Custom Action", mockServer.data[524])  // custom action button
+		assertEquals("Custom Action  ♥ ", mockServer.data[524])  // custom action button
 		assertEquals(false, mockServer.properties[124]?.get(RHMIProperty.PropertyId.ENABLED.id))  // custom action button
 		assertEquals(false, mockServer.properties[124]?.get(RHMIProperty.PropertyId.SELECTABLE.id))  // clear this notification button
 		assertEquals(true, mockServer.properties[124]?.get(RHMIProperty.PropertyId.VISIBLE.id))
@@ -1227,8 +1234,8 @@ class NotificationAppTest {
 		// Add a colon, should show emoji suggestions
 		buttons[1].getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(emptyMap<Int, Any>())
 		inputComponent.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(8.toByte() to "Spoken text :hea"))
-		assertEquals(listOf("Spoken text :hea", "Spoken text :heart_eyes_cat:"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
-		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 1))
+		assertEquals(listOf("Spoken text :hea", "Spoken text :heavy_check_mark:", "Spoken text :heart_eyes_cat:", "Spoken text :heartpulse:"), (mockServer.data[inputComponent.suggestModel] as BMWRemoting.RHMIDataTable).data.map { it[0] })
+		inputComponent.getSuggestAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(1.toByte() to 2))
 		verify(carNotificationController).reply(notification.key, notification.actions[0].name.toString(), "Spoken text \uD83D\uDE3B")
 
 		// erase, should show the suggestions again
@@ -1296,16 +1303,16 @@ class NotificationAppTest {
 
 		val app = PhoneNotifications(iDriveConnectionStatus, securityAccess, carAppResources, phoneAppResources, graphicsHelpers, carNotificationController, audioPlayer, notificationSettings)
 
-		whenever(notificationSettings.isChecked(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP)) doReturn true
-		whenever(notificationSettings.isChecked(AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER)) doReturn false
-		whenever(notificationSettings.isChecked(AppSettings.KEYS.NOTIFICATIONS_READOUT)) doReturn true
-		whenever(notificationSettings.isChecked(AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP)) doReturn true
-		whenever(notificationSettings.isChecked(AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER)) doReturn false
-		val appSettingsCallback = argumentCaptor<() -> Unit>()
+		appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP] = "true"
+		appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER] = "false"
+		appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT] = "true"
+		appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP] = "true"
+		appSettings[AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER] = "false"
 
 		// the car shows the view state
 		val callbacks = IDriveConnection.mockRemotingClient as BMWRemotingClient
 		callbacks.rhmi_onHmiEvent(1, "unused", 8, 1, mapOf(4.toByte() to true))
+		val appSettingsCallback = argumentCaptor<() -> Unit>()
 		verify(notificationSettings).callback = appSettingsCallback.capture()
 
 		// check the correct displayed entries
@@ -1322,8 +1329,7 @@ class NotificationAppTest {
 		// click a menu entry
 		callbacks.rhmi_onActionEvent(1, "Dont care", 173, mapOf(1.toByte() to 1))
 		verify(mockServer).rhmi_ackActionEvent(1, 173, 1, false)    // don't click to the next screen
-		verify(notificationSettings).toggleSetting(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER)
-		whenever(notificationSettings.isChecked(AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER)) doReturn true
+		assertEquals("true", appSettings[AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER])
 
 		// the callback should trigger because of the changed setting
 		appSettingsCallback.lastValue.invoke()

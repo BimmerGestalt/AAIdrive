@@ -5,8 +5,7 @@ import android.media.ImageReader
 import android.os.Handler
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import me.hufman.idriveconnectionkit.rhmi.RHMIModel
-import java.lang.RuntimeException
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 
 interface FrameModeListener {
 	fun onResume()

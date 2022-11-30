@@ -23,7 +23,8 @@
             android:checked="@={viewModel.preferCarLanguage}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/settings_vertical_margin"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
             android:text="@{viewModel.lblPreferCarLanguage}" />
 
         <LinearLayout
@@ -42,6 +43,7 @@
                 app:selectedValue="@={viewModel.forceCarLanguage}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:minWidth="140dp"
                 android:entries="@array/available_languages" />
         </LinearLayout>

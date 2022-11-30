@@ -57,7 +57,7 @@
                 <LinearLayout
                     android:id="@+id/paneMusicAppFeatures"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="48dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:onClick="@{() -> callback.toggleFeatures(txtMusicAppFeatures)}">
@@ -74,8 +74,9 @@
 
                     <ImageButton
                         android:id="@+id/imgSettings"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="4dp"
                         android:contentDescription="@string/btn_configure"
                         app:tint="?android:attr/textColorSecondary"
                         android:src="@drawable/ic_settings_feather"
@@ -88,7 +89,7 @@
                         android:contentDescription="@string/musicAppControllable"
                         app:tint="?android:attr/textColorSecondary"
                         app:srcCompat="@drawable/ic_slow_motion_video_black_24dp"
-                        android:visibility="@{data.controllable &amp;&amp; !data.connectable}"/>
+                        android:visibility="@{(data.controllable || data.possiblyControllable) &amp;&amp; !data.connectable}"/>
 
                     <ImageView
                         android:id="@+id/imgConnectable"
@@ -125,7 +126,7 @@
                         app:tint="?android:attr/textColorSecondary"
                         android:alpha="0.5"
                         app:srcCompat="@drawable/ic_block_black_24dp"
-                        android:visibility="@{!(data.connectable || data.connectable)}" />
+                        android:visibility="@{!(data.connectable || data.controllable || data.possiblyControllable)}" />
                 </LinearLayout>
 
             </LinearLayout>

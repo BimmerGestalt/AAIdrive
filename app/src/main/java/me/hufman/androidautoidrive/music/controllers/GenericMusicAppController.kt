@@ -11,6 +11,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.music.*
+import me.hufman.androidautoidrive.utils.CachedData
 import java.util.*
 
 /**
@@ -18,18 +19,33 @@ import java.util.*
  * Any function may throw DeadObjectException, please catch it
  */
 class GenericMusicAppController(val context: Context, val mediaController: MediaControllerCompat, val musicBrowser: MusicBrowser?) : MusicAppController {
-	// forward any callbacks to the UI
+	// update cached state and forward any callbacks to the UI
 	private val controllerCallback by lazy {
 		object : MediaControllerCompat.Callback() {
 			override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
+				controllerPlaybackState.value = state
 				callback?.invoke(this@GenericMusicAppController)
 			}
 
 			override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+				controllerMetadata.value = metadata
 				callback?.invoke(this@GenericMusicAppController)
 			}
 
+			override fun onRepeatModeChanged(repeatMode: Int) {
+				controllerRepeatMode.value = repeatMode
+			}
+
+			override fun onShuffleModeChanged(shuffleMode: Int) {
+				controllerShuffleMode.value = shuffleMode
+			}
+
+			override fun onQueueTitleChanged(title: CharSequence?) {
+				controllerQueueTitle.value = title
+			}
+
 			override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
+				controllerQueue.value = queue
 				callback?.invoke(this@GenericMusicAppController)
 			}
 		}
@@ -101,21 +117,45 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 	}
 
 	/* Current state */
+	private val controllerPlaybackState = CachedData(5000) {
+		mediaController.playbackState
+	}
+	private val controllerMetadata = CachedData(5000) {
+		mediaController.metadata
+	}
+	private val controllerRepeatMode = CachedData(5000) {
+		mediaController.repeatMode
+	}
+	private val controllerShuffleMode = CachedData(5000) {
+		mediaController.shuffleMode
+	}
+	private val controllerQueueTitle = CachedData(5000) {
+		mediaController.queueTitle
+	}
+	private val controllerQueue = CachedData(5000) {
+		mediaController.queue
+	}
+	private val allControllerCaches = listOf(
+			controllerPlaybackState, controllerMetadata,
+			controllerRepeatMode, controllerShuffleMode,
+			controllerQueueTitle, controllerQueue
+	)
+
 	override fun getQueue(): QueueMetadata? {
 		triggerSpotifyWorkaround()
 		return remoteData {
-			QueueMetadata(mediaController.queueTitle?.toString(), null, mediaController.queue?.map { MusicMetadata.fromQueueItem(it) })
+			QueueMetadata(controllerQueueTitle.value?.toString(), null, controllerQueue.value?.map { MusicMetadata.fromQueueItem(it) })
 		}
 	}
 
 	override fun getMetadata(): MusicMetadata? = remoteData {
-		mediaController.metadata?.let {
-			MusicMetadata.fromMediaMetadata(it, mediaController.playbackState)
+		controllerMetadata.value?.let {
+			MusicMetadata.fromMediaMetadata(it, controllerPlaybackState.value)
 		}
 	}
 
 	override fun getPlaybackPosition(): PlaybackPosition {
-		val state = remoteData { mediaController.playbackState }
+		val state = remoteData { controllerPlaybackState.value }
 		return if (state == null) {
 			PlaybackPosition(true, false, 0, 0, 0)
 		} else {
@@ -136,14 +176,14 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 	}
 
 	override fun isSupportedAction(action: MusicAction): Boolean {
-		val actions = remoteData { mediaController.playbackState?.actions } ?: 0
+		val actions = remoteData { controllerPlaybackState.value?.actions } ?: 0
 		return (actions and action.flag) > 0
 	}
 
 	override fun getCustomActions(): List<CustomAction> {
 		triggerSpotifyWorkaround()
 
-		return remoteData { mediaController.playbackState?.customActions }?.map {
+		return remoteData { controllerPlaybackState.value?.customActions }?.map {
 			CustomAction.fromMediaCustomAction(context, mediaController.packageName, it)
 		} ?: LinkedList()
 	}
@@ -156,7 +196,7 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 
 	override fun isShuffling(): Boolean {
 		return remoteData {
-			mediaController.shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL || mediaController.shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_GROUP
+			controllerShuffleMode.value == PlaybackStateCompat.SHUFFLE_MODE_ALL || controllerShuffleMode.value == PlaybackStateCompat.SHUFFLE_MODE_GROUP
 		} ?: false
 	}
 
@@ -174,7 +214,7 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 	}
 
 	override fun getRepeatMode(): RepeatMode {
-		return when(mediaController.repeatMode) {
+		return when(controllerRepeatMode.value) {
 			PlaybackStateCompat.REPEAT_MODE_ALL -> RepeatMode.ALL
 			PlaybackStateCompat.REPEAT_MODE_ONE -> RepeatMode.ONE
 			PlaybackStateCompat.REPEAT_MODE_NONE -> RepeatMode.OFF
@@ -211,6 +251,8 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 
 	override fun subscribe(callback: (MusicAppController) -> Unit) {
 		this.callback = callback
+		// only enable the cache if we register for callbacks
+		allControllerCaches.forEach { it.enabled = true }
 		mediaController.registerCallback(this.controllerCallback)
 	}
 
@@ -222,6 +264,7 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 		this.connected = false
 		try {
 			mediaController.unregisterCallback(this.controllerCallback)
+			allControllerCaches.forEach { it.enabled = false }
 		} catch (e: Exception) {}
 		try {
 			musicBrowser?.disconnect()

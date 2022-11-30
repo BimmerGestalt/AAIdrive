@@ -33,6 +33,7 @@
             android:id="@+id/paneConnectionStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:layout_marginTop="@dimen/nav_header_vertical_spacing"
             android:orientation="horizontal"
             android:gravity="center_vertical">

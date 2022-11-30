@@ -1,13 +1,13 @@
 package me.hufman.androidautoidrive.carapp.music
 
 import de.bmw.idrive.BMWRemoting
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.UnicodeCleaner
-import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.idriveconnectionkit.rhmi.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -115,7 +115,7 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 	}
 
 	private fun showQueue(queue: List<MusicMetadata>, currentSong: MusicMetadata?) {
-		val adapter = object: RHMIListAdapter<MusicMetadata>(7, queue) {
+		val adapter = object: RHMIModel.RaListModel.RHMIListAdapter<MusicMetadata>(7, queue) {
 			override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
 				val selected = item.queueId == currentSong?.queueId
 				return arrayOf(

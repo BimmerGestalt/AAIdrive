@@ -4,19 +4,21 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
-import me.hufman.androidautoidrive.CarAppAssetManager
-import me.hufman.androidautoidrive.carapp.*
+import io.bimmergestalt.idriveconnectkit.IDriveConnection
+import io.bimmergestalt.idriveconnectkit.Utils.rhmi_setResourceCached
+import io.bimmergestalt.idriveconnectkit.android.CarAppResources
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.rhmi.*
+import me.hufman.androidautoidrive.CarAppWidgetAssetResources
+import me.hufman.androidautoidrive.carapp.FocusTriggerController
+import me.hufman.androidautoidrive.carapp.L
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.notifications.views.ID5PopupView
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
-import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import me.hufman.idriveconnectionkit.rhmi.*
-import java.lang.RuntimeException
 import java.util.zip.ZipInputStream
 
-class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, carAppAssets: CarAppAssetManager, graphicsHelpers: GraphicsHelpers) {
+class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, carAppAssets: CarAppWidgetAssetResources, graphicsHelpers: GraphicsHelpers) {
 	val carConnection: BMWRemotingServer
 	val carApp: RHMIApplication
 	val infoState: RHMIState.PlainState
@@ -30,7 +32,7 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 	init {
 		val listener = ID5StatusbarListener()
 		carConnection = IDriveConnection.getEtchConnection(iDriveConnectionStatus.host ?: "127.0.0.1", iDriveConnectionStatus.port ?: 8003, listener)
-		val appCert = carAppAssets.getAppCertificate(iDriveConnectionStatus.brand ?: "")?.readBytes() as ByteArray
+		val appCert = carAppAssets.getAppCertificate(iDriveConnectionStatus.brand ?: "").readBytes()
 		val sas_challenge = carConnection.sas_certificate(appCert)
 		val sas_login = securityAccess.signChallenge(challenge=sas_challenge)
 		carConnection.sas_login(sas_login)
@@ -38,9 +40,9 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 		// create the app in the car
 		val rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.notification.statusbar", BMWRemoting.VersionInfo(0, 1, 0),
 				"me.hufman.androidautoidrive.notification.statusbar", "me.hufman"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(iDriveConnectionStatus.brand ?: "common"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.WIDGETDB, carAppAssets.getWidgetsDB(iDriveConnectionStatus.brand ?: "common"))
+		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
+		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(iDriveConnectionStatus.brand ?: "common"))
+		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.WIDGETDB, carAppAssets.getWidgetsDB(iDriveConnectionStatus.brand ?: "common"))
 
 		// no text, so sneaky
 		carConnection.rhmi_initialize(rhmiHandle)

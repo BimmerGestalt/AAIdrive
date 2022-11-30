@@ -1,0 +1,106 @@
+name: publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      whats_new:
+        description: "What's new:"
+        required: true
+        default: "Improvements to stability and performance"
+
+env:
+  KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+  KEYSTORE_ALIAS: upload
+  KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
+  AndroidAutoIdrive_SpotifyApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_SPOTIFYAPIKEY }}
+  AndroidAutoIdrive_SentryDsn: ${{ secrets.ANDROIDAUTOIDRIVE_SENTRYDSN }}
+  AndroidAutoIdrive_MapboxAccessToken: ${{ secrets.ANDROIDAUTOIDRIVE_MAPBOXACCESSTOKEN }}
+  AndroidAutoIdrive_MapboxDownloadToken: ${{ secrets.ANDROIDAUTOIDRIVE_MAPBOXDOWNLOADTOKEN }}
+
+jobs:
+  unitTest:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Checkout the project
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Prepare cached external dependencies
+        uses: actions/cache@v2
+        with:
+          key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
+          path: |
+            external
+      - name: Download build dependencies
+        uses: ./.github/actions/download-externals-action
+
+      - name: Build the project
+        run: ./gradlew compileMapboxSentryPlayDebugSources
+
+      - name: Run unit tests
+        run: ./gradlew testMapboxSentryPlayDebugUnitTest
+
+  package:
+    needs: [ unitTest ]  # wait for the tests to succeed
+    runs-on: ubuntu-18.04
+
+    steps:
+
+      - name: Checkout the project
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Prepare cached external dependencies
+        uses: actions/cache@v2
+        with:
+          key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
+          path: |
+            external
+      - name: Download build dependencies
+        uses: ./.github/actions/download-externals-action
+
+      - name: Extract signing key
+        run: "echo ${{ secrets.KEYSTORE_BASE64 }} | base64 -d > keystore.jks"
+
+      - name: Build app bundle
+        run: ./gradlew bundleMapboxSentryPlayRelease
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v2
+        with:
+          retention-days: 7
+          name: bundle
+          path: |
+            app/build/outputs/bundle/*/*aab
+
+  upload:
+    needs: package
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Download project artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: bundle
+          path: bundle
+      - name: Prepare Changelog
+        run: mkdir whats_new && echo -e "${{ github.event.inputs.whats_new }}" >> whats_new/whatsnew-en-US
+      - uses: r0adkll/upload-google-play@v1.0.15
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SECRET }}
+          packageName: me.hufman.androidautoidrive
+          releaseFiles: "bundle/*/*.aab"
+          track: beta
+          whatsNewDirectory: whats_new

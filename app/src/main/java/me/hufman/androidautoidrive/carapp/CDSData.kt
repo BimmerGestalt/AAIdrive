@@ -7,7 +7,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
 import de.bmw.idrive.BMWRemotingServer
-import me.hufman.idriveconnectionkit.CDSProperty
+import io.bimmergestalt.idriveconnectkit.CDSProperty
 import java.util.*
 
 /**
@@ -46,6 +46,10 @@ class CDSConnectionEtch(private val carConnection: BMWRemotingServer): CDSConnec
 class CDSDataConnectionWrapper(private val cdsData: CDSData, private val eventHandler: CDSEventHandler): CDSConnection {
 	override fun subscribeProperty(property: CDSProperty, intervalLimit: Int) {
 		cdsData.addEventHandler(property, intervalLimit, eventHandler)
+		val existing = cdsData[property]
+		if (existing != null) {
+			eventHandler.onPropertyChangedEvent(property, existing)
+		}
 	}
 
 	override fun unsubscribeProperty(property: CDSProperty) {
@@ -182,12 +186,12 @@ class CDSDataProvider: CDSData, CDSEventHandler {
 
 	override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
 		_data[property] = propertyValue
-		_eventHandlers[property]?.forEach { it.onPropertyChangedEvent(property, propertyValue) }
+		_eventHandlers[property]?.toSet()?.forEach { it.onPropertyChangedEvent(property, propertyValue) }
 	}
 
 	/** Use this CDSData object as a CDSConnection */
-	fun asConnection(): CDSConnection {
-		return CDSDataConnectionWrapper(this, this)
+	fun asConnection(eventHandler: CDSEventHandler): CDSConnection {
+		return CDSDataConnectionWrapper(this, eventHandler)
 	}
 }
 
@@ -208,6 +212,7 @@ val CDSData.subscriptions: CDSSubscriptions
 interface CDSSubscriptions {
 	var defaultIntervalLimit: Int
 	operator fun set(property: CDSProperty, subscription: ((JsonObject) -> Unit)?)
+	operator fun get(property: CDSProperty): ((JsonObject) -> Unit)?
 	fun addSubscription(property: CDSProperty, intervalLimit: Int = defaultIntervalLimit, subscription: (JsonObject) -> Unit)
 	fun removeSubscription(property: CDSProperty)
 }
@@ -225,6 +230,10 @@ class CDSSubscriptionsManager(private val cdsData: CDSData): CDSEventHandler, CD
 		} else {
 			removeSubscription(property)
 		}
+	}
+
+	override fun get(property: CDSProperty): ((JsonObject) -> Unit)? {
+		return _subscriptions[property]
 	}
 
 	override fun addSubscription(property: CDSProperty, intervalLimit: Int, subscription: (value: JsonObject) -> Unit) {

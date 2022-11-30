@@ -1,0 +1,10 @@
+
+// Android chooses to cater to 20-year-old Java compatibility
+// instead of fixing their bug and following the ISO standard language code
+// and the fractured device market means some phones ignore the incorrect code
+// and so both language resources must be provided
+task copyHebrewResources(type: Copy) {
+    from 'src/main/res/values-he/strings.xml'
+    into 'src/main/res/values-iw'
+}
+preBuild.dependsOn copyHebrewResources

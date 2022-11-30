@@ -11,15 +11,16 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.Observable
-import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.music.controllers.GenericMusicAppController
 import me.hufman.androidautoidrive.music.controllers.MusicAppController
+import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 class MusicSessions(val context: Context) {
 	companion object {
 		const val TAG = "MusicSessions"
+		var hasPermission = false
 
 		private fun isControllable(actions: Long): Boolean {
 			return ((actions and ACTION_PLAY) or (actions and ACTION_PAUSE) or (actions and ACTION_PLAY_FROM_SEARCH)) > 0
@@ -68,9 +69,11 @@ class MusicSessions(val context: Context) {
 					return MediaControllerCompat(context, MediaSessionCompat.Token.fromToken(session.sessionToken))
 				}
 			}
+			hasPermission = true
 		} catch (e: SecurityException) {
 			// user hasn't granted Notification Access yet
 			Log.w(TAG, "Can't connect to ${desiredApp.name}, user hasn't granted Notification Access yet")
+			hasPermission = false
 		}
 		return null
 	}
@@ -113,10 +116,11 @@ class MusicSessions(val context: Context) {
 	fun discoverApps(): List<MusicAppInfo> {
 		return try {
 			val sessions = mediaManager.getActiveSessions(ComponentName(context, NotificationListenerServiceImpl::class.java))
+			hasPermission = true
 			return sessions.filter {
 				isControllable(it.playbackState?.actions ?: 0)
-			}.map {
-				MusicAppInfo.getInstance(context, it.packageName, null).apply {
+			}.mapNotNull {
+				MusicAppInfo.getInstance(context, it.packageName, null)?.apply {
 					this.controllable = true
 					val actions = it.playbackState?.actions ?: 0
 					this.playsearchable = actions and PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH > 0
@@ -124,6 +128,7 @@ class MusicSessions(val context: Context) {
 			}
 		} catch (e: SecurityException) {
 			// user hasn't granted Notification Access yet
+			hasPermission = false
 			Log.i(TAG, "Can't discoverApps, user hasn't granted Notification Access yet")
 			LinkedList()
 		}
@@ -138,8 +143,13 @@ class MusicSessions(val context: Context) {
 				val state = session.playbackState?.state ?: 0
 				if (isControllable(actions) && state == STATE_PLAYING) {
 					Log.i(TAG, "Found mediaSession for ${session.packageName}")
-					return MusicAppInfo.getInstance(context, session.packageName, null).apply {
+					val appInfo = MusicAppInfo.getInstance(context, session.packageName, null)?.apply {
 						this.controllable = true
+					}
+					if (appInfo != null) {
+						return appInfo
+					} else {
+						Log.w(TAG, "Failed to load MusicAppInfo for ${session.packageName}")
 					}
 				}
 			}

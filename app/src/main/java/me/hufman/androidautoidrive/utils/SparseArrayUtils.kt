@@ -2,9 +2,12 @@ package me.hufman.androidautoidrive.utils
 
 import android.util.SparseArray
 
+/*
+API31 broke SparseArray.set extension: https://stackoverflow.com/q/69132082/169035
 operator fun <E> SparseArray<E>.set(key: Int, value: E) {
 	put(key, value)
 }
+*/
 
 fun <E> SparseArray<E>.setDefault(key: Int, defaultValueFactory: (Int) -> E): E {
 	val existingIndex = indexOfKey(key)

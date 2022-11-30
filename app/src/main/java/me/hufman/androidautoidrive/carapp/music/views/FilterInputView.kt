@@ -1,13 +1,16 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
-import kotlinx.coroutines.*
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
+import io.bimmergestalt.idriveconnectkit.rhmi.VisibleCallback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.InputState
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.music.MusicMetadata
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
-import me.hufman.idriveconnectionkit.rhmi.VisibleCallback
-import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 class FilterInputView(val state: RHMIState,
@@ -50,10 +53,9 @@ class FilterInputView(val state: RHMIState,
 					// still loading
 					sendSuggestions(listOf(FILTERRESULT_LOADING))
 				} else {
-					val results = input.toLowerCase(Locale.ROOT).let { inputLower ->
+					val results = input.lowercase().let { inputLower ->
 						musicList.asSequence().map {
-							Pair(it, UnicodeCleaner.clean((it.title ?: "") + " " + (it.artist
-									?: "")).toLowerCase(Locale.ROOT))
+							Pair(it, UnicodeCleaner.clean((it.title ?: "") + " " + (it.artist ?: "")).lowercase())
 						}.let {
 							it.filter { meta ->
 								meta.second.split(Regex("\\s+")).any { word ->

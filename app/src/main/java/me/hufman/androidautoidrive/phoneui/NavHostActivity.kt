@@ -18,7 +18,6 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.databinding.NavHeaderBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionStatusModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
-import java.lang.IllegalStateException
 
 class NavHostActivity: AppCompatActivity() {
 
@@ -26,15 +25,17 @@ class NavHostActivity: AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		Analytics.init(this)
 		AppSettings.loadSettings(this)
-		L.loadResources(this)
+		if (AppSettings[AppSettings.KEYS.ENABLED_ANALYTICS].toBoolean()) {
+			Analytics.init(this)
+		}
 		CarInformation.loadCache(MutableAppSettingsReceiver(applicationContext))
 
 		if (!AppSettings[AppSettings.KEYS.FIRST_START_DONE].toBoolean()) {
 			val intent = Intent(this, WelcomeActivity::class.java)
 			startActivity(intent)
 			finish()
+			return
 		}
 
 		setContentView(R.layout.activity_navhost)
@@ -57,17 +58,20 @@ class NavHostActivity: AppCompatActivity() {
 
 		setupNavMenu()
 
-		startService()
-
 		drawerLayout?.post { drawerLayout.openDrawer(GravityCompat.START) }
 	}
 
+	override fun onResume() {
+		super.onResume()
+
+		startService()
+	}
+
 	fun setupNavHeader() {
-		val viewModel  by viewModels<ConnectionStatusModel> { ConnectionStatusModel.Factory(this.applicationContext) }
 		val navView = findViewById<NavigationView>(R.id.nav_view)
 		val binding = NavHeaderBinding.inflate(layoutInflater, navView, false)
 		binding.lifecycleOwner = this
-		binding.viewModel = viewModel
+		binding.viewModel = connectionViewModel
 		navView.removeHeaderView(navView.getHeaderView(0))
 		navView.addHeaderView(binding.root)
 
@@ -80,7 +84,7 @@ class NavHostActivity: AppCompatActivity() {
 	}
 
 	fun setupNavMenu() {
-		val themeAttrs = obtainStyledAttributes(R.style.optionGmapVisible, arrayOf(android.R.attr.visibility).toIntArray())
+		val themeAttrs = obtainStyledAttributes(R.style.optionMapVisible, arrayOf(android.R.attr.visibility).toIntArray())
 		val mapVisibility = themeAttrs.getInt(0, 0)
 		themeAttrs.recycle()
 		val navView = findViewById<NavigationView>(R.id.nav_view)
@@ -94,10 +98,21 @@ class NavHostActivity: AppCompatActivity() {
 
 	fun startService() {
 		try {
-			this.startService(Intent(this, MainService::class.java).setAction(MainService.ACTION_START))
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+				// this is a clear signal of car connection, we can confidently startForeground
+				this.startForegroundService(Intent(this, MainService::class.java).setAction(MainService.ACTION_START))
+			} else {
+				this.startService(Intent(this, MainService::class.java).setAction(MainService.ACTION_START))
+			}
 		} catch (e: IllegalStateException) {
 			// Android Oreo strenuously objects to starting the service if the activity isn't visible
 			// for example, when Android Studio tries to start the Activity with the screen off
 		}
+	}
+
+	override fun onPause() {
+		super.onPause()
+		// stop animations in the nav header
+		connectionViewModel.onPause()
 	}
 }

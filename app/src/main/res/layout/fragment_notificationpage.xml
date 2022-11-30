@@ -37,7 +37,8 @@
                 android:id="@+id/swMessageNotifications"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/settings_vertical_margin"
+                android:minHeight="48dp"
+                android:paddingBottom="@dimen/settings_vertical_margin"
                 android:text="@string/message_notifications"
                 android:checked="@{settingsModel.notificationEnabled}"
                 android:onCheckedChanged="@{(button, checked) -> controller.onChangedSwitchNotifications(checked)}"/>

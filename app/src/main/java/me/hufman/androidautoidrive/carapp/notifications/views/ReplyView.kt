@@ -1,16 +1,31 @@
 package me.hufman.androidautoidrive.carapp.notifications.views
 
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.InputState
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.notifications.ReplyController
-import me.hufman.idriveconnectionkit.rhmi.RHMIState
 
 class ReplyView(destState: RHMIState, inputState: RHMIState, val replyController: ReplyController): InputState<CharSequence>(inputState) {
+	// track whether the last input was from dictation
+	var voicedInput = false
 	// only send once
 	var sent = false
 	init {
+		// when picking a result from the suggestion side view
 		inputComponent.getSuggestAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = destState.id
+		// when pushing OK
+		inputComponent.getResultAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = destState.id
 	}
+
+	override fun onInput(letter: String) {
+		// if the user dictated a response, ignore the next onOK()
+		if (input == "" && letter.length > 1) {
+			voicedInput = true
+		}
+		super.onInput(letter)
+	}
+
 	override fun onEntry(input: String) {
 		if (input == "") {
 			sendSuggestions(replyController.getSuggestions(input))
@@ -28,7 +43,16 @@ class ReplyView(destState: RHMIState, inputState: RHMIState, val replyController
 		}
 	}
 
+	override fun onOk() {
+		if (!voicedInput && input.isNotEmpty()) {
+			replyController.sendReply(input)
+		} else {
+			voicedInput = false     // the car pushes Ok once after a voiced input, allow the user to push Ok from now on
+			throw RHMIActionAbort()
+		}
+	}
+
 	override fun convertRow(row: CharSequence): String {
-		return UnicodeCleaner.clean(row.toString())
+		return UnicodeCleaner.clean(row.toString(), false)
 	}
 }

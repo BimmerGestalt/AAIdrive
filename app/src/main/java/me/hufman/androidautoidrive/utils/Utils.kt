@@ -4,14 +4,17 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import ar.com.hjg.pngj.*
+import ar.com.hjg.pngj.ImageInfo
+import ar.com.hjg.pngj.ImageLineInt
+import ar.com.hjg.pngj.PngReaderInt
+import ar.com.hjg.pngj.PngWriter
 import ar.com.hjg.pngj.chunks.PngChunkPLTE
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
-import java.util.zip.ZipInputStream
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.withTimeout
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.util.zip.ZipInputStream
 
 object Utils {
 	val FILTER_NEGATIVE by lazy {
@@ -114,18 +117,6 @@ object Utils {
 		values[6] = values[6] * Color.green(tint) / 255f
 		values[12] = values[12] * Color.blue(tint) / 255f
 		return ColorMatrixColorFilter(values)
-	}
-
-	fun etchAsInt(obj: Any?, default: Int = 0): Int {
-		/** Etch likes to shrink numbers to the smallest type that will fit
-		 * But JVM wants the number types to match in various places
-		 */
-		return when (obj) {
-			is Byte -> obj.toInt()
-			is Short -> obj.toInt()
-			is Int -> obj
-			else -> default
-		}
 	}
 
 	fun loadZipfile(zipfile: InputStream?): Map<String, ByteArray> {

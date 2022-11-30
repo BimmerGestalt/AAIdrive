@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.databinding.MusicNowPlayingBinding
 import me.hufman.androidautoidrive.music.MusicController
+import me.hufman.androidautoidrive.phoneui.UIState
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
@@ -16,8 +17,8 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 class MusicNowPlayingFragment: Fragment() {
 	lateinit var musicController: MusicController
 
-	val viewModel by activityViewModels<MusicActivityModel>()
-	val iconsModel by activityViewModels<MusicActivityIconsModel>()
+	val viewModel by activityViewModels<MusicActivityModel> { MusicActivityModel.Factory(requireContext().applicationContext, UIState.selectedMusicApp) }
+	val iconsModel by activityViewModels<MusicActivityIconsModel> { MusicActivityIconsModel.Factory(requireActivity()) }
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 		val binding = MusicNowPlayingBinding.inflate(inflater, container, false)

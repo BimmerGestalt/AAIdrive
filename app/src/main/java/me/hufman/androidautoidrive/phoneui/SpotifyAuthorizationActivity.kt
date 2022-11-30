@@ -5,19 +5,19 @@ import android.app.NotificationManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.*
-import androidx.browser.customtabs.CustomTabsIntent
+import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.browser.customtabs.CustomTabsIntent
 import com.adamratzman.spotify.SpotifyScope
 import com.adamratzman.spotify.getSpotifyPkceCodeChallenge
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
+import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import net.openid.appauth.*
 import net.openid.appauth.connectivity.DefaultConnectionBuilder
 import java.util.concurrent.CountDownLatch
@@ -60,7 +60,11 @@ class SpotifyAuthorizationActivity: Activity() {
 	private var authIntentLatch = CountDownLatch(1)
 	private val scopes = listOf(
 			SpotifyScope.USER_MODIFY_PLAYBACK_STATE.uri,
-			SpotifyScope.USER_LIBRARY_READ.uri)
+			SpotifyScope.USER_LIBRARY_READ.uri,
+			SpotifyScope.PLAYLIST_MODIFY_PRIVATE.uri,
+			SpotifyScope.PLAYLIST_READ_PRIVATE.uri,
+			SpotifyScope.UGC_IMAGE_UPLOAD.uri,
+			SpotifyScope.USER_READ_PRIVATE.uri)
 	private val lazyAuthService = lazy {
 		createAuthorizationService()
 	}

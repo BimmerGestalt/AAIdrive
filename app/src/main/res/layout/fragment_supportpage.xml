@@ -38,11 +38,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
                 android:drawableStart="@drawable/ic_heart_feather"
                 android:drawableTint="?android:attr/colorControlNormal"
                 android:drawablePadding="8dp"
                 android:text="@string/btn_donations"
-                android:layout_marginBottom="@dimen/pane_vertical_margin"
                 android:onClick="@{controller::onClickDonations}"/>
     
             <View style="@style/Divider"
@@ -68,6 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
+                    android:minHeight="48dp"
                     android:orientation="horizontal"
                     android:gravity="center"
                     android:onClick="@{controller::onClickFeedback}">
@@ -86,6 +87,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
+                    android:minHeight="48dp"
                     android:orientation="horizontal"
                     android:gravity="center"
                     android:onClick="@{controller::onClickIssues}">
@@ -104,6 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
+                    android:minHeight="48dp"
                     android:orientation="horizontal"
                     android:gravity="center"
                     android:onClick="@{controller::onClickShare}">
@@ -119,7 +122,16 @@
                         android:text="@string/lbl_support_share" />
                 </LinearLayout>
             </com.google.android.flexbox.FlexboxLayout>
-    
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingBottom="@dimen/pane_vertical_margin"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:text="@string/lbl_support_privacy"
+                android:onClick="@{controller::onClickPrivacy}" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -141,6 +153,7 @@
                 android:id="@+id/txtBuildInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:layout_marginBottom="@dimen/pane_vertical_margin"
                 android:layout_gravity="bottom"
                 android:longClickable="true"

@@ -59,6 +59,7 @@ fun <VM : ViewModel> createMockedViewModelLazy(
 		if (mockedViewModels.isNotEmpty()) {
 			object: ViewModelProvider.Factory {
 				override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+					@Suppress("UNCHECKED_CAST")
 					return mockedViewModels[modelClass] as T
 							?: factoryPromise().create(modelClass)  // return the normal one if no mock found
 				}

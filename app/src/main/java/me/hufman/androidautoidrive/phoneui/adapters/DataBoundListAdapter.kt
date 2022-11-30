@@ -45,8 +45,8 @@ class ReorderableItemsCallback<I>(private val items: MutableList<I>): ItemTouchH
 	override fun isLongPressDragEnabled() = true
 
 	override fun onMove(recyclerView: RecyclerView, source: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-		val startIndex = source.adapterPosition
-		val destIndex = target.adapterPosition
+		val startIndex = source.absoluteAdapterPosition
+		val destIndex = target.absoluteAdapterPosition
 
 		val item = items.removeAt(startIndex)
 		items.add(destIndex, item)
@@ -57,7 +57,7 @@ class ReorderableItemsCallback<I>(private val items: MutableList<I>): ItemTouchH
 
 	override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 		val recyclerView = viewHolder.itemView.parent as? RecyclerView ?: return
-		val index = viewHolder.adapterPosition
+		val index = viewHolder.absoluteAdapterPosition
 		items.removeAt(index)
 		recyclerView.adapter?.notifyItemRemoved(index)
 	}

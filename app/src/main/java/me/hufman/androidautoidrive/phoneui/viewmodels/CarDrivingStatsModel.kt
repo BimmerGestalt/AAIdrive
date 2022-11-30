@@ -1,28 +1,27 @@
 package me.hufman.androidautoidrive.phoneui.viewmodels
 
-import me.hufman.androidautoidrive.carapp.CDSVehicleUnits
-import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble
-import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
-import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive
-import me.hufman.androidautoidrive.utils.GsonNullable.tryAsString
-
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.JsonObject
+import io.bimmergestalt.idriveconnectkit.CDS
 import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.carapp.CDSVehicleUnits
 import me.hufman.androidautoidrive.carapp.liveData
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.addUnit
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.combine
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.format
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
+import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsInt
-import me.hufman.idriveconnectionkit.CDS
-import java.lang.Exception
+import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
+import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive
+import me.hufman.androidautoidrive.utils.GsonNullable.tryAsString
 import java.lang.Math.round
 import java.text.DateFormat
 import java.util.*
@@ -60,7 +59,7 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
-			val handler = Handler()
+			val handler = Handler(Looper.getMainLooper())
 			var model: CarDrivingStatsModel? = null
 			val carInfo = CarInformationObserver {
 				handler.post { model?.update() }

@@ -2,7 +2,6 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.os.Handler
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,8 +14,9 @@ class ConnectionTipsModel(val connection: CarConnectionDebugging): TipsModel() {
 	class Factory(val appContext: Context) : ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
-			var model: ConnectionTipsModel? = null
 			val connection = CarConnectionDebugging(appContext) {
+				// no need to call model.update()
+				// we only update the Tips List on a new screen draw, not as the connection changes
 			}
 			// can't unittest CarConnectionDebugging registration
 
@@ -24,7 +24,7 @@ class ConnectionTipsModel(val connection: CarConnectionDebugging): TipsModel() {
 			// don't need to register to BCL updates
 			connection._registerBtStatus()
 			connection._registerUsbStatus()
-			model = ConnectionTipsModel(connection)
+			val model = ConnectionTipsModel(connection)
 			model.update()
 			return model as T
 		}
@@ -32,21 +32,21 @@ class ConnectionTipsModel(val connection: CarConnectionDebugging): TipsModel() {
 
 	val TIPS = listOf(
 		ConnectionTip({getString(R.string.tip_usb_chargingmode)}, {ContextCompat.getDrawable(this, R.drawable.tip_phone_chargemode)}) {
-			!isUsbAccessoryConnected
+			isUsbConnected && !isUsbAccessoryConnected
 		},
 		ConnectionTip({getString(R.string.tip_connassistant)}, {ContextCompat.getDrawable(this, R.drawable.tip_connassistant_bmw)}) {
-			isBMWConnectedInstalled
+			isBMWInstalled
 		},
 		ConnectionTip({getString(R.string.tip_connassistant)}, {ContextCompat.getDrawable(this, R.drawable.tip_connassistant_mini)}) {
-			isMiniConnectedInstalled
+			isMiniInstalled
 		},
 		ConnectionTip({getString(R.string.tip_btapp)}, {ContextCompat.getDrawable(this, R.drawable.tip_btapp_bmw)}) {
 			val btApps = !isBTConnected || (isBTConnected && !isSPPAvailable)
-			(isBMWConnectedInstalled || isBMWMineInstalled) && btApps
+			isBMWInstalled && btApps
 		},
 		ConnectionTip({getString(R.string.tip_btapp)}, {ContextCompat.getDrawable(this, R.drawable.tip_btapp_mini)}) {
 			val btApps = !isBTConnected || (isBTConnected && !isSPPAvailable)
-			(isMiniConnectedInstalled || isMiniMineInstalled) && btApps
+			isMiniInstalled && btApps
 		},
 		ConnectionTip({getString(R.string.tip_batterymode_mybmw)}, {ContextCompat.getDrawable(this, R.drawable.tip_batterymode_mybmw)}) {
 			isBMWMineInstalled

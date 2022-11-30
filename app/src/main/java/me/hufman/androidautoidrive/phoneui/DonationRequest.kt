@@ -51,7 +51,7 @@ class DayCounter(val settings: MutableAppSettings, val onDayIncremented: () -> U
 class DonationRequest(val context: Context) {
 	companion object {
 		const val DONATION_DAYS_THRESHOLD = 5   // show at the 5th day of use
-		const val DONATION_URL = "https://hufman.github.io/AndroidAutoIdrive/support"
+		const val DONATION_URL = "https://bimmergestalt.github.io/AAIdrive/support"
 		const val NOTIFICATION_CHANNEL_ID = "DonationRequest"
 	}
 
@@ -87,10 +87,12 @@ class DonationRequest(val context: Context) {
 		val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
 				.setContentTitle(context.getText(R.string.donation_title))
 				.setContentText(context.getText(R.string.donation_text))
+				.setStyle(NotificationCompat.BigTextStyle()
+						.setSummaryText(context.getString(R.string.donation_text_onetime)))
 				.setSmallIcon(R.drawable.ic_notify)
 				.setPriority(NotificationCompat.PRIORITY_LOW)
 				.setAutoCancel(true)
-				.setContentIntent(PendingIntent.getActivity(context, 50, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+				.setContentIntent(PendingIntent.getActivity(context, 50, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 
 		val notificationManager = context.getSystemService(NotificationManager::class.java)
 		notificationManager.notify(50, notificationBuilder.build())

@@ -33,12 +33,20 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 
 	private val _hasNotificationPermission = MutableLiveData(false)
 	val hasNotificationPermission: LiveData<Boolean> = _hasNotificationPermission
+	private val _supportsSmsPermission = MutableLiveData(false)
+	val supportsSmsPermission: LiveData<Boolean> = _supportsSmsPermission
 	private val _hasSmsPermission = MutableLiveData(false)
 	val hasSmsPermission: LiveData<Boolean> = _hasSmsPermission
+	private val _hasCalendarPermission = MutableLiveData(false)
+	val hasCalendarPermission: LiveData<Boolean> = _hasCalendarPermission
 	private val _hasLocationPermission = MutableLiveData(false)
 	val hasLocationPermission: LiveData<Boolean> = _hasLocationPermission
 	private val _hasBackgroundPermission = MutableLiveData(false)
 	val hasBackgroundPermission: LiveData<Boolean> = _hasBackgroundPermission
+	private val _supportsBluetoothConnectPermission = MutableLiveData(false)
+	val supportsBluetoothConnectPermission: LiveData<Boolean> = _supportsBluetoothConnectPermission
+	private val _hasBluetoothConnectPermission = MutableLiveData(false)
+	val hasBluetoothConnectPermission: LiveData<Boolean> = _hasBluetoothConnectPermission
 
 	private val _hasSpotify = MutableLiveData(false)
 	val hasSpotify: LiveData<Boolean> = _hasSpotify
@@ -52,13 +60,17 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 
 	fun update() {
 		_hasNotificationPermission.value = notificationListenerState.value == true && permissionsState.hasNotificationPermission
+		_supportsSmsPermission.value = permissionsState.supportsSmsPermission
 		_hasSmsPermission.value = permissionsState.hasSmsPermission
+		_hasCalendarPermission.value = permissionsState.hasCalendarPermission
 		_hasLocationPermission.value = permissionsState.hasLocationPermission
 		_hasBackgroundPermission.value =  if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
 			!activityManager.isBackgroundRestricted
 		} else {
 			true        // old phones just assume true
 		}
+		_supportsBluetoothConnectPermission.value = android.os.Build.VERSION.SDK_INT >= 31
+		_hasBluetoothConnectPermission.value = permissionsState.hasBluetoothConnectPermission
 	}
 
 	/** Try connecting to Spotify */
@@ -84,25 +96,37 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 	private fun _updateSpotify() {
 		_hasSpotifyControlPermission.value = spotifyConnector.previousControlSuccess()
 		val errorName = spotifyConnector.lastError?.javaClass?.simpleName
-		val errorMessage = spotifyConnector.lastError?.message
+		val errorMessage = spotifyConnector.lastError?.message ?: ""
 		when(errorName) {
 			"CouldNotFindSpotifyApp" -> _spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_apiNotFound) }
 			"OfflineModeException" -> _spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_apiUnavailable) }
 			"UserNotAuthorizedException" -> when {
 				// no internet
-				errorMessage?.contains("AUTHENTICATION_SERVICE_UNAVAILABLE") == true -> {
+				errorMessage.contains("AUTHENTICATION_SERVICE_UNAVAILABLE") -> {
 					_spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_apiUnavailable) }
 				}
+				// user cancelled
+				errorMessage.contains("Canceled") -> {
+					_spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_userDeclined) }
+				}
 				// user didn't grant access or user cancelled
-				errorMessage?.contains("User authorization required") == true -> {
-					_spotifyErrorHint.value = { ""}
+				errorMessage.contains("AUTHENTICATION_DENIED_BY_USER") -> {
+					_spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_userDeclined) }
+				}
+				// user didn't grant access or user cancelled
+				errorMessage.contains("User authorization required") -> {
+					_spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_userDeclined) }
+				}
+				// could not open the prompt
+				errorMessage.contains("Explicit user authorization") -> {
+					_spotifyErrorHint.value = { getString(R.string.musicAppNotes_spotify_backgroundDisabled) }
 				}
 				// unknown
 				else -> {
-					_spotifyErrorHint.value = { errorMessage ?: "" }
+					_spotifyErrorHint.value = { errorMessage }
 				}
 			}
-			else -> _spotifyErrorHint.value = { errorMessage ?: "" }
+			else -> _spotifyErrorHint.value = { errorMessage }
 		}
 
 		_isSpotifyWebApiAuthorized.value = spotifyAuthStateManager.isAuthorized()
@@ -133,9 +157,24 @@ class PermissionsState(private val appContext: Context) {
 			return enabledListeners.contains(appContext.packageName)
 		}
 
+	val supportsSmsPermission: Boolean
+		get() = appContext.packageManager.getPackageInfo(appContext.packageName, PackageManager.GET_PERMISSIONS).requestedPermissions.any {
+			it == Manifest.permission.READ_SMS
+		}
+
 	val hasSmsPermission: Boolean
 		get() = ContextCompat.checkSelfPermission(appContext, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
 
+	val hasCalendarPermission: Boolean
+		get() = ContextCompat.checkSelfPermission(appContext, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
+
 	val hasLocationPermission: Boolean
 		get() = ContextCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+	val hasBluetoothConnectPermission: Boolean
+		get() = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+			ContextCompat.checkSelfPermission(appContext, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+		} else {
+			true
+		}
 }

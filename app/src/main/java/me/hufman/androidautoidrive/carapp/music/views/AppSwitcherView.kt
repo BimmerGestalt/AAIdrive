@@ -2,13 +2,13 @@ package me.hufman.androidautoidrive.carapp.music.views
 
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import me.hufman.androidautoidrive.utils.GraphicsHelpers
-import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import io.bimmergestalt.idriveconnectkit.rhmi.*
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.music.AVContextHandler
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
-import me.hufman.idriveconnectionkit.rhmi.*
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 
 class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery, val avContext: AVContextHandler, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 
@@ -27,7 +27,7 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 	var visible = false
 	var hasSelectionChanged = 0 // allow the car to set the selection one time
 	val apps = ArrayList<MusicAppInfo>()
-	val appsListAdapter = object: RHMIListAdapter<MusicAppInfo>(3, apps) {
+	val appsListAdapter = object: RHMIModel.RaListModel.RHMIListAdapter<MusicAppInfo>(3, apps) {
 		override fun convertRow(index: Int, item: MusicAppInfo): Array<Any> {
 			val appIcon = graphicsHelpers.compress(item.icon, 48, 48)
 			val checkbox = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.CHECKMARK)

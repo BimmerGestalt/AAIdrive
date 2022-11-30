@@ -11,12 +11,13 @@ import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
-import java.lang.IllegalArgumentException
 
 class PermissionsController(val activity: Activity) {
 	companion object {
 		const val REQUEST_SMS = 20
+		const val REQUEST_CALENDAR = 30
 		const val REQUEST_LOCATION = 4000
+		const val REQUEST_BLUETOOTH = 50
 	}
 
 	private fun tryOpenActivity(intent: Intent): Boolean {
@@ -59,6 +60,10 @@ class PermissionsController(val activity: Activity) {
 		}
 	}
 
+	fun openSelfPermissions() {
+		openApplicationPermissions(activity.packageName)
+	}
+
 	fun promptNotification() {
 		val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
 				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -71,10 +76,24 @@ class PermissionsController(val activity: Activity) {
 				REQUEST_SMS)
 	}
 
+	fun promptCalendar() {
+		ActivityCompat.requestPermissions(activity,
+				arrayOf(Manifest.permission.READ_CALENDAR),
+				REQUEST_CALENDAR)
+	}
+
 	fun promptLocation() {
 		ActivityCompat.requestPermissions(activity,
-				arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+				arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
 				REQUEST_LOCATION)
+	}
+
+	fun promptBluetooth() {
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+			ActivityCompat.requestPermissions(activity,
+					arrayOf(Manifest.permission.BLUETOOTH_CONNECT),
+					REQUEST_BLUETOOTH)
+		}
 	}
 
 	fun promptSpotifyControl() {

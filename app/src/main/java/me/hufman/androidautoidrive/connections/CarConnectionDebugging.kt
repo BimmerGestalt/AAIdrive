@@ -3,10 +3,10 @@ package me.hufman.androidautoidrive.connections
 import android.content.Context
 import android.os.SystemClock
 import android.provider.Settings
-import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
-import me.hufman.idriveconnectionkit.android.security.KnownSecurityServices
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import java.lang.Exception
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
+import io.bimmergestalt.idriveconnectkit.android.security.KnownSecurityServices
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 
 /**
  * Assists in determining prerequisites and difficulties in the car connection
@@ -80,9 +80,11 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 		} catch (e: Exception) { false }
 
 	val isBMWMineInstalled
-		get() = SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.BMWMine)
+		get() = SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.BMWMine) ||
+				SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.BMWMineNA)
 	val isMiniMineInstalled
-		get() = SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.MiniMine)
+		get() = SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.MiniMine) ||
+				SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.MiniMineNA)
 
 	private val btStatus = BtStatus(context) { callback() }
 	private val usbStatus = UsbStatus(context) { callback() }
@@ -127,10 +129,13 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 		get() = idriveListener.isConnected
 
 	val bclTransport
-		get() = bclListener.transport
+		get() = bclListener.transport ?: MusicAppMode.TRANSPORT_PORTS.fromPort(idriveListener.port)?.toString()
 
 	val carBrand
 		get() = idriveListener.brand
+
+	val btCarBrand
+		get() = btStatus.carBrand
 
 	fun register() {
 		idriveListener.callback = { callback() }
@@ -144,6 +149,10 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 	}
 	fun _registerUsbStatus() {
 		usbStatus.register()
+	}
+
+	fun probeSecurityModules() {
+		securityAccess.connect()
 	}
 
 	fun unregister() {

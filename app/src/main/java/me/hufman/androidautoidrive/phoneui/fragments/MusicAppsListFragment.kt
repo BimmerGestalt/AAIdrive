@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.phoneui.fragments
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,24 +13,26 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.StoredSet
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.StoredSet
 import me.hufman.androidautoidrive.music.MusicAppInfo
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.findParent
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.scrollTop
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundViewHolder
 import me.hufman.androidautoidrive.phoneui.adapters.ObservableListCallback
 import me.hufman.androidautoidrive.phoneui.controllers.MusicAppListController
+import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicAppsViewModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
-import me.hufman.androidautoidrive.phoneui.ViewHelpers.findParent
-import me.hufman.androidautoidrive.phoneui.ViewHelpers.scrollTop
 import kotlin.math.max
 
 class MusicAppsListFragment: Fragment() {
-	val handler = Handler()
+	val handler = Handler(Looper.getMainLooper())
 
-	val controller by lazy { MusicAppListController(requireActivity()) }
+	val permissionsController by lazy { PermissionsController(requireActivity()) }
+	val controller by lazy { MusicAppListController(requireActivity(), permissionsController) }
 	val appsViewModel by activityViewModels<MusicAppsViewModel> { MusicAppsViewModel.Factory(requireActivity().applicationContext) }
 	private val appsChangedCallback = ObservableListCallback<MusicAppInfo> {
 		val listView = view?.findViewById<RecyclerView>(R.id.listMusicApps)
@@ -56,6 +59,14 @@ class MusicAppsListFragment: Fragment() {
 		appsViewModel.validApps.addOnListChangedCallback(appsChangedCallback)
 
 		val listMusicAppsRefresh = view.findViewById<SwipeRefreshLayout>(R.id.listMusicAppsRefresh)
+		listMusicApps.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+			override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+				// disable the swipe-refresh if we aren't positioned at the top
+				if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+					listMusicAppsRefresh.isEnabled = recyclerView.computeVerticalScrollOffset() == 0
+				}
+			}
+		})
 		listMusicAppsRefresh.setOnRefreshListener {
 			appsViewModel.musicAppDiscoveryThread.forceDiscovery()
 			handler.postDelayed({
@@ -69,7 +80,7 @@ class MusicAppsListFragment: Fragment() {
 			}
 
 			override fun onSwiped(view: RecyclerView.ViewHolder, direction: Int) {
-				val musicAppInfo = (view as? DataBoundViewHolder<MusicAppInfo, MusicAppListController>)?.data
+				val musicAppInfo = (view as? DataBoundViewHolder<*, *>)?.data as? MusicAppInfo
 				if (musicAppInfo != null) {
 					val previous = hiddenApps.contains(musicAppInfo.packageName)
 					if (previous) {

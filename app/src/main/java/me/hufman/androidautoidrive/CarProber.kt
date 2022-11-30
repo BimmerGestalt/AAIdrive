@@ -5,10 +5,10 @@ import android.os.HandlerThread
 import android.util.Log
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
-import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.android.CertMangling
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.IDriveConnection
+import io.bimmergestalt.idriveconnectkit.android.CertMangling
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import java.io.IOException
 import java.net.Socket
 
@@ -36,6 +36,10 @@ class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray, val 
 			}
 		}
 		schedule(2000)
+		if (IDriveConnectionStatus.isConnected && carConnection == null) {
+			// weird state, assert that we really have no connection
+			IDriveConnectionStatus.reset()
+		}
 	}
 
 	val KeepaliveTask = Runnable {

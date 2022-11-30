@@ -3,21 +3,25 @@ package me.hufman.androidautoidrive.phoneui.viewmodels
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Handler
+import android.os.Looper
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import me.hufman.androidautoidrive.*
+import me.hufman.androidautoidrive.CarInformation
+import me.hufman.androidautoidrive.CarInformationObserver
+import me.hufman.androidautoidrive.ChassisCode
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.connections.CarConnectionDebugging
+import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 import java.util.*
 
 class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo: CarInformation): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
-			val handler = Handler()
+			val handler = Handler(Looper.getMainLooper())
 			var model: ConnectionStatusModel? = null
 			val connection = CarConnectionDebugging(appContext) {
 				handler.post { model?.update() }
@@ -84,6 +88,9 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		getString(R.string.txt_setup_bcl_connected)
 	}
 	val bclModeText: LiveData<Context.() -> String> = _bclModeText
+	val isBclTransportBT: LiveData<Boolean> = bclTransport.map {
+		it == "BT"
+	}
 
 	// Car
 	val isCarConnected = isBclConnected
@@ -135,8 +142,16 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 			_bclReadyTimer = viewModelScope.launch {
 				delay(BCL_READY_THRESHOLD)
 				if (_isBclConnected.value != true) {
-					_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bclspp_usb) }
-					_carConnectionHint.value = { getString(R.string.txt_setup_enable_bclspp_usb) }
+					if (connection.isBMWMineInstalled && connection.btCarBrand == "BMW") {
+						_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bmwmine) }
+						_carConnectionHint.value = { getString(R.string.txt_setup_enable_bmwmine) }
+					} else if (connection.isMiniMineInstalled && connection.btCarBrand == "MINI") {
+						_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_minimine) }
+						_carConnectionHint.value = { getString(R.string.txt_setup_enable_minimine) }
+					} else {
+						_hintBclDisconnected.value = { getString(R.string.txt_setup_enable_bclspp_usb) }
+						_carConnectionHint.value = { getString(R.string.txt_setup_enable_bclspp_usb) }
+					}
 				}
 			}
 		}
@@ -147,7 +162,7 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		_isBclStuck.value = connection.isBCLStuck
 		_isBclConnected.value = connection.isBCLConnected
 		_hintBclMode.value = {getString(R.string.txt_setup_enable_bcl_mode, connection.deviceName)}
-		_bclTransport.value = connection.bclTransport?.toUpperCase(Locale.ROOT) ?: ""
+		_bclTransport.value = connection.bclTransport?.uppercase(Locale.ROOT) ?: ""
 		_bclModeText.value = if (connection.bclTransport == null) {
 			{ getString(R.string.txt_setup_bcl_connected) }
 		} else {
@@ -167,7 +182,7 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		}
 
 		// current car overview
-		val brand = if (connection.isBCLConnected) connection.carBrand?.toUpperCase(Locale.ROOT) else null
+		val brand = if (connection.isBCLConnected) connection.carBrand?.uppercase(Locale.ROOT) else null
 		_carBrand.value = brand
 		when (brand) {
 			"BMW" -> _carLogo.value = { ContextCompat.getDrawable(this, R.drawable.logo_bmw) }
@@ -202,6 +217,21 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		// recent ID5/6 versions just say EntryEvo and don't have a specific category
 		val displayedHmiVersion = if (mainHmiVersion.contains("EntryEvo_ID5")) hmiType else mainHmiVersion
 		_hmiVersion.value = displayedHmiVersion
+	}
+
+	fun onPause() {
+		// clear boolean statuses to stop animations
+		_isBtConnected.value = false
+		_isA2dpConnected.value = false
+		_isSppAvailable.value = false
+		_isUsbConnected.value = false
+		_isUsbCharging.value = false
+		_isUsbTransfer.value = false
+		_isUsbAccessory.value = false
+		_isBclReady.value = false
+		_isBclDisconnected.value = false
+		_isBclConnecting.value = false
+		_isBclStuck.value = false
 	}
 
 	override fun onCleared() {

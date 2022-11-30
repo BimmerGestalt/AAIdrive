@@ -2,14 +2,14 @@ package me.hufman.androidautoidrive.carapp.music.views
 
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import kotlinx.coroutines.*
-import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.UnicodeCleaner
-import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
 import me.hufman.androidautoidrive.music.MusicMetadata
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.truncate
-import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
@@ -85,7 +85,7 @@ class BrowsePageView(val state: RHMIState,
 	val songIcon = BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SONG)
 
 	private val actions = ArrayList<BrowseAction>()
-	private val actionsListModel = RHMIListAdapter(3, actions)
+	private val actionsListModel = RHMIModel.RaListModel.RHMIListAdapter(3, actions)
 
 	var visibleRows: List<MusicMetadata> = emptyList()
 	var visibleRowsOriginalMusicMetadata: List<MusicMetadata> = emptyList()
@@ -146,9 +146,11 @@ class BrowsePageView(val state: RHMIState,
 				currentListModel = loadingList
 				showList()
 			}
+			folderNameLabel.setProperty(RHMIProperty.PropertyId.LABEL_WAITINGANIMATION, true)
 			val musicListDeferred = browsePageModel.contents
 			val musicList = musicListDeferred.await() ?: emptyList()
 			this@BrowsePageView.musicList = ArrayList(musicList)
+			folderNameLabel.setProperty(RHMIProperty.PropertyId.LABEL_WAITINGANIMATION, false)
 			Log.d(TAG, "Browsing ${browsePageModel.title} resulted in ${musicList.count()} items")
 
 			if (musicList.isEmpty()) {
@@ -160,7 +162,7 @@ class BrowsePageView(val state: RHMIState,
 				browseController.shortcutBrowsePage(musicList.first { it.browseable })
 				return@launch
 			} else {
-				currentListModel = object: RHMIListAdapter<MusicMetadata>(4, musicList) {
+				currentListModel = object: RHMIModel.RaListModel.RHMIListAdapter<MusicMetadata>(4, musicList) {
 					override fun convertRow(index: Int, item: MusicMetadata): Array<Any> {
 						val checkmarkIcon = if (browsePageModel.previouslySelected == item) checkmarkIcon else ""
 						val coverArt = item.coverArt

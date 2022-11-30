@@ -2,17 +2,16 @@ package me.hufman.androidautoidrive.carapp.notifications.views
 
 import android.os.Handler
 import android.util.Log
-import de.bmw.idrive.BMWRemoting
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.FocusTriggerController
-import me.hufman.androidautoidrive.carapp.RHMIActionAbort
-import me.hufman.androidautoidrive.carapp.RHMIListAdapter
+import me.hufman.androidautoidrive.carapp.L
+import me.hufman.androidautoidrive.carapp.SettingsToggleList
 import me.hufman.androidautoidrive.carapp.notifications.*
 import me.hufman.androidautoidrive.carapp.notifications.TAG
 import me.hufman.androidautoidrive.notifications.CarNotification
 import me.hufman.androidautoidrive.notifications.NotificationsState
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
-import me.hufman.idriveconnectionkit.rhmi.*
 import java.util.*
 
 class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHelpers, val settings: NotificationSettings,
@@ -32,6 +31,7 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 
 	val notificationListView: RHMIComponent.List    // the list component of notifications
 	val settingsListView: RHMIComponent.List    // the list component of notifications
+	val settingsView: SettingsToggleList    // the list of settings to be toggled
 
 	var visible = false                 // whether the notification list is showing
 	var firstView = true                // whether this is the first time this view is shown
@@ -49,7 +49,7 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 	var mostInterestingNotification: CarNotification? = null        // most recently arrived or selected notification
 
 	val shownNotifications = Collections.synchronizedList(ArrayList<CarNotification>())   // which notifications are showing
-	val notificationListData = object: RHMIListAdapter<CarNotification>(3, shownNotifications) {
+	val notificationListData = object: RHMIModel.RaListModel.RHMIListAdapter<CarNotification>(3, shownNotifications) {
 		override fun convertRow(index: Int, item: CarNotification): Array<Any> {
 			val icon = item.icon?.let { graphicsHelpers.compress(it, 48, 48) } ?: ""
 			val text = "${item.title}\n${item.text.trim().split(Regex("\n")).lastOrNull() ?: ""}"
@@ -60,33 +60,17 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 		addRow(arrayOf("", "", L.NOTIFICATIONS_EMPTY_LIST))
 	}
 
-	val menuSettingsListData = object: RHMIListAdapter<AppSettings.KEYS>(3, settings.getSettings()) {
-		override fun convertRow(index: Int, item: AppSettings.KEYS): Array<Any> {
-			val checked = settings.isChecked(item)
-			val checkmark = if (checked) BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, IMAGEID_CHECKMARK) else ""
-			val name = when (item) {
-				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP -> L.NOTIFICATION_POPUPS
-				AppSettings.KEYS.ENABLED_NOTIFICATIONS_POPUP_PASSENGER -> L.NOTIFICATION_POPUPS_PASSENGER
-				AppSettings.KEYS.NOTIFICATIONS_SOUND -> L.NOTIFICATION_SOUND
-				AppSettings.KEYS.NOTIFICATIONS_READOUT -> L.NOTIFICATION_READOUT
-				AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP -> L.NOTIFICATION_READOUT_POPUP
-				AppSettings.KEYS.NOTIFICATIONS_READOUT_POPUP_PASSENGER -> L.NOTIFICATION_READOUT_POPUP_PASSENGER
-				else -> ""
-			}
-			return arrayOf(checkmark, "", name)
-		}
-	}
-
 	init {
 		notificationListView = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 		settingsListView = state.componentsList.filterIsInstance<RHMIComponent.List>().last()
+		settingsView = SettingsToggleList(settingsListView, settings.appSettings, settings.getSettings(), IMAGEID_CHECKMARK)
 	}
 
 	fun initWidgets(showNotificationController: ShowNotificationController, permissionView: PermissionView) {
 		// refresh the list when we are displayed
 		state.focusCallback = FocusCallback { focused ->
 			visible = focused
-			if (firstView && !settings.notificationListenerConnected) {
+			if (firstView && !NotificationsState.serviceConnected) {
 				focusTriggerController.focusState(permissionView.state, false)   // skip through to permissions view
 				firstView = false
 			} else if (focused) {
@@ -170,15 +154,7 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 				it.setSelectable(false)
 			}
 
-			settingsListView.setVisible(true)
-			settingsListView.setProperty(RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id, "55,0,*")
-			settingsListView.getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { index ->
-				val setting = menuSettingsListData.realData.getOrNull(index)
-				if (setting != null) {
-					settings.toggleSetting(setting)
-				}
-				throw RHMIActionAbort()
-			}
+			settingsView.initWidgets()
 		}
 	}
 
@@ -228,7 +204,7 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 	}
 
 	fun redrawSettingsList() {
-		settingsListView.getModel()?.value = menuSettingsListData
+		settingsView.redraw()
 	}
 
 	fun showNotification(sbn: CarNotification) {

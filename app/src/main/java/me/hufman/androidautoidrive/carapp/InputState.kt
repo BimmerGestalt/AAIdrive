@@ -1,7 +1,7 @@
 package me.hufman.androidautoidrive.carapp
 
 import android.util.Log
-import me.hufman.idriveconnectionkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 
 
 /** Handles letter entry from the car's input widget */
@@ -63,7 +63,11 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 		outputListModel.setValue(outputList, 0, outputList.height, outputList.height)
 	}
 
-	fun onInput(letter: String) {
+	/**
+	 * Handles processing the input from the RHMIActionSpellerCallback and sets the input result model
+	 * to the updated input.
+	 */
+	open fun onInput(letter: String) {
 		when (letter) {
 			"delall" -> input = ""
 			"del" -> input = input.dropLast(1)

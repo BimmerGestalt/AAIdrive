@@ -21,23 +21,25 @@
 
         <!-- Background Execution -->
         <LinearLayout
-            android:visibility="@{permissionsModel.hasBackgroundPermission}"
+            android:visibility="@{permissionsModel.hasBackgroundPermission &amp;&amp; !viewModel.hasBackgroundSuspended &amp;&amp; !viewModel.hasBackgroundKilled}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/pane_vertical_margin"
-            android:onClick="@{() -> permissionsController.openApplicationPermissions(&quot;me.hufman.androidautoidrive&quot;)}"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:onClick="@{() -> permissionsController.openSelfPermissions()}"
             android:gravity="center">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:paddingEnd="5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
                 android:src="@android:drawable/checkbox_on_background" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:text="@string/txt_setup_background_permission" />
         </LinearLayout>
 
@@ -46,24 +48,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/pane_vertical_margin"
-            android:onClick="@{() -> permissionsController.openApplicationPermissions(&quot;me.hufman.androidautoidrive&quot;)}"
-            android:gravity="center">
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:onClick="@{() -> permissionsController.openSelfPermissions()}">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal"
+                android:gravity="center">
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:paddingEnd="5dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
                     app:tint="?android:attr/textColorSecondary"
                     android:src="@android:drawable/checkbox_off_background" />
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:text="@string/txt_setup_background_impermission" />
             </LinearLayout>
             <TextView
@@ -72,29 +76,136 @@
                 android:text="@string/txt_setup_background_hint" />
         </LinearLayout>
 
+        <!-- Background restrictions caused problems -->
+        <LinearLayout
+            android:visibility="@{viewModel.hasBackgroundSuspended || viewModel.hasBackgroundKilled}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:onClick="@{() -> permissionsController.openSelfPermissions()}"
+            android:gravity="center">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/checkbox_vertical_margin"
+                android:gravity="center">
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
+                    app:tint="?android:attr/textColorSecondary"
+                    android:src="@drawable/ic_error_outline_black_24dp" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:visibility="@{viewModel.hasBackgroundKilled}"
+                    android:text="@string/txt_setup_background_killed" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:visibility="@{!viewModel.hasBackgroundKilled &amp;&amp; viewModel.hasBackgroundSuspended}"
+                    android:text="@string/txt_setup_background_suspended" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_setup_background_restrictions_hint" />
+        </LinearLayout>
+
+        <!-- Bluetooth Connection -->
+        <LinearLayout
+            android:visibility="@{permissionsModel.supportsBluetoothConnectPermission &amp;&amp; permissionsModel.hasBluetoothConnectPermission}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:onClick="@{() -> permissionsController.openSelfPermissions()}"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@android:drawable/checkbox_on_background" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="@string/txt_setup_bluetooth_permission" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="@{!permissionsModel.hasBluetoothConnectPermission}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:onClick="@{() -> permissionsController.promptBluetooth()}"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
+                    app:tint="?android:attr/textColorSecondary"
+                    android:src="@android:drawable/checkbox_off_background" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:text="@string/txt_setup_bluetooth_impermission" />
+            </LinearLayout>
+            <Button
+                android:onClick="@{() -> permissionsController.promptBluetooth()}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_grant"/>
+        </LinearLayout>
+
         <!-- BMW Connection -->
         <LinearLayout
             android:visibility="@{!viewModel.isBmwReady()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:paddingEnd="5dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
                     android:src="@android:drawable/checkbox_off_background" />
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:text="@string/txt_setup_bmw_missing" />
             </LinearLayout>
             <Button
@@ -110,18 +221,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:paddingEnd="5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
                 android:src="@android:drawable/checkbox_on_background" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:text="@string/txt_setup_bmw_ready" />
         </LinearLayout>
 
@@ -130,19 +243,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:paddingEnd="5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
                 app:tint="?android:attr/textColorSecondary"
                 android:src="@drawable/ic_error_outline_black_24dp" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:text="@string/txt_setup_bmw_connected_65" />
         </LinearLayout>
 
@@ -151,19 +266,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:paddingEnd="5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
                 app:tint="?android:attr/textColorSecondary"
                 android:src="@drawable/ic_error_outline_black_24dp" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:text="@string/txt_setup_bmw_mine_conflict" />
         </LinearLayout>
 
@@ -173,22 +290,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center">
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:paddingEnd="5dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
                     android:src="@android:drawable/checkbox_off_background" />
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:text="@string/txt_setup_mini_missing" />
             </LinearLayout>
             <Button
@@ -204,18 +324,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:paddingEnd="5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
                 android:src="@android:drawable/checkbox_on_background" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:text="@string/txt_setup_mini_ready" />
         </LinearLayout>
 
@@ -224,19 +346,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:paddingEnd="5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
                 app:tint="?android:attr/textColorSecondary"
                 android:src="@drawable/ic_error_outline_black_24dp" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:text="@string/txt_setup_mini_connected_65" />
         </LinearLayout>
 
@@ -245,19 +369,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:paddingEnd="5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
                 app:tint="?android:attr/textColorSecondary"
                 android:src="@drawable/ic_error_outline_black_24dp" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:text="@string/txt_setup_mini_mine_conflict" />
         </LinearLayout>
 
@@ -299,23 +425,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:paddingEnd="5dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
                     android:src="@android:drawable/checkbox_off_background" />
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:text="@string/txt_setup_security_missing" />
             </LinearLayout>
             <Button

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data class="CalendarSettingsBinding">
+        <variable
+            name="settings"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.CalendarSettingsModel" />
+        <variable
+            name="permissions"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel" />
+        <variable
+            name="permissionsController"
+            type="me.hufman.androidautoidrive.phoneui.controllers.PermissionsController" />
+    </data>
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:visibility="@{!permissions.hasCalendarPermission}"
+                android:onClick="@{() -> permissionsController.promptCalendar()}"
+                app:srcCompat="@android:drawable/checkbox_off_background" />
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:visibility="@{permissions.hasCalendarPermission}"
+                android:onClick="@{() -> permissionsController.openSelfPermissions()}"
+                app:srcCompat="@android:drawable/checkbox_on_background" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="@string/lbl_calendar_permissions" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_grant"
+                android:textSize="12sp"
+                android:onClick="@{() -> permissionsController.promptCalendar()}"
+                android:visibility="@{!permissions.hasCalendarPermission}"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:gravity="center_vertical"
+            android:visibility="@{settings.xiaomiCalendarInstalled}">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_error_outline_black_24dp"
+                app:tint="?android:attr/textColorSecondary"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="@string/lbl_calendar_xiaomi_installed" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:text="@string/lbl_calendar_detailed_events"
+            android:checked="@={settings.detailedEvents}"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:animationDuration="300"
+            android:alpha="@{settings.isNaviNotSupported() ? 0.5f : 1.0f}">
+            <androidx.appcompat.widget.SwitchCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingBottom="@dimen/settings_vertical_margin"
+                android:text="@string/lbl_calendar_automatic_navigation"
+                android:checked="@={settings.autonav}"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="@dimen/settings_vertical_margin"
+                android:visibility="@{settings.isNaviNotSupported()}"
+                android:text="@string/txt_capabilities_navi_no" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:text="@string/lbl_calendar_ignore_visibility"
+            android:visibility="@{settings.advancedSettings}"
+            android:checked="@={settings.ignoreVisibility}"/>
+
+    </LinearLayout>
+</layout>

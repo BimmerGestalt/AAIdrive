@@ -9,8 +9,8 @@ import me.hufman.androidautoidrive.databinding.DependencySummaryBinding
 import me.hufman.androidautoidrive.phoneui.controllers.DependencyInfoController
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import me.hufman.androidautoidrive.phoneui.viewmodels.DependencyInfoModel
-import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 
 class DependencySummaryFragment: Fragment() {
 	val viewModel by activityViewModels<DependencyInfoModel> { DependencyInfoModel.Factory(requireContext().applicationContext) }

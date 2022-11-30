@@ -1,58 +1,41 @@
 package me.hufman.androidautoidrive.carapp.maps
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.hardware.display.VirtualDisplay
+import android.location.Location
 import android.os.Handler
 import android.os.Looper
-import androidx.core.content.ContextCompat
 import android.util.Log
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.*
-import com.google.android.libraries.places.api.net.FetchPlaceRequest
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
-import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.maps.DirectionsApi
-import com.google.maps.GeoApiContext
-import com.google.maps.PendingResult
-import com.google.maps.model.DirectionsResult
-import com.google.maps.model.TravelMode
 import me.hufman.androidautoidrive.AppSettingsObserver
 import me.hufman.androidautoidrive.R
-import java.util.concurrent.TimeUnit
+import me.hufman.androidautoidrive.maps.CarLocationProvider
+import me.hufman.androidautoidrive.maps.LatLong
 import kotlin.math.max
 import kotlin.math.min
 
-class GMapsController(private val context: Context, private val resultsController: MapResultsController, private val virtualDisplay: VirtualDisplay, val appSettings: AppSettingsObserver): MapInteractionController {
+class GMapsController(private val context: Context,
+                      private val carLocationProvider: CarLocationProvider,
+                      private val virtualDisplay: VirtualDisplay,
+                      private val appSettings: AppSettingsObserver,
+                      private val mapAppMode: MapAppMode): MapInteractionController {
 	val TAG = "GMapsController"
 	var handler = Handler(context.mainLooper)
 	var projection: GMapsProjection? = null
 
 	private val SHUTDOWN_WAIT_INTERVAL = 120000L   // milliseconds of inactivity before shutting down map
-	private val SEARCH_SESSION_TTL = 180000L    // number of milliseconds that a search session can live   https://stackoverflow.com/a/52339858
-
-	private val placesClient: PlacesClient
-	private val geoClient = GeoApiContext().setQueryRateLimit(3)
-			.setApiKey(context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-					.metaData.getString("com.google.android.geo.API_KEY"))
-			.setConnectTimeout(2, TimeUnit.SECONDS)
-			.setReadTimeout(2, TimeUnit.SECONDS)
-			.setWriteTimeout(2, TimeUnit.SECONDS)
 
 	private var lastSettingsTime = 0L   // the last time we checked settings, for day/night check
 	private val SETTINGS_TIME_INTERVAL = 5 * 60000  // milliseconds between checking day/night
 
-	val locationProvider = LocationServices.getFusedLocationProviderClient(context)!!
-	val locationCallback = LocationCallbackImpl()
-	var currentLocation: LatLng? = null
+	val navController = GMapsNavController.getInstance(context, carLocationProvider) {
+		drawNavigation()
+		mapAppMode.currentNavDestination = it.currentNavDestination
+	}
+	val gMapLocationSource = GMapsLocationSource()
+	var currentLocation: Location? = null
 
 	var animatingCamera = false
 	var zoomingCamera = false   // whether the animation started with a zoom command, and thus should be cancelable
@@ -68,17 +51,13 @@ class GMapsController(private val context: Context, private val resultsControlle
 	}
 	private var startZoom = 6f  // what zoom level we start the projection with
 	private var currentZoom = 15f
-	private var searchSessionStart: Long = 0    // when the search session started
-	private var searchSessionConsumed = true    // if we used the search session for a Place Info lookup
-	private var searchSession: AutocompleteSessionToken? = null // the search session token
-	private var currentNavDestination: LatLong? = null
-	var currentNavRoute: List<LatLng>? = null
 
 	init {
-		val api_key = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-				.metaData.getString("com.google.android.geo.API_KEY") ?: ""
-		Places.initialize(context, api_key)
-		placesClient = Places.createClient(context)
+		carLocationProvider.callback = { location ->
+			handler.post {
+				onLocationUpdate(location)
+			}
+		}
 	}
 
 	override fun showMap() {
@@ -89,7 +68,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 
 		if (projection == null) {
 			Log.i(TAG, "First showing of the map")
-			val projection = GMapsProjection(context, virtualDisplay.display, appSettings)
+			val projection = GMapsProjection(context, virtualDisplay.display, appSettings, gMapLocationSource)
 			this.projection = projection
 			projection.mapListener = Runnable {
 				// when getMapAsync finishes
@@ -107,18 +86,11 @@ class GMapsController(private val context: Context, private val resultsControlle
 		}
 
 		// register for location updates
-		if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-			val locationRequest = LocationRequest()
-			locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-			locationRequest.interval = 3000
-			locationRequest.fastestInterval = 500
-
-			locationProvider.requestLocationUpdates(locationRequest, locationCallback, null)
-		}
+		carLocationProvider.start()
 	}
 
 	override fun pauseMap() {
-		locationProvider.removeLocationUpdates(locationCallback)
+		carLocationProvider.stop()
 
 		handler.postDelayed(shutdownMapRunnable, SHUTDOWN_WAIT_INTERVAL)
 	}
@@ -129,37 +101,35 @@ class GMapsController(private val context: Context, private val resultsControlle
 		projection = null
 	}
 
-	inner class LocationCallbackImpl: LocationCallback() {
-		override fun onLocationResult(location: LocationResult?) {
-			if (location != null && location.lastLocation != null) {
-				if (currentLocation == null) {  // first view
-					initCamera()
-				}
+	private fun onLocationUpdate(location: Location) {
+		if (currentLocation == null) {  // first view
+			initCamera()
+		}
 
-				// save the new location
-				currentLocation = LatLng(location.lastLocation.latitude, location.lastLocation.longitude)
-				projection?.location = currentLocation
+		// save the new location and move the camera
+		currentLocation = location
+		updateCamera()
 
-				// move the camera to the new location
-				updateCamera()
+		// move the map dot to the new location
+		gMapLocationSource.onLocationUpdate(location)
 
-				// check to re-apply day/night settings after an interval
-				if (lastSettingsTime + SETTINGS_TIME_INTERVAL < System.currentTimeMillis()) {
-					projection?.applySettings()
-					lastSettingsTime = System.currentTimeMillis()
-				}
-			}
+		// check to re-apply day/night settings after an interval
+		if (lastSettingsTime + SETTINGS_TIME_INTERVAL < System.currentTimeMillis()) {
+			projection?.applySettings()
+			lastSettingsTime = System.currentTimeMillis()
 		}
 	}
 
 	override fun zoomIn(steps: Int) {
 		Log.i(TAG, "Zooming map in $steps steps")
+		mapAppMode.startInteraction()
 		zoomingCamera = true
-		currentZoom = min(20f, currentZoom + steps)
+		currentZoom = min(18f, currentZoom + steps)
 		updateCamera()
 	}
 	override fun zoomOut(steps: Int) {
 		Log.i(TAG, "Zooming map out $steps steps")
+		mapAppMode.startInteraction()
 		zoomingCamera = true
 		currentZoom = max(0f, currentZoom - steps)
 		updateCamera()
@@ -167,6 +137,7 @@ class GMapsController(private val context: Context, private val resultsControlle
 
 	private fun initCamera() {
 		// set the camera to the starting position
+		mapAppMode.startInteraction()
 		val location = currentLocation
 		if (location != null) {
 			val cameraLocation = LatLng(location.latitude, location.longitude)
@@ -180,85 +151,20 @@ class GMapsController(private val context: Context, private val resultsControlle
 		val location = currentLocation ?: return
 		if (!animatingCamera || zoomingCamera) {
 			// if the camera is idle or we are zooming the camera already
+			val cameraLocation = LatLng(location.latitude, location.longitude)
+			projection?.map?.stopAnimation()
+			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(cameraLocation, currentZoom), animationFinishedCallback)
 			animatingCamera = true
-			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(location, currentZoom), animationFinishedCallback)
-		}
-	}
-
-	override fun searchLocations(query: String) {
-		val latlngBounds = projection?.map?.projection?.visibleRegion?.latLngBounds ?: return
-		searchLocations(query, latlngBounds)
-	}
-
-	private fun generateSearchSession() {
-		// the search session only should live for 3 minutes
-		if (searchSessionStart + SEARCH_SESSION_TTL < System.currentTimeMillis()) {
-			searchSession = null
-		}
-		if (searchSession == null) {
-			searchSession = AutocompleteSessionToken.newInstance()
-			searchSessionStart = System.currentTimeMillis()
-			searchSessionConsumed = false
-		}
-	}
-	fun searchLocations(query: String, location: LatLngBounds) {
-		generateSearchSession()
-
-		val bounds = RectangularBounds.newInstance(location)
-		Log.i(TAG, "Starting Place search for $query near $bounds")
-		val autocompleteRequest = FindAutocompletePredictionsRequest.builder()
-				.setLocationBias(bounds)
-				.setSessionToken(searchSession)
-				.setQuery(query)
-				.build()
-		placesClient.findAutocompletePredictions(autocompleteRequest).addOnSuccessListener { result ->
-			val results = result?.autocompletePredictions ?: return@addOnSuccessListener
-			Log.i(TAG, "Received ${results.size} results for query $query")
-
-			val mapResults = results.map {
-				MapResult(it.placeId, it.getPrimaryText(null).toString(), it.getSecondaryText(null).toString())
-			}
-			resultsController.onSearchResults(mapResults.toTypedArray())
-		}.addOnFailureListener {
-			Log.w(TAG, "Unsuccessful result when loading results for $query: $it")
-		}
-	}
-
-	override fun resultInformation(resultId: String) {
-		val requestedFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS)
-		val requestBuilder = FetchPlaceRequest.builder(resultId, requestedFields)
-		if (!searchSessionConsumed) {
-			requestBuilder.setSessionToken(searchSession)
-			searchSessionConsumed = true
-		}
-		val request = requestBuilder.build()
-
-		placesClient.fetchPlace(request).addOnSuccessListener { result ->
-			Log.i(TAG, "Received Place result for resultId $resultId: ${result?.place}")
-			val place = result?.place ?: return@addOnSuccessListener
-			val latLng = place.latLng
-			if (latLng == null) {
-				Log.w(TAG, "Place does not have a latlng location!")
-				return@addOnSuccessListener
-			}
-			val mapResult = MapResult(resultId, place.name.toString(), place.address.toString(),
-					LatLong(latLng.latitude, latLng.longitude))
-			resultsController.onPlaceResult(mapResult)
-		}.addOnFailureListener {
-			Log.w(TAG, "Did not find Place info for Place ID $resultId: $it")
 		}
 	}
 
 	override fun navigateTo(dest: LatLong) {
 		Log.i(TAG, "Beginning navigation to $dest")
+		mapAppMode.startInteraction(NAVIGATION_MAP_STARTZOOM_TIME + 4000)
 		// clear out previous nav
 		projection?.map?.clear()
 		// show new nav destination icon
-		currentNavDestination = dest
-		drawNavigation()
-
-		// search for a route
-		routeNavigation()
+		navController.navigateTo(dest)
 
 		// start zoom animation
 		animateNavigation()
@@ -266,14 +172,15 @@ class GMapsController(private val context: Context, private val resultsControlle
 
 	private fun animateNavigation() {
 		// show a camera animation to zoom out to the whole navigation route
-		val dest = currentNavDestination ?: return
+		val dest = navController.currentNavDestination ?: return
 		val lastLocation = currentLocation ?: return
 		animatingCamera = true
 		// zoom out to the full view
+		val startLatLng = LatLng(lastLocation.latitude, lastLocation.longitude)
 		val destLatLng = LatLng(dest.latitude, dest.longitude)
 
 		val navigationBounds = LatLngBounds.builder()
-				.include(lastLocation)
+				.include(startLatLng)
 				.include(destLatLng)
 				.build()
 		val currentVisibleRegion = projection?.map?.projection?.visibleRegion?.latLngBounds
@@ -285,64 +192,35 @@ class GMapsController(private val context: Context, private val resultsControlle
 
 		// then zoom back in to the user's chosen zoom
 		handler.postDelayed({
-			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, currentZoom))
+			projection?.map?.animateCamera(CameraUpdateFactory.newLatLngZoom(startLatLng, currentZoom))
 			animatingCamera = false
 		}, NAVIGATION_MAP_STARTZOOM_TIME.toLong())
-	}
-
-	private fun routeNavigation() {
-		// start a route search
-		val lastLocation = currentLocation ?: return
-		val dest = currentNavDestination ?: return
-		val origin = com.google.maps.model.LatLng(lastLocation.latitude, lastLocation.longitude)
-		val routeDest = com.google.maps.model.LatLng(dest.latitude, dest.longitude)
-
-		val directionsRequest = DirectionsApi.newRequest(geoClient)
-				.mode(TravelMode.DRIVING)
-				.origin(origin)
-				.destination(routeDest)
-		directionsRequest.setCallback(object: PendingResult.Callback<DirectionsResult> {
-			override fun onFailure(e: Throwable?) {
-				Log.w(TAG, "Failed to find route! $e")
-//				throw e ?: return
-			}
-
-			override fun onResult(result: DirectionsResult?) {
-				if (result == null || result.routes.isEmpty()) { return }
-				Log.i(TAG, "Adding route to map")
-				// this needs to be on the main thread
-				val decodedPath = result.routes[0].overviewPolyline.decodePath()
-				val currentNavRoute = decodedPath.map {
-					// convert from route LatLng to map LatLng
-					LatLng(it.lat, it.lng)
-				}
-				this@GMapsController.currentNavRoute = currentNavRoute
-				drawNavigation()
-			}
-		})
 	}
 
 	private fun drawNavigation() {
 		// make sure we are in the UI thread, and then draw navigation lines onto it
 		// because route search comes back on a network thread
 		val action = {
-			projection?.map?.clear()
+			val map = projection?.map
+			if (map != null) {
+				map.clear()
 
-			// destination flag
-			val dest = currentNavDestination
-			if (dest != null) {
-				val destLatLng = LatLng(dest.latitude, dest.longitude)
-				val marker = MarkerOptions()
-						.position(destLatLng)
-						.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-						.visible(true)
-				projection?.map?.addMarker(marker)
-			}
+				// destination flag
+				val dest = navController.currentNavDestination
+				if (dest != null) {
+					val destLatLng = LatLng(dest.latitude, dest.longitude)
+					val marker = MarkerOptions()
+							.position(destLatLng)
+							.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+							.visible(true)
+					map.addMarker(marker)
+				}
 
-			// routing
-			val currentNavRoute = this.currentNavRoute
-			if (currentNavRoute != null) {
-				projection?.map?.addPolyline(PolylineOptions().color(context.getColor(R.color.mapRouteLine)).addAll(currentNavRoute))
+				// routing
+				val currentNavRoute = navController.currentNavRoute
+				if (currentNavRoute != null) {
+					map.addPolyline(PolylineOptions().color(context.getColor(R.color.mapRouteLine)).addAll(currentNavRoute))
+				}
 			}
 		}
 		if (Looper.myLooper() != handler.looper) {
@@ -352,10 +230,14 @@ class GMapsController(private val context: Context, private val resultsControlle
 		}
 	}
 
+	override fun recalcNavigation() {
+		navController.currentNavDestination?.let {
+			navController.navigateTo(it)
+		}
+	}
+
 	override fun stopNavigation() {
 		// clear out previous nav
-		currentNavDestination = null
-		currentNavRoute = null
-		drawNavigation()
+		navController.stopNavigation()
 	}
 }

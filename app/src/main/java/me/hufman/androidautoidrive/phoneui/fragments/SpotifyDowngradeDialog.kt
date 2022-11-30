@@ -8,7 +8,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import java.lang.IllegalStateException
 import me.hufman.androidautoidrive.R
 
 class SpotifyDowngradeDialog: DialogFragment() {

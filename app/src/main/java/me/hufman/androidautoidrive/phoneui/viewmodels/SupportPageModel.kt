@@ -11,8 +11,12 @@ import java.util.*
 
 class SupportPageModel: ViewModel() {
 	private val _buildInfo = MutableLiveData<Context.() -> String> {
-		val buildTime = SimpleDateFormat.getDateTimeInstance().format(Date(BuildConfig.BUILD_TIME))
-		getString(R.string.txt_build_info, BuildConfig.VERSION_NAME, buildTime)
+		val commitTime = if (BuildConfig.COMMIT_TIME == 0L) {
+			""
+		} else {
+			SimpleDateFormat.getDateTimeInstance().format(Date(BuildConfig.COMMIT_TIME * 1000))
+		}
+		getString(R.string.txt_build_info, BuildConfig.VERSION_NAME, commitTime)
 	}
 	val buildInfo: LiveData<Context.() -> String> = _buildInfo
 }

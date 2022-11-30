@@ -23,7 +23,6 @@ class WelcomeActivity: AppCompatActivity() {
 		val pgrWelcomeTabs = findViewById<ViewPager>(R.id.pgrWelcomeTabs)
 		val adapter = FirstStartPagerAdapter(supportFragmentManager)
 		pgrWelcomeTabs.adapter = adapter
-		pgrWelcomeTabs.offscreenPageLimit = 2
 
 		findViewById<TabLayout>(R.id.tabWelcomeTabs).setupWithViewPager(pgrWelcomeTabs)
 	}
@@ -60,10 +59,11 @@ class FirstStartPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm,
 	val tabs = arrayOf(
 		WelcomeFragment(),
 		WelcomeDependenciesFragment(),
-		WelcomeMusicFragment(),
 		WelcomeNotificationFragment(),
+		WelcomeMusicFragment(),
+		if (WelcomeAnalyticsFragment.isSupported()) WelcomeAnalyticsFragment() else null,
 		WelcomeCompleteFragment()
-	)
+	).filterNotNull()
 
 	override fun getCount(): Int {
 		return tabs.size

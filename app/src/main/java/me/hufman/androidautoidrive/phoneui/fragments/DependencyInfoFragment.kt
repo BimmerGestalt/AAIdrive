@@ -29,6 +29,7 @@ class DependencyInfoFragment: Fragment() {
 
 	override fun onResume() {
 		super.onResume()
+		viewModel.connection.probeSecurityModules()
 		permissionsModel.update()
 	}
 }

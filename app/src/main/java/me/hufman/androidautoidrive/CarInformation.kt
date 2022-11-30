@@ -4,18 +4,20 @@ import android.util.Log
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
+import io.bimmergestalt.idriveconnectkit.CDS
+import io.bimmergestalt.idriveconnectkit.CDSProperty
 import me.hufman.androidautoidrive.carapp.CDSConnection
 import me.hufman.androidautoidrive.carapp.CDSData
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
+import me.hufman.androidautoidrive.carapp.CDSEventHandler
 import me.hufman.androidautoidrive.phoneui.viewmodels.CarDrivingStatsModel
-import me.hufman.idriveconnectionkit.CDS
-import me.hufman.idriveconnectionkit.CDSProperty
 import java.util.*
 
 open class CarInformation {
 	companion object {
 		@JvmStatic
 		protected val CACHED_CAPABILITY_KEYS = setOf(
+				"hmi.display-width",
 				"hmi.type",
 				"hmi.version",
 				"navi",
@@ -24,6 +26,8 @@ open class CarInformation {
 		)
 
 		private val CACHED_CDS_INTERVAL = 10000
+		private var lastCacheTime = 0L
+
 		@JvmStatic
 		protected val CACHED_CDS_KEYS = setOf(
 				CDS.VEHICLE.LANGUAGE
@@ -37,10 +41,19 @@ open class CarInformation {
 		var currentCapabilities: Map<String, String> = emptyMap()
 		var cachedCapabilities: Map<String, String> = emptyMap()
 		val cdsData = CDSDataProvider()
-		var cachedCdsData = CDSDataProvider().also { cachedCdsData ->
-			CACHED_CDS_KEYS.forEach { cachedProperty ->
-				cdsData.addEventHandler(cachedProperty, CACHED_CDS_INTERVAL, cachedCdsData)
+
+		val cachedCdsListener = object: CDSEventHandler {
+			override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
+				// register for updates through cachedCdsData to keep it subscribed to the car
+				// but actually updating the cache happens through the CarInformationUpdater
 			}
+		}
+		val cachedCdsData = CDSDataProvider().also { cachedCdsData ->
+			CACHED_CDS_KEYS.forEach { cachedProperty ->
+				cachedCdsData.addEventHandler(cachedProperty, CACHED_CDS_INTERVAL, cachedCdsListener)
+			}
+			// this enables cachedCdsData liveData to register for faster updates when on-screen
+			cachedCdsData.setConnection(cdsData.asConnection(cachedCdsData))
 		}
 
 		fun addListener(listener: CarInformationObserver) {
@@ -81,23 +94,27 @@ open class CarInformation {
 			} catch (e: IllegalStateException) {
 				Log.w(TAG, "Failed to restore cached cds properties", e)
 			}
+			lastCacheTime = 0L      // reset the cache time, needed for unit tests
 		}
 
 		fun saveCache(settings: MutableAppSettings) {
-			val capabilities = JsonObject()
-			cachedCapabilities.keys.forEach { key ->
-				capabilities.addProperty(key, cachedCapabilities[key])
-			}
-			settings[AppSettings.KEYS.CACHED_CAR_CAPABILITIES] = capabilities.toString()
-
-			val cdsCached = JsonObject()
-			CACHED_CDS_KEYS.forEach { propertyKey ->
-				val value = cachedCdsData[propertyKey]
-				if (value != null) {
-					cdsCached.add(propertyKey.propertyName, value)
+			if (lastCacheTime + CACHED_CDS_INTERVAL < System.currentTimeMillis()) {
+				val capabilities = JsonObject()
+				cachedCapabilities.keys.forEach { key ->
+					capabilities.addProperty(key, cachedCapabilities[key])
 				}
+				settings[AppSettings.KEYS.CACHED_CAR_CAPABILITIES] = capabilities.toString()
+
+				val cdsCached = JsonObject()
+				CACHED_CDS_KEYS.forEach { propertyKey ->
+					val value = cachedCdsData[propertyKey]
+					if (value != null) {
+						cdsCached.add(propertyKey.propertyName, value)
+					}
+				}
+				settings[AppSettings.KEYS.CACHED_CAR_DATA] = cdsCached.toString()
+				lastCacheTime = System.currentTimeMillis()
 			}
-			settings[AppSettings.KEYS.CACHED_CAR_DATA] = cdsCached.toString()
 		}
 	}
 
@@ -143,9 +160,6 @@ open class CarInformationUpdater(val appSettings: MutableAppSettings): CarInform
 
 	override fun onCdsConnection(connection: CDSConnection?) {
 		cdsData.setConnection(connection)
-
-		// this enables cachedCdsData liveData to register for faster updates when on-screen
-		cachedCdsData.setConnection(connection)
 	}
 
 	override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
@@ -180,12 +194,19 @@ class CarCapabilitiesSummarized(val carInformation: CarInformation) {
 	val isPopupNotSupported = false
 
 	val isTtsSupported: Boolean
-		get() = carInformation.capabilities["tts"]?.toLowerCase(Locale.ROOT) == "true"
+		get() = carInformation.capabilities["tts"]?.lowercase(Locale.ROOT) == "true"
 	val isTtsNotSupported: Boolean
-		get() = carInformation.capabilities["tts"]?.toLowerCase(Locale.ROOT) == "false"
+		get() = carInformation.capabilities["tts"]?.lowercase(Locale.ROOT) == "false"
 
 	val isNaviSupported: Boolean
-		get() = carInformation.capabilities["navi"]?.toLowerCase(Locale.ROOT) == "true"
+		get() = carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "true"
 	val isNaviNotSupported: Boolean
-		get() = carInformation.capabilities["navi"]?.toLowerCase(Locale.ROOT) == "false"
+		get() = carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
+
+	val mapWidescreenSupported: Boolean
+		get() = carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 0 >= 1000
+	val mapWidescreenUnsupported: Boolean
+		get() = carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 9999 < 1000
+	val mapWidescreenCrashes: Boolean
+		get() = carInformation.capabilities["hmi.version"]?.lowercase(Locale.ROOT)?.startsWith("entryevo_") == true
 }

@@ -4,6 +4,7 @@ import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsObserver
 import me.hufman.androidautoidrive.StoredList
 import me.hufman.androidautoidrive.connections.BtStatus
+import java.util.*
 
 class NotificationSettings(val capabilities: Map<String, String?>, val btStatus: BtStatus, val appSettings: MutableAppSettingsObserver) {
 	var callback
@@ -13,11 +14,8 @@ class NotificationSettings(val capabilities: Map<String, String?>, val btStatus:
 	// quick replies for input suggestions
 	val quickReplies: List<String> = StoredList(appSettings, AppSettings.KEYS.NOTIFICATIONS_QUICK_REPLIES)
 
-	// whether the notification listener service is connected
-	var notificationListenerConnected = true
-
 	// car's supported features
-	val tts = capabilities["tts"]?.toLowerCase() == "true"
+	val tts = capabilities["tts"]?.lowercase(Locale.ROOT) == "true"
 
 	fun getSettings(): List<AppSettings.KEYS> {
 		val popupSettings = listOf(
@@ -37,14 +35,6 @@ class NotificationSettings(val capabilities: Map<String, String?>, val btStatus:
 			listOf()
 		}
 		return popupSettings + soundSettings + readoutSettings
-	}
-
-	fun toggleSetting(setting: AppSettings.KEYS) {
-		appSettings[setting] = (!appSettings[setting].toBoolean()).toString()
-	}
-
-	fun isChecked(setting: AppSettings.KEYS): Boolean {
-		return appSettings[setting].toBoolean()
 	}
 
 	fun shouldPopup(passengerSeated: Boolean): Boolean {

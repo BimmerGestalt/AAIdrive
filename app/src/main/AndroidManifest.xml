@@ -7,12 +7,66 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Run the Foreground Notification to stay in memory -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Read Calendar to show in the car -->
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
     <!-- Optionally access SMS images -->
     <uses-permission android:name="android.permission.READ_SMS" />
     <!-- Open Assistant while the screen is off in new phones -->
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <!-- Retrieve package information (app icon, etc.) from all apps -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
     <!-- View Bluetooth status -->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <!-- But don't require Bluetooth support -->
+    <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
+
+    <permission android:name="io.bimmergestalt.permission.CDS_normal"
+        android:description="@string/permission_cds_normal"
+        android:label="@string/permission_cds_normal"
+        android:protectionLevel="normal"/>
+    <permission android:name="io.bimmergestalt.permission.CDS_personal"
+        android:description="@string/permission_cds_personal"
+        android:label="@string/permission_cds_personal"
+        android:protectionLevel="dangerous"/>
+
+    <queries>
+        <!-- Search for MediaBrowserService -->
+        <intent>
+            <action android:name="android.media.browse.MediaBrowserService" />
+        </intent>
+        <!-- Search for applications that may play music without using MediaBrowserService -->
+        <intent>
+            <action android:name="android.intent.action.MEDIA_BUTTON" />
+        </intent>
+        <!-- Search for browsers to open Spotify Web Auth -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.APP_BROWSER" />
+            <data android:scheme="https" />
+        </intent>
+        <!-- Search for Voice Assistants -->
+        <intent>
+            <action android:name="android.intent.action.VOICE_COMMAND" />
+        </intent>
+        <!-- Search for Addon apps that poll data -->
+        <intent>
+            <action android:name="io.bimmergestalt.cardata.service" />
+        </intent>
+        <!-- Search for Addon apps that connect to the car -->
+        <intent>
+            <action android:name="io.bimmergestalt.carconnection.service" />
+        </intent>
+        <!-- Check for the Xiaomi Calendar -->
+        <package android:name="com.xiaomi.calendar" />
+    </queries>
 
     <application
         android:name=".ApplicationCallbacks"
@@ -27,7 +81,8 @@
 
         <activity-alias
             android:name=".phoneui.MainActivity"
-            android:targetActivity=".phoneui.NavHostActivity" >
+            android:targetActivity=".phoneui.NavHostActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -52,6 +107,7 @@
             android:name=".phoneui.NavActivityBMW"
             android:targetActivity=".phoneui.NavIntentActivity"
             android:label="@string/navigation_listener_bmw"
+            android:exported="true"
             android:enabled="false"
             >
             <intent-filter>
@@ -518,6 +574,7 @@
             android:name=".phoneui.NavActivityMINI"
             android:targetActivity=".phoneui.NavIntentActivity"
             android:label="@string/navigation_listener_mini"
+            android:exported="true"
             android:enabled="false"
             >
             <intent-filter>
@@ -986,14 +1043,41 @@
 
         <service android:name=".MainService"
             android:label="@string/app_name"
-            android:exported="false">
+            android:exported="false"
+            android:foregroundServiceType="location|connectedDevice">
             <intent-filter>
                 <action android:name="me.hufman.androidautoidrive.MainService.start" />
                 <action android:name="me.hufman.androidautoidrive.MainService.stop" />
             </intent-filter>
         </service>
 
-        <receiver android:name=".CarConnectionListener">
+        <service android:name=".carapp.assistant.AssistantAppService" android:exported="false">
+            <intent-filter>
+                <action android:name="me.hufman.androidautoidrive.carconnection.service" />
+            </intent-filter>
+        </service>
+        <service android:name=".carapp.calendar.CalendarAppService" android:exported="false">
+            <intent-filter>
+                <action android:name="me.hufman.androidautoidrive.carconnection.service" />
+            </intent-filter>
+        </service>
+        <service android:name=".carapp.carinfo.CarInformationDiscoveryService" android:exported="false">
+            <intent-filter>
+                <action android:name="me.hufman.androidautoidrive.carconnection.service" />
+            </intent-filter>
+        </service>
+        <service android:name=".carapp.music.MusicAppService" android:exported="false">
+            <intent-filter>
+                <action android:name="me.hufman.androidautoidrive.carconnection.service" />
+            </intent-filter>
+        </service>
+        <service android:name=".carapp.notifications.NotificationAppService" android:exported="false">
+            <intent-filter>
+                <action android:name="me.hufman.androidautoidrive.carconnection.service" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".CarConnectionListener" android:exported="false">
             <intent-filter>
                 <action android:name="com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_ATTACHED" />
                 <action android:name="com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_DETACHED" />
@@ -1005,7 +1089,8 @@
         <receiver android:name=".phoneui.fragments.NotificationPageFragment$CustomActionListener" />
 
         <receiver
-            android:name=".A2DPBroadcastReceiver">
+            android:name=".A2DPBroadcastReceiver"
+            android:exported="true">
 
             <intent-filter>
                 <action
@@ -1023,6 +1108,7 @@
 
         <service android:name=".notifications.NotificationListenerServiceImpl"
             android:label="@string/app_name"
+            android:exported="true"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
@@ -1030,11 +1116,25 @@
         </service>
 
         <provider
-            android:name="me.hufman.androidautoidrive.CarAPIAssetProvider"
+            android:authorities="io.bimmergestalt.cardata.provider"
+            android:name="me.hufman.androidautoidrive.CDSContentProvider"
             android:exported="true"
-            android:authorities="me.hufman.androidautoidrive.provider"
-            android:grantUriPermissions="true" />
-
+            android:readPermission="io.bimmergestalt.permission.CDS_normal"
+            >
+            <path-permission android:path="/cds/10" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/11" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/57" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/59" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/60" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/61" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/62" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/63" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/64" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/65" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/66" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/67" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/87" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+        </provider>
 
         <meta-data
             android:name="com.spotify.music.API_KEY"

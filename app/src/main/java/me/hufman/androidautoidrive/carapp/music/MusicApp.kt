@@ -4,24 +4,22 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
-import me.hufman.androidautoidrive.utils.GraphicsHelpers
+import io.bimmergestalt.idriveconnectkit.CDS
+import io.bimmergestalt.idriveconnectkit.IDriveConnection
+import io.bimmergestalt.idriveconnectkit.Utils.rhmi_setResourceCached
+import io.bimmergestalt.idriveconnectkit.android.CarAppResources
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.PhoneAppResources
-import me.hufman.androidautoidrive.utils.Utils.loadZipfile
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.music.views.*
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
+import me.hufman.androidautoidrive.utils.Utils.loadZipfile
 import me.hufman.androidautoidrive.utils.removeFirst
-import me.hufman.idriveconnectionkit.CDS
-import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
-import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import me.hufman.idriveconnectionkit.rhmi.*
-import kotlin.collections.ArrayList
 
 
 class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val musicImageIDs: MusicImageIDs, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicAppDiscovery: MusicAppDiscovery, val musicController: MusicController, val musicAppMode: MusicAppMode) {
@@ -35,9 +33,9 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 
 	val avContext: AVContextHandler
 	val amAppList: AMAppList<MusicAppInfo>
+	val contextTracker = ContextTracker()
 
 	val globalMetadata: GlobalMetadata
-	var hmiContextChangedTime = 0L
 	val playbackId5View: PlaybackView?
 	val playbackView: PlaybackView
 	val appSwitcherView: AppSwitcherView
@@ -99,9 +97,9 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 
 			// listen for HMI Context events
 			cdsData.setConnection(CDSConnectionEtch(carConnection))
-			cdsData.subscriptions.defaultIntervalLimit = 50
+			cdsData.subscriptions.defaultIntervalLimit = 300
 			cdsData.subscriptions[CDS.HMI.GRAPHICALCONTEXT] = {
-				hmiContextChangedTime = System.currentTimeMillis()
+				contextTracker.onHmiContextUpdate(it)
 			}
 		}
 
@@ -151,9 +149,9 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 	private fun createRhmiApp(): RHMIApplication {
 		// create the app in the car
 		rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.music", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive.music", "me.hufman"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB(iDriveConnectionStatus.brand ?: "common"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(iDriveConnectionStatus.brand ?: "common"))
+		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
+		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB(iDriveConnectionStatus.brand ?: "common"))
+		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(iDriveConnectionStatus.brand ?: "common"))
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		// register for events from the car
@@ -320,21 +318,29 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 	}
 
 	private fun initWidgets() {
-		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach {
-			it.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIActionButtonCallback {
+		carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().forEach { entryButton ->
+			entryButton.getAction()?.asRAAction()?.rhmiActionCallback = object: RHMIActionButtonCallback {
 				override fun onAction(invokedBy: Int?) {
 					val bookmarkButton = invokedBy == 2
-					if (musicController.currentAppController == null) {
-						it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = appSwitcherView.state.id
-					} else {
-						// set the destination state for the entrybutton
-						it.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = currentPlaybackView.state.id
 
-						// invoked manually, not by a shortcut button
-						// when the Media button is pressed, it shows the Media/Radio window for a short time
-						// and then selects the Entrybutton
-						val contextChangeDelay = System.currentTimeMillis() - hmiContextChangedTime
-						if (musicAppMode.shouldId5Playback() && (contextChangeDelay > 1500 || bookmarkButton)) {
+					// set the destination state for the entrybutton
+					val stateId = if (musicController.currentAppController == null) {
+						appSwitcherView.state.id
+					} else {
+						currentPlaybackView.state.id
+					}
+					// manually check for itempotency, so we aren't blocked by redrawProgress updates
+					if (entryButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value != stateId) {
+						entryButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = stateId
+					}
+
+					if (musicController.currentAppController != null) {
+						// wait for any hmi context changes to filter through
+						if (musicAppMode.supportsId5Playback() && !bookmarkButton) {
+							Thread.sleep(50)
+						}
+						// invoked manually, not by the Media shortcut button
+						if (musicAppMode.supportsId5Playback() && (bookmarkButton || contextTracker.isIntentionalSpotifyClick())) {
 							// there's no spotify AM icon for the user to push
 							// so handle this spotify icon push
 							// but only if the user has dwelled on a screen for a second
@@ -344,11 +350,11 @@ class MusicApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityA
 							if (spotifyApp != null) {
 								avContext.av_requestContext(spotifyApp)
 							}
-						}
-
-						val currentApp = musicController.currentAppInfo
-						if (currentApp != null) {
-							avContext.av_requestContext(currentApp)
+						} else {
+							val currentApp = musicController.currentAppInfo
+							if (currentApp != null) {
+								avContext.av_requestContext(currentApp)
+							}
 						}
 					}
 				}

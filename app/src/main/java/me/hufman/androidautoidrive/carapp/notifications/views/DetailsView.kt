@@ -2,15 +2,17 @@ package me.hufman.androidautoidrive.carapp.notifications.views
 
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import me.hufman.androidautoidrive.utils.GraphicsHelpers
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.PhoneAppResources
+import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.FocusTriggerController
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.notifications.*
 import me.hufman.androidautoidrive.notifications.CarNotification
 import me.hufman.androidautoidrive.notifications.CarNotificationController
 import me.hufman.androidautoidrive.notifications.NotificationsState
-import me.hufman.idriveconnectionkit.rhmi.*
-import java.util.ArrayList
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
+import java.util.*
 import kotlin.math.min
 
 class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers,
@@ -171,7 +173,8 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 		// prepare the notification text
 		val listData = RHMIModel.RaListModel.RHMIListConcrete(1)
 		val trimmedText = notification.text.substring(0, min(MAX_LENGTH, notification.text.length))
-		listData.addRow(arrayOf(trimmedText))
+		val sanitizedText = trimmedText.replace("<", "<\u200b")     // break up any incidental <info or <color= sequences with a zero-width-space
+		listData.addRow(arrayOf(sanitizedText))
 
 		state.getTextModel()?.asRaDataModel()?.value = appName
 		iconWidget.getModel()?.value = iconListData
@@ -240,7 +243,7 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 					setEnabled(true)
 					setSelectable(true)
 					getImageModel()?.asImageIdModel()?.imageId = 158
-					getTooltipModel()?.asRaDataModel()?.value = action.name.toString()
+					getTooltipModel()?.asRaDataModel()?.value = UnicodeCleaner.clean(action.name.toString())
 					getAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
 						if (action.supportsReply) {
 							// show input to reply

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.hardware.usb.UsbManager
 import android.util.Log
-import java.lang.IllegalArgumentException
 
 class UsbStatus(val context: Context, val callback: () -> Unit) {
 

@@ -9,7 +9,7 @@ import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.phoneui.viewmodels.LanguageSettingsModel
-import me.hufman.idriveconnectionkit.CDS
+import io.bimmergestalt.idriveconnectkit.CDS
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -55,7 +55,10 @@ class LanguageSettingsModelTest {
 
 	@Test
 	fun testCarLanguage() {
-		val context = mock<Context>()
+		val context = mock<Context> {
+			on {getString(any())} doReturn ""
+			on {getString(any(), any())} doReturn ""
+		}
 		val cdsData = CDSDataProvider()
 		val carInformation = mock<CarInformation>()
 		whenever(carInformation.cdsData) doReturn cdsData

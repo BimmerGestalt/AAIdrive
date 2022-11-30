@@ -1,26 +1,32 @@
 package me.hufman.androidautoidrive.carapp.music.views
 
 import de.bmw.idrive.BMWRemoting
-import me.hufman.androidautoidrive.utils.GraphicsHelpers
+import io.bimmergestalt.idriveconnectkit.Utils.etchAsInt
+import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.PhoneAppResources
-import me.hufman.androidautoidrive.utils.TimeUtils.formatTime
 import me.hufman.androidautoidrive.UnicodeCleaner
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
-import me.hufman.androidautoidrive.utils.Utils
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
+import me.hufman.androidautoidrive.carapp.RHMIUtils.findAdjacentComponent
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
+import me.hufman.androidautoidrive.carapp.music.TextScroller
 import me.hufman.androidautoidrive.carapp.music.components.PlaylistItem
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGauge
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeAudioState
 import me.hufman.androidautoidrive.carapp.music.components.ProgressGaugeToolbarState
-import me.hufman.androidautoidrive.carapp.RHMIUtils.findAdjacentComponent
 import me.hufman.androidautoidrive.music.*
-import me.hufman.idriveconnectionkit.rhmi.*
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
+import me.hufman.androidautoidrive.utils.TimeUtils.formatTime
+import me.hufman.androidautoidrive.utils.Utils
 
 class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs) {
 	companion object {
+		const val MUSIC_METADATA_MAX_LINE_LENGTH = 30
+		const val AUDIOSTATE_PLAYLIST_MAX_LINE_LENGTH = 28
 		const val INITIALIZATION_DEFERRED_TIMEOUT = 6000
+		const val POSITION_ACTION_DEBOUNCE = 500
 		fun fits(state: RHMIState): Boolean {
 			return state is RHMIState.AudioHmiState || (
 					state is RHMIState.ToolbarState &&
@@ -66,6 +72,11 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	var isBuffering: Boolean = false
 	var skipBackEnabled: Boolean = true
 	var skipNextEnabled: Boolean = true
+	var lastPositionActionTime: Long = 0
+
+	var artistTextScroller: TextScroller = TextScroller("", 0)
+	var albumTextScroller: TextScroller = TextScroller("", 0)
+	var trackTextScroller: TextScroller = TextScroller("", 0)
 
 	init {
 		// discover widgets
@@ -201,6 +212,26 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		}
 		buttons[2].getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = enqueuedView.state.id
 		customActionButton.getAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = customActionsView.state.id
+
+		if (state is RHMIState.AudioHmiState) {
+			state.getProgressAction()?.asRAAction()?.rhmiActionCallback = RHMIActionCallback { args ->
+				if (args?.containsKey(45.toByte()) == true && lastPositionActionTime + POSITION_ACTION_DEBOUNCE < System.currentTimeMillis()) {
+					val newPosition = etchAsInt(args[45.toByte()])
+					controller.seekTo(controller.getPlaybackPosition().maximumPosition * newPosition / 100)
+					lastPositionActionTime = System.currentTimeMillis()
+				}
+			}
+			state.getArtistAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+				browseView.clearPages()
+				val page = browseView.pushBrowsePage(null)
+				state.getArtistAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id
+			}
+			state.getAlbumAction()?.asRAAction()?.rhmiActionCallback = RHMIActionButtonCallback {
+				browseView.clearPages()
+				val page = browseView.pushBrowsePage(null)
+				state.getAlbumAction()?.asHMIAction()?.getTargetModel()?.asRaIntModel()?.value = page.state.id
+			}
+		}
 	}
 
 	/**
@@ -301,16 +332,37 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 	/** Any updates that should happen in the background */
 	fun backgroundRedraw() {
 		if (!initialized && initializationDeferredTime < System.currentTimeMillis()) {
-			initWidgetsLater()
+			try {
+				initWidgetsLater()
+			} catch (e: BMWRemoting.ServiceException) {
+				// something went wrong during background initialization
+				// but don't crash, instead wait to initialize on first view
+			}
 		}
 
 		// Redraw these in the background, for AudioHmiState's global metadata
 		if (state is RHMIState.AudioHmiState) {
 			if (displayedSong != controller.getMetadata() ||
 					displayedConnected != controller.isConnected()) {
-				redrawSong()
+				try {
+					redrawSong()
+				} catch (e: BMWRemoting.ServiceException) {
+					// something went wrong during background update
+					// sometimes seen when updating the AudioHmiState Playlist model
+					// but don't crash, instead continue on and try to redraw again on next view
+					// analytics says only a single user (ID4 running ID5 AudioHmiState somehow)
+					// experiences this, so we'll accept the inefficiency of repeatedly trying to update
+				}
+			} else {
+				// if the song is the same, update any scrolling text
+				redrawLongTitles()
 			}
-			redrawPosition()
+			try {
+				redrawPosition()
+			} catch (e: BMWRemoting.ServiceException) {
+				// something went wrong during background update
+				// but don't crash about it
+			}
 		}
 	}
 
@@ -326,12 +378,25 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		if (displayedSong != controller.getMetadata() ||
 				displayedConnected != controller.isConnected()) {
 			redrawSong()
+		} else {
+			redrawLongTitles()
 		}
 		redrawPosition()
 		redrawQueueButton()
 		redrawShuffleButton()
 		redrawRepeatButton()
 		redrawActions()
+	}
+
+	/**
+	 * Redraw long titles with current state of the text scrolling
+	 */
+	private fun redrawLongTitles() {
+		artistModel.value = artistTextScroller.getText()
+		albumModel.value = albumTextScroller.getText()
+		val trackText = trackTextScroller.getText()
+		redrawAudiostatePlaylist(trackText)
+		trackModel.value = trackText
 	}
 
 	private fun redrawApp() {
@@ -344,11 +409,25 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 
 	private fun redrawSong() {
 		val song = controller.getMetadata()
-		artistModel.value = if (controller.isConnected()) {
+
+		val artistTitle = if (controller.isConnected()) {
 			UnicodeCleaner.clean(song?.artist ?: "")
 		} else { L.MUSIC_DISCONNECTED }
-		albumModel.value = UnicodeCleaner.clean(song?.album ?: "")
-		trackModel.value = UnicodeCleaner.clean(song?.title ?: "")
+		artistTextScroller = TextScroller(artistTitle, MUSIC_METADATA_MAX_LINE_LENGTH)
+
+		val albumTitle = UnicodeCleaner.clean(song?.album ?: "")
+		albumTextScroller = TextScroller(albumTitle, MUSIC_METADATA_MAX_LINE_LENGTH)
+
+		val trackTitle = UnicodeCleaner.clean(song?.title ?: "")
+		val trackMaxLineLength = if (state is RHMIState.AudioHmiState) {
+			AUDIOSTATE_PLAYLIST_MAX_LINE_LENGTH
+		} else {
+			MUSIC_METADATA_MAX_LINE_LENGTH
+		}
+		trackTextScroller = TextScroller(trackTitle, trackMaxLineLength)
+
+		redrawLongTitles()
+
 		val songCoverArt = song?.coverArt
 		if (songCoverArt != null) {
 			albumArtBigModel.value = graphicsHelpers.compress(songCoverArt, 320, 320, quality = 65)
@@ -374,7 +453,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		}
 
 		// update the audio state playlist
-		redrawAudiostatePlaylist(song?.title ?: "")
+		redrawAudiostatePlaylist(trackTitle)
 
 		displayedSong = song
 		displayedConnected = controller.isConnected()
@@ -511,5 +590,4 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			maximumTimeModel.value = formatTime(progress.maximumPosition)
 		}
 	}
-
 }

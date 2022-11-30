@@ -9,12 +9,20 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
-import java.lang.IllegalArgumentException
 import java.util.*
 
-fun BluetoothDevice.isCar(): Boolean {
-	return this.name.startsWith("BMW") || this.name.startsWith("MINI")
+fun BluetoothDevice?.isCar(): Boolean {
+	return this?.name?.startsWith("BMW") == true || this?.name?.startsWith("MINI") == true
 }
+val BluetoothProfile.safeConnectedDevices: List<BluetoothDevice>
+	get() {
+		return try {
+			this.connectedDevices
+		} catch (e: SecurityException) {
+			// missing BLUETOOTH_CONNECT permission
+			emptyList()
+		}
+	}
 
 class BtStatus(val context: Context, val callback: () -> Unit) {
 	companion object {
@@ -26,15 +34,15 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 
 	// the resulting state
 	val isHfConnected
-		get() = hfListener.profile?.connectedDevices?.any { it.isCar() } == true
+		get() = hfListener.profile?.safeConnectedDevices?.any { it.isCar() } == true
 	private val hfListener = ProfileListener(BluetoothProfile.HEADSET)
 
 	val isA2dpConnected
-		get() = a2dpListener.profile?.connectedDevices?.any { it.isCar() } == true
+		get() = a2dpListener.profile?.safeConnectedDevices?.any { it.isCar() } == true
 	private val a2dpListener = ProfileListener(BluetoothProfile.A2DP)
 
 	val isSPPAvailable
-		get() = (a2dpListener.profile?.connectedDevices?.filter { it.isCar() } ?: listOf()).any { device ->
+		get() = (a2dpListener.profile?.safeConnectedDevices?.filter { it.isCar() } ?: listOf()).any { device ->
 			device.uuids?.any {
 				it?.uuid == UUID_SPP
 			} ?: false
@@ -42,6 +50,15 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 
 	val isBTConnected
 		get() = isHfConnected || isA2dpConnected
+
+	val carBrand: String?
+		get() = a2dpListener.profile?.safeConnectedDevices?.filter { it.isCar() }?.map {
+			when {
+				it?.name?.startsWith("BMW") == true -> "BMW"
+				it?.name?.startsWith("MINI") == true -> "MINI"
+				else -> null
+			}
+		}?.firstOrNull()
 
 	inner class ProfileListener(profileId: Int): BluetoothProfile.ServiceListener {
 		var profile: BluetoothProfile? = null
@@ -65,7 +82,7 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 		}
 
 		fun fetchUuidsWithSdp() {
-			val cars = profile?.connectedDevices?.filter { it.isCar() } ?: listOf()
+			val cars = profile?.safeConnectedDevices?.filter { it.isCar() } ?: listOf()
 			cars.forEach {
 				it.fetchUuidsWithSdp()
 			}
@@ -78,7 +95,7 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			if (intent?.action == BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED &&
 					intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1) == BluetoothProfile.STATE_CONNECTED) {
 				val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-				device.fetchUuidsWithSdp()
+				device?.fetchUuidsWithSdp()
 			}
 			callback()
 		}
@@ -101,10 +118,6 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
 			addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
 			addAction(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED)
-		}
-		val uuidFilter = IntentFilter().apply {
-			addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
-			addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
 		}
 		context.registerReceiver(bluetoothListener, btFilter)
 		subscribed = true

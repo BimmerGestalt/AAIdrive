@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive
 
-import me.hufman.androidautoidrive.carapp.maps.LatLong
+import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.utils.TimeUtils
 import org.junit.Assert.*
 import org.junit.Test

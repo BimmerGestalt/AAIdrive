@@ -3,10 +3,10 @@ package me.hufman.androidautoidrive.carapp.music
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
-import me.hufman.androidautoidrive.utils.GraphicsHelpers
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 
 class AVContextHandler(val iDriveConnectionStatus: IDriveConnectionStatus, val carConnection: BMWRemotingServer, val controller: MusicController, val graphicsHelpers: GraphicsHelpers, val musicAppMode: MusicAppMode) {
 	val MY_IDENT = "me.hufman.androidautoidrive.music"  // AM and AV ident string
@@ -25,7 +25,7 @@ class AVContextHandler(val iDriveConnectionStatus: IDriveConnectionStatus, val c
 		}
 		val instanceId = iDriveConnectionStatus.instanceId ?: 0
 		if (instanceId <= 0) {
-			Log.w(TAG, "instanceId is null! skipping av handle creation for now")
+//			Log.w(TAG, "instanceId is null! skipping av handle creation for now")
 		} else if (musicAppMode.shouldRequestAudioContext()) {
 			Log.d(TAG, "instanceId == ${iDriveConnectionStatus.instanceId}")
 			synchronized(carConnection) {
@@ -53,7 +53,6 @@ class AVContextHandler(val iDriveConnectionStatus: IDriveConnectionStatus, val c
 				// start playback if we are the current AV context
 				// or play anyways if we don't know the context yet
 				enactPlayerState(BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
-				av_playerStateChanged(avHandle, BMWRemoting.AVConnectionType.AV_CONNECTION_TYPE_ENTERTAINMENT, BMWRemoting.AVPlayerState.AV_PLAYERSTATE_PLAY)
 			}
 		} else {
 			// acting as just a fancy controller for Bluetooth music, just play the app

@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive.utils
 
 import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator
 import com.luckycatlabs.sunrisesunset.dto.Location
-import me.hufman.androidautoidrive.carapp.maps.LatLong
+import me.hufman.androidautoidrive.maps.LatLong
 import java.util.*
 
 object TimeUtils {
@@ -16,6 +16,10 @@ object TimeUtils {
 
 		val sunrise = sunsetCalculator.getCivilSunriseCalendarForDate(calendar)
 		val sunset = sunsetCalculator.getCivilSunsetCalendarForDate(calendar)
+
+		if (sunrise == null || sunset == null) {
+			return true     // default to Day if we don't know sunset
+		}
 
 		val afterSunrise = sunrise.get(Calendar.HOUR_OF_DAY) < calendar.get(Calendar.HOUR_OF_DAY) ||
 				(sunrise.get(Calendar.HOUR_OF_DAY) == calendar.get(Calendar.HOUR_OF_DAY) &&

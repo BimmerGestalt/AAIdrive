@@ -16,12 +16,11 @@ import android.util.Log
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
 import me.hufman.androidautoidrive.CarConnectionListener
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent.Companion.INTENT_INTERACTION
 import me.hufman.androidautoidrive.notifications.NotificationParser.Companion.dumpNotification
-import me.hufman.androidautoidrive.phoneui.UIState
-import me.hufman.idriveconnectionkit.android.IDriveConnectionReceiver
 
 fun Notification.isGroupSummary(): Boolean {
 	val FLAG_GROUP_SUMMARY = 0x00000200     // hard-coded to work on old SDK
@@ -89,12 +88,14 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	override fun onListenerConnected() {
 		super.onListenerConnected()
 		_serviceState.value = true
+		NotificationsState.serviceConnected = true
 
 		updateNotificationList()
 	}
 
 	override fun onListenerDisconnected() {
 		_serviceState.value = false
+		NotificationsState.serviceConnected = false
 
 		// clear the list in the car
 		NotificationsState.replaceNotifications(emptyList())
@@ -139,6 +140,10 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 				notificationParser.summarizeNotification(it)
 			}
 			NotificationsState.replaceNotifications(current)
+		} catch (e: NullPointerException) {
+			Log.w(TAG, "Unable to fetch activeNotifications: $e")
+		} catch (e: RuntimeException) {
+			Log.w(TAG, "Unable to fetch activeNotifications: $e")
 		} catch (e: SecurityException) {
 			Log.w(TAG, "Unable to fetch activeNotifications: $e")
 		}
@@ -164,7 +169,13 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 					val intent = notification?.notification?.actions?.find { it.title == actionName }?.actionIntent
 					intent?.send()
 				}
+			} catch (e: NullPointerException) {
+				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
+			} catch (e: RuntimeException) {
+				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
 			} catch (e: SecurityException) {
+				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
+			} catch (e: PendingIntent.CanceledException) {
 				Log.w(TAG, "Unable to send action $actionName to notification $key: $e")
 			}
 		}
@@ -188,6 +199,10 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 					}
 					action.actionIntent.send(listenerService, 0, intent)
 				}
+			} catch (e: NullPointerException) {
+				Log.w(TAG, "Unable to send reply to $actionName to notification $key: $e")
+			} catch (e: RuntimeException) {
+				Log.w(TAG, "Unable to send reply to $actionName to notification $key: $e")
 			} catch (e: SecurityException) {
 				Log.w(TAG, "Unable to send reply to $actionName to notification $key: $e")
 			} catch (e: PendingIntent.CanceledException) {

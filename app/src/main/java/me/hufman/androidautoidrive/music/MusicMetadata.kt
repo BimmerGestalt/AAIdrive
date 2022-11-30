@@ -43,9 +43,9 @@ open class MusicMetadata(val mediaId: String? = null,
 			// some apps only set DISPLAY_TITLE and DISPLAY_SUBTITLE
 			// so use those for artist/title fields, because that matches the car widget display order
 			// prefer the artist field if the DISPLAY_TITLE is the same as the COLLECTION
-			var artist: String? = null
-			var album: String? = null
-			var title: String? = null
+			var artist: String?
+			var album: String?
+			var title: String?
 
 			// SomaFM has swapped artist/title fields, so prefer its title/subtitle fields
 			val isSomaFm = metadata.compilation != null && metadata.compilation == metadata.displayTitle && metadata.artist == metadata.displaySubtitle
@@ -142,7 +142,13 @@ open class MusicMetadata(val mediaId: String? = null,
 		if (trackNumber != other.trackNumber) return false
 		if (trackCount != other.trackCount) return false
 		if (coverArtUri != other.coverArtUri) return false
-		if ((coverArt == null) != (other.coverArt == null)) return false
+
+		/** CoverArt equality is tricky
+		 * First check if they have the same null or notnull state
+		 * If both are null, the sameAs is null
+		 * If both are notnull, the sameAs is a boolean
+		 */
+		if (((coverArt == null) != (other.coverArt == null)) || (coverArt?.sameAs(other.coverArt) == false)) return false
 
 		return true
 	}

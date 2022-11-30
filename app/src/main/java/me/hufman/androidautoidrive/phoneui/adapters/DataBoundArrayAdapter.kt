@@ -5,12 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Filter
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import me.hufman.androidautoidrive.BR
 
-class DataBoundArrayAdapter<T, C>(context: Context, val layoutId: Int, contents: List<T>, val callback: C? = null): ArrayAdapter<T>(context, layoutId, contents) {
-	override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+class DataBoundArrayAdapter<T, C>(context: Context, val layoutId: Int, contents: List<T>, val callback: C? = null, val customFilter: Filter? = null): ArrayAdapter<T>(context, layoutId, contents) {
+	override fun getFilter(): Filter {
+		return customFilter ?: super.getFilter()
+	}
+
+	override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 		val layoutInflater = LayoutInflater.from(context)
 		val item = getItem(position)
 		val binding = (convertView?.tag as? ViewDataBinding) ?:

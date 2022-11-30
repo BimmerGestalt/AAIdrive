@@ -8,23 +8,20 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
-import me.hufman.androidautoidrive.*
+import io.bimmergestalt.idriveconnectkit.CDS
+import io.bimmergestalt.idriveconnectkit.IDriveConnection
+import io.bimmergestalt.idriveconnectkit.Utils.rhmi_setResourceCached
+import io.bimmergestalt.idriveconnectkit.android.CarAppResources
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
+import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import io.bimmergestalt.idriveconnectkit.rhmi.*
+import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.notifications.views.*
 import me.hufman.androidautoidrive.notifications.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.Utils
 import me.hufman.androidautoidrive.utils.removeFirst
-import me.hufman.idriveconnectionkit.CDS
-import me.hufman.idriveconnectionkit.IDriveConnection
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationIdempotent
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplicationSynchronized
-import me.hufman.idriveconnectionkit.android.CarAppResources
-import me.hufman.idriveconnectionkit.android.IDriveConnectionStatus
-import me.hufman.idriveconnectionkit.android.security.SecurityAccess
-import me.hufman.idriveconnectionkit.rhmi.*
-import java.lang.IllegalArgumentException
-import java.lang.RuntimeException
 import java.util.*
 
 const val TAG = "PhoneNotifications"
@@ -52,6 +49,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			add(it)     // add the currently shown notifications to suppress popups
 		}
 	}
+	var popupAutoCloser: PopupAutoCloser? = null
 
 	var viewPopup: PopupView                // notification about notification
 	val viewList: NotificationListView      // show a list of active notifications
@@ -169,10 +167,10 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	 * */
 	fun checkRecreate() {
 		val interval = 500
-		val waitDelay = 10000
+		val waitDelay = 20000
 		if (focusTriggerController.hasFocusedState && focusedStateTracker.getFocused() == null) {
 			for (i in 0..waitDelay step interval) {
-				Thread.sleep(500)
+				Thread.sleep(interval.toLong())
 				if (focusedStateTracker.getFocused() != null) {
 					return
 				}
@@ -186,9 +184,9 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	fun createRhmiApp(): RHMIApplication {
 		// load the resources
 		rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive", BMWRemoting.VersionInfo(0, 1, 0), "me.hufman.androidautoidrive", "me.hufman"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB(iDriveConnectionStatus.brand ?: "common"))
-		RHMIUtils.rhmi_setResourceCached(carConnection, rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(iDriveConnectionStatus.brand ?: "common"))
+		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
+		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, carAppAssets.getTextsDB(iDriveConnectionStatus.brand ?: "common"))
+		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(iDriveConnectionStatus.brand ?: "common"))
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		// register for events from the car
@@ -310,6 +308,20 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 		notificationReceiver.register(context, notificationBroadcastReceiver, handler)
 
 		viewList.onCreate(handler)
+
+		popupAutoCloser = PopupAutoCloser(handler, viewPopup)
+	}
+	fun id5Upgrade(id5StatusbarApp: ID5StatusbarApp) {
+		// main app should use id5 for popup access
+		viewPopup = id5StatusbarApp.popupView
+		// main app should use id5 for statusbar access
+		statusbarController.controller = id5StatusbarApp.statusbarController
+		// the id5 statusbar can trigger the main app view state
+		id5StatusbarApp.showNotificationController = showNotificationController
+
+		// replace the popup autocloser with the new popup state
+		val handler = popupAutoCloser?.handler ?: return        // this should be initialized already, but just in case
+		popupAutoCloser = PopupAutoCloser(handler, viewPopup)
 	}
 	fun onDestroy(context: Context) {
 		val notificationReceiver = this.notificationBroadcastReceiver
@@ -343,13 +355,14 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 			if (!alreadyShown) {
 				val currentlyPopped = sbn.equalsKey(viewPopup.currentNotification)
 				val currentlyReading = viewDetails.visible && sbn.equalsKey(viewDetails.selectedNotification)
-				val currentlyInputing = hmiContextWidgetType.toLowerCase(Locale.ROOT).contains("speller") ||
-						hmiContextWidgetType.toLowerCase(Locale.ROOT).contains("keyboard") ||
+				val currentlyInputing = hmiContextWidgetType.lowercase(Locale.ROOT).contains("speller") ||
+						hmiContextWidgetType.lowercase(Locale.ROOT).contains("keyboard") ||
 						focusedStateTracker.isFocused[stateInput.id] == true
 				val timeSinceContextChange = System.currentTimeMillis() - hmiContextChangedTime
 				val userActivelyInteracting = timeSinceContextChange < HMI_CONTEXT_THRESHOLD
 				if (notificationSettings.shouldPopup(passengerSeated) && (currentlyPopped || (!currentlyReading && !currentlyInputing && !userActivelyInteracting))) {
 					viewPopup.showNotification(sbn)
+					popupAutoCloser?.start()
 				} else if (!currentlyPopped && !currentlyReading) {
 					// only show the statusbar icon if we didn't pop it up
 					viewList.showNotification(sbn)

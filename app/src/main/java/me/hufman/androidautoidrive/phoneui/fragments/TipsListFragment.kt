@@ -14,13 +14,13 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.findParent
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.scrollTop
+import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
+import me.hufman.androidautoidrive.phoneui.adapters.DataBoundListAdapter
 import me.hufman.androidautoidrive.phoneui.viewmodels.CapabilitiesTipsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.ConnectionTipsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.TipsModel
-import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 
 class TipsListFragment: Fragment() {
@@ -99,7 +99,7 @@ class TipsListFragment: Fragment() {
 			pane.postDelayed(200) {
 				if (visible) {
 					val position = pane.scrollTop
-					(pane.findParent { it is ScrollView } as ScrollView).smoothScrollTo(0, position)
+					(pane.findParent { it is ScrollView } as? ScrollView)?.smoothScrollTo(0, position)
 				}
 			}
 		}

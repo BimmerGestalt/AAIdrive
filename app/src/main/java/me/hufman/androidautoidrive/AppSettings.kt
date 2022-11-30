@@ -7,10 +7,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonArray
 import com.google.gson.JsonParser
-import java.lang.IllegalStateException
 
 /**
  * This implements read-only access to a singleton of loaded settings
@@ -27,12 +27,23 @@ interface AppSettings {
 		NOTIFICATIONS_READOUT_POPUP("Notifications_Readout_Popup", "false", "New notifications are read aloud"),
 		NOTIFICATIONS_READOUT_POPUP_PASSENGER("Notifications_Readout_Popup_Passenger", "false", "New notifications are read aloud when a passenger is seated"),
 		NOTIFICATIONS_QUICK_REPLIES("Notifications_Quick_Replies", "[]", "A list of quick replies"),
-		ENABLED_GMAPS("Enabled_GMaps", "false", "Show Google Maps in the car"),
+		ENABLED_CALENDAR("Enabled_Calendar", "false", "Show Calendar in the car"),
+		CALENDAR_DETAILED_EVENTS("Calendar_Detailed_Events", "false", "Only show detailed appointments"),
+		CALENDAR_AUTOMATIC_NAVIGATION("Calendar_Automatic_Navigation", "false", "Automatically navigate to upcoming appointments"),
+		CALENDAR_IGNORE_VISIBILITY("Calendar_Ignore_Visibility", "false", "Ignore calendar visibility for events"),
+		ENABLED_MAPS("Enabled_Maps", "false", "Show Custom Maps in the car"),
+		MAP_QUICK_DESTINATIONS("Map_Quick_Destinations", "[]", "A list of quick destinations"),
 		MAP_WIDESCREEN("Map_Widescreen", "false", "Show Map in widescreen"),
 		MAP_INVERT_SCROLL("Map_Invert_Scroll", "false", "Invert zoom direction"),
+		MAP_SATELLITE("Map_Satellite", "false", "Show satellite imagery"),
 		MAP_TRAFFIC("Map_Traffic", "true", "Show traffic"),
-		GMAPS_BUILDINGS("GMaps_Buildings", "true", "GMaps 3D Buildings"),
+		MAP_USE_PHONE_GPS("Map_Use_Phone_GPS", "false", "Use Phone GPS"),
+		NAV_PREFER_CUSTOM_MAP("Nav_Prefer_Custom_Map", "false", "Prefer custom map nav over car nav"),
+		MAP_BUILDINGS("Map_Buildings", "true", "Maps 3D Buildings"),
+		MAP_TILT("Map_Tilt", "false", "3D tilt and rotate the map"),
 		GMAPS_STYLE("GMaps_Style", "auto", "GMaps style"),
+		MAP_CUSTOM_STYLE("Mapbox_Custom_Style", "", "Mapbox custom style"),
+		MAPBOX_STYLE_URL("Mapbox_Style_Uri", "", "Mapbox style uri"),
 		AUDIO_SUPPORTS_USB("Audio_Supports_USB", (Build.VERSION.SDK_INT < Build.VERSION_CODES.O).toString(), "The phone is old enough to support USB accessory audio"),
 		AUDIO_FORCE_CONTEXT("Audio_Force_Context", "false", "Force audio context"),
 		AUDIO_DESIRED_APP("Audio_Desired_App", "", "Last music app that was playing"),
@@ -45,10 +56,14 @@ interface AppSettings {
 		SPOTIFY_CONTROL_SUCCESS("Spotify_Control_Success", "false", "Whether Spotify Control api worked previously"),
 		SPOTIFY_SHOW_UNAUTHENTICATED_NOTIFICATION("Spotify_Show_Unauthenticated_Notification", "false", "Show a notification when the Spotify Web API is not authenticated"),
 		SPOTIFY_AUTH_STATE_JSON("Spotify_Auth_State_Json", "", "String serialized JSON representation of the Spotify Web API AuthState."),
+		SPOTIFY_LIKED_SONGS_PLAYLIST_STATE("Spotify_Liked_Songs_Playlist_State", "", "Spotify Liked Songs playlist state."),
+		SPOTIFY_ARTIST_SONGS_PLAYLIST_STATE("Spotify_Artist_Songs_Playlist_State", "", "Spotify Artist songs playlist state."),
 		CACHED_CAR_CAPABILITIES("Cached_Car_Capabilities", "{}", "JSON Object of any previously-cached capabilities"),
 		CACHED_CAR_DATA("Cached_Car_Data", "{}", "JSON Object of any previously-cached cds properties"),
 		PREFER_CAR_LANGUAGE("Prefer_Car_Language", "true", "Prefer the car's language instead of the phone's language"),
-		FORCE_CAR_LANGUAGE("Force_Car_Language", "", "Force a specific language for the car apps")
+		FORCE_CAR_LANGUAGE("Force_Car_Language", "", "Force a specific language for the car apps"),
+		ENABLED_ANALYTICS("Enable_Analytics", "false", "Enable Analytics module"),
+		MUSIC_SEARCH_QUERY_HISTORY("Music_Search_Query_History","", "Music service search query history")
 	}
 
 	/** Store the active preferences in a singleton */
@@ -225,7 +240,11 @@ abstract class LiveSetting<K>(val context: Context, val key: AppSettings.KEYS): 
 	override fun getValue(): K? {
 		val backing = getData()
 		if (backing != super.getValue()) {
-			super.setValue(backing)
+			if (Looper.getMainLooper() == Looper.myLooper()) {
+				super.setValue(backing)
+			} else {
+				super.postValue(backing)
+			}
 		}
 		return backing
 	}

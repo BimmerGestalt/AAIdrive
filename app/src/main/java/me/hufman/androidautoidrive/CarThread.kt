@@ -4,9 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import me.hufman.idriveconnectionkit.android.IDriveConnectionObserver
-import java.lang.IllegalStateException
-import java.lang.RuntimeException
+import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
 
 const val TAG = "CarThread"
 /**
@@ -24,7 +22,7 @@ class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 	override fun run() {
 		try {
 			Looper.prepare()
-			handler = Handler(Looper.myLooper())
+			handler = Handler(Looper.myLooper()!!)
 			runnable()
 			runnable = {}
 			Log.i(TAG, "Successfully finished runnable for thread $name, starting Handler loop")
@@ -44,6 +42,12 @@ class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 				// the car is no longer connected
 				// so this is most likely a crash caused by the closed connection
 				Log.i(TAG, "Shutting down thread $name due to disconnection")
+			} else if (e.errorMsg?.contains("RHMI application was already connected") == true) {
+				// sometimes, the BCL tunnel blips during the start of the connection
+				// and so previously-initialized apps are still "in the car" though the tunnel has since restarted
+				// and so the car complains that the app is already connected
+				// so shut down the thread for now and wait for MainService to start this app module again
+				Log.i(TAG, "RHMI application was already connected, perhaps from a previous partial connection, shutting down thread $name")
 			} else {
 				throw(e)
 			}
@@ -54,7 +58,9 @@ class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 	}
 
 	fun post(block: () -> Unit) {
-		handler?.post(block)
+		if (handler?.looper?.thread?.isAlive == true) {
+			handler?.post(block)
+		}
 	}
 
 	fun quit() {

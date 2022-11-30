@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playstore_tagline">Aggiungi funzionalità Android Auto al cruscotto BMW e Mini IDrive NBT</string>
+    <string name="playstore_desc_title">Sfrutta tutto il potenziale della tua auto con IDrive 4-6 abilitata a BMW Connected App per migliorare la tua esperienza di guida!</string>
+    <string name="playstore_desc_features_heading">In combinazione con un abbonamento BMW ConnectedDrive attivo o con l\'\'opzione Mini Connected, questa app aggiunge la maggior parte delle caratteristiche di Android Auto alla vostra auto facendole rilevare come delle app BMW/Mini Connected non ufficiali:</string>
+    <string name="playstore_desc_features_music">Visualizza le app musicali sul tuo telefono come sorgenti multimediali in IDrive</string>
+    <string name="playstore_desc_features_assistants">Interagisci con gli assistenti vocali installati sul telefono</string>
+    <string name="playstore_desc_features_notifications">Leggi, ascolta e interagisci con le notifiche attraverso i controlli della vettura</string>
+    <string name="playstore_desc_features_calendar">Visualizza il tuo calendario in auto e inizia la navigazione verso i tuoi appuntamenti</string>
+    <string name="playstore_desc_features_carnav">Attiva la navigazione auto dalle app del telefono</string>
+    <string name="playstore_desc_features_carinfo">Leggi varie informazioni diagnostiche e statistiche della tua auto</string>
+    <string name="playstore_desc_features_addons_mirroring">Estendi le funzionalità tramite i plugin opzionali (come lo screen mirroring)</string>
+    <string name="playstore_desc_features_custommap_soon">E\'\' prevista in futuro l\'\'implementazione di una funzionalità di navigazione</string>
+    <string name="playstore_desc_features_custommap">Mappa e navigazione personalizzata basata su Mapbox</string>
+    <string name="playstore_desc_nativeapps_protocol">Utilizzando il protocollo nativo BMW App, lo stesso utilizzato dalla vecchia app Spotify, questa app non modifica la tua auto in alcun modo: tutte le funzionalità estese sono fornite soltanto mentre il telefono è connesso.</string>
+    <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps richiede che sul telefono sia installata l\'\'app MyBMW o MINI per la tua auto, e che la stessa possa abilitare correttamente la casella di controllo App dell\'auto IDrive5+, oppure che la vostra auto IDrive4 abbia l\'\'optional ConnectedDrive Connection Assistant.</string>
+    <string name="playstore_desc_depends_bmw_subscription">In sostanza è richiesto di avere un abbonamento BMW ConnectedDrive attivo, che è in genere incluso per alcuni anni dopo aver acquistato la vostra nuova auto.</string>
+    <string name="playstore_release_desc">Finalmente la funzione mappa che tutti hanno chiesto!</string>
+    <string name="playstore_release_point1">Aggiunge una mappa personalizzata, renderizzata sul telefono e visualizzata nell\'auto</string>
+    <string name="playstore_release_point2">Usa Mapbox per la mappa, la ricerca dei luoghi e la navigazione</string>
+    <string name="playstore_release_point3">Aggiunge il completamento del Punti di Interesse per la scheda Navigazione</string>
+</resources>

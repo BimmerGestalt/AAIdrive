@@ -19,7 +19,11 @@ class ReportGenerator:
         self.formatter = formatter
 
     def reduce(self, event):
-        replaced = self.reducer(self.accumulator, event)
+        try:
+            replaced = self.reducer(self.accumulator, event)
+        except Exception:
+            #logging.warning("Failed to reduce event " + str(event))
+            raise
         if replaced:
             self.accumulator = replaced
 
@@ -63,6 +67,8 @@ def tags_dict(tags_list):
 
 def car_identifier(event):
     tags = tags_dict(event['tags'])
+    tags.setdefault('user', None)
+    tags.setdefault('vehicle_type', None)
     return "{user}-{vehicle_type}".format_map(tags)
 
 
@@ -113,7 +119,7 @@ REPORTS = {
     ),
     "weekly_users.json": ReportGenerator(
         set(),
-        lambda s, e: s.add(e['user']['id']),
+        lambda s, e: s.add((e['user'] or {}).get('id')),
         lambda s: json.dumps({
             "schemaVersion": 1,
             "label": "users",

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data class="MapSettingsBinding">
+        <variable
+            name="settings"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.MapSettingsModel" />
+        <variable
+            name="controller"
+            type="me.hufman.androidautoidrive.phoneui.controllers.MapsPageController" />
+    </data>
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
+
+        <LinearLayout
+            android:orientation="vertical" android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{settings.showAdvancedSettings}">
+            <androidx.appcompat.widget.SwitchCompat
+                android:checked="@{settings.mapPhoneGps}"
+                android:onCheckedChanged="@{(button, checked) -> controller.onChangedPhoneGps(checked)}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingBottom="@dimen/settings_vertical_margin"
+                android:text="@string/lbl_map_phone_gps" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:checked="@={settings.mapWidescreen}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:alpha="@{settings.mapWidescreenUnsupported ? 0.5f : 1.0f}"
+            android:text="@string/lbl_widescreen_map" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:text="@string/lbl_map_widescreen_unsupported"
+            android:visibility="@{settings.mapWidescreenUnsupported}" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:gravity="center_vertical"
+            android:visibility="@{settings.mapWidescreenSupported &amp;&amp; settings.mapWidescreenCrashes}">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:paddingEnd="12dp"
+                android:src="@drawable/ic_error_outline_black_24dp"
+                app:tint="?android:attr/textColorSecondary"
+                tools:ignore="RtlSymmetry" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_map_widescreen_crashes" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:checked="@={settings.mapInvertZoom}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:text="@string/lbl_map_invert_zoom" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:checked="@={settings.mapTilt}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:text="@string/lbl_map_tilt" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:checked="@={settings.mapBuildings}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:text="@string/lbl_map_buildings" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:checked="@={settings.mapSatellite}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:text="@string/lbl_map_satellite" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:checked="@={settings.mapTraffic}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:text="@string/lbl_map_traffic" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:labelFor="@id/txtMapboxStyleUrl"
+            android:checked="@={settings.mapboxCustomStyle}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/settings_vertical_margin"
+            android:text="@string/lbl_mapbox_custom_style"
+            android:visibility="@{settings.showMapboxCustomField}"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/settings_vertical_margin"
+            android:visibility="@{settings.mapboxCustomStyle}">
+
+            <EditText
+                android:id="@+id/txtMapboxStyleUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:inputType="textUri"
+                android:importantForAutofill="no"
+                android:hint="mapbox://styles/..."
+                android:text="@={settings.mapboxStyleUrl}"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/paneMapQuickDestinations"
+            android:visibility="@{settings.mapEnabled}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="me.hufman.androidautoidrive.phoneui.fragments.MapQuickDestinationsFragment"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{settings.invalidAccessToken}">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_error_outline_black_24dp"
+                app:tint="?android:attr/textColorSecondary"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="@string/lbl_mapbox_invalid_token" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:padding="32dp"
+            android:src="@drawable/mapbox_logo_icon" />
+    </LinearLayout>
+</layout>

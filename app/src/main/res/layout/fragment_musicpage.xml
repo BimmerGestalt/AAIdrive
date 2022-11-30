@@ -32,14 +32,14 @@
         <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/pane_vertical_margin"
+            android:layout_marginBottom="@dimen/settings_vertical_margin"
             android:id="@+id/fragmentMusicPermissions"
             android:name="me.hufman.androidautoidrive.phoneui.fragments.MusicPermissionsFragment"/>
 
         <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/pane_vertical_margin"
+            android:layout_marginBottom="@dimen/settings_vertical_margin"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:id="@+id/fragmentTipsList"

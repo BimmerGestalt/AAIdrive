@@ -1,11 +1,10 @@
 package me.hufman.androidautoidrive.carapp
 
 import android.util.Log
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplication
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 import me.hufman.androidautoidrive.carapp.notifications.TAG
-import me.hufman.idriveconnectionkit.rhmi.RHMIApplication
-import me.hufman.idriveconnectionkit.rhmi.RHMIEvent
-import me.hufman.idriveconnectionkit.rhmi.RHMIModel
-import java.lang.IllegalArgumentException
 
 data class TTSState(
 	val state: Int?,

@@ -10,7 +10,6 @@ import androidx.annotation.ColorInt
 import androidx.core.view.marginTop
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import me.hufman.androidautoidrive.phoneui.ViewHelpers.scrollTop
 
 /** Resolve a Color Attribute to a color int */
 @ColorInt

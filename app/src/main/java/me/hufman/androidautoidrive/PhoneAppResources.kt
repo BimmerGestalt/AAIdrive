@@ -49,13 +49,14 @@ class PhoneAppResourcesAndroid(val context: Context): PhoneAppResources {
 	override fun getUriDrawable(uri: String): Drawable {
 		val parsedUri = Uri.parse(uri)
 		val inputStream = when (parsedUri.scheme) {
+			"android.resource" -> context.contentResolver.openInputStream(parsedUri)
 			"content" -> context.contentResolver.openInputStream(parsedUri)
 			"http" -> URL(uri).openStream()
 			"https" -> URL(uri).openStream()
 			else -> throw IllegalArgumentException("Unknown scheme ${parsedUri.scheme}")
 		}
 		val drawable = Drawable.createFromStream(inputStream, uri)
-		inputStream.close()
+		inputStream?.close()
 		return drawable
 	}
 }
