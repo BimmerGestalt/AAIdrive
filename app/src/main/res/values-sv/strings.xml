@@ -69,6 +69,7 @@
     <string name="notification_quickreplies_default">[\"👍\",\"På väg!\",\"Kör bil nu! \",\"Kan inte sms:a nu ring mig istället\",\"Jag ringer dig senare\"]</string>
     <string name="lbl_notification_permissions">Åtkomst till aviseringar</string>
     <string name="lbl_notification_sms_permissions">Åtkomst att visa SMS-bilder</string>
+    <string name="lbl_notification_permissions_hint">Du kan bevilja aviseringsbehörighet senare och kan enkelt återkalla dem när som helst</string>
     <string name="lbl_popupVersion">Popupfönster fungerar endast med IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS stöds ej av din bil</string>
     <string name="lbl_smsPermission">Ge behörighet för inkommande SMS att visa bilder i bilen. Texten är däremot alltid synlig.</string>
