@@ -124,7 +124,9 @@ enum class ChassisCode(val brand: String, val chassis: String) {
     E12("BMW","5 Series"),
     E9("BMW","2 Series"),
     E6("BMW","2 Series"),
-    E3("BMW","2 Series");
+    E3("BMW","2 Series"),
+
+    J29("Toyota", "Supra");
 
     companion object {
         fun fromCode(chassisCode: String): ChassisCode? {

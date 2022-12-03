@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.phoneui
 
 import android.content.Context
+import android.os.Looper
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -80,7 +81,13 @@ object LiveDataHelpers {
 	/** Like Transformations.map(LiveData), except supports an initial value */
 	inline fun <T, R : Any> LiveData<T>.map(initialValue: R? = null, crossinline block: (T) -> R?): LiveData<R> {
 		val result = MediatorLiveData<R>()
-		initialValue?.also { result.value = it }
+		initialValue?.also {
+			if (Looper.getMainLooper() == Looper.myLooper()) {
+				result.value = it
+			} else {
+				result.postValue(it)
+			}
+		}
 		result.addSource(this) {
 			// only map nonnull data
 			it?.also { result.value = block(it) }

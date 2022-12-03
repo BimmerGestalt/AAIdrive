@@ -387,6 +387,40 @@
                 android:text="@string/txt_setup_mini_mine_conflict" />
         </LinearLayout>
 
+        <!-- Toyota Connection -->
+        <LinearLayout
+            android:visibility="@{viewModel.isToyotaReady()}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:paddingEnd="5dp"
+                    android:src="@android:drawable/checkbox_on_background" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:text="@string/txt_setup_toyota_ready" />
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="@string/txt_setup_toyota_hint" />
+            <!-- Don't suggest installing Supra Connect if missing, it doesn't provide many features -->
+        </LinearLayout>
+
         <!-- Security Service -->
         <LinearLayout
             android:visibility="@{viewModel.isSecurityServiceDisconnected()}"

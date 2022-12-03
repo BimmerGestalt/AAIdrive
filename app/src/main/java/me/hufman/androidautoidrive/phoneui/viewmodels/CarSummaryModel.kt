@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 
-class CarSummaryModel(carInfoOverride: CarInformation? = null, val showAdvancedSettings: BooleanLiveSetting): ViewModel() {
+class CarSummaryModel(carInfoOverride: CarInformation? = null, val showAdvancedSettings: LiveData<Boolean>): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {

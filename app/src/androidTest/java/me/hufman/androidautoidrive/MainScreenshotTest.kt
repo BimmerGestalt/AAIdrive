@@ -22,7 +22,7 @@ import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.phoneui.NavHostActivity
 import me.hufman.androidautoidrive.phoneui.adapters.DataBoundViewHolder
 import me.hufman.androidautoidrive.phoneui.controllers.MusicAppListController
-import me.hufman.androidautoidrive.phoneui.viewmodels.TipsModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.*
 import org.junit.*
 
 class MainScreenshotTest {
@@ -47,13 +47,19 @@ class MainScreenshotTest {
 	@get:Rule
 	val activityScenario = activityScenarioRule<NavHostActivity>()
 
-	@UiThreadTest
 	@Before
 	fun setUp() {
 		println("Starting to update viewmodels")
-		mockScenario.carCapabilitiesViewModel.update()
-		mockScenario.connectionStatusModel.update()
-		mockScenario.dependencyInfoModel.update()
+		updateViewModels()
+	}
+
+	private fun updateViewModels() {
+		InstrumentationRegistry.getInstrumentation().runOnMainSync {
+			mockScenario.carSummaryViewModel.update()
+			mockScenario.carCapabilitiesViewModel.update()
+			mockScenario.connectionStatusModel.update()
+			mockScenario.dependencyInfoModel.update()
+		}
 	}
 
 	val processor = PrivateScreenshotProcessor(context)
@@ -90,6 +96,24 @@ class MainScreenshotTest {
 		screenshot("home_sidebar")
 		onView(withId(R.id.drawer_layout)).perform(DrawerActions.close())
 		screenshot("home")
+		onView(withId(R.id.drawer_layout)).check(matches(isClosed()))
+	}
+
+	@Test
+	fun homeMiniScreenshot() {
+		whenever(mockScenario.carInfo.capabilities) doReturn mapOf(
+				"hmi.type" to "MINI ID5",
+				"hmi.version" to "NBTevo_ID5_2111",
+				"navi" to "true",
+				"tts" to "true",
+				"vehicle.type" to "F56"
+		)
+		updateViewModels()
+		Thread.sleep(1000)
+		onView(withId(R.id.drawer_layout)).check(matches(isOpen()))
+		screenshot("home_sidebar_mini")
+		onView(withId(R.id.drawer_layout)).perform(DrawerActions.close())
+		screenshot("home_mini")
 		onView(withId(R.id.drawer_layout)).check(matches(isClosed()))
 	}
 
@@ -257,5 +281,42 @@ class MainScreenshotTest {
 				))
 
 		screenshot("support")
+	}
+
+	@Test
+	fun j29Connection() {
+		whenever(mockScenario.connectionDebugging.isJ29Installed) doReturn true
+		whenever(mockScenario.carInfo.capabilities) doReturn mapOf(
+				"hmi.type" to "J29 ID6L",
+				"hmi.version" to "NBTevo_ID5_2111",
+				"navi" to "true",
+				"tts" to "true",
+				"vehicle.type" to "J29"
+		)
+		whenever(mockScenario.navigationStatusModel.isConnected) doReturn false
+		whenever(mockScenario.navigationStatusModel.searchStatus) doReturnMutableContexted {""}
+
+		// real viewmodels need to be updated for the above mocked data
+		updateViewModels()
+
+		onView(withId(R.id.nav_view)).perform(NavigationViewActions
+				.navigateTo(
+						R.id.nav_overview
+				))
+		screenshot("home_j29")
+
+		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open())
+		onView(withId(R.id.nav_view)).perform(NavigationViewActions
+				.navigateTo(
+						R.id.nav_connection
+				))
+		screenshot("connection_j29")
+
+		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open())
+		onView(withId(R.id.nav_view)).perform(NavigationViewActions
+				.navigateTo(
+						R.id.nav_navigation
+				))
+		screenshot("navigation_j29")
 	}
 }

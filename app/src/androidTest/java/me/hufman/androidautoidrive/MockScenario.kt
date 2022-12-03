@@ -55,6 +55,7 @@ class MockScenario(context: Context) {
 		on {heuristicAudioContext()} doReturn true
 		on {shouldId5Playback()} doReturn true
 	}
+	val carSummaryViewModel = CarSummaryModel(carInfo, MutableLiveData(false))
 	val carCapabilitiesViewModel = CarCapabilitiesViewModel(carInfo, musicAppMode)
 	val connectionStatusModel = ConnectionStatusModel(connectionDebugging, carInfo)
 	val dependencyInfoModel = DependencyInfoModel(connectionDebugging, mock())
@@ -164,6 +165,7 @@ class MockScenario(context: Context) {
 	}
 
 	val viewModels = MockViewModels().also {
+		it[CarSummaryModel::class.java] = carSummaryViewModel
 		it[CarCapabilitiesViewModel::class.java] = carCapabilitiesViewModel
 		it[CalendarSettingsModel::class.java] = calendarSettingsModel
 		it[CalendarEventsModel::class.java] = calendarEventsModel

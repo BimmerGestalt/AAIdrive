@@ -34,8 +34,8 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 		}
 	}
 
-	private val _isCarConnected = MutableLiveData<Boolean>(false)
-	val isCarConnnected: LiveData<Boolean> = _isCarConnected
+	private val _isCarConnected = MutableLiveData(false)
+	val isCarConnected: LiveData<Boolean> = _isCarConnected
 
 	private val _isAudioContextSupported = MutableLiveData(false)
 	val isAudioContextSupported: LiveData<Boolean> = _isAudioContextSupported
@@ -77,7 +77,10 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 	fun update() {
 		val summarized = CarCapabilitiesSummarized(carInformation)
 
-		_isCarConnected.value = carInformation.capabilities.isNotEmpty()
+		// only these brands of cars support RHMI apps
+		val carBrandSupported = carInformation.capabilities["hmi.type"]?.startsWith("BMW") == true ||
+				carInformation.capabilities["hmi.type"]?.startsWith("MINI") == true
+		_isCarConnected.value = carInformation.capabilities.isNotEmpty() && carBrandSupported
 
 		_isAudioContextSupported.value = musicAppMode.heuristicAudioContext()
 		if (musicAppMode.heuristicAudioContext()) {

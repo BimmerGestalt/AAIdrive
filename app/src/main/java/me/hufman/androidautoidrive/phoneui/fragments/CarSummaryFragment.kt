@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import me.hufman.androidautoidrive.databinding.CarSummaryBinding
 import me.hufman.androidautoidrive.phoneui.viewmodels.CarSummaryModel
+import me.hufman.androidautoidrive.phoneui.viewmodels.activityViewModels
 
 class CarSummaryFragment: Fragment() {
 	val viewModel by activityViewModels<CarSummaryModel> { CarSummaryModel.Factory(requireContext().applicationContext) }

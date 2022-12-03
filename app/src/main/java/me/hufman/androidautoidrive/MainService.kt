@@ -220,8 +220,9 @@ class MainService: Service() {
 	private fun startCarProber() {
 		if (carProberThread?.isAlive != true) {
 			carProberThread = CarProber(securityAccess,
-				CarAppAssetResources(applicationContext, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
-				CarAppAssetResources(applicationContext, "smartthings").getAppCertificateRaw("mini")!!.readBytes()
+				CarAppAssetResources(applicationContext, "smartthings").getAppCertificateRaw("bmw")?.readBytes(),
+				CarAppAssetResources(applicationContext, "smartthings").getAppCertificateRaw("mini")?.readBytes(),
+				CarAppAssetResources(applicationContext, "cdsbaseapp").getAppCertificateRaw("")?.readBytes()
 			).apply { start() }
 		} else {
 			carProberThread?.schedule(1000)
@@ -392,10 +393,19 @@ class MainService: Service() {
 	}
 
 	fun startModuleServices() {
+		// RHMI apps are not supported in J29
+		val j29Services = setOf(
+				"me.hufman.androidautoidrive.carapp.assistant.AssistantAppService",
+				"me.hufman.androidautoidrive.carapp.carinfo.CarInformationDiscoveryService"
+		)
 		val intentService = Intent(ACTION_SERVICE_MODULE)
 				.setPackage(applicationContext.packageName)
 		packageManager.queryIntentServices(intentService, 0).forEach { resolveInfo ->
-			startModuleService(resolveInfo.serviceInfo.name)
+			if (iDriveConnectionReceiver.brand == "bmw" ||
+					iDriveConnectionReceiver.brand == "mini" ||
+					resolveInfo.serviceInfo.name in j29Services) {
+				startModuleService(resolveInfo.serviceInfo.name)
+			}
 		}
 	}
 

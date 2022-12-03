@@ -30,8 +30,10 @@ class CarInformationDiscoveryService: CarAppService() {
 			}
 		}
 
+		val certName = if (CarAppAssetResources(applicationContext, "cdsbaseapp").getAppCertificateRaw("") != null) {
+			"cdsbaseapp" } else { "smartthings" }
 		carappCapabilities = CarInformationDiscovery(iDriveConnectionStatus, securityAccess,
-				CarAppAssetResources(applicationContext, "smartthings"), carInformationUpdater)
+				CarAppAssetResources(applicationContext, certName), carInformationUpdater)
 		carappCapabilities?.onCreate()
 	}
 

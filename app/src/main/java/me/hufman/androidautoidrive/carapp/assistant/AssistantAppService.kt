@@ -13,8 +13,10 @@ class AssistantAppService: CarAppService() {
 	}
 
 	override fun onCarStart() {
+		val certName = if (CarAppAssetResources(applicationContext, "cdsbaseapp").getAppCertificateRaw("") != null) {
+			"cdsbaseapp" } else { "basecoreOnlineServices" }
 		carappAssistant = AssistantApp(iDriveConnectionStatus, securityAccess,
-				CarAppAssetResources(applicationContext, "basecoreOnlineServices"),
+				CarAppAssetResources(applicationContext, certName),
 				AssistantControllerAndroid(applicationContext, PhoneAppResourcesAndroid(applicationContext)),
 				GraphicsHelpersAndroid())
 		carappAssistant?.onCreate()

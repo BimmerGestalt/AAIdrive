@@ -48,6 +48,10 @@ def RHMISources = [
                 // spotify UI layout, newer versions of Spotify package don't include this file
                 "basecore/rhmi/multimedia/id5/v3/ui_description.xml": "spotify/rhmi/ui_description.xml",
         ],
+        "BMWMine": [
+                // MyBMW for J29 support
+                "cdsbaseapp/cdsbaseapp.p7b": "cdsbaseapp/cdsbaseapp.p7b",
+        ],
         "MINIClassic": [
                 "com.bmwgroup.connected.mini.usa/com.bmwgroup.connected.mini.usa.p7b": "multimedia/rhmi/mini/multimedia.p7b",
                 "com.bmwgroup.connected.mini.usa/rhmi/mini/images.zip": "multimedia/rhmi/mini/images.zip",
@@ -84,6 +88,7 @@ def RHMISources = [
                 "com.spotify.music/rhmi/mini/texts.zip": "spotify/rhmi/mini/texts.zip",
         ],
 ]
+def OptionalRHMI = ["BMWMine", "MyBMW"]
 
 // extract RHMI resources from official apps
 task confirmRHMIResources() {
@@ -91,18 +96,26 @@ task confirmRHMIResources() {
         def found = [
                 "BMW Connected Classic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*classic.*\.apk/),
                 "BMW Connected": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*\.apk/),
+                "MyBMW": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected\.mobile20.*\.apk/),
                 "MINI Connected Classic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*classic.*\.apk/),
                 "MINI Connected": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*\.apk/),
                 "Smartthings Classic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)smartthings.*classic.*\.apk/),
                 "Spotify": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)spotify.*\.apk/),
         ]
         found["BMW Connected"].removeAll(found["BMW Connected Classic"])
+        found["BMW Connected"].removeAll(found["MyBMW"])
         found["MINI Connected"].removeAll(found["MINI Connected Classic"])
+        found["MINI Connected"].removeAll(found["MyBMW"])
 
         def missing = found.findAll { it.value.isEmpty() }.collect { it.key }
-        if (!missing.isEmpty()) {
-            def message = missing.collect { "Could not locate $it APK in external directory" }.join("\n")
+        def missingRequired = missing - OptionalRHMI
+        if (!missingRequired.isEmpty()) {
+            def message = missingRequired.collect { "Could not locate $it APK in external directory" }.join("\n")
             throw new MissingResourceException(message)
+        }
+        if (!missing.isEmpty()) {
+            def message = missing.collect { "Could not locate optional $it APK in external directory" }.join("\n")
+            logger.warn(message)
         }
     }
     getOutputs().dir("../external")
@@ -115,13 +128,16 @@ task extractRHMIResources(type: Copy, dependsOn: confirmRHMIResources) {
     def sources = [
             "BMWClassic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*classic.*\.apk/),
             "BMW": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)bmw.*connected.*\.apk/),
+            "BMWMine": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected\.mobile20.*\.apk/),
             "MINIClassic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*classic.*\.apk/),
             "MINI": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)mini.*connected.*\.apk/),
             "Smartthings": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)smartthings.*classic.*\.apk/),
             "Spotify": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)spotify.*\.apk/),
     ]
     sources["BMW"].removeAll(sources["BMWClassic"])
+    sources["BMW"].removeAll(sources["BMWMine"])
     sources["MINI"].removeAll(sources["MINIClassic"])
+    sources["MINI"].removeAll(sources["BMWMine"])
 
     // actually do the copy
     sources.each { sourceZip ->
@@ -154,8 +170,17 @@ task extractRHMIResources(type: Copy, dependsOn: confirmRHMIResources) {
         def missing = outputFiles.findAll {
             !file(it).exists()
         }
+        def optionalResources = OptionalRHMI.collect({ key ->
+            RHMISources.get(key, [:]).values()
+        }).flatten().collect({
+            "$destRoot/$it"
+        })
+        def missingRequired = missing - optionalResources
+        if (!missingRequired.isEmpty()) {
+            throw new MissingResourceException("Missing required RHMI files:\n${missingRequired.join("\n")}")
+        }
         if (!missing.isEmpty()) {
-            throw new MissingResourceException("Missing required RHMI files:\n${missing.join("\n")}")
+            logger.warn("Missing optional RHMI files:\n${missing.join("\n")}")
         }
     }
 }
@@ -180,9 +205,11 @@ task extractRHMIResourcesTest(type: Copy, dependsOn: confirmRHMIResources) {
 
     def sources = [
             "Classic": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*classic.*\.apk/),
-            "Connected": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*\.apk/)
+            "Connected": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected.*\.apk/),
+            "Mine": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected\.mobile20.*\.apk/)
     ]
     sources["Connected"].removeAll(sources["Classic"])
+    sources["Connected"].removeAll(sources["Mine"])     // make sure we use the right Connected resources
 
     def missing = RHMISourcesTest.values().findAll {
         !file("$destRoot/$it").exists()

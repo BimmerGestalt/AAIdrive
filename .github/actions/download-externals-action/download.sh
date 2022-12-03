@@ -13,3 +13,5 @@ wget --quiet -P external 'https://bimmergestalt.s3.amazonaws.com/aaidrive/extern
 wget --quiet -P external 'https://bimmergestalt.s3.amazonaws.com/aaidrive/external/SmartThings_Classic_v2.1.6_apkpure.com.apk'
 [ -e 'external/Spotify_Music_v8.4.32.623_apkpure.com.apk' ] ||
 wget --quiet -P external 'https://bimmergestalt.s3.amazonaws.com/aaidrive/external/Spotify_Music_v8.4.32.623_apkpure.com.apk'
+[ -e 'external/de.bmw.connected.mobile20.row.apk' ] ||
+wget --quiet -P external 'https://bimmergestalt.s3.amazonaws.com/aaidrive/external/de.bmw.connected.mobile20.row.apk'
