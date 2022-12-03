@@ -15,7 +15,7 @@ import java.net.Socket
 /**
  * Tries to connect to a car
  */
-class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray, val miniCert: ByteArray, val j29Cert: ByteArray): HandlerThread("CarProber") {
+class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray?, val miniCert: ByteArray?, val j29Cert: ByteArray?): HandlerThread("CarProber") {
 	companion object {
 		val PORTS = listOf(4004, 4005, 4006, 4007, 4008)
 		val TAG = "CarProber"
@@ -104,7 +104,7 @@ class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray, val 
 					"bmw" -> bmwCert
 					"mini" -> miniCert
 					else -> j29Cert
-				}
+				} ?: continue       // j29Cert is optional cdsBaseApp from MyBMW
 				val signedCert = CertMangling.mergeBMWCert(cert, securityAccess.fetchBMWCerts(brandHint = brand))
 				val conn = IDriveConnection.getEtchConnection("127.0.0.1", port, BaseBMWRemotingClient())
 				val sas_challenge = conn.sas_certificate(signedCert)

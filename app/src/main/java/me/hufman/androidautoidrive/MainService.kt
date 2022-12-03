@@ -220,9 +220,9 @@ class MainService: Service() {
 	private fun startCarProber() {
 		if (carProberThread?.isAlive != true) {
 			carProberThread = CarProber(securityAccess,
-				CarAppAssetResources(applicationContext, "smartthings").getAppCertificateRaw("bmw")!!.readBytes(),
-				CarAppAssetResources(applicationContext, "smartthings").getAppCertificateRaw("mini")!!.readBytes(),
-				CarAppAssetResources(applicationContext, "cdsbaseapp").getAppCertificateRaw("")!!.readBytes()
+				CarAppAssetResources(applicationContext, "smartthings").getAppCertificateRaw("bmw")?.readBytes(),
+				CarAppAssetResources(applicationContext, "smartthings").getAppCertificateRaw("mini")?.readBytes(),
+				CarAppAssetResources(applicationContext, "cdsbaseapp").getAppCertificateRaw("")?.readBytes()
 			).apply { start() }
 		} else {
 			carProberThread?.schedule(1000)
@@ -403,8 +403,9 @@ class MainService: Service() {
 		packageManager.queryIntentServices(intentService, 0).forEach { resolveInfo ->
 			if (iDriveConnectionReceiver.brand == "bmw" ||
 					iDriveConnectionReceiver.brand == "mini" ||
-					resolveInfo.serviceInfo.name in j29Services)
-			startModuleService(resolveInfo.serviceInfo.name)
+					resolveInfo.serviceInfo.name in j29Services) {
+				startModuleService(resolveInfo.serviceInfo.name)
+			}
 		}
 	}
 

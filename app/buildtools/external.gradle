@@ -88,6 +88,7 @@ def RHMISources = [
                 "com.spotify.music/rhmi/mini/texts.zip": "spotify/rhmi/mini/texts.zip",
         ],
 ]
+def OptionalRHMI = ["BMWMine", "MyBMW"]
 
 // extract RHMI resources from official apps
 task confirmRHMIResources() {
@@ -107,9 +108,14 @@ task confirmRHMIResources() {
         found["MINI Connected"].removeAll(found["MyBMW"])
 
         def missing = found.findAll { it.value.isEmpty() }.collect { it.key }
-        if (!missing.isEmpty()) {
-            def message = missing.collect { "Could not locate $it APK in external directory" }.join("\n")
+        def missingRequired = missing - OptionalRHMI
+        if (!missingRequired.isEmpty()) {
+            def message = missingRequired.collect { "Could not locate $it APK in external directory" }.join("\n")
             throw new MissingResourceException(message)
+        }
+        if (!missing.isEmpty()) {
+            def message = missing.collect { "Could not locate optional $it APK in external directory" }.join("\n")
+            logger.warn(message)
         }
     }
     getOutputs().dir("../external")
@@ -164,8 +170,17 @@ task extractRHMIResources(type: Copy, dependsOn: confirmRHMIResources) {
         def missing = outputFiles.findAll {
             !file(it).exists()
         }
+        def optionalResources = OptionalRHMI.collect({ key ->
+            RHMISources.get(key, [:]).values()
+        }).flatten().collect({
+            "$destRoot/$it"
+        })
+        def missingRequired = missing - optionalResources
+        if (!missingRequired.isEmpty()) {
+            throw new MissingResourceException("Missing required RHMI files:\n${missingRequired.join("\n")}")
+        }
         if (!missing.isEmpty()) {
-            throw new MissingResourceException("Missing required RHMI files:\n${missing.join("\n")}")
+            logger.warn("Missing optional RHMI files:\n${missing.join("\n")}")
         }
     }
 }
@@ -194,7 +209,7 @@ task extractRHMIResourcesTest(type: Copy, dependsOn: confirmRHMIResources) {
             "Mine": new FileNameByRegexFinder().getFileNames(file("../external").toString(), /(?i)connected\.mobile20.*\.apk/)
     ]
     sources["Connected"].removeAll(sources["Classic"])
-    sources["Connected"].removeAll(sources["Mine"])
+    sources["Connected"].removeAll(sources["Mine"])     // make sure we use the right Connected resources
 
     def missing = RHMISourcesTest.values().findAll {
         !file("$destRoot/$it").exists()
