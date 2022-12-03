@@ -146,6 +146,7 @@ class MainService: Service() {
 			handleActionStart()
 		} else if (action == ACTION_STOP) {
 			handleActionStop()
+			stopSelf()
 		}
 		return START_STICKY
 	}
@@ -233,6 +234,12 @@ class MainService: Service() {
 		val notifyIntent = Intent(applicationContext, NavHostActivity::class.java).apply {
 			flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 		}
+		val shutdownIntent = Intent(applicationContext, MainService::class.java).apply {
+			action = ACTION_STOP
+		}
+		val shutdownAction = NotificationCompat.Action.Builder(null, getString(R.string.notification_shutdown),
+				PendingIntent.getService(this, 40, shutdownIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+		).build()
 		val foregroundNotificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
 				.setOngoing(true)
 				.setContentTitle(getText(R.string.notification_title))
@@ -240,6 +247,7 @@ class MainService: Service() {
 				.setSmallIcon(R.drawable.ic_notify)
 				.setPriority(NotificationCompat.PRIORITY_LOW)
 				.setContentIntent(PendingIntent.getActivity(applicationContext, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+				.addAction(shutdownAction)
 
 		if (!iDriveConnectionReceiver.isConnected) {
 			// show a notification even if we aren't connected, in case we were called with startForegroundService

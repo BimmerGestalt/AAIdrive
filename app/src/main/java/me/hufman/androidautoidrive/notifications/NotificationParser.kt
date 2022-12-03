@@ -24,6 +24,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat.*
+import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.PhoneAppResourcesAndroid
 import me.hufman.androidautoidrive.UnicodeCleaner
@@ -273,9 +274,11 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 	}
 
 	fun shouldShowNotification(sbn: StatusBarNotification): Boolean {
+		val myMainServiceNotification = sbn.packageName == BuildConfig.APPLICATION_ID && sbn.isOngoing
 		return !sbn.notification.isGroupSummary() &&
 				sbn.notification.extras.getCharSequence(Notification.EXTRA_TITLE) != null &&
-				(sbn.isClearable || sbn.notification.actions?.isNotEmpty() == true || sbn.notification.getContentView() != null)
+				(sbn.isClearable || sbn.notification.actions?.isNotEmpty() == true || sbn.notification.getContentView() != null) &&
+				!myMainServiceNotification
 	}
 }
 
