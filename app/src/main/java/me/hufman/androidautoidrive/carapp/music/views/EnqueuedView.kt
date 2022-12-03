@@ -82,9 +82,10 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 	fun initWidgets(playbackView: PlaybackView) {
 		state.focusCallback = FocusCallback { focused ->
-			visible = focused
+			visible = false
 			if (focused) {
 				show()
+				visible = true  // enable redraw after we've shown the initial view
 			}
 		}
 		queueImageComponent.setProperty(RHMIProperty.PropertyId.WIDTH, 180)
@@ -111,6 +112,11 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			return
 		}
 
+		if (queueMetadata?.songs != null && queueMetadata?.songs?.size == newQueueMetadata?.songs?.size) {
+			// clear the previous car list, which happens to be the same size as the new list
+			listComponent.getModel()?.setValue(songsEmptyList, 0, songsEmptyList.height, songsEmptyList.height)
+		}
+
 		queueMetadata = newQueueMetadata
 		songsList.clear()
 		val songs = queueMetadata?.songs ?: emptyList()
@@ -123,7 +129,6 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 			listComponent.setEnabled(true)
 			listComponent.setSelectable(true)
 			songsList.addAll(songs)
-			showList(0)
 			listComponent.requestDataCallback = RequestDataCallback { startIndex, numRows ->
 				showList(startIndex, numRows)
 
@@ -132,12 +137,14 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 				visibleRowsOriginalMusicMetadata = visibleRows.map { MusicMetadata.copy(it) }
 			}
 
-			showCurrentlyPlayingSong(true)
+			currentSong = musicController.getMetadata()
+			showList(0, 0)
 			setSelectionToCurrentSong()
 		} else {
 			listComponent.setEnabled(false)
 			listComponent.setSelectable(false)
 			listComponent.getModel()?.setValue(songsEmptyList, 0, songsEmptyList.height, songsEmptyList.height)
+			currentSong = null
 		}
 
 		val queueTitle = UnicodeCleaner.clean(queueMetadata?.title ?: "")
@@ -166,6 +173,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		queueMetadata = null
 	}
 
+	/** Redraw while the list is currently displayed */
 	fun redraw() {
 		// need a full redraw if the queue is different or has been modified
 		if (musicController.getQueue() != queueMetadata) {
@@ -251,7 +259,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}
 
 		// move the selection if the previous song was selected
-		if (oldPlayingIndex == selectedIndex) {
+		if (oldPlayingIndex == selectedIndex && oldPlayingIndex != playingIndex) {
 			setSelectionToCurrentSong()
 		}
 	}

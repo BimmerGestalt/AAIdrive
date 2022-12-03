@@ -61,6 +61,10 @@ android {
         // Forcing it is only useful for old phones with Android Open Accessory v2 Audio support
         // because the detection logic for AUDIO_SUPPORTS_USB only guesses based on version
         buildConfigField "boolean", "MANUAL_AUDIO_CONTEXT", "false"
+
+        // enable async RHMI data updates
+        // big performance improvement, and seemingly doesn't even cause bugs!
+        buildConfigField "boolean", "ASYNC_RHMI_APPLICATION", "true"
     }
 
     signingConfigs {

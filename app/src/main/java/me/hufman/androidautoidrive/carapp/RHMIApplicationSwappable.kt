@@ -14,7 +14,7 @@ import me.hufman.androidautoidrive.utils.setDefault
  *  No triggered events are replayed either
  *  Make sure to handle these manually (for example, multimediaInfoEvent, AudioHmiState's coverart)
  */
-class RHMIApplicationSwappable(var app: RHMIApplication): RHMIApplication() {
+class RHMIApplicationSwappable(var app: RHMIApplication): RHMIApplication(), RHMIApplicationWrapper {
 	var isConnected = true
 		set(value) {
 			field = value
@@ -72,6 +72,15 @@ class RHMIApplicationSwappable(var app: RHMIApplication): RHMIApplication() {
 			properties.forEach { propertyId, value ->
 				app.setProperty(componentId, propertyId, value)
 			}
+		}
+	}
+
+	override fun unwrap(): RHMIApplication {
+		val app = app
+		return if (app is RHMIApplicationWrapper) {
+			app.unwrap()
+		} else {
+			return app
 		}
 	}
 }

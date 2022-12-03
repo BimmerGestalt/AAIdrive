@@ -130,9 +130,11 @@ class BrowsePageView(val state: RHMIState,
 		showActionsList()
 
 		// show this page's previous list, if we are backing out to it and have wrapped the pages around
-		val index = max(0, musicList.indexOf(browsePageModel.previouslySelected))   // redraw the checkmark item
-		showList(index, 1)
-		setFocusToPreviouslySelected()
+		val index = musicList.indexOf(browsePageModel.previouslySelected)   // redraw the checkmark item
+		if (index >= 0) {   // we have a previous musicList
+			showList(index, 1)
+			setFocusToPreviouslySelected()
+		}
 
 		// load the contents of this page
 		load()
@@ -285,10 +287,10 @@ class BrowsePageView(val state: RHMIState,
 	 * Shows the list component content from the start index for the specified number of rows.
 	 */
 	private fun showList(startIndex: Int = 0, numRows: Int = 20) {
-		musicListComponent.setEnabled(currentListModel != loadingList && currentListModel != emptyList)
 		if (startIndex >= 0) {
 			musicListComponent.getModel()?.setValue(currentListModel, startIndex, numRows, currentListModel.height)
 		}
+		musicListComponent.setEnabled(currentListModel != loadingList && currentListModel != emptyList)
 	}
 
 	fun hide() {
