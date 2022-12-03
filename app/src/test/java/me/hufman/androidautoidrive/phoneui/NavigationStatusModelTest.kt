@@ -22,7 +22,9 @@ class NavigationStatusModelTest {
 
 	val context = mock<Context>()
 	var isConnected = false
-	val capabilities = HashMap<String, String>()
+	val capabilities = HashMap<String, String>().also {
+		it["hmi.type"] = "BMW ID5"
+	}
 	val cdsData = CDSDataProvider()
 	val carInformation = mock<CarInformation> {
 		on { isConnected } doAnswer { isConnected }
@@ -40,6 +42,17 @@ class NavigationStatusModelTest {
 		isConnected = true
 		model.update()
 		assertEquals(true, model.isConnected.value)
+	}
+
+	@Test
+	fun testJ29IsNotConnected() {
+		capabilities["hmi.type"] = "J29 ID6L"
+		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false), MutableLiveData(null)).apply { update() }
+		assertEquals(false, model.isConnected.value)
+
+		isConnected = true
+		model.update()
+		assertEquals(false, model.isConnected.value)
 	}
 
 	@Test
