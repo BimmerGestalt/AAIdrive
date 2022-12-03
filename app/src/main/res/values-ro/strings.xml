@@ -70,6 +70,7 @@
     <string name="notification_quickreplies_default">[\"👍\",\"Pe drum!\",\"Momentan în mașină\",\"Nu pot vorbi prin mesaj, sună-mă te rog\",\"Te sun mai târziu\"]</string>
     <string name="lbl_notification_permissions">Acces vizualizare notificări</string>
     <string name="lbl_notification_sms_permissions">Acces poze SMS</string>
+    <string name="lbl_notification_permissions_hint">Puteți acorda permisiuni de notificare mai târziu și să le revocați cu ușurință în orice moment</string>
     <string name="lbl_popupVersion">Popup-urile funcționează doar cu IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS nu e suportat de mașina dvs.</string>
     <string name="lbl_smsPermission">Permisiune SMS necesară pentru a vedea imaginile din mesaje în mașină. Textul este disponibil întotdeauna.</string>
