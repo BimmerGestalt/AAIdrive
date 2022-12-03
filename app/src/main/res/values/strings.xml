@@ -76,6 +76,7 @@
     <string name="notification_quickreplies_default">[\"👍\",\"On my way!\",\"Currently in the car\",\"Can\'t text, call me instead\",\"I\'ll call you later\"]</string>
     <string name="lbl_notification_permissions">Access to view notifications</string>
     <string name="lbl_notification_sms_permissions">Access to show SMS pictures</string>
+    <string name="lbl_notification_permissions_hint">You may grant notification permissions later and can easily revoke them at any time</string>
     <string name="lbl_popupVersion">Popups only work with IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS is not supported by your car</string>
     <string name="lbl_smsPermission">Grant the SMS permission to view pictures from incoming SMS images in the car. The text itself is always visible.</string>
