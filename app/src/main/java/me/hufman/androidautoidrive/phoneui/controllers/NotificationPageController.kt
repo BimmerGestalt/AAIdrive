@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.phoneui.controllers
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -30,6 +31,7 @@ class NotificationPageController(val notificationSettingsModel: NotificationSett
 		}
 	}
 
+	@SuppressLint("UnspecifiedImmutableFlag")       // guarded with conditional
 	fun sendTestNotification(view: View) {
 		val context = view.context
 		createNotificationChannel(context)
@@ -41,8 +43,13 @@ class NotificationPageController(val notificationSettingsModel: NotificationSett
 		val action = NotificationCompat.Action.Builder(null, "Custom Action",
 				PendingIntent.getBroadcast(context, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 				.build()
-		val inputAction = NotificationCompat.Action.Builder(null, "Reply",
-				PendingIntent.getBroadcast(context, 1, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+		val inputActionIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+			// PendingIntents attached to actions with remote inputs must be mutable
+			PendingIntent.getBroadcast(context, 1, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
+		} else {
+			PendingIntent.getBroadcast(context, 1, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+		}
+		val inputAction = NotificationCompat.Action.Builder(null, "Reply", inputActionIntent)
 				.addRemoteInput(replyInput)
 				.build()
 		val notificationBuilder = NotificationCompat.Builder(context, NotificationPageFragment.NOTIFICATION_CHANNEL_ID)
@@ -52,6 +59,7 @@ class NotificationPageController(val notificationSettingsModel: NotificationSett
 				.setSubText("SubText")
 				.addAction(action)
 				.addAction(inputAction)
+				.setAutoCancel(true)
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			notificationBuilder.setChannelId(NotificationPageFragment.NOTIFICATION_CHANNEL_ID)
 		}

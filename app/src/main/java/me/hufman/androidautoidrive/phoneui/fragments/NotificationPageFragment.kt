@@ -23,7 +23,7 @@ import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
 class NotificationPageFragment: Fragment() {
 	companion object {
 		const val NOTIFICATION_CHANNEL_ID = "TestNotification"
-		const val NOTIFICATION_ID = 1
+		const val NOTIFICATION_ID = 169
 	}
 
 	val notificationSettingsModel by viewModels<NotificationSettingsModel> {NotificationSettingsModel.Factory(requireContext().applicationContext)}
@@ -55,11 +55,14 @@ class NotificationPageFragment: Fragment() {
 				Log.i(TAG, "Received reply")
 				Toast.makeText(context, "Reply: ${reply.getCharSequence("reply")}", Toast.LENGTH_SHORT).show()
 
+				// seems to not work, oh well
 				val manager = NotificationManagerCompat.from(context)
 				manager.cancel(NOTIFICATION_ID)
 			} else {
 				Log.i(TAG, "Received custom action")
 				Toast.makeText(context, "Custom Action press", Toast.LENGTH_SHORT).show()
+				val manager = NotificationManagerCompat.from(context)
+				manager.cancel(NOTIFICATION_ID)
 			}
 		}
 	}
