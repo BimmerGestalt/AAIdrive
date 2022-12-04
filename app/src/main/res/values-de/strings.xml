@@ -10,7 +10,7 @@
     <string name="notification_description_chassiscode">Verbunden mit %s</string>
     <string name="notification_description_bmw">Verbunden mit BMW</string>
     <string name="notification_description_mini">Verbunden mit Mini</string>
-    <string name="notification_shutdown">Herunterfahren</string>
+    <string name="notification_shutdown">Beenden</string>
     <string name="permission_cds_normal">allgemeine Autoinfo lesen</string>
     <string name="permission_cds_personal">Persönliche Fahrzeuginformationen auslesen</string>
     <!-- notification channel names -->
