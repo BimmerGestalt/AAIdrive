@@ -10,6 +10,7 @@
     <string name="notification_description_chassiscode">Conectat la %s</string>
     <string name="notification_description_bmw">Conectat la BMW</string>
     <string name="notification_description_mini">Conectat la Mini</string>
+    <string name="notification_shutdown">Oprire</string>
     <string name="permission_cds_normal">informatii generice masina</string>
     <string name="permission_cds_personal">Informatii personale masina</string>
     <!-- notification channel names -->
@@ -185,6 +186,8 @@
     <string name="txt_setup_bluetooth_impermission">Este posibil ca aplicația să nu se activeze automat atunci când se conectează Bluetooth</string>
     <string name="txt_setup_bmw_ready">Aplicația este gata să se conecteze la un BMW</string>
     <string name="txt_setup_mini_ready">Aplicația este gata să se conecteze la un Mini</string>
+    <string name="txt_setup_toyota_ready">Aplicația este gata să se conecteze la o Toyota Supra</string>
+    <string name="txt_setup_toyota_hint">Sprijinul pentru Toyota este foarte limitat, în prezent furnizând doar date despre autoturism</string>
     <string name="txt_setup_bmw_missing">Nepregătit pentru conectare la BMW:</string>
     <string name="txt_setup_mini_missing">Nepregătit pentru conectare la Mini:</string>
     <string name="txt_setup_bmw_connected_65">Daca BMW Connected 6.5 este instalat, uneori nu se poate stabili conexiunea la auto. Încearcă să instalezi versiunea 6,4 sau să treci la MyBMW dacă întâmpini probleme</string>
