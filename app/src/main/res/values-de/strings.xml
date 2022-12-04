@@ -10,6 +10,7 @@
     <string name="notification_description_chassiscode">Verbunden mit %s</string>
     <string name="notification_description_bmw">Verbunden mit BMW</string>
     <string name="notification_description_mini">Verbunden mit Mini</string>
+    <string name="notification_shutdown">Herunterfahren</string>
     <string name="permission_cds_normal">allgemeine Autoinfo lesen</string>
     <string name="permission_cds_personal">Persönliche Fahrzeuginformationen auslesen</string>
     <!-- notification channel names -->
@@ -184,6 +185,8 @@
     <string name="txt_setup_bluetooth_impermission">Die App wird möglicherweise nicht automatisch aufwachen, wenn Bluetooth verbunden ist</string>
     <string name="txt_setup_bmw_ready">Diese App ist bereit für die Verbindung mit einem BMW</string>
     <string name="txt_setup_mini_ready">Diese App ist bereit für die Verbindung mit einem Mini</string>
+    <string name="txt_setup_toyota_ready">Diese App ist bereit für die Verbindung mit einem Toyota Supra</string>
+    <string name="txt_setup_toyota_hint">Die Unterstützung von Toyota ist sehr begrenzt, zurzeit werden nur Fahrzeugdaten zu Verfügung gestellt</string>
     <string name="txt_setup_bmw_missing">Nicht bereit für die Verbindung mit einem BMW:</string>
     <string name="txt_setup_mini_missing">Nicht bereit für die Verbindung mit einem Mini:</string>
     <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 ist installiert. Diese Version stellt manchmal die Verbindung zum Fahrzeug nicht zuverlässig her. Ein downgrade zur Version 6.4 oder Upgrade zur My BMW App kann hier Abhilfe schaffen</string>
