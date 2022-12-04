@@ -70,7 +70,7 @@
     <string name="notification_quickreplies_default">[\"👍\",\"Sto arrivando!\",\"Sono in auto\",\"Non posso messaggiare, chiamami\",\"Ti chiamerò più tardi\"]</string>
     <string name="lbl_notification_permissions">Accesso per visualizzare le notifiche</string>
     <string name="lbl_notification_sms_permissions">Accesso per visualizzare immagini negli SMS</string>
-    <string name="lbl_notification_permissions_hint">È possibile concedere i permessi di notifica più tardi e facilmente revocarli in qualsiasi momento</string>
+    <string name="lbl_notification_permissions_hint">Puoi concedere i permessi di notifica in un secondo momento e puoi facilmente revocarli in qualsiasi momento</string>
     <string name="lbl_popupVersion">Il popup funziona solo con IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS non è supportato dalla tua auto</string>
     <string name="lbl_smsPermission">Concedi l\'autorizzazione SMS per visualizzare le immagini nell\'auto. Il testo è sempre visibile.</string>
