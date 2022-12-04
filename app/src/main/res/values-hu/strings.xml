@@ -66,6 +66,7 @@
     <string name="notification_quickreplies_default">[\"👍\",\"Úton vagyok!\",\"Autóban vagyok\",\"Nem tudok írni, hívj inkább!\",\"Később visszahívlak!\"]</string>
     <string name="lbl_notification_permissions">Hozzáférés az értesítésekhez</string>
     <string name="lbl_notification_sms_permissions">Hozzáférés az SMS képek megjelenítéséhez</string>
+    <string name="lbl_notification_permissions_hint">Később is adhatsz értesítési engedélyeket, és bármikor könnyedén visszavonhatod azokat</string>
     <string name="lbl_popupVersion">Felugró értesítések megjelenítése csak IDrive4-en működik</string>
     <string name="lbl_ttsUnsupported">TTS nem támogatott az autódban</string>
     <string name="lbl_smsPermission">Engedélyezés a beérkező SMS üzenetekben lévő képeknek az autóban történő megjelenítésre. A szöveg állandóan látható.</string>
