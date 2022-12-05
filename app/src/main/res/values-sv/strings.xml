@@ -10,6 +10,7 @@
     <string name="notification_description_chassiscode">Ansluten till %s</string>
     <string name="notification_description_bmw">Ansluten till BMW</string>
     <string name="notification_description_mini">Ansluten till Mini</string>
+    <string name="notification_shutdown">Avstängning</string>
     <string name="permission_cds_normal">se allmän bilinformation</string>
     <string name="permission_cds_personal">se privat bilinformation</string>
     <!-- notification channel names -->
@@ -69,6 +70,7 @@
     <string name="notification_quickreplies_default">[\"👍\",\"På väg!\",\"Kör bil nu! \",\"Kan inte sms:a nu ring mig istället\",\"Jag ringer dig senare\"]</string>
     <string name="lbl_notification_permissions">Åtkomst till aviseringar</string>
     <string name="lbl_notification_sms_permissions">Åtkomst att visa SMS-bilder</string>
+    <string name="lbl_notification_permissions_hint">Du kan bevilja aviseringsbehörighet senare och kan enkelt återkalla dem när som helst</string>
     <string name="lbl_popupVersion">Popupfönster fungerar endast med IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS stöds ej av din bil</string>
     <string name="lbl_smsPermission">Ge behörighet för inkommande SMS att visa bilder i bilen. Texten är däremot alltid synlig.</string>
@@ -183,6 +185,8 @@
     <string name="txt_setup_bluetooth_impermission">Appen startar kanske inte automatiskt när Bluetooth ansluts</string>
     <string name="txt_setup_bmw_ready">Appen är redo att ansluta till BMW</string>
     <string name="txt_setup_mini_ready">Appen är klar att ansluta till en Mini</string>
+    <string name="txt_setup_toyota_ready">Appen är redo att ansluta till en Toyota Supra</string>
+    <string name="txt_setup_toyota_hint">Toyota stöd är mycket begränsat, för närvarande endast tillhandahålla bildata</string>
     <string name="txt_setup_bmw_missing">Ej redo att ansluta till BMW:</string>
     <string name="txt_setup_mini_missing">Ej redo att ansluta till Mini:</string>
     <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 är installerad, vilket ibland inte startar bilanslutningen. Prova att nedgradera till 6.4 eller uppgradera till nya appen MyBMW om du stöter på problem</string>

@@ -10,6 +10,7 @@
     <string name="notification_description_chassiscode">Verbunden mit %s</string>
     <string name="notification_description_bmw">Verbunden mit BMW</string>
     <string name="notification_description_mini">Verbunden mit Mini</string>
+    <string name="notification_shutdown">Beenden</string>
     <string name="permission_cds_normal">allgemeine Autoinfo lesen</string>
     <string name="permission_cds_personal">Persönliche Fahrzeuginformationen auslesen</string>
     <!-- notification channel names -->
@@ -69,6 +70,7 @@
     <string name="notification_quickreplies_default">[\"👍\",\"Ich bin auf dem Weg!\",\"Momentan im Auto\",\"Kann nicht schreiben, bitte stattdessen anrufen\",\"Ich rufe dich später an\"]</string>
     <string name="lbl_notification_permissions">Zugriff auf Benachrichtigungen</string>
     <string name="lbl_notification_sms_permissions">Zugriff um SMS Bilder anzuzeigen</string>
+    <string name="lbl_notification_permissions_hint">Du kannst auch später die Rechte für \"Benachrichtigungen\" erteilen und sie auch jederzeit widerrufen</string>
     <string name="lbl_popupVersion">PopUps funktionieren nur mit IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS wird von Ihrem Fahrzeug nicht unterstützt</string>
     <string name="lbl_smsPermission">Erteile Zugriff für SMS-Nachrichten um Bilder von Nachrichten im Fahrzeug zu sehen. Text ist immer sichtbar.</string>
@@ -183,6 +185,8 @@
     <string name="txt_setup_bluetooth_impermission">Die App wird möglicherweise nicht automatisch aufwachen, wenn Bluetooth verbunden ist</string>
     <string name="txt_setup_bmw_ready">Diese App ist bereit für die Verbindung mit einem BMW</string>
     <string name="txt_setup_mini_ready">Diese App ist bereit für die Verbindung mit einem Mini</string>
+    <string name="txt_setup_toyota_ready">Diese App ist bereit für die Verbindung mit einem Toyota Supra</string>
+    <string name="txt_setup_toyota_hint">Die Unterstützung von Toyota ist sehr begrenzt, zurzeit werden nur Fahrzeugdaten zu Verfügung gestellt</string>
     <string name="txt_setup_bmw_missing">Nicht bereit für die Verbindung mit einem BMW:</string>
     <string name="txt_setup_mini_missing">Nicht bereit für die Verbindung mit einem Mini:</string>
     <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 ist installiert. Diese Version stellt manchmal die Verbindung zum Fahrzeug nicht zuverlässig her. Ein downgrade zur Version 6.4 oder Upgrade zur My BMW App kann hier Abhilfe schaffen</string>
