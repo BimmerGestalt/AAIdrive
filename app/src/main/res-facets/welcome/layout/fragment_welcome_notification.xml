@@ -9,43 +9,47 @@
             name="controller"
             type="me.hufman.androidautoidrive.phoneui.controllers.NotificationPageController" />
     </data>
-    <LinearLayout
-        android:orientation="vertical"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <TextView
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/pane_vertical_margin"
-            android:animateLayoutChanges="true"
-            android:text="@string/lbl_notificationpage" />
+            android:layout_height="wrap_content">
 
-        <View style="@style/Divider"
-            android:layout_marginBottom="@dimen/pane_vertical_margin"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
+                android:animateLayoutChanges="true"
+                android:text="@string/lbl_notificationpage" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/pane_vertical_margin"
-            android:animateLayoutChanges="true"
-            android:text="@string/lbl_notification_permissions_hint" />
+            <View style="@style/Divider"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/swMessageNotifications"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/settings_vertical_margin"
-            android:text="@string/message_notifications"
-            android:checked="@{settingsModel.notificationEnabled}"
-            android:onCheckedChanged="@{(button, checked) -> controller.onChangedSwitchNotifications(checked)}" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/pane_vertical_margin"
+                android:animateLayoutChanges="true"
+                android:text="@string/lbl_notification_permissions_hint" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/paneNotificationPermissions"
-            android:name="me.hufman.androidautoidrive.phoneui.fragments.NotificationPermissionsFragment"
-            android:visibility="@{settingsModel.notificationEnabled}"/>
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/swMessageNotifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/settings_vertical_margin"
+                android:text="@string/message_notifications"
+                android:checked="@{settingsModel.notificationEnabled}"
+                android:onCheckedChanged="@{(button, checked) -> controller.onChangedSwitchNotifications(checked)}" />
 
-    </LinearLayout>
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/paneNotificationPermissions"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.NotificationPermissionsFragment"
+                android:visibility="@{settingsModel.notificationEnabled}"/>
+
+        </LinearLayout>
+    </ScrollView>
 </layout>
