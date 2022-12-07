@@ -36,6 +36,8 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 
 	private val _isCarConnected = MutableLiveData(false)
 	val isCarConnected: LiveData<Boolean> = _isCarConnected
+	private val _isJ29Connected = MutableLiveData(false)
+	val isJ29Connected: LiveData<Boolean> = _isJ29Connected
 
 	private val _isAudioContextSupported = MutableLiveData(false)
 	val isAudioContextSupported: LiveData<Boolean> = _isAudioContextSupported
@@ -78,30 +80,33 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 		val summarized = CarCapabilitiesSummarized(carInformation)
 
 		// only these brands of cars support RHMI apps
-		val carBrandSupported = carInformation.capabilities["hmi.type"]?.startsWith("BMW") == true ||
-				carInformation.capabilities["hmi.type"]?.startsWith("MINI") == true
+		val carBrandSupported = summarized.isBmw || summarized.isMini
 		_isCarConnected.value = carInformation.capabilities.isNotEmpty() && carBrandSupported
+		_isJ29Connected.value = summarized.isJ29
 
-		_isAudioContextSupported.value = musicAppMode.heuristicAudioContext()
-		if (musicAppMode.heuristicAudioContext()) {
+		_isAudioContextSupported.value = !summarized.isJ29 && musicAppMode.heuristicAudioContext()
+		if (carBrandSupported && musicAppMode.heuristicAudioContext()) {
 			_audioContextStatus.value = { getString(R.string.txt_capabilities_audiocontext_yes) }
 			_audioContextHint.value = { "" }
 		} else {
-			if (!musicAppMode.isBTConnection() && !musicAppMode.supportsUsbAudio()) {
+			if (carBrandSupported && !musicAppMode.isBTConnection() && !musicAppMode.supportsUsbAudio()) {
 				_audioContextStatus.value = { getString(R.string.txt_capabilities_audiocontext_no_usb) }
+				_audioContextHint.value = { getString(R.string.txt_capabilities_audiocontext_hint) }
 			} else {
 				_audioContextStatus.value = { getString(R.string.txt_capabilities_audiocontext_no) }
+				_audioContextHint.value = { "" }
 			}
-			_audioContextHint.value = { getString(R.string.txt_capabilities_audiocontext_hint) }
 		}
 
-		_isAudioStateSupported.value = musicAppMode.supportsId5Playback()
-		if (musicAppMode.supportsId5Playback()) {
+		_isAudioStateSupported.value = !summarized.isJ29 && musicAppMode.supportsId5Playback()
+		if (carBrandSupported && musicAppMode.supportsId5Playback()) {
 			_audioStateStatus.value = { getString(R.string.txt_capabilities_audiostate_yes) }
 			_audioStateHint.value = { "" }
 		} else {
 			_audioStateStatus.value = { getString(R.string.txt_capabilities_audiostate_no) }
-			if (musicAppMode.isId4()) {
+			if (!carBrandSupported) {
+				_audioStateHint.value = { "" }      // not supported, but not displayed in the UI
+			} else if (musicAppMode.isId4()) {
 				_audioStateHint.value = { getString(R.string.txt_capabilities_audiostate_id4) }
 			} else if (!musicAppMode.shouldRequestAudioContext()) {
 				_audioStateHint.value = { getString(R.string.txt_capabilities_audiostate_audiocontext) }
@@ -115,7 +120,11 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 
 		_isPopupSupported.value = summarized.isPopupSupported
 		_isPopupNotSupported.value = summarized.isPopupNotSupported
-		_popupStatus.value = { getString(R.string.txt_capabilities_popup_yes) }
+		_popupStatus.value = if (summarized.isPopupSupported) {
+			{ getString(R.string.txt_capabilities_popup_yes) }
+		} else {
+			{ getString(R.string.txt_capabilities_popup_no) }
+		}
 		_popupHint.value = { "" }
 
 		_isTtsSupported.value = summarized.isTtsSupported

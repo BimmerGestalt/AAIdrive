@@ -189,24 +189,28 @@ class CarCapabilitiesSummarized(val carInformation: CarInformation) {
 		get() = carInformation.capabilities["hmi.type"]?.startsWith("BMW") == true
 	val isMini: Boolean
 		get() = carInformation.capabilities["hmi.type"]?.startsWith("MINI") == true
+	val isJ29: Boolean
+		get() = carInformation.capabilities["hmi.type"]?.startsWith("J29") == true
 
-	val isPopupSupported = true
-	val isPopupNotSupported = false
+	val isPopupSupported: Boolean
+		get() = !isJ29
+	val isPopupNotSupported: Boolean
+		get() = isJ29
 
 	val isTtsSupported: Boolean
-		get() = carInformation.capabilities["tts"]?.lowercase(Locale.ROOT) == "true"
+		get() = !isJ29 && carInformation.capabilities["tts"]?.lowercase(Locale.ROOT) == "true"
 	val isTtsNotSupported: Boolean
-		get() = carInformation.capabilities["tts"]?.lowercase(Locale.ROOT) == "false"
+		get() = isJ29 || carInformation.capabilities["tts"]?.lowercase(Locale.ROOT) == "false"
 
 	val isNaviSupported: Boolean
-		get() = carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "true"
+		get() = !isJ29 && carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "true"
 	val isNaviNotSupported: Boolean
-		get() = carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
+		get() = isJ29 || carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
 
 	val mapWidescreenSupported: Boolean
-		get() = carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 0 >= 1000
+		get() = !isJ29 && (carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 0) >= 1000
 	val mapWidescreenUnsupported: Boolean
-		get() = carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 9999 < 1000
+		get() = isJ29 || (carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 9999) < 1000
 	val mapWidescreenCrashes: Boolean
 		get() = carInformation.capabilities["hmi.version"]?.lowercase(Locale.ROOT)?.startsWith("entryevo_") == true
 }
