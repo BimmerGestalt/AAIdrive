@@ -104,6 +104,7 @@ class MusicBrowser(val handler: Handler, val mediaBrowser: MediaBrowserCompat, v
 			"com.tbig.playerprotrial" -> "__ROOT__"    // PlayerPro Free
 			"com.tbig.playerpro" -> "__ROOT__"    // PlayerPro
 			"com.amazon.mp3" -> "BROWSER_ROOT"      // Amazon Music, except it sends a null root first
+			"com.qobuz.music" -> "QOBUZ_MEDIA_ROOT"     // Qobuz
 			else -> return when(musicAppInfo.className) {   // some apps have a shared service library
 				"com.itmwpb.vanilla.radioapp.player.MusicService" -> "/"    // OneCMS (HOT97 Official)
 				"com.example.android.uamp.media.MusicService" -> "/"        // UAMP Example player (Radio Bob)
