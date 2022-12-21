@@ -4,12 +4,12 @@ import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.RemoteInput
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.app.Service
+import android.content.*
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -17,6 +17,7 @@ import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
+import me.hufman.androidautoidrive.ApplicationCallbacks
 import me.hufman.androidautoidrive.CarConnectionListener
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent.Companion.INTENT_INTERACTION
@@ -30,11 +31,34 @@ fun Notification.isGroupSummary(): Boolean {
 class NotificationListenerServiceImpl: NotificationListenerService() {
 	companion object {
 		const val TAG = "IDriveNotifications"
+		const val AUTO_SHUTDOWN = 30000L
 		const val LOG_NOTIFICATIONS = false
+		const val INTENT_START_LISTENER = "me.hufman.androidaudoidrive.PhoneNotificationUpdate.START_LISTENER"
+		const val INTENT_STOP_LISTENER = "me.hufman.androidaudoidrive.PhoneNotificationUpdate.STOP_LISTENER"
 		const val INTENT_REQUEST_DATA = "me.hufman.androidaudoidrive.PhoneNotificationUpdate.REQUEST_DATA"
 
 		private val _serviceState = MutableLiveData(false)
-		val serviceState = _serviceState as LiveData<Boolean>
+		val serviceState = _serviceState as LiveData<Boolean>   // only valid while the service is running
+
+		fun startService(context: Context) {
+			val intent = Intent(context, NotificationListenerServiceImpl::class.java)
+					.setAction(INTENT_START_LISTENER)
+			context.startService(intent)
+		}
+		fun shutdownService(context: Context) {
+			val intent = Intent(INTENT_STOP_LISTENER)
+					.setPackage(context.packageName)
+			context.sendBroadcast(intent)
+		}
+	}
+
+	val handler = Handler(Looper.getMainLooper())
+	val autoShutdown = Runnable {
+		if (!iDriveConnectionReceiver.isConnected && ApplicationCallbacks.visibleWindows.get() == 0) {
+			shutdownService(this)
+		} else {
+			scheduleAutoShutdown()
+		}
 	}
 
 	val iDriveConnectionReceiver = IDriveConnectionReceiver()       // watches connection state
@@ -46,9 +70,15 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	val interactionListener = NotificationInteractionListener(carNotificationReceiver, carController)
 	val broadcastReceiver = object: BroadcastReceiver() {
 		// Instantiating a BroadcastReceiver in a unit test is hard, so it's factored out a bit
-		override fun onReceive(p0: Context?, p1: Intent?) {
-			p1 ?: return
-			interactionListener.onReceive(p1)
+		override fun onReceive(p0: Context?, intent: Intent?) {
+			intent ?: return
+
+			if (intent.action == INTENT_STOP_LISTENER && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+				requestUnbind()
+				stopSelf()
+			} else {
+				interactionListener.onReceive(intent)
+			}
 		}
 	}
 	val ranking = Ranking() // object to receive new notification rankings
@@ -69,7 +99,26 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		// car app listeners
 		Log.i(TAG, "Registering CarNotificationInteraction listeners")
 		carNotificationReceiver.register(this, broadcastReceiver)
+		this.registerReceiver(broadcastReceiver, IntentFilter(INTENT_STOP_LISTENER))
 		this.registerReceiver(broadcastReceiver, IntentFilter(INTENT_REQUEST_DATA))
+
+		// automatically shutdown if the car is not connected
+		// but only on phones if we can programmatically start again
+		scheduleAutoShutdown()
+	}
+
+	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			requestRebind(ComponentName(this, this::class.java))
+			updateNotificationList()
+			scheduleAutoShutdown()
+		}
+		return Service.START_STICKY
+	}
+
+	fun scheduleAutoShutdown() {
+		handler.removeCallbacks(autoShutdown)
+		handler.postDelayed(autoShutdown, AUTO_SHUTDOWN)
 	}
 
 	override fun onDestroy() {

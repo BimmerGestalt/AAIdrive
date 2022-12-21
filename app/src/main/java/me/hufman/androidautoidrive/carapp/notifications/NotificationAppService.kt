@@ -35,6 +35,10 @@ class NotificationAppService: CarAppService() {
 				notificationSettings)
 		carappNotifications?.onCreate(applicationContext, handler)
 		// request an initial draw
+		// API24 can turn off the service, so we ask it to start up the service
+		// The service automatically loads all the data onStart if the car is connected
+		// but we also send a manual request if the service is already runnin
+		NotificationListenerServiceImpl.startService(applicationContext)
 		applicationContext.sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
 
 		handler.post {
@@ -70,6 +74,7 @@ class NotificationAppService: CarAppService() {
 			Log.w(MainService.TAG, "Encountered an exception while shutting down Notifications", e)
 		}
 
+		NotificationListenerServiceImpl.shutdownService(this)
 		carappNotifications?.disconnect()
 		carappNotifications = null
 		carappReadout?.disconnect()

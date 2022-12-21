@@ -21,16 +21,6 @@ class NotificationPageController(val notificationSettingsModel: NotificationSett
                                  val permissionsModel: PermissionsModel,
                                  val permissionsController: PermissionsController) {
 
-	fun onChangedSwitchNotifications(isChecked: Boolean) {
-		notificationSettingsModel.notificationEnabled.setValue(isChecked)
-		if (isChecked) {
-			// make sure we have permissions to read the notifications
-			if (permissionsModel.hasNotificationPermission.value != true) {
-				permissionsController.promptNotification()
-			}
-		}
-	}
-
 	@SuppressLint("UnspecifiedImmutableFlag")       // guarded with conditional
 	fun sendTestNotification(view: View) {
 		val context = view.context

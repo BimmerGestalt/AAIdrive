@@ -40,8 +40,7 @@
                 android:minHeight="48dp"
                 android:paddingBottom="@dimen/settings_vertical_margin"
                 android:text="@string/message_notifications"
-                android:checked="@{settingsModel.notificationEnabled}"
-                android:onCheckedChanged="@{(button, checked) -> controller.onChangedSwitchNotifications(checked)}"/>
+                android:checked="@={settingsModel.notificationEnabled}"/>
 
             <androidx.fragment.app.FragmentContainerView
                 android:layout_width="match_parent"

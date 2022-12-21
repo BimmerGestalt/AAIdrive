@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.databinding.NotificationPermissionsBinding
+import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import me.hufman.androidautoidrive.phoneui.controllers.PermissionsController
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
 import me.hufman.androidautoidrive.phoneui.viewmodels.viewModels
@@ -15,6 +16,7 @@ class NotificationPermissionsFragment: Fragment() {
 	val appSettings by lazy { MutableAppSettingsReceiver(requireContext()) }
 	val viewModel by viewModels<PermissionsModel> { PermissionsModel.Factory(requireContext().applicationContext) }
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+
 		val binding = NotificationPermissionsBinding.inflate(inflater, container, false)
 		binding.lifecycleOwner = viewLifecycleOwner
 		binding.controller = PermissionsController(requireActivity())
@@ -24,6 +26,10 @@ class NotificationPermissionsFragment: Fragment() {
 
 	override fun onResume() {
 		super.onResume()
+
+		// start the service to check whether we have permission
+		NotificationListenerServiceImpl.startService(requireContext())
+
 		viewModel.update()
 	}
 }
