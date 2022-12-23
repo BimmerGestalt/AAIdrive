@@ -124,6 +124,7 @@ Implemented Features
         - [PowerAmp](https://play.google.com/store/apps/details?id=com.maxmpz.audioplayer)
         - [Retro Music Player](https://play.google.com/store/apps/details?id=code.name.monkey.retromusic)
         - [Rocket Player](https://play.google.com/store/apps/details?id=com.jrtstudio.AnotherMusicPlayer)
+        - [Symfonium](https://play.google.com/store/apps/details?id=app.symfonik.music.player)
         - [TimberX Music Player](https://play.google.com/store/apps/details?id=com.naman14.timberx)
         - [VLC For Android](https://play.google.com/store/apps/details?id=org.videolan.vlc)
       - Radio
@@ -163,6 +164,7 @@ Implemented Features
         - [Anghami](https://play.google.com/store/apps/details?id=com.anghami)
         - [Gaana Music](https://play.google.com/store/apps/details?id=com.gaana)
         - [JioSaavn](https://play.google.com/store/apps/details?id=com.jio.media.jiobeats)
+        - [Qobuz](https://play.google.com/store/apps/details?id=com.qobuz.music)
         - [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android)
         - [Spotify](https://play.google.com/store/apps/details?id=com.spotify.music)
         - [Tidal](https://play.google.com/store/apps/details?id=com.aspiro.tidal)
