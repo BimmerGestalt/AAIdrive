@@ -74,7 +74,12 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 			intent ?: return
 
 			if (intent.action == INTENT_STOP_LISTENER && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-				requestUnbind()
+				if (NotificationsState.serviceConnected) {
+					try {
+						requestUnbind()
+					} catch (_: SecurityException) {
+					} catch (_: RuntimeException) {}
+				}
 				stopSelf()
 			} else {
 				interactionListener.onReceive(intent)
