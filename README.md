@@ -1,7 +1,7 @@
 AAIdrive
 ========
 
-[![Build Status](https://img.shields.io/github/workflow/status/BimmerGestalt/AAIdrive/build.svg)](https://github.com/BimmerGestalt/AAIdrive/actions?query=workflow%3Abuild)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/BimmerGestalt/AAIdrive/android-build.yml?branch=main)](https://github.com/BimmerGestalt/AAIdrive/actions?query=workflow%3Abuild)
 [![Code Coverage](https://img.shields.io/codecov/c/gh/BimmerGestalt/AAIdrive/main.svg)](https://codecov.io/gh/BimmerGestalt/AAIdrive)
 [![Crowdin](https://badges.crowdin.net/androidautoidrive/localized.svg)](https://crowdin.com/project/androidautoidrive)
 [![Release Download](https://img.shields.io/github/release/BimmerGestalt/AAIdrive.svg)](https://github.com/BimmerGestalt/AAIdrive/releases/latest)
