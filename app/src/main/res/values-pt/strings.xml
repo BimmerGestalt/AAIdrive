@@ -10,6 +10,7 @@
     <string name="notification_description_chassiscode">Conectado com %s</string>
     <string name="notification_description_bmw">Conectado com BMW</string>
     <string name="notification_description_mini">Conectado com Mini</string>
+    <string name="notification_shutdown">Desligar</string>
     <string name="permission_cds_normal">ler informações genéricas do carro</string>
     <string name="permission_cds_personal">ler informações pessoais do carro</string>
     <!-- notification channel names -->
@@ -69,6 +70,7 @@
     <string name="notification_quickreplies_default">[\"👍\",\"Estou a caminho!\",\"Estou atualmente no carro\",\"Não posso escrever mensagens, por favor ligue\",\"Ligarei mais tarde\"]</string>
     <string name="lbl_notification_permissions">Aceder às notificações</string>
     <string name="lbl_notification_sms_permissions">Acesso para mostrar fotos de SMS</string>
+    <string name="lbl_notification_permissions_hint">Pode conceder permissões de notificação mais tarde e facilmente revogá-las a qualquer momento</string>
     <string name="lbl_popupVersion">Popups apenas trabalham com IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS não é suportado pelo seu carro</string>
     <string name="lbl_smsPermission">Garantir permissão de SMS para ver imagens de SMS recebidas. O texto em si é sempre visível.</string>
@@ -179,8 +181,12 @@
     <string name="txt_setup_background_permission">A aplicação pode ser executada em segundo plano</string>
     <string name="txt_setup_background_impermission">A aplicação não pode ser executada em segundo plano</string>
     <string name="txt_setup_background_hint">Conexões automáticas funcionam melhor se as atividades em segundo plano forem permitidas</string>
+    <string name="txt_setup_bluetooth_permission">A aplicação pode acordar automaticamente quando o Bluetooth estiver conectado</string>
+    <string name="txt_setup_bluetooth_impermission">A aplicação pode não acordar automaticamente quando o Bluetooth for conectado</string>
     <string name="txt_setup_bmw_ready">A app está pronta a ligar-se ao BMW</string>
     <string name="txt_setup_mini_ready">A app está pronta a ligar-se ao Mini</string>
+    <string name="txt_setup_toyota_ready">O aplicativo está pronto para se conectar a um Toyota Supra</string>
+    <string name="txt_setup_toyota_hint">O suporte a Toyota é muito limitado, atualmente apenas fornece dados do veículo</string>
     <string name="txt_setup_bmw_missing">A app não está pronta se ligar ao BMW:</string>
     <string name="txt_setup_mini_missing">A app não está pronta para se ligar ao Mini:</string>
     <string name="txt_setup_bmw_connected_65">O BMW Connected 6.5 está instalado, o que às vezes não inicia a conexão ao carro. Tente fazer o downgrade para a versão 6.4 ou atualize para o MyBMW se encontrar problemas</string>
@@ -381,6 +387,7 @@
     <string name="MAP_TRAFFIC">Mostrar tráfego</string>
     <string name="MAP_BUILDINGS">Ativar edifícios 3D</string>
     <string name="MAP_TILT">Inclinação do mapa</string>
+    <string name="MAP_CUSTOM_STYLE">Usar estilo de mapa personalizado</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Sem Apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acções</string>
@@ -424,4 +431,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Subido</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Descer</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Descido</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">A sua biblioteca</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Pesquisar</string>
 </resources>
