@@ -185,6 +185,8 @@
     <string name="txt_setup_bluetooth_impermission">L\'app potrebbe non riattivarsi automaticamente quando il Bluetooth si connette</string>
     <string name="txt_setup_bmw_ready">L\'app è pronta a connettersi con una BMW</string>
     <string name="txt_setup_mini_ready">L\'app è pronta a connettersi con una Mini</string>
+    <string name="txt_setup_toyota_ready">L\'app è pronta a connettersi con una Toyota Supra</string>
+    <string name="txt_setup_toyota_hint">Il supporto per Toyota è molto limitato, attualmente è possibile verificare solo alcuni dati essenziali dell\'auto</string>
     <string name="txt_setup_bmw_missing">Non pronta a connettersi con una BMW:</string>
     <string name="txt_setup_mini_missing">Non pronta a connettersi con una Mini:</string>
     <string name="txt_setup_bmw_connected_65">È installata la versione 6.5 di BMW Connected che qualche volta non fa partire la connessione con l\'auto. Prova a fare un downgrade alla versione 6.4 o un upgrade a MyBMW se riscontri problemi</string>
