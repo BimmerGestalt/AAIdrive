@@ -23,6 +23,7 @@ import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.mockito.ArgumentMatchers.anyInt
 import java.io.ByteArrayInputStream
 
 class AVContextTest {
@@ -143,7 +144,7 @@ class AVContextTest {
 	@Test
 	fun testAmRadio() {
 		val mockPackageManager = mock<PackageManager> {
-			on { getApplicationInfo(any(), any()) } doReturn mock<ApplicationInfo>()
+			on { getApplicationInfo(any(), anyInt()) } doReturn mock<ApplicationInfo>()
 			on { getApplicationLabel(any()) } doReturn ""
 			on { getApplicationIcon(isA<ApplicationInfo>()) } doReturn mock<Drawable>()
 		}

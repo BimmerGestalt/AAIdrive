@@ -18,6 +18,7 @@ class PermissionsController(val activity: Activity) {
 		const val REQUEST_CALENDAR = 30
 		const val REQUEST_LOCATION = 4000
 		const val REQUEST_BLUETOOTH = 50
+		const val REQUEST_POST_NOTIFICATIONS = 60
 	}
 
 	private fun tryOpenActivity(intent: Intent): Boolean {
@@ -69,6 +70,17 @@ class PermissionsController(val activity: Activity) {
 				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 		activity.startActivity(intent)
 	}
+
+	fun promptPostNotificationsPermission() {
+		if (android.os.Build.VERSION.SDK_INT >= 33 && activity.applicationInfo.targetSdkVersion >= 33) {       // Android 13+
+			ActivityCompat.requestPermissions(activity,
+					arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+					REQUEST_POST_NOTIFICATIONS)
+		} else {
+			openApplicationPermissions(activity.packageName)
+		}
+	}
+
 
 	fun promptSms() {
 		ActivityCompat.requestPermissions(activity,

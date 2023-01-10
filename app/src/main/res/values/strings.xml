@@ -81,6 +81,7 @@
     <string name="lbl_popupVersion">Popups only work with IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS is not supported by your car</string>
     <string name="lbl_smsPermission">Grant the SMS permission to view pictures from incoming SMS images in the car. The text itself is always visible.</string>
+    <string name="lbl_postNotificationsPermission">Access to show a service notification to stay running while connected to the car</string>
 
     <string name="lbl_calendarpage">Your calendar can be displayed in the car, offering quick navigation to appointments</string>
     <string name="lbl_calendar_description">Events in the phone\'s calendar as seen in Google Calendar will show up in the car. Any work profile calendar is unavailable.</string>
