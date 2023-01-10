@@ -157,6 +157,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <!--
+                <Button
+                    android:id="@+id/btnShuffle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:onClick="@{() -> controller.toggleShuffle()}"
+                    android:text="@{viewModel.shuffleLabel}" />
+                -->
+
                 <ImageButton
                     android:id="@+id/btnPrevious"
                     android:layout_width="wrap_content"

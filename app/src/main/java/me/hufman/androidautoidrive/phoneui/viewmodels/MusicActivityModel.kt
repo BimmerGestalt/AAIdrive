@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
@@ -67,6 +68,8 @@ class MusicActivityModel(val musicApp: MusicAppInfo, val musicController: MusicC
 	val title: LiveData<String?> = _title
 	private val _coverArt = MutableLiveData<Bitmap?>()
 	val coverArt: LiveData<Bitmap?> = _coverArt
+	private val _shuffleLabel = MutableLiveData("")
+	val shuffleLabel: LiveData<String> = _shuffleLabel
 
 	private val _queueMetadata = MutableLiveData<QueueMetadata?>()
 	val queueMetadata: LiveData<QueueMetadata?> = _queueMetadata
@@ -96,6 +99,11 @@ class MusicActivityModel(val musicApp: MusicAppInfo, val musicController: MusicC
 		_album.value = metadata?.album ?: ""
 		_title.value = metadata?.title ?: ""
 		_coverArt.value = metadata?.coverArt
+		_shuffleLabel.value = if (musicController.isShuffling()) {
+			L.MUSIC_TURN_SHUFFLE_OFF
+		} else {
+			L.MUSIC_TURN_SHUFFLE_ON
+		}
 
 		_queueMetadata.value = musicController.getQueue()
 		_queueEmptyText.value = if (_queueMetadata.value?.songs?.isEmpty() == true) {
