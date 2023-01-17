@@ -15,8 +15,4 @@
     <string name="playstore_desc_nativeapps_protocol">Używając natywnego protokołu aplikacji BMW, dokładnie tak jak stara aplikacja Spotify, ta aplikacja nie modyfikuje Twojego samochodu w żaden sposób i wszystkie rozszerzone możliwości są dostarczane tylko wtedy, gdy Twój telefon jest podłączony.</string>
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps wymaga, aby aplikacja MyBMW lub MINI dla twojego samochodu była zainstalowana i aby zostało włączone wsparcie aplikacji IDrive5+ w ustawieniach połączonego telefonu w samochodzie, albo Twój samochód z IDrive4 ma opcję ConnectedDrive Connection Assistant.</string>
     <string name="playstore_desc_depends_bmw_subscription">Zazwyczaj wymaga to aktywnej subskrypcji BMW ConnectedDrive, która jest aktywna przez kilka lat po zakupieniu nowego samochodu.</string>
-    <string name="playstore_release_desc">Na koniec, funkcja mapy, o którą wszyscy prosili!</string>
-    <string name="playstore_release_point1">Dodaje niestandardową mapę, renderowaną na telefonie i wyświetlaną w samochodzie</string>
-    <string name="playstore_release_point2">Używaj Mapbox do wyświetlania mapy, wyszukiwania miejsc i nawigacji trasy</string>
-    <string name="playstore_release_point3">Dodaje punkt zainteresowania dla karty nawigacyjnej</string>
 </resources>
