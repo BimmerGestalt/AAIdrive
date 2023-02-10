@@ -470,11 +470,11 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 			heading += 360
 			//heading = -100 + 360  = 260;
 
-			if((heading>=0 && heading<22.5) || (heading>=347.5 && heading<=359.99) ) {
+			if((heading>=0 && heading<22.5) || (heading>=347.5 && heading<=360) ) {
 				direction = "N"
 			}
 			else if (heading >= 22.5 && heading < 67.5) {
-				direction = "NNE"
+				direction = "NE"
 			}
 			else if (heading>=67.5 && heading<112.5) {
 				direction = "E"
@@ -492,7 +492,7 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 				direction = "W"
 			}
 			else if (heading>=302.5 && heading<347.5) {
-				direction = "S"
+				direction = "NW"
 			}
 			else {
 				direction = "-"
