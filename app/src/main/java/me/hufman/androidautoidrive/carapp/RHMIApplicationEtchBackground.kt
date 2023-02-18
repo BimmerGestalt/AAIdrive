@@ -34,7 +34,7 @@ class RHMIApplicationEtchBackground(val remoteServer: RemoteBMWRemotingServer, v
 			if (p0?.isFull == true) {
 				p0.closeDelivery()
 				p0.unregisterNotify(this)
-				if (p1 is Int) synchronized(this) {
+				if (p1 is Int) synchronized(this@RHMIApplicationEtchBackground) {
 					pendingModels.remove(p1)
 				}
 
