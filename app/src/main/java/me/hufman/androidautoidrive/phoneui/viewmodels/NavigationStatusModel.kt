@@ -7,10 +7,10 @@ import androidx.lifecycle.*
 import io.bimmergestalt.idriveconnectkit.CDS
 import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import me.hufman.androidautoidrive.*
-import me.hufman.androidautoidrive.carapp.CDSVehicleUnits
-import me.hufman.androidautoidrive.carapp.liveData
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.cds.CDSVehicleUnits
+import me.hufman.androidautoidrive.cds.liveData
 import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.maps.MapResult
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.combine

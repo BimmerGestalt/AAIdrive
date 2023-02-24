@@ -9,9 +9,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.nhaarman.mockito_kotlin.*
 import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import kotlinx.coroutines.runBlocking
-import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.cds.CDSDataProvider
 import me.hufman.androidautoidrive.maps.CarLocationProvider
 import me.hufman.androidautoidrive.maps.GMapsPlaceSearch
 import me.hufman.androidautoidrive.maps.LatLong

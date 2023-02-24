@@ -6,10 +6,10 @@ import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
 import io.bimmergestalt.idriveconnectkit.CDS
 import io.bimmergestalt.idriveconnectkit.CDSProperty
-import me.hufman.androidautoidrive.carapp.CDSConnection
-import me.hufman.androidautoidrive.carapp.CDSData
-import me.hufman.androidautoidrive.carapp.CDSDataProvider
-import me.hufman.androidautoidrive.carapp.CDSEventHandler
+import me.hufman.androidautoidrive.cds.CDSConnection
+import me.hufman.androidautoidrive.cds.CDSData
+import me.hufman.androidautoidrive.cds.CDSDataProvider
+import me.hufman.androidautoidrive.cds.CDSEventHandler
 import me.hufman.androidautoidrive.phoneui.viewmodels.CarDrivingStatsModel
 import java.util.*
 

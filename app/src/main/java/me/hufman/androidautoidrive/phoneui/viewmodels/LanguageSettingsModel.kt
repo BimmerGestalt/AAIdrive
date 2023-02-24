@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.bimmergestalt.idriveconnectkit.CDS
 import me.hufman.androidautoidrive.*
-import me.hufman.androidautoidrive.carapp.CDSVehicleLanguage
-import me.hufman.androidautoidrive.carapp.liveData
+import me.hufman.androidautoidrive.cds.CDSVehicleLanguage
+import me.hufman.androidautoidrive.cds.liveData
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.map
 
 class LanguageSettingsModel(appContext: Context, carInformation: CarInformation): ViewModel() {

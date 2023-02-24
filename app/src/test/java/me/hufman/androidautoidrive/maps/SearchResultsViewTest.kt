@@ -7,13 +7,13 @@ import io.bimmergestalt.idriveconnectkit.rhmi.*
 import io.bimmergestalt.idriveconnectkit.rhmi.mocking.RHMIApplicationMock
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
-import me.hufman.androidautoidrive.carapp.CDSVehicleUnits
 import me.hufman.androidautoidrive.carapp.FullImageView
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
 import me.hufman.androidautoidrive.carapp.maps.views.SearchResultsView
+import me.hufman.androidautoidrive.cds.CDSVehicleUnits
 import org.awaitility.Awaitility.await
 import org.junit.Assert.*
 import org.junit.Test

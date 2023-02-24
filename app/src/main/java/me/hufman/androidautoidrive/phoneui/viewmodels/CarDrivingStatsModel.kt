@@ -11,8 +11,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.gson.JsonObject
 import io.bimmergestalt.idriveconnectkit.CDS
 import me.hufman.androidautoidrive.*
-import me.hufman.androidautoidrive.carapp.CDSVehicleUnits
-import me.hufman.androidautoidrive.carapp.liveData
+import me.hufman.androidautoidrive.cds.liveData
+import me.hufman.androidautoidrive.cds.CDSVehicleUnits
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.addUnit
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.combine
 import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.format
@@ -121,6 +121,7 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 	}
 
 	// the visible LiveData objects
+	val test = carInfo.cachedCdsData.liveData
 	val vin = carInfo.cachedCdsData.liveData[CDS.VEHICLE.VIN].map {
 		it.tryAsJsonPrimitive("VIN")?.tryAsString
 	}

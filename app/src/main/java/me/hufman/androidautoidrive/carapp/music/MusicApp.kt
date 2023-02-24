@@ -16,6 +16,11 @@ import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.music.views.*
+import me.hufman.androidautoidrive.cds.CDSConnectionEtch
+import me.hufman.androidautoidrive.cds.CDSDataProvider
+import me.hufman.androidautoidrive.cds.CDSEventHandler
+import me.hufman.androidautoidrive.cds.onPropertyChangedEvent
+import me.hufman.androidautoidrive.cds.subscriptions
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController

@@ -11,9 +11,9 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.CoroutineTestRule
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger
+import me.hufman.androidautoidrive.cds.CDSDataProvider
 import me.hufman.androidautoidrive.phoneui.controllers.NavigationSearchController
 import me.hufman.androidautoidrive.phoneui.viewmodels.NavigationStatusModel
 import io.bimmergestalt.idriveconnectkit.CDS

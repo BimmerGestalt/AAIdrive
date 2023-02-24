@@ -6,10 +6,10 @@ import io.bimmergestalt.idriveconnectkit.IDriveConnection
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
-import me.hufman.androidautoidrive.carapp.CDSConnection
-import me.hufman.androidautoidrive.carapp.CDSConnectionEtch
-import me.hufman.androidautoidrive.carapp.CDSEventHandler
-import me.hufman.androidautoidrive.carapp.onPropertyChangedEvent
+import me.hufman.androidautoidrive.cds.CDSConnection
+import me.hufman.androidautoidrive.cds.CDSConnectionEtch
+import me.hufman.androidautoidrive.cds.CDSEventHandler
+import me.hufman.androidautoidrive.cds.onPropertyChangedEvent
 
 class CarInformationDiscovery(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, carAppAssets: CarAppResources, val listener: CarInformationDiscoveryListener) {
 	val carappListener: CarAppListener

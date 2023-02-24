@@ -6,9 +6,9 @@ import com.soywiz.kmem.isNanOrInfinite
 import io.bimmergestalt.idriveconnectkit.CDS
 import io.bimmergestalt.idriveconnectkit.CDSProperty
 import me.hufman.androidautoidrive.AppSettings
-import me.hufman.androidautoidrive.carapp.CDSData
-import me.hufman.androidautoidrive.carapp.CDSEventHandler
-import me.hufman.androidautoidrive.carapp.subscriptions
+import me.hufman.androidautoidrive.cds.CDSData
+import me.hufman.androidautoidrive.cds.CDSEventHandler
+import me.hufman.androidautoidrive.cds.subscriptions
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive

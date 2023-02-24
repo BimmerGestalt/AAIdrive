@@ -20,6 +20,11 @@ import me.hufman.androidautoidrive.carapp.calendar.views.PermissionView
 import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger
+import me.hufman.androidautoidrive.cds.CDSConnectionEtch
+import me.hufman.androidautoidrive.cds.CDSDataProvider
+import me.hufman.androidautoidrive.cds.CDSEventHandler
+import me.hufman.androidautoidrive.cds.onPropertyChangedEvent
+import me.hufman.androidautoidrive.cds.subscriptions
 
 class CalendarApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: SecurityAccess, carAppResources: CarAppResources,
                   val calendarProvider: CalendarProvider, val addressSearcher: AddressSearcher, val navigationTrigger: NavigationTrigger) {

@@ -1,14 +1,13 @@
-package me.hufman.androidautoidrive.carapp
+package me.hufman.androidautoidrive.cds
 
 import android.os.Handler
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
 import de.bmw.idrive.BMWRemotingServer
 import io.bimmergestalt.idriveconnectkit.CDSProperty
-import java.util.*
+import java.util.HashMap
+import java.util.HashSet
 
 /**
  * Manages CDS subscriptions to the car
@@ -171,7 +170,7 @@ class CDSDataProvider: CDSData, CDSEventHandler {
 
 	private val _eventHandlers = HashMap<CDSProperty, MutableSet<CDSEventHandler>>()
 	override fun addEventHandler(property: CDSProperty, intervalLimit: Int, eventHandler: CDSEventHandler) {
-		_eventHandlers.getOrPut(property, {HashSet()}).add(eventHandler)
+		_eventHandlers.getOrPut(property, { HashSet() }).add(eventHandler)
 		_connection.subscribeProperty(property, intervalLimit)
 	}
 
@@ -192,127 +191,5 @@ class CDSDataProvider: CDSData, CDSEventHandler {
 	/** Use this CDSData object as a CDSConnection */
 	fun asConnection(eventHandler: CDSEventHandler): CDSConnection {
 		return CDSDataConnectionWrapper(this, eventHandler)
-	}
-}
-
-/**
- * An extension to CDSData to support subscribing to specific elements
- */
-val CDSDataSubscriptions = WeakHashMap<CDSData, CDSSubscriptions>()
-val CDSData.subscriptions: CDSSubscriptions
-	get() = CDSDataSubscriptions.getOrPut(this) {
-		CDSSubscriptionsManager(this)
-	}
-
-/**
- * The subscription manager
- * It is keyed by the CDSProperty to watch
- * Set to a callback lambda, or to null to clear a callback
- */
-interface CDSSubscriptions {
-	var defaultIntervalLimit: Int
-	operator fun set(property: CDSProperty, subscription: ((JsonObject) -> Unit)?)
-	operator fun get(property: CDSProperty): ((JsonObject) -> Unit)?
-	fun addSubscription(property: CDSProperty, intervalLimit: Int = defaultIntervalLimit, subscription: (JsonObject) -> Unit)
-	fun removeSubscription(property: CDSProperty)
-}
-
-/**
- * Implementation of the subscription manager
- */
-class CDSSubscriptionsManager(private val cdsData: CDSData): CDSEventHandler, CDSSubscriptions {
-	override var defaultIntervalLimit: Int = 500
-	private val _subscriptions = HashMap<CDSProperty, (JsonObject) -> Unit>()
-
-	override operator fun set(property: CDSProperty, subscription: ((value: JsonObject) -> Unit)?) {
-		if (subscription != null) {
-			addSubscription(property, defaultIntervalLimit, subscription)
-		} else {
-			removeSubscription(property)
-		}
-	}
-
-	override fun get(property: CDSProperty): ((JsonObject) -> Unit)? {
-		return _subscriptions[property]
-	}
-
-	override fun addSubscription(property: CDSProperty, intervalLimit: Int, subscription: (value: JsonObject) -> Unit) {
-		_subscriptions[property] = subscription
-		cdsData.addEventHandler(property, intervalLimit, this)
-	}
-
-	override fun removeSubscription(property: CDSProperty) {
-		cdsData.removeEventHandler(property, this)
-		_subscriptions.remove(property)
-	}
-
-	override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
-		_subscriptions[property]?.invoke(propertyValue)
-	}
-}
-
-/**
- * An extension to CDSData that allows accessing CDS via LiveData
- */
-
-private val CDSDataLiveDataMaps = WeakHashMap<CDSData, CDSLiveDataMap>()
-val CDSData.liveData: CDSLiveDataMap
-	get() = CDSDataLiveDataMaps.getOrPut(this) {
-		CDSLiveDataManager(this)
-	}
-
-/**
- * The LiveData factory
- * It is keyed by the CDSProperty to watch
- */
-interface CDSLiveDataMap {
-	var defaultIntervalLimit: Int
-	operator fun get(property: CDSProperty): LiveData<JsonObject>
-}
-
-/**
- * Implementation of the LiveData factory
- * Returns LiveData<JsonObject> objects
- * and dynamically registers them from the given CDSConnection
- */
-class CDSLiveDataManager(private val cdsData: CDSData): CDSLiveDataMap {
-	override var defaultIntervalLimit: Int = 500
-	private val _subscriptions = HashMap<CDSProperty, MutableLiveData<JsonObject>>()
-
-	override operator fun get(property: CDSProperty): LiveData<JsonObject> {
-		return _subscriptions.getOrPut(property) {
-			CDSMutableLiveData(cdsData, property, defaultIntervalLimit)
-		}
-	}
-}
-
-/**
- * A LiveData subclass that dynamically subscribes to the given CDSConnection
- * Expects to be created and updated by CDSLiveDataManager
- */
-class CDSMutableLiveData(private val cdsData: CDSData, val property: CDSProperty, private val intervalLimit: Int): MutableLiveData<JsonObject>(), CDSEventHandler {
-	init {
-		val value = cdsData[property]
-		if (value != null) {
-			postValue(value)
-		}
-	}
-
-	override fun onActive() {
-		super.onActive()
-		cdsData[property]?.also { postValue(it) }       // update with latest value if it's been updated
-		cdsData.addEventHandler(property, intervalLimit, this)      // subscribe to updates
-	}
-
-	override fun onInactive() {
-		super.onInactive()
-		cdsData.removeEventHandler(property, this)
-	}
-
-	override fun onPropertyChangedEvent(property: CDSProperty, propertyValue: JsonObject) {
-		// postValue because CDSEventHandler might be coming from the Etch connection
-		if (this.value != propertyValue) {
-			this.postValue(propertyValue)
-		}
 	}
 }

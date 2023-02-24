@@ -8,7 +8,7 @@ import com.google.gson.JsonObject
 import com.nhaarman.mockito_kotlin.*
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.carapp.CDSDataProvider
+import me.hufman.androidautoidrive.cds.CDSDataProvider
 import me.hufman.androidautoidrive.phoneui.viewmodels.NavigationStatusModel
 import io.bimmergestalt.idriveconnectkit.CDS
 import org.junit.Assert.assertEquals

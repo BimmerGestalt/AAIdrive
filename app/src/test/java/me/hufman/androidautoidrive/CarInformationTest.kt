@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive
 import com.google.gson.JsonObject
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
-import me.hufman.androidautoidrive.carapp.CDSConnection
+import me.hufman.androidautoidrive.cds.CDSConnection
 import io.bimmergestalt.idriveconnectkit.CDSProperty
 import io.bimmergestalt.idriveconnectkit.CDS
 import org.junit.Assert.assertEquals
