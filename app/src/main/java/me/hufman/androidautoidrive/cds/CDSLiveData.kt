@@ -28,7 +28,7 @@ interface CDSLiveDataMap {
 /**
  * Implementation of the LiveData factory
  * Returns LiveData<JsonObject> objects
- * and dynamically registers them from the given CDSConnection
+ * and dynamically registers them from the given CDSData
  */
 class CDSLiveDataManager(private val cdsData: CDSData): CDSLiveDataMap {
 	override var defaultIntervalLimit: Int = 500
@@ -42,8 +42,8 @@ class CDSLiveDataManager(private val cdsData: CDSData): CDSLiveDataMap {
 }
 
 /**
- * A LiveData subclass that dynamically subscribes to the given CDSConnection
- * Expects to be created and updated by CDSLiveDataManager
+ * A LiveData subclass that dynamically subscribes to the given CDSData
+ * Expects to be created by CDSLiveDataManager
  */
 class CDSMutableLiveData(private val cdsData: CDSData, val property: CDSProperty, private val intervalLimit: Int): MutableLiveData<JsonObject>(), CDSEventHandler {
 	init {
