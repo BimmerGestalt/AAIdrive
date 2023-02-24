@@ -19,7 +19,7 @@ env:
 
 jobs:
   unitTest:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -32,17 +32,18 @@ jobs:
             map: Mapbox   # Mapbox requires secrets to build
     steps:
       - name: Checkout the project
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           submodules: true
       - name: Set up JDK 11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
+          distribution: 'zulu'
           java-version: 11
 
       - name: Prepare cached external dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
           path: |
@@ -59,9 +60,9 @@ jobs:
         run: ./gradlew test${{ matrix.map }}${{ matrix.analytics }}FullDebugUnitTestCoverage
       - name: Upload CodeCov report
         if: github.event.pull_request.title != 'New Crowdin updates' && github.event.ref != 'refs/heads/l10n_main'   # don't upload coverage for Crowdin pushes
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
-          file: app/build/reports/jacoco/jacoco.xml
+          files: app/build/reports/jacoco/jacoco.xml
           flags: unittests
 
 
@@ -80,16 +81,17 @@ jobs:
             map: Mapbox   # Mapbox requires secrets to build
     steps:
       - name: Checkout the project
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           submodules: true
       - name: Set up JDK 11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
+          distribution: 'zulu'
           java-version: 11
       - name: Prepare cached external dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
           path: |
@@ -115,9 +117,9 @@ jobs:
           script: ./gradlew connected${{ matrix.map }}NonalyticsFullDebugAndroidTestCoverage --stacktrace
       - name: Upload CodeCov report
         if: matrix.map == 'Nomap' && github.event.pull_request.title != 'New Crowdin updates' && github.event.ref != 'refs/heads/l10n_main'   # don't upload Gmap test results, which don't run during PRs
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
-          file: app/build/reports/jacoco/jacoco.xml
+          files: app/build/reports/jacoco/jacoco.xml
 #          flags: instrumentedtests
 
 # android connectedTests don't leave the app or files installed after the test
@@ -131,7 +133,7 @@ jobs:
           target: google_apis
           script: adb logcat -c && ./gradlew install${{ matrix.map }}NonalyticsFullDebug --stacktrace && ./gradlew install${{ matrix.map }}NonalyticsFullDebugAndroidTest --stacktrace && ( adb shell am instrument -w me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner || adb shell am instrument -w me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner ) && ./gradlew fetchScreenshots --stacktrace || adb logcat -d
       - name: Package screenshots
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: matrix.map == 'Nomap'
         with:
           retention-days: 7
@@ -143,20 +145,21 @@ jobs:
     # Only build on the main repo, which has the secrets configured
     if: github.repository == 'BimmerGestalt/AAIdrive' && github.event_name == 'push'
     needs: [unitTest]  # wait for the tests to succeed
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout the project
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           submodules: true
       - name: Set up JDK 11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
+          distribution: 'zulu'
           java-version: 11
 
       - name: Prepare cached external dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           key: aaidrive_external_${{ hashFiles('.github/actions/download-externals-action/download.sh') }}
           path: |
@@ -175,7 +178,7 @@ jobs:
       - name: Confirm APK hashes
         run: "find app/build/outputs/apk -name '*.sha1' -exec cat {} \\; -execdir sha1sum -c {} \\;"
       - name: Upload APKs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           retention-days: 7
           name: apk
@@ -192,14 +195,14 @@ jobs:
   upload_s3:
     if: github.event_name == 'push'
     needs: package
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Download project artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: apk
       - name: Determine branch name
-        uses: nelonoel/branch-name@v1.0.1
+        run: echo "BRANCH_NAME=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
       - name: Stage upload directory
         run: |
           mkdir dist
@@ -208,7 +211,7 @@ jobs:
           cp mapboxNonalyticsFull/release/*apk dist/androidautoidrive-latest-${BRANCH_NAME}-mapbox-nonalytics-release.apk
           cp mapboxSentryFull/release/*apk dist/androidautoidrive-latest-${BRANCH_NAME}-mapbox-sentry-release.apk
       - name: Upload to S3
-        uses: shallwefootball/s3-upload-action@v1.1.3
+        uses: shallwefootball/s3-upload-action@v1.3.0
         with:
           source_dir: dist
           destination_dir: aaidrive/builds
@@ -219,7 +222,7 @@ jobs:
   upload_release:
     if: startsWith(github.ref, 'refs/tags/')
     needs: package
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Download project artifacts
         uses: actions/download-artifact@v2
