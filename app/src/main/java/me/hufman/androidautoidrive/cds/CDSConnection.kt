@@ -170,8 +170,13 @@ class CDSDataProvider: CDSData, CDSEventHandler {
 
 	private val _eventHandlers = HashMap<CDSProperty, MutableSet<CDSEventHandler>>()
 	override fun addEventHandler(property: CDSProperty, intervalLimit: Int, eventHandler: CDSEventHandler) {
+		val subscribed = _eventHandlers.contains(property)
 		_eventHandlers.getOrPut(property, { HashSet() }).add(eventHandler)
 		_connection.subscribeProperty(property, intervalLimit)
+		val existing = _data[property]
+		if (subscribed && existing != null) {
+			eventHandler.onPropertyChangedEvent(property, existing)
+		}
 	}
 
 	override fun removeEventHandler(property: CDSProperty, eventHandler: CDSEventHandler) {

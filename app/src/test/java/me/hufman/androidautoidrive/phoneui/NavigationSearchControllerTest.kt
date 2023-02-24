@@ -17,6 +17,7 @@ import me.hufman.androidautoidrive.cds.CDSDataProvider
 import me.hufman.androidautoidrive.phoneui.controllers.NavigationSearchController
 import me.hufman.androidautoidrive.phoneui.viewmodels.NavigationStatusModel
 import io.bimmergestalt.idriveconnectkit.CDS
+import kotlinx.coroutines.test.advanceTimeBy
 import me.hufman.androidautoidrive.maps.MapPlaceSearch
 import org.junit.Assert.assertEquals
 import org.junit.Rule

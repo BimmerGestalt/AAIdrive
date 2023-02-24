@@ -37,9 +37,10 @@ class ReadoutAppTest {
 		IDriveConnection.mockRemotingServer = mockServer
 		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources)
 
-		val infoComponent = app.infoState.componentsList.filterIsInstance<RHMIComponent.List>().first()
-		val infoList = mockServer.data[infoComponent.model] as BMWRemoting.RHMIDataTable
-		assertEquals(L.READOUT_DESCRIPTION, infoList.data[0][0])
+		val labelComponent = app.infoState.state.componentsList.filterIsInstance<RHMIComponent.Button>().first()
+		assertEquals(L.CARINFO_TITLE, mockServer.data[labelComponent.model])
+		val listComponent = app.infoState.state.componentsList.filterIsInstance<RHMIComponent.List>().first()
+		// won't show data until the screen is opened
 
 		assertTrue(mockServer.cdsSubscriptions.contains("hmi.tts"))
 
