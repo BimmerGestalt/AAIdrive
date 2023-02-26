@@ -227,7 +227,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 				0 to 145,   // basecore version
 				1 to name,  // app name
 				2 to (carAppImages["157.png"] ?: ""),
-				3 to "Addressbook",   // section
+				3 to AMCategory.ADDRESSBOOK.value,   // section
 				4 to true,
 				5 to 800,   // weight
 				8 to viewList.state.id  // mainstateId

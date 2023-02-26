@@ -390,7 +390,7 @@
     <string name="btn_authorize">Authorize</string>
 
     <!-- car app strings -->
-    <string name="CARINFO_TITLE">Detailed Vehicle Information</string>
+    <string name="CARINFO_TITLE">Detailed Vehicle Info</string>
     <string name="CARINFO_ENGINE">Engine</string>
     <string name="CARINFO_OIL">Oil</string>
     <string name="CARINFO_BATTERY">Battery</string>

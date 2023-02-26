@@ -15,7 +15,7 @@ object L {
 
 	// all of the strings used in the car app
 	// these default string values are used in tests, Android resources are used for real
-	val CARINFO_TITLE by StringResourceDelegate("Detailed Vehicle Information")
+	val CARINFO_TITLE by StringResourceDelegate("Detailed Vehicle Info")
 	val CARINFO_ENGINE by StringResourceDelegate("Engine")
 	val CARINFO_OIL by StringResourceDelegate("Oil")
 	val CARINFO_EXCHANGER by StringResourceDelegate("HVAC")
