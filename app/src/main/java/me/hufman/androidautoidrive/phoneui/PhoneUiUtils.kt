@@ -11,9 +11,7 @@ import androidx.annotation.ColorInt
 import androidx.core.view.marginTop
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 
 /** Resolve a Color Attribute to a color int */
 @ColorInt
@@ -177,7 +175,14 @@ object FlowUtils {
 
 	/**
 	 * Decorates a given Flow<String> with a unit, where the unit comes from a Flow<String>
-	 *     Either LiveData object will trigger an update
+	 *     Either Flow object will trigger an update
+	 */
+	fun Flow<String>.addContextUnit(unitFlow: Flow<Context.() -> String>): Flow<Context.() -> String> = this.combine(unitFlow) { value, unit ->
+		{ "$value${this.run(unit)}" }
+	}
+	/**
+	 * Decorates a given Flow<String> with a unit, where the unit comes from a Flow<String>
+	 *     Either Flow object will trigger an update
 	 */
 	fun Flow<String>.addPlainUnit(unitFlow: Flow<String>): Flow<String> = this.combine(unitFlow) { value, unit ->
 		"$value$unit"

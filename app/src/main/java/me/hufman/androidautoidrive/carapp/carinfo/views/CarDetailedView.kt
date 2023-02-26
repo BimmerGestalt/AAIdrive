@@ -6,7 +6,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.batchDataTables
 import me.hufman.androidautoidrive.carapp.carinfo.CarDetailedInfo
@@ -17,7 +16,7 @@ import me.hufman.androidautoidrive.carapp.rhmiDataTableFlow
  * ReadoutApp's EntryButton is hardcoded to a specific RHMIState
  * so we must take whatever we are given
  */
-class CarDetailedView(val state: RHMIState, val carInfo: CarInformation) {
+class CarDetailedView(val state: RHMIState, val carInfo: CarDetailedInfo) {
 
 	private val coroutineScope = CoroutineScope(Job() + Dispatchers.IO)
 	private var updateJob: Job? = null
@@ -25,14 +24,12 @@ class CarDetailedView(val state: RHMIState, val carInfo: CarInformation) {
 	private val label = state.componentsList.filterIsInstance<RHMIComponent.Button>().first()       // the only other widget that has a raDataModel
 	private val list = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 
-	private val info = CarDetailedInfo(carInfo)
-
 	private val fields: List<Flow<String>> = listOf(
-			info.engineTemp, info.tempExterior,
-			info.oilTemp, info.tempInterior,
-			info.batteryTemp, info.tempExchanger,
-			info.fuelLevelLabel, info.evLevelLabel,
-			info.accBatteryLevelLabel,
+			carInfo.engineTemp, carInfo.tempExterior,
+			carInfo.oilTemp, carInfo.tempInterior,
+			carInfo.batteryTemp, carInfo.tempExchanger,
+			carInfo.fuelLevelLabel, carInfo.evLevelLabel,
+			carInfo.accBatteryLevelLabel, carInfo.drivingGearLabel
 	)
 
 	fun initWidgets() {

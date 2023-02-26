@@ -14,6 +14,7 @@ import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.carapp.*
+import me.hufman.androidautoidrive.carapp.carinfo.CarDetailedInfo
 import me.hufman.androidautoidrive.carapp.carinfo.views.CarDetailedView
 import me.hufman.androidautoidrive.cds.*
 
@@ -48,7 +49,7 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 		listener.app = carApp
 
 		val destStateId = carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().first().getAction()?.asHMIAction()?.target!!
-		this.infoState = CarDetailedView(carApp.states[destStateId] as RHMIState, CarInformation())
+		this.infoState = CarDetailedView(carApp.states[destStateId] as RHMIState, CarDetailedInfo(CDSMetrics(CarInformation())))
 
 		initWidgets()
 
