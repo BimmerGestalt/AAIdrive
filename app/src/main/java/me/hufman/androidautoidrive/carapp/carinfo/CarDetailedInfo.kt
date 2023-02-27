@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.carapp.carinfo
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.cds.CDSMetrics
@@ -48,5 +49,37 @@ class CarDetailedInfo(cdsMetrics: CDSMetrics) {
 	val tempExterior = cdsMetrics.tempExterior.format("%.1f").addPlainUnit(unitsTemperatureLabel).map { "$it ${L.CARINFO_EXTERIOR}"}
 	val tempExchanger = cdsMetrics.tempExchanger.format("%.1f").addPlainUnit(unitsTemperatureLabel).map { "$it ${L.CARINFO_EXCHANGER}"}
 
+	val drivingMode = cdsMetrics.drivingMode
 	val drivingGearLabel = cdsMetrics.drivingGearName.map { "${L.CARINFO_GEAR} $it"}
+
+	// driving detail fields, as examples
+	// real ones would need translated labels
+	val accelContact = cdsMetrics.accelerator.format("%.1f%%").map { "Accel $it"}
+	val accelEcoContact = cdsMetrics.acceleratorEco.format("%.1f%%").map { "AccelEco $it"}
+	val clutchContact = cdsMetrics.clutch.format("%.1f%%").map { "Clutch $it"}
+	val brakeContact = cdsMetrics.brake.format("%.1f%%").map { "Brake $it"}
+	val steeringAngle = cdsMetrics.steeringAngle.format("%.1f°").map { "Steering $it" }
+
+	// categories
+	private val overviewFields: List<Flow<String>> = listOf(
+			engineTemp, tempExterior,
+			oilTemp, tempInterior,
+			batteryTemp, tempExchanger,
+			fuelLevelLabel, evLevelLabel,
+			accBatteryLevelLabel, drivingGearLabel
+	)
+	private val drivingFields: List<Flow<String>> = listOf(
+			drivingMode, drivingGearLabel,
+			accelContact, accelEcoContact,
+			clutchContact, brakeContact,
+			steeringAngle
+	)
+	val categories = LinkedHashMap<String, List<Flow<String>>>().apply {
+		put(L.CARINFO_TITLE, overviewFields)
+
+		// add more pages like this:
+//		put("Driving Details", drivingFields)
+	}
+	val category = MutableStateFlow(categories.keys.first())
+	val categoryFields: Flow<List<Flow<String>>> = category.map { categories[it] ?: emptyList() }
 }

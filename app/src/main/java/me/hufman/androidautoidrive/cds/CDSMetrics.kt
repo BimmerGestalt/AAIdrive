@@ -150,4 +150,20 @@ class CDSMetrics(val carInfo: CarInformation) {
 	}.combine(units) { value, units ->
 		units.distanceUnits.fromCarUnit(value)
 	}
+
+	val accelerator = carInfo.cdsData.flow[CDS.DRIVING.ACCELERATORPEDAL].mapNotNull {
+		it.tryAsJsonObject("acceleratorPedal")?.tryAsJsonPrimitive("position")?.tryAsDouble
+	}
+	val acceleratorEco = carInfo.cdsData.flow[CDS.DRIVING.ACCELERATORPEDAL].mapNotNull {
+		it.tryAsJsonObject("acceleratorPedal")?.tryAsJsonPrimitive("ecoPosition")?.tryAsDouble
+	}
+	val brake = carInfo.cdsData.flow[CDS.DRIVING.BRAKECONTACT].mapNotNull {
+		it.tryAsJsonPrimitive("brakeContact")?.tryAsDouble
+	}
+	val clutch = carInfo.cdsData.flow[CDS.DRIVING.CLUTCHPEDAL].mapNotNull {
+		it.tryAsJsonObject("clutchPedal")?.tryAsJsonPrimitive("position")?.tryAsDouble
+	}
+	val steeringAngle = carInfo.cdsData.flow[CDS.DRIVING.STEERINGWHEEL].mapNotNull {
+		it.tryAsJsonObject("steeringWheel")?.tryAsJsonPrimitive("angle")?.tryAsDouble
+	}
 }

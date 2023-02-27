@@ -20,6 +20,7 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.carinfo.CarDetailedInfo
 import me.hufman.androidautoidrive.carapp.carinfo.views.CarDetailedView
+import me.hufman.androidautoidrive.carapp.carinfo.views.CategoryView
 import me.hufman.androidautoidrive.cds.*
 import me.hufman.androidautoidrive.utils.Utils
 
@@ -31,6 +32,7 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 	val amHandle: Int
 	val focusTriggerController: FocusTriggerController
 	val infoState: CarDetailedView
+	val categoryState: CategoryView
 	val readoutController: ReadoutController
 
 	init {
@@ -56,8 +58,11 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 
 			this.readoutController = ReadoutController.build(carApp, "NotificationReadout")
 
+			val carInfo = CarDetailedInfo(CDSMetrics(CarInformation()))
 			val destStateId = carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().first().getAction()?.asHMIAction()?.target!!
-			this.infoState = CarDetailedView(carApp.states[destStateId] as RHMIState, CarDetailedInfo(CDSMetrics(CarInformation())))
+			this.infoState = CarDetailedView(carApp.states[destStateId] as RHMIState, carInfo)
+			val categoryState = infoState.state.componentsList.filterIsInstance<RHMIComponent.Button>().first().getAction()?.asHMIAction()?.getTargetState()!!
+			this.categoryState = CategoryView(categoryState, carInfo)
 
 			initWidgets()
 		}
@@ -187,6 +192,7 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 
 	fun initWidgets() {
 		infoState.initWidgets()
+		categoryState.initWidgets()
 	}
 
 	fun disconnect() {

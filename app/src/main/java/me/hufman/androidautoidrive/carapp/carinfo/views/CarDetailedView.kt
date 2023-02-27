@@ -1,11 +1,8 @@
 package me.hufman.androidautoidrive.carapp.carinfo.views
 
 import io.bimmergestalt.idriveconnectkit.rhmi.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.batchDataTables
 import me.hufman.androidautoidrive.carapp.carinfo.CarDetailedInfo
@@ -19,23 +16,15 @@ import me.hufman.androidautoidrive.carapp.rhmiDataTableFlow
 class CarDetailedView(val state: RHMIState, val carInfo: CarDetailedInfo) {
 
 	private val coroutineScope = CoroutineScope(Job() + Dispatchers.IO)
-	private var updateJob: Job? = null
 
 	private val label = state.componentsList.filterIsInstance<RHMIComponent.Button>().first()       // the only other widget that has a raDataModel
 	private val list = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 
-	private val fields: List<Flow<String>> = listOf(
-			carInfo.engineTemp, carInfo.tempExterior,
-			carInfo.oilTemp, carInfo.tempInterior,
-			carInfo.batteryTemp, carInfo.tempExchanger,
-			carInfo.fuelLevelLabel, carInfo.evLevelLabel,
-			carInfo.accBatteryLevelLabel, carInfo.drivingGearLabel
-	)
-
 	fun initWidgets() {
 		label.getModel()?.asRaDataModel()?.value = L.CARINFO_TITLE
-		label.setSelectable(false)
-		label.setEnabled(false)
+		val categoriesEnabled = carInfo.categories.size > 1
+		label.setSelectable(categoriesEnabled)
+		label.setEnabled(categoriesEnabled)
 		label.setVisible(true)
 		list.setEnabled(true)
 		list.setVisible(true)
@@ -50,31 +39,35 @@ class CarDetailedView(val state: RHMIState, val carInfo: CarDetailedInfo) {
 	}
 
 	private fun onShow() {
-		updateJob?.cancel()
-
-		updateJob = coroutineScope.launch {
-			val rows: List<Flow<Array<Any>>> = fields.windowed(2, 2, true).map { cells ->
-				if (cells.size == 2) {
-					// combine waits for both sides to have a value, so we prepend a placeholder
-					// gross! https://stackoverflow.com/a/72290550
-					val preLeft = flowOf("").onCompletion { emitAll(cells[0]) }
-					val preRight = flowOf("").onCompletion { emitAll(cells[1]) }
-					preLeft.combine(preRight) { left, right ->
-						arrayOf(left, right)
-					}
-				} else {
-					cells[0].map { arrayOf(it, "") }
-				}
+		coroutineScope.launch {
+			carInfo.category.collectLatest { title ->
+				label.getModel()?.asRaDataModel()?.value = title
 			}
-			rows.rhmiDataTableFlow { it }
+		}
+		coroutineScope.launch {
+			carInfo.categoryFields.collectLatest { fields ->
+				val rows: List<Flow<Array<Any>>> = fields.windowed(2, 2, true).map { cells ->
+					if (cells.size == 2) {
+						// combine waits for both sides to have a value, so we prepend a placeholder
+						// gross! https://stackoverflow.com/a/72290550
+						val preLeft = flowOf("").onCompletion { emitAll(cells[0]) }
+						val preRight = flowOf("").onCompletion { emitAll(cells[1]) }
+						preLeft.combine(preRight) { left, right ->
+							arrayOf(left, right)
+						}
+					} else {
+						cells[0].map { arrayOf(it, "") }
+					}
+				}
+				rows.rhmiDataTableFlow { it }
 					.batchDataTables(100)
 					.collect {
 						list.app.setModel(list.model, it)
 					}
+			}
 		}
 	}
 	private fun onHide() {
-		updateJob?.cancel()
-		updateJob = null
+		coroutineScope.coroutineContext.cancelChildren()
 	}
 }
