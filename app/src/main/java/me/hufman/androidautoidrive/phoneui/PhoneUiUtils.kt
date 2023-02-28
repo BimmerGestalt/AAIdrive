@@ -11,6 +11,7 @@ import androidx.annotation.ColorInt
 import androidx.core.view.marginTop
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import kotlinx.coroutines.flow.*
 
 /** Resolve a Color Attribute to a color int */
 @ColorInt
@@ -138,7 +139,7 @@ object LiveDataHelpers {
 		result.addSource(this) {
 			result.value = {
 				val units = unit.value?.let { this.run(it) } ?: ""
-				"$it $units"
+				"$it$units"
 			}
 		}
 		result.addSource(unit) {
@@ -146,7 +147,7 @@ object LiveDataHelpers {
 			if (value != null) {
 				result.value = {
 					val units = unit.value?.let { this.run(it) } ?: ""
-					"$value $units"
+					"$value$units"
 				}
 			}
 		}
@@ -161,5 +162,29 @@ class FunctionalLiveData<T>(val producer: () -> T?): LiveData<T>() {
 	override fun onActive() {
 		super.onActive()
 		value = producer()
+	}
+}
+
+object FlowUtils {
+	/**
+	 * Formats this Flow<Double> with the given format string
+	 */
+	fun Flow<Double>.format(format: String): Flow<String> = this.map {
+		String.format(format, it)
+	}
+
+	/**
+	 * Decorates a given Flow<String> with a unit, where the unit comes from a Flow<String>
+	 *     Either Flow object will trigger an update
+	 */
+	fun Flow<String>.addContextUnit(unitFlow: Flow<Context.() -> String>): Flow<Context.() -> String> = this.combine(unitFlow) { value, unit ->
+		{ "$value${this.run(unit)}" }
+	}
+	/**
+	 * Decorates a given Flow<String> with a unit, where the unit comes from a Flow<String>
+	 *     Either Flow object will trigger an update
+	 */
+	fun Flow<String>.addPlainUnit(unitFlow: Flow<String>): Flow<String> = this.combine(unitFlow) { value, unit ->
+		"$value$unit"
 	}
 }

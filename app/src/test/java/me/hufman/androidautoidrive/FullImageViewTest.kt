@@ -9,6 +9,7 @@ import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationConcrete
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.cds.CDSDataProvider
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test

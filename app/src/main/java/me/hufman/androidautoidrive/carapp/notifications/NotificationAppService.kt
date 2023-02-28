@@ -46,7 +46,8 @@ class NotificationAppService: CarAppService() {
 				// start up the readout app
 				// using a handler to automatically handle shutting down during init
 				val carappReadout = ReadoutApp(iDriveConnectionStatus, securityAccess,
-						CarAppAssetResources(applicationContext, "news"))
+						CarAppAssetResources(applicationContext, "news"),
+						handler, applicationContext.resources)
 				carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
 				this.carappReadout = carappReadout
 			}

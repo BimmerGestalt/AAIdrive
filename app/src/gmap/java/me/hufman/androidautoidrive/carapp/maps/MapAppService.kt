@@ -5,9 +5,9 @@ import android.util.Log
 import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import me.hufman.androidautoidrive.*
-import me.hufman.androidautoidrive.carapp.CDSDataProvider
 import me.hufman.androidautoidrive.carapp.CarAppService
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.cds.CDSDataProvider
 import me.hufman.androidautoidrive.maps.AndroidLocationProvider
 import me.hufman.androidautoidrive.maps.CdsLocationProvider
 import me.hufman.androidautoidrive.maps.CombinedLocationProvider

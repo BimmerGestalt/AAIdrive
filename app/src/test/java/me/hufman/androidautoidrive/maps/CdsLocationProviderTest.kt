@@ -2,8 +2,8 @@ package me.hufman.androidautoidrive.maps
 
 import com.google.gson.JsonObject
 import io.bimmergestalt.idriveconnectkit.CDS
-import me.hufman.androidautoidrive.carapp.CDSDataProvider
-import me.hufman.androidautoidrive.carapp.subscriptions
+import me.hufman.androidautoidrive.cds.CDSDataProvider
+import me.hufman.androidautoidrive.cds.subscriptions
 import org.junit.Assert.*
 import org.junit.Test
 

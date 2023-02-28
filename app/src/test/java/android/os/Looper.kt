@@ -12,4 +12,7 @@ class Looper {
 			return null
 		}
 	}
+	fun getThread(): Thread {
+		return Thread.currentThread()
+	}
 }
