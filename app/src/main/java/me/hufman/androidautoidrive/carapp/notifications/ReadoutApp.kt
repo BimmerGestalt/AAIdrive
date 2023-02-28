@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.carapp.notifications
 import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.content.res.Resources.NotFoundException
+import android.os.Handler
 import android.util.Log
 import com.google.gson.Gson
 import de.bmw.idrive.BMWRemoting
@@ -15,6 +16,7 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
+import kotlinx.coroutines.android.asCoroutineDispatcher
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.*
@@ -24,7 +26,8 @@ import me.hufman.androidautoidrive.carapp.carinfo.views.CategoryView
 import me.hufman.androidautoidrive.cds.*
 import me.hufman.androidautoidrive.utils.Utils
 
-class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val resources: Resources) {
+class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val handler: Handler, val resources: Resources) {
+	private val coroutineContext = handler.asCoroutineDispatcher()
 	val carConnection: BMWRemotingServer
 	var rhmiHandle: Int = -1
 	val carAppSwappable: RHMIApplicationSwappable
@@ -60,7 +63,7 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 
 			val carInfo = CarDetailedInfo(CDSMetrics(CarInformation()))
 			val destStateId = carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().first().getAction()?.asHMIAction()?.target!!
-			this.infoState = CarDetailedView(carApp.states[destStateId] as RHMIState, carInfo)
+			this.infoState = CarDetailedView(carApp.states[destStateId] as RHMIState, coroutineContext, carInfo)
 			val categoryState = infoState.state.componentsList.filterIsInstance<RHMIComponent.Button>().first().getAction()?.asHMIAction()?.getTargetState()!!
 			this.categoryState = CategoryView(categoryState, carInfo)
 

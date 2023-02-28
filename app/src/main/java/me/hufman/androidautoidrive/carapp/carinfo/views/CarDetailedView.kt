@@ -7,16 +7,15 @@ import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.batchDataTables
 import me.hufman.androidautoidrive.carapp.carinfo.CarDetailedInfo
 import me.hufman.androidautoidrive.carapp.rhmiDataTableFlow
+import kotlin.coroutines.CoroutineContext
 
 /**
  * This state shows detailed car information as part of ReadoutApp
  * ReadoutApp's EntryButton is hardcoded to a specific RHMIState
  * so we must take whatever we are given
  */
-class CarDetailedView(val state: RHMIState, val carInfo: CarDetailedInfo) {
-
-	private val coroutineScope = CoroutineScope(Job() + Dispatchers.IO)
-
+class CarDetailedView(val state: RHMIState, val coroutineContext: CoroutineContext, val carInfo: CarDetailedInfo) {
+	val coroutineScope = CoroutineScope(coroutineContext)
 	private val label = state.componentsList.filterIsInstance<RHMIComponent.Button>().first()       // the only other widget that has a raDataModel
 	private val list = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 

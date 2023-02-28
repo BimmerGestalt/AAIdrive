@@ -36,7 +36,7 @@ class ReadoutAppTest {
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, resources)
+		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), resources)
 
 		val labelComponent = app.infoState.state.componentsList.filterIsInstance<RHMIComponent.Button>().first()
 		assertEquals(L.CARINFO_TITLE, mockServer.data[labelComponent.model])
@@ -52,7 +52,7 @@ class ReadoutAppTest {
 	fun testTTSCallback() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, resources)
+		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), resources)
 
 		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "113", "hmi.tts",
 				"{\"TTSState\": {\"state\": 0, \"type\": \"app\", \"currentblock\": 0}}" )
@@ -68,7 +68,7 @@ class ReadoutAppTest {
 	fun testTTSTrigger() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, resources)
+		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), resources)
 
 		app.readoutController.readout(listOf("Test Output"))
 		val speechList = mockServer.data[app.readoutController.speechList.id] as BMWRemoting.RHMIDataTable

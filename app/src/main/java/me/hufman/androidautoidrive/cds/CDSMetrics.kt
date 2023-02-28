@@ -65,7 +65,7 @@ class CDSMetrics(val carInfo: CarInformation) {
 	}.combine(units) { value, units ->
 		units.temperatureUnits.fromCarUnit(value)
 	}
-	val batteryTemp = carInfo.cachedCdsData.flow[CDS.SENSORS.BATTERYTEMP].mapNotNull {
+	val batteryTemp = carInfo.cdsData.flow[CDS.SENSORS.BATTERYTEMP].mapNotNull {
 		it.tryAsJsonPrimitive("batteryTemp")?.tryAsDouble?.takeIf { it < 255 }
 	}.combine(units) { value, units ->
 		units.temperatureUnits.fromCarUnit(value)
