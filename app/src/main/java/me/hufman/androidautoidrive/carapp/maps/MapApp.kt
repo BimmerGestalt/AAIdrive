@@ -116,6 +116,7 @@ class MapApp(iDriveConnectionStatus: IDriveConnectionStatus, securityAccess: Sec
 	}
 	fun onDestroy() {
 		frameUpdater.shutDown()
+		mapAppMode.appSettings.callback = null
 	}
 	fun disconnect() {
 		try {
