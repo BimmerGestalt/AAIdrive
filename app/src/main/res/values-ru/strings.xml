@@ -348,6 +348,24 @@
     <string name="lbl_spotify_api_authorized_user_friendly">Возможность искать в Spotify</string>
     <string name="btn_authorize">Авторизировать</string>
     <!-- car app strings -->
+    <string name="CARINFO_TITLE">Подробная информация об Автомобиле</string>
+    <string name="CARINFO_ENGINE">Двигатель</string>
+    <string name="CARINFO_OIL">Масло</string>
+    <string name="CARINFO_BATTERY">Аккумулятор</string>
+    <string name="CARINFO_EXCHANGER">Система отопления</string>
+    <string name="CARINFO_EXTERIOR">Снаружи</string>
+    <string name="CARINFO_INTERIOR">Внутри</string>
+    <string name="CARINFO_GEAR">Передача</string>
+    <string name="CARINFO_ACC_BATTERY">Акт. батарея</string>
+    <string name="CARINFO_EV_BATTERY">Батарея EV</string>
+    <string name="CARINFO_FUEL">Топливо</string>
+    <string name="CARINFO_UNIT_C">\u2103</string>
+    <string name="CARINFO_UNIT_F">\u2109</string>
+    <string name="CARINFO_UNIT_KM">км</string>
+    <string name="CARINFO_UNIT_MI">миль</string>
+    <string name="CARINFO_UNIT_GALUK">гал (UK)</string>
+    <string name="CARINFO_UNIT_GALUS">гал (US)</string>
+    <string name="CARINFO_UNIT_LITER">Л</string>
     <string name="NOTIFICATIONS_TITLE">Уведомления</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Нет уведомлений</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Очистить </string>
