@@ -357,6 +357,24 @@
     <string name="lbl_spotify_api_authorized_user_friendly">Possibilità di cercare in Spotify</string>
     <string name="btn_authorize">Autorizza</string>
     <!-- car app strings -->
+    <string name="CARINFO_TITLE">Informazioni dettagliate sul veicolo</string>
+    <string name="CARINFO_ENGINE">Motore</string>
+    <string name="CARINFO_OIL">Olio</string>
+    <string name="CARINFO_BATTERY">Batteria</string>
+    <string name="CARINFO_EXCHANGER">HVAC</string>
+    <string name="CARINFO_EXTERIOR">Esterni</string>
+    <string name="CARINFO_INTERIOR">Interni</string>
+    <string name="CARINFO_GEAR">Cambio</string>
+    <string name="CARINFO_ACC_BATTERY">Batteria Acc.</string>
+    <string name="CARINFO_EV_BATTERY">Batteria EV</string>
+    <string name="CARINFO_FUEL">Carburante</string>
+    <string name="CARINFO_UNIT_C">\u2103</string>
+    <string name="CARINFO_UNIT_F">\u2109</string>
+    <string name="CARINFO_UNIT_KM">km</string>
+    <string name="CARINFO_UNIT_MI">mi</string>
+    <string name="CARINFO_UNIT_GALUK">gal (Regno Unito)</string>
+    <string name="CARINFO_UNIT_GALUS">gal (USA)</string>
+    <string name="CARINFO_UNIT_LITER">L</string>
     <string name="NOTIFICATIONS_TITLE">Notifiche</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Nessuna notifica</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Pulisci</string>
