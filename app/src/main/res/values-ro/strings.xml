@@ -358,6 +358,24 @@
     <string name="lbl_spotify_api_authorized_user_friendly">Abilitatea de a căuta Spotify</string>
     <string name="btn_authorize">Autorizează</string>
     <!-- car app strings -->
+    <string name="CARINFO_TITLE">Informații detaliate despre vehicul</string>
+    <string name="CARINFO_ENGINE">Motor</string>
+    <string name="CARINFO_OIL">Ulei</string>
+    <string name="CARINFO_BATTERY">Baterie</string>
+    <string name="CARINFO_EXCHANGER">HVAC</string>
+    <string name="CARINFO_EXTERIOR">Exterior</string>
+    <string name="CARINFO_INTERIOR">Interior</string>
+    <string name="CARINFO_GEAR">Treapta de viteza</string>
+    <string name="CARINFO_ACC_BATTERY">Baterie Acc</string>
+    <string name="CARINFO_EV_BATTERY">Baterie EV</string>
+    <string name="CARINFO_FUEL">Combustibil</string>
+    <string name="CARINFO_UNIT_C">\u2103</string>
+    <string name="CARINFO_UNIT_F">\u2109</string>
+    <string name="CARINFO_UNIT_KM">km</string>
+    <string name="CARINFO_UNIT_MI">mile</string>
+    <string name="CARINFO_UNIT_GALUK">galon (Marea Britanie)</string>
+    <string name="CARINFO_UNIT_GALUS">galon (US)</string>
+    <string name="CARINFO_UNIT_LITER">L</string>
     <string name="NOTIFICATIONS_TITLE">Notificări</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Nu există notificări</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Șterge tot</string>
