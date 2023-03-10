@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.carapp.maps.views
 import androidx.annotation.VisibleForTesting
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import kotlinx.coroutines.*
+import me.hufman.androidautoidrive.CarThreadExceptionHandler
 import me.hufman.androidautoidrive.carapp.FullImageView
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
@@ -36,7 +37,7 @@ class SearchResultsView(val state: RHMIState, val mapPlaceSearch: MapPlaceSearch
 		}
 	}
 	override val coroutineContext: CoroutineContext
-		get() = Dispatchers.IO
+		get() = Dispatchers.IO + CarThreadExceptionHandler
 
 	@VisibleForTesting
 	var loaderJob: Job? = null

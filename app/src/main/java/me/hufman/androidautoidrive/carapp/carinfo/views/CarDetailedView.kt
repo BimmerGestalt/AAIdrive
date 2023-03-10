@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.carapp.carinfo.views
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import me.hufman.androidautoidrive.CarThreadExceptionHandler
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.batchDataTables
 import me.hufman.androidautoidrive.carapp.carinfo.CarDetailedInfo
@@ -15,7 +16,7 @@ import kotlin.coroutines.CoroutineContext
  * so we must take whatever we are given
  */
 class CarDetailedView(val state: RHMIState, val coroutineContext: CoroutineContext, val carInfo: CarDetailedInfo) {
-	val coroutineScope = CoroutineScope(coroutineContext)
+	val coroutineScope = CoroutineScope(coroutineContext + CarThreadExceptionHandler)
 	private val label = state.componentsList.filterIsInstance<RHMIComponent.Button>().first()       // the only other widget that has a raDataModel
 	private val list = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 

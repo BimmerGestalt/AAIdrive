@@ -6,6 +6,7 @@ import io.bimmergestalt.idriveconnectkit.rhmi.VisibleCallback
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.CarThreadExceptionHandler
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.L
@@ -31,7 +32,7 @@ class SearchInputView(val state: RHMIState,
 	}
 
 	override val coroutineContext: CoroutineContext
-		get() = Dispatchers.IO
+		get() = Dispatchers.IO + CarThreadExceptionHandler
 	private var searchJob: Job? = null
 	private var searchQueryHistory: MutableList<String> = LinkedList()
 	private val gson: Gson = Gson()

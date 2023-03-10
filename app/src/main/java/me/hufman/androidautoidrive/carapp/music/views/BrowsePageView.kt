@@ -4,6 +4,7 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import kotlinx.coroutines.*
+import me.hufman.androidautoidrive.CarThreadExceptionHandler
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.music.MusicImageIDs
@@ -34,7 +35,7 @@ class BrowsePageView(val state: RHMIState,
 	var oldPreviouslySelectedIndex: Int? = null
 
 	override val coroutineContext: CoroutineContext
-		get() = Dispatchers.IO
+		get() = Dispatchers.IO + CarThreadExceptionHandler
 
 	companion object {
 		const val LOADING_TIMEOUT = 2000
