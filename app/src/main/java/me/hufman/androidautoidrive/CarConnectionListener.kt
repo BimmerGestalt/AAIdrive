@@ -21,23 +21,27 @@ class CarConnectionListener: BroadcastReceiver() {
 		// car changed connection status
 		Log.i(TAG, "Received car status announcement: ${intent.action}")
 
-		if (intent.action == IDriveConnectionReceiver.INTENT_ATTACHED ||
-				intent.action == "me.hufman.androidautoidrive.CarConnectionListener_START") {
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-				// this is a clear signal of car connection, we can confidently startForeground
-				context.startForegroundService(Intent(context, MainService::class.java).setAction(MainService.ACTION_START))
-			} else {
-				context.startService(Intent(context, MainService::class.java).setAction(MainService.ACTION_START))
+		try {
+			if (intent.action == IDriveConnectionReceiver.INTENT_ATTACHED ||
+					intent.action == "me.hufman.androidautoidrive.CarConnectionListener_START") {
+				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+					// this is a clear signal of car connection, we can confidently startForeground
+					context.startForegroundService(Intent(context, MainService::class.java).setAction(MainService.ACTION_START))
+				} else {
+					context.startService(Intent(context, MainService::class.java).setAction(MainService.ACTION_START))
+				}
 			}
-		}
-		if (intent.action == IDriveConnectionReceiver.INTENT_DETACHED ||
-				intent.action == "me.hufman.androidautoidrive.CarConnectionListener_STOP") {
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-				// we have to startForegroundService everywhere
-				context.startForegroundService(Intent(context, MainService::class.java).setAction(MainService.ACTION_STOP))
-			} else {
-				context.startService(Intent(context, MainService::class.java).setAction(MainService.ACTION_STOP))
+			if (intent.action == IDriveConnectionReceiver.INTENT_DETACHED ||
+					intent.action == "me.hufman.androidautoidrive.CarConnectionListener_STOP") {
+				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+					// we have to startForegroundService everywhere
+					context.startForegroundService(Intent(context, MainService::class.java).setAction(MainService.ACTION_STOP))
+				} else {
+					context.startService(Intent(context, MainService::class.java).setAction(MainService.ACTION_STOP))
+				}
 			}
+		} catch (e: Exception) {
+			Log.w(TAG, "Failed to start MainService", e)
 		}
 	}
 
