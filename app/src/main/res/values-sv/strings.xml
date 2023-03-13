@@ -361,13 +361,17 @@
     <string name="CARINFO_ENGINE">Motor</string>
     <string name="CARINFO_OIL">Olja</string>
     <string name="CARINFO_BATTERY">Batteri</string>
+    <string name="CARINFO_EXCHANGER">AC lufttemp.</string>
     <string name="CARINFO_EXTERIOR">Utvändig</string>
     <string name="CARINFO_INTERIOR">Invändig</string>
     <string name="CARINFO_GEAR">Växel</string>
+    <string name="CARINFO_ACC_BATTERY">Startbatteri</string>
+    <string name="CARINFO_EV_BATTERY">Högvoltsbatteri</string>
     <string name="CARINFO_FUEL">Bränsle</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
     <string name="CARINFO_UNIT_F">\u2109</string>
     <string name="CARINFO_UNIT_KM">km</string>
+    <string name="CARINFO_UNIT_MI">miles</string>
     <string name="CARINFO_UNIT_GALUK">Gallon (UK)</string>
     <string name="CARINFO_UNIT_GALUS">Gallon (US)</string>
     <string name="CARINFO_UNIT_LITER">L</string>
