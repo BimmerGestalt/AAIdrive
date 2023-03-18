@@ -362,8 +362,8 @@
     <string name="CARINFO_OIL">Olja</string>
     <string name="CARINFO_BATTERY">Batteri</string>
     <string name="CARINFO_EXCHANGER">AC lufttemp.</string>
-    <string name="CARINFO_EXTERIOR">Utvändig</string>
-    <string name="CARINFO_INTERIOR">Invändig</string>
+    <string name="CARINFO_EXTERIOR">Utvändig temp</string>
+    <string name="CARINFO_INTERIOR">Invändig temp</string>
     <string name="CARINFO_GEAR">Växel</string>
     <string name="CARINFO_ACC_BATTERY">Startbatteri</string>
     <string name="CARINFO_EV_BATTERY">Högvoltsbatteri</string>
