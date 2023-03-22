@@ -150,6 +150,7 @@ Implemented Features
         - [Radio FM](https://play.google.com/store/apps/details?id=com.radio.fmradio)
         - [Radio Monte Carlo](https://play.google.com/store/apps/details?id=it.froggy.android.rmc)
         - [Radio Nowy Swiat](https://play.google.com/store/apps/details?id=com.thehouseofcode.radio_nowy_swiat)
+        - [Replaio FM Radio](https://play.google.com/store/apps/details?id=com.hv.replaio)
         - [RTL 102.5](https://play.google.com/store/apps/details?id=com.rtl.rtlapp)
         - [Scanner Radio](https://play.google.com/store/apps/details?id=com.scannerradio)
         - [SiriusXM](https://play.google.com/store/apps/details?id=com.sirius)
