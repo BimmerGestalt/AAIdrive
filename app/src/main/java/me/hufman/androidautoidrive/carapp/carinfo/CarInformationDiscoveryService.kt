@@ -6,9 +6,9 @@ import me.hufman.androidautoidrive.CarInformationDiscovery
 import me.hufman.androidautoidrive.CarInformationUpdater
 import me.hufman.androidautoidrive.MainService
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
-import me.hufman.androidautoidrive.carapp.CDSConnection
-import me.hufman.androidautoidrive.carapp.CDSConnectionAsync
 import me.hufman.androidautoidrive.carapp.CarAppService
+import me.hufman.androidautoidrive.cds.CDSConnection
+import me.hufman.androidautoidrive.cds.CDSConnectionAsync
 
 class CarInformationDiscoveryService: CarAppService() {
 	val appSettings by lazy { MutableAppSettingsReceiver(applicationContext) }

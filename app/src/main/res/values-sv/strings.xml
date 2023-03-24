@@ -357,6 +357,24 @@
     <string name="lbl_spotify_api_authorized_user_friendly">Möjlighet att söka på Spotify</string>
     <string name="btn_authorize">Auktorisera</string>
     <!-- car app strings -->
+    <string name="CARINFO_TITLE">Detaljerad fordonsinformation</string>
+    <string name="CARINFO_ENGINE">Motor</string>
+    <string name="CARINFO_OIL">Olja</string>
+    <string name="CARINFO_BATTERY">Batteri</string>
+    <string name="CARINFO_EXCHANGER">AC lufttemp.</string>
+    <string name="CARINFO_EXTERIOR">Utvändig temp</string>
+    <string name="CARINFO_INTERIOR">Invändig temp</string>
+    <string name="CARINFO_GEAR">Växel</string>
+    <string name="CARINFO_ACC_BATTERY">Startbatteri</string>
+    <string name="CARINFO_EV_BATTERY">Högvoltsbatteri</string>
+    <string name="CARINFO_FUEL">Bränsle</string>
+    <string name="CARINFO_UNIT_C">\u2103</string>
+    <string name="CARINFO_UNIT_F">\u2109</string>
+    <string name="CARINFO_UNIT_KM">km</string>
+    <string name="CARINFO_UNIT_MI">miles</string>
+    <string name="CARINFO_UNIT_GALUK">Gallon (UK)</string>
+    <string name="CARINFO_UNIT_GALUS">Gallon (US)</string>
+    <string name="CARINFO_UNIT_LITER">L</string>
     <string name="NOTIFICATIONS_TITLE">Aviseringar</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Inga aviseringar</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Töm</string>

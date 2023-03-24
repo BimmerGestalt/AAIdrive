@@ -5,8 +5,8 @@ import androidx.lifecycle.Observer
 import com.google.gson.JsonObject
 import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemotingServer
-import me.hufman.androidautoidrive.carapp.*
 import io.bimmergestalt.idriveconnectkit.CDS
+import me.hufman.androidautoidrive.cds.*
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test

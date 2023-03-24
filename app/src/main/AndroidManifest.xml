@@ -1078,7 +1078,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".CarConnectionListener" android:exported="false">
+        <receiver android:name=".CarConnectionListener" android:exported="true">
             <intent-filter>
                 <action android:name="com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_ATTACHED" />
                 <action android:name="com.bmwgroup.connected.accessory.ACTION_CAR_ACCESSORY_DETACHED" />

@@ -12,7 +12,7 @@ import com.google.gson.JsonObject
 import io.bimmergestalt.idriveconnectkit.CDS
 import me.hufman.androidautoidrive.CarInformationObserver
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.carapp.liveData
+import me.hufman.androidautoidrive.cds.liveData
 import me.hufman.androidautoidrive.phoneui.ViewHelpers.visible
 
 class CarAdvancedInfoFragment: Fragment() {

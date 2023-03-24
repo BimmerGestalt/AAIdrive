@@ -1,19 +1,17 @@
 package me.hufman.androidautoidrive.notifications
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doAnswer
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
+import android.content.res.Resources
+import com.nhaarman.mockito_kotlin.*
 import de.bmw.idrive.BMWRemoting
-import me.hufman.androidautoidrive.MockBMWRemotingServer
-import me.hufman.androidautoidrive.carapp.ReadoutState
-import me.hufman.androidautoidrive.carapp.notifications.ReadoutApp
 import io.bimmergestalt.idriveconnectkit.IDriveConnection
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import me.hufman.androidautoidrive.MockBMWRemotingServer
 import me.hufman.androidautoidrive.carapp.L
+import me.hufman.androidautoidrive.carapp.ReadoutState
+import me.hufman.androidautoidrive.carapp.notifications.ReadoutApp
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.ByteArrayInputStream
@@ -30,16 +28,20 @@ class ReadoutAppTest {
 		on { getImagesDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 		on { getTextsDB(any()) } doReturn ByteArrayInputStream(ByteArray(0))
 	}
+	val resources = mock<Resources> {
+		on { openRawResource(any()) } doThrow Resources.NotFoundException()
+	}
 
 	@Test
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources)
+		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), resources)
 
-		val infoComponent = app.infoState.componentsList.filterIsInstance<RHMIComponent.List>().first()
-		val infoList = mockServer.data[infoComponent.model] as BMWRemoting.RHMIDataTable
-		assertEquals(L.READOUT_DESCRIPTION, infoList.data[0][0])
+		val labelComponent = app.infoState.state.componentsList.filterIsInstance<RHMIComponent.Button>().first()
+		assertEquals(L.CARINFO_TITLE, mockServer.data[labelComponent.model])
+		val listComponent = app.infoState.state.componentsList.filterIsInstance<RHMIComponent.List>().first()
+		// won't show data until the screen is opened
 
 		assertTrue(mockServer.cdsSubscriptions.contains("hmi.tts"))
 
@@ -50,7 +52,7 @@ class ReadoutAppTest {
 	fun testTTSCallback() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources)
+		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), resources)
 
 		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "113", "hmi.tts",
 				"{\"TTSState\": {\"state\": 0, \"type\": \"app\", \"currentblock\": 0}}" )
@@ -66,7 +68,7 @@ class ReadoutAppTest {
 	fun testTTSTrigger() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources)
+		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), resources)
 
 		app.readoutController.readout(listOf("Test Output"))
 		val speechList = mockServer.data[app.readoutController.speechList.id] as BMWRemoting.RHMIDataTable

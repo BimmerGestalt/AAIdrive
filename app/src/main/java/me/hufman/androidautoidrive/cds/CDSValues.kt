@@ -1,4 +1,4 @@
-package me.hufman.androidautoidrive.carapp
+package me.hufman.androidautoidrive.cds
 
 import com.google.gson.JsonObject
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsInt

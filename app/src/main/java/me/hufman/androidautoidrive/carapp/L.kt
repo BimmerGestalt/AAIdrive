@@ -15,6 +15,25 @@ object L {
 
 	// all of the strings used in the car app
 	// these default string values are used in tests, Android resources are used for real
+	val CARINFO_TITLE by StringResourceDelegate("Detailed Vehicle Info")
+	val CARINFO_ENGINE by StringResourceDelegate("Engine")
+	val CARINFO_OIL by StringResourceDelegate("Oil")
+	val CARINFO_EXCHANGER by StringResourceDelegate("HVAC")
+	val CARINFO_BATTERY by StringResourceDelegate("Battery")
+	val CARINFO_EXTERIOR by StringResourceDelegate("Exterior")
+	val CARINFO_INTERIOR by StringResourceDelegate("Interior")
+	val CARINFO_GEAR by StringResourceDelegate("Gear")
+	val CARINFO_ACC_BATTERY by StringResourceDelegate("Acc. Battery")
+	val CARINFO_EV_BATTERY by StringResourceDelegate("EV Battery")
+	val CARINFO_FUEL by StringResourceDelegate("Fuel")
+	val CARINFO_UNIT_C by StringResourceDelegate("\\u2103")
+	val CARINFO_UNIT_F by StringResourceDelegate("\\u2109")
+	val CARINFO_UNIT_KM by StringResourceDelegate("km")
+	val CARINFO_UNIT_MI by StringResourceDelegate("mi")
+	val CARINFO_UNIT_GALUK by StringResourceDelegate("gal (UK)")
+	val CARINFO_UNIT_GALUS by StringResourceDelegate("gal (US)")
+	val CARINFO_UNIT_LITER by StringResourceDelegate("L")
+
 	val NOTIFICATIONS_TITLE by StringResourceDelegate("Notifications")
 	val NOTIFICATIONS_EMPTY_LIST by StringResourceDelegate("No Notifications")
 	val NOTIFICATION_CLEAR_ACTION by StringResourceDelegate("Clear")

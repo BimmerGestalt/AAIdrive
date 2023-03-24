@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import me.hufman.androidautoidrive.CarThreadExceptionHandler
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.InputState
 import me.hufman.androidautoidrive.carapp.L
@@ -20,7 +21,7 @@ class FilterInputView(val state: RHMIState,
 	val FILTERRESULT_EMPTY = MusicMetadata(mediaId="__EMPTY__", title=L.MUSIC_BROWSE_EMPTY)
 
 	override val coroutineContext: CoroutineContext
-		get() = Dispatchers.IO
+		get() = Dispatchers.IO + CarThreadExceptionHandler
 
 	var loadingJob: Job? = null
 	var musicList: List<MusicMetadata> = emptyList()

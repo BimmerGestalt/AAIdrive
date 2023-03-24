@@ -5,6 +5,9 @@ import android.os.Looper
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.job
+import kotlin.coroutines.CoroutineContext
 
 const val TAG = "CarThread"
 /**
@@ -71,5 +74,27 @@ class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 	fun quitSafely() {
 		handler?.looper?.quitSafely()
 		handler = null      // no longer useful
+	}
+}
+
+var CarThreadExceptionHandler = CoroutineExceptionHandler { c: CoroutineContext, e: Throwable ->
+	when (e) {
+		is IllegalStateException -> {
+			// posted to a dead handler
+			Log.i(TAG, "Shutting down coroutine thread $c due to IllegalStateException: $e", e)
+		}
+		is RuntimeException -> {
+			// phone was unplugged during an RPC command
+			Log.i(TAG, "Shutting down coroutine thread $c due to RuntimeException: $e", e)
+		}
+		is org.apache.etch.util.TimeoutException -> {
+			// phone was unplugged during an RPC command
+			Log.i(TAG, "Shutting down coroutine thread $c due to Etch TimeoutException")
+		}
+		is BMWRemoting.ServiceException -> {
+			// probably phone was unplugged during an RPC command
+			Log.i(TAG, "Shutting down coroutine thread $c due to ServiceException: $e", e)
+		}
+		else -> throw e
 	}
 }

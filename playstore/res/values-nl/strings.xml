@@ -15,8 +15,4 @@
     <string name="playstore_desc_nativeapps_protocol">Door gebruik te maken van het BMW Apps protocol, net als de oude Spotify app, wijzigt deze app uw auto op geen enkele manier en alle extra mogelijkheden zijn alleen beschikbaar wanneer uw telefoon verbonden is.</string>
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps vereisen dat de MyBMW- of MINI-app voor uw auto is geïnstalleerd en dat het uw selectievakje IDrive5+ auto kan inschakelen, of dat uw IDrive4-auto de optie ConnectedDrive Connectie Assistent heeft.</string>
     <string name="playstore_desc_depends_bmw_subscription">Dit vereist meestal een actief BMW ConnectedDrive-abonnement, meestal actief voor een aantal jaar na aanschaf van de auto.</string>
-    <string name="playstore_release_desc">Eindelijk, de kaartfunctie waar iedereen om heeft gevraagd!</string>
-    <string name="playstore_release_point1">Voegt een aangepaste kaart toe, gegenereerd op de telefoon en weergegeven in de auto</string>
-    <string name="playstore_release_point2">Gebruikt Mapbox voor de kaart, zoeken, en navigatie</string>
-    <string name="playstore_release_point3">Voegt Interessante Punten suggesties toe aan het Navigatie tabblad</string>
 </resources>

@@ -56,10 +56,14 @@ class A2DPBroadcastReceiver: BroadcastReceiver() {
 				.putExtra(MainService.EXTRA_FOREGROUND, true)
 
 		// if we are in a background mode, we need to startForegroundService
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-			context.startForegroundService(intent)
-		} else {
-			context.startService(intent)
+		try {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+				context.startForegroundService(intent)
+			} else {
+				context.startService(intent)
+			}
+		} catch (e: Exception) {
+			Log.w(TAG, "Failed to start MainService", e)
 		}
 	}
 }

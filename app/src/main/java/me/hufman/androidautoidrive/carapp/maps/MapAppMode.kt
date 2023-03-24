@@ -10,11 +10,11 @@ import io.bimmergestalt.idriveconnectkit.SidebarRHMIDimensions
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.MutableAppSettingsObserver
-import me.hufman.androidautoidrive.carapp.CDSData
-import me.hufman.androidautoidrive.carapp.CDSEventHandler
-import me.hufman.androidautoidrive.carapp.CDSVehicleUnits
 import me.hufman.androidautoidrive.carapp.FullImageConfig
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
+import me.hufman.androidautoidrive.cds.CDSData
+import me.hufman.androidautoidrive.cds.CDSEventHandler
+import me.hufman.androidautoidrive.cds.CDSVehicleUnits
 import me.hufman.androidautoidrive.maps.LatLong
 import kotlin.math.max
 

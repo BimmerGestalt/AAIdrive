@@ -8,7 +8,7 @@ import com.mapbox.geojson.Point
 import com.nhaarman.mockito_kotlin.*
 import io.bimmergestalt.idriveconnectkit.CDSProperty
 import kotlinx.coroutines.runBlocking
-import me.hufman.androidautoidrive.carapp.CDSDataProvider
+import me.hufman.androidautoidrive.cds.CDSDataProvider
 import org.junit.Assert.*
 import org.junit.Test
 import retrofit2.Callback

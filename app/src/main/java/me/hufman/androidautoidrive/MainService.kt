@@ -21,6 +21,8 @@ import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import me.hufman.androidautoidrive.addons.AddonsService
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.carinfo.CarInformationDiscoveryService
+import me.hufman.androidautoidrive.cds.CDSEventHandler
+import me.hufman.androidautoidrive.cds.CDSVehicleLanguage
 import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.phoneui.DonationRequest
 import me.hufman.androidautoidrive.phoneui.NavHostActivity
