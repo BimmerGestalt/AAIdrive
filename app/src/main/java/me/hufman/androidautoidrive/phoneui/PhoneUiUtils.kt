@@ -169,7 +169,7 @@ object FlowUtils {
 	/**
 	 * Formats this Flow<Double> with the given format string
 	 */
-	fun Flow<Double>.format(format: String): Flow<String> = this.map {
+	fun Flow<Number>.format(format: String): Flow<String> = this.map {
 		String.format(format, it)
 	}
 

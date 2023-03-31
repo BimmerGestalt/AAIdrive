@@ -61,11 +61,14 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 
 			this.readoutController = ReadoutController.build(carApp, "NotificationReadout")
 
-			val carInfo = CarDetailedInfo(CDSMetrics(CarInformation()))
+			val carInfo = CarInformation().also {
+				cdsData.flow.defaultIntervalLimit = 100
+			}
+			val carDetailedInfo = CarDetailedInfo(carInfo.capabilities, CDSMetrics(carInfo))
 			val destStateId = carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().first().getAction()?.asHMIAction()?.target!!
-			this.infoState = CarDetailedView(carApp.states[destStateId] as RHMIState, coroutineContext, carInfo)
+			this.infoState = CarDetailedView(carApp.states[destStateId] as RHMIState, coroutineContext, carDetailedInfo)
 			val categoryState = infoState.state.componentsList.filterIsInstance<RHMIComponent.Button>().first().getAction()?.asHMIAction()?.getTargetState()!!
-			this.categoryState = CategoryView(categoryState, carInfo)
+			this.categoryState = CategoryView(categoryState, carDetailedInfo)
 
 			initWidgets()
 		}

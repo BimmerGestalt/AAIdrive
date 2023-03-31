@@ -13,6 +13,7 @@ import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
 import me.hufman.androidautoidrive.carapp.maps.views.SearchResultsView
+import me.hufman.androidautoidrive.cds.CDSMetrics
 import me.hufman.androidautoidrive.cds.CDSVehicleUnits
 import org.awaitility.Awaitility.await
 import org.junit.Assert.*
@@ -148,7 +149,7 @@ class SearchResultsViewTest {
 
 	@Test
 	fun testBearingArrow() {
-		val bearingArrow = {angle: Float? -> SearchResultsView.MapResultListAdapter.bearingArrow(angle) }
+		val bearingArrow = {angle: Float? -> CDSMetrics.compassArrow(angle) }
 		assertEquals("", bearingArrow(null))
 		assertEquals("↑", bearingArrow(0f))
 		assertEquals("↑", bearingArrow(359f))

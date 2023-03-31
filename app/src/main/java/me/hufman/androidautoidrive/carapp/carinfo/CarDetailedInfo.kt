@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.carapp.carinfo
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.cds.CDSMetrics
@@ -9,7 +10,14 @@ import me.hufman.androidautoidrive.cds.CDSVehicleUnits
 import me.hufman.androidautoidrive.phoneui.FlowUtils.addPlainUnit
 import me.hufman.androidautoidrive.phoneui.FlowUtils.format
 
-class CarDetailedInfo(cdsMetrics: CDSMetrics) {
+class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics) {
+	// general car information
+
+	// RHD is guessed, defaults to LHD
+	// mainly used for driver/passenger window orientation
+	val rightHandDrive = carCapabilities["type_steering"] == "right" ||
+			carCapabilities["iva_STEERING_SIDE_LEFT"] == false ||
+			carCapabilities["alignment-right"] == false
 
 	// unit display
 	val unitsTemperatureLabel: Flow<String> = cdsMetrics.units.map {
@@ -23,6 +31,12 @@ class CarDetailedInfo(cdsMetrics: CDSMetrics) {
 		when (it.distanceUnits) {
 			CDSVehicleUnits.Distance.Kilometers -> L.CARINFO_UNIT_KM
 			CDSVehicleUnits.Distance.Miles -> L.CARINFO_UNIT_MI
+		}
+	}
+	val unitsSpeedLabel: Flow<String> = cdsMetrics.units.map {
+		when (it.distanceUnits) {
+			CDSVehicleUnits.Distance.Kilometers -> "kmph"
+			CDSVehicleUnits.Distance.Miles -> "mph"
 		}
 	}
 
@@ -54,11 +68,38 @@ class CarDetailedInfo(cdsMetrics: CDSMetrics) {
 
 	// driving detail fields, as examples
 	// real ones would need translated labels
-	val accelContact = cdsMetrics.accelerator.format("%.1f%%").map { "Accel $it"}
-	val accelEcoContact = cdsMetrics.acceleratorEco.format("%.1f%%").map { "AccelEco $it"}
-	val clutchContact = cdsMetrics.clutch.format("%.1f%%").map { "Clutch $it"}
-	val brakeContact = cdsMetrics.brake.format("%.1f%%").map { "Brake $it"}
+	val accelContact = cdsMetrics.accelerator.format("%d%%").map { "Accel $it"}
+	val accelEcoContact = cdsMetrics.acceleratorEco.format("%d%%").map { "AccelEco $it"}
+	val clutchContact = cdsMetrics.clutch.map { "Clutch $it"}
+	val brakeContact = cdsMetrics.brake.format("%d%%").map { "Brake $it"}
 	val steeringAngle = cdsMetrics.steeringAngle.format("%.1f°").map { "Steering $it" }
+	val speed = cdsMetrics.speedActual.format("%.1f").addPlainUnit(unitsSpeedLabel)
+	val engineRpm =cdsMetrics.engineRpm.map { "$it RPM"}
+	val heading = cdsMetrics.heading.map { heading ->
+		val direction = CDSMetrics.compassDirection(heading)
+		val arrow = CDSMetrics.compassArrow(heading)
+		"$arrow $direction (${heading.toInt()}°)"
+	}
+	val gforces = cdsMetrics.accel.map { accel ->
+		val lat = accel.first?.let {"%.2f".format(it/9.8)}?.plus("↔")
+		val long = accel.second?.let {"%.2f".format(it/9.8)}?.plus("↕")
+		"GForce $lat $long"
+	}
+
+	fun formatWindowState(name: String, state: CDSMetrics.WindowState): String = when(state.state) {
+		CDSMetrics.WindowState.State.CLOSED -> "$name Closed"
+		CDSMetrics.WindowState.State.TILTED -> "$name Tilted"
+		CDSMetrics.WindowState.State.OPENED -> "$name Opened ${state.position}%"
+	}.trimStart()
+	fun Flow<CDSMetrics.WindowState>.format(name: String): Flow<String> = this.map {
+		formatWindowState(name, it)
+	}
+
+	val sunroof = cdsMetrics.sunroof.format("Sunroof")
+	val windowDriverFront = cdsMetrics.windowDriverFront.format("")
+	val windowPassengerFront = cdsMetrics.windowPassengerFront.format("")
+	val windowDriverRear = cdsMetrics.windowDriverRear.format("")
+	val windowPassengerRear = cdsMetrics.windowPassengerRear.format("")
 
 	// categories
 	private val overviewFields: List<Flow<String>> = listOf(
@@ -66,16 +107,33 @@ class CarDetailedInfo(cdsMetrics: CDSMetrics) {
 			oilTemp, tempInterior,
 			batteryTemp, tempExchanger,
 			fuelLevelLabel, evLevelLabel,
-			accBatteryLevelLabel, drivingGearLabel
+			accBatteryLevelLabel
 	)
 	private val drivingFields: List<Flow<String>> = listOf(
 			drivingMode, drivingGearLabel,
-			accelContact, accelEcoContact,
-			clutchContact, brakeContact,
-			steeringAngle
+			accelContact, brakeContact,
+			clutchContact, steeringAngle,
+			speed, heading,
+			gforces
+	)
+	private val windowFields: List<Flow<String>> = if (!rightHandDrive) {
+		listOf(
+				windowDriverFront, windowPassengerFront,
+				windowDriverRear, windowPassengerRear
+		)
+	} else {
+		listOf(
+				windowPassengerFront, windowDriverFront,
+				windowPassengerRear, windowDriverRear,
+		)
+	} + listOf(
+			emptyFlow(), emptyFlow(),
+			sunroof
 	)
 	val categories = LinkedHashMap<String, List<Flow<String>>>().apply {
 		put(L.CARINFO_TITLE, overviewFields)
+		put("Driving Details", drivingFields)
+		put("Window Status", windowFields)
 
 		// add more pages like this:
 //		put("Driving Details", drivingFields)

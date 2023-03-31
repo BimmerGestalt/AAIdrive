@@ -259,76 +259,40 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 			"-$pB-"
 	}.asLiveData()
 
-	/*
-		status: 0 - closed or tilted
-		status: 1 - partially open  (not tilted)
-		status: 2 - fully open
-		tilt: 1->12 -> tilted (tilted degree)
-		open: 1-50 -> how far is open
+	fun formatWindowState(nameResource: Int?, state: CDSMetrics.WindowState): Context.() -> String = {
+		val stateStr: String = when (state.state) {
+			CDSMetrics.WindowState.State.CLOSED -> getString(R.string.lbl_carinfo_sunroof_closed)
+			CDSMetrics.WindowState.State.TILTED -> getString(R.string.lbl_carinfo_sunroof_tilted)
+			CDSMetrics.WindowState.State.OPENED -> if (state.position < 100) {
+				getString(R.string.lbl_carinfo_sunroof_partial, state.position)
+			} else {
+				getString(R.string.lbl_carinfo_sunroof_open)
+			}
+		}
+		if (nameResource != null) {
+			"${getString(nameResource)} $stateStr"
+		} else {
+			stateStr
+		}
+	}
+	fun Flow<CDSMetrics.WindowState>.format(nameResource: Int?): Flow<Context.() -> String> = this.map {
+		formatWindowState(nameResource, it)
+	}
 
-	 */
 	val sunroofSupported = flow { emit(false); emitAll(carInfo.cachedCdsData.flow[CDS.CONTROLS.SUNROOF].map {
 		val status = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("status")?.tryAsInt
 		status == 0 || status == 1 || status == 2      // 3 and null would be false
 	})}.asLiveData()    // nullability to control visibility
-	val sunRoof = carInfo.cachedCdsData.flow[CDS.CONTROLS.SUNROOF].map {
-		val status = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("status")?.tryAsInt ?: 0
-		val openPosition = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("openPosition")?.tryAsInt ?: 0
-		val tiltPosition = it.tryAsJsonObject("sunroof")?.tryAsJsonPrimitive("tiltPosition")?.tryAsInt ?: 0
-		val sunRoofString: Context.() -> String = if (status == 0 && tiltPosition == 0 && openPosition == 0) {
-			{ getString(R.string.lbl_carinfo_sunroof_closed) }
-		} else if (tiltPosition>0 && openPosition == 0) {
-			{ getString(R.string.lbl_carinfo_sunroof_tilted) }
-		} else if (status == 1 && openPosition >0) {
-			{ getString(R.string.lbl_carinfo_sunroof_partial, openPosition * 2) }
-		} else if (status == 2) {
-			{ getString(R.string.lbl_carinfo_sunroof_open) }
-		} else {
-			{ "" }
-		}
-		sunRoofString
-		//"DEBUG: Status: $status | Open: $openPosition | Tilt: $tiltPosition"
-	}.asLiveData()
+	val sunRoof = cdsMetrics.sunroof.format(null).asLiveData()
 
-	private fun parseWindowOpen(data: JsonObject?): Boolean {
-		val status = data?.tryAsJsonPrimitive("status")?.tryAsInt ?: 0
-		return status == 1 || status == 2
-	}
-	private fun parseWindowStatus(nameString: Int, data: JsonObject?): Context.() -> String {
-		val status = data?.tryAsJsonPrimitive("status")?.tryAsInt ?: 0
-		val position = data?.tryAsJsonPrimitive("position")?.tryAsInt ?: 0
-		return if (status == 0) {
-			{ getString(nameString) + ": " + getString(R.string.lbl_carinfo_window_closed) }
-		} else if (status == 1) {
-			{ getString(nameString) + ": " + getString(R.string.lbl_carinfo_window_partial, position * 2)}
-		} else {
-			{ getString(nameString) + ": " + getString(R.string.lbl_carinfo_window_open) }
-		}
-	}
-	val windowDriverFrontOpen = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWDRIVERFRONT].map {
-		parseWindowOpen(it.tryAsJsonObject("windowDriverFront"))
-	}.asLiveData()
-	val windowDriverFrontState = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWDRIVERFRONT].map {
-		parseWindowStatus(R.string.lbl_carinfo_window_driverfront, it.tryAsJsonObject("windowDriverFront"))
-	}.asLiveData()
-	val windowPassengerFrontOpen = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWPASSENGERFRONT].map {
-		parseWindowOpen(it.tryAsJsonObject("windowPassengerFront"))
-	}.asLiveData()
-	val windowPassengerFrontState = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWPASSENGERFRONT].map {
-		parseWindowStatus(R.string.lbl_carinfo_window_passengerfront, it.tryAsJsonObject("windowPassengerFront"))
-	}.asLiveData()
-	val windowDriverRearOpen = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWDRIVERREAR].map {
-		parseWindowOpen(it.tryAsJsonObject("windowDriverRear"))
-	}.asLiveData()
-	val windowDriverRearState = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWDRIVERREAR].map {
-		parseWindowStatus(R.string.lbl_carinfo_window_driverrear, it.tryAsJsonObject("windowDriverRear"))
-	}.asLiveData()
-	val windowPassengerRearOpen = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWPASSENGERREAR].map {
-		parseWindowOpen(it.tryAsJsonObject("windowPassengerRear"))
-	}.asLiveData()
-	val windowPassengerRearState = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWPASSENGERREAR].map {
-		parseWindowStatus(R.string.lbl_carinfo_window_passengerrear, it.tryAsJsonObject("windowPassengerRear"))
-	}.asLiveData()
+	val windowDriverFrontOpen = cdsMetrics.windowDriverFront.map { it.isOpen }.asLiveData()
+	val windowDriverFrontState = cdsMetrics.windowDriverFront.format(R.string.lbl_carinfo_window_driverfront).asLiveData()
+	val windowPassengerFrontOpen = cdsMetrics.windowPassengerFront.map { it.isOpen }.asLiveData()
+	val windowPassengerFrontState = cdsMetrics.windowPassengerFront.format(R.string.lbl_carinfo_window_passengerfront).asLiveData()
+	val windowDriverRearOpen = cdsMetrics.windowDriverRear.map { it.isOpen }.asLiveData()
+	val windowDriverRearState = cdsMetrics.windowDriverRear.format(R.string.lbl_carinfo_window_driverrear).asLiveData()
+	val windowPassengerRearOpen = cdsMetrics.windowPassengerRear.map { it.isOpen }.asLiveData()
+	val windowPassengerRearState = cdsMetrics.windowPassengerRear.format(R.string.lbl_carinfo_window_passengerrear).asLiveData()
 	val windowsAnyOpen = windowDriverFrontOpen.combine(windowPassengerFrontOpen) { acc, i ->
 		acc || i
 	}.combine(windowDriverRearOpen) { acc, i ->
@@ -339,44 +303,6 @@ class CarDrivingStatsModel(carInfoOverride: CarInformation? = null, val showAdva
 
 	val drivingGear = cdsMetrics.drivingGearName.asLiveData()
 
-	val headingGPS = carInfo.cachedCdsData.flow[CDS.NAVIGATION.GPSEXTENDEDINFO].map {
-		var heading = it.tryAsJsonObject("GPSExtendedInfo")?.tryAsJsonPrimitive("heading")?.tryAsDouble
-		var direction = ""
-		if (heading != null) {
-			// heading defined in CCW manner, so we ned to invert to CW neutral direction wheel.
-			heading *= -1
-			heading += 360
-			//heading = -100 + 360  = 260;
-
-			if((heading>=0 && heading<22.5) || (heading>=347.5 && heading<=360) ) {
-				direction = "N"
-			}
-			else if (heading >= 22.5 && heading < 67.5) {
-				direction = "NE"
-			}
-			else if (heading>=67.5 && heading<112.5) {
-				direction = "E"
-			}
-			else if (heading>=112.5 && heading < 157.5) {
-				direction = "SE"
-			}
-			else if (heading>=157.5 && heading<202.5) {
-				direction = "S"
-			}
-			else if (heading>=202.5 && heading<247.5) {
-				direction = "SW"
-			}
-			else if (heading>=247.5 && heading<302.5){
-				direction = "W"
-			}
-			else if (heading>=302.5 && heading<347.5) {
-				direction = "NW"
-			}
-			else {
-				direction = "-"
-			}
-			round(heading)
-		}
-		Pair(direction, "$heading")
-	}.asLiveData()
+	val headingDirection = cdsMetrics.compassDirection.asLiveData()
+	val headingGPS = cdsMetrics.heading.format("%.0f°").asLiveData()
 }
