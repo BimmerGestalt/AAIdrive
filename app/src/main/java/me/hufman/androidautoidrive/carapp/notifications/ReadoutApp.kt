@@ -17,6 +17,7 @@ import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import kotlinx.coroutines.android.asCoroutineDispatcher
+import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.*
@@ -26,7 +27,7 @@ import me.hufman.androidautoidrive.carapp.carinfo.views.CategoryView
 import me.hufman.androidautoidrive.cds.*
 import me.hufman.androidautoidrive.utils.Utils
 
-class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val handler: Handler, val resources: Resources) {
+class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val handler: Handler, val resources: Resources, val appSettings: AppSettings) {
 	private val coroutineContext = handler.asCoroutineDispatcher()
 	val carConnection: BMWRemotingServer
 	var rhmiHandle: Int = -1
@@ -68,7 +69,7 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 			val destStateId = carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().first().getAction()?.asHMIAction()?.target!!
 			this.infoState = CarDetailedView(carApp.states[destStateId] as RHMIState, coroutineContext, carDetailedInfo)
 			val categoryState = infoState.state.componentsList.filterIsInstance<RHMIComponent.Button>().first().getAction()?.asHMIAction()?.getTargetState()!!
-			this.categoryState = CategoryView(categoryState, carDetailedInfo)
+			this.categoryState = CategoryView(categoryState, carDetailedInfo, appSettings)
 
 			initWidgets()
 		}

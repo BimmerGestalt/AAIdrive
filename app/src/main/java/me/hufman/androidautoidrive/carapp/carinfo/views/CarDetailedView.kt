@@ -22,7 +22,7 @@ class CarDetailedView(val state: RHMIState, val coroutineContext: CoroutineConte
 
 	fun initWidgets() {
 		label.getModel()?.asRaDataModel()?.value = L.CARINFO_TITLE
-		val categoriesEnabled = carInfo.categories.size > 1
+		val categoriesEnabled = true
 		label.setSelectable(categoriesEnabled)
 		label.setEnabled(categoriesEnabled)
 		label.setVisible(true)

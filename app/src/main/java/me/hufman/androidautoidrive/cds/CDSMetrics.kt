@@ -8,6 +8,7 @@ import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsInt
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive
+import me.hufman.androidautoidrive.utils.GsonNullable.tryAsString
 import kotlin.math.max
 
 class CDSMetrics(val carInfo: CarInformation) {
@@ -236,20 +237,29 @@ class CDSMetrics(val carInfo: CarInformation) {
 		compassArrow(heading)
 	}
 
+	var gearboxType = carInfo.cdsData.flow[CDS.ENGINE.INFO].mapNotNull {
+		it.tryAsJsonObject("info")?.tryAsJsonPrimitive("gearboxType")?.tryAsInt
+	}
 	val accelerator = carInfo.cdsData.flow[CDS.DRIVING.ACCELERATORPEDAL].mapNotNull {
 		it.tryAsJsonObject("acceleratorPedal")?.tryAsJsonPrimitive("position")?.tryAsInt
 	}
 	val acceleratorEco = carInfo.cdsData.flow[CDS.DRIVING.ACCELERATORPEDAL].mapNotNull {
 		it.tryAsJsonObject("acceleratorPedal")?.tryAsJsonPrimitive("ecoPosition")?.tryAsInt
 	}
-	val brake = carInfo.cdsData.flow[CDS.DRIVING.BRAKECONTACT].mapNotNull {
+	val brake = carInfo.cdsData.flow[CDS.DRIVING.BRAKECONTACT].map {
 		it.tryAsJsonPrimitive("brakeContact")?.tryAsInt
 	}
-	val clutch = carInfo.cdsData.flow[CDS.DRIVING.CLUTCHPEDAL].mapNotNull {
+	val clutch = carInfo.cdsData.flow[CDS.DRIVING.CLUTCHPEDAL].map {
 		it.tryAsJsonObject("clutchPedal")?.tryAsJsonPrimitive("position")?.tryAsInt
 	}
 	val steeringAngle = carInfo.cdsData.flow[CDS.DRIVING.STEERINGWHEEL].mapNotNull {
 		it.tryAsJsonObject("steeringWheel")?.tryAsJsonPrimitive("angle")?.tryAsDouble
+	}
+	val parkingBrake = carInfo.cachedCdsData.flow[CDS.DRIVING.PARKINGBRAKE].mapNotNull {
+		it.tryAsJsonPrimitive("parkingBrake")?.tryAsInt
+	}
+	val parkingBrakeSet = parkingBrake.map {
+		it == 2 || it == 8 || it == 32
 	}
 
 	val accel = carInfo.cdsData.flow[CDS.DRIVING.ACCELERATION].mapNotNull {
@@ -273,5 +283,32 @@ class CDSMetrics(val carInfo: CarInformation) {
 	}
 	val windowPassengerRear = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWPASSENGERREAR].map {
 		parseWindowState(it.tryAsJsonObject("windowPassengerRear"))
+	}
+
+	val gpsCountry = carInfo.cachedCdsData.flow[CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO].mapNotNull {
+		it.tryAsJsonObject("currentPositionDetailedInfo")?.tryAsJsonPrimitive("country")?.tryAsString
+	}
+	val gpsCity = carInfo.cachedCdsData.flow[CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO].mapNotNull {
+		it.tryAsJsonObject("currentPositionDetailedInfo")?.tryAsJsonPrimitive("city")?.tryAsString
+	}
+	val gpsStreet = carInfo.cachedCdsData.flow[CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO].mapNotNull {
+		it.tryAsJsonObject("currentPositionDetailedInfo")?.tryAsJsonPrimitive("street")?.tryAsString
+	}
+	val gpsCrossStreet = carInfo.cachedCdsData.flow[CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO].mapNotNull {
+		it.tryAsJsonObject("currentPositionDetailedInfo")?.tryAsJsonPrimitive("crossStreet")?.tryAsString
+	}
+	val gpsHouseNumber = carInfo.cachedCdsData.flow[CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO].mapNotNull {
+		it.tryAsJsonObject("currentPositionDetailedInfo")?.tryAsJsonPrimitive("houseNumber")?.tryAsString
+	}
+
+	val gpsAltitude = carInfo.cachedCdsData.flow[CDS.NAVIGATION.GPSEXTENDEDINFO].mapNotNull {
+		it.tryAsJsonObject("GPSExtendedInfo")?.tryAsJsonPrimitive("altitude")?.tryAsInt?.takeIf { it < 32767 }
+	}
+
+	val gpsLat = carInfo.cachedCdsData.flow[CDS.NAVIGATION.GPSPOSITION].mapNotNull {
+		it.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("latitude")?.tryAsDouble
+	}
+	val gpsLon = carInfo.cachedCdsData.flow[CDS.NAVIGATION.GPSPOSITION].mapNotNull {
+		it.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("longitude")?.tryAsDouble
 	}
 }
