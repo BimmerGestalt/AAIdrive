@@ -391,6 +391,7 @@
 
     <!-- car app strings -->
     <string name="CARINFO_TITLE">Detailed Vehicle Info</string>
+    <string name="CARINFO_TITLE_DRIVING">Driving Details</string>
     <string name="CARINFO_ENGINE">Engine</string>
     <string name="CARINFO_OIL">Oil</string>
     <string name="CARINFO_BATTERY">Battery</string>
@@ -401,6 +402,10 @@
     <string name="CARINFO_ACC_BATTERY">Acc. Battery</string>
     <string name="CARINFO_EV_BATTERY">EV Battery</string>
     <string name="CARINFO_FUEL">Fuel</string>
+    <string name="CARINFO_ACCEL">Accel</string>
+    <string name="CARINFO_STEERING">Steering</string>
+    <string name="CARINFO_RPM">RPM</string>
+    <string name="CARINFO_GFORCE">GForce</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
     <string name="CARINFO_UNIT_F">\u2109</string>
     <string name="CARINFO_UNIT_KM">km</string>
@@ -408,6 +413,8 @@
     <string name="CARINFO_UNIT_GALUK">gal (UK)</string>
     <string name="CARINFO_UNIT_GALUS">gal (US)</string>
     <string name="CARINFO_UNIT_LITER">L</string>
+    <string name="CARINFO_UNIT_KMPH">kmph</string>
+    <string name="CARINFO_UNIT_MPH">mph</string>
 
     <string name="NOTIFICATIONS_TITLE">Notifications</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">No Notifications</string>

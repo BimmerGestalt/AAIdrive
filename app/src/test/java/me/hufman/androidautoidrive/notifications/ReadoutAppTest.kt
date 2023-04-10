@@ -8,6 +8,7 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import me.hufman.androidautoidrive.AppSettingsViewer
 import me.hufman.androidautoidrive.MockBMWRemotingServer
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.ReadoutState
@@ -36,7 +37,7 @@ class ReadoutAppTest {
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), resources)
+		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), resources, AppSettingsViewer())
 
 		val labelComponent = app.infoState.state.componentsList.filterIsInstance<RHMIComponent.Button>().first()
 		assertEquals(L.CARINFO_TITLE, mockServer.data[labelComponent.model])
@@ -52,7 +53,7 @@ class ReadoutAppTest {
 	fun testTTSCallback() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), resources)
+		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), resources, AppSettingsViewer())
 
 		IDriveConnection.mockRemotingClient?.cds_onPropertyChangedEvent(1, "113", "hmi.tts",
 				"{\"TTSState\": {\"state\": 0, \"type\": \"app\", \"currentblock\": 0}}" )
@@ -68,7 +69,7 @@ class ReadoutAppTest {
 	fun testTTSTrigger() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), resources)
+		val app = ReadoutApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), resources, AppSettingsViewer())
 
 		app.readoutController.readout(listOf("Test Output"))
 		val speechList = mockServer.data[app.readoutController.speechList.id] as BMWRemoting.RHMIDataTable

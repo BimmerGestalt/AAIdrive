@@ -9,6 +9,7 @@ import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
+import me.hufman.androidautoidrive.cds.CDSMetrics
 import me.hufman.androidautoidrive.cds.CDSVehicleUnits
 import me.hufman.androidautoidrive.maps.CarLocationProvider
 import me.hufman.androidautoidrive.maps.LatLong
@@ -90,29 +91,6 @@ class SearchResultsView(val state: RHMIState, val mapPlaceSearch: MapPlaceSearch
 	}
 
 	class MapResultListAdapter(mapAppMode: MapAppMode, locationProvider: CarLocationProvider, contents: List<MapResult>): RHMIModel.RaListModel.RHMIListAdapter<MapResult>(2, contents) {
-		companion object {
-			fun bearingArrow(angle: Float?): String {
-				angle ?: return ""
-				val ranges = listOf(
-						(0f..22.5f) to "↑",
-						(22.5f..67.5f) to "↗",
-						(67.5f..112.5f) to "→",
-						(112.5f..157.5f) to "↘",
-						(157.5f..202.5f) to "↓",
-						(202.5f..247.5f) to "↙",
-						(247.5f..292.5f) to "←",
-						(292.5f..337.5f) to "↖",
-						(337.5f..360f) to "↑"
-				)
-				for ((range, symbol) in ranges) {
-					if (range.contains(angle)) {
-						return symbol
-					}
-				}
-				return ""
-			}
-		}
-
 		val currentLocation = locationProvider.currentLocation
 		val currentLatLong = currentLocation?.let { LatLong(it.latitude, it.longitude) }
 		val distanceUnits = mapAppMode.distanceUnits        // cache across each row for this set of results
@@ -124,7 +102,7 @@ class SearchResultsView(val state: RHMIState, val mapPlaceSearch: MapPlaceSearch
 					?.minus(currentLocation?.bearing ?: 0f)
 					?.plus(360f)
 					?.mod(360f)
-			val bearingArrow = bearingArrow(relativeToCarBearing)
+			val bearingArrow = CDSMetrics.compassArrow(relativeToCarBearing)
 			val distance = item.distanceKm?.let {
 				val distance = distanceUnits.fromCarUnit(it).toInt()
 				val label = if (distanceUnits == CDSVehicleUnits.Distance.Miles) "mi" else "km"
