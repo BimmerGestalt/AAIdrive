@@ -349,6 +349,7 @@
     <string name="btn_authorize">Авторизировать</string>
     <!-- car app strings -->
     <string name="CARINFO_TITLE">Подробная информация об Автомобиле</string>
+    <string name="CARINFO_TITLE_DRIVING">Детали поездки</string>
     <string name="CARINFO_ENGINE">Двигатель</string>
     <string name="CARINFO_OIL">Масло</string>
     <string name="CARINFO_BATTERY">Аккумулятор</string>
@@ -359,6 +360,10 @@
     <string name="CARINFO_ACC_BATTERY">Акт. батарея</string>
     <string name="CARINFO_EV_BATTERY">Батарея EV</string>
     <string name="CARINFO_FUEL">Топливо</string>
+    <string name="CARINFO_ACCEL">Ускор.</string>
+    <string name="CARINFO_STEERING">Поворот</string>
+    <string name="CARINFO_RPM">об./мин.</string>
+    <string name="CARINFO_GFORCE">GForce</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
     <string name="CARINFO_UNIT_F">\u2109</string>
     <string name="CARINFO_UNIT_KM">км</string>
@@ -366,6 +371,8 @@
     <string name="CARINFO_UNIT_GALUK">гал (UK)</string>
     <string name="CARINFO_UNIT_GALUS">гал (US)</string>
     <string name="CARINFO_UNIT_LITER">Л</string>
+    <string name="CARINFO_UNIT_KMPH">км/ч</string>
+    <string name="CARINFO_UNIT_MPH">миль/ч</string>
     <string name="NOTIFICATIONS_TITLE">Уведомления</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Нет уведомлений</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Очистить </string>
