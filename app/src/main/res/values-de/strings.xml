@@ -358,6 +358,7 @@
     <string name="btn_authorize">Autorisieren</string>
     <!-- car app strings -->
     <string name="CARINFO_TITLE">Detaillierte Fahrzeuginfo</string>
+    <string name="CARINFO_TITLE_DRIVING">Fahrdetails</string>
     <string name="CARINFO_ENGINE">Motor</string>
     <string name="CARINFO_OIL">Öl</string>
     <string name="CARINFO_BATTERY">Batterie</string>
@@ -368,6 +369,8 @@
     <string name="CARINFO_ACC_BATTERY">Acc. Batterie</string>
     <string name="CARINFO_EV_BATTERY">EV Batterie</string>
     <string name="CARINFO_FUEL">Kraftstoff</string>
+    <string name="CARINFO_ACCEL">Fahrpedalstellung</string>
+    <string name="CARINFO_STEERING">Lenkung</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
     <string name="CARINFO_UNIT_F">\u2109</string>
     <string name="CARINFO_UNIT_KM">km</string>
