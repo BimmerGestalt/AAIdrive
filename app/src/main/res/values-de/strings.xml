@@ -381,7 +381,7 @@
     <string name="CARINFO_UNIT_GALUS">gal (US)</string>
     <string name="CARINFO_UNIT_LITER">L</string>
     <string name="CARINFO_UNIT_KMPH">km/h</string>
-    <string name="CARINFO_UNIT_MPH">km/h</string>
+    <string name="CARINFO_UNIT_MPH">mph</string>
     <string name="NOTIFICATIONS_TITLE">Benachrichtigungen</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Keine Benachrichtigungen</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Leeren</string>
