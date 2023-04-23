@@ -357,7 +357,8 @@
     <string name="lbl_spotify_api_authorized_user_friendly">Suchmöglichkeit für Spotify</string>
     <string name="btn_authorize">Autorisieren</string>
     <!-- car app strings -->
-    <string name="CARINFO_TITLE">Detaillierte Fahrzeuginfo</string>
+    <string name="CARINFO_TITLE">Detaillierte Fahrzeuginformationen</string>
+    <string name="CARINFO_TITLE_DRIVING">Fahrdetails</string>
     <string name="CARINFO_ENGINE">Motor</string>
     <string name="CARINFO_OIL">Öl</string>
     <string name="CARINFO_BATTERY">Batterie</string>
@@ -365,9 +366,13 @@
     <string name="CARINFO_EXTERIOR">Außen</string>
     <string name="CARINFO_INTERIOR">Innen</string>
     <string name="CARINFO_GEAR">Gang</string>
-    <string name="CARINFO_ACC_BATTERY">Acc. Batterie</string>
+    <string name="CARINFO_ACC_BATTERY">Batterieladung</string>
     <string name="CARINFO_EV_BATTERY">EV Batterie</string>
     <string name="CARINFO_FUEL">Kraftstoff</string>
+    <string name="CARINFO_ACCEL">Fahrpedalstellung</string>
+    <string name="CARINFO_STEERING">Lenkung</string>
+    <string name="CARINFO_RPM">U/Min</string>
+    <string name="CARINFO_GFORCE">g-Kräfte</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
     <string name="CARINFO_UNIT_F">\u2109</string>
     <string name="CARINFO_UNIT_KM">km</string>
@@ -375,6 +380,8 @@
     <string name="CARINFO_UNIT_GALUK">gal (UK)</string>
     <string name="CARINFO_UNIT_GALUS">gal (US)</string>
     <string name="CARINFO_UNIT_LITER">L</string>
+    <string name="CARINFO_UNIT_KMPH">km/h</string>
+    <string name="CARINFO_UNIT_MPH">mph</string>
     <string name="NOTIFICATIONS_TITLE">Benachrichtigungen</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Keine Benachrichtigungen</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Leeren</string>
