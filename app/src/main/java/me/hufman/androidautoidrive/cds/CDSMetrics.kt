@@ -220,14 +220,15 @@ class CDSMetrics(val carInfo: CarInformation) {
 		it.tryAsJsonPrimitive("RPMSpeed")?.tryAsInt
 	}
 
-	val heading = carInfo.cachedCdsData.flow[CDS.NAVIGATION.GPSEXTENDEDINFO].mapNotNull {
-		var heading = it.tryAsJsonObject("GPSExtendedInfo")?.tryAsJsonPrimitive("heading")?.tryAsDouble?.toFloat()
-		if (heading != null) {
-			// heading defined in CCW manner, so we ned to invert to CW neutral direction wheel.
-			heading *= -1
-			heading += 360
-			//heading = -100 + 360  = 260;
-		}
+	val rawHeading = carInfo.cachedCdsData.flow[CDS.NAVIGATION.GPSEXTENDEDINFO].mapNotNull {
+		it.tryAsJsonObject("GPSExtendedInfo")?.tryAsJsonPrimitive("heading")?.tryAsDouble?.toFloat()
+	}
+	val heading = rawHeading.mapNotNull { rawHeading ->
+		var heading = rawHeading
+		// heading defined in CCW manner, so we ned to invert to CW neutral direction wheel.
+		heading *= -1
+		heading += 360
+		//heading = -100 + 360  = 260;
 		heading
 	}
 	val compassDirection = heading.map { heading ->

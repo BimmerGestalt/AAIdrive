@@ -161,6 +161,7 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	val altitudeLabel = cdsMetrics.gpsAltitude.map { "Altitude: ${it}m" }
 	val latitudeLabel = cdsMetrics.gpsLat.map { "Lat: $it" }
 	val longitudeLabel = cdsMetrics.gpsLon.map { "Long: $it" }
+	val rawHeading = cdsMetrics.rawHeading.format("%.0f Raw Heading")
 
 	// categories
 	private val overviewFields: List<Flow<String>> = listOf(
@@ -187,7 +188,8 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 			countryLabel, heading,
 			cityLabel, altitudeLabel,
 			streetLabel, crossStreetLabel,
-			latitudeLabel, longitudeLabel
+			latitudeLabel, longitudeLabel,
+			rawHeading
 	)
 	private val windowFields: List<Flow<String>> = if (!rightHandDrive) {
 		listOf(
