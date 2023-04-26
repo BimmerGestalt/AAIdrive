@@ -366,7 +366,7 @@
     <string name="CARINFO_EXTERIOR">Außen</string>
     <string name="CARINFO_INTERIOR">Innen</string>
     <string name="CARINFO_GEAR">Gang</string>
-    <string name="CARINFO_ACC_BATTERY">Batterieladung</string>
+    <string name="CARINFO_ACC_BATTERY">Acc. Batterie</string>
     <string name="CARINFO_EV_BATTERY">EV Batterie</string>
     <string name="CARINFO_FUEL">Kraftstoff</string>
     <string name="CARINFO_ACCEL">Fahrpedalstellung</string>
