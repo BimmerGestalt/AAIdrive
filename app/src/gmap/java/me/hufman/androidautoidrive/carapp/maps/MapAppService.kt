@@ -32,7 +32,7 @@ class MapAppService: CarAppService() {
 		val cdsData = CDSDataProvider()
 		cdsData.setConnection(CarInformation.cdsData.asConnection(cdsData))
 		val carLocationProvider = CombinedLocationProvider(
-				appSettings, AndroidLocationProvider.getInstance(this), CdsLocationProvider(cdsData)
+				appSettings, AndroidLocationProvider.getInstance(this), CdsLocationProvider(cdsData, false)
 		)
 		val mapAppMode = MapAppMode.build(RHMIDimensions.create(carInformation.capabilities), MutableAppSettingsReceiver(this, handler), cdsData, MusicAppMode.TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port) ?: MusicAppMode.TRANSPORT_PORTS.BT)
 		this.mapAppMode = mapAppMode

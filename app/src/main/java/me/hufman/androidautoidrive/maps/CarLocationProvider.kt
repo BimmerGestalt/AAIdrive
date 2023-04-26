@@ -67,7 +67,7 @@ abstract class CarLocationProvider {
 	abstract fun stop()
 }
 
-class CdsLocationProvider(val cdsData: CDSData): CarLocationProvider() {
+class CdsLocationProvider(val cdsData: CDSData, val id4: Boolean): CarLocationProvider() {
 	var currentLatLong: LatLong? = null
 	var currentHeading: CarHeading? = null
 
@@ -111,10 +111,11 @@ class CdsLocationProvider(val cdsData: CDSData): CarLocationProvider() {
 		val gpsHeading = cdsData[CDS.NAVIGATION.GPSEXTENDEDINFO] ?: return
 		val position = gpsHeading.tryAsJsonObject("GPSExtendedInfo")
 		val heading = position?.tryAsJsonPrimitive("heading")?.tryAsDouble   // in degrees, needs to be negated for Location usage
+		val headingAdj = if (id4) -1.40625f else -1f
 		val speed = position?.tryAsJsonPrimitive("speed")?.tryAsDouble ?: 0.0  // in kmph
 		val validSpeed = if (speed < 4000) speed else 0
 		if (heading != null) {
-			currentHeading = CarHeading(-heading.toFloat(), validSpeed.toFloat() / 3.6f)
+			currentHeading = CarHeading(heading.toFloat() * headingAdj, validSpeed.toFloat() / 3.6f)
 			onLocationUpdate()
 		}
 	}

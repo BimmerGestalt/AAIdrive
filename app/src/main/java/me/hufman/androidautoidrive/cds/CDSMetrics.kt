@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.cds
 import com.google.gson.JsonObject
 import io.bimmergestalt.idriveconnectkit.CDS
 import kotlinx.coroutines.flow.*
+import me.hufman.androidautoidrive.CarCapabilitiesSummarized
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsInt
@@ -225,7 +226,11 @@ class CDSMetrics(val carInfo: CarInformation) {
 	}
 	val heading = rawHeading.mapNotNull { rawHeading ->
 		var heading = rawHeading
-		// heading defined in CCW manner, so we ned to invert to CW neutral direction wheel.
+		// ID4 range is 0..256, adjust to 0..360
+		if (CarCapabilitiesSummarized(carInfo).isId4) {
+			heading *= 1.40625f
+		}
+		// heading defined in CCW manner, so we need to invert to CW neutral direction wheel.
 		heading *= -1
 		heading += 360
 		//heading = -100 + 360  = 260;
