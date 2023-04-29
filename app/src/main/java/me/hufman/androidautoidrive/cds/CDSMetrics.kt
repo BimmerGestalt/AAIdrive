@@ -269,20 +269,20 @@ class CDSMetrics(val carInfo: CarInformation) {
 		Pair(lat, long)
 	}
 
-	val sunroof = carInfo.cachedCdsData.flow[CDS.CONTROLS.SUNROOF].map {
-		parseWindowState(it.tryAsJsonObject("sunroof"))
+	val sunroof = carInfo.cachedCdsData.flow[CDS.CONTROLS.SUNROOF].mapNotNull {
+		parseWindowState(it.tryAsJsonObject("sunroof")).takeIf { it.position < 150 }
 	}
-	val windowDriverFront = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWDRIVERFRONT].map {
-		parseWindowState(it.tryAsJsonObject("windowDriverFront"))
+	val windowDriverFront = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWDRIVERFRONT].mapNotNull {
+		parseWindowState(it.tryAsJsonObject("windowDriverFront")).takeIf { it.position < 150 }
 	}
-	val windowPassengerFront = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWPASSENGERFRONT].map {
-		parseWindowState(it.tryAsJsonObject("windowPassengerFront"))
+	val windowPassengerFront = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWPASSENGERFRONT].mapNotNull {
+		parseWindowState(it.tryAsJsonObject("windowPassengerFront")).takeIf { it.position < 150 }
 	}
-	val windowDriverRear = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWDRIVERREAR].map {
-		parseWindowState(it.tryAsJsonObject("windowDriverRear"))
+	val windowDriverRear = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWDRIVERREAR].mapNotNull {
+		parseWindowState(it.tryAsJsonObject("windowDriverRear")).takeIf { it.position < 150 }
 	}
-	val windowPassengerRear = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWPASSENGERREAR].map {
-		parseWindowState(it.tryAsJsonObject("windowPassengerRear"))
+	val windowPassengerRear = carInfo.cachedCdsData.flow[CDS.CONTROLS.WINDOWPASSENGERREAR].mapNotNull {
+		parseWindowState(it.tryAsJsonObject("windowPassengerRear")).takeIf { it.position < 150 }
 	}
 
 	val gpsCountry = carInfo.cachedCdsData.flow[CDS.NAVIGATION.CURRENTPOSITIONDETAILEDINFO].mapNotNull {
