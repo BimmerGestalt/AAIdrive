@@ -144,6 +144,7 @@ Implemented Features
         - [NHL](https://play.google.com/store/apps/details?id=com.nhl.gc1112.free)
         - [ntv Nachrichten](https://play.google.com/store/apps/details?id=de.lineas.lit.ntv.android)
         - [NYTimes](https://play.google.com/store/apps/details?id=com.nytimes.android)
+        - [Open Radio](https://play.google.com/store/apps/details?id=com.yuriy.openradio)
         - [R101](https://play.google.com/store/apps/details?id=it.r101)
         - [Radio 105](https://play.google.com/store/apps/details?id=it.froggy.android.radio105)
         - [Radio Bob](https://play.google.com/store/apps/details?id=de.radiobob.radio)
