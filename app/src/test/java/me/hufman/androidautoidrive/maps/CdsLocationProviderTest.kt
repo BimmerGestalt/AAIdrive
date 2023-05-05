@@ -27,7 +27,7 @@ class CdsLocationProviderTest {
 
 	@Test
 	fun testParseEmpty() {
-		val provider = CdsLocationProvider(cdsData)
+		val provider = CdsLocationProvider(cdsData, false)
 		assertNull(provider.currentLatLong)
 		assertNull(provider.currentHeading)
 		assertNull(provider.currentLocation)
@@ -55,7 +55,7 @@ class CdsLocationProviderTest {
 
 				cdsData.onPropertyChangedEvent(CDS.NAVIGATION.GPSPOSITION, position)
 
-				val provider = CdsLocationProvider(cdsData)
+				val provider = CdsLocationProvider(cdsData, false)
 				assertNull(provider.currentLatLong)
 				assertNull(provider.currentHeading)
 				assertNull(provider.currentLocation)
@@ -68,7 +68,7 @@ class CdsLocationProviderTest {
 		cdsData.onPropertyChangedEvent(CDS.NAVIGATION.GPSPOSITION, gpsPosition)
 		cdsData.onPropertyChangedEvent(CDS.NAVIGATION.GPSEXTENDEDINFO, gpsHeading)
 
-		val provider = CdsLocationProvider(cdsData)
+		val provider = CdsLocationProvider(cdsData, false)
 		assertNotNull(provider.currentLatLong)
 		assertNotNull(provider.currentHeading)
 		assertNotNull(provider.currentLocation)
@@ -85,8 +85,30 @@ class CdsLocationProviderTest {
 	}
 
 	@Test
+	fun testParseId4() {
+		// ID4's heading ranges from 0-255
+		cdsData.onPropertyChangedEvent(CDS.NAVIGATION.GPSPOSITION, gpsPosition)
+		cdsData.onPropertyChangedEvent(CDS.NAVIGATION.GPSEXTENDEDINFO, gpsHeading)
+
+		val provider = CdsLocationProvider(cdsData, true)
+		assertNotNull(provider.currentLatLong)
+		assertNotNull(provider.currentHeading)
+		assertNotNull(provider.currentLocation)
+
+		assertEquals(12.345678, provider.currentLatLong?.latitude)
+		assertEquals(-12.345678, provider.currentLatLong?.longitude)
+		assertEquals(-202.5f, provider.currentHeading?.heading)
+		assertEquals(0f, provider.currentHeading?.speed)
+
+		assertEquals(12.345678, provider.currentLocation?.latitude)
+		assertEquals(-12.345678, provider.currentLocation?.longitude)
+		assertEquals(-202.5f, provider.currentLocation?.bearing)
+		assertEquals(0f, provider.currentLocation?.speed)
+	}
+
+	@Test
 	fun testStart() {
-		val provider = CdsLocationProvider(cdsData)
+		val provider = CdsLocationProvider(cdsData, false)
 		assertNull(provider.currentLatLong)
 		assertNull(provider.currentHeading)
 		assertNull(provider.currentLocation)

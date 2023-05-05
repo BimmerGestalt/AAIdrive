@@ -5,6 +5,6 @@ import me.hufman.androidautoidrive.CarInformation
 
 class PlaceSearchProvider(private val context: Context) {
 	fun getInstance(): MapPlaceSearch {
-		return MapboxPlaceSearch.getInstance(CdsLocationProvider(CarInformation.cachedCdsData))
+		return MapboxPlaceSearch.getInstance(CdsLocationProvider(CarInformation.cachedCdsData, false))
 	}
 }
