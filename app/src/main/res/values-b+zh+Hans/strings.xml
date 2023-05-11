@@ -10,6 +10,8 @@
     <string name="notification_description_chassiscode">连接至 %s</string>
     <string name="notification_description_bmw">连接至 BMW</string>
     <string name="notification_description_mini">连接至 Mini</string>
+    <string name="permission_cds_normal">获取车辆一般信息</string>
+    <string name="permission_cds_personal">获取车辆个人信息</string>
     <!-- notification channel names -->
     <string name="notification_channel_assistant">启动助手</string>
     <string name="notification_channel_connection">车辆连接状态</string>
@@ -40,8 +42,10 @@
     <string name="menu_music">音乐</string>
     <string name="menu_notifications">通知</string>
     <string name="menu_assistants">助手</string>
+    <string name="menu_calendar">日历</string>
     <string name="menu_maps">地图</string>
     <string name="menu_navigation">导航</string>
+    <string name="menu_addons">应用拓展插件</string>
     <string name="menu_settings">设置</string>
     <string name="menu_support">支持</string>
     <string name="btn_next">继续</string>
