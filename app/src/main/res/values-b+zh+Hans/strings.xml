@@ -127,6 +127,7 @@
     <string name="lbl_language_prefercar">优先考虑车辆语言，其次手机语言</string>
     <string name="lbl_language_prefercar_code">选择车辆语言(%s)而非手机语言</string>
     <string name="lbl_language_forcelanguage">强制语言</string>
+    <string name="lbl_analytics_enabled">启用分析和崩溃报告上传功能</string>
     <string name="lbl_donations_volunteer">AAIdrive是一个非盈利项目</string>
     <string name="lbl_donations_request">如果你喜欢使用，请通过捐款支持我们:</string>
     <string name="btn_donations">捐款</string>
@@ -189,6 +190,7 @@
     <string name="txt_setup_bcl_waiting">等待应用连接启动</string>
     <string name="txt_setup_enable_bclspp_bt">切换蓝牙音乐</string>
     <string name="txt_setup_enable_bclspp_usb">切换蓝牙或USB连接音乐</string>
+    <string name="txt_setup_enable_bmwmine">请确认MyBMW应用用户已登录</string>
     <string name="txt_setup_bcl_connecting">应用连接正在试图连接</string>
     <string name="txt_setup_bcl_connected">应用连接</string>
     <string name="txt_setup_bcl_connected_transport">应用连接通过 %s 运行</string>
