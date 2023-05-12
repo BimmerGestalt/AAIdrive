@@ -164,6 +164,13 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	val rawHeading = cdsMetrics.rawHeading.format("%.0f Raw Heading")
 
 	// categories
+	private val sportFields: List<Flow<String>> = listOf(
+			engineTemp, oilTemp,
+			accelContact, brakeState,
+			clutchState, steeringAngle,
+			tempInterior, tempExterior,
+			gforces
+	)
 	private val overviewFields: List<Flow<String>> = listOf(
 			engineTemp, tempExterior,
 			oilTemp, tempInterior,
@@ -214,6 +221,7 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		put(L.CARINFO_TITLE_DRIVING + " ", drivingAdvancedFields)   // slightly different key for the allCategories
 
 		// add more pages like this:
+		put("Sport Displays", sportFields)
 		put("GPS", gpsFields)
 		put("Window Status", windowFields)
 	}
