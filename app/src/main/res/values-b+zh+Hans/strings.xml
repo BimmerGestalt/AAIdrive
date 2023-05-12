@@ -357,9 +357,11 @@
     <string name="btn_authorize">认证</string>
     <!-- car app strings -->
     <string name="CARINFO_TITLE">车辆详细信息</string>
+    <string name="CARINFO_TITLE_DRIVING">驾驶详情</string>
     <string name="CARINFO_ENGINE">发动机</string>
     <string name="CARINFO_OIL">燃油</string>
     <string name="CARINFO_BATTERY">电池</string>
+    <string name="CARINFO_EXCHANGER">HVAC</string>
     <string name="CARINFO_EXTERIOR">外部</string>
     <string name="CARINFO_INTERIOR">内部</string>
     <string name="CARINFO_GEAR">档位</string>
