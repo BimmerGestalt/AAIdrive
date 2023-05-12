@@ -127,6 +127,7 @@
     <string name="lbl_language_prefercar">优先考虑车辆语言，其次手机语言</string>
     <string name="lbl_language_prefercar_code">选择车辆语言(%s)而非手机语言</string>
     <string name="lbl_language_forcelanguage">强制语言</string>
+    <string name="lbl_analytics_description">开启分析功能，除了崩溃报告外，还会上传已安装音乐应用列表和一些匿名的车辆信息，以帮助开发应用功能。</string>
     <string name="lbl_analytics_enabled">启用分析和崩溃报告上传功能</string>
     <string name="lbl_donations_volunteer">AAIdrive是一个非盈利项目</string>
     <string name="lbl_donations_request">如果你喜欢使用，请通过捐款支持我们:</string>
@@ -152,6 +153,7 @@
     <string name="txt_setup_background_permission">app可在后台运行</string>
     <string name="txt_setup_background_impermission">app不可在后台运行</string>
     <string name="txt_setup_background_hint">如果允许后台运行，有助于自动连接</string>
+    <string name="txt_setup_bluetooth_permission">当连接到车辆蓝牙时，可自动唤醒应用程序</string>
     <string name="txt_setup_bmw_ready">app准备好连接至 BMW</string>
     <string name="txt_setup_mini_ready">app准备好连接至 Mini</string>
     <string name="txt_setup_bmw_missing">未准备好连接至 BMW:</string>
@@ -191,6 +193,7 @@
     <string name="txt_setup_enable_bclspp_bt">切换蓝牙音乐</string>
     <string name="txt_setup_enable_bclspp_usb">切换蓝牙或USB连接音乐</string>
     <string name="txt_setup_enable_bmwmine">请确认MyBMW应用用户已登录</string>
+    <string name="txt_setup_enable_minimine">确保MINI应用程序用户已登录</string>
     <string name="txt_setup_bcl_connecting">应用连接正在试图连接</string>
     <string name="txt_setup_bcl_connected">应用连接</string>
     <string name="txt_setup_bcl_connected_transport">应用连接通过 %s 运行</string>
@@ -319,6 +322,8 @@
     <string name="lbl_spotify_api_authorized_user_friendly">搜索 Spotify</string>
     <string name="btn_authorize">认证</string>
     <!-- car app strings -->
+    <string name="CARINFO_TITLE">车辆详细信息</string>
+    <string name="CARINFO_GEAR">档位</string>
     <string name="NOTIFICATIONS_TITLE">通知</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">无通知</string>
     <string name="NOTIFICATION_CLEAR_ACTION">清除</string>
