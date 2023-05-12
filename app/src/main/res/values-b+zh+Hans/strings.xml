@@ -10,6 +10,7 @@
     <string name="notification_description_chassiscode">连接至 %s</string>
     <string name="notification_description_bmw">连接至 BMW</string>
     <string name="notification_description_mini">连接至 Mini</string>
+    <string name="notification_shutdown">关闭</string>
     <string name="permission_cds_normal">获取车辆一般信息</string>
     <string name="permission_cds_personal">获取车辆个人信息</string>
     <!-- notification channel names -->
@@ -68,6 +69,7 @@
     <string name="notification_quickreplies_default">[\"👍\",\"在路上!\",\"在车上\",\"不能回消息，请打电话\",\"我稍后打给你\"]</string>
     <string name="lbl_notification_permissions">查看通知权限</string>
     <string name="lbl_notification_sms_permissions">显示SMS图片权限</string>
+    <string name="lbl_notification_permissions_hint">您可以稍后授予获取通知权限，并且可以在任何时候轻松撤销</string>
     <string name="lbl_popupVersion">只有IDrive4支持弹出框</string>
     <string name="lbl_ttsUnsupported">您的车辆不支持TTS</string>
     <string name="lbl_smsPermission">允许在车上查看SMS图片，SMS文字默认可见.</string>
@@ -137,11 +139,20 @@
     <string name="lbl_addon_learn">了解详情</string>
     <string name="addonAppIcon">拓展App插件 图标</string>
     <string name="addonConnectionPermission">插件访问权限</string>
+    <string name="addonConnectionPermissionDeclined">禁止连接到车辆</string>
+    <string name="addonConnectionPermissionGranted">允许连接到车辆</string>
+    <string name="addonNormalPermission">汽车数据访问权限</string>
+    <string name="addonNormalPermissionDeclined">禁止访问车辆数据</string>
+    <string name="addonNormalPermissionGranted">允许获取车辆信息</string>
+    <string name="addonPersonalPermission">车辆个人数据权限</string>
+    <string name="addonPersonalPermissionDeclined">禁止访问车辆个人数据</string>
+    <string name="addonPersonalPermissionGranted">允许访问车辆个人数据</string>
     <string name="lbl_settingspage">高级设置，不保证稳定性</string>
     <string name="lbl_language_carinterface">车辆显示语言</string>
     <string name="lbl_language_prefercar">优先考虑车辆语言，其次手机语言</string>
     <string name="lbl_language_prefercar_code">选择车辆语言(%s)而非手机语言</string>
     <string name="lbl_language_forcelanguage">强制语言</string>
+    <string name="lbl_analytics_intro">AAIdrive是一个非官方的项目，没有以任何方式得到BMW的支持或认可，基于逆向工程的协议实现。 我对其功能和稳定性感到自豪，但崩溃可能仍然发生。请考虑启用分析功能来自动发送任何崩溃报告以便帮助改进应用程序。</string>
     <string name="lbl_analytics_description">开启分析功能，除了崩溃报告外，还会上传已安装音乐应用列表和一些匿名的车辆信息，以帮助开发应用功能。</string>
     <string name="lbl_analytics_enabled">启用分析和崩溃报告上传功能</string>
     <string name="lbl_donations_volunteer">AAIdrive是一个非盈利项目</string>
@@ -151,6 +162,7 @@
     <string name="lbl_support_feedback">提供反馈</string>
     <string name="lbl_support_issues">提交问题</string>
     <string name="lbl_support_share">告诉朋友</string>
+    <string name="lbl_support_privacy">隐私非常重要，因此AAIdrive不会收集、存储或共享您的个人数据。点击此处了解更多内容。</string>
     <string name="lbl_support_thanks">感谢您使用 AAIdrive!</string>
     <string name="lbl_ok">确认</string>
     <string name="lbl_cancel">取消</string>
@@ -169,8 +181,11 @@
     <string name="txt_setup_background_impermission">app不可在后台运行</string>
     <string name="txt_setup_background_hint">如果允许后台运行，有助于自动连接</string>
     <string name="txt_setup_bluetooth_permission">当连接到车辆蓝牙时，可自动唤醒应用程序</string>
+    <string name="txt_setup_bluetooth_impermission">蓝牙连接时应用程序可能无法自动唤醒</string>
     <string name="txt_setup_bmw_ready">app准备好连接至 BMW</string>
     <string name="txt_setup_mini_ready">app准备好连接至 Mini</string>
+    <string name="txt_setup_toyota_ready">app已准备好连接至 Toyota Supra</string>
+    <string name="txt_setup_toyota_hint">对于Toyota支持是非常有限的，目前仅提供汽车数据</string>
     <string name="txt_setup_bmw_missing">未准备好连接至 BMW:</string>
     <string name="txt_setup_mini_missing">未准备好连接至 Mini:</string>
     <string name="txt_setup_bmw_connected_65">检测到 BMW Connected 6.5 安装, 可导致车辆连接失败. 如有问题，请降级到6.4或升级到MyBMW</string>
@@ -180,6 +195,9 @@
     <string name="txt_setup_bmw_mine_conflict">检测到 BMW Connected 和 My BMW apps 同时安装，可导致连接不稳定，建议通过USB连接</string>
     <string name="txt_setup_mini_mine_conflict">检测 MINI Connected 和 My MINI apps 同时安装，可导致连接不稳定，建议通过USB连接</string>
     <string name="txt_setup_security_missing">无法连接安全服务:</string>
+    <string name="txt_setup_background_killed">应用在连接到汽车时被系统终止</string>
+    <string name="txt_setup_background_suspended">应用在连接到汽车时被系统暂停后台运行</string>
+    <string name="txt_setup_background_restrictions_hint">检查您手机的后台运行和电池节能设置，允许AAIdrive在后台运行</string>
     <string name="btn_install">安装</string>
     <string name="btn_install_bmwmine">安装 MyBMW app</string>
     <string name="btn_install_minimine">安装 Mini app</string>
@@ -327,6 +345,7 @@
     <string name="notification_assistant_description">只有在屏幕打开时才需要</string>
     <string name="donation_title">喜欢此app?</string>
     <string name="donation_text">小额捐款支持我们</string>
+    <string name="donation_text_onetime">仅一次性请求</string>
     <string name="txt_spotify_auth_notification">Spotify Web API 需要认证. 点击此处.</string>
     <string name="txt_spotify_app_remote_last_error">Spotify App Remote 最新错误:</string>
     <string name="txt_spotify_api_authorization_needed">Spotify Web API 需要认证.</string>
@@ -338,7 +357,28 @@
     <string name="btn_authorize">认证</string>
     <!-- car app strings -->
     <string name="CARINFO_TITLE">车辆详细信息</string>
+    <string name="CARINFO_ENGINE">发动机</string>
+    <string name="CARINFO_OIL">燃油</string>
+    <string name="CARINFO_BATTERY">电池</string>
+    <string name="CARINFO_EXTERIOR">外部</string>
+    <string name="CARINFO_INTERIOR">内部</string>
     <string name="CARINFO_GEAR">档位</string>
+    <string name="CARINFO_ACC_BATTERY">Acc. 电池</string>
+    <string name="CARINFO_EV_BATTERY">EV电池</string>
+    <string name="CARINFO_FUEL">燃油</string>
+    <string name="CARINFO_ACCEL">加速度</string>
+    <string name="CARINFO_STEERING">转向</string>
+    <string name="CARINFO_RPM">RPM</string>
+    <string name="CARINFO_GFORCE">加速度</string>
+    <string name="CARINFO_UNIT_C">度</string>
+    <string name="CARINFO_UNIT_F">华氏度</string>
+    <string name="CARINFO_UNIT_KM">公里</string>
+    <string name="CARINFO_UNIT_MI">英里</string>
+    <string name="CARINFO_UNIT_GALUK">加仑（英）</string>
+    <string name="CARINFO_UNIT_GALUS">加仑（美）</string>
+    <string name="CARINFO_UNIT_LITER">升</string>
+    <string name="CARINFO_UNIT_KMPH">公里/小时</string>
+    <string name="CARINFO_UNIT_MPH">英里/时</string>
     <string name="NOTIFICATIONS_TITLE">通知</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">无通知</string>
     <string name="NOTIFICATION_CLEAR_ACTION">清除</string>
@@ -353,14 +393,23 @@
     <string name="NOTIFICATION_PERMISSION_NEEDED">此app 需要授权访问通知</string>
     <string name="NOTIFICATION_CENTER_APP">此app用于推送车上通知中心</string>
     <string name="READOUT_DESCRIPTION">此app用于语音播放</string>
+    <string name="CALENDAR_TIME_START">开始时间</string>
+    <string name="CALENDAR_TIME_END">结束时间</string>
+    <string name="CALENDAR_TIME_DURATION">持续时间</string>
+    <string name="CALENDAR_TIME_ALLDAY">全天</string>
+    <string name="CALENDAR_NAVIGATE">导航</string>
     <string name="MAP_ACTION_VIEWMAP">查看完整地图</string>
     <string name="MAP_ACTION_SEARCH">搜索地址</string>
+    <string name="MAP_ACTION_RECALC_NAV">重新计算导航路线</string>
     <string name="MAP_ACTION_CLEARNAV">清除导航</string>
+    <string name="MAP_DESTINATIONS">常用的的导航目的地：</string>
     <string name="MAP_WIDESCREEN">宽屏地图</string>
     <string name="MAP_INVERT_ZOOM">反转缩放</string>
+    <string name="MAP_SATELLITE">显示卫星图像</string>
     <string name="MAP_TRAFFIC">显示</string>
     <string name="MAP_BUILDINGS">激活 3D 建筑</string>
     <string name="MAP_TILT">倾斜地图</string>
+    <string name="MAP_CUSTOM_STYLE">使用自定义地图样式</string>
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;无Apps&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">操作</string>
@@ -388,6 +437,7 @@
     <string name="MUSIC_TURN_REPEAT_ALL_ON">打开全部循环</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">打开单曲循环</string>
     <string name="MUSIC_TURN_REPEAT_OFF">关闭循环</string>
+    <string name="MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION">AAIdrive 临时播放列表</string>
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="other">回退 %s 秒</item>
     </plurals>
@@ -401,4 +451,6 @@
     <string name="MUSIC_SPOTIFY_THUMBS_UP_SELECTED">Thumbed Up</string>
     <string name="MUSIC_SPOTIFY_THUMB_DOWN">Thumb Down</string>
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Thumbed Down</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">我的音乐库</string>
+    <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">浏览</string>
 </resources>
