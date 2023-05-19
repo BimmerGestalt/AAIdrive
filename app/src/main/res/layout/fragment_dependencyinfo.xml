@@ -31,7 +31,7 @@
             android:gravity="start">
 
             <CheckBox
-                android:id="@+id/checkbox_on_background"
+                android:id="@+id/checkbox_background_permission"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
@@ -108,23 +108,22 @@
             android:visibility="@{permissionsModel.supportsBluetoothConnectPermission &amp;&amp; permissionsModel.hasBluetoothConnectPermission}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:onClick="@{() -> permissionsController.openSelfPermissions()}"
-            android:gravity="center">
+            android:gravity="">
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="12dp"
-                android:src="@android:drawable/checkbox_on_background" />
-            <TextView
-                android:layout_width="0dp"
+            <CheckBox
+                android:id="@+id/checkbox_bt_connection"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:text="@string/txt_setup_bluetooth_permission" />
+                android:gravity="center_vertical"
+                android:text="@{permissionsModel.hasBluetoothConnectPermission ? @string/txt_setup_bluetooth_permission : @string/txt_setup_bluetooth_impermission}"
+                android:checked="@{permissionsModel.supportsBluetoothConnectPermission &amp;&amp; permissionsModel.hasBluetoothConnectPermission}"
+                android:clickable="false"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -132,6 +131,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:onClick="@{() -> permissionsController.promptBluetooth()}"
             android:gravity="center">
@@ -139,21 +140,19 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    app:tint="?android:attr/textColorSecondary"
-                    android:src="@android:drawable/checkbox_off_background" />
-                <TextView
-                    android:layout_width="0dp"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/checkbox_vertical_margin"
+                android:gravity="center_vertical">
+
+                <CheckBox
+                    android:id="@+id/checkbox_bt_wakeup_connection"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@string/txt_setup_bluetooth_impermission" />
+                    android:gravity="center_vertical"
+                    android:text="@{permissionsModel.hasBluetoothConnectPermission ? @string/txt_setup_bluetooth_permission : @string/txt_setup_bluetooth_impermission}"
+                    android:checked="@{permissionsModel.supportsBluetoothConnectPermission &amp;&amp; permissionsModel.hasBluetoothConnectPermission}"
+                    android:clickable="false"/>
+
             </LinearLayout>
             <Button
                 android:onClick="@{() -> permissionsController.promptBluetooth()}"
@@ -168,6 +167,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
@@ -175,20 +176,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center">
+                android:gravity="center_vertical">
 
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:src="@android:drawable/checkbox_off_background" />
-                <TextView
-                    android:layout_width="0dp"
+                <CheckBox
+                    android:id="@+id/checkbox_bmw_ready"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@string/txt_setup_bmw_missing" />
+                    android:gravity="center_vertical"
+                    android:text="@{viewModel.isBmwReady() ? @string/txt_setup_bmw_ready : @string/txt_setup_bmw_missing}"
+                    android:checked="@{viewModel.isBmwReady()}"
+                    android:clickable="false"/>
+
             </LinearLayout>
             <Button
                 android:visibility="@{!viewModel.isBmwInstalled()}"
@@ -202,22 +200,20 @@
             android:visibility="@{viewModel.isBmwReady()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
-            android:gravity="center">
+            android:gravity="center_vertical">
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="12dp"
-                android:src="@android:drawable/checkbox_on_background" />
-            <TextView
-                android:layout_width="0dp"
+            <CheckBox
+                android:id="@+id/checkbox_setup_bmw_ready"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:text="@string/txt_setup_bmw_ready" />
+                android:gravity="center_vertical"
+                android:text="@{viewModel.isBmwReady() ? @string/txt_setup_bmw_ready : @string/txt_setup_bmw_missing}"
+                android:checked="@{viewModel.isBmwReady()}"
+                android:clickable="false"/>
         </LinearLayout>
 
         <LinearLayout
@@ -272,6 +268,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
@@ -279,19 +277,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:src="@android:drawable/checkbox_off_background" />
-                <TextView
-                    android:layout_width="0dp"
+                android:gravity="center_vertical">
+
+                <CheckBox
+                    android:id="@+id/checkbox_mini_ready"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@string/txt_setup_mini_missing" />
+                    android:gravity="center_vertical"
+                    android:text="@{viewModel.isMiniReady() ? @string/txt_setup_mini_ready : @string/txt_setup_mini_missing}"
+                    android:checked="@{viewModel.isMiniReady()}"
+                    android:clickable="false"/>
+
             </LinearLayout>
             <Button
                 android:visibility="@{!viewModel.isMiniInstalled()}"
@@ -305,23 +301,10 @@
             android:visibility="@{viewModel.isMiniReady()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/checkbox_vertical_margin"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="12dp"
-                android:src="@android:drawable/checkbox_on_background" />
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:text="@string/txt_setup_mini_ready" />
-        </LinearLayout>
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
+            android:paddingBottom="@dimen/checkbox_vertical_margin" />
 
         <LinearLayout
             android:visibility="@{viewModel.isMiniConnected65Installed() &amp;&amp; !viewModel.isMiniMineInstalled()}"
@@ -375,25 +358,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/pane_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:paddingEnd="5dp"
-                    android:src="@android:drawable/checkbox_on_background" />
-                <TextView
-                    android:layout_width="0dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <CheckBox
+                    android:id="@+id/checkbox_toyota_ready"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@string/txt_setup_toyota_ready" />
+                    android:gravity="center_vertical"
+                    android:text="@{viewModel.isToyotaReady() ? @string/txt_setup_toyota_ready : @string/txt_setup_toyota_hint}"
+                    android:checked="@{viewModel.isToyotaReady()}"
+                    android:clickable="false"/>
+
             </LinearLayout>
             <TextView
                 android:layout_width="match_parent"
@@ -409,6 +393,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
@@ -416,20 +402,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center">
+                android:gravity="center_vertical">
 
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:src="@android:drawable/checkbox_off_background" />
-                <TextView
-                    android:layout_width="0dp"
+                <CheckBox
+                    android:id="@+id/checkbox_security_missing"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@string/txt_setup_security_missing" />
+                    android:gravity="center_vertical"
+                    android:text="@string/txt_setup_security_missing"
+                    android:checked="@{viewModel.isToyotaReady()}"
+                    android:clickable="false"/>
+
             </LinearLayout>
             <Button
                 android:visibility="@{viewModel.isMiniInstalled()}"
