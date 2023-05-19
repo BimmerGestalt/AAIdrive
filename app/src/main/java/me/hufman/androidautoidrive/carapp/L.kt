@@ -40,6 +40,9 @@ object L {
 	val CARINFO_UNIT_LITER by StringResourceDelegate("L")
 	val CARINFO_UNIT_KMPH by StringResourceDelegate("kmph")
 	val CARINFO_UNIT_MPH by StringResourceDelegate("mph")
+	val CARINFO_WINDOW_CLOSED by StringResourceDelegate("Closed")
+	val CARINFO_WINDOW_TILTED by StringResourceDelegate("Tilted")
+	val CARINFO_WINDOW_OPENED by StringResourceDelegate("Opened")
 
 	val NOTIFICATIONS_TITLE by StringResourceDelegate("Notifications")
 	val NOTIFICATIONS_EMPTY_LIST by StringResourceDelegate("No Notifications")

@@ -81,8 +81,8 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		"$arrow $direction (${heading.toInt()}°)"
 	}
 	val gforces = cdsMetrics.accel.map { accel ->
-		val lat = accel.first?.let {"↔%.2f".format(it/9.8)} ?: ""
-		val long = accel.second?.let {"↕%.2f".format(it/9.8)} ?: ""
+		val lat = accel.first?.let {"↔%.2f".format(it/9.81)} ?: ""
+		val long = accel.second?.let {"↕%.2f".format(it/9.81)} ?: ""
 		"$lat $long ${L.CARINFO_GFORCE}"
 	}
 
@@ -98,7 +98,9 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		// Choosing the "most interesting" bit in the right order because multiple bits might be set
 		var brakeString = "Not braking"
 		val brakeContact = brakeContact ?: 0
-		if (brakeContact.and(8) == 8) {
+		if (brakeContact.and(16) == 16) {
+			brakeString = "Fullstop"
+		} else if (brakeContact.and(8) == 8) {
 			brakeString = "Cruise Control"
 		} else if (brakeContact.and(4) == 4) {
 			brakeString = "Strong"
@@ -135,9 +137,9 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 
 	// windows are not translated
 	fun formatWindowState(name: String, state: CDSMetrics.WindowState): String = when(state.state) {
-		CDSMetrics.WindowState.State.CLOSED -> "$name Closed"
-		CDSMetrics.WindowState.State.TILTED -> "$name Tilted"
-		CDSMetrics.WindowState.State.OPENED -> "$name Opened ${state.position}%"
+		CDSMetrics.WindowState.State.CLOSED -> "$name ${L.CARINFO_WINDOW_CLOSED}"
+		CDSMetrics.WindowState.State.TILTED -> "$name ${L.CARINFO_WINDOW_TILTED}"
+		CDSMetrics.WindowState.State.OPENED -> "$name ${L.CARINFO_WINDOW_OPENED} ${state.position}%"
 	}.trimStart()
 	fun Flow<CDSMetrics.WindowState>.format(name: String): Flow<String> = this.map {
 		formatWindowState(name, it)
@@ -169,7 +171,7 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 			accelContact, brakeState,
 			clutchState, steeringAngle,
 			tempInterior, tempExterior,
-			gforces
+			gforces, emptyFlow()
 	)
 	private val overviewFields: List<Flow<String>> = listOf(
 			engineTemp, tempExterior,
@@ -217,13 +219,13 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		put(L.CARINFO_TITLE_DRIVING, drivingFields)
 	}
 	val advancedCategories = LinkedHashMap<String, List<Flow<String>>>().apply {
+		put("Sport Displays", sportFields)
 		put(L.CARINFO_TITLE, overviewFields)
 		put(L.CARINFO_TITLE_DRIVING + " ", drivingAdvancedFields)   // slightly different key for the allCategories
-
-		// add more pages like this:
-		put("Sport Displays", sportFields)
 		put("GPS", gpsFields)
 		put("Window Status", windowFields)
+		// add more pages like this:
+		// put("Title", gpsFields)
 	}
 	val allCategories = basicCategories + advancedCategories
 	val category = MutableStateFlow(allCategories.keys.first())

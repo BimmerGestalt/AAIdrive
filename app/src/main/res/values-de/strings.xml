@@ -458,4 +458,7 @@
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Runtergevoted</string>
     <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">Deine Bibliothek</string>
     <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Durchsuchen</string>
+    <string name="CARINFO_WINDOW_CLOSED">Geschlossen</string>
+    <string name="CARINFO_WINDOW_TILTED">Gekippt</string>
+    <string name="CARINFO_WINDOW_OPENED">Geöffnet</string>
 </resources>

@@ -497,4 +497,7 @@
     <string name="MUSIC_SPOTIFY_THUMBS_DOWN_SELECTED">Thumbed Down</string>
     <string name="MUSIC_SPOTIFY_BROWSEROOT_LIBRARY">Your Library</string>
     <string name="MUSIC_SPOTIFY_BROWSEROOT_BROWSE">Browse</string>
+    <string name="CARINFO_WINDOW_CLOSED">Closed</string>
+    <string name="CARINFO_WINDOW_TILTED">Tilted</string>
+    <string name="CARINFO_WINDOW_OPENED">Opened</string>
 </resources>

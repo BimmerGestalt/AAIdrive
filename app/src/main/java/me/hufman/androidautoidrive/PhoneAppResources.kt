@@ -57,6 +57,6 @@ class PhoneAppResourcesAndroid(val context: Context): PhoneAppResources {
 		}
 		val drawable = Drawable.createFromStream(inputStream, uri)
 		inputStream?.close()
-		return drawable
+		return drawable!!
 	}
 }
