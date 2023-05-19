@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
 
     <group android:id="@+id/menugroup_over">
         <item
@@ -18,49 +19,59 @@
             android:icon="@drawable/ic_baseline_directions_car_24"
             android:title="@string/menu_carinfo" />
     </group>
-    <group android:id="@+id/menugroup_apps">
-        <item
-            android:id="@+id/nav_assistants"
-            android:icon="@drawable/ic_mic_feather"
-            android:title="@string/menu_assistants" />
 
-        <item
-            android:id="@+id/nav_calendar"
-            android:icon="@drawable/ic_calendar_feather"
-            android:title="@string/menu_calendar" />
+    <item android:title="@string/menu_main_settings">
+        <menu>
+            <group android:id="@+id/menugroup_apps">
+                <item
+                    android:id="@+id/nav_assistants"
+                    android:icon="@drawable/ic_mic_feather"
+                    android:title="@string/menu_assistants" />
 
-        <item
-            android:id="@+id/nav_maps"
-            android:icon="@drawable/ic_map_feather"
-            android:title="@string/menu_maps" />
+                <item
+                    android:id="@+id/nav_calendar"
+                    android:icon="@drawable/ic_calendar_feather"
+                    android:title="@string/menu_calendar" />
 
-        <item
-            android:id="@+id/nav_music"
-            android:icon="@drawable/ic_music_feather"
-            android:title="@string/menu_music" />
+                <item
+                    android:id="@+id/nav_maps"
+                    android:icon="@drawable/ic_map_feather"
+                    android:title="@string/menu_maps" />
 
-        <item
-            android:id="@+id/nav_navigation"
-            android:icon="@drawable/ic_navigation_feather"
-            android:title="@string/menu_navigation" />
+                <item
+                    android:id="@+id/nav_music"
+                    android:icon="@drawable/ic_music_feather"
+                    android:title="@string/menu_music" />
 
-        <item
-            android:id="@+id/nav_notifications"
-            android:icon="@drawable/ic_bell_feather"
-            android:title="@string/menu_notifications" />
-    </group>
-    <group android:id="@+id/menugroup_support">
-        <item
-            android:id="@+id/nav_addons"
-            android:icon="@drawable/ic_outline_extension_24"
-            android:title="@string/menu_addons" />
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_settings_feather"
-            android:title="@string/menu_settings" />
-        <item
-            android:id="@+id/nav_support"
-            android:icon="@drawable/ic_heart_feather"
-            android:title="@string/menu_support"/>
-    </group>
+                <item
+                    android:id="@+id/nav_navigation"
+                    android:icon="@drawable/ic_navigation_feather"
+                    android:title="@string/menu_navigation" />
+
+                <item
+                    android:id="@+id/nav_notifications"
+                    android:icon="@drawable/ic_bell_feather"
+                    android:title="@string/menu_notifications" />
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="@string/menu_main_support">
+        <menu>
+            <group android:id="@+id/menugroup_support">
+                <item
+                    android:id="@+id/nav_addons"
+                    android:icon="@drawable/ic_outline_extension_24"
+                    android:title="@string/menu_addons" />
+                <item
+                    android:id="@+id/nav_settings"
+                    android:icon="@drawable/ic_settings_feather"
+                    android:title="@string/menu_settings" />
+                <item
+                    android:id="@+id/nav_support"
+                    android:icon="@drawable/ic_heart_feather"
+                    android:title="@string/menu_support"/>
+            </group>
+        </menu>
+    </item>
 </menu>

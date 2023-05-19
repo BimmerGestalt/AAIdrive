@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#5F71E5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#A6D0DD</color>
+    <color name="colorPrimaryDark">#00005C</color>
+    <color name="colorAccent">#BA90C6</color>
     <color name="mapRouteLine">#0f52ba</color>
 
     <color name="connectionWaiting">#cccccc</color>
