@@ -23,8 +23,8 @@
 
         <!-- Layout to contain contents of nav_main body of screen (drawer will slide over this) -->
         <fragment
-            android:name="androidx.navigation.fragment.NavHostFragment"
             android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:defaultNavHost="true"

@@ -500,4 +500,6 @@
     <string name="CARINFO_WINDOW_CLOSED">Closed</string>
     <string name="CARINFO_WINDOW_TILTED">Tilted</string>
     <string name="CARINFO_WINDOW_OPENED">Opened</string>
+    <string name="menu_main_support">Support</string>
+    <string name="menu_main_settings">Settings</string>
 </resources>
