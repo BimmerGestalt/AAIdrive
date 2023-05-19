@@ -78,6 +78,8 @@ class DependencyInfoModel(val connection: CarConnectionDebugging, val interrupti
 		_isSecurityServiceDisconnected.value = connection.isConnectedSecurityInstalled && !connection.isConnectedSecurityConnected
 		_hasBackgroundKilled.value = interruptionDetection.detectedKilled >= 3
 		_hasBackgroundSuspended.value = interruptionDetection.detectedSuspended >= 2
+
+
 	}
 
 	override fun onCleared() {

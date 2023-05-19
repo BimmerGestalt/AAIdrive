@@ -21,26 +21,30 @@
 
         <!-- Background Execution -->
         <LinearLayout
-            android:visibility="@{permissionsModel.hasBackgroundPermission &amp;&amp; !viewModel.hasBackgroundSuspended &amp;&amp; !viewModel.hasBackgroundKilled}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:onClick="@{() -> permissionsController.openSelfPermissions()}"
-            android:gravity="center">
+            android:gravity="start">
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="12dp"
-                android:src="@android:drawable/checkbox_on_background" />
-            <TextView
-                android:layout_width="0dp"
+            <CheckBox
+                android:id="@+id/checkbox_on_background"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:text="@string/txt_setup_background_permission" />
+                android:gravity="center_vertical"
+                android:text="@{permissionsModel.hasBackgroundPermission ? @string/txt_setup_background_permission : @string/txt_setup_background_impermission}"
+                android:checked="@{permissionsModel.hasBackgroundPermission}"
+                android:clickable="false"/>
+
+            <TextView
+                android:visibility="@{!permissionsModel.hasBackgroundPermission}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_setup_background_hint"
+                android:gravity="start" />
         </LinearLayout>
 
         <LinearLayout
@@ -51,29 +55,7 @@
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:onClick="@{() -> permissionsController.openSelfPermissions()}">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    app:tint="?android:attr/textColorSecondary"
-                    android:src="@android:drawable/checkbox_off_background" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@string/txt_setup_background_impermission" />
-            </LinearLayout>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/txt_setup_background_hint" />
+
         </LinearLayout>
 
         <!-- Background restrictions caused problems -->

@@ -23,6 +23,11 @@
                 android:layout_marginBottom="@dimen/pane_vertical_margin"
                 android:text="@string/lbl_settingspage" />
 
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </CheckBox>
+
             <View style="@style/Divider"
                 android:layout_marginBottom="@dimen/pane_vertical_margin"/>
 

@@ -11,6 +11,7 @@
         android:animateLayoutChanges="true">
 
         <!-- Bluetooth Connected -->
+
         <LinearLayout
             android:visibility="@{!viewModel.isBtConnected()}"
             android:layout_width="match_parent"
@@ -24,6 +25,14 @@
                 android:layout_gravity="top"
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
+                <!--
+                <CheckBox android:id="@+id/setup_bt_disconnected"
+                    android:checked="@{viewModel.isBtConnected()}"
+                    android:clickable="false"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt_setup_bt_disconnected"/>
+                -->
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
