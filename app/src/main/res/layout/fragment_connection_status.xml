@@ -13,38 +13,28 @@
         <!-- Bluetooth Connected -->
 
         <LinearLayout
-            android:visibility="@{!viewModel.isBtConnected()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center_vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
-                <!--
-                <CheckBox android:id="@+id/setup_bt_disconnected"
-                    android:checked="@{viewModel.isBtConnected()}"
-                    android:clickable="false"
+
+                <CheckBox android:id="@+id/setup_is_bt_connected"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/txt_setup_bt_disconnected"/>
-                -->
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:src="@android:drawable/checkbox_off_background" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@string/txt_setup_bt_disconnected" />
+                    android:gravity="center_vertical"
+                    android:checked="@{viewModel.isBtConnected()}"
+                    android:text="@{viewModel.isBtConnected() ? @string/txt_setup_bt_connected : @string/txt_setup_bt_disconnected}"
+                    android:clickable="false"/>
+
             </LinearLayout>
         </LinearLayout>
 
@@ -55,124 +45,60 @@
             android:orientation="vertical"
             android:gravity="center_vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/checkbox_vertical_margin"
-                android:gravity="center_vertical">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:src="@android:drawable/checkbox_on_background" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@string/txt_setup_bt_connected" />
-            </LinearLayout>
-
             <!-- Bluetooth Music Connected -->
             <LinearLayout
                 android:visibility="@{!viewModel.isA2dpConnected()}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/checkbox_vertical_margin"
                 android:paddingBottom="@dimen/checkbox_vertical_margin"
                 android:gravity="center_vertical">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="top"
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:padding="12dp"
-                        android:src="@android:drawable/checkbox_off_background" />
-                    <TextView
-                        android:layout_width="0dp"
+
+                    <CheckBox android:id="@+id/setup_is_a2dp_connected"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp"
-                        android:text="@string/txt_setup_a2dp_disconnected" />
+                        android:gravity="center_vertical"
+                        android:checked="@{viewModel.isA2dpConnected()}"
+                        android:text="@{viewModel.isA2dpConnected() ? @string/txt_setup_a2dp_connected : @string/txt_setup_a2dp_disconnected}"
+                        android:clickable="false"/>
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:visibility="@{viewModel.isA2dpConnected()}"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/checkbox_vertical_margin"
-                android:gravity="center_vertical">
 
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:src="@android:drawable/checkbox_on_background" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@string/txt_setup_a2dp_connected" />
-            </LinearLayout>
 
             <!-- Bluetooth SPP available -->
             <LinearLayout
                 android:visibility="@{viewModel.isA2dpConnected() &amp;&amp; !viewModel.isSppAvailable()}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/checkbox_vertical_margin"
                 android:paddingBottom="@dimen/checkbox_vertical_margin"
                 android:gravity="center_vertical">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="top"
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:padding="12dp"
-                        android:src="@android:drawable/checkbox_off_background" />
-                    <TextView
-                        android:layout_width="0dp"
+
+                    <CheckBox android:id="@+id/setup_is_spp_connected"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp"
-                        android:text="@string/txt_setup_spp_disconnected" />
+                        android:gravity="center_vertical"
+                        android:checked="@{viewModel.isA2dpConnected()}"
+                        android:text="@{viewModel.isA2dpConnected() ? @string/txt_setup_spp_connected : @string/txt_setup_spp_disconnected}"
+                        android:clickable="false"/>
                 </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:visibility="@{viewModel.isSppAvailable()}"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/checkbox_vertical_margin"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:src="@android:drawable/checkbox_on_background" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@string/txt_setup_spp_connected" />
             </LinearLayout>
 
         </LinearLayout>
@@ -187,26 +113,25 @@
                 android:visibility="@{!viewModel.isUsbConnected()}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/checkbox_vertical_margin"
                 android:paddingBottom="@dimen/checkbox_vertical_margin"
                 android:gravity="center_vertical">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="top"
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:padding="12dp"
-                        android:src="@android:drawable/checkbox_off_background" />
-                    <TextView
-                        android:layout_width="0dp"
+
+                    <CheckBox android:id="@+id/setup_is_usb_connected"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp"
-                        android:text="@string/txt_setup_usb_disconnected" />
+                        android:gravity="center_vertical"
+                        android:checked="@{viewModel.isUsbConnected()}"
+                        android:text="@{viewModel.isUsbConnected() ? @string/txt_setup_usb_connected : @string/txt_setup_usb_disconnected}"
+                        android:clickable="false"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -222,6 +147,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingTop="@dimen/checkbox_vertical_margin"
                     android:paddingBottom="@dimen/checkbox_vertical_margin"
                     android:gravity="center_vertical">
                     <LinearLayout
@@ -230,18 +157,14 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical">
 
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:padding="12dp"
-                            android:src="@android:drawable/checkbox_off_background" />
-                        <TextView
-                            android:layout_width="0dp"
+                        <CheckBox android:id="@+id/setup_is_usb_charg_mode"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:paddingTop="12dp"
-                            android:paddingBottom="12dp"
-                            android:text="@string/txt_setup_usb_connected" />
+                            android:gravity="center_vertical"
+                            android:checked="@{viewModel.isUsbCharging()}"
+                            android:text="@{viewModel.isUsbCharging() ? @string/txt_setup_usb_connected : @string/txt_setup_enable_usbmtp}"
+                            android:clickable="false"/>
+
                     </LinearLayout>
                     <TextView
                         android:layout_width="wrap_content"
@@ -258,6 +181,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingTop="@dimen/checkbox_vertical_margin"
                     android:paddingBottom="@dimen/checkbox_vertical_margin"
                     android:gravity="center_vertical">
 
@@ -266,18 +191,13 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical">
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:padding="12dp"
-                            android:src="@android:drawable/checkbox_off_background" />
-                        <TextView
-                            android:layout_width="0dp"
+                        <CheckBox android:id="@+id/setup_is_usb_acc_mode"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:paddingTop="12dp"
-                            android:paddingBottom="12dp"
-                            android:text="@string/txt_setup_usbmtp_connected" />
+                            android:gravity="center_vertical"
+                            android:checked="@{viewModel.isUsbTransfer()}"
+                            android:text="@{viewModel.isUsbTransfer() ? @string/txt_setup_usbacc_connected : @string/txt_setup_enable_usbacc}"
+                            android:clickable="false"/>
                     </LinearLayout>
                     <TextView
                         android:layout_width="wrap_content"
@@ -297,24 +217,6 @@
                     android:paddingBottom="@dimen/checkbox_vertical_margin"
                     android:gravity="center_vertical">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:padding="12dp"
-                            android:src="@android:drawable/checkbox_on_background" />
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:paddingTop="12dp"
-                            android:paddingBottom="12dp"
-                            android:text="@string/txt_setup_usbacc_connected" />
-                    </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>
