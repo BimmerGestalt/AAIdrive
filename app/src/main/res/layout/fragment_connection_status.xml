@@ -191,6 +191,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical">
+
                         <CheckBox android:id="@+id/setup_is_usb_acc_mode"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -198,6 +199,7 @@
                             android:checked="@{viewModel.isUsbTransfer()}"
                             android:text="@{viewModel.isUsbTransfer() ? @string/txt_setup_usbacc_connected : @string/txt_setup_enable_usbacc}"
                             android:clickable="false"/>
+
                     </LinearLayout>
                     <TextView
                         android:layout_width="wrap_content"
@@ -222,39 +224,32 @@
             </LinearLayout>
         </LinearLayout>
 
+
         <!-- BCL connection-->
         <LinearLayout
             android:visibility="@{viewModel.isBclReady()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center_vertical">
 
             <LinearLayout
-                android:visibility="@{viewModel.isBclDisconnected()}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/checkbox_vertical_margin"
+                android:orientation="horizontal"
                 android:gravity="center_vertical">
-                <LinearLayout
-                    android:layout_width="match_parent"
+
+                <CheckBox android:id="@+id/setup_is_usb_bcl_mode"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:padding="12dp"
-                        android:src="@android:drawable/checkbox_off_background" />
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp"
-                        android:text="@string/txt_setup_bcl_waiting" />
-                </LinearLayout>
+                    android:gravity="center_vertical"
+                    android:checked="@{viewModel.isBclDisconnected()}"
+                    android:text="@{viewModel.isBclDisconnected() ? @string/txt_setup_usbacc_connected : @string/txt_setup_bcl_waiting}"
+                    android:clickable="false"/>
+
                 <TextView
                     android:id="@+id/txtEnableBclSpp"
                     android:layout_width="wrap_content"
