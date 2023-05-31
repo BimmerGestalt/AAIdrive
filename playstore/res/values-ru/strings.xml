@@ -17,4 +17,6 @@
     <string name="playstore_desc_depends_bmw_subscription">Для этого требуется наличие активной подписки BMW ConnectedDrive, которая обычно включена на несколько лет при покупке новой машины.</string>
     <string name="playstore_release_desc">Добавляет приложение Car Information и некоторые исправления ошибок</string>
     <string name="playstore_release_point1">Добавляет приложение \"Информация о автомобиле\", чтобы показать некоторые внутренние данные из машины</string>
+    <string name="playstore_release_point2">Исправлена ориентация компаса карты на автомобилях IDrive4</string>
+    <string name="playstore_release_point3">Добавлена поддержка китайских приложений MyBMW/Mini</string>
 </resources>
