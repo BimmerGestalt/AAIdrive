@@ -6,14 +6,13 @@
     <string name="playstore_desc_features_music">A telefonondon lévő zenei alkalmazások média forrásként az IDive-ban</string>
     <string name="playstore_desc_features_assistants">Telefonodra telepített hang asszisztensekkel interakciók</string>
     <string name="playstore_desc_features_notifications">Megjelenítés, felolvasás és válaszok az értesítésekre az autó vezérlőin keresztül</string>
+    <string name="playstore_desc_features_calendar">Tekintsd meg naptárát az autóban, és indíts navigációt a találkozókhoz</string>
     <string name="playstore_desc_features_carnav">Autó navigációjának indítása a telefonon lévő alkalmazásokból</string>
     <string name="playstore_desc_features_carinfo">Az autós különböző diganosztikai és statisztikai információinak olvasása</string>
     <string name="playstore_desc_features_addons_mirroring">Képességek bővítésének lehetősége opcionális bővítményekkel (pl. képernyő tükrözés)</string>
     <string name="playstore_desc_features_custommap_soon">Egyedi térkép implementáció hamarosan elérhető</string>
+    <string name="playstore_desc_features_custommap">Egyedi térkép és navigáció a Mapbox alapján</string>
     <string name="playstore_desc_nativeapps_protocol">A natív BMW Apps protokoll használatával (pontosan úgy, mint ahogy a régi Spotify alkalmazás) ez az alkalmazás semmilyen módon nem módosítja az autódat, és az összes kiterjesztett képesség csak akkor érhető el, ha a telefon csatlakoztatva van.</string>
     <string name="playstore_desc_depends_bmw_subscription">Ehhez általában aktív BMW ConnectedDrive regisztráció szükséges, amely általában az új autó vásárlását követően néhány évig alapból megkapsz.</string>
-    <string name="playstore_release_desc">Néhány apró teljesítmény optimalizáció:</string>
-    <string name="playstore_release_point1">Zene és értesítési képek gyorsabb frissítése</string>
-    <string name="playstore_release_point2">Értesítési figyelő leállítása, amikor nincs kapcsolat az autóval</string>
-    <string name="playstore_release_point3">Autó adatok betöltésének támogatása Toyota Suprák esetében</string>
+    <string name="playstore_release_point3">Kínai MyBMW/Mini app támogatása</string>
 </resources>
