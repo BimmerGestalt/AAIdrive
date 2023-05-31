@@ -15,8 +15,4 @@
     <string name="playstore_desc_nativeapps_protocol">Durch die Verwendung des nativen BMW App-Protokolls, genau wie eine ältere Version der Spotify-App, ändert diese App dein Auto in keiner Weise und alle erweiterten Funktionen werden nur zur Verfügung gestellt, wenn das Telefon verbunden ist.</string>
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps erfordert, dass die MyBMW oder MINI App für dein Auto installiert ist und dass sie erfolgreich die IDrive5+ Auto-App-Checkbox aktivieren kann oder dass dein IDrive4 Auto über den ConnectedDrive Connection Assistant verfügt.</string>
     <string name="playstore_desc_depends_bmw_subscription">Dies erfordert in der Regel ein aktives BMW ConnectedDrive-Abonnement, das normalerweise für ein paar Jahre nach dem Kauf des neuen Autos enthalten ist.</string>
-    <string name="playstore_release_desc">Einige geringfügige Leistungsoptimierungen:</string>
-    <string name="playstore_release_point1">Musik- und Benachrichtigungsbildschirme werden schneller aktualisiert</string>
-    <string name="playstore_release_point2">Schließt Benachrichtigungs-Listener aus, wenn mit dem Auto keine Verbindung besteht</string>
-    <string name="playstore_release_point3">Unterstützt das Laden von Fahrzeugdaten von Fahrzeugen des Typs: Toyota Supra</string>
 </resources>
