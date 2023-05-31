@@ -84,6 +84,7 @@
     <string name="lbl_calendar_upcoming_events_empty">Nem találtunk közelgő eseményt ebben a hónapban</string>
     <string name="lbl_mapspage">AAIdrive tartalmaz egy egyedi térképet, amely a telefonon kerül renderelésre, és az autóban megjelenik</string>
     <string name="enable_custom_maps">Egyedi térkép bekapcsolása</string>
+    <string name="lbl_map_bt_hint">Bluetooth kapcsolat esetén gyenge a térkép teljesítménye és minősége</string>
     <string name="lbl_map_phone_gps">Telefon GPS-ének használata az autó GPS-e helyett</string>
     <string name="lbl_widescreen_map">Szélesképernyős térkép</string>
     <string name="lbl_map_widescreen_unsupported">Ez a beállítás nem támogatott az autódban, amely így mindig teljes képernyő módban fut</string>
@@ -95,6 +96,7 @@
     <string name="gmapStyleLabel">Térkép stílus</string>
     <string name="lbl_map_quickdestinations">Kedvenc navigációs célpontok:</string>
     <string name="lbl_gmap_invalid_apikey">A GMaps API Kulcs érvénytelen, és így a térkép funkciók korlátozottak. Tájékoztast a fejlesztőt erről a hibáról, és várd a frissítést</string>
+    <string name="lbl_mapbox_invalid_token">A Mapbox Token érvénytelen, és így a térkép funkciók korlátozottak. Tájékoztast a fejlesztőt erről a hibáról, és várd a frissítést</string>
     <string name="lbl_musicpage">A telefonodon lévő zene alkalmazások kiválaszthatóak mint média forrás az autóban</string>
     <string name="lbl_music_apps">Zene applikációk</string>
     <string name="musicAppIcon">Applikáció ikon</string>
@@ -337,6 +339,7 @@
     <string name="btn_authorize">Engedélyez</string>
     <!-- car app strings -->
     <string name="CARINFO_TITLE">Részletes jármű információ</string>
+    <string name="CARINFO_TITLE_DRIVING">Vezetés részletei</string>
     <string name="CARINFO_ENGINE">Motor</string>
     <string name="CARINFO_OIL">Olaj</string>
     <string name="CARINFO_BATTERY">Akkumulátor</string>
