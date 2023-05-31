@@ -15,8 +15,4 @@
     <string name="playstore_desc_nativeapps_protocol">使用原生的 BMW 应用程序协议就像使用旧的 Spotify 应用程序，这个应用程序不会以任何方式修改你的汽车。 所有扩展功能只能在您的手机连接到车辆时提供。</string>
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected 应用需要您的车辆已经安装了MyBMW或MINI功能。在IDrive5+的车型上可以通过“应用”选项开启，或者您的IDrive4车型开启了ConnectedDrive Connection Assistant选项。</string>
     <string name="playstore_desc_depends_bmw_subscription">这通常需要一个有效的BMW ConnectedDrive订阅，这通常是在您购买新车后几年内包含的。</string>
-    <string name="playstore_release_desc">一些小的性能优化：</string>
-    <string name="playstore_release_point1">更快更新音乐和通知界面</string>
-    <string name="playstore_release_point2">当未连接到汽车时关闭消息通知侦听器</string>
-    <string name="playstore_release_point3">支持从Toyota Supra加载汽车数据</string>
 </resources>
