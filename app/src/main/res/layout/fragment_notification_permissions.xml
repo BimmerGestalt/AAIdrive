@@ -10,85 +10,79 @@
             type="me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel" />
     </data>
     <LinearLayout
-        android:orientation="vertical" android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:orientation="horizontal"
             android:gravity="center_vertical">
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="12dp"
-                android:visibility="@{!viewModel.hasNotificationPermission}"
-                android:onClick="@{() -> controller.promptNotification()}"
-                app:srcCompat="@android:drawable/checkbox_off_background" />
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="12dp"
-                android:visibility="@{viewModel.hasNotificationPermission}"
-                android:onClick="@{() -> controller.promptNotification()}"
-                app:srcCompat="@android:drawable/checkbox_on_background" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:text="@string/lbl_notification_permissions" />
-
-            <Button
+            <CheckBox android:id="@+id/setup_notifi_perm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lbl_grant"
-                android:textSize="12sp"
-                android:onClick="@{() -> controller.promptNotification()}"
-                android:visibility="@{!viewModel.hasNotificationPermission}"/>
+                android:gravity="center_vertical"
+                android:checked="@{viewModel.hasNotificationPermission}"
+                android:text="@string/lbl_notification_permissions"
+                android:clickable="false"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lbl_grant"
+                    android:textSize="12sp"
+                    android:onClick="@{() -> controller.promptNotification()}"
+                    android:visibility="@{!viewModel.hasNotificationPermission}"/>
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center_vertical"
-            android:visibility="@{viewModel.hasNotificationPermission &amp;&amp; viewModel.supportsSmsPermission}">
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="12dp"
-                android:visibility="@{!viewModel.hasSmsPermission}"
-                android:onClick="@{() -> controller.promptSms()}"
-                app:srcCompat="@android:drawable/checkbox_off_background" />
+            android:visibility="@{viewModel.hasNotificationPermission &amp;&amp; viewModel.supportsSmsPermission}"
+            android:onClick="@{() -> controller.openSelfPermissions()}">
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="12dp"
-                android:visibility="@{viewModel.hasSmsPermission}"
-                android:onClick="@{() -> controller.openSelfPermissions()}"
-                app:srcCompat="@android:drawable/checkbox_on_background" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:text="@string/lbl_notification_sms_permissions" />
-
-            <Button
+            <CheckBox android:id="@+id/setup_sms_perm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:text="@string/lbl_grant"
-                android:textSize="12sp"
-                android:onClick="@{() -> controller.promptSms()}"
-                android:visibility="@{!viewModel.hasSmsPermission}"/>
+                android:gravity="center_vertical"
+                android:checked="@{viewModel.hasSmsPermission}"
+                android:text="@string/lbl_notification_sms_permissions"
+                android:clickable="false" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/lbl_grant"
+                    android:textSize="12sp"
+                    android:onClick="@{() -> controller.promptSms()}"
+                    android:visibility="@{!viewModel.hasSmsPermission}"/>
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>
