@@ -40,7 +40,6 @@
                 android:layout_gravity="center"
                 android:layout_marginBottom="@dimen/pane_vertical_margin"
                 android:drawableStart="@drawable/ic_heart_feather"
-                android:drawableTint="?android:attr/colorControlNormal"
                 android:drawablePadding="8dp"
                 android:text="@string/btn_donations"
                 android:onClick="@{controller::onClickDonations}"/>

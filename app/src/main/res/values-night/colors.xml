@@ -8,4 +8,6 @@
     <color name="connectionWaiting">#666</color>
     <color name="connectionConnected">#559922</color>
     <color name="connectionError">#661122</color>
+
+    <color name="red">#FF0000</color>
 </resources>

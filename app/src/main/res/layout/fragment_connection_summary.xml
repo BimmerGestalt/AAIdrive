@@ -14,6 +14,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:orientation="horizontal"
             android:gravity="center_vertical">
@@ -26,17 +28,6 @@
                 android:text="@{viewModel.carConnectionText}"
                 android:clickable="false"/>
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="12dp"
-                android:src="@{viewModel.isCarConnected() ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background}" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:text="@{viewModel.carConnectionText}" />
         </LinearLayout>
 
         <LinearLayout

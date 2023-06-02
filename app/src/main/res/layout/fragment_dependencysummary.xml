@@ -25,32 +25,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingStart="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:onClick="@{() -> permissionsController.openSelfPermissions()}"
-            android:gravity="center">
+            android:gravity="center_vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <CheckBox android:id="@+id/setup_is_background"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    app:tint="?android:attr/textColorSecondary"
-                    android:src="@android:drawable/checkbox_off_background" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@string/txt_setup_background_impermission" />
-            </LinearLayout>
+                android:gravity="center_vertical"
+                android:checked="@{!permissionsModel.hasBackgroundPermission}"
+                android:text="@string/txt_setup_background_impermission"
+                android:clickable="false" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingStart="36dp"
+                android:paddingEnd="36dp"
                 android:text="@string/txt_setup_background_hint" />
         </LinearLayout>
 
@@ -60,6 +53,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingStart="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:onClick="@{() -> permissionsController.openSelfPermissions()}"
             android:gravity="center">
@@ -69,6 +64,7 @@
                 android:orientation="horizontal"
                 android:paddingBottom="@dimen/checkbox_vertical_margin"
                 android:gravity="center">
+
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
@@ -96,6 +92,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/checkbox_vertical_margin"
                 android:text="@string/txt_setup_background_restrictions_hint" />
         </LinearLayout>
 
@@ -105,34 +102,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingStart="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:onClick="@{() -> permissionsController.promptBluetooth()}"
             android:gravity="center">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <CheckBox android:id="@+id/setup_is_bluetooth"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    app:tint="?android:attr/textColorSecondary"
-                    android:src="@android:drawable/checkbox_off_background" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@string/txt_setup_bluetooth_impermission" />
-            </LinearLayout>
+                android:gravity="center_vertical"
+                android:checked="@{!permissionsModel.hasBluetoothConnectPermission}"
+                android:text="@string/txt_setup_bluetooth_impermission"
+                android:clickable="false" />
+
             <Button
                 android:onClick="@{() -> permissionsController.promptBluetooth()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/lbl_grant"/>
+
         </LinearLayout>
 
         <!-- BMW Connection -->
@@ -140,22 +129,20 @@
             android:visibility="@{viewModel.isBmwReady()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
-            android:gravity="center">
+            android:gravity="center_vertical">
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="12dp"
-                android:src="@android:drawable/checkbox_on_background" />
-            <TextView
-                android:layout_width="0dp"
+            <CheckBox android:id="@+id/setup_is_bmw_rdy"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:text="@string/txt_setup_bmw_ready" />
+                android:gravity="center_vertical"
+                android:checked="@{viewModel.isBmwReady()}"
+                android:text="@string/txt_setup_bmw_ready"
+                android:clickable="false"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -163,6 +150,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
@@ -186,6 +175,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
@@ -209,22 +200,20 @@
             android:visibility="@{viewModel.isMiniReady()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
-            android:gravity="center">
+            android:gravity="center_vertical">
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="12dp"
-                android:src="@android:drawable/checkbox_on_background" />
-            <TextView
-                android:layout_width="0dp"
+            <CheckBox android:id="@+id/setup_is_mini_rdy"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:text="@string/txt_setup_mini_ready" />
+                android:gravity="center_vertical"
+                android:checked="@{viewModel.isMiniReady()}"
+                android:text="@string/txt_setup_mini_ready"
+                android:clickable="false"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -232,6 +221,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 
@@ -255,6 +246,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/checkbox_vertical_margin"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
             android:gravity="center">
 

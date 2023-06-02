@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/fragmentCarSummary"
+            android:background="@color/red"
             android:name="me.hufman.androidautoidrive.phoneui.fragments.CarSummaryFragment"/>
 
         <androidx.fragment.app.FragmentContainerView
