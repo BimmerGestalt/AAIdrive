@@ -1,0 +1,87 @@
+Index: gradle.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># Project-wide Gradle settings.\r\n\r\n# IDE (e.g. Android Studio) users:\r\n# Gradle settings configured through the IDE *will override*\r\n# any settings specified in this file.\r\n\r\n# For more details on how to configure your build environment visit\r\n# http://www.gradle.org/docs/current/userguide/build_environment.html\r\n\r\n# Specifies the JVM arguments used for the daemon process.\r\n# The setting is particularly useful for tweaking memory settings.\r\norg.gradle.jvmargs=-Xmx1536m\r\n\r\n# When configured, Gradle will run in incubating parallel mode.\r\n# This option should only be used with decoupled projects. More details, visit\r\n# http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects\r\n# org.gradle.parallel=true\r\n\r\nandroid.useAndroidX=true\r\n\r\n# try to fix occasional JaCoCo resource problems https://issuetracker.google.com/issues/137213542\r\nandroid.forceJacocoOutOfProcess=true\r\n\r\n# enable incremental Kapt processing\r\nkapt.incremental.apt=true\r\n\r\n# Please override these options in your ~/.gradle/gradle.properties\r\nAndroidAutoIdrive_GmapsApiKey=unset\r\nAndroidAutoIdrive_MapboxAccessToken=unset\r\nAndroidAutoIdrive_MapboxDownloadToken=unset\r\nAndroidAutoIdrive_SentryDsn=unset\r\nAndroidAutoIdrive_SpotifyApiKey=invalid
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/gradle.properties b/gradle.properties
+--- a/gradle.properties	(revision 4732eb6818f97f1b138148730f7199cde75c69a2)
++++ b/gradle.properties	(date 1684783344342)
+@@ -25,8 +25,8 @@
+ kapt.incremental.apt=true
+ 
+ # Please override these options in your ~/.gradle/gradle.properties
+-AndroidAutoIdrive_GmapsApiKey=unset
++AndroidAutoIdrive_GmapsApiKey=AIzaSyDPubVgrdrYyLX7U4vCg5ZDvkkm9P7Sw84
+ AndroidAutoIdrive_MapboxAccessToken=unset
+ AndroidAutoIdrive_MapboxDownloadToken=unset
+ AndroidAutoIdrive_SentryDsn=unset
+-AndroidAutoIdrive_SpotifyApiKey=invalid
+\ No newline at end of file
++AndroidAutoIdrive_SpotifyApiKey=8cd6e75b3ec5411cbdac901d263be435
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_11\" default=\"true\" project-jdk-name=\"JDK\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 4732eb6818f97f1b138148730f7199cde75c69a2)
++++ b/.idea/misc.xml	(date 1685685110714)
+@@ -1,6 +1,5 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="JDK" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_15" default="true" project-jdk-name="15" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+new file mode 100644
+--- /dev/null	(date 1685708906423)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1685708906423)
+@@ -0,0 +1,17 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="deploymentTargetDropDown">
++    <runningDeviceTargetSelectedWithDropDown>
++      <Target>
++        <type value="RUNNING_DEVICE_TARGET" />
++        <deviceKey>
++          <Key>
++            <type value="SERIAL_NUMBER" />
++            <value value="18041FDF6000CM" />
++          </Key>
++        </deviceKey>
++      </Target>
++    </runningDeviceTargetSelectedWithDropDown>
++    <timeTargetWasSelectedWithDropDown value="2023-06-02T12:28:16.934802300Z" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/kotlinc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/kotlinc.xml b/.idea/kotlinc.xml
+new file mode 100644
+--- /dev/null	(date 1684783413850)
++++ b/.idea/kotlinc.xml	(date 1684783413850)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="KotlinJpsPluginSettings">
++    <option name="version" value="1.6.21" />
++  </component>
++</project>
+\ No newline at end of file
