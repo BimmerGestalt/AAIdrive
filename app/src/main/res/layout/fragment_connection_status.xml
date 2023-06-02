@@ -11,7 +11,6 @@
         android:animateLayoutChanges="true">
 
         <!-- Bluetooth Connected -->
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -324,44 +323,28 @@
                 android:visibility="@{viewModel.isBclConnected()}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/checkbox_vertical_margin"
                 android:paddingBottom="@dimen/checkbox_vertical_margin"
                 android:gravity="center_vertical">
 
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:src="@android:drawable/checkbox_on_background" />
-                <TextView
-                    android:layout_width="0dp"
+                <CheckBox android:id="@+id/setup_bcl_mode_text"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@{viewModel.bclModeText}" />
-            </LinearLayout>
+                    android:paddingBottom="@dimen/checkbox_vertical_margin"
+                    android:gravity="center_vertical"
+                    android:checked="true"
+                    android:text="@{viewModel.bclModeText}"
+                    android:clickable="false"/>
 
-            <LinearLayout
-                android:visibility="@{viewModel.isBclConnected()}"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/checkbox_vertical_margin"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:src="@android:drawable/checkbox_on_background" />
-                <TextView
-                    android:layout_width="0dp"
+                <CheckBox android:id="@+id/setup_conn_text"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@{viewModel.carConnectionText}" />
+                    android:paddingTop="@dimen/checkbox_vertical_margin"
+                    android:gravity="center_vertical"
+                    android:checked="true"
+                    android:text="@{viewModel.carConnectionText}"
+                    android:clickable="false"/>
             </LinearLayout>
         </LinearLayout>
 

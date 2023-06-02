@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data class="CarCapabilitiesBinding">
         <variable
@@ -26,6 +27,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/checkbox_vertical_margin"
                 android:paddingBottom="@dimen/checkbox_vertical_margin"
                 android:gravity="center_vertical">
 
@@ -35,30 +38,32 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:padding="12dp"
-                        android:src="@{viewModel.isAudioContextSupported ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background}" />
-                    <TextView
-                        android:text="@{viewModel.audioContextStatus}"
-                        android:layout_width="0dp"
+                    <CheckBox android:id="@+id/setup_is_audio_supp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp"/>
+                        android:gravity="center_vertical"
+                        android:checked="@{viewModel.isAudioContextSupported()}"
+                        android:text="@{viewModel.audioContextStatus}"
+                        android:clickable="false"/>
+
                 </LinearLayout>
+
                 <TextView
                     android:text="@{viewModel.audioContextHint}"
                     android:visibility="@{viewModel.audioContextHint}"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:paddingStart="36dp"
+                    android:paddingEnd="36dp"
+                    android:paddingBottom="12dp"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/checkbox_vertical_margin"
                 android:paddingBottom="@dimen/checkbox_vertical_margin"
                 android:gravity="center_vertical">
 
@@ -68,30 +73,32 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:padding="12dp"
-                        android:src="@{viewModel.isAudioStateSupported ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background}" />
-                    <TextView
-                        android:text="@{viewModel.audioStateStatus}"
-                        android:layout_width="0dp"
+                    <CheckBox android:id="@+id/setup_is_audio_state"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp" />
+                        android:gravity="center_vertical"
+                        android:checked="@{viewModel.isAudioStateSupported()}"
+                        android:text="@{viewModel.audioStateStatus}"
+                        android:clickable="false"/>
+
                 </LinearLayout>
+
                 <TextView
                     android:text="@{viewModel.audioStateHint}"
                     android:visibility="@{viewModel.audioStateHint}"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:paddingStart="36dp"
+                    android:paddingEnd="36dp"
+                    android:paddingBottom="12dp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/checkbox_vertical_margin"
                 android:paddingBottom="@dimen/checkbox_vertical_margin"
                 android:gravity="center_vertical">
 
@@ -101,18 +108,14 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:padding="12dp"
-                        android:src="@{viewModel.isPopupSupported ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background}" />
-                    <TextView
-                        android:text="@{viewModel.popupStatus}"
-                        android:layout_width="0dp"
+                    <CheckBox android:id="@+id/setup_is_popup_supp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp" />
+                        android:gravity="center_vertical"
+                        android:checked="@{viewModel.isPopupSupported()}"
+                        android:text="@{viewModel.popupStatus}"
+                        android:clickable="false"/>
+
                 </LinearLayout>
                 <TextView
                     android:text="@{viewModel.popupHint}"
@@ -125,42 +128,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/checkbox_vertical_margin"
                 android:paddingBottom="@dimen/checkbox_vertical_margin"
                 android:gravity="center_vertical">
 
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:src="@{viewModel.isTtsSupported() ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background}" />
-                <TextView
-                    android:text="@{viewModel.ttsStatus}"
-                    android:layout_width="0dp"
+                <CheckBox android:id="@+id/setup_is_tts_supp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp" />
+                    android:gravity="center_vertical"
+                    android:checked="@{viewModel.isTtsSupported()}"
+                    android:text="@{viewModel.ttsStatus}"
+                    android:clickable="false"/>
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/checkbox_vertical_margin"
                 android:paddingBottom="@dimen/checkbox_vertical_margin"
                 android:gravity="center_vertical">
 
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:src="@{viewModel.isNaviSupported() ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background}" />
-                <TextView
-                    android:text="@{viewModel.naviStatus}"
-                    android:layout_width="0dp"
+                <CheckBox android:id="@+id/setup_is_navi_supp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"/>
+                    android:gravity="center_vertical"
+                    android:checked="@{viewModel.isNaviSupported()}"
+                    android:text="@{viewModel.naviStatus}"
+                    android:clickable="false"/>
+
             </LinearLayout>
         </LinearLayout>
 
