@@ -5,6 +5,7 @@ import io.bimmergestalt.idriveconnectkit.CDS
 import kotlinx.coroutines.flow.*
 import me.hufman.androidautoidrive.CarCapabilitiesSummarized
 import me.hufman.androidautoidrive.CarInformation
+import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsInt
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
@@ -16,15 +17,15 @@ class CDSMetrics(val carInfo: CarInformation) {
 	companion object {
 		fun compassDirection(heading: Float?) = when (heading) {
 			null -> "-"
-			in 0.0 .. 22.5 -> "N"
-			in 22.5 .. 67.5 -> "NE"
-			in 67.5 .. 112.5 -> "E"
-			in 112.5 .. 157.5 -> "SE"
-			in 157.5 .. 202.5 -> "S"
-			in 202.5 .. 247.5 -> "SW"
-			in 247.5 .. 302.5 -> "W"
-			in 302.5 .. 347.5 -> "NW"
-			in 347.5 .. 360.0 -> "N"
+			in 0.0 .. 22.5 ->    "${L.CARINFO_HEADING_NORTH}"
+			in 22.5 .. 67.5 ->   "${L.CARINFO_HEADING_NORTHEAST}"
+			in 67.5 .. 112.5 ->  "${L.CARINFO_HEADING_EAST}"
+			in 112.5 .. 157.5 -> "${L.CARINFO_HEADING_SOUTHEAST}"
+			in 157.5 .. 202.5 -> "${L.CARINFO_HEADING_SOUTH}"
+			in 202.5 .. 247.5 -> "${L.CARINFO_HEADING_SOUTHWEST}"
+			in 247.5 .. 302.5 -> "${L.CARINFO_HEADING_WEST}"
+			in 302.5 .. 347.5 -> "${L.CARINFO_HEADING_NORTHWEST}"
+			in 347.5 .. 360.0 -> "${L.CARINFO_HEADING_NORTH}"
 			else -> "-"
 		}
 
@@ -177,7 +178,7 @@ class CDSMetrics(val carInfo: CarInformation) {
 			null -> ""
 			2 -> "Comfort"
 			9 -> "Comfort+"
-			3 -> "Basic"
+			3 -> if (CarCapabilitiesSummarized(carInfo).isF20orF21) "Comfort" else "Basic"
 			4 -> "Sport"
 			5 -> "Sport+"
 			6 -> "Race"
@@ -216,6 +217,12 @@ class CDSMetrics(val carInfo: CarInformation) {
 		// probably doesn't need unit conversion
 	}.combine(units) { value, units ->
 		units.distanceUnits.fromCarUnit(value)
+	}
+	val speedGPS = carInfo.cdsData.flow[CDS.NAVIGATION.GPSEXTENDEDINFO].mapNotNull {
+		it.tryAsJsonObject("GPSExtendedInfo")?.tryAsJsonPrimitive("speed")?.tryAsDouble?.takeIf { it <= -24434 } // max. 300 km/h
+		// probably doesn't need unit conversion
+	}.combine(units) { value, units ->
+		units.distanceUnits.fromCarUnit((value + 32768) * 0.036) // GPS unit is 10m/s
 	}
 	val engineRpm = carInfo.cdsData.flow[CDS.ENGINE.RPMSPEED].mapNotNull {
 		it.tryAsJsonPrimitive("RPMSpeed")?.tryAsInt
@@ -260,6 +267,9 @@ class CDSMetrics(val carInfo: CarInformation) {
 	}
 	val steeringAngle = carInfo.cdsData.flow[CDS.DRIVING.STEERINGWHEEL].mapNotNull {
 		it.tryAsJsonObject("steeringWheel")?.tryAsJsonPrimitive("angle")?.tryAsDouble
+	}
+	val torque = carInfo.cdsData.flow[CDS.ENGINE.TORQUE].mapNotNull {
+		it.tryAsJsonPrimitive("torque")?.tryAsDouble?.takeIf { it >= 0 }
 	}
 	val parkingBrake = carInfo.cachedCdsData.flow[CDS.DRIVING.PARKINGBRAKE].mapNotNull {
 		it.tryAsJsonPrimitive("parkingBrake")?.tryAsInt
@@ -317,4 +327,20 @@ class CDSMetrics(val carInfo: CarInformation) {
 	val gpsLon = carInfo.cachedCdsData.flow[CDS.NAVIGATION.GPSPOSITION].mapNotNull {
 		it.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("longitude")?.tryAsDouble
 	}
+//	val ACCompressorActualPower = carInfo.cdsData.flow[CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR].mapNotNull {
+//		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("actualPower")?.tryAsDouble
+//	}
+//	val ACCompressorDualMode = carInfo.cdsData.flow[CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR].mapNotNull {
+//		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("dualMode")?.tryAsDouble
+//	}
+	val ACCompressorActualTorque = carInfo.cdsData.flow[CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR].mapNotNull {
+		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("actualTorque")?.tryAsDouble
+	}
+	val ACCompressorLevel = ACCompressorActualTorque.mapNotNull { ACCompressorActualTorque ->
+		ACCompressorActualTorque * 10.0
+	}
+	val ACCompressor = carInfo.cdsData.flow[CDS.CLIMATE.ACCOMPRESSOR].mapNotNull {
+		it.tryAsJsonPrimitive("ACCompressor")?.tryAsInt
+	}
+
 }

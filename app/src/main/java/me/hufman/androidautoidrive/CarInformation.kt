@@ -213,4 +213,6 @@ class CarCapabilitiesSummarized(val carInformation: CarInformation) {
 		get() = isJ29 || (carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 9999) < 1000
 	val mapWidescreenCrashes: Boolean
 		get() = carInformation.capabilities["hmi.version"]?.lowercase(Locale.ROOT)?.startsWith("entryevo_") == true
+	val isF20orF21: Boolean
+		get()= carInformation.capabilities["vehicle.type"]?.contains("F20") == true || carInformation.capabilities["vehicle.type"]?.contains("F21") == true
 }
