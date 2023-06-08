@@ -74,8 +74,8 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		val icon = if (it < 0) {"→"} else if (it > 0) {"←"} else {""}
 		"$icon %.0f°".format(it.absoluteValue)
 	}.map { "$it ${L.CARINFO_STEERING}" }
-	val speed = cdsMetrics.speedActual.format("%.0f").addPlainUnit(unitsSpeedLabel).map { "$it ${L.CARINFO_SPEEDACTUAL}" }
-	val speedGPS = cdsMetrics.speedGPS.format("%.0f").addPlainUnit(unitsSpeedLabel).map { "$it ${L.CARINFO_SPEEDGPS}" }
+	val speed = cdsMetrics.speedActual.format("%.0f").addPlainUnit(unitsSpeedLabel)
+	val speedGPS = cdsMetrics.speedGPS.format("%.0f").addPlainUnit(unitsSpeedLabel)
 	val torque =cdsMetrics.torque.format("%.0fNM").map { "$it ${L.CARINFO_TORQUE}" }
 	val engineRpm = cdsMetrics.engineRpm.map { "$it ${L.CARINFO_RPM}"}
 	val heading = cdsMetrics.heading.map { heading ->
@@ -161,9 +161,9 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	val crossStreetLabel = cdsMetrics.gpsCrossStreet.map {
 		if (it.isBlank()) "" else "and $it"
 	}
-	val altitudeLabel = cdsMetrics.gpsAltitude.map { "${L.CARINFO_GPSALTITUDE} ${it}m" }
-	val latitudeLabel = cdsMetrics.gpsLat.map { "${L.CARINFO_GPSLATITUDE} $it" }
-	val longitudeLabel = cdsMetrics.gpsLon.map { "${L.CARINFO_GPSLONGITUDE} $it" }
+	val altitudeLabel = cdsMetrics.gpsAltitude.map { "${it}m ${L.CARINFO_GPSALTITUDE}" }
+	val latitudeLabel = cdsMetrics.gpsLat.map { "$it ${L.CARINFO_GPSLATITUDE}" }
+	val longitudeLabel = cdsMetrics.gpsLon.map { "$it ${L.CARINFO_GPSLONGITUDE}" }
 //	val rawHeading = cdsMetrics.rawHeading.format("%.0f Raw Heading")
 //	val ACActualPower =cdsMetrics.ACCompressorActualPower.format("%.0f").map { "$it Power" }
 //	val ACDualmode =cdsMetrics.ACCompressorDualMode.format("%.0f").map { "$it Dualmode" }
@@ -183,7 +183,7 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 			oilTemp, tempInterior,
 			tempEvaporator, tempExchanger,
 			fuelLevelLabel, evLevelLabel,
-			accBatteryLevelLabel
+			accBatteryLevelLabel,batteryTemp
 	)
 	private val drivingFields: List<Flow<String>> = listOf(
 			drivingMode, drivingGearLabel,

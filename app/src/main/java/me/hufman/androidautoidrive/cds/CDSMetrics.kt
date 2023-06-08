@@ -155,7 +155,21 @@ class CDSMetrics(val carInfo: CarInformation) {
 	val tempEvaporator = carInfo.cdsData.flow[CDS.CLIMATE.ACSYSTEMTEMPERATURES].mapNotNull {
 		it.tryAsJsonObject("ACSystemTemperatures")?.tryAsJsonPrimitive("evaporator")?.tryAsDouble
 	}
-
+	val ACCompressorActualPower = carInfo.cdsData.flow[CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR].mapNotNull {
+		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("actualPower")?.tryAsDouble
+	}
+	val ACCompressorDualMode = carInfo.cdsData.flow[CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR].mapNotNull {
+		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("dualMode")?.tryAsDouble
+	}
+	val ACCompressorActualTorque = carInfo.cdsData.flow[CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR].mapNotNull {
+		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("actualTorque")?.tryAsDouble
+	}
+	val ACCompressorLevel = ACCompressorActualTorque.mapNotNull { ACCompressorActualTorque ->
+		ACCompressorActualTorque * 10.0
+	}
+	val ACCompressor = carInfo.cdsData.flow[CDS.CLIMATE.ACCOMPRESSOR].mapNotNull {
+		it.tryAsJsonPrimitive("ACCompressor")?.tryAsInt
+	}
 	/*
 		0 - Initialisierung -> initialization
 		1 - Tractionmodus -> Traction mode
@@ -327,20 +341,4 @@ class CDSMetrics(val carInfo: CarInformation) {
 	val gpsLon = carInfo.cachedCdsData.flow[CDS.NAVIGATION.GPSPOSITION].mapNotNull {
 		it.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("longitude")?.tryAsDouble
 	}
-//	val ACCompressorActualPower = carInfo.cdsData.flow[CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR].mapNotNull {
-//		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("actualPower")?.tryAsDouble
-//	}
-//	val ACCompressorDualMode = carInfo.cdsData.flow[CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR].mapNotNull {
-//		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("dualMode")?.tryAsDouble
-//	}
-	val ACCompressorActualTorque = carInfo.cdsData.flow[CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR].mapNotNull {
-		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("actualTorque")?.tryAsDouble
-	}
-	val ACCompressorLevel = ACCompressorActualTorque.mapNotNull { ACCompressorActualTorque ->
-		ACCompressorActualTorque * 10.0
-	}
-	val ACCompressor = carInfo.cdsData.flow[CDS.CLIMATE.ACCOMPRESSOR].mapNotNull {
-		it.tryAsJsonPrimitive("ACCompressor")?.tryAsInt
-	}
-
 }
