@@ -176,7 +176,8 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	private val sportFields: List<Flow<String>> = listOf(
 			engineTemp, oilTemp,
 			accelContact, brakeState,
-			torque, steeringAngle,
+			engineRpm, torque,
+			drivingGearLabel , steeringAngle,
 			tempInterior, tempExterior,
 			gforceLat, gforceLong
 	)
