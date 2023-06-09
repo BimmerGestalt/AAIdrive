@@ -234,9 +234,9 @@ class CDSMetrics(val carInfo: CarInformation) {
 	}
 	val speedGPS = carInfo.cdsData.flow[CDS.NAVIGATION.GPSEXTENDEDINFO].mapNotNull {
 		it.tryAsJsonObject("GPSExtendedInfo")?.tryAsJsonPrimitive("speed")?.tryAsDouble?.takeIf { it <= -24434 } // max. 300 km/h
-		// probably doesn't need unit conversion
-	}.combine(units) { value, units ->
-		units.distanceUnits.fromCarUnit((value + 32768) * 0.036) // GPS unit is 10m/s
+				?.plus(32768)?.times(0.036)}// GPS unit is 10m/s
+			.combine(units) { value, units ->
+		units.distanceUnits.fromCarUnit(value)
 	}
 	val engineRpm = carInfo.cdsData.flow[CDS.ENGINE.RPMSPEED].mapNotNull {
 		it.tryAsJsonPrimitive("RPMSpeed")?.tryAsInt
