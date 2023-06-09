@@ -392,6 +392,7 @@
     <!-- car app strings -->
     <string name="CARINFO_TITLE">Detailed Vehicle Info</string>
     <string name="CARINFO_TITLE_DRIVING">Driving Details</string>
+    <string name="CARINFO_TITLE_SPORT">Sport Display</string>
     <string name="CARINFO_ENGINE">Engine</string>
     <string name="CARINFO_OIL">Oil</string>
     <string name="CARINFO_BATTERY">Battery</string>

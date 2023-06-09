@@ -81,9 +81,17 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		"$arrow $direction (${heading.toInt()}°)"
 	}
 	val gforces = cdsMetrics.accel.map { accel ->
-		val lat = accel.first?.let {"↔%.2f".format(it/9.8)} ?: ""
-		val long = accel.second?.let {"↕%.2f".format(it/9.8)} ?: ""
+		val lat = accel.first?.let { "↔%.2f".format(it / 9.8) } ?: ""
+		val long = accel.second?.let { "↕%.2f".format(it / 9.8) } ?: ""
 		"$lat $long ${L.CARINFO_GFORCE}"
+	}
+	val gforceLat = cdsMetrics.accel.map { accel ->
+		val lat = accel.first?.let {"↔%.2f".format(it/9.8)} ?: ""
+		"$lat"
+	}
+	val gforceLong = cdsMetrics.accel.map { accel ->
+		val long = accel.second?.let {"↕%.2f".format(it/9.8)} ?: ""
+		"$long ${L.CARINFO_GFORCE}"
 	}
 
 	// advanced driving fields that aren't translated
@@ -164,6 +172,13 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	val rawHeading = cdsMetrics.rawHeading.format("%.0f Raw Heading")
 
 	// categories
+	private val sportFields: List<Flow<String>> = listOf(
+			engineTemp, oilTemp,
+			accelContact, brakeState,
+			clutchState, steeringAngle,
+			tempInterior, tempExterior,
+			gforceLat, gforceLong
+	)
 	private val overviewFields: List<Flow<String>> = listOf(
 			engineTemp, tempExterior,
 			oilTemp, tempInterior,
@@ -208,6 +223,7 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	val basicCategories = LinkedHashMap<String, List<Flow<String>>>().apply {
 		put(L.CARINFO_TITLE, overviewFields)
 		put(L.CARINFO_TITLE_DRIVING, drivingFields)
+		put(L.CARINFO_TITLE_SPORT, sportFields)
 	}
 	val advancedCategories = LinkedHashMap<String, List<Flow<String>>>().apply {
 		put(L.CARINFO_TITLE, overviewFields)
