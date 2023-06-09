@@ -406,6 +406,7 @@
     <string name="CARINFO_ACCEL">Accel</string>
     <string name="CARINFO_STEERING">Steering</string>
     <string name="CARINFO_RPM">RPM</string>
+    <string name="CARINFO_TORQUE">Torque</string>
     <string name="CARINFO_GFORCE">GForce</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
     <string name="CARINFO_UNIT_F">\u2109</string>

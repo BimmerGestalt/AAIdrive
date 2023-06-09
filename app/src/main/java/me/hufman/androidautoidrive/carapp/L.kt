@@ -31,6 +31,7 @@ object L {
 	val CARINFO_ACCEL by StringResourceDelegate("Accel")
 	val CARINFO_STEERING by StringResourceDelegate("Steering")
 	val CARINFO_RPM by StringResourceDelegate("RPM")
+	val CARINFO_TORQUE by StringResourceDelegate("Torque")
 	val CARINFO_GFORCE by StringResourceDelegate("GForce")
 	val CARINFO_UNIT_C by StringResourceDelegate("\\u2103")
 	val CARINFO_UNIT_F by StringResourceDelegate("\\u2109")

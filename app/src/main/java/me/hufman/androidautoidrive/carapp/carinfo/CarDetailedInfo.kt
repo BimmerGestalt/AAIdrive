@@ -74,6 +74,7 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		"$icon %.0f°".format(it.absoluteValue)
 	}.map { "$it ${L.CARINFO_STEERING}" }
 	val speed = cdsMetrics.speedActual.format("%.1f").addPlainUnit(unitsSpeedLabel)
+	val torque =cdsMetrics.torque.format("%.0fNM").map { "$it ${L.CARINFO_TORQUE}" }
 	val engineRpm = cdsMetrics.engineRpm.map { "$it ${L.CARINFO_RPM}"}
 	val heading = cdsMetrics.heading.map { heading ->
 		val direction = CDSMetrics.compassDirection(heading)
@@ -175,7 +176,7 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	private val sportFields: List<Flow<String>> = listOf(
 			engineTemp, oilTemp,
 			accelContact, brakeState,
-			clutchState, steeringAngle,
+			torque, steeringAngle,
 			tempInterior, tempExterior,
 			gforceLat, gforceLong
 	)
