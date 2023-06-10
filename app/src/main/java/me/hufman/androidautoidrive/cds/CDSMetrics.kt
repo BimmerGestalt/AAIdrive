@@ -192,7 +192,7 @@ class CDSMetrics(val carInfo: CarInformation) {
 			null -> ""
 			2 -> "Comfort"
 			9 -> "Comfort+"
-			3 -> if (CarCapabilitiesSummarized(carInfo).isF20orF21) "Comfort" else "Basic"
+			3 -> "Comfort" //changed from "Basic" as wording "Basic" never seen in Cars
 			4 -> "Sport"
 			5 -> "Sport+"
 			6 -> "Race"

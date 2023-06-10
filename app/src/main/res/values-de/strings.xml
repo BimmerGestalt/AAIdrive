@@ -359,6 +359,7 @@
     <!-- car app strings -->
     <string name="CARINFO_TITLE">Detaillierte Fahrzeuginformationen</string>
     <string name="CARINFO_TITLE_DRIVING">Fahrdetails</string>
+    <string name="CARINFO_TITLE_PERFORMANCE">Performancedetails</string>
     <string name="CARINFO_TITLE_GPS">GPS Daten</string>
     <string name="CARINFO_TITLE_AC">Klimaanlage Daten</string>
     <string name="CARINFO_TITLE_WINDOWS">Fensterstati</string>

@@ -193,6 +193,13 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	)
 	private val drivingAdvancedFields: List<Flow<String>> = listOf(
 			drivingMode, drivingGearLabel,
+			accelContact, brakeState,
+			clutchState, steeringAngle,
+			speed, heading,
+			gforces, engineRpm
+	)
+	private val drivingPerformanceFields: List<Flow<String>> = listOf(
+			drivingMode, drivingGearLabel,
 			accelContact, steeringAngle,
 			speed, torque,
 			gforces, heading,
@@ -230,12 +237,14 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	val basicCategories = LinkedHashMap<String, List<Flow<String>>>().apply {
 		put(L.CARINFO_TITLE, overviewFields)
 		put(L.CARINFO_TITLE_DRIVING, drivingFields)
+		put (L.CARINFO_TITLE_PERFORMANCE, drivingPerformanceFields)
 	}
 	val advancedCategories = LinkedHashMap<String, List<Flow<String>>>().apply {
 		put(L.CARINFO_TITLE, overviewFields)
 		put(L.CARINFO_TITLE_DRIVING + " ", drivingAdvancedFields)   // slightly different key for the allCategories
 
 		// add more pages like this:
+		put (L.CARINFO_TITLE_PERFORMANCE + " ", drivingPerformanceFields)
 		put(L.CARINFO_TITLE_GPS, gpsFields)
 		put (L.CARINFO_TITLE_AC, ACFields)
 		put(L.CARINFO_TITLE_WINDOWS, windowFields)
