@@ -407,6 +407,8 @@
     <string name="CARINFO_COMPRESSOR">Klimakompressor</string>
     <string name="CARINFO_COMPRESSORSTATE">Status</string>
     <string name="CARINFO_COMPRESSORLEVEL">Ansteuerung</string>
+    <string name="CARINFO_COMPRESSORPOWER">AC Power</string>
+    <string name="CARINFO_COMPRESSORDUALMODE">Dualmode</string>
     <string name="CARINFO_GPSALTITUDE">Höhe</string>
     <string name="CARINFO_GPSLATITUDE">BtGr</string>
     <string name="CARINFO_GPSLONGITUDE">LgGr</string>

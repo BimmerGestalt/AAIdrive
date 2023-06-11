@@ -165,16 +165,22 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	val latitudeLabel = cdsMetrics.gpsLat.map { "$it ${L.CARINFO_GPSLATITUDE}" }
 	val longitudeLabel = cdsMetrics.gpsLon.map { "$it ${L.CARINFO_GPSLONGITUDE}" }
 //	val rawHeading = cdsMetrics.rawHeading.format("%.0f Raw Heading")
-//	val ACActualPower =cdsMetrics.ACCompressorActualPower.format("%.0f").map { "$it Power" }
-//	val ACDualmode =cdsMetrics.ACCompressorDualMode.format("%.0f").map { "$it Dualmode" }
+   val ACCompressorActualPower =cdsMetrics.ACCompressorActualPower.format("%.0f").map { "$it ${L.CARINFO_COMPRESSORPOWER}" }
+   val ACCompressorDualmode =cdsMetrics.ACCompressorDualMode.mapNotNull {
+		when (it) {
+			1 -> "${L.CARINFO_STATE_OFF}"
+			2 -> "${L.CARINFO_STATE_ON}"
+			else -> "?"
+		}
+	}.map { "${L.CARINFO_COMPRESSORDUALMODE}: $it" }
 //	val ACActualTorque =cdsMetrics.ACCompressorActualTorque.format("%.0f").map { "$it Torque" }
-	val ACCompressorState = cdsMetrics.ACCompressor.mapNotNull { // .format("%d").map {"$it Compressor"}
+	val ACCompressorState = cdsMetrics.ACCompressor.mapNotNull {
 				when (it) {
 					0 -> "${L.CARINFO_STATE_OFF}"
 					1 -> "${L.CARINFO_STATE_ON}"
 					else -> "?"
 				}
-	}//.map {"$it ${L.CARINFO_COMPRESSORSTATE}"}
+	}
 	val ACCompressorLevel = cdsMetrics.ACCompressorLevel.format("%.0f%%").map {"$it ${L.CARINFO_COMPRESSORLEVEL}"}
 
 	// categories
@@ -230,8 +236,8 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 			tempExterior, tempInterior,
 			tempEvaporator, tempExchanger,
 			flowOf(L.CARINFO_COMPRESSOR),emptyFlow(),
-			ACCompressorState, emptyFlow(),
-			ACCompressorLevel,
+			ACCompressorState, ACCompressorDualmode,
+			ACCompressorLevel, ACCompressorActualPower,
 	)
 
 	val basicCategories = LinkedHashMap<String, List<Flow<String>>>().apply {
@@ -244,7 +250,7 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		put(L.CARINFO_TITLE_DRIVING + " ", drivingAdvancedFields)   // slightly different key for the allCategories
 
 		// add more pages like this:
-		put (L.CARINFO_TITLE_PERFORMANCE + " ", drivingPerformanceFields)
+		put (L.CARINFO_TITLE_PERFORMANCE, drivingPerformanceFields)
 		put(L.CARINFO_TITLE_GPS, gpsFields)
 		put (L.CARINFO_TITLE_AC, ACFields)
 		put(L.CARINFO_TITLE_WINDOWS, windowFields)

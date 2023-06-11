@@ -440,6 +440,8 @@
     <string name="CARINFO_COMPRESSOR">AC Compressor</string>
     <string name="CARINFO_COMPRESSORSTATE">AC State</string>
     <string name="CARINFO_COMPRESSORLEVEL">AC Level</string>
+    <string name="CARINFO_COMPRESSORPOWER">AC Power</string>
+    <string name="CARINFO_COMPRESSORDUALMODE">Dualmode</string>
     <string name="CARINFO_GPSALTITUDE">Altitude</string>
     <string name="CARINFO_GPSLATITUDE">Lat</string>
     <string name="CARINFO_GPSLONGITUDE">Long</string>

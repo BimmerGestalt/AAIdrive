@@ -63,6 +63,8 @@ object L {
 	val CARINFO_COMPRESSOR by StringResourceDelegate("AC Compressor")
 	val CARINFO_COMPRESSORSTATE by StringResourceDelegate("AC State")
 	val CARINFO_COMPRESSORLEVEL by StringResourceDelegate("AC Level")
+	val CARINFO_COMPRESSORPOWER by StringResourceDelegate("AC Power")
+	val CARINFO_COMPRESSORDUALMODE by StringResourceDelegate("Dualmode")
 	val CARINFO_GPSALTITUDE by StringResourceDelegate("Altiude")
 	val CARINFO_GPSLATITUDE by StringResourceDelegate("Lat")
 	val CARINFO_GPSLONGITUDE by StringResourceDelegate("Long")

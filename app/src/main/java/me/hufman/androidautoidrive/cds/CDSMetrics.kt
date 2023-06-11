@@ -156,13 +156,13 @@ class CDSMetrics(val carInfo: CarInformation) {
 		it.tryAsJsonObject("ACSystemTemperatures")?.tryAsJsonPrimitive("evaporator")?.tryAsDouble
 	}
 	val ACCompressorActualPower = carInfo.cdsData.flow[CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR].mapNotNull {
-		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("actualPower")?.tryAsDouble
+		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("actualPower")?.tryAsDouble?.takeIf { it < 255 }
 	}
 	val ACCompressorDualMode = carInfo.cdsData.flow[CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR].mapNotNull {
-		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("dualMode")?.tryAsDouble
+		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("dualMode")?.tryAsInt?.takeIf { it < 3 }
 	}
 	val ACCompressorActualTorque = carInfo.cdsData.flow[CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR].mapNotNull {
-		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("actualTorque")?.tryAsDouble
+		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("actualTorque")?.tryAsDouble?.takeIf { it < 255 }
 	}
 	val ACCompressorLevel = ACCompressorActualTorque.mapNotNull { ACCompressorActualTorque ->
 		ACCompressorActualTorque * 10.0
