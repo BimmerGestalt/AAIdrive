@@ -359,6 +359,7 @@
     <!-- car app strings -->
     <string name="CARINFO_TITLE">Informazioni dettagliate sul veicolo</string>
     <string name="CARINFO_TITLE_DRIVING">Dati di Guida</string>
+    <string name="CARINFO_TITLE_SPORT">Display Sportivo</string>
     <string name="CARINFO_ENGINE">Motore</string>
     <string name="CARINFO_OIL">Olio</string>
     <string name="CARINFO_BATTERY">Batteria</string>
@@ -372,6 +373,7 @@
     <string name="CARINFO_ACCEL">Acceleratore</string>
     <string name="CARINFO_STEERING">Sterzo</string>
     <string name="CARINFO_RPM">Giri/min</string>
+    <string name="CARINFO_TORQUE">Coppia</string>
     <string name="CARINFO_GFORCE">Forza G</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
     <string name="CARINFO_UNIT_F">\u2109</string>
