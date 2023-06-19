@@ -350,6 +350,7 @@
     <!-- car app strings -->
     <string name="CARINFO_TITLE">Подробная информация об Автомобиле</string>
     <string name="CARINFO_TITLE_DRIVING">Детали поездки</string>
+    <string name="CARINFO_TITLE_SPORT">Спортивный дисплей</string>
     <string name="CARINFO_ENGINE">Двигатель</string>
     <string name="CARINFO_OIL">Масло</string>
     <string name="CARINFO_BATTERY">Аккумулятор</string>
@@ -363,6 +364,7 @@
     <string name="CARINFO_ACCEL">Ускор.</string>
     <string name="CARINFO_STEERING">Поворот</string>
     <string name="CARINFO_RPM">об./мин.</string>
+    <string name="CARINFO_TORQUE">Крутящий момент</string>
     <string name="CARINFO_GFORCE">GForce</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
     <string name="CARINFO_UNIT_F">\u2109</string>
