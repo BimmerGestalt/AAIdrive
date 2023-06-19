@@ -17,6 +17,7 @@ object L {
 	// these default string values are used in tests, Android resources are used for real
 	val CARINFO_TITLE by StringResourceDelegate("Detailed Vehicle Info")
 	val CARINFO_TITLE_DRIVING by StringResourceDelegate("Driving Details")
+	val CARINFO_TITLE_SPORT by StringResourceDelegate("Sport Display")
 	val CARINFO_ENGINE by StringResourceDelegate("Engine")
 	val CARINFO_OIL by StringResourceDelegate("Oil")
 	val CARINFO_EXCHANGER by StringResourceDelegate("HVAC")
@@ -30,6 +31,7 @@ object L {
 	val CARINFO_ACCEL by StringResourceDelegate("Accel")
 	val CARINFO_STEERING by StringResourceDelegate("Steering")
 	val CARINFO_RPM by StringResourceDelegate("RPM")
+	val CARINFO_TORQUE by StringResourceDelegate("Torque")
 	val CARINFO_GFORCE by StringResourceDelegate("GForce")
 	val CARINFO_UNIT_C by StringResourceDelegate("\\u2103")
 	val CARINFO_UNIT_F by StringResourceDelegate("\\u2109")

@@ -252,6 +252,9 @@ class CDSMetrics(val carInfo: CarInformation) {
 	val acceleratorEco = carInfo.cdsData.flow[CDS.DRIVING.ACCELERATORPEDAL].mapNotNull {
 		it.tryAsJsonObject("acceleratorPedal")?.tryAsJsonPrimitive("ecoPosition")?.tryAsInt
 	}
+	val torque = carInfo.cdsData.flow[CDS.ENGINE.TORQUE].mapNotNull {
+		it.tryAsJsonPrimitive("torque")?.tryAsDouble?.takeIf { it >= 0 }
+	}
 	val brake = carInfo.cdsData.flow[CDS.DRIVING.BRAKECONTACT].map {
 		it.tryAsJsonPrimitive("brakeContact")?.tryAsInt
 	}

@@ -392,6 +392,7 @@
     <!-- car app strings -->
     <string name="CARINFO_TITLE">Detailed Vehicle Info</string>
     <string name="CARINFO_TITLE_DRIVING">Driving Details</string>
+    <string name="CARINFO_TITLE_SPORT">Sport Display</string>
     <string name="CARINFO_ENGINE">Engine</string>
     <string name="CARINFO_OIL">Oil</string>
     <string name="CARINFO_BATTERY">Battery</string>
@@ -405,6 +406,7 @@
     <string name="CARINFO_ACCEL">Accel</string>
     <string name="CARINFO_STEERING">Steering</string>
     <string name="CARINFO_RPM">RPM</string>
+    <string name="CARINFO_TORQUE">Torque</string>
     <string name="CARINFO_GFORCE">GForce</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
     <string name="CARINFO_UNIT_F">\u2109</string>
