@@ -359,6 +359,7 @@
     <!-- car app strings -->
     <string name="CARINFO_TITLE">Detaljerad fordonsinformation</string>
     <string name="CARINFO_TITLE_DRIVING">Körinformation</string>
+    <string name="CARINFO_TITLE_SPORT">Sportdisplay</string>
     <string name="CARINFO_ENGINE">Motor</string>
     <string name="CARINFO_OIL">Olja</string>
     <string name="CARINFO_BATTERY">Batteri</string>
@@ -372,6 +373,7 @@
     <string name="CARINFO_ACCEL">Acceleration</string>
     <string name="CARINFO_STEERING">Styrning</string>
     <string name="CARINFO_RPM">Varvtal</string>
+    <string name="CARINFO_TORQUE">Vridmoment</string>
     <string name="CARINFO_GFORCE">GForce</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
     <string name="CARINFO_UNIT_F">\u2109</string>
