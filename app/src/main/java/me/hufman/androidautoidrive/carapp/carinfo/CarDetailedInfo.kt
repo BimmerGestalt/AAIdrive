@@ -231,7 +231,7 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 			cityLabel, altitudeLabel,
 			streetLabel, crossStreetLabel,
 			latitudeLabel, longitudeLabel,
-			speedGPS, heading
+			speedGPS
 	)
 	private val windowFields: List<Flow<String>> = if (!rightHandDrive) {
 		listOf(
