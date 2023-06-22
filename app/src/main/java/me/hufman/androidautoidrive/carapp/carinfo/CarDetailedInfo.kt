@@ -84,9 +84,17 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		"$arrow $direction (${heading.toInt()}°)"
 	}
 	val gforces = cdsMetrics.accel.map { accel ->
-		val lat = accel.first?.let {"↔%.2f".format(it/9.8)} ?: ""
-		val long = accel.second?.let {"↕%.2f".format(it/9.8)} ?: ""
+		val lat = accel.first?.let { "↔%.2f".format(it / 9.8) } ?: ""
+		val long = accel.second?.let { "↕%.2f".format(it / 9.8) } ?: ""
 		"$lat $long ${L.CARINFO_GFORCE}"
+	}
+	val gforceLat = cdsMetrics.accel.map { accel ->
+		val lat = accel.first?.let {"↔%.2f".format(it/9.8)} ?: ""
+		"$lat"
+	}
+	val gforceLong = cdsMetrics.accel.map { accel ->
+		val long = accel.second?.let {"↕%.2f".format(it/9.8)} ?: ""
+		"$long ${L.CARINFO_GFORCE}"
 	}
 
 	// advanced driving fields that aren't translated
@@ -184,6 +192,13 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	val ACCompressorLevel = cdsMetrics.ACCompressorLevel.format("%.0f%%").map {"$it ${L.CARINFO_COMPRESSORLEVEL}"}
 
 	// categories
+	private val sportFields: List<Flow<String>> = listOf(
+			engineTemp, oilTemp,
+			accelContact, brakeState,
+			engineRpm, torque,
+			drivingGearLabel, steeringAngle,
+			gforceLat, gforceLong
+	)
 	private val overviewFields: List<Flow<String>> = listOf(
 			engineTemp, tempExterior,
 			oilTemp, tempInterior,
@@ -216,7 +231,7 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 			cityLabel, altitudeLabel,
 			streetLabel, crossStreetLabel,
 			latitudeLabel, longitudeLabel,
-			speedGPS
+			speedGPS, heading
 	)
 	private val windowFields: List<Flow<String>> = if (!rightHandDrive) {
 		listOf(
@@ -243,14 +258,14 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	val basicCategories = LinkedHashMap<String, List<Flow<String>>>().apply {
 		put(L.CARINFO_TITLE, overviewFields)
 		put(L.CARINFO_TITLE_DRIVING, drivingFields)
-		put (L.CARINFO_TITLE_PERFORMANCE, drivingPerformanceFields)
+		put (L.CARINFO_TITLE_SPORT, sportFields)
 	}
 	val advancedCategories = LinkedHashMap<String, List<Flow<String>>>().apply {
 		put(L.CARINFO_TITLE, overviewFields)
 		put(L.CARINFO_TITLE_DRIVING + " ", drivingAdvancedFields)   // slightly different key for the allCategories
 
 		// add more pages like this:
-		put (L.CARINFO_TITLE_PERFORMANCE, drivingPerformanceFields)
+		put (L.CARINFO_TITLE_SPORT + " ", drivingPerformanceFields) // slightly different key for the allCategories
 		put(L.CARINFO_TITLE_GPS, gpsFields)
 		put (L.CARINFO_TITLE_AC, ACFields)
 		put(L.CARINFO_TITLE_WINDOWS, windowFields)
