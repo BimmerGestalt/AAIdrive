@@ -351,6 +351,7 @@
     <string name="CARINFO_TITLE">Подробная информация об Автомобиле</string>
     <string name="CARINFO_TITLE_DRIVING">Детали поездки</string>
     <string name="CARINFO_TITLE_SPORT">Спортивный дисплей</string>
+    <string name="CARINFO_TITLE_GPS">GPS Info</string>
     <string name="CARINFO_ENGINE">Двигатель</string>
     <string name="CARINFO_OIL">Масло</string>
     <string name="CARINFO_BATTERY">Аккумулятор</string>
