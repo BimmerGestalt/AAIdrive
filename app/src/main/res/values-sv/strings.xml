@@ -408,6 +408,7 @@
     <string name="CARINFO_COMPRESSORSTATE">AC Skick</string>
     <string name="CARINFO_COMPRESSORLEVEL">AC nivå</string>
     <string name="CARINFO_GPSLATITUDE">Latitud</string>
+    <string name="CARINFO_GPSLONGITUDE">Longitud</string>
     <string name="NOTIFICATIONS_TITLE">Aviseringar</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Inga aviseringar</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Töm</string>
