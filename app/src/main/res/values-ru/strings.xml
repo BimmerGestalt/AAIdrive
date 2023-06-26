@@ -358,6 +358,7 @@
     <string name="CARINFO_OIL">Масло</string>
     <string name="CARINFO_BATTERY">Аккумулятор</string>
     <string name="CARINFO_EXCHANGER">Система отопления</string>
+    <string name="CARINFO_EVAPORATOR">EVAC</string>
     <string name="CARINFO_EXTERIOR">Снаружи</string>
     <string name="CARINFO_INTERIOR">Внутри</string>
     <string name="CARINFO_GEAR">Передача</string>
@@ -395,7 +396,13 @@
     <string name="CARINFO_STATE_OFF">выкл.</string>
     <string name="CARINFO_STATE_ON">вкл.</string>
     <string name="CARINFO_COMPRESSOR">Компрессор кондиционера</string>
-    <string name="CARINFO_COMPRESSORPOWER">Питание кондиционера</string>
+    <string name="CARINFO_COMPRESSORSTATE">Состояние конд. </string>
+    <string name="CARINFO_COMPRESSORLEVEL">Уровень конд.</string>
+    <string name="CARINFO_COMPRESSORPOWER">Питание конд.</string>
+    <string name="CARINFO_COMPRESSORDUALMODE">Dualmode</string>
+    <string name="CARINFO_GPSALTITUDE">Высота</string>
+    <string name="CARINFO_GPSLATITUDE">Шир.</string>
+    <string name="CARINFO_GPSLONGITUDE">Долг.</string>
     <string name="NOTIFICATIONS_TITLE">Уведомления</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Нет уведомлений</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Очистить </string>
