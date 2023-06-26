@@ -341,10 +341,14 @@
     <string name="CARINFO_TITLE">Részletes jármű információ</string>
     <string name="CARINFO_TITLE_DRIVING">Vezetés részletei</string>
     <string name="CARINFO_TITLE_SPORT">Sport Kijelző</string>
+    <string name="CARINFO_TITLE_GPS">GPS Információ</string>
+    <string name="CARINFO_TITLE_AC">Légkondícionáló Információ</string>
+    <string name="CARINFO_TITLE_WINDOWS">Ablak információ</string>
     <string name="CARINFO_ENGINE">Motor</string>
     <string name="CARINFO_OIL">Olaj</string>
     <string name="CARINFO_BATTERY">Akkumulátor</string>
     <string name="CARINFO_EXCHANGER">HVAC</string>
+    <string name="CARINFO_EVAPORATOR">EVAC</string>
     <string name="CARINFO_EXTERIOR">Külső</string>
     <string name="CARINFO_INTERIOR">Belső</string>
     <string name="CARINFO_GEAR">Váltó</string>
@@ -354,6 +358,8 @@
     <string name="CARINFO_RPM">Fordulatszám</string>
     <string name="CARINFO_TORQUE">Forgatónyomaték</string>
     <string name="CARINFO_GFORCE">G-erő</string>
+    <string name="CARINFO_SPEEDACTUAL">Pillanatnyi</string>
+    <string name="CARINFO_SPEEDGPS">GPS</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
     <string name="CARINFO_UNIT_F">\u2109</string>
     <string name="CARINFO_UNIT_KM">km</string>
@@ -363,6 +369,9 @@
     <string name="CARINFO_UNIT_LITER">L</string>
     <string name="CARINFO_UNIT_KMPH">km/h</string>
     <string name="CARINFO_UNIT_MPH">mph</string>
+    <string name="CARINFO_HEADING_NORTH">É</string>
+    <string name="CARINFO_HEADING_NORTHEAST">ÉK</string>
+    <string name="CARINFO_HEADING_EAST">K</string>
     <string name="NOTIFICATIONS_TITLE">Értesítések</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Nincsenek értesítések</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Törlés</string>
