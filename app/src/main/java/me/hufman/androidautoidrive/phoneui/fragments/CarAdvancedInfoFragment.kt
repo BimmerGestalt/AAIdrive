@@ -21,6 +21,7 @@ class CarAdvancedInfoFragment: Fragment() {
 
 		val CDS_KEYS = mapOf(
 			CDS.ENGINE.INFO to "info",
+			CDS.ENGINE.STATUS to "status",
 			CDS.ENGINE.TEMPERATURE to "temperature",
 			CDS.ENGINE.CONSUMPTION to "consumption",
 			CDS.DRIVING.MODE to "mode",
@@ -43,7 +44,8 @@ class CarAdvancedInfoFragment: Fragment() {
 			CDS.ENGINE.ELECTRICVEHICLEMODE to "electricVehicleMode",
 			CDS.DRIVING.ELECTRICALPOWERDISTRIBUTION to "electricalPowerDistribution",
 			CDS.SENSORS.TEMPERATUREINTERIOR to "temperatureInterior",
-			CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR to "ACCompressor",
+			CDS.CLIMATE.ACCOMPRESSOR to "ACCompressor",
+			CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR to "airConditionerCompressor",
 			CDS.CLIMATE.ACMODE to "ACMode",
 			CDS.CLIMATE.ACSYSTEMTEMPERATURES to "ACSystemTemperatures",
 			CDS.ENTERTAINMENT.MULTIMEDIA to "multimedia",
