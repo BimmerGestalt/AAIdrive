@@ -13,6 +13,10 @@
     <string name="playstore_desc_features_custommap_soon">Egyedi térkép implementáció hamarosan elérhető</string>
     <string name="playstore_desc_features_custommap">Egyedi térkép és navigáció a Mapbox alapján</string>
     <string name="playstore_desc_nativeapps_protocol">A natív BMW Apps protokoll használatával (pontosan úgy, mint ahogy a régi Spotify alkalmazás) ez az alkalmazás semmilyen módon nem módosítja az autódat, és az összes kiterjesztett képesség csak akkor érhető el, ha a telefon csatlakoztatva van.</string>
+    <string name="playstore_desc_depends_mybmw">A BMW/Mini Connected Apps megköveteli, hogy az autójához telepítve legyen a MyBMW vagy MINI alkalmazás, és ezzel sikeresen engedélyezni tudja az IDrive5+ autójában az Alkalmazások jelölőnégyzetét, vagy hogy az IDrive4 autójában rendelkezzen a ConnectedDrive Connection Assistant opcióval.</string>
     <string name="playstore_desc_depends_bmw_subscription">Ehhez általában aktív BMW ConnectedDrive regisztráció szükséges, amely általában az új autó vásárlását követően néhány évig alapból megkapsz.</string>
+    <string name="playstore_release_desc">Hozzáad egy Autó információ alkalmazást és néhány hibajavítást</string>
+    <string name="playstore_release_point1">Hozzáad egy Autó információ alkalmazást, amely felfed néhány belső adatot az autóról</string>
+    <string name="playstore_release_point2">Javítva a térkép iránytű tájolás az IDrive4 autókban</string>
     <string name="playstore_release_point3">Kínai MyBMW/Mini app támogatása</string>
 </resources>

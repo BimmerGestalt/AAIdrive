@@ -360,6 +360,7 @@
     <!-- car app strings -->
     <string name="CARINFO_TITLE">Informații detaliate despre vehicul</string>
     <string name="CARINFO_TITLE_DRIVING">Detalii conducere</string>
+    <string name="CARINFO_TITLE_SPORT">Ecran sport</string>
     <string name="CARINFO_ENGINE">Motor</string>
     <string name="CARINFO_OIL">Ulei</string>
     <string name="CARINFO_BATTERY">Baterie</string>
@@ -373,6 +374,7 @@
     <string name="CARINFO_ACCEL">Acceleratie</string>
     <string name="CARINFO_STEERING">Direcție</string>
     <string name="CARINFO_RPM">RPM</string>
+    <string name="CARINFO_TORQUE">Cuplu</string>
     <string name="CARINFO_GFORCE">GForce</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
     <string name="CARINFO_UNIT_F">\u2109</string>
