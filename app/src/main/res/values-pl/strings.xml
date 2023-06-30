@@ -10,6 +10,7 @@
     <string name="notification_description_chassiscode">Połączono z %s</string>
     <string name="notification_description_bmw">Połączono z BMW</string>
     <string name="notification_description_mini">Połączono z Mini</string>
+    <string name="notification_shutdown">Shutdownk</string>
     <string name="permission_cds_normal">odczyt ogólnych danych z pojazdu</string>
     <string name="permission_cds_personal">odczyt wrażliwych danych z pojazdu</string>
     <!-- notification channel names -->
