@@ -8,6 +8,7 @@ import android.util.Log
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import me.hufman.androidautoidrive.BackgroundInterruptionDetection
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.CarThread
 import java.lang.RuntimeException
@@ -97,6 +98,8 @@ abstract class CarAppService: Service() {
 
 				thread = CarThread(TAG) {
 					onCarStart()
+				}.setDisconnectHandler {
+					BackgroundInterruptionDetection.reportUnexpectedDisconnect(applicationContext)
 				}
 				thread?.start()
 			}

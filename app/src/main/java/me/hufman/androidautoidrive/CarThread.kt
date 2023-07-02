@@ -16,6 +16,7 @@ const val TAG = "CarThread"
  */
 class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 	var handler: Handler? = null
+	private var disconnectHandler: (() -> Unit)? = null
 	val iDriveConnectionObserver = IDriveConnectionObserver()
 
 	init {
@@ -40,11 +41,13 @@ class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 		} catch (e: org.apache.etch.util.TimeoutException) {
 			// phone was unplugged during an RPC command
 			Log.i(TAG, "Shutting down thread $name due to Etch TimeoutException")
+			disconnectHandler?.invoke()
 		} catch (e: BMWRemoting.ServiceException) {
 			if (!iDriveConnectionObserver.isConnected) {
 				// the car is no longer connected
 				// so this is most likely a crash caused by the closed connection
 				Log.i(TAG, "Shutting down thread $name due to disconnection")
+				disconnectHandler?.invoke()
 			} else if (e.errorMsg?.contains("RHMI application was already connected") == true) {
 				// sometimes, the BCL tunnel blips during the start of the connection
 				// and so previously-initialized apps are still "in the car" though the tunnel has since restarted
@@ -58,6 +61,12 @@ class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 			// if we fail during init, make sure to forget the runnable
 			runnable = {}
 		}
+	}
+
+	fun setDisconnectHandler(block: () -> Unit): CarThread {
+		/** When the car disconnects unexpectedly, call this callback */
+		disconnectHandler = block
+		return this
 	}
 
 	fun post(block: () -> Unit) {

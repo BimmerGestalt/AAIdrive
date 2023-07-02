@@ -219,6 +219,8 @@
     <string name="txt_setup_background_killed">The app was killed while connected to the car</string>
     <string name="txt_setup_background_suspended">The app was paused in the background while connected to the car</string>
     <string name="txt_setup_background_restrictions_hint">Check your phone\'s background execution and battery settings to allow AAIdrive to run in the background</string>
+    <string name="txt_setup_tunnel_killed">The car connection was broken unexpectedly</string>
+    <string name="txt_setup_tunnel_killed_hint">Check the background execution settings on the MyBMW or Mini apps to allow them to run in the background</string>
 
     <string name="btn_install">Install</string>
     <string name="btn_install_bmwmine">Install the MyBMW app</string>

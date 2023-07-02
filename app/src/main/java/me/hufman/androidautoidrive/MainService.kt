@@ -105,6 +105,7 @@ class MainService: Service() {
 		super.onCreate()
 
 		backgroundInterruptionDetection.detectKilledPreviously()
+		backgroundInterruptionDetection.registerListeners()
 
 		// only register listeners a single time
 
@@ -170,6 +171,7 @@ class MainService: Service() {
 		carProberThread?.quitSafely()
 		btStatus.unregister()
 
+		backgroundInterruptionDetection.unregisterListeners()
 		backgroundInterruptionDetection.stop()
 
 		// close the notification

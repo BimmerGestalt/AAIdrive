@@ -58,10 +58,12 @@ class DependencyInfoModel(val connection: CarConnectionDebugging, val interrupti
 	val isSecurityServiceDisconnected: LiveData<Boolean> = _isSecurityServiceDisconnected
 
 	// Background restrictions appear to be in effect
-	val _hasBackgroundKilled = MutableLiveData(false)
+	private val _hasBackgroundKilled = MutableLiveData(false)
 	val hasBackgroundKilled: LiveData<Boolean> = _hasBackgroundKilled
-	val _hasBackgroundSuspended = MutableLiveData(false)
+	private val _hasBackgroundSuspended = MutableLiveData(false)
 	val hasBackgroundSuspended: LiveData<Boolean> = _hasBackgroundSuspended
+	private val _hasTunnelKilled = MutableLiveData(false)
+	val hasTunnelKilled: LiveData<Boolean> = _hasTunnelKilled
 
 	fun update() {
 		_isBmwConnectedInstalled.value = connection.isBMWConnectedInstalled
@@ -78,6 +80,7 @@ class DependencyInfoModel(val connection: CarConnectionDebugging, val interrupti
 		_isSecurityServiceDisconnected.value = connection.isConnectedSecurityInstalled && !connection.isConnectedSecurityConnected
 		_hasBackgroundKilled.value = interruptionDetection.detectedKilled >= 3
 		_hasBackgroundSuspended.value = interruptionDetection.detectedSuspended >= 2
+		_hasTunnelKilled.value = interruptionDetection.detectedTunnelKilled >= 2
 	}
 
 	override fun onCleared() {

@@ -30,7 +30,7 @@ class BackgroundInterruptionDetectionTest {
 	}
 
 	fun buildDetector(): BackgroundInterruptionDetection {
-		return BackgroundInterruptionDetection(preferences, handler, BackgroundInterruptionDetection.DEFAULT_TTL) { time }
+		return BackgroundInterruptionDetection(preferences, handler, mock(), BackgroundInterruptionDetection.DEFAULT_TTL) { time }
 	}
 
 	@Test
@@ -83,6 +83,57 @@ class BackgroundInterruptionDetectionTest {
 		detector2.detectKilledPreviously()
 		assertEquals(1, detector2.detectedKilled)
 		assertEquals(0, detector2.detectedSuspended)
+	}
+
+	@Test
+	fun testTunnelKilledEarlyAnnounce() {
+		val detector = buildDetector()
+		detector.onAnnouncedDisconnect()
+		time += 3000
+		detector.onUnexpectedDisconnect()
+		time += 35000
+		runnable.lastValue.run()
+		assertEquals(0, detector.detectedTunnelKilled)
+	}
+	@Test
+	fun testTunnelKilledLateAnnounce() {
+		val detector = buildDetector()
+		detector.onUnexpectedDisconnect()
+		time += 3000
+		detector.onAnnouncedDisconnect()
+		time += 35000
+		runnable.lastValue.run()
+		assertEquals(0, detector.detectedTunnelKilled)
+	}
+	@Test
+	fun testTunnelKilledMissingAnnounce() {
+		val detector = buildDetector()
+		detector.onUnexpectedDisconnect()
+		time += 3000
+//		detector.onAnnouncedDisconnect()
+		time += 35000
+		runnable.lastValue.run()
+		assertEquals(1, detector.detectedTunnelKilled)
+
+		// new connection, check that we don't decrement
+		time += 60000
+		detector.onUnexpectedDisconnect()
+		time += 3000
+		detector.onAnnouncedDisconnect()
+		time += 35000
+		assertEquals(1, detector.detectedTunnelKilled)
+	}
+	@Test
+	fun testTunnelKilledDecrement() {
+		// check that we decrement the counter for successful announcements
+		val detector = buildDetector()
+		detector.detectedTunnelKilled = 3
+		detector.onUnexpectedDisconnect()
+		time += 3000
+		detector.onAnnouncedDisconnect()
+		time += 35000
+		runnable.lastValue.run()
+		assertEquals(2, detector.detectedTunnelKilled)
 	}
 
 	@Test
