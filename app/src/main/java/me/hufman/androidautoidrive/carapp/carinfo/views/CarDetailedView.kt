@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.carapp.carinfo.views
 
+import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -59,6 +60,8 @@ class CarDetailedView(val state: RHMIState, val coroutineContext: CoroutineConte
 						cells[0].map { arrayOf(it, "") }
 					}
 				}
+				val emptyTable = BMWRemoting.RHMIDataTable(emptyArray(), false, 0, 0, 0, 0, 2, 2)
+				list.app.setModel(list.model, emptyTable)       // explicitly clear the page when switching categories
 				rows.rhmiDataTableFlow { it }
 					.batchDataTables(100)
 					.collect {
