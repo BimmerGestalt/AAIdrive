@@ -73,87 +73,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="12dp"
                 android:text="@string/txt_setup_background_hint" />
-        </LinearLayout>
-
-        <!-- Background restrictions caused problems -->
-        <LinearLayout
-            android:visibility="@{viewModel.hasBackgroundSuspended || viewModel.hasBackgroundKilled}"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/checkbox_vertical_margin"
-            android:onClick="@{() -> permissionsController.openSelfPermissions()}"
-            android:gravity="center">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/checkbox_vertical_margin"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    app:tint="?android:attr/textColorSecondary"
-                    android:src="@drawable/ic_error_outline_black_24dp" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:visibility="@{viewModel.hasBackgroundKilled}"
-                    android:text="@string/txt_setup_background_killed" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:visibility="@{!viewModel.hasBackgroundKilled &amp;&amp; viewModel.hasBackgroundSuspended}"
-                    android:text="@string/txt_setup_background_suspended" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/txt_setup_background_restrictions_hint" />
-        </LinearLayout>
-
-        <!-- BCL tunnel was disconnected -->
-        <LinearLayout
-            android:visibility="@{viewModel.hasTunnelKilled}"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/checkbox_vertical_margin"
-            android:gravity="center">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/checkbox_vertical_margin"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    app:tint="?android:attr/textColorSecondary"
-                    android:src="@drawable/ic_error_outline_black_24dp" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:text="@string/txt_setup_tunnel_killed" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/txt_setup_tunnel_killed_hint" />
         </LinearLayout>
 
         <!-- Bluetooth Connection -->
@@ -212,6 +133,7 @@
                 android:onClick="@{() -> permissionsController.promptBluetooth()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
                 android:text="@string/lbl_grant"/>
         </LinearLayout>
 
@@ -248,6 +170,7 @@
                 android:onClick="@{() -> controller.installBMWMine()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
                 android:text="@string/btn_install_bmwmine"/>
         </LinearLayout>
 
@@ -351,6 +274,7 @@
                 android:onClick="@{() -> controller.installMiniMine()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
                 android:text="@string/btn_install_minimine"/>
         </LinearLayout>
 
@@ -452,6 +376,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:paddingBottom="12dp"
                 android:text="@string/txt_setup_toyota_hint" />
             <!-- Don't suggest installing Supra Connect if missing, it doesn't provide many features -->
         </LinearLayout>
@@ -489,12 +414,14 @@
                 android:onClick="@{() -> controller.installBMWConnectedClassic()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
                 android:text="@string/btn_install_bmwclassic"/>
             <Button
                 android:visibility="@{!viewModel.isMiniInstalled()}"
                 android:onClick="@{() -> controller.installMiniConnectedClassic()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
                 android:text="@string/btn_install_miniclassic"/>
         </LinearLayout>
 

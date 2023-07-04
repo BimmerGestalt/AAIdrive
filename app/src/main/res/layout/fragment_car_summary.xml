@@ -66,6 +66,7 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:ellipsize="none"
+            android:paddingBottom="12dp"
             android:text="@{viewModel.carChassisCode.toString()}" />
     </LinearLayout>
 </layout>
