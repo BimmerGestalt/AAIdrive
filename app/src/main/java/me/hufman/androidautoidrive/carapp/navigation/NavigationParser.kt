@@ -170,7 +170,7 @@ class NavigationParser(val addressSearcher: AddressSearcher, val redirector: URL
 		val uri = if (origUri.authority == "goo.gl" || origUri.authority == "maps.app.goo.gl") {
 			redirector.tryRedirect(url)?.let { parseUri(it) } ?: origUri
 		} else { origUri }
-		if (!uri.authority.contains("google")) return null
+		if (uri.authority != null && !uri.authority.contains("google")) return null
 
 		val path = uri.path?.replace('+', ' ') ?: ""
 		// https://www.google.com/maps/dir/Current+Location/47.5951518,-122.3316393
