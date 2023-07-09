@@ -10,6 +10,7 @@
     <string name="notification_description_chassiscode">Conectado con %s</string>
     <string name="notification_description_bmw">Conectado con BMW</string>
     <string name="notification_description_mini">Conectado con Mini</string>
+    <string name="notification_shutdown">Apagar</string>
     <string name="permission_cds_normal">leer información genérica del coche</string>
     <string name="permission_cds_personal">leer información personal del coche</string>
     <!-- notification channel names -->
@@ -42,6 +43,7 @@
     <string name="menu_music">Música</string>
     <string name="menu_notifications">Notificaciones</string>
     <string name="menu_assistants">Asistentes de voz</string>
+    <string name="menu_calendar">Calendario</string>
     <string name="menu_maps">Mapas</string>
     <string name="menu_navigation">Navegación</string>
     <string name="menu_addons">Extensiones</string>
@@ -68,9 +70,20 @@
     <string name="notification_quickreplies_default">[\"👍\",\"De camino\",\"Voy en conduciendo\",\"No puedo escribir, llámame por favor\",\"Te llamo luego\"]</string>
     <string name="lbl_notification_permissions">Acceso para ver notificaciones</string>
     <string name="lbl_notification_sms_permissions">Acceso para ver fotos de SMS</string>
+    <string name="lbl_notification_permissions_hint">Puedes conceder permisos de notificación más tarde y fácilmente revocarlos en cualquier momento</string>
     <string name="lbl_popupVersion">Las ventanass emergentes sólo funcionan con IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS no está soportado por tu coche</string>
     <string name="lbl_smsPermission">Otorgue el permiso de SMS para ver las imágenes entrantes de imágenes SMS en el automóvil. El texto siempre será visible.</string>
+    <string name="lbl_calendarpage">Su calendario se puede mostrar en el coche, ofreciendo una rápida navegación a las citas</string>
+    <string name="lbl_calendar_description">Los eventos en el calendario del teléfono tal y como se ven en Google Calendar aparecerán en el coche. Cualquier calendario de perfil de trabajo no está disponible.</string>
+    <string name="lbl_calendar_enabled">Mostrar Calendario</string>
+    <string name="lbl_calendar_permissions">Otorgar permisos de calendario</string>
+    <string name="lbl_calendar_xiaomi_installed">Calendario de xiaomi instalado</string>
+    <string name="lbl_calendar_detailed_events">Detalles de evento</string>
+    <string name="lbl_calendar_automatic_navigation">Navegación automática de calendario</string>
+    <string name="lbl_calendar_calendars">Calendarios:</string>
+    <string name="lbl_calendar_calendars_empty">No se encontró ningún calendario</string>
+    <string name="lbl_calendar_upcoming_events">Siguiente evento:</string>
     <string name="lbl_widescreen_map">Mapa a pantalla completa</string>
     <string name="lbl_map_invert_zoom">Invertir la dirección del zoom</string>
     <string name="lbl_map_tilt">Inclinar mapa</string>
