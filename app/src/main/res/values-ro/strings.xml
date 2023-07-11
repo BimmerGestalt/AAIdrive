@@ -402,6 +402,17 @@
     <string name="CARINFO_SUNROOF">Trapă</string>
     <string name="CARINFO_WINDOW_CLOSED">Închis</string>
     <string name="CARINFO_WINDOW_TILTED">Înclinat</string>
+    <string name="CARINFO_WINDOW_OPENED">Deschis</string>
+    <string name="CARINFO_STATE_OFF">oprit</string>
+    <string name="CARINFO_STATE_ON">activ</string>
+    <string name="CARINFO_COMPRESSOR">Compresor</string>
+    <string name="CARINFO_COMPRESSORSTATE">Stare AC</string>
+    <string name="CARINFO_COMPRESSORLEVEL">Nivel AC</string>
+    <string name="CARINFO_COMPRESSORPOWER">Energia AC</string>
+    <string name="CARINFO_COMPRESSORDUALMODE">Dualmode</string>
+    <string name="CARINFO_GPSALTITUDE">Altitudine</string>
+    <string name="CARINFO_GPSLATITUDE">Latitudine</string>
+    <string name="CARINFO_GPSLONGITUDE">Longitudine</string>
     <string name="NOTIFICATIONS_TITLE">Notificări</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Nu există notificări</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Șterge tot</string>
