@@ -113,7 +113,7 @@
     <string name="musicAppSearchable">Búsqueda posible</string>
     <string name="musicAppUnavailable">No disponible</string>
     <string name="musicAppHidden">Oculto</string>
-    <string name="enable_audio_context">Solicitar focus de Audio</string>
+    <string name="enable_audio_context">Forzar Audio Focus sobre la conexión USB</string>
     <string name="enable_spotify_layout">Mostrar siempre como la app de Spotify en Idrive5+</string>
     <string name="enable_audioplayer_layout">Preferir la interfaz compacta de música en Idrive5+</string>
     <string name="lbl_grant_sessions">Control sobre la aplicación de música activa</string>
@@ -230,7 +230,7 @@
     <string name="txt_setup_enable_minimine">Asegúrate de que la aplicación MINI esté conectada</string>
     <string name="txt_setup_bcl_connecting">La conexión de Aplicaciones del coche se está conectando</string>
     <string name="txt_setup_bcl_connected">La conexión de Aplicaciones del coche está funcionando</string>
-    <string name="txt_setup_bcl_connected_transport">La conexión de la aplicación esta funcionando al %s</string>
+    <string name="txt_setup_bcl_connected_transport">La conexión de la aplicación está funcionando al %s</string>
     <!-- capabilities -->
     <string name="lbl_capabilities_detected">Capacidades del coche detectadas:</string>
     <string name="txt_capabilities_audiocontext_yes">La función Audio Context está soportada</string>
@@ -301,7 +301,7 @@
     <string name="lbl_carinfo_window_passengerfront">Frontal lado pasajero</string>
     <string name="lbl_carinfo_window_driverrear">Trasera lado conductor</string>
     <string name="lbl_carinfo_window_passengerrear">Trasera lado pasajero</string>
-    <string name="lbl_carinfo_window_closed">Cerrado</string>
+    <string name="lbl_carinfo_window_closed">Cerrada</string>
     <string name="lbl_carinfo_window_partial">Abierta %d%%</string>
     <string name="lbl_carinfo_window_open">Totalmente abierta</string>
     <string name="lbl_carinfo_displayedSpeed">Velocidad mostrada:</string>
@@ -318,14 +318,14 @@
     <string name="lbl_carinfo_units_mpg">mpg</string>
     <string name="lbl_carinfo_units_kmL">km/L</string>
     <string name="lbl_carinfo_units_mph">mph</string>
-    <string name="lbl_carinfo_units_kmph">kmph</string>
+    <string name="lbl_carinfo_units_kmph">km/h</string>
     <string name="lbl_carinfo_units_celcius">\u2103</string>
     <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
     <string name="lbl_carinfo_units_masl">m.s.n.m.</string>
     <!-- tips -->
     <string name="lbl_tip_image">Imagen de demostración</string>
     <string name="lbl_tiplist">Consejos y trucos</string>
-    <string name="lbl_tip_expand">Ampliar Consejos</string>
+    <string name="lbl_tip_expand">Ampliar consejos</string>
     <string name="tip_usb_chargingmode">Cambia el modo USB del teléfono a Transferencia de Archivos si por defecto está en modo de Sólo Carga</string>
     <string name="tip_connassistant">Usa el Asistente de Conexión para activar el Modo Accesorio USB en coches IDrive4</string>
     <string name="tip_btapp">Asegúrese de que la conexión Bluetooth de IDrive5 tiene la opción de Aplicaciones. Intente desconectar el audio Bluetooth y volver a conectar si la conexión está bloqueada</string>
@@ -345,7 +345,7 @@
     <string name="notification_assistant_tap">Toque para iniciar %s</string>
     <string name="notification_assistant_description">Sólo es necesario porque la pantalla está encendida</string>
     <string name="donation_title">Te gusta esta aplicación?</string>
-    <string name="donation_text">Considere mostrarnos su apoyo con una pequena donación</string>
+    <string name="donation_text">Considere mostrarnos su apoyo con una pequeña donación</string>
     <string name="donation_text_onetime">Solicitud de una sola vez</string>
     <string name="txt_spotify_auth_notification">La API Web de Spotify debe ser autorizada. Haga clic aquí para autorizar.</string>
     <string name="txt_spotify_app_remote_last_error">Último error de Spotify App Remote:</string>
@@ -430,10 +430,10 @@
     <string name="CALENDAR_TIME_DURATION">Duración</string>
     <string name="CALENDAR_TIME_ALLDAY">Todo el día</string>
     <string name="CALENDAR_NAVIGATE">Navegación</string>
-    <string name="MAP_ACTION_VIEWMAP">Ver Mapa Entero</string>
-    <string name="MAP_ACTION_SEARCH">Buscar por Lugar</string>
+    <string name="MAP_ACTION_VIEWMAP">Ver mapa completo</string>
+    <string name="MAP_ACTION_SEARCH">Buscar por lugar</string>
     <string name="MAP_ACTION_RECALC_NAV">Recalcular navegación</string>
-    <string name="MAP_ACTION_CLEARNAV">Limpiar Navegación</string>
+    <string name="MAP_ACTION_CLEARNAV">Limpiar navegación</string>
     <string name="MAP_DESTINATIONS">Destinos favoritos</string>
     <string name="MAP_WIDESCREEN">Mapa a pantalla completa</string>
     <string name="MAP_INVERT_ZOOM">Invertir la dirección del zoom</string>
@@ -445,7 +445,7 @@
     <string name="MUSIC_APPLIST_TITLE">Apps</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;No hay apps disponibles&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Acciones</string>
-    <string name="MUSIC_DISCONNECTED">&lt;No Conectado&gt;</string>
+    <string name="MUSIC_DISCONNECTED">&lt;No conectado&gt;</string>
     <string name="MUSIC_BROWSE_TITLE">Explorar</string>
     <string name="MUSIC_BROWSE_EMPTY">&lt;Vacío&gt;</string>
     <string name="MUSIC_BROWSE_LOADING">&lt;Cargando&gt;</string>
@@ -455,17 +455,17 @@
     <string name="MUSIC_BROWSE_ACTION_SEARCH">Buscar</string>
     <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Reproducir desde la búsqueda</string>
     <string name="MUSIC_SEARCH_RESULTS_LABEL">Resultados de Búsqueda</string>
-    <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Mostrar Resultados Completos</string>
+    <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Mostrar resultados completos</string>
     <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">Reproduciendo ahora</string>
-    <string name="MUSIC_QUEUE_EMPTY">&lt;Lista Vacía&gt;</string>
-    <string name="MUSIC_SEARCH_EMPTY">&lt;Sin Resultados Encontrados&gt;</string>
+    <string name="MUSIC_QUEUE_EMPTY">&lt;Lista vacía&gt;</string>
+    <string name="MUSIC_SEARCH_EMPTY">&lt;Sin resultados encontrados&gt;</string>
     <string name="MUSIC_SKIP_PREVIOUS">Atrás</string>
     <string name="MUSIC_SKIP_NEXT">Siguiente</string>
     <string name="MUSIC_TURN_SHUFFLE_UNAVAILABLE">Aleatorio no disponible</string>
     <string name="MUSIC_TURN_SHUFFLE_ON">Activar Aleatorio</string>
     <string name="MUSIC_TURN_SHUFFLE_OFF">Desactivar Aleatorio</string>
-    <string name="MUSIC_TURN_REPEAT_UNAVAILABLE">Repetir No disponible</string>
+    <string name="MUSIC_TURN_REPEAT_UNAVAILABLE">Repetir no disponible</string>
     <string name="MUSIC_TURN_REPEAT_ALL_ON">Activar repetir todo</string>
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Activar repetir actual</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Desactivar repetir</string>
