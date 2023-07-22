@@ -252,7 +252,7 @@
     <!-- debug status -->
     <string name="txt_build_info">Versión de Compilación: %1$s %2$s</string>
     <string name="txt_bcl_report">Rendimiento del túnel BCL:</string>
-    <string name="txt_cds_view">Informe de Datos del coche:</string>
+    <string name="txt_cds_view">Informe de datos del coche:</string>
     <string name="txt_car_capabilities">Capacidades del automóvil detalladas:</string>
     <string name="lbl_advanced_settings">Mostrar configuración avanzada</string>
     <string name="lbl_assistant">Asistente de voz (Beta)</string>
@@ -262,21 +262,21 @@
     <string name="lbl_carinfopage">Información rápida acerca de tu coche está disponible aquí</string>
     <string name="lbl_carinfo_efficiency">Estadísticas de eficiencia</string>
     <string name="lbl_carinfo_ev">Estadísticas de Consumo EV</string>
-    <string name="lbl_carinfo_style">Estilo de Conducción Eficiente</string>
+    <string name="lbl_carinfo_style">Estilo de conducción eficiente</string>
     <string name="lbl_carinfo_lastchecked">Última comprobación:</string>
-    <string name="lbl_carinfo_lastPosition">Ultima Posición:</string>
+    <string name="lbl_carinfo_lastPosition">Ultima posición:</string>
     <string name="lbl_carinfo_lastPosition_crossStreet">%s y %s</string>
-    <string name="lbl_carinfo_lastPosition_openMap">Abrir Mapa</string>
+    <string name="lbl_carinfo_lastPosition_openMap">Abrir mapa</string>
     <string name="lbl_carinfo_vin">Número de bastidor:</string>
     <string name="lbl_carinfo_odo">Odómetro:</string>
     <string name="lbl_carinfo_idriveVersion">Versión IDrive:</string>
     <string name="lbl_carinfo_averageConsumption">Consumo medio:</string>
-    <string name="lbl_carinfo_averageSpeed">Velocidad Media:</string>
+    <string name="lbl_carinfo_averageSpeed">Velocidad media:</string>
     <string name="lbl_carinfo_averageConsumptionAlt">Promedio de Cons (alt):</string>
     <string name="lbl_carinfo_averageSpeedAlt">Velocidad Media (alt):</string>
-    <string name="lbl_carinfo_ecoRangeWon">Rango de Eco Ganado:</string>
-    <string name="lbl_carinfo_evLevel">Carga Eeléctrica:</string>
-    <string name="lbl_carinfo_evRange">Rango Eléctrico:</string>
+    <string name="lbl_carinfo_ecoRangeWon">Rango de Eco ganado:</string>
+    <string name="lbl_carinfo_evLevel">Carga eléctrica:</string>
+    <string name="lbl_carinfo_evRange">Rango eléctrico:</string>
     <string name="lbl_carinfo_fuelLevel">Nivel de combustible:</string>
     <string name="lbl_carinfo_fuelRange">Rango de combustible:</string>
     <string name="lbl_carinfo_totalRange">Rango total:</string>
@@ -291,7 +291,7 @@
     <string name="lbl_carinfo_gear">Marcha:</string>
     <string name="lbl_carinfo_drivingmode">Modo:</string>
     <string name="lbl_carinfo_compass">Brújula:</string>
-    <string name="lbl_carinfo_sunroof">Techo Solar:</string>
+    <string name="lbl_carinfo_sunroof">Techo solar:</string>
     <string name="lbl_carinfo_sunroof_closed">Cerrado</string>
     <string name="lbl_carinfo_sunroof_tilted">Abierto, inclinado</string>
     <string name="lbl_carinfo_sunroof_partial">Parcialmente abierto, %d %%</string>
