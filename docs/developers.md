@@ -23,7 +23,7 @@ Gradle can sometimes get cranky and need fixing, but most Gradle problems can us
     - If you don't want to set up a Spotify API key, set your Gradle like so: `AndroidAutoIdrive_SpotifyApiKey=unset`
     - The client secret is not needed, and no spaces or quotes are needed around the property value: `AndroidAutoIdrive_SpotifyApiKey=36b6...`
     - It needs the Redirect URI set to `me.hufman.androidautoidrive://spotify_callback`
-    - It may also need the package fingerprint added, [follow these instructions](https://developer.spotify.com/documentation/android/tutorials/application-fingerprints) to configure it
+    - It needs the Android Package Fingerprint to be added, [follow these instructions](https://developer.spotify.com/documentation/android/tutorials/application-fingerprints) to configure that
 6. (Optional) Add a Sentry DSN to `~/.gradle/gradle.properties` as a property named `AndroidAutoIdrive_SentryDsn` to capture crash reports.
     - No spaces or quotes are needed around the DSN: `AndroidAutoIdrive_SentryDsn=https://e40...@sentry.io/0123...`
 
