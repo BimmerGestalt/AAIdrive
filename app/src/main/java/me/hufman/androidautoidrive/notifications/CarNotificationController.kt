@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED
 import me.hufman.androidautoidrive.carapp.notifications.TAG
 
 
@@ -66,7 +68,7 @@ class CarNotificationControllerIntent(private val context: Context): CarNotifica
 
 	class Receiver(val receiver: CarNotificationController) {
 		fun register(context: Context, broadcastReceiver: BroadcastReceiver) {
-			context.registerReceiver(broadcastReceiver, IntentFilter(INTENT_INTERACTION))
+			ContextCompat.registerReceiver(context, broadcastReceiver, IntentFilter(INTENT_INTERACTION), RECEIVER_NOT_EXPORTED)
 		}
 
 		fun onReceive(intent: Intent) {

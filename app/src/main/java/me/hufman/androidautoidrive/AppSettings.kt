@@ -8,6 +8,8 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonArray
 import com.google.gson.JsonParser
@@ -188,7 +190,7 @@ class MutableAppSettingsReceiver(val context: Context, val handler: Handler? = n
 	override var callback: (() -> Unit)? = null
 		set(value) {
 			if (field == null && value != null) {
-				context.registerReceiver(receiver, IntentFilter(INTENT_SETTINGS_CHANGED), null, handler)
+				ContextCompat.registerReceiver(context, receiver, IntentFilter(INTENT_SETTINGS_CHANGED), null, handler, RECEIVER_NOT_EXPORTED)
 			}
 			if (field != null && value == null) {
 				context.unregisterReceiver(receiver)

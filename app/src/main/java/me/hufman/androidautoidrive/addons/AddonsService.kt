@@ -4,8 +4,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.core.content.ContextCompat
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 
@@ -22,6 +24,9 @@ class AddonsService(val context: Context, val iDriveConnectionStatus: IDriveConn
 		running = true
 		synchronized(this) {
 			addonDiscovery.discoverApps().forEach { appInfo ->
+				val bindFlags = if (Build.VERSION.SDK_INT >= 34) {
+					Context.BIND_AUTO_CREATE or Context.BIND_ALLOW_ACTIVITY_STARTS
+				} else { Context.BIND_AUTO_CREATE }
 				val connectionServiceIntent = appInfo.intentConnectionService
 				if (connectionServiceIntent != null) {
 					val connectionIntent = prepareCarConnectionIntent(connectionServiceIntent)
@@ -29,7 +34,7 @@ class AddonsService(val context: Context, val iDriveConnectionStatus: IDriveConn
 						Log.i(TAG, "Binding connection addon ${appInfo.name} ${appInfo.packageName}")
 						val conn = AddonServiceConnection(appInfo)
 						try {
-							context.bindService(connectionIntent, conn, Context.BIND_AUTO_CREATE)
+							context.bindService(connectionIntent, conn, bindFlags)
 							boundConnectionAddons[appInfo] = conn
 						} catch (e: SecurityException) {
 							Log.w(TAG, "Error while binding connection service ${appInfo.name}: $e")
@@ -43,12 +48,13 @@ class AddonsService(val context: Context, val iDriveConnectionStatus: IDriveConn
 						}
 					}
 				}
-				if (appInfo.intentDataService != null) {
+				val dataServiceIntent = appInfo.intentDataService
+				if (dataServiceIntent != null) {
 					if (!boundDataAddons.containsKey(appInfo)) {
 						Log.i(TAG, "Binding data addon ${appInfo.name} ${appInfo.packageName}")
 						val conn = AddonServiceConnection(appInfo)
 						try {
-							context.bindService(appInfo.intentDataService, conn, Context.BIND_AUTO_CREATE)
+							context.bindService(dataServiceIntent, conn, bindFlags)
 							boundDataAddons[appInfo] = conn
 						} catch (e: SecurityException) {
 							Log.w(TAG, "Error while binding data service ${appInfo.name}: $e")

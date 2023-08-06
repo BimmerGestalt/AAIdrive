@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.SystemClock
 import android.text.format.DateUtils
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED
 import java.text.NumberFormat
 
 class BclStatusListener(val context: Context, val callback: () -> Unit = {}): BroadcastReceiver() {
@@ -42,8 +44,8 @@ class BclStatusListener(val context: Context, val callback: () -> Unit = {}): Br
 
 	fun subscribe() {
 		if (!subscribed) {
-			context.registerReceiver(this, IntentFilter(BCL_REPORT))
-			context.registerReceiver(this, IntentFilter(BCL_TRANSPORT))
+			ContextCompat.registerReceiver(context, this, IntentFilter(BCL_REPORT), RECEIVER_NOT_EXPORTED)
+			ContextCompat.registerReceiver(context, this, IntentFilter(BCL_TRANSPORT), RECEIVER_NOT_EXPORTED)
 			subscribed = true
 		}
 	}
