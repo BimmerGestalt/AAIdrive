@@ -315,6 +315,7 @@ class BrowsePageView(val state: RHMIState,
 			BrowseAction.SEARCH -> {
 				browseController.openSearchInput(musicListComponent.getAction()?.asHMIAction())
 			}
+			null -> {}
 		}
 	}
 

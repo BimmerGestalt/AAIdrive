@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.test.runner.screenshot.BasicScreenCaptureProcessor
 import androidx.test.runner.screenshot.ScreenCapture
 import java.io.File
+import java.util.*
 
 class PrivateScreenshotProcessor(context: Context): BasicScreenCaptureProcessor() {
 	init {
@@ -17,7 +18,7 @@ class PrivateScreenshotProcessor(context: Context): BasicScreenCaptureProcessor(
 	override fun process(capture: ScreenCapture?): String {
 		val imageFolder = mDefaultScreenshotPath
 		val filename = if (capture!!.name == null) defaultFilename else getFilename(capture.name)
-		val suffix = "." + capture.format.toString().toLowerCase()
+		val suffix = "." + capture.format.toString().lowercase(Locale.getDefault())
 		val imageFile = File(imageFolder, filename + suffix)
 		println("Saving to $imageFile")
 		return super.process(capture)
