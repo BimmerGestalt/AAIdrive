@@ -151,7 +151,7 @@
     <string name="lbl_settingspage">Configuración avanzada para ajustar el comportamiento, puede causar un comportamiento inesperado</string>
     <string name="lbl_language_carinterface">Idioma a mostrar en el coche</string>
     <string name="lbl_language_prefercar">Se prefiere el idioma del coche sobre el idioma del teléfono</string>
-    <string name="lbl_language_prefercar_code">Se prefiere el idioma del coche sobre el idioma del teléfono</string>
+    <string name="lbl_language_prefercar_code">Se prefiere el idioma del coche (%s) sobre el idioma del teléfono</string>
     <string name="lbl_language_forcelanguage">Forzar el uso de un idioma específico</string>
     <string name="lbl_analytics_intro">AAIdrive es un proyecto aficionado no oficial, no respaldado o avalado por BMW de ninguna manera, construido con un protocolo de ingeniería inversa. Estoy orgulloso de su funcionalidad y estabilidad, pero todavía pueden ocurrir errores. Por favor, considere habilitar las analíticas de la app para enviar automáticamente cualquier informe de error para la depuración.</string>
     <string name="lbl_analytics_description">Además de los informes de fallos, activar el análisis también cargará la lista de aplicaciones de música instaladas y alguna información anónima del coche para ayudar a priorizar el desarrollo de funciones.</string>
@@ -374,11 +374,11 @@
     <string name="CARINFO_ACC_BATTERY">Acc. Batería</string>
     <string name="CARINFO_EV_BATTERY">Batería EV</string>
     <string name="CARINFO_FUEL">Combustible</string>
-    <string name="CARINFO_ACCEL">Aceleración</string>
+    <string name="CARINFO_ACCEL">Acelerador</string>
     <string name="CARINFO_STEERING">Dirección</string>
     <string name="CARINFO_RPM">RPM</string>
     <string name="CARINFO_TORQUE">Torque</string>
-    <string name="CARINFO_GFORCE">Fuerza G</string>
+    <string name="CARINFO_GFORCE">GForce</string>
     <string name="CARINFO_SPEEDACTUAL">Actual</string>
     <string name="CARINFO_SPEEDGPS">GPS</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
