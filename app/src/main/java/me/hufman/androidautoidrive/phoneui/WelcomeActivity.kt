@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.phoneui
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -25,6 +26,16 @@ class WelcomeActivity: AppCompatActivity() {
 		pgrWelcomeTabs.adapter = adapter
 
 		findViewById<TabLayout>(R.id.tabWelcomeTabs).setupWithViewPager(pgrWelcomeTabs)
+
+		onBackPressedDispatcher.addCallback {
+			if (pgrWelcomeTabs.currentItem == 0) {
+				// pass through default behavior, to close the Activity
+				this.isEnabled = false
+				onBackPressedDispatcher.onBackPressed()
+			} else {
+				pgrWelcomeTabs.currentItem = pgrWelcomeTabs.currentItem - 1
+			}
+		}
 	}
 
 	override fun onResume() {
@@ -41,16 +52,6 @@ class WelcomeActivity: AppCompatActivity() {
 				startActivity(intent)
 				finish()
 			}
-		}
-	}
-
-	override fun onBackPressed() {
-		val pgrWelcomeTabs = findViewById<ViewPager>(R.id.pgrWelcomeTabs)
-		if (pgrWelcomeTabs.currentItem == 0) {
-			// pass through default behavior, to close the Activity
-			super.onBackPressed()
-		} else {
-			pgrWelcomeTabs.currentItem = pgrWelcomeTabs.currentItem - 1
 		}
 	}
 }

@@ -9,6 +9,8 @@ import android.content.Intent
 import android.util.Log
 import android.util.SparseArray
 import me.hufman.androidautoidrive.connections.isCar
+import me.hufman.androidautoidrive.connections.safeName
+import me.hufman.androidautoidrive.utils.getParcelableExtraCompat
 
 class A2DPBroadcastReceiver: BroadcastReceiver() {
 	val TAG = "A2DPBroadcast"
@@ -23,25 +25,25 @@ class A2DPBroadcastReceiver: BroadcastReceiver() {
 		context ?: return
 		intent ?: return
 		if (intent.action == BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED) {
-			val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+			val device = intent.getParcelableExtraCompat(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
 			val oldState = states[intent.getIntExtra(BluetoothProfile.EXTRA_PREVIOUS_STATE, -1)] ?: "unknown"
 			val newStateCode = intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1)
 			val newState = states[intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1)] ?: "unknown"
-			Log.i(TAG, "Notified of A2DP status: ${device?.name} $oldState -> $newState")
+			Log.i(TAG, "Notified of A2DP status: ${device?.safeName} $oldState -> $newState")
 			if (newStateCode == BluetoothProfile.STATE_CONNECTED && isValidDevice(device)) {
 				startMainService(context)
 			}
 		}
 		if (intent.action == BluetoothDevice.ACTION_ACL_CONNECTED) {
-			val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-			Log.i(TAG, "Notified of ACL connection: ${device?.name}")
+			val device = intent.getParcelableExtraCompat(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
+			Log.i(TAG, "Notified of ACL connection: ${device?.safeName}")
 			if (isValidDevice(device)) {
 				startMainService(context)
 			}
 		}
 		if (intent.action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {
-			val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-			Log.i(TAG, "Notified of ACL disconnection: ${device?.name}")
+			val device = intent.getParcelableExtraCompat(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
+			Log.i(TAG, "Notified of ACL disconnection: ${device?.safeName}")
 		}
 	}
 

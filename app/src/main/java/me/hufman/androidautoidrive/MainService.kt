@@ -410,7 +410,13 @@ class MainService: Service() {
 		)
 		val intentService = Intent(ACTION_SERVICE_MODULE)
 				.setPackage(applicationContext.packageName)
-		packageManager.queryIntentServices(intentService, 0).forEach { resolveInfo ->
+		val results = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+			packageManager.queryIntentServices(intentService, PackageManager.ResolveInfoFlags.of(0))
+		} else {
+			@Suppress("DEPRECATION")
+			packageManager.queryIntentServices(intentService, 0)
+		}
+		results.forEach { resolveInfo ->
 			if (iDriveConnectionReceiver.brand == "bmw" ||
 					iDriveConnectionReceiver.brand == "mini" ||
 					resolveInfo.serviceInfo.name in j29Services) {
@@ -422,7 +428,13 @@ class MainService: Service() {
 	fun stopModuleServices() {
 		val intentService = Intent(ACTION_SERVICE_MODULE)
 				.setPackage(applicationContext.packageName)
-		packageManager.queryIntentServices(intentService, 0).forEach { resolveInfo ->
+		val results = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+			packageManager.queryIntentServices(intentService, PackageManager.ResolveInfoFlags.of(0))
+		} else {
+			@Suppress("DEPRECATION")
+			packageManager.queryIntentServices(intentService, 0)
+		}
+		results.forEach { resolveInfo ->
 			stopModuleService(resolveInfo.serviceInfo.name)
 		}
 	}
@@ -490,7 +502,12 @@ class MainService: Service() {
 
 	private fun stopServiceNotification() {
 		Log.i(TAG, "Hiding foreground notification")
-		stopForeground(true)
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			stopForeground(STOP_FOREGROUND_REMOVE)
+		} else {
+			@Suppress("DEPRECATION")
+			stopForeground(true)
+		}
 		foregroundNotification = null
 	}
 

@@ -44,6 +44,7 @@ class AddonDiscoveryTest {
 		// can't stub mocks inside a different mock doAnswer
 		mock<ApplicationInfo> {
 			on {loadIcon(any())} doReturn addonInfo.value.icon
+			on {loadLabel(any())} doReturn addonInfo.value.name
 		}.apply {
 			packageName = addonInfo.value.packageName
 		}
@@ -75,6 +76,10 @@ class AddonDiscoveryTest {
 		}
 		// label
 		on {getApplicationLabel(any())} doAnswer {
+			val appInfo = installedAddonsByName[(it.arguments[0] as ApplicationInfo).packageName]!!
+			appInfo.name
+		}
+		on {getText(any(), anyInt(), any())} doAnswer {
 			val appInfo = installedAddonsByName[(it.arguments[0] as ApplicationInfo).packageName]!!
 			appInfo.name
 		}

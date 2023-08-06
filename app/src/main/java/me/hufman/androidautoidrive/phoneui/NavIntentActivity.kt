@@ -27,6 +27,7 @@ class NavIntentActivity: AppCompatActivity() {
 
 	val viewModel by viewModels<NavigationStatusModel> { NavigationStatusModel.Factory(this.applicationContext) }
 
+	@Suppress("DEPRECATION")
 	override fun onAttachedToWindow() {
 		super.onAttachedToWindow()
 

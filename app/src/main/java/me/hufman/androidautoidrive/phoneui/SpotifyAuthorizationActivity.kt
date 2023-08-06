@@ -18,6 +18,7 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.getApplicationInfoCompat
 import net.openid.appauth.*
 import net.openid.appauth.connectivity.DefaultConnectionBuilder
 import java.util.concurrent.CountDownLatch
@@ -124,8 +125,8 @@ class SpotifyAuthorizationActivity: Activity() {
 		Log.d(TAG, "Creating auth request")
 		val codeChallenge = getSpotifyPkceCodeChallenge(CODE_VERIFIER)
 		val codeChallengeMethod = "S256"
-		val clientId = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
-				.metaData.getString("com.spotify.music.API_KEY", "unavailable")
+		val clientId = packageManager.getApplicationInfoCompat(packageName, PackageManager.GET_META_DATA)
+				?.metaData?.getString("com.spotify.music.API_KEY", "unavailable") ?: "unavailable"
 		val authRequestBuilder = AuthorizationRequest.Builder(
 				authStateManager.getAuthorizationServiceConfiguration()!!,
 				clientId,

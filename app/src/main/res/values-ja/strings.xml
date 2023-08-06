@@ -204,7 +204,7 @@
     <string name="lbl_carinfo_style">効率的な運転スタイル</string>
     <string name="lbl_carinfo_lastchecked">最終チェック：</string>
     <string name="lbl_carinfo_lastPosition">最終位置：</string>
-    <string name="lbl_carinfo_lastPosition_crossStreet">$1%sおよび$1%s</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%1$sおよび%2$s</string>
     <string name="lbl_carinfo_lastPosition_openMap">マップを開く</string>
     <string name="lbl_carinfo_vin">VIN：</string>
     <string name="lbl_carinfo_odo">走行距離計：</string>

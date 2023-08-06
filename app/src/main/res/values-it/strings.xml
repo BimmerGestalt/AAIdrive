@@ -265,7 +265,7 @@
     <string name="lbl_carinfo_style">Efficienza Stile di Guida</string>
     <string name="lbl_carinfo_lastchecked">Ultimo Aggiornamento:</string>
     <string name="lbl_carinfo_lastPosition">Ultima Posizione:</string>
-    <string name="lbl_carinfo_lastPosition_crossStreet">%s e %s</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%1$s e %2$s</string>
     <string name="lbl_carinfo_lastPosition_openMap">Apri la mappa</string>
     <string name="lbl_carinfo_vin">Telaio (VIN):</string>
     <string name="lbl_carinfo_odo">Chilometraggio:</string>

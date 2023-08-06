@@ -10,7 +10,7 @@ class PopupHistory(val maxSize: Int = POPPED_HISTORY_SIZE) {
 	}
 
 	@VisibleForTesting
-	val poppedNotifications = Collections.newSetFromMap(object: LinkedHashMap<CarNotification, Boolean>(maxSize) {
+	val poppedNotifications: MutableSet<CarNotification> = Collections.newSetFromMap(object: LinkedHashMap<CarNotification, Boolean>(maxSize) {
 		override fun removeEldestEntry(_eldest: MutableMap.MutableEntry<CarNotification, Boolean>?): Boolean {
 			return size > maxSize
 		}

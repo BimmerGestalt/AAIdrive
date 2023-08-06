@@ -292,7 +292,7 @@
     <string name="lbl_carinfo_style">Efficient Driving Style</string>
     <string name="lbl_carinfo_lastchecked">Last Checked:</string>
     <string name="lbl_carinfo_lastPosition">Last Position:</string>
-    <string name="lbl_carinfo_lastPosition_crossStreet">%s and %s</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%1$s and %2$s</string>
     <string name="lbl_carinfo_lastPosition_openMap">Open Map</string>
     <string name="lbl_carinfo_vin">VIN:</string>
     <string name="lbl_carinfo_odo">Odometer:</string>

@@ -24,6 +24,8 @@ import me.hufman.androidautoidrive.music.PlaybackPosition
 import me.hufman.androidautoidrive.music.spotify.SpotifyMusicMetadata
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 import me.hufman.androidautoidrive.music.spotify.TemporaryPlaylistState
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.getApplicationInfoCompat
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.getPackageInfoCompat
 import me.hufman.androidautoidrive.utils.Utils
 import java.util.*
 
@@ -33,8 +35,8 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		const val REDIRECT_URI = "me.hufman.androidautoidrive://spotify_callback"
 
 		fun getClientId(context: Context): String {
-			return context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-					.metaData.getString("com.spotify.music.API_KEY", "unset")
+			return context.packageManager.getApplicationInfoCompat(context.packageName, PackageManager.GET_META_DATA)
+					?.metaData?.getString("com.spotify.music.API_KEY", "unset") ?: "unset"
 		}
 
 		fun hasSupport(context: Context): Boolean {
@@ -43,10 +45,7 @@ class SpotifyAppController(context: Context, val remote: SpotifyAppRemote, val w
 		}
 
 		fun isSpotifyInstalled(context: Context): Boolean {
-			return try {
-				context.packageManager.getPackageInfo("com.spotify.music", 0)
-				true
-			} catch (e: PackageManager.NameNotFoundException) { false }
+			return context.packageManager.getPackageInfoCompat("com.spotify.music", 0) != null
 		}
 
 		fun MusicMetadata.Companion.fromSpotify(track: Track, coverArt: Bitmap? = null): MusicMetadata {

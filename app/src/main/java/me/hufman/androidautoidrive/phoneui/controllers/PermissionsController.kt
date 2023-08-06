@@ -11,6 +11,7 @@ import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.resolveActivityCompat
 
 class PermissionsController(val activity: Activity) {
 	companion object {
@@ -22,7 +23,7 @@ class PermissionsController(val activity: Activity) {
 	}
 
 	private fun tryOpenActivity(intent: Intent): Boolean {
-		if (activity.packageManager.resolveActivity(intent, 0) != null) {
+		if (activity.packageManager.resolveActivityCompat(intent, 0) != null) {
 			try {
 				activity.startActivity(intent)
 				return true

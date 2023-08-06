@@ -266,7 +266,7 @@
     <string name="lbl_carinfo_style">Eficienta stilului de conducere</string>
     <string name="lbl_carinfo_lastchecked">Ultima verificare:</string>
     <string name="lbl_carinfo_lastPosition">Ultima poziție:</string>
-    <string name="lbl_carinfo_lastPosition_crossStreet">%s şi %s</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%1$s şi %2$s</string>
     <string name="lbl_carinfo_lastPosition_openMap">Deschide harta</string>
     <string name="lbl_carinfo_vin">Nr. șasiu:</string>
     <string name="lbl_carinfo_odo">Odometru:</string>

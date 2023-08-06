@@ -12,6 +12,7 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.getPackageInfoCompat
 
 class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
                        private val permissionsState: PermissionsState,
@@ -161,7 +162,7 @@ class PermissionsState(private val appContext: Context) {
 		}
 
 	val supportsSmsPermission: Boolean
-		get() = appContext.packageManager.getPackageInfo(appContext.packageName, PackageManager.GET_PERMISSIONS).requestedPermissions.any {
+		get() = (appContext.packageManager.getPackageInfoCompat(appContext.packageName, PackageManager.GET_PERMISSIONS)?.requestedPermissions?: emptyArray()).any {
 			it == Manifest.permission.READ_SMS
 		}
 

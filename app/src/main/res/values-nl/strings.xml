@@ -254,7 +254,7 @@
     <string name="lbl_carinfo_style">Efficiënte rijstijl</string>
     <string name="lbl_carinfo_lastchecked">Laatst gecontroleerd:</string>
     <string name="lbl_carinfo_lastPosition">Laatste positie:</string>
-    <string name="lbl_carinfo_lastPosition_crossStreet">%s en %s</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%1$s en %2$s</string>
     <string name="lbl_carinfo_lastPosition_openMap">Open kaart</string>
     <string name="lbl_carinfo_vin">VIN:</string>
     <string name="lbl_carinfo_odo">Kilometerteller:</string>

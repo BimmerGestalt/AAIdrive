@@ -262,7 +262,7 @@
     <string name="lbl_carinfo_style">Эффективный стиль вождения</string>
     <string name="lbl_carinfo_lastchecked">Последняя проверка:</string>
     <string name="lbl_carinfo_lastPosition">Последняя позиция:</string>
-    <string name="lbl_carinfo_lastPosition_crossStreet">%s и %s</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%1$s и %2$s</string>
     <string name="lbl_carinfo_lastPosition_openMap">Открыть карту</string>
     <string name="lbl_carinfo_vin">VIN:</string>
     <string name="lbl_carinfo_odo">Одометр:</string>

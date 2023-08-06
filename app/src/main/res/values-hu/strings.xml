@@ -256,7 +256,7 @@
     <string name="lbl_carinfo_style">Efficient Driving Stílus</string>
     <string name="lbl_carinfo_lastchecked">Utoljára ellenőrizve:</string>
     <string name="lbl_carinfo_lastPosition">Utolsó pozíció:</string>
-    <string name="lbl_carinfo_lastPosition_crossStreet">%s és %s</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%1$s és %2$s</string>
     <string name="lbl_carinfo_lastPosition_openMap">Térkép megnyitása</string>
     <string name="lbl_carinfo_vin">VIN:</string>
     <string name="lbl_carinfo_odo">Futásteljesítmény:</string>

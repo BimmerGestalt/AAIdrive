@@ -158,6 +158,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 
 	override fun onNotificationRemoved(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
 		if (LOG_NOTIFICATIONS) {
+			@Suppress("DEPRECATION")
 			Log.i(TAG, "Notification removed: ${sbn?.notification?.extras?.get("android.title")}")
 		}
 		super.onNotificationRemoved(sbn, rankingMap)

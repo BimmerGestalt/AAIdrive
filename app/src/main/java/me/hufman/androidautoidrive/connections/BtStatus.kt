@@ -1,8 +1,8 @@
 package me.hufman.androidautoidrive.connections
 
 import android.bluetooth.BluetoothA2dp
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.ParcelUuid
 import android.util.Log
+import me.hufman.androidautoidrive.utils.getParcelableExtraCompat
 import java.util.*
 
 val BluetoothDevice.safeName: String?
@@ -115,7 +116,7 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 		override fun onReceive(p0: Context?, intent: Intent?) {
 			if (intent?.action == BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED &&
 					intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1) == BluetoothProfile.STATE_CONNECTED) {
-				val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+				val device = intent.getParcelableExtraCompat(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
 				device?.safeFetchUuidsWithSdp()
 			}
 			callback()
@@ -131,7 +132,7 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 		if (subscribed) {
 			return
 		}
-		BluetoothAdapter.getDefaultAdapter()?.apply {
+		context.getSystemService(BluetoothManager::class.java).adapter?.apply {
 			this.getProfileProxy(context, hfListener, BluetoothProfile.HEADSET)
 			this.getProfileProxy(context, a2dpListener, BluetoothProfile.A2DP)
 		}
@@ -149,7 +150,7 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			subscribed = false
 			context.unregisterReceiver(bluetoothListener)
 		} catch (e: IllegalArgumentException) {}
-		BluetoothAdapter.getDefaultAdapter()?.apply {
+		context.getSystemService(BluetoothManager::class.java).adapter?.apply {
 			val hfProfile = hfListener.profile
 			if (hfProfile != null) {
 				this.closeProfileProxy(BluetoothProfile.HEADSET, hfProfile)

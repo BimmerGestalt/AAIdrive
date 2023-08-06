@@ -1,13 +1,13 @@
 package me.hufman.androidautoidrive
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.net.Uri
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.getApplicationInfoCompat
 import java.net.URL
 
 /**
@@ -23,20 +23,10 @@ interface PhoneAppResources {
 
 class PhoneAppResourcesAndroid(val context: Context): PhoneAppResources {
 	override fun getAppIcon(packageName: String): Drawable {
-		return try {
-			context.packageManager.getApplicationInfo(packageName, 0).loadIcon(context.packageManager)
-		} catch (e: PackageManager.NameNotFoundException) {
-			// very unlikely
-			ColorDrawable(0)
-		}
+		return context.packageManager.getApplicationInfoCompat(packageName)?.loadIcon(context.packageManager) ?: ColorDrawable(0)
 	}
 	override fun getAppName(packageName: String): String {
-		return try {
-			context.packageManager.getApplicationInfo(packageName, 0).loadLabel(context.packageManager).toString()
-		} catch (e: PackageManager.NameNotFoundException) {
-			// very unlikely
-			""
-		}
+		return context.packageManager.getApplicationInfoCompat(packageName)?.loadLabel(context.packageManager)?.toString() ?: ""
 	}
 
 	override fun getBitmapDrawable(bitmap: Bitmap): Drawable {

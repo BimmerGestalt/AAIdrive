@@ -5,7 +5,6 @@ import com.mapbox.api.directions.v5.DirectionsCriteria
 import com.mapbox.api.directions.v5.MapboxDirections
 import com.mapbox.api.directions.v5.models.DirectionsResponse
 import com.mapbox.core.constants.Constants.PRECISION_6
-import com.mapbox.geojson.Feature
 import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import me.hufman.androidautoidrive.BuildConfig
@@ -44,7 +43,7 @@ class MapboxNavController(val client: MapboxDirections.Builder, val locationProv
 			Log.w(TAG, "No car location yet, cancelling route search")
 			return
 		}
-		routeNavigation(LatLong(currentLocation.latitude, currentLocation.longitude), dest, currentLocation.bearing)
+		routeNavigation(LatLong(currentLocation.latitude, currentLocation.longitude), dest)
 	}
 
 	fun stopNavigation() {
@@ -54,7 +53,7 @@ class MapboxNavController(val client: MapboxDirections.Builder, val locationProv
 		callback(this)
 	}
 
-	private fun routeNavigation(start: LatLong, dest: LatLong, bearing: Float) {
+	private fun routeNavigation(start: LatLong, dest: LatLong) {
 		val request = client.waypoints(ArrayList())     // clear any previous origin/destination
 				.bearings(ArrayList())
 				.origin(start.toPoint())

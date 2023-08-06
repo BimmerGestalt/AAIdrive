@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import me.hufman.androidautoidrive.addons.AddonAppInfo
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.resolveActivityCompat
 
 class AddonAppListController(val context: Context, val permissionsController: PermissionsController) {
 	fun openApplicationPermissions(appInfo: AddonAppInfo) {
@@ -11,7 +12,7 @@ class AddonAppListController(val context: Context, val permissionsController: Pe
 	}
 
 	private fun tryOpenActivity(intent: Intent): Boolean {
-		if (context.packageManager.resolveActivity(intent, 0) != null) {
+		if (context.packageManager.resolveActivityCompat(intent, 0) != null) {
 			try {
 				context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 				return true
