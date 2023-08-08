@@ -25,7 +25,7 @@ class MapboxPlaceSearchTest {
 		on {build()} doReturn searchClient
 	}
 	val cdsData = CDSDataProvider()
-	val locationProvider = CdsLocationProvider(cdsData)
+	val locationProvider = CdsLocationProvider(cdsData, false)
 	val placeSearch = MapboxPlaceSearch(searchBuilder, locationProvider)
 
 	fun makeFeature(id: String, placeType: String, name: String, address: String, center: Point? = null): CarmenFeature {

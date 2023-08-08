@@ -16,8 +16,8 @@
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps requires that the MyBMW or MINI app for your car is installed and that it can successfully enable your IDrive5+ car's Apps checkbox, or that your IDrive4 car has the ConnectedDrive Connection Assistant option.</string>
     <string name="playstore_desc_depends_bmw_subscription">This usually requires having an active BMW ConnectedDrive subscription, which is typically included for a few years after you bought your new car.</string>
 
-    <string name="playstore_release_desc">Some minor performance optimizations:</string>
-    <string name="playstore_release_point1">Updates music and notification screens faster</string>
-    <string name="playstore_release_point2">Shuts down notification listener when not connected to the car</string>
-    <string name="playstore_release_point3">Supports loading car data from Toyota Supra vehicles</string>
+    <string name="playstore_release_desc">Adds a Car Information app and some bugfixes</string>
+    <string name="playstore_release_point1">Adds a Car Information app to reveal some internal data from the car</string>
+    <string name="playstore_release_point2">Fixes map compass orientation in IDrive4 cars</string>
+    <string name="playstore_release_point3">Adds support for Chinese MyBMW/Mini apps</string>
 </resources>

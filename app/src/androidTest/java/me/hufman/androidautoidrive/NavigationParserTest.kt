@@ -161,6 +161,8 @@ class NavigationParserTest {
 		Assert.assertEquals(namedAnswer.toString(), parser.parseUrl(zanottoQuery).toString())
 		val llQuery = "https://maps.google.de/maps?q=47.5951518,-122.3316393&z=17&t=k"
 		Assert.assertEquals(correctAnswer.toString(), parser.parseUrl(llQuery).toString())
+		val nullQuery = "https:///maps?q=47.5951518,-122.3316393&z=17&t=k"
+		Assert.assertEquals(correctAnswer.toString(), parser.parseUrl(nullQuery).toString())
 	}
 
 	@Test

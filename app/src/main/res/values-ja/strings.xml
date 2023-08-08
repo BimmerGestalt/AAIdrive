@@ -99,6 +99,7 @@
     <string name="lbl_navigationpage_intent">接続中、他のアプリのナビゲーションボタンでアプリチューザーを開くと、車のナビゲーションシステムがオプションとして表示されます</string>
     <string name="lbl_navigationstatus_active">現在ナビゲート中</string>
     <string name="lbl_navigationstatus_inactive">現在ナビゲートしていません</string>
+    <string name="addonNormalPermission">車のデータアクセス</string>
     <string name="lbl_settingspage">動作を微調整するための詳細設定。予期しない動作を引き起こす可能性があります</string>
     <string name="lbl_language_carinterface">車に表示する言語</string>
     <string name="lbl_language_prefercar">電話の言語よりも車の言語を優先する</string>

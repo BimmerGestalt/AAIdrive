@@ -36,9 +36,10 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 	val isConnectedSecurityConnected
 		get() = securityAccess.isConnected()
 
-	val isBMWInstalled = SecurityAccess.installedSecurityServices.any {
-		it.name.startsWith("BMW")
-	}
+	val isBMWInstalled
+		get() = SecurityAccess.installedSecurityServices.any {
+			it.name.startsWith("BMW")
+		}
 
 	val isMiniInstalled
 		get() = SecurityAccess.installedSecurityServices.any {
@@ -50,7 +51,8 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 			it.name.startsWith("J29")
 		}
 
-	val isBMWConnectedInstalled = SecurityAccess.installedSecurityServices.any {
+	val isBMWConnectedInstalled
+		get() = SecurityAccess.installedSecurityServices.any {
 			it.name.startsWith("BMWC")
 		}
 

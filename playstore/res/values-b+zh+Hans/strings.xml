@@ -1,2 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="playstore_tagline">将 Android Auto功能添加到您的BMW 和 Mini 的 IDrive NBT 仪表盘</string>
+    <string name="playstore_desc_title">解锁你的BMW Connected应用的全部潜能，在运行IDrive 4-6的车型上，以提高你的驾驶体验！</string>
+    <string name="playstore_desc_features_heading">结合一个有效的BMW ConnectDrive订阅或 Mini Connected选配， 此项目可以作为非官方的 BMW/Mini Connected应用程序将安卓系统的大多数功能添加到你的汽车中：</string>
+    <string name="playstore_desc_features_music">在 IDrive 中查看您手机上的音乐应用作为媒体源</string>
+    <string name="playstore_desc_features_assistants">与您手机上安装的语音助手互动</string>
+    <string name="playstore_desc_features_notifications">通过汽车控制器读取、监听和交互手机上的通知信息</string>
+    <string name="playstore_desc_features_calendar">在汽车中查看您的日历，并开始导航到事件地点</string>
+    <string name="playstore_desc_features_carnav">从手机应用启动汽车导航</string>
+    <string name="playstore_desc_features_carinfo">从你的汽车上读取各种诊断信息和统计数据</string>
+    <string name="playstore_desc_features_addons_mirroring">通过可选附加组件(例如屏幕镜像) 扩展能力</string>
+    <string name="playstore_desc_features_custommap_soon">自定义地图即将实现</string>
+    <string name="playstore_desc_features_custommap">基于Mapbox的自定义地图和导航</string>
+    <string name="playstore_desc_nativeapps_protocol">使用原生的 BMW 应用程序协议就像使用旧的 Spotify 应用程序，这个应用程序不会以任何方式修改你的汽车。 所有扩展功能只能在您的手机连接到车辆时提供。</string>
+    <string name="playstore_desc_depends_mybmw">BMW/Mini Connected 应用需要您的车辆已经安装了MyBMW或MINI功能。在IDrive5+的车型上可以通过“应用”选项开启，或者您的IDrive4车型开启了ConnectedDrive Connection Assistant选项。</string>
+    <string name="playstore_desc_depends_bmw_subscription">这通常需要一个有效的BMW ConnectedDrive订阅，这通常是在您购买新车后几年内包含的。</string>
+</resources>

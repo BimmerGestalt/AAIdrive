@@ -16,7 +16,7 @@ fun Address.addressLines(): List<String> {
 class AddressPlaceSearch(val geocoder: Geocoder, private val locationProvider: CarLocationProvider): MapPlaceSearch {
 	companion object {
 		fun getInstance(context: Context): AddressPlaceSearch {
-			return AddressPlaceSearch(Geocoder(context), CdsLocationProvider(CarInformation.cachedCdsData))
+			return AddressPlaceSearch(Geocoder(context), CdsLocationProvider(CarInformation.cachedCdsData, false))
 		}
 	}
 
