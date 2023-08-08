@@ -1,6 +1,5 @@
 package me.hufman.androidautoidrive
 
-import androidx.test.annotation.UiThreadTest
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -35,7 +34,7 @@ class MainScreenshotTest {
 		}
 	}
 
-	val context = InstrumentationRegistry.getInstrumentation().targetContext
+	val context = InstrumentationRegistry.getInstrumentation().targetContext!!
 
 	// holds all the mock viewmodels
 	val mockScenario = MockScenario(context)

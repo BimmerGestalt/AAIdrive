@@ -177,7 +177,7 @@
     <string name="lbl_carinfo_style">סגנון נהיגה יעיל</string>
     <string name="lbl_carinfo_lastchecked">נבדק לאחרונה:</string>
     <string name="lbl_carinfo_lastPosition">מיקום אחרון:</string>
-    <string name="lbl_carinfo_lastPosition_crossStreet">%s ו-%s</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%1$s ו-%2$s</string>
     <string name="lbl_carinfo_lastPosition_openMap">פתח מפה</string>
     <string name="lbl_carinfo_vin">מס\' זיהוי שלדת הרכב (VIN):</string>
     <string name="lbl_carinfo_odo">מד מרחק:</string>

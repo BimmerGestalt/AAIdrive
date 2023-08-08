@@ -12,6 +12,7 @@ import me.hufman.androidautoidrive.BooleanLiveSetting
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.calendar.CalendarProvider
 import me.hufman.androidautoidrive.phoneui.FunctionalLiveData
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.getPackageInfoCompat
 import java.util.*
 
 class CalendarSettingsModel(appContext: Context, carInformation: CarInformation, val calendarProvider: CalendarProvider): ViewModel() {
@@ -35,7 +36,7 @@ class CalendarSettingsModel(appContext: Context, carInformation: CarInformation,
 
 	val xiaomiCalendarInstalled = FunctionalLiveData<Boolean> {
 		try {
-			appContext.packageManager.getPackageInfo("com.xiaomi.calendar", 0)
+			appContext.packageManager.getPackageInfoCompat("com.xiaomi.calendar", 0)
 			true
 		} catch (e: PackageManager.NameNotFoundException) { false }
 	}

@@ -265,7 +265,7 @@
     <string name="lbl_carinfo_style">Effektiv körstil</string>
     <string name="lbl_carinfo_lastchecked">Senast granskad:</string>
     <string name="lbl_carinfo_lastPosition">Senaste position:</string>
-    <string name="lbl_carinfo_lastPosition_crossStreet">%s och %s</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%1$s och %2$s</string>
     <string name="lbl_carinfo_lastPosition_openMap">Öppna Karta</string>
     <string name="lbl_carinfo_vin">VIN:</string>
     <string name="lbl_carinfo_odo">Trippmätare:</string>

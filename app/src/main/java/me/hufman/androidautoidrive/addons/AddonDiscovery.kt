@@ -3,6 +3,10 @@ package me.hufman.androidautoidrive.addons
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.graphics.drawable.ColorDrawable
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.getPackageInfoCompat
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.queryIntentServicesCompat
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.resolveActivityCompat
 
 class AddonDiscovery(val packageManager: PackageManager) {
 	companion object {
@@ -15,7 +19,7 @@ class AddonDiscovery(val packageManager: PackageManager) {
 	}
 
 	private fun resolveIntent(intent: Intent): Intent? {
-		val resolveInfo = packageManager.resolveActivity(intent, 0)
+		val resolveInfo = packageManager.resolveActivityCompat(intent, 0)
 		if (resolveInfo != null) {
 			intent.setClassName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name)
 			return intent
@@ -27,13 +31,14 @@ class AddonDiscovery(val packageManager: PackageManager) {
 		val discovered = HashMap<String, AddonAppInfo>()
 
 		val intentDataService = Intent(INTENT_DATA_SERVICE)
-		packageManager.queryIntentServices(intentDataService, 0).forEach { resolveInfo ->
+		packageManager.queryIntentServicesCompat(intentDataService, 0).forEach { resolveInfo ->
 			// load up the requested permissions for this app
-			val packageInfo = packageManager.getPackageInfo(resolveInfo.serviceInfo.packageName, PackageManager.GET_PERMISSIONS)
+			val packageName = resolveInfo.serviceInfo.packageName
+			val packageInfo = packageManager.getPackageInfoCompat(packageName, PackageManager.GET_PERMISSIONS)
 
 			var cdsNormalRequested = false
 			var cdsPersonalRequested = false
-			packageInfo.requestedPermissions?.forEach {
+			packageInfo?.requestedPermissions?.forEach {
 				if (it == PERMISSION_NORMAL) {
 					cdsNormalRequested = true
 				}
@@ -42,32 +47,33 @@ class AddonDiscovery(val packageManager: PackageManager) {
 				}
 			}
 			if (cdsNormalRequested || cdsPersonalRequested) {
-				val name = packageManager.getApplicationLabel(packageInfo.applicationInfo).toString()
-				val icon = packageInfo.applicationInfo.loadIcon(packageManager)
-				val cdsNormalGranted = packageManager.checkPermission(PERMISSION_NORMAL, packageInfo.packageName) == PERMISSION_GRANTED
-				val cdsPersonalGranted = packageManager.checkPermission(PERMISSION_PERSONAL, packageInfo.packageName) == PERMISSION_GRANTED
-				val appInfo = AddonAppInfo(name, icon, packageInfo.packageName).also {
-					it.intentOpen = resolveIntent(Intent(Intent.ACTION_MAIN).setPackage(packageInfo.packageName))
-					it.intentSettings = resolveIntent(Intent(ACTION_APPLICATION_PREFERENCES).setPackage(packageInfo.packageName))
-					it.intentDataService = Intent(INTENT_DATA_SERVICE).setPackage(packageInfo.packageName)
+				val name = packageInfo?.applicationInfo?.loadLabel(packageManager)?.toString() ?: ""
+				val icon = packageInfo?.applicationInfo?.loadIcon(packageManager) ?: ColorDrawable(0)
+				val cdsNormalGranted = packageManager.checkPermission(PERMISSION_NORMAL, packageName) == PERMISSION_GRANTED
+				val cdsPersonalGranted = packageManager.checkPermission(PERMISSION_PERSONAL, packageName) == PERMISSION_GRANTED
+				val appInfo = AddonAppInfo(name, icon, packageName).also {
+					it.intentOpen = resolveIntent(Intent(Intent.ACTION_MAIN).setPackage(packageName))
+					it.intentSettings = resolveIntent(Intent(ACTION_APPLICATION_PREFERENCES).setPackage(packageName))
+					it.intentDataService = Intent(INTENT_DATA_SERVICE).setPackage(packageName)
 					it.cdsNormalRequested = cdsNormalRequested
 					it.cdsNormalGranted = cdsNormalGranted
 					it.cdsPersonalRequested = cdsPersonalRequested
 					it.cdsPersonalGranted = cdsPersonalGranted
 				}
-				discovered[packageInfo.packageName] = appInfo
+				discovered[packageName] = appInfo
 			}
 		}
 
 		val intentCarService = Intent(INTENT_CONNECTION_SERVICE)
-		packageManager.queryIntentServices(intentCarService, 0).forEach { resolveInfo ->
-			val packageInfo = packageManager.getPackageInfo(resolveInfo.serviceInfo.packageName, 0)
-			val name = packageManager.getApplicationLabel(packageInfo.applicationInfo).toString()
-			val icon = packageInfo.applicationInfo.loadIcon(packageManager)
-			val appInfo = discovered[packageInfo.packageName] ?: AddonAppInfo(name, icon, packageInfo.packageName).also {
-				it.intentOpen = resolveIntent(Intent(Intent.ACTION_MAIN).setPackage(packageInfo.packageName))
-				it.intentSettings = resolveIntent(Intent(ACTION_APPLICATION_PREFERENCES).setPackage(packageInfo.packageName))
-				it.intentConnectionService = Intent(INTENT_CONNECTION_SERVICE).setPackage(packageInfo.packageName)
+		packageManager.queryIntentServicesCompat(intentCarService, 0).forEach { resolveInfo ->
+			val packageName = resolveInfo.serviceInfo.packageName
+			val packageInfo = packageManager.getPackageInfoCompat(packageName, 0)
+			val name = packageInfo?.applicationInfo?.loadLabel(packageManager)?.toString() ?: ""
+			val icon = packageInfo?.applicationInfo?.loadIcon(packageManager) ?: ColorDrawable(0)
+			val appInfo = discovered[packageName] ?: AddonAppInfo(name, icon, packageName).also {
+				it.intentOpen = resolveIntent(Intent(Intent.ACTION_MAIN).setPackage(packageName))
+				it.intentSettings = resolveIntent(Intent(ACTION_APPLICATION_PREFERENCES).setPackage(packageName))
+				it.intentConnectionService = Intent(INTENT_CONNECTION_SERVICE).setPackage(packageName)
 				// a direct car connection can provide all the same
 				it.cdsNormalRequested = true
 				it.cdsNormalGranted = true
@@ -77,7 +83,7 @@ class AddonDiscovery(val packageManager: PackageManager) {
 				it.carConnectionRequested = true
 				it.carConnectionGranted = true     // TODO support disabling like the MusicApp swiping
 			}
-			discovered[packageInfo.packageName] = appInfo
+			discovered[packageName] = appInfo
 		}
 
 		val results = ArrayList(discovered.values)

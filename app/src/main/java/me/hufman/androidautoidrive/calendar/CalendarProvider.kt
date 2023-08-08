@@ -201,8 +201,6 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 		if (cursor != null) {
 			cursor.moveToFirst()
 			while (cursor.moveToNext()) {
-				val allDay = cursor.getInt(INDEX_ALL_DAY)
-				val timezoneName = cursor.getString(INDEX_TIMEZONE)
 				splitEventIntoDays(parseEvent(cursor)).forEach { event ->
 					if (event.start[Calendar.YEAR] == year &&
 						event.start[Calendar.MONTH] + 1 == month &&
@@ -211,6 +209,8 @@ class CalendarProvider(val context: Context, val appSettings: AppSettings) {
 							if (!appSettings[AppSettings.KEYS.CALENDAR_DETAILED_EVENTS].toBoolean() || isDetailed) {
 								events.add(event)
 							}
+//						val allDay = cursor.getInt(INDEX_ALL_DAY)
+//						val timezoneName = cursor.getString(INDEX_TIMEZONE)
 //						println("${event.title}  ${allDay}T $timezoneName  ${event.start} - ${event.end}")
 //					} else {
 //						println("Skipping ${event.title} on ${event.start}")

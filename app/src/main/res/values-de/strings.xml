@@ -265,7 +265,7 @@
     <string name="lbl_carinfo_style">Fahrmodus</string>
     <string name="lbl_carinfo_lastchecked">Letzte Aktualisierung:</string>
     <string name="lbl_carinfo_lastPosition">Letzte Position:</string>
-    <string name="lbl_carinfo_lastPosition_crossStreet">%s und %s</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%1$s und %2$s</string>
     <string name="lbl_carinfo_lastPosition_openMap">Position anzeigen</string>
     <string name="lbl_carinfo_vin">Fahrgestellnummer (VIN):</string>
     <string name="lbl_carinfo_odo">Kilometerstand:</string>

@@ -1,9 +1,12 @@
 package me.hufman.androidautoidrive.utils
 
+import android.content.Intent
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import ar.com.hjg.pngj.ImageInfo
 import ar.com.hjg.pngj.ImageLineInt
 import ar.com.hjg.pngj.PngReaderInt
@@ -14,6 +17,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.withTimeout
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
+import java.io.Serializable
 import java.util.zip.ZipInputStream
 
 object Utils {
@@ -211,11 +215,41 @@ inline fun <T> MutableList<T>.removeFirstOrNull(predicate: (T) -> Boolean): T? {
 	}
 }
 
+@Suppress("DEPRECATION")
 fun Bundle.dumpToString(): String {
 	return "Bundle{ " + this.keySet().map {
 		"$it -> ${this.get(it)}"
 	}.joinToString(", ") + " }"
 }
+
+fun Bundle.getParcelableArrayCompat(name: String): Array<Parcelable>? {
+	return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+		this.getParcelableArray(name, Parcelable::class.java)
+	} else {
+		@Suppress("DEPRECATION")
+		this.getParcelableArray(name)
+	}
+}
+fun <T: Parcelable> Bundle.getParcelableCompat(name: String, klass: Class<T>): T? {
+	return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+		this.getParcelable(name, klass)
+	} else {
+		@Suppress("DEPRECATION")
+		this.getParcelable(name)
+	}
+}
+fun Bundle.getSerializableCompat(name: String): Serializable? {
+	return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+		this.getSerializable(name, Serializable::class.java)
+	} else {
+		@Suppress("DEPRECATION")
+		this.getSerializable(name)
+	}
+}
+fun <T: Parcelable> Intent.getParcelableExtraCompat(name: String, klass: Class<T>): T? =
+	this.extras?.getParcelableCompat(name, klass)
+fun Intent.getSerializableExtraCompat(name: String): Serializable? =
+	this.extras?.getSerializableCompat(name)
 
 /** Wait for a Deferred to resolve
  * if it takes longer than the timeout, run the timeoutHandler then continue waiting

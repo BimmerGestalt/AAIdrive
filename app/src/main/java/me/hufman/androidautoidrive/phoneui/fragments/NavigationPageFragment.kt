@@ -44,7 +44,7 @@ class NavigationPageFragment: Fragment() {
 		// autocomplete behaviors
 		val autocomplete = binding.root.findViewById<AutoCompleteTextView>(R.id.txtNavigationAddress)
 		autocomplete.setAdapter(adapter)
-		autocomplete.onItemClickListener = AdapterView.OnItemClickListener { adapterView, _view, index, _id ->
+		autocomplete.onItemClickListener = AdapterView.OnItemClickListener { adapterView, _, index, _ ->
 			val item = adapterView.getItemAtPosition(index) as? MapResultViewModel
 			item?.also { triggerNavigation(it.result) }
 		}

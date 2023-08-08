@@ -26,7 +26,7 @@ class WelcomeScreenshotTest {
 			AppSettings.saveSetting(context, AppSettings.KEYS.FIRST_START_DONE, "false")
 		}
 	}
-	val context = InstrumentationRegistry.getInstrumentation().targetContext
+	val context = InstrumentationRegistry.getInstrumentation().targetContext!!
 
 	val mockScenario = MockScenario(context)
 

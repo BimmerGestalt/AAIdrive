@@ -16,7 +16,7 @@ import org.junit.Test
 import java.util.*
 
 class CalendarParsingTest {
-	val timeZone = TimeZone.getTimeZone("America/Los_Angeles")
+	val timeZone: TimeZone = TimeZone.getTimeZone("America/Los_Angeles")
 
 	fun prepareResult(title: String, startTime: Long, endTime: Long, timezone: String, allDay: Boolean): Cursor {
 		return mock {

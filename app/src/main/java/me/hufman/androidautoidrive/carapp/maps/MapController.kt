@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import me.hufman.androidautoidrive.maps.LatLong
+import me.hufman.androidautoidrive.utils.getSerializableExtraCompat
 
 const val INTENT_INTERACTION = "me.hufman.androidautoidrive.maps.INTERACTION"
 const val EXTRA_INTERACTION_TYPE = "me.hufman.androidautoidrive.maps.INTERACTION.TYPE"
@@ -97,7 +98,7 @@ class MapsInteractionControllerListener(val context: Context, val controller: Ma
 				INTERACTION_PAUSE_MAP -> controller.pauseMap()
 				INTERACTION_ZOOM_IN -> controller.zoomIn(intent.getIntExtra(EXTRA_ZOOM_AMOUNT, 1))
 				INTERACTION_ZOOM_OUT -> controller.zoomOut(intent.getIntExtra(EXTRA_ZOOM_AMOUNT, 1))
-				INTERACTION_NAV_START -> controller.navigateTo(intent.getSerializableExtra(EXTRA_LATLONG) as? LatLong
+				INTERACTION_NAV_START -> controller.navigateTo(intent.getSerializableExtraCompat(EXTRA_LATLONG) as? LatLong
 						?: return)
 				INTERACTION_NAV_RECALCULATE -> controller.recalcNavigation()
 				INTERACTION_NAV_STOP -> controller.stopNavigation()

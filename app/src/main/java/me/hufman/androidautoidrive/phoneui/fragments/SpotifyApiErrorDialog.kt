@@ -43,6 +43,7 @@ class SpotifyApiErrorDialog: DialogFragment() {
 		return builder.create()
 	}
 
+	@Suppress("DEPRECATION")
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		if (requestCode == SpotifyAuthorizationActivity.REQUEST_CODE_SPOTIFY_LOGIN) {
@@ -116,6 +117,7 @@ class SpotifyApiErrorDialog: DialogFragment() {
 	 * Launches an activity displaying the the authorization login page in a custom tab. This is the
 	 * entry point of the authorization process.
 	 */
+	@Suppress("DEPRECATION")
 	private fun launchAuthorizationActivity() {
 		val intent = Intent(context, SpotifyAuthorizationActivity::class.java)
 		startActivityForResult(intent, SpotifyAuthorizationActivity.REQUEST_CODE_SPOTIFY_LOGIN)

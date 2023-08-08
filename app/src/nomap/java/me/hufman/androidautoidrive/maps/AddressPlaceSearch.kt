@@ -26,7 +26,7 @@ class AddressPlaceSearch(val geocoder: Geocoder, private val locationProvider: C
 			val currentLocation = locationProvider.currentLocation?.let {
 				LatLong(it.latitude, it.longitude)
 			}
-			val searchResults = geocoder.getFromLocationName(query, 5)
+			val searchResults = geocoder.getFromLocationName(query, 5) ?: emptyList()
 			results.complete(searchResults.map {
 				val name = if (!it.getAddressLine(0).startsWith(it.featureName)) { it.featureName } else { "" }
 				val placeLocation = LatLong(it.latitude, it.longitude)

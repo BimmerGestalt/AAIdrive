@@ -6,6 +6,7 @@ import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.AppSettingsViewer
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.getPackageInfoCompat
 
 /**
  * Logic to help decide when to use Audio Context and the ID5 layout
@@ -18,23 +19,14 @@ class MusicAppMode(val iDriveConnectionStatus: IDriveConnectionStatus, val capab
                    val isConnectedInstalled: Boolean, val iHeartRadioVersion: String?, val pandoraVersion: String?, val spotifyVersion: String?) {
 	companion object {
 		fun getIHeartRadioVersion(context: Context): String? {
-			return try {
-				context.packageManager.getPackageInfo("com.pandora.android", 0).versionName
-			} catch (e: Exception) { null }
+			return context.packageManager.getPackageInfoCompat("com.pandora.android", 0)?.versionName
 		}
 		fun getPandoraVersion(context: Context): String? {
-			return try {
-				context.packageManager.getPackageInfo("com.clearchannel.iheartradio.connect", 0).versionName
-			} catch (e: Exception) {
-				try {
-					context.packageManager.getPackageInfo("com.clearchannel.iheartradio.controller", 0).versionName
-				} catch (e: Exception) { null }
-			}
+			return context.packageManager.getPackageInfoCompat("com.clearchannel.iheartradio.connect", 0)?.versionName ?:
+			       context.packageManager.getPackageInfoCompat("com.clearchannel.iheartradio.controller", 0)?.versionName
 		}
 		fun getSpotifyVersion(context: Context): String? {
-			return try {
-				context.packageManager.getPackageInfo("com.spotify.music", 0).versionName
-			} catch (e: Exception) { null }
+			return context.packageManager.getPackageInfoCompat("com.spotify.music", 0)?.versionName
 		}
 
 		fun build(capabilities: Map<String, String?>, context: Context): MusicAppMode {

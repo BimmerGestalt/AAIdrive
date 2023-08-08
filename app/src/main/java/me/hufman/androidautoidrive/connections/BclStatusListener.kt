@@ -15,7 +15,7 @@ class BclStatusListener(val context: Context, val callback: () -> Unit = {}): Br
 	}
 
 	val stringBuilder = StringBuilder()
-	val numberFormatter = NumberFormat.getNumberInstance()
+	val numberFormatter: NumberFormat = NumberFormat.getNumberInstance()
 
 	var subscribed = false
 

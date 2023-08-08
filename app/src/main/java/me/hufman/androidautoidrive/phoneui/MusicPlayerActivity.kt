@@ -3,6 +3,7 @@ package me.hufman.androidautoidrive.phoneui
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -51,37 +52,32 @@ class MusicPlayerActivity: AppCompatActivity() {
 		pgrMusicPlayer.adapter = adapter
 		pgrMusicPlayer.offscreenPageLimit = 2
 		findViewById<TabLayout>(R.id.tabMusicPlayer).setupWithViewPager(pgrMusicPlayer)
+
+		onBackPressedDispatcher.addCallback {
+			val currentItem = pgrMusicPlayer?.currentItem ?: 0
+			if (currentItem == 0) {
+				this.isEnabled = false
+				onBackPressedDispatcher.onBackPressed()
+			} else if (currentItem == 1) {
+				val container = (pgrMusicPlayer.adapter as MusicPlayerPagerAdapter).getItem(1) as MusicBrowseFragment
+				val popped = container.onBackPressed()
+				if (!popped) {
+					musicPlayerController.showNowPlaying()
+				}
+			} else if (currentItem == 2) {
+				// go back to the main playback page
+				musicPlayerController.showNowPlaying()
+			} else if (currentItem == 3) {
+				// go back to the main playback page
+				musicPlayerController.showNowPlaying()
+			}
+		}
 	}
 
 	fun discoverApp(musicAppInfo: MusicAppInfo) {
 		val musicAppDiscovery = MusicAppDiscovery(this, Handler(Looper.getMainLooper()))
 		musicAppDiscovery.loadInstalledMusicApps()
 		musicAppDiscovery.probeApp(musicAppInfo)
-	}
-
-	override fun onBackPressed() {
-		val pager = findViewById<ViewPager>(R.id.pgrMusicPlayer)
-		val currentItem = pager?.currentItem ?: 0
-		if (currentItem == 0) {
-			// pass through default behavior, to close the Activity
-			super.onBackPressed()
-			return
-		}
-		if (currentItem == 1) {
-			val container = (pager.adapter as MusicPlayerPagerAdapter).getItem(1) as MusicBrowseFragment
-			val popped = container.onBackPressed()
-			if (!popped) {
-				musicPlayerController.showNowPlaying()
-			}
-		}
-		if (currentItem == 2) {
-			// go back to the main playback page
-			musicPlayerController.showNowPlaying()
-		}
-		if (currentItem == 3) {
-			// go back to the main playback page
-			musicPlayerController.showNowPlaying()
-		}
 	}
 
 	override fun onDestroy() {

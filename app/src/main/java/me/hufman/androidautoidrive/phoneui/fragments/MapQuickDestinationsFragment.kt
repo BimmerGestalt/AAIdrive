@@ -53,7 +53,7 @@ class MapQuickDestinationsFragment: Fragment() {
 		// autocomplete behaviors
 		val autocomplete = binding.root.findViewById<AutoCompleteTextView>(R.id.txtInput)
 		autocomplete.setAdapter(autocompleteAdapter)
-		autocomplete.onItemClickListener = AdapterView.OnItemClickListener { adapterView, _view, index, _id ->
+		autocomplete.onItemClickListener = AdapterView.OnItemClickListener { adapterView, _, index, _ ->
 			val item = adapterView.getItemAtPosition(index) as? MapResultViewModel
 			item?.also {
 				controller.currentInput.value = it.result.toString()

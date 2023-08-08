@@ -30,7 +30,7 @@ class StatusbarAppTest {
 		on { signChallenge(any(), any() )} doReturn ByteArray(512)
 	}
 
-	val images = ByteArrayOutputStream().apply {
+	val images: ByteArray = ByteArrayOutputStream().apply {
 		ZipOutputStream(this).apply {
 			putNextEntry(ZipEntry("100.png"))
 			write("".toByteArray())

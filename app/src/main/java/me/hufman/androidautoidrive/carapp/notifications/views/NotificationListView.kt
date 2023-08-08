@@ -48,7 +48,7 @@ class NotificationListView(val state: RHMIState, val graphicsHelpers: GraphicsHe
 		get() = System.currentTimeMillis() - notificationArrivalTimestamp
 	var mostInterestingNotification: CarNotification? = null        // most recently arrived or selected notification
 
-	val shownNotifications = Collections.synchronizedList(ArrayList<CarNotification>())   // which notifications are showing
+	val shownNotifications: MutableList<CarNotification> = Collections.synchronizedList(ArrayList<CarNotification>())   // which notifications are showing
 	val notificationListData = object: RHMIModel.RaListModel.RHMIListAdapter<CarNotification>(3, shownNotifications) {
 		override fun convertRow(index: Int, item: CarNotification): Array<Any> {
 			val icon = item.icon?.let { graphicsHelpers.compress(it, 48, 48) } ?: ""

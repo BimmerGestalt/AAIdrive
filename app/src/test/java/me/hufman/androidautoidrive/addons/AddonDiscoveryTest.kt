@@ -9,6 +9,7 @@ import com.nhaarman.mockito_kotlin.mock
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
 
 class AddonDiscoveryTest {
@@ -43,6 +44,7 @@ class AddonDiscoveryTest {
 		// can't stub mocks inside a different mock doAnswer
 		mock<ApplicationInfo> {
 			on {loadIcon(any())} doReturn addonInfo.value.icon
+			on {loadLabel(any())} doReturn addonInfo.value.name
 		}.apply {
 			packageName = addonInfo.value.packageName
 		}
@@ -50,7 +52,7 @@ class AddonDiscoveryTest {
 
 	val packageManager = mock<PackageManager> {
 		// discover apps
-		on {queryIntentServices(any(), any())} doAnswer {
+		on {queryIntentServices(any(), anyInt())} doAnswer {
 			when ((it.arguments[0] as Intent).action) {
 				AddonDiscovery.INTENT_DATA_SERVICE -> installedAddons.filter { addonInfo ->
 					addonInfo.packageName.startsWith("cds")
@@ -69,7 +71,7 @@ class AddonDiscoveryTest {
 			}
 		}
 		// app info
-		on {getApplicationInfo(anyString(), any())} doAnswer {
+		on {getApplicationInfo(anyString(), anyInt())} doAnswer {
 			applicationInfos[it.arguments[0] as String]
 		}
 		// label
@@ -77,8 +79,12 @@ class AddonDiscoveryTest {
 			val appInfo = installedAddonsByName[(it.arguments[0] as ApplicationInfo).packageName]!!
 			appInfo.name
 		}
+		on {getText(any(), anyInt(), any())} doAnswer {
+			val appInfo = installedAddonsByName[(it.arguments[0] as ApplicationInfo).packageName]!!
+			appInfo.name
+		}
 		// ask what permissions the app requests in its Manifest
-		on {getPackageInfo(anyString(), any())} doAnswer {
+		on {getPackageInfo(anyString(), anyInt())} doAnswer {
 			val addonInfo = installedAddonsByName[it.arguments[0] as String]!!
 			val permissions = ArrayList<String>()
 			if (addonInfo.cdsNormalRequested) permissions.add(AddonDiscovery.PERMISSION_NORMAL)

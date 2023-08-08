@@ -1,6 +1,8 @@
 package me.hufman.androidautoidrive.connections
 
 import android.content.Context
+import android.content.pm.PackageManager.PackageInfoFlags
+import android.os.Build
 import android.os.SystemClock
 import android.provider.Settings
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
@@ -19,7 +21,7 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 		const val BCL_REDRAW_DEBOUNCE = 100
 	}
 
-	val deviceName = Settings.Global.getString(context.contentResolver, "device_name")
+	val deviceName = Settings.Global.getString(context.contentResolver, "device_name") ?: ""
 
 	private val securityAccess = SecurityAccess.getInstance(context).also {
 		it.callback = callback
@@ -66,7 +68,12 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 			SecurityAccess.installedSecurityServices.filter {
 				it.name.startsWith("BMWC")
 			}.any {
-				val version = context.packageManager.getPackageInfo(it.packageName, 0).versionName
+				val version = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+					context.packageManager.getPackageInfo(it.packageName, PackageInfoFlags.of(0)).versionName
+				} else {
+					@Suppress("DEPRECATION")
+					context.packageManager.getPackageInfo(it.packageName, 0).versionName
+				}
 				version.startsWith("6.5")
 			}
 		} catch (e: Exception) { false }
@@ -76,7 +83,12 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 			SecurityAccess.installedSecurityServices.filter {
 				it.name.startsWith("MiniC")
 			}.any {
-				val version = context.packageManager.getPackageInfo(it.packageName, 0).versionName
+				val version = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+					context.packageManager.getPackageInfo(it.packageName, PackageInfoFlags.of(0)).versionName
+				} else {
+					@Suppress("DEPRECATION")
+					context.packageManager.getPackageInfo(it.packageName, 0).versionName
+				}
 				version.startsWith("6.5")
 			}
 		} catch (e: Exception) { false }

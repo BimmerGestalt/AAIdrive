@@ -11,6 +11,7 @@ import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.resolveActivityCompat
 
 class PermissionsController(val activity: Activity) {
 	companion object {
@@ -18,10 +19,11 @@ class PermissionsController(val activity: Activity) {
 		const val REQUEST_CALENDAR = 30
 		const val REQUEST_LOCATION = 4000
 		const val REQUEST_BLUETOOTH = 50
+		const val REQUEST_POST_NOTIFICATIONS = 60
 	}
 
 	private fun tryOpenActivity(intent: Intent): Boolean {
-		if (activity.packageManager.resolveActivity(intent, 0) != null) {
+		if (activity.packageManager.resolveActivityCompat(intent, 0) != null) {
 			try {
 				activity.startActivity(intent)
 				return true
@@ -69,6 +71,17 @@ class PermissionsController(val activity: Activity) {
 				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 		activity.startActivity(intent)
 	}
+
+	fun promptPostNotificationsPermission() {
+		if (android.os.Build.VERSION.SDK_INT >= 33 && activity.applicationInfo.targetSdkVersion >= 33) {       // Android 13+
+			ActivityCompat.requestPermissions(activity,
+					arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+					REQUEST_POST_NOTIFICATIONS)
+		} else {
+			openApplicationPermissions(activity.packageName)
+		}
+	}
+
 
 	fun promptSms() {
 		ActivityCompat.requestPermissions(activity,

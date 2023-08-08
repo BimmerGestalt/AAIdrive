@@ -32,7 +32,6 @@ class CDSFlowManager(private val cdsData: CDSData): CDSFlowMap {
 					.buffer(1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 	}
 
-	@OptIn(ExperimentalCoroutinesApi::class)
 	private fun createFlow(property: CDSProperty): Flow<JsonObject> = callbackFlow {
 		val eventHandler = CDSEventHandler { _, propertyValue ->
 			trySend(propertyValue)

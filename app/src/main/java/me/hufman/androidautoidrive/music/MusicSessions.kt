@@ -51,7 +51,7 @@ class MusicSessions(val context: Context) {
 		}
 	}
 
-	val mediaManager = context.getSystemService(MediaSessionManager::class.java)
+	val mediaManager: MediaSessionManager = context.getSystemService(MediaSessionManager::class.java)
 	val sessionControllers = ConcurrentHashMap<String, MutableObservable<GenericMusicAppController>>()
 	val sessionListener = object: MediaSessionManager.OnActiveSessionsChangedListener {
 		override fun onActiveSessionsChanged(p0: MutableList<MediaController>?) {

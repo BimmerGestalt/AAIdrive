@@ -15,6 +15,7 @@ import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.carapp.maps.*
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTrigger.Companion.TAG
 import me.hufman.androidautoidrive.maps.LatLong
+import me.hufman.androidautoidrive.utils.getParcelableExtraCompat
 
 interface NavigationTrigger {
 	companion object {
@@ -93,7 +94,7 @@ class NavigationTriggerReceiver(val trigger: NavigationTrigger): BroadcastReceiv
 		const val EXTRA_DESTINATION = "DESTINATION"
 	}
 	override fun onReceive(p0: Context?, p1: Intent?) {
-		val destination = p1?.getParcelableExtra<Address>(EXTRA_DESTINATION)
+		val destination = p1?.getParcelableExtraCompat(EXTRA_DESTINATION, Address::class.java)
 		if (destination != null) {
 			trigger.triggerNavigation(destination)
 		}

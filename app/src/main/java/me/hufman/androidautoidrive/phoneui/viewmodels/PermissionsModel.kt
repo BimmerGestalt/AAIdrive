@@ -12,6 +12,7 @@ import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
+import me.hufman.androidautoidrive.utils.PackageManagerCompat.getPackageInfoCompat
 
 class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
                        private val permissionsState: PermissionsState,
@@ -33,6 +34,8 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 
 	private val _hasNotificationPermission = MutableLiveData(false)
 	val hasNotificationPermission: LiveData<Boolean> = _hasNotificationPermission
+	private val _hasPostNotificationsPermission = MutableLiveData(false)
+	val hasPostNotificationsPermission: LiveData<Boolean> = _hasPostNotificationsPermission
 	private val _supportsSmsPermission = MutableLiveData(false)
 	val supportsSmsPermission: LiveData<Boolean> = _supportsSmsPermission
 	private val _hasSmsPermission = MutableLiveData(false)
@@ -62,6 +65,7 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 		_hasNotificationPermission.value = notificationListenerState.value == true && permissionsState.hasNotificationPermission
 		_supportsSmsPermission.value = permissionsState.supportsSmsPermission
 		_hasSmsPermission.value = permissionsState.hasSmsPermission
+		_hasPostNotificationsPermission.value = permissionsState.hasPostNotificationsPermission
 		_hasCalendarPermission.value = permissionsState.hasCalendarPermission
 		_hasLocationPermission.value = permissionsState.hasLocationPermission
 		_hasBackgroundPermission.value =  if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
@@ -158,12 +162,15 @@ class PermissionsState(private val appContext: Context) {
 		}
 
 	val supportsSmsPermission: Boolean
-		get() = appContext.packageManager.getPackageInfo(appContext.packageName, PackageManager.GET_PERMISSIONS).requestedPermissions.any {
+		get() = (appContext.packageManager.getPackageInfoCompat(appContext.packageName, PackageManager.GET_PERMISSIONS)?.requestedPermissions?: emptyArray()).any {
 			it == Manifest.permission.READ_SMS
 		}
 
 	val hasSmsPermission: Boolean
 		get() = ContextCompat.checkSelfPermission(appContext, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
+
+	val hasPostNotificationsPermission: Boolean
+		get() = NotificationManagerCompat.from(appContext).areNotificationsEnabled()
 
 	val hasCalendarPermission: Boolean
 		get() = ContextCompat.checkSelfPermission(appContext, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED

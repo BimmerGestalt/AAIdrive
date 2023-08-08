@@ -28,6 +28,8 @@ import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.PhoneAppResourcesAndroid
 import me.hufman.androidautoidrive.UnicodeCleaner
+import me.hufman.androidautoidrive.utils.getParcelableArrayCompat
+import me.hufman.androidautoidrive.utils.getParcelableCompat
 
 class NotificationParser(val notificationManager: NotificationManager, val phoneAppResources: PhoneAppResources, val remoteViewInflater: (RemoteViews) -> View) {
 	/**
@@ -48,12 +50,14 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 			return NotificationParser(notificationManager, phoneAppResources, remoteViewInflater)
 		}
 
+		@Suppress("DEPRECATION")
 		fun dumpNotification(title: String, sbn: StatusBarNotification, ranking: NotificationListenerService.Ranking?) {
 			val extras = sbn.notification.extras
 			val details = extras?.keySet()?.map { "  ${it}=>${extras.get(it)}" }?.joinToString("\n") ?: ""
 			Log.i(NotificationListenerServiceImpl.TAG, "$title from ${sbn.packageName}: ${extras?.get("android.title")} with the keys:\n$details")
 			Log.i(NotificationListenerServiceImpl.TAG, "Ranking: isAmbient:${ranking?.isAmbient} matchesFilter:${ranking?.matchesInterruptionFilter()}")
 		}
+		@Suppress("DEPRECATION")
 		fun dumpMessage(title: String, bundle: Bundle) {
 			val details = bundle.keySet()?.map { key -> "  ${key}=>${bundle.get(key)}" }?.joinToString("\n") ?: ""
 			Log.i(NotificationListenerServiceImpl.TAG, "$title $details")
@@ -103,7 +107,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)?.let { text = it.joinToString("\n") }
 
 		// icon handling
-		extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON)?.also { largeIcon ->
+		extras.getParcelableCompat(NotificationCompat.EXTRA_LARGE_ICON, Parcelable::class.java)?.also { largeIcon ->
 			// the picture on the side of a notification
 			when (largeIcon) {
 				is Icon -> phoneAppResources.getIconDrawable(largeIcon).also {
@@ -116,7 +120,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 				}
 			}
 		}
-		extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_LARGE_ICON_BIG)?.also { largeIcon ->
+		extras.getParcelableCompat(NotificationCompat.EXTRA_LARGE_ICON_BIG, Parcelable::class.java)?.also { largeIcon ->
 			// the picture on the side of a notification, when expanded
 			when (largeIcon) {
 				is Icon -> phoneAppResources.getIconDrawable(largeIcon).also {
@@ -131,7 +135,7 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 		}
 
 		// maybe a picture too
-		extras.getParcelable<Parcelable>(NotificationCompat.EXTRA_PICTURE)?.let {
+		extras.getParcelableCompat(NotificationCompat.EXTRA_PICTURE, Parcelable::class.java)?.let {
 			if (it is Bitmap) picture = phoneAppResources.getBitmapDrawable(it)
 		}
 
@@ -169,22 +173,22 @@ class NotificationParser(val notificationManager: NotificationManager, val phone
 	@RequiresApi(Build.VERSION_CODES.O)
 	fun summarizeMessagingNotification(sbn: StatusBarNotification): MessagingNotificationParsed {
 		val extras = sbn.notification.extras
-		val historicMessages = extras.getParcelableArray(Notification.EXTRA_HISTORIC_MESSAGES) ?: arrayOf()
-		val messages = extras.getParcelableArray(Notification.EXTRA_MESSAGES) ?: arrayOf()
+		val historicMessages = extras.getParcelableArrayCompat(Notification.EXTRA_HISTORIC_MESSAGES) ?: arrayOf()
+		val messages = extras.getParcelableArrayCompat(Notification.EXTRA_MESSAGES) ?: arrayOf()
 		val recentMessages = (historicMessages + messages).filterIsInstance<Bundle>().takeLast(10)
 		// parse out the lines of chat
 		val text = recentMessages.joinToString("\n") {
 			"${it.getCharSequence("sender")}: ${it.getCharSequence("text")}"
 		}
 		val personIcon = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {   // person objects only exist in >= Pie
-			val person = recentMessages.lastOrNull()?.getParcelable("sender_person") as? Person // last message person
-			?: extras.getParcelable(Notification.EXTRA_MESSAGING_PERSON) as? Person
+			val person = recentMessages.lastOrNull()?.getParcelableCompat("sender_person", Person::class.java) // last message person
+			?: extras.getParcelableCompat(Notification.EXTRA_MESSAGING_PERSON, Person::class.java)
 			person?.icon
 		} else null
 		val pictureUri = recentMessages.filter {
 			it.getCharSequence("type")?.startsWith("image/") == true
 		}.mapNotNull {
-			it.getParcelable("uri") as Uri?
+			it.getParcelableCompat("uri", Uri::class.java)
 		}.lastOrNull()?.toString()
 		return MessagingNotificationParsed(text, personIcon, pictureUri)
 	}

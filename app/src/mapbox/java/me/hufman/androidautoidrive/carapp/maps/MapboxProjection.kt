@@ -45,7 +45,7 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
                        private val locationProvider: MapboxLocationSource): Presentation(parentContext, display) {
 
 	val TAG = "MapboxProjection"
-	val map by lazy { findViewById<MapView>(R.id.mapView) }
+	val map: MapView by lazy { findViewById(R.id.mapView) }
 	val iconAnnotations by lazy { map.annotations.createPointAnnotationManager() }
 	val lineAnnotations by lazy { map.annotations.createPolylineAnnotationManager() }
 	var mapListener: Runnable? = null

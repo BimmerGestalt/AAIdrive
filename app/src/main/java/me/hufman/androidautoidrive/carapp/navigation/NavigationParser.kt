@@ -19,6 +19,7 @@ class AndroidGeocoderSearcher(context: Context): AddressSearcher {
 	val geocoder = Geocoder(context)
 	override fun search(query: String): Address? {
 		return try {
+			// TODO https://github.com/BimmerGestalt/AAIdrive/issues/729
 			geocoder.getFromLocationName(query, 1)?.getOrNull(0)
 		} catch (e: IOException) {
 			null
@@ -105,7 +106,7 @@ class NavigationParser(val addressSearcher: AddressSearcher, val redirector: URL
 			val splits = latlng.split(',')
 			LatLong(splits[0].trim().toDouble(), splits[1].trim().toDouble())
 		} else null
-		if (latlong?.latitude == 0.0 && latlong.latitude == 0.0) return null
+		if (latlong?.latitude == 0.0 && latlong.longitude == 0.0) return null
 		val label = queryResult?.groupValues?.getOrNull(4) ?: ""
 		if (latlong != null) return latlongToAddress(latlong, label)   // found a latlong
 
