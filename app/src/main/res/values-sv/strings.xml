@@ -74,6 +74,7 @@
     <string name="lbl_popupVersion">Popupfönster fungerar endast med IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS stöds ej av din bil</string>
     <string name="lbl_smsPermission">Ge behörighet för inkommande SMS att visa bilder i bilen. Texten är däremot alltid synlig.</string>
+    <string name="lbl_postNotificationsPermission">Tillgång till att visa en serviceavisering att vara på när anslutning till bilen finns</string>
     <string name="lbl_calendarpage">Din kalender kan visas i bilen, erbjuder snabb navigering till bokningar</string>
     <string name="lbl_calendar_description">Händelser i telefonens kalender som ses i Google Calendar kommer att dyka upp i bilen. Alla jobbprofilskalender är ej tillgängliga.</string>
     <string name="lbl_calendar_enabled">Visa kalendern</string>

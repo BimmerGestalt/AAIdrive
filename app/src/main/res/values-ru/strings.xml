@@ -75,6 +75,7 @@
     <string name="lbl_popupVersion">Всплывающие уведомления работают только с IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS не поддерживается вашим автомобилем</string>
     <string name="lbl_smsPermission">Доступ к смс и фотографиям. Показывать всегда текст.</string>
+    <string name="lbl_postNotificationsPermission">Доступ к отображению служебного уведомления для продолжения работы во время подключения к автомобилю</string>
     <string name="lbl_calendarpage">Ваш календарь может быть отображен в автомобиле, предлагая быструю навигацию по встречам</string>
     <string name="lbl_calendar_description">События в календаре телефона, как видно в Календаре Google, будут показаны в автомобиле. Календарь любого рабочего профиля недоступен.</string>
     <string name="lbl_calendar_enabled">Показать календарь</string>

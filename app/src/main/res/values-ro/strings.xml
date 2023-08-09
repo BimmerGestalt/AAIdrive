@@ -75,6 +75,7 @@
     <string name="lbl_popupVersion">Popup-urile funcționează doar cu IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS nu e suportat de mașina dvs.</string>
     <string name="lbl_smsPermission">Permisiune SMS necesară pentru a vedea imaginile din mesaje în mașină. Textul este disponibil întotdeauna.</string>
+    <string name="lbl_postNotificationsPermission">Acces pentru a afișa o notificare de serviciu de a rămâne în stare de funcționare în timpul conectării la mașină</string>
     <string name="lbl_calendarpage">Calendarul poate fi afișat în mașină, oferind o navigare rapidă la programări</string>
     <string name="lbl_calendar_description">Evenimentele din calendarul telefonului vor aparea in masina asa cum sunt afisate in Google Calendar. Profilurile de munca din calendar nu sunt disponiobile.</string>
     <string name="lbl_calendar_enabled">Afisare calendar</string>
@@ -266,7 +267,7 @@
     <string name="lbl_carinfo_style">Eficienta stilului de conducere</string>
     <string name="lbl_carinfo_lastchecked">Ultima verificare:</string>
     <string name="lbl_carinfo_lastPosition">Ultima poziție:</string>
-    <string name="lbl_carinfo_lastPosition_crossStreet">%1$s şi %2$s</string>
+    <string name="lbl_carinfo_lastPosition_crossStreet">%1$s și %2$s</string>
     <string name="lbl_carinfo_lastPosition_openMap">Deschide harta</string>
     <string name="lbl_carinfo_vin">Nr. șasiu:</string>
     <string name="lbl_carinfo_odo">Odometru:</string>
