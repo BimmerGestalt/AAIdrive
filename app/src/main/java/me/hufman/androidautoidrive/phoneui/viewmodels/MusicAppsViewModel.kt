@@ -13,7 +13,7 @@ import me.hufman.androidautoidrive.phoneui.MusicAppDiscoveryThread
 class MusicAppsViewModel(val musicAppDiscoveryThread: MusicAppDiscoveryThread): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
-		override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+		override fun <T : ViewModel> create(modelClass: Class<T>): T {
 			var model: MusicAppsViewModel? = null
 
 			val handler = Handler(Looper.getMainLooper()) // UI thread handler

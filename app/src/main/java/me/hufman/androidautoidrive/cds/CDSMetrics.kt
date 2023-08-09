@@ -55,7 +55,7 @@ class CDSMetrics(val carInfo: CarInformation) {
 			val tiltPosition = state?.tryAsJsonPrimitive("tiltPosition")?.tryAsInt?: 0
 			val position = state?.tryAsJsonPrimitive("position")?.tryAsInt ?:
 				state?.tryAsJsonPrimitive("openPosition")?.tryAsInt ?: 0
-			val state = when {
+			val windowState = when {
 				status == 0 && tiltPosition == 0 -> WindowState.State.CLOSED
 				tiltPosition > 0 && position == 0 -> WindowState.State.TILTED
 				position > 0 -> WindowState.State.OPENED
@@ -66,7 +66,7 @@ class CDSMetrics(val carInfo: CarInformation) {
 			} else {
 				position * 2
 			}
-			return WindowState(state, fullPosition)
+			return WindowState(windowState, fullPosition)
 		}
 	}
 

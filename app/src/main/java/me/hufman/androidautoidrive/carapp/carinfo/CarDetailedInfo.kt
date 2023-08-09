@@ -108,12 +108,11 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 
 		// Choosing the "most interesting" bit in the right order because multiple bits might be set
 		var brakeString = "Not braking"
-		val brakeContact = brakeContact ?: 0
-		if (brakeContact.and(8) == 8) {
+		if (brakeContact?.and(8) == 8) {
 			brakeString = "Cruise Control"
-		} else if (brakeContact.and(4) == 4) {
+		} else if (brakeContact?.and(4) == 4) {
 			brakeString = "Strong"
-		} else if (brakeContact.and(2) == 2) {
+		} else if (brakeContact?.and(2) == 2) {
 			brakeString = "Soft"
 		}
 		// Adding the parking brake info

@@ -2,10 +2,7 @@ package me.hufman.androidautoidrive.carapp.music.views
 
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import io.bimmergestalt.idriveconnectkit.rhmi.VisibleCallback
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import me.hufman.androidautoidrive.CarThreadExceptionHandler
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.InputState
@@ -27,10 +24,10 @@ class FilterInputView(val state: RHMIState,
 	var musicList: List<MusicMetadata> = emptyList()
 	var inputState: InputState<MusicMetadata>? = null
 
+	@OptIn(ExperimentalCoroutinesApi::class)
 	fun show() {
 		// make sure the deferred contents are loaded
 		if (browsePageModel.contents.isCompleted) {
-			@Suppress("EXPERIMENTAL_API_USAGE")
 			musicList = browsePageModel.contents.getCompleted() ?: emptyList()
 		} else {
 			loadingJob = launch(Dispatchers.IO) {

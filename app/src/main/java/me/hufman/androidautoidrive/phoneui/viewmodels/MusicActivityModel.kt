@@ -20,7 +20,7 @@ import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi
 class MusicActivityModel(val musicApp: MusicAppInfo, val musicController: MusicController, val spotifyWebApi: SpotifyWebApi): ViewModel() {
 	class Factory(val appContext: Context, val musicApp: MusicAppInfo?): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
-		override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+		override fun <T : ViewModel> create(modelClass: Class<T>): T {
 			var model: MusicActivityModel? = null
 			val controller = MusicController(appContext, Handler(Looper.getMainLooper()))
 			val spotifyWebApi = SpotifyWebApi.getInstance(appContext, MutableAppSettingsReceiver(appContext))
