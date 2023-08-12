@@ -16,7 +16,7 @@ import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppMode: MusicAppMode): ViewModel() {
 	class Factory(val context: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
-		override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+		override fun <T : ViewModel> create(modelClass: Class<T>): T {
 			val postHandler = Handler(Looper.getMainLooper())
 			var viewModel: CarCapabilitiesViewModel? = null
 			val carCapabilities = HashMap<String, String>()

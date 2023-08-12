@@ -9,7 +9,7 @@ import me.hufman.androidautoidrive.addons.AddonDiscovery
 class AddonsViewModel(val discovery: AddonDiscovery): ViewModel() {
 	class Factory(val context: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
-		override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+		override fun <T : ViewModel> create(modelClass: Class<T>): T {
 			val addonDiscovery = AddonDiscovery(context.applicationContext.packageManager)
 			val viewModel: AddonsViewModel? = AddonsViewModel(addonDiscovery)
 			return viewModel as T

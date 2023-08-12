@@ -115,6 +115,7 @@ class AVContextHandler(val iDriveConnectionStatus: IDriveConnectionStatus, val c
 			BMWRemoting.AVButtonEvent.AV_EVENT_SKIP_LONG_UP -> controller.startFastForward()
 			BMWRemoting.AVButtonEvent.AV_EVENT_SKIP_LONG_DOWN -> controller.startRewind()
 			BMWRemoting.AVButtonEvent.AV_EVENT_SKIP_LONG_STOP -> controller.stopSeeking()
+			null -> {}
 		}
 	}
 }

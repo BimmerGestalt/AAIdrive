@@ -76,7 +76,7 @@ class NavigationSearchControllerTest {
 		clearInvocations(context)
 
 		// hide the text after a timeout
-		advanceTimeBy(NavigationSearchController.SUCCESS)
+		testScheduler.apply { advanceTimeBy(NavigationSearchController.SUCCESS); runCurrent() }
 		assertEquals("", context.run(model.searchStatus.value!!))
 		verify(context, never()).getString(any())
 	}
@@ -100,16 +100,16 @@ class NavigationSearchControllerTest {
 		clearInvocations(navigationTrigger)
 
 		// the car missed it the first time, try to send again
-		advanceTimeBy(NavigationSearchController.TIMEOUT + 100)
+		testScheduler.apply { advanceTimeBy(NavigationSearchController.TIMEOUT + 100); runCurrent() }
 		verify(navigationTrigger).triggerNavigation(testAddress)
 		clearInvocations(navigationTrigger)
 
 		// now wait for the car to notice
-		advanceTimeBy(NavigationSearchController.TIMEOUT / 2)
+		testScheduler.apply { advanceTimeBy(NavigationSearchController.TIMEOUT / 2); runCurrent() }
 		cdsData.onPropertyChangedEvent(CDS.NAVIGATION.GUIDANCESTATUS, JsonObject().apply { addProperty("guidanceStatus", 1) })
 
 		// wait up to 1000ms for the poll loop
-		advanceTimeBy(1000)
+		testScheduler.apply { advanceTimeBy(1000); runCurrent() }
 
 		// UI should update with success
 		assertEquals(false, model.isSearching.value)
@@ -118,7 +118,7 @@ class NavigationSearchControllerTest {
 		clearInvocations(context)
 
 		// hide the text after a timeout
-		advanceTimeBy(NavigationSearchController.SUCCESS)
+		testScheduler.apply { advanceTimeBy(NavigationSearchController.SUCCESS); runCurrent() }
 		assertEquals("", context.run(model.searchStatus.value!!))
 		verify(context, never()).getString(any())
 	}
@@ -142,17 +142,17 @@ class NavigationSearchControllerTest {
 		clearInvocations(navigationTrigger)
 
 		// the car missed it the first time, try to send again
-		advanceTimeBy(NavigationSearchController.TIMEOUT + 100)
+		testScheduler.apply { advanceTimeBy(NavigationSearchController.TIMEOUT + 100); runCurrent() }
 		verify(navigationTrigger).triggerNavigation(testAddress)
 		clearInvocations(navigationTrigger)
 
 		// the car missed it the second time, try to send again
-		advanceTimeBy(NavigationSearchController.TIMEOUT + 100)
+		testScheduler.apply { advanceTimeBy(NavigationSearchController.TIMEOUT + 100); runCurrent() }
 		verify(navigationTrigger).triggerNavigation(testAddress)
 		clearInvocations(navigationTrigger)
 
 		// the car missed it the third time, should not try again
-		advanceTimeBy(NavigationSearchController.TIMEOUT + 100)
+		testScheduler.apply { advanceTimeBy(NavigationSearchController.TIMEOUT + 100); runCurrent() }
 		verify(navigationTrigger, never()).triggerNavigation(testAddress)
 
 		// UI should update with success
@@ -162,7 +162,7 @@ class NavigationSearchControllerTest {
 		clearInvocations(context)
 
 		// hide the text after a timeout
-		advanceTimeBy(NavigationSearchController.SUCCESS)
+		testScheduler.apply { advanceTimeBy(NavigationSearchController.SUCCESS); runCurrent() }
 		assertEquals("", context.run(model.searchStatus.value!!))
 		verify(context, never()).getString(any())
 	}

@@ -76,8 +76,8 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 	val carBrand: String?
 		get() = a2dpListener.profile?.safeConnectedDevices?.filter { it.isCar() }?.map {
 			when {
-				it?.safeName?.startsWith("BMW") == true -> "BMW"
-				it?.safeName?.startsWith("MINI") == true -> "MINI"
+				it.safeName?.startsWith("BMW") == true -> "BMW"
+				it.safeName?.startsWith("MINI") == true -> "MINI"
 				else -> null
 			}
 		}?.firstOrNull()

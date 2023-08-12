@@ -21,7 +21,7 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
                        private val spotifyAuthStateManager: SpotifyAuthStateManager): ViewModel(), Observer<Boolean> {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
-		override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+		override fun <T : ViewModel> create(modelClass: Class<T>): T {
 			val viewModel = PermissionsModel(NotificationListenerServiceImpl.serviceState,
 					PermissionsState(appContext),
 					appContext.getSystemService(ActivityManager::class.java),
