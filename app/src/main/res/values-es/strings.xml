@@ -74,6 +74,7 @@
     <string name="lbl_popupVersion">Las ventanass emergentes sólo funcionan con IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS no está soportado por tu coche</string>
     <string name="lbl_smsPermission">Otorgue el permiso de SMS para ver las imágenes entrantes de imágenes SMS en el automóvil. El texto siempre será visible.</string>
+    <string name="lbl_postNotificationsPermission">Acceso para mostrar una notificación de servicio para permanecer en funcionamiento mientras está conectado al coche</string>
     <string name="lbl_calendarpage">Su calendario se puede mostrar en el coche, ofreciendo una rápida navegación a las citas</string>
     <string name="lbl_calendar_description">Los eventos en el calendario del teléfono tal y como se ven en Google Calendar aparecerán en el coche. Cualquier calendario de perfil de trabajo no está disponible.</string>
     <string name="lbl_calendar_enabled">Mostrar Calendario</string>
