@@ -68,7 +68,8 @@ class MusicAppMode(val iDriveConnectionStatus: IDriveConnectionStatus, val capab
 	}
 
 	fun isBTConnection(): Boolean {
-		return TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port) == TRANSPORT_PORTS.BT
+		return (iDriveConnectionStatus.host == "127.0.0.1" || iDriveConnectionStatus.host == "::1") &&
+				TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port) == TRANSPORT_PORTS.BT
 	}
 	fun supportsUsbAudio(): Boolean {
 		return appSettings[AppSettings.KEYS.AUDIO_SUPPORTS_USB].toBoolean()

@@ -9,6 +9,22 @@
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lbl_connection_probe_ips"
+            android:labelFor="@id/txtConnectionProbeIps"
+            android:layout_marginBottom="@dimen/settings_vertical_margin" />
+
+        <EditText
+            android:id="@+id/txtConnectionProbeIps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:text="@={settings.connectionProbeIps}"
+            android:layout_marginBottom="@dimen/settings_vertical_margin"
+            android:autofillHints="connection_ip" />
+
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/swAudioContext"
             android:checked="@={settings.audioContext}"

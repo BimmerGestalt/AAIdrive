@@ -280,6 +280,7 @@
     <string name="txt_cds_view">Car Data Report:</string>
     <string name="txt_car_capabilities">Detailed Car Capabilities:</string>
     <string name="lbl_advanced_settings">Show Advanced Settings</string>
+    <string name="lbl_connection_probe_ips">Try connecting to a car by TCP tunnel</string>
 
     <string name="lbl_assistant">Voice Assistant (Beta)</string>
     <string name="lbl_assistant_empty">None found</string>
