@@ -10,12 +10,13 @@ import io.bimmergestalt.idriveconnectkit.android.CertMangling
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import java.io.IOException
+import java.net.InetSocketAddress
 import java.net.Socket
 
 /**
  * Tries to connect to a car
  */
-class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray?, val miniCert: ByteArray?, val j29Cert: ByteArray?): HandlerThread("CarProber") {
+class CarProber(val securityAccess: SecurityAccess, val settings: AppSettings, val bmwCert: ByteArray?, val miniCert: ByteArray?, val j29Cert: ByteArray?): HandlerThread("CarProber") {
 	companion object {
 		val PORTS = listOf(4004, 4005, 4006, 4007, 4008)
 		val TAG = "CarProber"
@@ -25,16 +26,26 @@ class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray?, val
 	var carConnection: BMWRemotingServer? = null
 
 	val ProberTask = Runnable {
-		for (port in PORTS) {
-			if (probePort(port)) {
-				// we found a car proxy! probably
-				// let's try connecting to it
-				Log.i(TAG, "Found open socket at $port, detecting car brand")
-				probeCar(port)
-				// successful connection!
-				schedule(5000)
+		val configuredIps = settings[AppSettings.KEYS.CONNECTION_PROBE_IPS]
+		if (configuredIps.isNotEmpty()) {
+			for (configuredIp in configuredIps.split(',')) {
+				val parts = configuredIp.split(':')
+				val host = parts[0].trim()
+				val port = parts.getOrNull(1)?.trim()?.toIntOrNull()
+				if (port != null) {   // the user gave us a valid port
+					if (probePort(host, port)) {
+						// let's try connecting to it
+						Log.i(TAG, "Found open socket at $host:$port, detecting car brand")
+						probeCar(host, port)
+					}
+				} else {
+					// scan the car ports on this host
+					probeHost(host)
+				}
 			}
 		}
+		// scan the car ports from local BCL tunnel
+		probeHost("127.0.0.1")
 		schedule(2000)
 		if (IDriveConnectionStatus.isConnected && carConnection == null) {
 			// weird state, assert that we really have no connection
@@ -58,8 +69,12 @@ class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray?, val
 		schedule(1000)
 	}
 
+	private fun isConnected(): Boolean {
+		return IDriveConnectionStatus.isConnected && carConnection != null
+	}
+
 	fun schedule(delay: Long) {
-		if (!IDriveConnectionStatus.isConnected || carConnection == null) {
+		if (!isConnected()) {
 			handler?.removeCallbacks(ProberTask)
 			handler?.postDelayed(ProberTask, delay)
 		} else {
@@ -68,12 +83,26 @@ class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray?, val
 		}
 	}
 
+	/** Tries connecting to a car at this host */
+	private fun probeHost(host: String) {
+		for (port in PORTS) {
+			if (!isConnected() && probePort(host, port)) {
+				// we found a car proxy! probably
+				// let's try connecting to it
+				Log.i(TAG, "Found open socket at $port, detecting car brand")
+				probeCar(host, port)
+			}
+		}
+	}
+
 	/**
 	 * Detects whether a port is open
 	 */
-	private fun probePort(port: Int): Boolean {
+	private fun probePort(host: String, port: Int): Boolean {
 		try {
-			val socket = Socket("127.0.0.1", port)
+//			Log.d(TAG, "Probing $host:$port")
+			val socket = Socket()
+			socket.connect(InetSocketAddress(host, port), 100)
 			if (socket.isConnected) {
 				socket.close()
 				return true
@@ -88,7 +117,7 @@ class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray?, val
 	/**
 	 * Attempts to detect the car brand
 	 */
-	private fun probeCar(port: Int) {
+	private fun probeCar(host: String, port: Int) {
 		if (!securityAccess.isConnected()) {
 			// try again later after the security service is ready
 			schedule(2000)
@@ -106,7 +135,7 @@ class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray?, val
 					else -> j29Cert
 				} ?: continue       // j29Cert is optional cdsBaseApp from MyBMW
 				val signedCert = CertMangling.mergeBMWCert(cert, securityAccess.fetchBMWCerts(brandHint = brand))
-				val conn = IDriveConnection.getEtchConnection("127.0.0.1", port, BaseBMWRemotingClient())
+				val conn = IDriveConnection.getEtchConnection(host, port, BaseBMWRemotingClient())
 				val sas_challenge = conn.sas_certificate(signedCert)
 				val sas_login = securityAccess.signChallenge(challenge = sas_challenge)
 				conn.sas_login(sas_login)
@@ -119,18 +148,18 @@ class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray?, val
 				Log.i(TAG, "Probing detected a HMI type $hmiType")
 				if (hmiType?.startsWith("BMW") == true) {
 					// BMW brand
-					setConnectedState(port, "bmw")
+					setConnectedState(host, port, "bmw")
 					success = true
 					break
 				}
 				if (hmiType?.startsWith("MINI") == true) {
 					// MINI connected
-					setConnectedState(port, "mini")
+					setConnectedState(host, port, "mini")
 					success = true
 					break
 				}
 				if (brand == "j29") {
-					setConnectedState(port, "j29")
+					setConnectedState(host, port, "j29")
 					success = true
 					break
 				}
@@ -156,8 +185,8 @@ class CarProber(val securityAccess: SecurityAccess, val bmwCert: ByteArray?, val
 		}
 	}
 
-	private fun setConnectedState(port: Int, brand: String) {
-		Log.i(TAG, "Successfully detected $brand connection at port $port")
-		IDriveConnectionStatus.setConnection(brand, "127.0.0.1", port)
+	private fun setConnectedState(host: String, port: Int, brand: String) {
+		Log.i(TAG, "Successfully detected $brand connection at port $host:$port")
+		IDriveConnectionStatus.setConnection(brand, host, port)
 	}
 }

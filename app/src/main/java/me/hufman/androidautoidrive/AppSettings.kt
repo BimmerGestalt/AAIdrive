@@ -51,6 +51,7 @@ interface AppSettings {
 		HIDDEN_MUSIC_APPS("Hidden_Music_Apps", "com.android.bluetooth,com.clearchannel.iheartradio.connect,com.google.android.googlequicksearchbox,com.google.android.youtube,com.vanced.android.youtube", "List of music apps to hide from the app list"),
 		FORCE_SPOTIFY_LAYOUT("Force_Spotify_Layout", "false", "Use Spotify UI Resources"),
 		FORCE_AUDIOPLAYER_LAYOUT("Force_Audioplayer_Layout", "false", "Use legacy music screen even with Spotify resources"),
+		CONNECTION_PROBE_IPS("Connection_Probe_IPs", "", "Extra IP(s) to test while probe for the car"),
 		DONATION_DAYS_COUNT("Donation_Days_Count", "0", "Number of days that the user has used the app, counting towards the donation request threshold"),
 		DONATION_LAST_DAY("Donation_Last_Day", "2000-01-01", "The last day that the user used the app"),
 		SPOTIFY_CONTROL_SUCCESS("Spotify_Control_Success", "false", "Whether Spotify Control api worked previously"),

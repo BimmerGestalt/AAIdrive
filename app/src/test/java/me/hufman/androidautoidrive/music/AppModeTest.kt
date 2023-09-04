@@ -2,6 +2,7 @@ package me.hufman.androidautoidrive.music
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.whenever
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MockAppSettings
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
@@ -11,9 +12,11 @@ import org.junit.Test
 
 class AppModeTest {
 	val usbConnection = mock<IDriveConnectionStatus> {
+		on {host} doReturn "127.0.0.1"
 		on {port} doReturn MusicAppMode.TRANSPORT_PORTS.USB.toPort()
 	}
 	val btConnection = mock<IDriveConnectionStatus> {
+		on {host} doReturn "127.0.0.1"
 		on {port} doReturn MusicAppMode.TRANSPORT_PORTS.BT.toPort()
 	}
 	val id4Capabilities = mapOf("hmi.type" to "ID4")
@@ -52,6 +55,15 @@ class AppModeTest {
 		val settings = MockAppSettings(AppSettings.KEYS.AUDIO_FORCE_CONTEXT to "false", AppSettings.KEYS.AUDIO_SUPPORTS_USB to "false")
 		val mode = MusicAppMode(btConnection, emptyMap(), settings, true, null, null, null)
 		assertTrue(mode.shouldRequestAudioContext())
+	}
+
+	@Test
+	fun testIPSupport() {
+		// Verify that the BT connection is handled properly
+		whenever(btConnection.host) doReturn "192.168.1.10"
+		val settings = MockAppSettings(AppSettings.KEYS.AUDIO_FORCE_CONTEXT to "false", AppSettings.KEYS.AUDIO_SUPPORTS_USB to "false")
+		val mode = MusicAppMode(btConnection, emptyMap(), settings, true, null, null, null)
+		assertFalse(mode.shouldRequestAudioContext())
 	}
 
 	@Test

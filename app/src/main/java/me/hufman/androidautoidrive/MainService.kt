@@ -222,7 +222,7 @@ class MainService: Service() {
 
 	private fun startCarProber() {
 		if (carProberThread?.isAlive != true) {
-			carProberThread = CarProber(securityAccess,
+			carProberThread = CarProber(securityAccess, appSettings,
 				CarAppAssetResources(applicationContext, "smartthings").getAppCertificateRaw("bmw")?.readBytes(),
 				CarAppAssetResources(applicationContext, "smartthings").getAppCertificateRaw("mini")?.readBytes(),
 				CarAppAssetResources(applicationContext, "cdsbaseapp").getAppCertificateRaw("")?.readBytes()
