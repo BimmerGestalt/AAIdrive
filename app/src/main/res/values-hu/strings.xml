@@ -246,6 +246,7 @@
     <string name="txt_cds_view">Autó adat riport:</string>
     <string name="txt_car_capabilities">Az autó képességei részletesen:</string>
     <string name="lbl_advanced_settings">Haladó beállítások mutatása</string>
+    <string name="lbl_connection_probe_ips">Próbáljon meg TCP-alagúton keresztül csatlakozni egy autóhoz</string>
     <string name="lbl_assistant">Hang asszisztens (Béta)</string>
     <string name="lbl_assistant_empty">Nincs találat</string>
     <!-- car status -->
