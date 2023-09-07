@@ -253,6 +253,7 @@
     <string name="txt_cds_view">Отчет об автомобиле:</string>
     <string name="txt_car_capabilities">Возможности автомобиля:</string>
     <string name="lbl_advanced_settings">Показать расширенные настройки</string>
+    <string name="lbl_connection_probe_ips">Попробуйте подключиться к автомобилю при помощи TCP туннеля</string>
     <string name="lbl_assistant">Голосовой помощник (бета)</string>
     <string name="lbl_assistant_empty">Не найдено</string>
     <!-- car status -->

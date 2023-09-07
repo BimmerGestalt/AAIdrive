@@ -256,6 +256,7 @@
     <string name="txt_cds_view">Rapporto dati dell\'auto:</string>
     <string name="txt_car_capabilities">Capacità dell\'auto rilevate:</string>
     <string name="lbl_advanced_settings">Mostra le impostazioni avanzate</string>
+    <string name="lbl_connection_probe_ips">Prova a connetterti a un\'auto tramite il tunnel TCP</string>
     <string name="lbl_assistant">Assistente vocale (Beta)</string>
     <string name="lbl_assistant_empty">Non trovato</string>
     <!-- car status -->

@@ -257,6 +257,7 @@
     <string name="txt_cds_view">Raport date mașină:</string>
     <string name="txt_car_capabilities">Capabilități mașină raportate:</string>
     <string name="lbl_advanced_settings">Arată setări avansate</string>
+    <string name="lbl_connection_probe_ips">Încercați să vă conectați la o mașină prin tunelul TCP</string>
     <string name="lbl_assistant">Asistent vocal (Beta)</string>
     <string name="lbl_assistant_empty">Nu am găsit asistenți</string>
     <!-- car status -->

@@ -256,6 +256,7 @@
     <string name="txt_cds_view">Bildata:</string>
     <string name="txt_car_capabilities">Detaljerade bilfunktioner:</string>
     <string name="lbl_advanced_settings">Avancerade inställningar</string>
+    <string name="lbl_connection_probe_ips">Försök att ansluta till en bil genom TCP-tunnel</string>
     <string name="lbl_assistant">Röstassistent (Beta)</string>
     <string name="lbl_assistant_empty">Inget hittades</string>
     <!-- car status -->
