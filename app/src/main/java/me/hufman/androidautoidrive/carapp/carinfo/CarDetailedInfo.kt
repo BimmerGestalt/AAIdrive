@@ -201,7 +201,6 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	private val overviewFields: List<Flow<String>> = listOf(
 			engineTemp, tempExterior,
 			oilTemp, tempInterior,
-			tempEvaporator, tempExchanger,
 			fuelLevelLabel, evLevelLabel,
 			accBatteryLevelLabel,batteryTemp
 	)
