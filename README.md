@@ -29,7 +29,7 @@ AAIdrive, combined with the safety benefits of the tactile IDrive controller, bu
 Getting Started
 ---------------
 
-This app requires that the MyBMW or MINI app for your car is installed and that it can successfully enable your ID5 car's [Apps checkbox](app/src/main/res/drawable/pic_btapp_bmw.jpg), or if your ID4 car has the [Connection Assistant option](app/src/main/res/drawable/pic_connassistant_bmw.jpg).
+This app requires that the MyBMW or MINI app for your car is installed and that it can successfully enable your ID5+ car's [Apps checkbox](app/src/main/res/drawable/pic_btapp_bmw.jpg), or if your ID4 car has the [Connection Assistant option](app/src/main/res/drawable/pic_connassistant_bmw.jpg).
 
 Download the APK of the latest stable release from the [Releases page](https://github.com/BimmerGestalt/AAIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. It is also available on the [Google Play Store](https://play.google.com/store/apps/details?id=me.hufman.androidautoidrive). After starting, the app should detect the MyBMW app and start waiting for the car connection.
 
@@ -55,6 +55,11 @@ After all the apps are connected, a bunch of new entries will show up in the car
 
 Several new entries will be added to the Media section of the control screen. The Audioplayer icon is the one with the main functionality, while the other displayed apps above the Audioplayer are quick shortcuts to switch playback to the respective apps. This screenshot also shows the legacy Spotify app at the bottom of the list.
 
+Development Status
+------------------
+
+AAIdrive is feature-complete, implementing as many Android Auto features as are possible within the BMW app system, and several more. Beyond the occasional maintenance patch, this project is complete and won't see any more development.
+
 Implemented Features
 --------------------
 
@@ -64,6 +69,7 @@ Implemented Features
   - Car Information
     - Remembers fuel level, window status, and car's location after parking
     - Shows live-updating speed and compass while connected
+    - Adds several pages of detailed car data to the infotainment screen
   - Car Navigation Integration
     - Android Navigation Intents and buttons can be handled by the connected car's navigation
     - Google Maps can share destinations to the connected car's navigation
@@ -77,6 +83,7 @@ Implemented Features
     - Can play a notification sound through the car's speakers
     - Supports Dismiss, Mark As Read, or other notification actions
     - Supports replying, including emoji input
+    - Reads out notifications using the car's TTS
   - Google Maps (proof-of-concept)
     - Basic search and routing
     - Includes some dark themes
@@ -90,7 +97,7 @@ Implemented Features
     - Supports browsing and searching apps' music libraries, including a special Spotify integration
     - Supports selecting from a list of currently-queued songs, as well as basic back/next control
     - Integrates into the car's audio context, for automatic resume and hardware button control
-    - Supports the ID5 music layout, enabling global coverart integration
+    - Supports the ID5+ music layout, enabling global coverart integration
     - Supports controlling any active music session, even apps that aren't Android Auto compatible
     - Automatically updates the screen to follow the active app
     - Recommended compatible apps:
@@ -187,7 +194,7 @@ Besides showing a self-contained remote UI, the IDrive system offers many exciti
   - The car's location and heading is shown in the custom map
   - The currently-playing app is displayed along the top of the IDrive screen
   - The currently-playing song title is shown in the IDrive4 Multimedia side panel
-  - The currently-playing song coverart and progress is shown in the IDrive5 Home screen and Multimedia side panel
+  - The currently-playing song coverart and progress is shown in the IDrive5+ Home screen and Multimedia side panel
   - On a MY2017+ car supporting Bluetooth Apps, audio focus will be enabled which grants the following extra features:
     - The Media shortcut button opens this app when it is in control of the music
     - Automatically resumes playback when reconnecting to the car
