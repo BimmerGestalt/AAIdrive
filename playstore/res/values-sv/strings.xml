@@ -15,4 +15,6 @@
     <string name="playstore_desc_nativeapps_protocol">Genom att använda BMW Apps-protokollet, precis som den gamla Spotify-appen, ändrar denna app inte din bil på något sätt, och alla utökade funktioner tillhandahålls endast när din telefon är ansluten.</string>
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps kräver att appen MyBMW eller MINI för din bil är installerad och att den med framgång kan aktivera din IDrive5+ bils kryssruta, eller att din IDrive4 bil har ConnectedDrive Connection Assistant alternativet.</string>
     <string name="playstore_desc_depends_bmw_subscription">Detta kräver vanligtvis att du har ett aktivt BMW ConnectedDrive-abonnemang, vilket vanligtvis ingår i några år efter att du köpt din nya bil.</string>
+    <string name="playstore_release_desc">Inaktiverar analyser</string>
+    <string name="playstore_release_point1">AAIdrive är komplett och kräver inte längre automatiska felrapporter</string>
 </resources>
