@@ -15,8 +15,4 @@
     <string name="playstore_desc_nativeapps_protocol">Al usar el protocolo nativo de aplicaciones de BMW, exactamente igual que la antigua aplicación de Spotify, esta aplicación no modifica su automóvil de ninguna manera, y todas las capacidades extendidas solo se brindan mientras su teléfono está conectado.</string>
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps requiere que la aplicación MyBMW o MINI para su automóvil esté instalada y que pueda habilitar con éxito la casilla de verificación de aplicaciones de su automóvil IDrive5+, o que su automóvil IDrive4 tenga la opción ConnectedDrive Connection Assistant.</string>
     <string name="playstore_desc_depends_bmw_subscription">Esto generalmente requiere tener una suscripción activa de BMW ConnectedDrive, que generalmente se incluye durante algunos años después de comprar su automóvil nuevo.</string>
-    <string name="playstore_release_desc">Agrega una aplicación de información del automóvil y algunas correcciones de errores</string>
-    <string name="playstore_release_point1">Añade una aplicación de información de coche para revelar algunos datos internos del coche</string>
-    <string name="playstore_release_point2">Corrige la orientación de la brújula en los coches IDrive4</string>
-    <string name="playstore_release_point3">Añade soporte para apps MyBMW/Mini chinas</string>
 </resources>

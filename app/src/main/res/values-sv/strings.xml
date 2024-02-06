@@ -10,7 +10,7 @@
     <string name="notification_description_chassiscode">Ansluten till %s</string>
     <string name="notification_description_bmw">Ansluten till BMW</string>
     <string name="notification_description_mini">Ansluten till Mini</string>
-    <string name="notification_shutdown">Avstängning</string>
+    <string name="notification_shutdown">Stäng av</string>
     <string name="permission_cds_normal">se allmän bilinformation</string>
     <string name="permission_cds_personal">se privat bilinformation</string>
     <!-- notification channel names -->
@@ -70,7 +70,7 @@
     <string name="notification_quickreplies_default">[\"👍\",\"På väg!\",\"Kör bil nu! \",\"Kan inte sms:a nu ring mig istället\",\"Jag ringer dig senare\"]</string>
     <string name="lbl_notification_permissions">Åtkomst till aviseringar</string>
     <string name="lbl_notification_sms_permissions">Åtkomst att visa SMS-bilder</string>
-    <string name="lbl_notification_permissions_hint">Du kan bevilja aviseringsbehörighet senare och kan enkelt återkalla dem när som helst</string>
+    <string name="lbl_notification_permissions_hint">Du kan bevilja meddelanden senare och kan enkelt återkalla dem när som helst</string>
     <string name="lbl_popupVersion">Popupfönster fungerar endast med IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS stöds ej av din bil</string>
     <string name="lbl_smsPermission">Ge behörighet för inkommande SMS att visa bilder i bilen. Texten är däremot alltid synlig.</string>
@@ -409,6 +409,9 @@
     <string name="CARINFO_COMPRESSOR">AC kompressor</string>
     <string name="CARINFO_COMPRESSORSTATE">AC Skick</string>
     <string name="CARINFO_COMPRESSORLEVEL">AC nivå</string>
+    <string name="CARINFO_COMPRESSORPOWER">AC ström</string>
+    <string name="CARINFO_COMPRESSORDUALMODE">Dualmode</string>
+    <string name="CARINFO_GPSALTITUDE">Höjd</string>
     <string name="CARINFO_GPSLATITUDE">Latitud</string>
     <string name="CARINFO_GPSLONGITUDE">Longitud</string>
     <string name="NOTIFICATIONS_TITLE">Aviseringar</string>
