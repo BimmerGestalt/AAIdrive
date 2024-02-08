@@ -13,7 +13,6 @@ env:
   KEYSTORE_ALIAS: upload
   KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
   AndroidAutoIdrive_SpotifyApiKey: ${{ secrets.ANDROIDAUTOIDRIVE_SPOTIFYAPIKEY }}
-  AndroidAutoIdrive_SentryDsn: ${{ secrets.ANDROIDAUTOIDRIVE_SENTRYDSN }}
   AndroidAutoIdrive_MapboxAccessToken: ${{ secrets.ANDROIDAUTOIDRIVE_MAPBOXACCESSTOKEN }}
   AndroidAutoIdrive_MapboxDownloadToken: ${{ secrets.ANDROIDAUTOIDRIVE_MAPBOXDOWNLOADTOKEN }}
 
@@ -43,10 +42,10 @@ jobs:
         uses: ./.github/actions/download-externals-action
 
       - name: Build the project
-        run: ./gradlew compileMapboxSentryPlayDebugSources
+        run: ./gradlew compileMapboxNonalyticsPlayDebugSources
 
       - name: Run unit tests
-        run: ./gradlew testMapboxSentryPlayDebugUnitTest
+        run: ./gradlew testMapboxNonalyticsPlayDebugUnitTest
 
   package:
     needs: [ unitTest ]  # wait for the tests to succeed
@@ -78,7 +77,7 @@ jobs:
         run: "echo ${{ secrets.KEYSTORE_BASE64 }} | base64 -d > keystore.jks"
 
       - name: Build app bundle
-        run: ./gradlew bundleMapboxSentryPlayRelease
+        run: ./gradlew bundleMapboxNonalyticsPlayRelease
 
       - name: Upload bundle
         uses: actions/upload-artifact@v3
