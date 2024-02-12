@@ -13,9 +13,9 @@ project.task("sentryProperties") {
 
 project.afterEvaluate {
     tasks.each {
-        if (it.name.startsWith("assemble")) {
-            it.dependsOn(tasks.getByName("sentryProperties"))
-            it.mustRunAfter(tasks.getByName("sentryProperties"))
+        if (it.name.startsWith("process")) {
+            it.dependsOn(tasks.named("sentryProperties"))
+            it.mustRunAfter(tasks.named("sentryProperties"))
         }
     }
 }
