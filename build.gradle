@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.7.20'
+    ext.kotlin_version = '1.9.0'
     ext.kotlin_coroutines_version = '1.6.0'
     ext.androidx_lifecycle_extensions_version = '2.2.0'
     ext.androidx_navigation_version = '2.3.5'
@@ -17,7 +17,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath 'com.android.tools.build:gradle:8.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'org.ajoberstar.grgit:grgit-gradle:4.1.1'
         // NOTE: Do not place your application dependencies here; they belong

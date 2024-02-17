@@ -33,7 +33,6 @@ def isRunningOnCI = System.getenv("CI") == "true"
 android {
     namespace 'me.hufman.androidautoidrive'
 
-    compileSdkVersion 33
     androidGitVersion {
         hideBranches = [ 'main' ]
         // include build number for CI builds, omit for local builds
@@ -46,6 +45,7 @@ android {
     }
     defaultConfig {
         applicationId "me.hufman.androidautoidrive"
+        compileSdk 33
         minSdkVersion 23
         targetSdkVersion 33
         versionCode androidGitVersion.code() + 1
@@ -94,6 +94,7 @@ android {
 
     buildFeatures {
         dataBinding true
+        buildConfig true
     }
     buildTypes {
         release {
@@ -114,16 +115,16 @@ android {
                     proguardFile 'proguard-rules.pro'
                 }
             }
-            testCoverageEnabled true
+            testCoverageEnabled false
             pseudoLocalesEnabled true
         }
     }
     bundle {
         language.enableSplit = false
     }
-    lintOptions {
-        checkReleaseBuilds false
+    lint {
         abortOnError false
+        checkReleaseBuilds false
     }
     testOptions {
         animationsDisabled = true
@@ -137,7 +138,7 @@ android {
         }
     }
 
-    flavorDimensions "map", "analytics", "storefront"
+    flavorDimensions = ["map", "analytics", "storefront"]
 
     productFlavors {
         nonalytics {
