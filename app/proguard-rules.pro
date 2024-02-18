@@ -24,45 +24,15 @@
 -dontobfuscate
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable
 
--keep public class * extends android.app.Activity
--keep public class * extends android.app.Application
--keep public class * extends java.lang.Exception
--keep public class * extends android.app.Service
--keep public class * extends android.content.BroadcastReceiver
--keep public class * extends android.content.ContentProvider
-
 # randomly hardcoding things to make connected tests pass
--keep class kotlin.collections.** { *; }
--keep class kotlin.coroutines.** { *; }
--keep class androidx.drawerlayout.widget.** { *; }
--keep class com.google.** { *; }
+-keep class com.google.maps.** { *; }
+-keep class kotlin.collections.CollectionsKt
+-keep class kotlin.collections.MapsKt
+-keep class kotlin.collections.SetsKt
+-keep class kotlin.coroutines.intrinsics.IntrinsicsKt
 -keep class io.wax911.emojify.model.Emoji { *; }
--keep class io.bimmergestalt.idriveconnectkit.rhmi.* { *; }
--keep class io.bimmergestalt.idriveconnectkit.android.security.* { *; }
--keep public class * extends org.apache.etch.bindings.java.transport.FormatFactory
 -keep class me.hufman.androidautoidrive.** { *; }
 
--keepclasseswithmembernames class * {
-    native <methods>;
-}
-
--keepclasseswithmembers class * {
-    public <init>(android.content.Context, android.util.AttributeSet);
-}
-
--keepclasseswithmembers class * {
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-}
-
--keepclassmembers class * extends android.app.Activity {
-   public void *(android.view.View);
-}
-
--keepclassmembers enum * {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
-
--keep class * implements android.os.Parcelable {
-  public static final android.os.Parcelable$Creator *;
-}
+# Needed only for ConnectedTests
+-keep class androidx.drawerlayout.widget.** { boolean isDrawer*(int); }
+-keep class kotlin.reflect.jvm.internal.** { *; }
