@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.util.TypedValue
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.ChassisCode
 import me.hufman.androidautoidrive.R

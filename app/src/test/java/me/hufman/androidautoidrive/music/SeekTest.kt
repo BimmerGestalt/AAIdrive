@@ -1,10 +1,7 @@
 package me.hufman.androidautoidrive.music
 
 import android.os.Handler
-import com.nhaarman.mockito_kotlin.*
-import me.hufman.androidautoidrive.music.MusicController
-import me.hufman.androidautoidrive.music.PlaybackPosition
-import me.hufman.androidautoidrive.music.SeekingController
+import org.mockito.kotlin.*
 import org.junit.Test
 
 class SeekTest {

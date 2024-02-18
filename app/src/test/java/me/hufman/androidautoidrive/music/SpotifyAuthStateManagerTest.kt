@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive.music
 import com.adamratzman.spotify.SpotifyException
 import com.adamratzman.spotify.SpotifyScope
 import com.adamratzman.spotify.models.Token
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MockAppSettings
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
@@ -13,7 +13,6 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.internal.util.reflection.FieldSetter
 import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
@@ -68,7 +67,7 @@ class SpotifyAuthStateManagerTest {
 	fun testGetAuthorizationCode_NullLastAuthorizationResponse() {
 		val currentState: AuthState = mock()
 		whenever(currentState.lastAuthorizationResponse).thenReturn(null)
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		assertNull(spotifyAuthStateManager.getAuthorizationCode())
 	}
@@ -77,11 +76,11 @@ class SpotifyAuthStateManagerTest {
 	fun testGetAuthorizationCode_ExistingLastAuthorizationResponse() {
 		val authorizationCode = "authorizationCode"
 		val authorizationResponse: AuthorizationResponse = mock()
-		FieldSetter.setField(authorizationResponse, AuthorizationResponse::class.java.getDeclaredField("authorizationCode"), authorizationCode)
+		Whitebox.setInternalState(authorizationResponse, "authorizationCode", authorizationCode)
 
 		val currentState: AuthState = mock()
 		whenever(currentState.lastAuthorizationResponse).thenReturn(authorizationResponse)
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		assertEquals(authorizationCode, spotifyAuthStateManager.getAuthorizationCode())
 	}
@@ -91,7 +90,7 @@ class SpotifyAuthStateManagerTest {
 		val accessToken = "accessToken"
 		val currentState: AuthState = mock()
 		whenever(currentState.accessToken).thenReturn(accessToken)
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		assertEquals(accessToken, spotifyAuthStateManager.getAccessToken())
 	}
@@ -100,7 +99,7 @@ class SpotifyAuthStateManagerTest {
 	fun testGetAccessTokenExpirationIn_NullAccessTokenExpirationTime() {
 		val currentState: AuthState = mock()
 		whenever(currentState.accessTokenExpirationTime).thenReturn(null)
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		assertEquals(0, spotifyAuthStateManager.getAccessTokenExpirationIn())
 	}
@@ -111,7 +110,7 @@ class SpotifyAuthStateManagerTest {
 		val currentTime = 3000L
 		val currentState: AuthState = mock()
 		whenever(currentState.accessTokenExpirationTime).thenReturn(expirationTime)
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		PowerMockito.mockStatic(System::class.java)
 		PowerMockito.`when`(System.currentTimeMillis()).doAnswer { currentTime }
@@ -124,7 +123,7 @@ class SpotifyAuthStateManagerTest {
 		val refreshToken = "refreshToken"
 		val currentState: AuthState = mock()
 		whenever(currentState.refreshToken).thenReturn(refreshToken)
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		assertEquals(refreshToken, spotifyAuthStateManager.getRefreshToken())
 	}
@@ -134,7 +133,7 @@ class SpotifyAuthStateManagerTest {
 		val scopeString = "scopeString"
 		val currentState: AuthState = mock()
 		whenever(currentState.scope).thenReturn(scopeString)
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		assertEquals(scopeString, spotifyAuthStateManager.getScopeString())
 	}
@@ -144,7 +143,7 @@ class SpotifyAuthStateManagerTest {
 		val authorizationServiceConfiguration: AuthorizationServiceConfiguration = mock()
 		val currentState: AuthState = mock()
 		whenever(currentState.authorizationServiceConfiguration).thenReturn(authorizationServiceConfiguration)
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		assertEquals(authorizationServiceConfiguration, spotifyAuthStateManager.getAuthorizationServiceConfiguration())
 	}
@@ -153,7 +152,7 @@ class SpotifyAuthStateManagerTest {
 	fun testIsAuthorized() {
 		val currentState: AuthState = mock()
 		whenever(currentState.isAuthorized).thenReturn(true)
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		assertTrue(spotifyAuthStateManager.isAuthorized())
 	}
@@ -165,7 +164,7 @@ class SpotifyAuthStateManagerTest {
 		val currentState: AuthState = mock()
 		doNothing().whenever(currentState).update(authorizationResponse, null)
 		whenever(currentState.jsonSerializeString()).thenReturn(authStateSerializedString)
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		spotifyAuthStateManager.updateAuthorizationResponse(authorizationResponse, null)
 
@@ -188,7 +187,7 @@ class SpotifyAuthStateManagerTest {
 		val authorizationServiceConfiguration: AuthorizationServiceConfiguration = mock()
 		val currentState: AuthState = mock()
 		whenever(currentState.authorizationServiceConfiguration).thenReturn(authorizationServiceConfiguration)
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		val clientId = "clientId"
 		val tokenRequest: TokenRequest = mock()
@@ -210,7 +209,7 @@ class SpotifyAuthStateManagerTest {
 		val authStateSerializedString = "auth state serialized"
 		doNothing().whenever(currentState).update(tokenResponse, null)
 		whenever(currentState.jsonSerializeString()).thenReturn(authStateSerializedString)
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		spotifyAuthStateManager.updateTokenResponseWithToken(token, clientId)
 
@@ -229,7 +228,7 @@ class SpotifyAuthStateManagerTest {
 		val currentState: AuthState = mock()
 		doNothing().whenever(currentState).update(tokenResponse, authorizationException)
 		whenever(currentState.jsonSerializeString()).thenReturn(authStateSerializedString)
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		spotifyAuthStateManager.addAccessTokenAuthorizationException(exception)
 
@@ -249,7 +248,7 @@ class SpotifyAuthStateManagerTest {
 		doNothing().whenever(currentState).update(authorizationResponse, authorizationException)
 		whenever(currentState.jsonSerializeString()).thenReturn(authStateSerializedString)
 
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		spotifyAuthStateManager.addAuthorizationCodeAuthorizationException(exception)
 
@@ -260,7 +259,7 @@ class SpotifyAuthStateManagerTest {
 	@Test
 	fun testReplaceAuthState() {
 		val currentState: AuthState = mock()
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		val authStateSerializedString = "auth state serialized"
 		val authState: AuthState = mock()
@@ -275,7 +274,7 @@ class SpotifyAuthStateManagerTest {
 	@Test
 	fun testClearAuthState() {
 		val currentState: AuthState = mock()
-		FieldSetter.setField(spotifyAuthStateManager, SpotifyAuthStateManager::class.java.getDeclaredField("currentState"), currentState)
+		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
 
 		val authStateSerializedString = "auth state serialized"
 		val authState: AuthState = mock()

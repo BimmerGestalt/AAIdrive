@@ -3,7 +3,7 @@
 apply plugin: 'jacoco'
 jacoco {
     // required Jacoco version to support Kotlin 1.5
-    toolVersion "0.8.7"
+    toolVersion "0.8.11"
 }
 
 project.afterEvaluate {

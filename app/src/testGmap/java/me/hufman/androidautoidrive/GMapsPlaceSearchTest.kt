@@ -8,7 +8,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.*
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.maps.CarLocationProvider
 import me.hufman.androidautoidrive.maps.GMapsPlaceSearch

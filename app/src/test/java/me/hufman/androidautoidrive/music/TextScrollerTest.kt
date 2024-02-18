@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive.music
 
-import com.nhaarman.mockito_kotlin.doAnswer
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.carapp.music.TextScroller
 import org.junit.Assert.*
 import org.junit.Test

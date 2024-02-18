@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive
 
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.RemoteBMWRemotingServer
 import de.bmw.idrive.ValueFactoryBMWRemoting

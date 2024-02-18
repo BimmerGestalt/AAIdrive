@@ -1,7 +1,7 @@
 package me.hufman.androidautoidrive.notifications
 
 import android.content.res.Resources
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.IDriveConnection
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources

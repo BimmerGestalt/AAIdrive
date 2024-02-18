@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
 import com.google.gson.Gson
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
 import kotlinx.coroutines.*

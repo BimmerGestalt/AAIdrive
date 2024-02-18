@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive
 
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import io.bimmergestalt.idriveconnectkit.IDriveConnection
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus

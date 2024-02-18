@@ -2,11 +2,7 @@ package me.hufman.androidautoidrive.notifications
 
 import android.content.Context
 import android.content.Intent
-import com.nhaarman.mockito_kotlin.*
-import me.hufman.androidautoidrive.notifications.CarNotificationController
-import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
-import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
-import me.hufman.androidautoidrive.notifications.NotificationUpdaterController
+import org.mockito.kotlin.*
 import org.junit.Test
 
 class CarNotificationControllerTest  {

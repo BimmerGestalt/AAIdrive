@@ -1,8 +1,7 @@
 package me.hufman.androidautoidrive.calendar
 
 import android.database.Cursor
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.calendar.CalendarProvider.Companion.INDEX_ALL_DAY
 import me.hufman.androidautoidrive.calendar.CalendarProvider.Companion.INDEX_BEGIN
 import me.hufman.androidautoidrive.calendar.CalendarProvider.Companion.INDEX_DESCRIPTION

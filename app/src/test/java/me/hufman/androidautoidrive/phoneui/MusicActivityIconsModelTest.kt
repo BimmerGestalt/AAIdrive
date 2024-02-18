@@ -1,7 +1,7 @@
 package me.hufman.androidautoidrive.phoneui
 
 import android.graphics.Bitmap
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
 import org.junit.Assert.*
 import org.junit.Test

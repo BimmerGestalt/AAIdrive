@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive.music.controllers
 
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

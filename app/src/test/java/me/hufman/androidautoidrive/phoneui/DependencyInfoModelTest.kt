@@ -1,7 +1,7 @@
 package me.hufman.androidautoidrive.phoneui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.BackgroundInterruptionDetection
 import me.hufman.androidautoidrive.connections.CarConnectionDebugging
 import me.hufman.androidautoidrive.phoneui.viewmodels.DependencyInfoModel

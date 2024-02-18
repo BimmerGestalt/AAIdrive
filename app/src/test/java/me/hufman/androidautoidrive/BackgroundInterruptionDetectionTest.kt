@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive
 
 import android.content.SharedPreferences
 import android.os.Handler
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -11,9 +11,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.carapp.maps.StaticScreenCaptureConfig
 import me.hufman.androidautoidrive.carapp.maps.VirtualDisplayScreenCapture
 import org.awaitility.Awaitility.await

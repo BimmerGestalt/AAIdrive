@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive.phoneui
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockito_kotlin.mock
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.phoneui.viewmodels.NotificationSettingsModel
 import org.junit.Assert.*

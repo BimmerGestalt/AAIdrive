@@ -5,7 +5,7 @@ import android.location.Address
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonObject
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import me.hufman.androidautoidrive.CarInformation
@@ -87,7 +87,7 @@ class NavigationSearchControllerTest {
 		val controller = NavigationSearchController(this, parser, searcher, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
 
 		// it should retry parseUrl once if the first result is null
-		whenever(parser.parseUrl(any())) doReturn listOf(null, testAddress)
+		whenever(parser.parseUrl(any())) doReturnConsecutively listOf(null, testAddress)
 		controller.startNavigation("test address")
 
 		// should now be trying to send to the car
@@ -129,7 +129,7 @@ class NavigationSearchControllerTest {
 		val controller = NavigationSearchController(this, parser, searcher, navigationTrigger, model, coroutineTestRule.testDispatcherProvider)
 
 		// it should retry parseUrl once if the first result is null
-		whenever(parser.parseUrl(any())) doReturn listOf(null, testAddress)
+		whenever(parser.parseUrl(any())) doReturnConsecutively  listOf(null, testAddress)
 		controller.startNavigation("test address")
 
 		// should now be trying to send to the car

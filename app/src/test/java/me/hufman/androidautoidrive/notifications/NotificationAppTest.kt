@@ -16,7 +16,7 @@ import android.widget.TextView
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat.IMPORTANCE_LOW
 import androidx.core.app.NotificationManagerCompat.IMPORTANCE_HIGH
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
 import me.hufman.androidautoidrive.*

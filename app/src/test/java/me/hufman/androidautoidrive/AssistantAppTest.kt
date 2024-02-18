@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.carapp.assistant.AssistantApp
 import me.hufman.androidautoidrive.carapp.assistant.AssistantAppInfo

@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive.phoneui
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode

@@ -1,8 +1,7 @@
 package me.hufman.androidautoidrive
 
 import com.google.gson.JsonObject
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.cds.CDSConnection
 import io.bimmergestalt.idriveconnectkit.CDSProperty
 import io.bimmergestalt.idriveconnectkit.CDS

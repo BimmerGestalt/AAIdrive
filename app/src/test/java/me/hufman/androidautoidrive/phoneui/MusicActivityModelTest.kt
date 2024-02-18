@@ -1,10 +1,7 @@
 package me.hufman.androidautoidrive.phoneui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockito_kotlin.doAnswer
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyWebApi

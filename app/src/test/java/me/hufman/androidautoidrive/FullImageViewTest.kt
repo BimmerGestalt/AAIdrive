@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive
 
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import io.bimmergestalt.idriveconnectkit.GenericRHMIDimensions
 import me.hufman.androidautoidrive.carapp.*
 import me.hufman.androidautoidrive.carapp.maps.MapAppMode

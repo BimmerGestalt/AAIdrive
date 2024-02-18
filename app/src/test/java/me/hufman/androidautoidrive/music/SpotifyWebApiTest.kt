@@ -15,7 +15,7 @@ import com.adamratzman.spotify.endpoints.pub.ArtistApi
 import com.adamratzman.spotify.endpoints.pub.SearchApi
 import com.adamratzman.spotify.models.*
 import com.adamratzman.spotify.utils.Market
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MockAppSettings
@@ -33,7 +33,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.internal.util.reflection.FieldSetter
 import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
@@ -74,7 +73,7 @@ class SpotifyWebApiTest {
 	fun testInitializeWebApi_WebApiExisting()
 	{
 		val webApi: SpotifyClientApi = mock()
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		spotifyWebApi.initializeWebApi()
 
@@ -560,10 +559,10 @@ class SpotifyWebApiTest {
 		val webApi: SpotifyClientApi = mock()
 
 		val instance1 = SpotifyWebApi.getInstance(context, appSettings)
-		FieldSetter.setField(instance1, instance1::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(instance1, "webApi", webApi)
 
 		val instance2 = SpotifyWebApi.getInstance(context, appSettings)
-		FieldSetter.setField(instance2, instance2::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(instance2, "webApi", webApi)
 
 		instance1.isUsingSpotify = true
 
@@ -582,10 +581,10 @@ class SpotifyWebApiTest {
 		doNothing().whenever(webApi).shutdown()
 
 		val instance1 = SpotifyWebApi.getInstance(context, appSettings)
-		FieldSetter.setField(instance1, instance1::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(instance1, "webApi", webApi)
 
 		val instance2 = SpotifyWebApi.getInstance(context, appSettings)
-		FieldSetter.setField(instance2, instance2::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(instance2, "webApi", webApi)
 
 		instance1.isUsingSpotify = true
 
@@ -598,7 +597,8 @@ class SpotifyWebApiTest {
 
 	@Test
 	fun testGetLikedSongs_NullWebApi() = runBlocking {
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), null)
+		val webApi: Any? = null
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val likedSongs = spotifyWebApi.getLikedSongs(spotifyAppController)
@@ -633,7 +633,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.library).thenReturn(clientLibraryApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val likedSongs = spotifyWebApi.getLikedSongs(spotifyAppController)
@@ -656,7 +656,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.library).thenReturn(clientLibraryApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		doNothing().whenever(spotifyAuthStateManager).addAccessTokenAuthorizationException(exception)
 
@@ -681,7 +681,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.library).thenReturn(clientLibraryApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val likedSongs = spotifyWebApi.getLikedSongs(spotifyAppController)
@@ -691,7 +691,8 @@ class SpotifyWebApiTest {
 
 	@Test
 	fun testGetArtistTopSongs_NullWebApi() = runBlocking {
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), null)
+		val webApi: Any? = null
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val artistTopSongs = spotifyWebApi.getArtistTopSongs(spotifyAppController, "artistUri")
@@ -725,7 +726,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.artists).thenReturn(artistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val artistTopSongs = spotifyWebApi.getArtistTopSongs(spotifyAppController, artistUri)
@@ -749,7 +750,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.artists).thenReturn(artistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		doNothing().whenever(spotifyAuthStateManager).addAccessTokenAuthorizationException(exception)
 
@@ -775,7 +776,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.artists).thenReturn(artistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val artistTopSongs = spotifyWebApi.getArtistTopSongs(spotifyAppController, artistUri)
@@ -792,7 +793,7 @@ class SpotifyWebApiTest {
 
 	@Test
 	fun testClearPendingQueueMetadataCreate() {
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("pendingQueueMetadataCreate"), { fail() })
+		Whitebox.setInternalState(spotifyWebApi, "pendingQueueMetadataCreate", { fail() })
 
 		spotifyWebApi.clearPendingQueueMetadataCreate()
 
@@ -835,7 +836,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
@@ -880,7 +881,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
@@ -919,7 +920,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
@@ -960,7 +961,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
@@ -999,7 +1000,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
@@ -1023,7 +1024,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
@@ -1087,7 +1088,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
@@ -1117,7 +1118,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		doNothing().whenever(spotifyAuthStateManager).addAccessTokenAuthorizationException(exception)
 
@@ -1147,7 +1148,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.search).thenReturn(clientSearchApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val searchResults = spotifyWebApi.searchForQuery(spotifyAppController, query)
@@ -1167,7 +1168,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val playlistCreateResult = spotifyWebApi.createPlaylist(playlistName)
 
@@ -1189,7 +1190,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val playlistCreateResult = spotifyWebApi.createPlaylist(playlistName)
 
@@ -1211,7 +1212,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val playlistCreateResult = spotifyWebApi.createPlaylist(playlistName)
 
@@ -1231,7 +1232,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		spotifyWebApi.addSongsToPlaylist(playlistId, songs)
 
@@ -1257,7 +1258,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		spotifyWebApi.addSongsToPlaylist(playlistId, songs)
 
@@ -1283,7 +1284,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		spotifyWebApi.addSongsToPlaylist(playlistId, songs)
 
@@ -1303,7 +1304,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		spotifyWebApi.replacePlaylistSongs(playlistId, songs)
 
@@ -1321,7 +1322,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		spotifyWebApi.replacePlaylistSongs(playlistId, songs)
 
@@ -1348,7 +1349,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		spotifyWebApi.replacePlaylistSongs(playlistId, songs)
 
@@ -1374,7 +1375,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		spotifyWebApi.replacePlaylistSongs(playlistId, songs)
 
@@ -1397,7 +1398,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val playlistUri = spotifyWebApi.getPlaylistUri(playlistName)
 
@@ -1429,7 +1430,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val playlistUri = spotifyWebApi.getPlaylistUri(playlistName)
 
@@ -1454,7 +1455,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val playlistUri = spotifyWebApi.getPlaylistUri("other playlist")
 
@@ -1482,7 +1483,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val playlistUri = spotifyWebApi.getPlaylistUri("other playlist")
 
@@ -1504,7 +1505,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val playlistUri = spotifyWebApi.getPlaylistUri(playlistName)
 
@@ -1527,7 +1528,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val playlistUri = spotifyWebApi.getPlaylistUri(playlistName)
 
@@ -1544,7 +1545,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		spotifyWebApi.setPlaylistImage(playlistId, coverArtImageData)
 
@@ -1567,7 +1568,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		spotifyWebApi.setPlaylistImage(playlistId, coverArtImageData)
 
@@ -1589,14 +1590,15 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		spotifyWebApi.setPlaylistImage(playlistId, coverArtImageData)
 	}
 
 	@Test
 	fun testGetPlaylistSongs_NullWebApi() = runBlocking {
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), null)
+		val webApi: Any? = null
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val playlistUri = "playlistUri"
@@ -1633,7 +1635,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val songs = spotifyWebApi.getPlaylistSongs(spotifyAppController, playlistUri)
@@ -1676,7 +1678,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val songs = spotifyWebApi.getPlaylistSongs(spotifyAppController, playlistUri)
@@ -1716,7 +1718,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val songs = spotifyWebApi.getPlaylistSongs(spotifyAppController, playlistUri)
@@ -1760,7 +1762,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val songs = spotifyWebApi.getPlaylistSongs(spotifyAppController, playlistUri)
@@ -1821,7 +1823,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val songs = spotifyWebApi.getPlaylistSongs(spotifyAppController, playlistUri)
@@ -1848,7 +1850,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		doNothing().whenever(spotifyAuthStateManager).addAccessTokenAuthorizationException(exception)
 
@@ -1874,7 +1876,7 @@ class SpotifyWebApiTest {
 
 		val webApi: SpotifyClientApi = mock()
 		whenever(webApi.playlists).thenReturn(clientPlaylistApi)
-		FieldSetter.setField(spotifyWebApi, spotifyWebApi::class.java.getDeclaredField("webApi"), webApi)
+		Whitebox.setInternalState(spotifyWebApi, "webApi", webApi)
 
 		val spotifyAppController: SpotifyAppController = mock()
 		val songs = spotifyWebApi.getPlaylistSongs(spotifyAppController, playlistUri)

@@ -5,10 +5,7 @@ import android.content.Context
 import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import org.mockito.kotlin.*
 import com.spotify.android.appremote.api.error.*
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.R

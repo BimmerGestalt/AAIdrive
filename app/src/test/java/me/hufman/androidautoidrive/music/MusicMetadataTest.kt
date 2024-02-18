@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive.music
 
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

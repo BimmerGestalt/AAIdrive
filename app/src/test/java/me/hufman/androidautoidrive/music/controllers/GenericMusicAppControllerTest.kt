@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.music.*
 import org.junit.Assert.*
