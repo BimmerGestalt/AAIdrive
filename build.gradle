@@ -45,6 +45,14 @@ allprojects {
     }
 }
 
+// fix mocking in jdk12+
+// https://stackoverflow.com/a/76267308/169035
+subprojects{
+    tasks.withType(Test).configureEach{
+        jvmArgs = jvmArgs + ['--add-opens=java.base/java.lang=ALL-UNNAMED', '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+    }
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
