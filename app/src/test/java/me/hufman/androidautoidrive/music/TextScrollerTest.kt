@@ -1,27 +1,17 @@
 package me.hufman.androidautoidrive.music
 
-import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.carapp.music.TextScroller
 import org.junit.Assert.*
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.powermock.api.mockito.PowerMockito
-import org.powermock.core.classloader.annotations.PrepareForTest
-import org.powermock.modules.junit4.PowerMockRunner
 
-@RunWith(PowerMockRunner::class)
-@PrepareForTest(System::class, TextScroller::class)
 class TextScrollerTest {
 	val longText = "This is a long text segment that will scroll"
 
 	@Test
 	fun testGetText_ShouldNotScroll() {
 		val shortText = "some text"
-		PowerMockito.mockStatic(System::class.java)
-		PowerMockito.`when`(System.currentTimeMillis())
-				.doAnswer { 0L } // initialization
 
-		val textScroller = TextScroller(shortText, 30)
+		val textScroller = TextScroller(shortText, 30) { 0 }
 
 		assertEquals(shortText, textScroller.getText())
 		assertEquals(shortText, textScroller.getText())
@@ -29,12 +19,8 @@ class TextScrollerTest {
 
 	@Test
 	fun testGetText_TimeElapsedLessThanScrollCooldown() {
-		PowerMockito.mockStatic(System::class.java)
-		PowerMockito.`when`(System.currentTimeMillis())
-				.doAnswer { 0L } // initialization
-				.doAnswer { 1000L } // elapsed time
-				.doAnswer { 1001L } // elapsed time
-		val textScroller = TextScroller(longText, 40)
+		val times = listOf(0L, 1000L, 1001L).iterator()
+		val textScroller = TextScroller(longText, 40) { times.next() }
 
 		assertEquals(longText, textScroller.getText())
 		assertEquals(longText, textScroller.getText())
@@ -42,12 +28,8 @@ class TextScrollerTest {
 
 	@Test
 	fun testGetText_TimeElapsedAfterScrollCooldown() {
-		PowerMockito.mockStatic(System::class.java)
-		PowerMockito.`when`(System.currentTimeMillis())
-				.doAnswer { 0L } // initialization
-				.doAnswer { 10000L } // elapsed time
-				.doAnswer { 10001L } // elapsed time
-		val textScroller = TextScroller(longText, 40)
+		val times = listOf(0L, 10000L, 10001L).iterator()
+		val textScroller = TextScroller(longText, 40) { times.next() }
 		textScroller.getText()
 
 		assertEquals(longText, textScroller.getText())
@@ -57,11 +39,8 @@ class TextScrollerTest {
 
 	@Test
 	fun testGetText_TextScroll_SliceHasNotReachedEndOfOriginalText() {
-		PowerMockito.mockStatic(System::class.java)
-		PowerMockito.`when`(System.currentTimeMillis())
-				.doAnswer { 0L } // initialization
-				.doAnswer { 10000L } // elapsed time
-		val textScroller = TextScroller(longText, 40)
+		val times = listOf(0L, 10000L).iterator()
+		val textScroller = TextScroller(longText, 40) { times.next() }
 		textScroller.getText()
 
 		assertEquals(longText, textScroller.getText())
@@ -71,13 +50,12 @@ class TextScrollerTest {
 
 	@Test
 	fun testGetText_TextScroll_SliceReachedEndOfOriginalText() {
-		PowerMockito.mockStatic(System::class.java)
-		PowerMockito.`when`(System.currentTimeMillis())
-				.doAnswer { 0L } // initialization
-				.doAnswer { 10000L } // elapsed time
-				.doAnswer { 20000L } // new previous timestamp
-				.doAnswer { 21000L } // elapsed time
-		val textScroller = TextScroller(longText, 40)
+		val times = listOf(0L,  // initialization
+			10000L, // elapsed time
+			20000L, // new previous timestamp
+			21000L  // elapsed time
+		).iterator()
+		val textScroller = TextScroller(longText, 40) { times.next() }
 		textScroller.getText()
 		textScroller.getText()
 		textScroller.getText()

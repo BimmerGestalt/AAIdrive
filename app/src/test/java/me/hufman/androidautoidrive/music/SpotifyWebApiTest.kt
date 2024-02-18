@@ -33,6 +33,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.Mockito
 import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
@@ -428,8 +429,9 @@ class SpotifyWebApiTest {
 		whenever(context.getString(any())).thenReturn(getStringText)
 
 		val contentIntent: PendingIntent = mock()
-		PowerMockito.mockStatic(PendingIntent::class.java)
-		PowerMockito.`when`(PendingIntent.getActivity(context, SpotifyWebApi.NOTIFICATION_REQ_ID, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)).thenAnswer { contentIntent }
+		Mockito.mockStatic(PendingIntent::class.java).`when`<PendingIntent> {
+			PendingIntent.getActivity(context, SpotifyWebApi.NOTIFICATION_REQ_ID, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+		}.doReturn(contentIntent)
 
 		val notification: Notification = mock()
 		val notificationBuilder: NotificationCompat.Builder = mock()

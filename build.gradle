@@ -49,7 +49,7 @@ allprojects {
 // https://stackoverflow.com/a/76267308/169035
 subprojects{
     tasks.withType(Test).configureEach{
-        jvmArgs = jvmArgs + ['--add-opens=java.base/java.lang=ALL-UNNAMED', '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+        jvmArgs = jvmArgs + ['--add-opens=java.base/java.lang=ALL-UNNAMED', '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED', '--add-opens=java.base/java.util=ALL-UNNAMED']
     }
 }
 

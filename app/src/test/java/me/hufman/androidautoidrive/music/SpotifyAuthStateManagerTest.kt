@@ -13,6 +13,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
@@ -42,10 +43,11 @@ class SpotifyAuthStateManagerTest {
 		appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON] = state
 
 		val authState = AuthState()
-		PowerMockito.mockStatic(AuthState::class.java)
-		PowerMockito.`when`(AuthState.jsonDeserialize(state)).thenAnswer { authState }
+		Mockito.mockStatic(AuthState::class.java).use {
+			it.`when`<AuthState> {AuthState.jsonDeserialize(state)}.thenReturn(authState)
 
-		spotifyAuthStateManager = Whitebox.invokeConstructor(SpotifyAuthStateManager::class.java, appSettings)
+			spotifyAuthStateManager = Whitebox.invokeConstructor(SpotifyAuthStateManager::class.java, appSettings)
+		}
 
 		assertEquals(authState, spotifyAuthStateManager.currentState)
 	}
@@ -55,10 +57,11 @@ class SpotifyAuthStateManagerTest {
 		val state = "authStateJson"
 		appSettings[AppSettings.KEYS.SPOTIFY_AUTH_STATE_JSON] = state
 
-		PowerMockito.mockStatic(AuthState::class.java)
-		PowerMockito.`when`(AuthState.jsonDeserialize(state)).thenAnswer { throw JSONException("message") }
+		Mockito.mockStatic(AuthState::class.java).use {
+			it.`when`<AuthState> {AuthState.jsonDeserialize(state)}.thenThrow(JSONException("message"))
 
-		spotifyAuthStateManager = Whitebox.invokeConstructor(SpotifyAuthStateManager::class.java, appSettings)
+			spotifyAuthStateManager = Whitebox.invokeConstructor(SpotifyAuthStateManager::class.java, appSettings)
+		}
 
 		assertTrue(isEmptyAuthState(spotifyAuthStateManager.currentState))
 	}
@@ -106,14 +109,9 @@ class SpotifyAuthStateManagerTest {
 
 	@Test
 	fun testGetAccessTokenExpirationIn_ExistingAccessTokenExpirationTime() {
-		val expirationTime = 5000L
-		val currentTime = 3000L
 		val currentState: AuthState = mock()
-		whenever(currentState.accessTokenExpirationTime).thenReturn(expirationTime)
+		whenever(currentState.accessTokenExpirationTime).thenReturn(System.currentTimeMillis() + 2999)
 		Whitebox.setInternalState(spotifyAuthStateManager, "currentState", currentState)
-
-		PowerMockito.mockStatic(System::class.java)
-		PowerMockito.`when`(System.currentTimeMillis()).doAnswer { currentTime }
 
 		assertEquals(2, spotifyAuthStateManager.getAccessTokenExpirationIn())
 	}
