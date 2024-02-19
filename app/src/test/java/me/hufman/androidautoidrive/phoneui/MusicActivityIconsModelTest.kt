@@ -21,7 +21,9 @@ class MusicActivityIconsModelTest {
 				PLACEHOLDER_ID to mock(),
 				FOLDER_ID to mock()
 		)
-		val icons = spy(realIcons)
+		val icons = spy(HashMap<String, Bitmap>()).apply {
+			putAll(realIcons)
+		}
 		val viewModel = MusicActivityIconsModel(icons)
 
 		assertEquals(realIcons[ARTIST_ID], viewModel.artistIcon)
