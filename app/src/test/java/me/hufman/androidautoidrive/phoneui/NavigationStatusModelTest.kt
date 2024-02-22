@@ -5,7 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.gson.JsonObject
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.cds.CDSDataProvider

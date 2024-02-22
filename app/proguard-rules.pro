@@ -36,3 +36,32 @@
 # Needed only for ConnectedTests
 -keep class androidx.drawerlayout.widget.** { boolean isDrawer*(int); }
 -keep class kotlin.reflect.jvm.internal.** { *; }
+
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn com.fasterxml.jackson.databind.deser.std.StdDeserializer
+-dontwarn com.fasterxml.jackson.databind.ser.std.StdSerializer
+-dontwarn com.google.errorprone.annotations.FormatMethod
+-dontwarn com.google.errorprone.annotations.Immutable
+-dontwarn org.bouncycastle.jsse.BCSSLParameters
+-dontwarn org.bouncycastle.jsse.BCSSLSocket
+-dontwarn org.bouncycastle.jsse.provider.BouncyCastleJsseProvider
+-dontwarn org.conscrypt.Conscrypt$Version
+-dontwarn org.conscrypt.Conscrypt
+-dontwarn org.conscrypt.ConscryptHostnameVerifier
+-dontwarn org.openjsse.javax.net.ssl.SSLParameters
+-dontwarn org.openjsse.javax.net.ssl.SSLSocket
+-dontwarn org.openjsse.net.ssl.OpenJSSE
+
+# And some more for Google Maps
+-dontwarn com.google.appengine.api.urlfetch.**
+-dontwarn org.joda.convert.FromString
+-dontwarn org.joda.convert.ToString
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+
+# And from Mapbox
+-dontwarn com.google.auto.**
+-dontwarn com.mapbox.maps.plugin.**
+
+# And from Sentry
+-dontwarn javax.**

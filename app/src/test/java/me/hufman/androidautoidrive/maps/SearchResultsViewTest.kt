@@ -1,7 +1,7 @@
 package me.hufman.androidautoidrive.maps
 
 import android.location.Location
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import io.bimmergestalt.idriveconnectkit.rhmi.mocking.RHMIApplicationMock

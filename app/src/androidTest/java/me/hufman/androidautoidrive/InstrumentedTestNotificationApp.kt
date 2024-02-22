@@ -14,7 +14,7 @@ import me.hufman.androidautoidrive.notifications.NotificationListenerServiceImpl
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.notifications.CarNotification
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
 import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications

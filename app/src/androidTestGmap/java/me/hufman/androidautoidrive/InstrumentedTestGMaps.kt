@@ -6,7 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.internal.runner.junit4.statement.UiThreadStatement.runOnUiThread
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.android.gms.maps.model.LatLng
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import io.bimmergestalt.idriveconnectkit.RHMIDimensions
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.carapp.maps.*

@@ -19,7 +19,7 @@ import java.util.*
 
 class NavigationStatusModel(val carInformation: CarInformation,
                             val isCustomNaviSupported: LiveData<Boolean>, val isCustomNaviPreferred: MutableLiveData<Boolean>,
-                            val customNavDestination: LiveData<LatLong>): ViewModel() {
+                            val customNavDestination: LiveData<LatLong?>): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
 		@Suppress("UNCHECKED_CAST")
 		override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -78,7 +78,7 @@ class NavigationStatusModel(val carInformation: CarInformation,
 	}
 
 	// custom map navigation status
-	val isCustomNavigating = Transformations.map(customNavDestination) {
+	val isCustomNavigating: LiveData<Boolean> = customNavDestination.map {
 		it != null
 	}
 	val customNavigationStatus: LiveData<Context.() -> String> = isCustomNavigating.map({ getString(R.string.lbl_navigationstatus_inactive) }) { isNavigating ->

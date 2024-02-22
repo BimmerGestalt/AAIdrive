@@ -1,8 +1,6 @@
 package me.hufman.androidautoidrive.music
 
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MockAppSettings
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode

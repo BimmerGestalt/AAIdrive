@@ -3,7 +3,7 @@
 apply plugin: 'jacoco'
 jacoco {
     // required Jacoco version to support Kotlin 1.5
-    toolVersion "0.8.7"
+    toolVersion "0.8.11"
 }
 
 project.afterEvaluate {
@@ -22,14 +22,14 @@ project.afterEvaluate {
         }
     }
 
-    tasks.create(name: "manualCoverage", type: JacocoReport) {
+    task('manualCoverage', type: JacocoReport) {
         group = "Reporting"
         description = "Generate Jacoco coverage reports for any coverage files"
 
         reports {
-            xml.enabled = true
-            xml.destination = file("$buildDir/reports/jacoco/jacoco.xml")   // have this in a common location for coveralls to find
-            html.enabled = true
+            xml.required = true
+            xml.outputLocation = file("$buildDir/reports/jacoco/jacoco.xml")   // have this in a common location for coveralls to find
+            html.required = true
         }
 
         def excludes = [
@@ -52,16 +52,16 @@ project.afterEvaluate {
 //        jacoco.includeNoLocationClasses = true
 //    }
     // create variant-specific ones
-    android.applicationVariants.all { variant ->
+    android.applicationVariants.configureEach { variant ->
         def testTaskName = "test${variant.name.capitalize()}UnitTest"
         tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {
             group = "Reporting"
             description = "Generate Jacoco coverage reports for the ${variant.name.capitalize()} build"
 
             reports {
-                xml.enabled = true
-                xml.destination = file("$buildDir/reports/jacoco/jacoco.xml")   // have this in a common location for coveralls to find
-                html.enabled = true
+                xml.required = true
+                xml.outputLocation = file("$buildDir/reports/jacoco/jacoco.xml")   // have this in a common location for coveralls to find
+                html.required = true
             }
 
             def excludes = [
@@ -84,9 +84,9 @@ project.afterEvaluate {
             description = "Generate Jacoco coverage reports for the ${variant.name.capitalize()} build"
 
             reports {
-                xml.enabled = true
-                xml.destination = file("$buildDir/reports/jacoco/jacoco.xml")   // have this in a common location for coveralls to find
-                html.enabled = true
+                xml.required = true
+                xml.outputLocation = file("$buildDir/reports/jacoco/jacoco.xml")   // have this in a common location for coveralls to find
+                html.required = true
             }
 
             def excludes = [

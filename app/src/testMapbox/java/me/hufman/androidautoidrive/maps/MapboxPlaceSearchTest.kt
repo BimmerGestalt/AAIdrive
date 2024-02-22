@@ -5,7 +5,7 @@ import com.mapbox.api.geocoding.v5.MapboxGeocoding
 import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse
 import com.mapbox.geojson.Point
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import io.bimmergestalt.idriveconnectkit.CDSProperty
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.cds.CDSDataProvider

@@ -5,7 +5,7 @@ import android.util.Base64
 import com.adamratzman.spotify.models.PlaylistUri
 import com.adamratzman.spotify.models.SpotifyUri
 import com.google.gson.Gson
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import com.spotify.android.appremote.api.*
 import com.spotify.protocol.client.CallResult
 import com.spotify.protocol.client.Subscription

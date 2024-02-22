@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test

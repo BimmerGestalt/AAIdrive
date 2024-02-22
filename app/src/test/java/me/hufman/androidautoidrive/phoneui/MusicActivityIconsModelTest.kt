@@ -1,7 +1,7 @@
 package me.hufman.androidautoidrive.phoneui
 
 import android.graphics.Bitmap
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel
 import org.junit.Assert.*
 import org.junit.Test
@@ -21,7 +21,9 @@ class MusicActivityIconsModelTest {
 				PLACEHOLDER_ID to mock(),
 				FOLDER_ID to mock()
 		)
-		val icons = spy(realIcons)
+		val icons = spy(HashMap<String, Bitmap>()).apply {
+			putAll(realIcons)
+		}
 		val viewModel = MusicActivityIconsModel(icons)
 
 		assertEquals(realIcons[ARTIST_ID], viewModel.artistIcon)

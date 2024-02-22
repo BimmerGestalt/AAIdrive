@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive
 
 import android.content.Context
 import android.content.res.AssetManager
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import org.junit.Assert.assertNotNull
 import org.junit.Test

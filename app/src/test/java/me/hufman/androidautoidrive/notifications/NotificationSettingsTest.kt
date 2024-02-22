@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive.notifications
 
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MockAppSettings
 import me.hufman.androidautoidrive.carapp.notifications.NotificationSettings

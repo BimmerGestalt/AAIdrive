@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive.carapp.music
 /**
  * Wrapper around a string that handles scrolling when it is too long to fit on a line.
  */
-class TextScroller(private val originalText: String, private val maxLineLength: Int) {
+class TextScroller(private val originalText: String, private val maxLineLength: Int, private val _getTime: () -> Long = {System.currentTimeMillis()}) {
 	companion object {
 		const val SCROLL_COOLDOWN_SECONDS = 2
 		const val INDEX_JUMP_VALUE = 3
@@ -16,7 +16,7 @@ class TextScroller(private val originalText: String, private val maxLineLength: 
 	private var previousTimestamp: Long
 
 	init {
-		previousTimestamp = System.currentTimeMillis()
+		previousTimestamp = _getTime()
 		shouldScroll = originalText.length > maxLineLength
 	}
 
@@ -41,9 +41,9 @@ class TextScroller(private val originalText: String, private val maxLineLength: 
 			} else {
 				scrollText = false
 				startIndex = 0
-				previousTimestamp = System.currentTimeMillis()
+				previousTimestamp = _getTime()
 			}
-		} else if ((System.currentTimeMillis() - previousTimestamp) / 1000 >= SCROLL_COOLDOWN_SECONDS) {
+		} else if ((_getTime() - previousTimestamp) / 1000 >= SCROLL_COOLDOWN_SECONDS) {
 			scrollText = true
 		}
 		return displayText

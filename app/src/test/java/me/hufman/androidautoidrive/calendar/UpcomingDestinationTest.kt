@@ -1,7 +1,7 @@
 package me.hufman.androidautoidrive.calendar
 
 import android.location.Address
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.carapp.calendar.UpcomingDestination
 import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
@@ -66,8 +66,8 @@ class UpcomingDestinationTest {
 		whenever(calendarProvider.getEvents(any(), any(), isNotNull())) doAnswer { emptyList() }
 		upcomingDestination.navigateUpcomingDestination(currentLatLong)
 		verify(calendarProvider).getEvents(2021, 11, 11)
-		verifyZeroInteractions(addressSearcher)
-		verifyZeroInteractions(navigationTrigger)
+		verifyNoInteractions(addressSearcher)
+		verifyNoInteractions(navigationTrigger)
 	}
 
 	@Test
@@ -109,7 +109,7 @@ class UpcomingDestinationTest {
 		upcomingDestination.navigateUpcomingDestination(currentLatLong)
 		verify(calendarProvider).getEvents(2021, 11, 11)
 		verify(addressSearcher).search(calendarEvents[0].location)
-		verifyZeroInteractions(navigationTrigger)
+		verifyNoInteractions(navigationTrigger)
 	}
 
 	@Test
@@ -120,8 +120,8 @@ class UpcomingDestinationTest {
 		whenever(addressSearcher.search(any())) doReturn farAddress
 		upcomingDestination.navigateUpcomingDestination(currentLatLong)
 		verify(calendarProvider).getEvents(2021, 11, 11)
-		verifyZeroInteractions(addressSearcher)
-		verifyZeroInteractions(navigationTrigger)
+		verifyNoInteractions(addressSearcher)
+		verifyNoInteractions(navigationTrigger)
 	}
 
 	@Test
@@ -132,7 +132,7 @@ class UpcomingDestinationTest {
 		whenever(addressSearcher.search(any())) doReturn farAddress
 		upcomingDestination.navigateUpcomingDestination(currentLatLong)
 		verify(calendarProvider).getEvents(2021, 11, 11)
-		verifyZeroInteractions(addressSearcher)
-		verifyZeroInteractions(navigationTrigger)
+		verifyNoInteractions(addressSearcher)
+		verifyNoInteractions(navigationTrigger)
 	}
 }

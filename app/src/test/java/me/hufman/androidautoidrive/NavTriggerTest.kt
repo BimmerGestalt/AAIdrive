@@ -1,8 +1,7 @@
 package me.hufman.androidautoidrive
 
 import android.location.Address
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.carapp.navigation.NavigationTriggerApp
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationConcrete

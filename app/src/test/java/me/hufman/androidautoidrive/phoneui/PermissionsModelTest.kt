@@ -5,13 +5,11 @@ import android.content.Context
 import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import org.mockito.kotlin.*
 import com.spotify.android.appremote.api.error.*
 import me.hufman.androidautoidrive.MutableObservable
 import me.hufman.androidautoidrive.R
+import me.hufman.androidautoidrive.getModifiersField
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel
@@ -44,7 +42,7 @@ class PermissionsModelTest {
 	fun setFinalStatic(field: Field, newValue: Any) {
 		field.setAccessible(true)
 
-		val modifiersField = Field::class.java.getDeclaredField("modifiers")
+		val modifiersField = getModifiersField()!!
 		modifiersField.setAccessible(true)
 		modifiersField.setInt(field, field.getModifiers() and Modifier.FINAL.inv())
 

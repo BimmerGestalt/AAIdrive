@@ -1,6 +1,6 @@
 package me.hufman.androidautoidrive.maps
 
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent

@@ -2,10 +2,7 @@ package me.hufman.androidautoidrive.addons
 
 import android.content.Intent
 import android.content.pm.*
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doAnswer
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
+import org.mockito.kotlin.*
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test

@@ -1,7 +1,7 @@
 package me.hufman.androidautoidrive
 
 import android.os.Handler
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import org.junit.Test
 
 class DeferredUpdateTest {

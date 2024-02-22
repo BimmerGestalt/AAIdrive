@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive
 
 import android.location.Address
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.carapp.navigation.AddressSearcher
 import me.hufman.androidautoidrive.carapp.navigation.NavigationParser
 import me.hufman.androidautoidrive.carapp.navigation.URLRedirector

@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive
 import android.graphics.Bitmap
 import android.media.ImageReader
 import android.os.Handler
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
 import io.bimmergestalt.idriveconnectkit.GenericRHMIDimensions

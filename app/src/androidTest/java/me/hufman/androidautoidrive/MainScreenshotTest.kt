@@ -14,8 +14,7 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.screenshot.Screenshot
 import androidx.viewpager2.widget.ViewPager2
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.whenever
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.EspressoHelpers.withCustomConstraints
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.phoneui.NavHostActivity

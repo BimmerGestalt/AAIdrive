@@ -4,9 +4,7 @@ import android.content.Context
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.nhaarman.mockito_kotlin.doAnswer
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.calendar.CalendarEvent
 import me.hufman.androidautoidrive.calendar.PhoneCalendar
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode

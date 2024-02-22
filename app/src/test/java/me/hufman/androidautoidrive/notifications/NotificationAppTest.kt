@@ -14,28 +14,26 @@ import android.service.notification.StatusBarNotification
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat.IMPORTANCE_LOW
 import androidx.core.app.NotificationManagerCompat.IMPORTANCE_HIGH
-import com.nhaarman.mockito_kotlin.*
+import androidx.core.app.NotificationManagerCompat.IMPORTANCE_LOW
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
-import me.hufman.androidautoidrive.*
-import me.hufman.androidautoidrive.carapp.ReadoutController
-import me.hufman.androidautoidrive.carapp.notifications.*
-import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
-import me.hufman.androidautoidrive.utils.GraphicsHelpers
-
 import io.bimmergestalt.idriveconnectkit.IDriveConnection
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
+import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.L
+import me.hufman.androidautoidrive.carapp.ReadoutController
+import me.hufman.androidautoidrive.carapp.notifications.*
+import me.hufman.androidautoidrive.carapp.notifications.views.NotificationListView
+import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-
+import org.mockito.kotlin.*
 import java.io.ByteArrayInputStream
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -95,7 +93,7 @@ class NotificationAppTest {
 	fun setFinalStatic(field: Field, newValue: Any) {
 		field.setAccessible(true)
 
-		val modifiersField = Field::class.java.getDeclaredField("modifiers")
+		val modifiersField = getModifiersField()!!
 		modifiersField.setAccessible(true)
 		modifiersField.setInt(field, field.getModifiers() and Modifier.FINAL.inv())
 

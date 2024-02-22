@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.phoneui.controllers.QuickEditListController
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -27,8 +27,8 @@ class QuickEditListControllerTest {
 	fun testAddEmptyItem() {
 		controller.addItem()
 		assertEquals(0, items.size)
-		verifyZeroInteractions(adapter)
-		verifyZeroInteractions(itemTouchHelper)
+		verifyNoInteractions(adapter)
+		verifyNoInteractions(itemTouchHelper)
 	}
 
 	@Test
@@ -38,7 +38,7 @@ class QuickEditListControllerTest {
 		assertEquals(1, items.size)
 		assertEquals("Test", items[0])
 		verify(adapter).notifyItemInserted(0)
-		verifyZeroInteractions(itemTouchHelper)
+		verifyNoInteractions(itemTouchHelper)
 	}
 
 	@Test
@@ -50,7 +50,7 @@ class QuickEditListControllerTest {
 			on { parent } doReturn intermediate
 		}
 		controller.startDrag(view)
-		verifyZeroInteractions(itemTouchHelper)
+		verifyNoInteractions(itemTouchHelper)
 	}
 
 	@Test

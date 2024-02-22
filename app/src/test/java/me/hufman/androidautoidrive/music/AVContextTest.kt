@@ -5,7 +5,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
 import me.hufman.androidautoidrive.MockBMWRemotingServer

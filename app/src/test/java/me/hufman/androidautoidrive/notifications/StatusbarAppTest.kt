@@ -2,7 +2,7 @@ package me.hufman.androidautoidrive.notifications
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import de.bmw.idrive.BMWRemoting
 import me.hufman.androidautoidrive.MockBMWRemotingServer
 import me.hufman.androidautoidrive.carapp.notifications.ID5StatusbarApp

@@ -3,7 +3,7 @@ package me.hufman.androidautoidrive
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.google.gson.JsonObject
-import com.nhaarman.mockito_kotlin.*
+import org.mockito.kotlin.*
 import de.bmw.idrive.BMWRemotingServer
 import io.bimmergestalt.idriveconnectkit.CDS
 import me.hufman.androidautoidrive.cds.*
@@ -141,7 +141,7 @@ class CDSDataTest {
 		val cdsData = CDSDataProvider()
 		cdsData.setConnection(connection)
 		val observer = object: Observer<JsonObject> {
-			override fun onChanged(t: JsonObject?) {
+			override fun onChanged(t: JsonObject) {
 				t ?: return
 				vin = t["VIN"].asString
 			}
