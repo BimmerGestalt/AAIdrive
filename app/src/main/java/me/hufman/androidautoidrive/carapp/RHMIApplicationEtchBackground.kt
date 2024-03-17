@@ -27,6 +27,10 @@ class RHMIApplicationEtchBackground(val remoteServer: RemoteBMWRemotingServer, v
 	override val states = HashMap<Int, RHMIState>()
 	override val components = HashMap<Int, RHMIComponent>()
 
+	// remember a little bit of properties and small ints
+	val modelData = HashMap<Int, Any?>()
+	val propertyData = HashMap<Int, MutableMap<Int, Any?>>()
+
 	private val pendingModels = HashMap<Int, Mailbox>()
 
 	private val MailboxCloser = object: Mailbox.Notify {
@@ -56,7 +60,12 @@ class RHMIApplicationEtchBackground(val remoteServer: RemoteBMWRemotingServer, v
 	}
 
 	@Throws(BMWRemoting.SecurityException::class, BMWRemoting.IllegalArgumentException::class, BMWRemoting.ServiceException::class)
-	override fun setModel(modelId: Int, value: Any) {
+	override fun setModel(modelId: Int, value: Any?) {
+		if (value is Int || value is BMWRemoting.RHMIResourceIdentifier) {
+			modelData[modelId] = value
+		} else {
+			modelData.remove(modelId)
+		}
 		if (ignoreUpdates) return
 		// wait for previous sets of this model to finish
 		fence(synchronized(this) { pendingModels[modelId] })
@@ -75,9 +84,11 @@ class RHMIApplicationEtchBackground(val remoteServer: RemoteBMWRemotingServer, v
 			fence(mailbox, 100, 100)
 		}
 	}
+	override fun getModel(modelId: Int): Any? = modelData[modelId]
 
 	@Throws(BMWRemoting.SecurityException::class, BMWRemoting.IllegalArgumentException::class, BMWRemoting.ServiceException::class)
 	override fun setProperty(componentId: Int, propertyId: Int, value: Any?) {
+		propertyData.getOrPut(componentId){HashMap()}[propertyId] = value
 		if (ignoreUpdates) return
 		val propertyValue = HashMap<Int, Any?>()
 		propertyValue[0] = value
@@ -86,6 +97,7 @@ class RHMIApplicationEtchBackground(val remoteServer: RemoteBMWRemotingServer, v
 		}
 		mailbox.registerNotify(MailboxCloser, componentId, 5000)
 	}
+	override fun getProperty(componentId: Int, propertyId: Int): Any? = propertyData[componentId]?.get(propertyId)
 
 	@Throws(BMWRemoting.SecurityException::class, BMWRemoting.IllegalArgumentException::class, BMWRemoting.ServiceException::class)
 	override fun triggerHMIEvent(eventId: Int, args: Map<Any, Any?>) {

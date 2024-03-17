@@ -33,7 +33,7 @@ class RHMIApplicationSwappable(var app: RHMIApplication): RHMIApplication(), RHM
 	val desiredData = SparseArray<Any>()
 	val desiredProperties = SparseArray<SparseArray<Any?>>()
 
-	override fun setModel(modelId: Int, value: Any) {
+	override fun setModel(modelId: Int, value: Any?) {
 		val model = models[modelId]
 		val memoized = when(model) {
 			is RHMIModel.RaIntModel -> true
@@ -51,6 +51,8 @@ class RHMIApplicationSwappable(var app: RHMIApplication): RHMIApplication(), RHM
 
 		if (isConnected) app.setModel(modelId, value)
 	}
+	override fun getModel(modelId: Int): Any? =
+		desiredData.get(modelId) ?: app.getModel(modelId)
 
 	override fun setProperty(componentId: Int, propertyId: Int, value: Any?) {
 		val properties = desiredProperties.setDefault(componentId) { SparseArray() }
@@ -58,6 +60,8 @@ class RHMIApplicationSwappable(var app: RHMIApplication): RHMIApplication(), RHM
 
 		if (isConnected) app.setProperty(componentId, propertyId, value)
 	}
+	override fun getProperty(componentId: Int, propertyId: Int): Any? =
+		desiredProperties.get(componentId)?.get(propertyId) ?: app.getProperty(componentId, propertyId)
 
 	override fun triggerHMIEvent(eventId: Int, args: Map<Any, Any?>) {
 		if (isConnected) app.triggerHMIEvent(eventId, args)

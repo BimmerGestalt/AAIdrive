@@ -7,6 +7,7 @@ import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
+import me.hufman.androidautoidrive.carapp.RHMIApplicationSwappable
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
 import me.hufman.androidautoidrive.carapp.RHMIUtils.findAdjacentComponent
@@ -109,22 +110,23 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			appLogoModel = state.componentsList.filterIsInstance<RHMIComponent.Image>().first {
 				// The one single image which is visible in both wide and small screen modes
 				val property = it.properties[RHMIProperty.PropertyId.POSITION_X.id]
-				val smallPosition = (property as? RHMIProperty.LayoutBag)?.get(1)
-				val widePosition = (property as? RHMIProperty.LayoutBag)?.get(0)
+				val smallPosition = property?.getForLayout(1)
+				val widePosition = property?.getForLayout(0)
 				(smallPosition is Int && smallPosition < 1900) &&
-				(widePosition is Int && widePosition < 1900)
+				(widePosition is Int && widePosition < 1900) &&
+				it.getModel() is RHMIModel.RaImageModel
 			}.getModel()?.asRaImageModel()!!
 
 			// group the components into which widescreen state they are visible in
 			// the layout hides the components by setting their X to 2000
 			val smallComponents = state.componentsList.filter {
 				val property = it.properties[RHMIProperty.PropertyId.POSITION_X.id]
-				val smallPosition = (property as? RHMIProperty.LayoutBag)?.get(1)
+				val smallPosition = property?.getForLayout(1)
 				smallPosition is Int && smallPosition < 1900
 			}
 			val wideComponents = state.componentsList.filter {
 				val property = it.properties[RHMIProperty.PropertyId.POSITION_X.id]
-				val widePosition = (property as? RHMIProperty.LayoutBag)?.get(0)
+				val widePosition = property?.getForLayout(0)
 				widePosition is Int && widePosition < 1900
 			}
 

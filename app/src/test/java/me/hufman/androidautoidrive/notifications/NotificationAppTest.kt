@@ -189,10 +189,12 @@ class NotificationAppTest {
 		// test speedlock
 		run {
 			// parking gear
+			app.viewDetails.state.setProperty(36, "")   // clear the idempotent cache
 			mockServer.properties[app.viewDetails.state.id]?.remove(36)
 			app.carappListener.cds_onPropertyChangedEvent(-1, "37", "driving.gear", """{"gear":3}""")
 			assertEquals(false, mockServer.properties[app.viewDetails.state.id]?.get(36))
 			// parking brake
+			app.viewDetails.state.setProperty(36, "")   // clear the idempotent cache
 			mockServer.properties[app.viewDetails.state.id]?.remove(36)
 			app.carappListener.cds_onPropertyChangedEvent(-1, "40", "driving.parkingBrake", """{"parkingBrake":2}""")
 			assertEquals(false, mockServer.properties[app.viewDetails.state.id]?.get(36))

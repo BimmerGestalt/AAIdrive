@@ -34,16 +34,8 @@ object RHMIUtils {
 	fun getComponentLocation(component: RHMIComponent, layout: Int = 0): Pair<Int, Int> {
 		val xProperty = component.properties[RHMIProperty.PropertyId.POSITION_X.id]
 		val yProperty = component.properties[RHMIProperty.PropertyId.POSITION_Y.id]
-		val x = when (xProperty) {
-			is RHMIProperty.SimpleProperty -> xProperty.value as Int
-			is RHMIProperty.LayoutBag -> xProperty.get(layout) as Int
-			else -> -1
-		}
-		val y = when (yProperty) {
-			is RHMIProperty.SimpleProperty -> yProperty.value as Int
-			is RHMIProperty.LayoutBag -> yProperty.get(layout) as Int
-			else -> -1
-		}
+		val x = xProperty?.getForLayout(layout) as? Int ?: -1
+		val y = yProperty?.getForLayout(layout) as? Int ?: -1
 		return Pair(x,y)
 	}
 
