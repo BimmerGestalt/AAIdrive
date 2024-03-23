@@ -399,6 +399,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		val trackText = trackTextScroller.getText()
 		redrawAudiostatePlaylist(trackText)
 		trackModel.value = trackText
+		println("Setting track to $trackText")
 	}
 
 	private fun redrawApp() {
