@@ -19,7 +19,7 @@ env:
 
 jobs:
   unitTest:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -67,7 +67,7 @@ jobs:
 
 
   instrumentedTest:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -80,6 +80,11 @@ jobs:
           - hasSecret: false
             map: Mapbox   # Mapbox requires secrets to build
     steps:
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
       - name: Checkout the project
         uses: actions/checkout@v3
         with:
@@ -145,7 +150,7 @@ jobs:
     # Only build on the main repo, which has the secrets configured
     if: github.repository == 'BimmerGestalt/AAIdrive' && github.event_name == 'push'
     needs: [unitTest]  # wait for the tests to succeed
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout the project
         uses: actions/checkout@v3
@@ -195,7 +200,7 @@ jobs:
   upload_s3:
     if: github.event_name == 'push'
     needs: package
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Download project artifacts
         uses: actions/download-artifact@v3
@@ -222,7 +227,7 @@ jobs:
   upload_release:
     if: startsWith(github.ref, 'refs/tags/')
     needs: package
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Download project artifacts
         uses: actions/download-artifact@v2
