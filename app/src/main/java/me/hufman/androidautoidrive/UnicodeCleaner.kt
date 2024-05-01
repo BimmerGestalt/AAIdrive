@@ -7,6 +7,7 @@ import androidx.annotation.VisibleForTesting
 import io.wax911.emojify.EmojiManager
 import io.wax911.emojify.model.Emoji
 import io.wax911.emojify.parser.EmojiParser
+import java.text.Normalizer
 
 /** Cleans a text string to be suitable for showing in the car */
 object UnicodeCleaner {
@@ -306,6 +307,7 @@ object UnicodeCleaner {
 	fun clean(input: String, convertEmoticons: Boolean = true): String {
 		val bidiCleaned = cleanBidiIsolates(input)
 		val fontCleaned = cleanFontVariations(bidiCleaned)
+		val normalizedCleaned = Normalizer.normalize(fontCleaned, Normalizer.Form.NFC)
 
 		val emojiTransformer = object : EmojiParser.EmojiTransformer {
 			override fun transform(unicodeCandidate: EmojiParser.UnicodeCandidate): String {
@@ -320,7 +322,7 @@ object UnicodeCleaner {
 				}
 			}
 		}
-		return EmojiParser.parseFromUnicode(fontCleaned, emojiTransformer)
+		return EmojiParser.parseFromUnicode(normalizedCleaned, emojiTransformer)
 	}
 
 	/** Builds a simple Emoji object */

@@ -33,6 +33,20 @@ class EmojiCleanerTest {
 		}
 	}
 
+	/** Verifies that decomposed characters are joined to precomposed */
+	@ExperimentalStdlibApi
+	@Test
+	fun testDecomposed() {
+		// the car shows the combining accent hovering next to the base
+		// instead of directly above
+		run {
+			val source = "65cc81"    // decomposed é
+			val correct = "c3a9"   // precomposed é
+			val parsed = UnicodeCleaner.clean(source.hexToByteArray(HexFormat.Default).decodeToString())
+			assertEquals(correct, parsed.toByteArray().toHexString(HexFormat.Default))
+		}
+	}
+
 	/** Verifies BMP text */
 	@Test
 	fun testBMP() {
