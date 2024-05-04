@@ -90,6 +90,12 @@ class CDSMetrics(val carInfo: CarInformation) {
 		CDSVehicleUnits.Speed.fromValue(it.tryAsJsonObject("averageSpeed")?.getAsJsonPrimitive("unit")?.tryAsInt)
 	}
 
+	// car information
+	val hasEngine: Flow<Boolean> = carInfo.cachedCdsData.flow[CDS.ENGINE.INFO].mapNotNull {
+		// electric-only vehicles have cylinders = 0
+		it.tryAsJsonObject("info")?.tryAsJsonPrimitive("numberOfCylinders")?.tryAsInt?.let { cyls -> cyls > 0 }
+	}
+
 	/** data points */
 	// level
 	val evLevel = carInfo.cachedCdsData.flow[CDS.SENSORS.SOCBATTERYHYBRID].mapNotNull {
@@ -123,12 +129,16 @@ class CDSMetrics(val carInfo: CarInformation) {
 	}
 
 	// temp
-	val engineTemp = carInfo.cachedCdsData.flow[CDS.ENGINE.TEMPERATURE].mapNotNull {
+	val engineTemp = carInfo.cachedCdsData.flow[CDS.ENGINE.TEMPERATURE].combine(hasEngine) { value, hasEngine ->
+		value.takeIf { hasEngine }
+	}.mapNotNull { it }.mapNotNull {
 		it.tryAsJsonObject("temperature")?.tryAsJsonPrimitive("engine")?.tryAsDouble?.takeIf { it < 255 }
 	}.combine(units) { value, units ->
 		units.temperatureUnits.fromCarUnit(value)
 	}
-	val oilTemp = carInfo.cachedCdsData.flow[CDS.ENGINE.TEMPERATURE].mapNotNull {
+	val oilTemp = carInfo.cachedCdsData.flow[CDS.ENGINE.TEMPERATURE].combine(hasEngine) { value, hasEngine ->
+		value.takeIf { hasEngine }
+	}.mapNotNull { it }.mapNotNull {
 		it.tryAsJsonObject("temperature")?.tryAsJsonPrimitive("oil")?.tryAsDouble?.takeIf { it < 255 }
 	}.combine(units) { value, units ->
 		units.temperatureUnits.fromCarUnit(value)
