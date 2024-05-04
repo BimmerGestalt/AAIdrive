@@ -5,6 +5,7 @@ import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationConcrete
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModelLive
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -51,7 +52,7 @@ class RHMIApplicationSwappableTest {
 	fun testReplay() {
 		val backing = RHMIApplicationConcrete()
 		val swap = RHMIApplicationSwappable(backing)
-		val model = RHMIModel.RaIntModel(swap, 40)
+		val model = RHMIModelLive.RaIntModel(swap, 40)
 		val component = RHMIComponent.Label(swap, 100)
 		val event = RHMIEvent.FocusEvent(swap, 200)
 		swap.models[model.id] = model

@@ -80,10 +80,10 @@ class AppSwitcherView(val state: RHMIState, val appDiscovery: MusicAppDiscovery,
 		apps.addAll(appDiscovery.validApps)
 		if (apps.size == 0) {
 			listApps.setSelectable(false)
-			listApps.getModel()?.setValue(appsEmptyList, 0, appsEmptyList.height, appsEmptyList.height)
+			listApps.getModel()?.value = appsEmptyList
 		} else {
 			listApps.setSelectable(true)
-			listApps.getModel()?.setValue(appsListAdapter, 0, appsListAdapter.height, appsListAdapter.height)
+			listApps.getModel()?.value = appsListAdapter
 
 		}
 	}

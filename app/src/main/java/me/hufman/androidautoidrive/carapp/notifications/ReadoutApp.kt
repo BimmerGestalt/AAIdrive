@@ -11,11 +11,12 @@ import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import io.bimmergestalt.idriveconnectkit.CDS
 import io.bimmergestalt.idriveconnectkit.IDriveConnection
-import io.bimmergestalt.idriveconnectkit.Utils.rhmi_setResourceCached
+import io.bimmergestalt.idriveconnectkit.RHMIUtils.rhmi_setResourceCached
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.deserialization.loadFromXML
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.CarInformation

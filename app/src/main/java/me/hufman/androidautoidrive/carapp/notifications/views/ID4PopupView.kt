@@ -22,7 +22,7 @@ class ID4PopupView(val state: RHMIState): PopupView {
 	override var currentNotification: CarNotification? = null
 
 	init {
-		val dummyLabel = RHMIModel.RaDataModel(RHMIApplicationMock(), 0)
+		val dummyLabel = RHMIModel.RaDataModel(0)
 		titleLabel = state.getTextModel()?.asRaDataModel() ?: dummyLabel
 		bodyLabel1 = state.componentsList.filterIsInstance<RHMIComponent.Label>().firstOrNull()?.getModel()?.asRaDataModel() ?: dummyLabel
 		bodyLabel2 = state.componentsList.filterIsInstance<RHMIComponent.Label>().lastOrNull()?.getModel()?.asRaDataModel() ?: dummyLabel

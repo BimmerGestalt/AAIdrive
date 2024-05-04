@@ -22,6 +22,7 @@ import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.TimeUtils.formatTime
 import me.hufman.androidautoidrive.utils.Utils
+import java.io.IOException
 
 class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs, val musicAppMode: MusicAppMode) {
 	companion object {
@@ -275,7 +276,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			// the book icon
 			try {
 				buttons[3].getImageModel()?.asImageIdModel()?.imageId = 0
-			} catch (e: BMWRemoting.ServiceException) {
+			} catch (e: IOException) {
 				buttons[3].setVisible(false)
 			}
 			buttons[3].setSelectable(false)
@@ -336,7 +337,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		if (!initialized && initializationDeferredTime < System.currentTimeMillis()) {
 			try {
 				initWidgetsLater()
-			} catch (e: BMWRemoting.ServiceException) {
+			} catch (e: IOException) {
 				// something went wrong during background initialization
 				// but don't crash, instead wait to initialize on first view
 			}
@@ -348,7 +349,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 					displayedConnected != controller.isConnected()) {
 				try {
 					redrawSong()
-				} catch (e: BMWRemoting.ServiceException) {
+				} catch (e: IOException) {
 					// something went wrong during background update
 					// sometimes seen when updating the AudioHmiState Playlist model
 					// but don't crash, instead continue on and try to redraw again on next view
@@ -361,7 +362,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			}
 			try {
 				redrawPosition()
-			} catch (e: BMWRemoting.ServiceException) {
+			} catch (e: IOException) {
 				// something went wrong during background update
 				// but don't crash about it
 			}
@@ -469,7 +470,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			playlist.addRow(PlaylistItem(false, skipBackEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_BACK), L.MUSIC_SKIP_PREVIOUS))
 			playlist.addRow(PlaylistItem(isBuffering, true, grayscaleNoteIcon, title))
 			playlist.addRow(PlaylistItem(false, skipNextEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_NEXT), L.MUSIC_SKIP_NEXT))
-			playlistModel?.asRaListModel()?.setValue(playlist, 0, 3, 3)
+			playlistModel?.asRaListModel()?.value = playlist
 		}
 	}
 

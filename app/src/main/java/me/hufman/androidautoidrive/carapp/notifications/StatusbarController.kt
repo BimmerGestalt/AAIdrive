@@ -4,6 +4,7 @@ import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIActionListCallback
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
 import me.hufman.androidautoidrive.notifications.CarNotification
+import java.io.IOException
 
 interface StatusbarController {
 	fun add(sbn: CarNotification)
@@ -80,7 +81,7 @@ class ID4StatusbarController(val notificationIconEvent: RHMIEvent.NotificationIc
 		notificationIconEvent.getImageIdModel()?.asImageIdModel()?.imageId = imageId
 		try {
 			notificationIconEvent.triggerEvent(mapOf(0 to true))
-		} catch (e: BMWRemoting.ServiceException) {
+		} catch (e: IOException) {
 			// error showing icon
 		}
 	}
@@ -98,8 +99,8 @@ class ID4StatusbarController(val notificationIconEvent: RHMIEvent.NotificationIc
 		super.clear()
 		try {
 			notificationIconEvent.triggerEvent(mapOf(0 to false))
-		} catch (e: BMWRemoting.ServiceException) {
-			// error showing icon
+		} catch (e: IOException) {
+			// error hiding icon
 		}
 	}
 }
@@ -120,7 +121,7 @@ class ID5NotificationCenter(val notificationEvent: RHMIEvent.NotificationEvent, 
 				notificationEvent.getNotificationTextModel()?.asRaDataModel()?.value = sbn.lastLine
 				notificationEvent.getImageModel()?.asImageIdModel()?.imageId = imageId
 				notificationEvent.triggerEvent(mapOf(0.toByte() to true))
-			} catch (e: BMWRemoting.ServiceException) {
+			} catch (e: IOException) {
 				// error showing icon
 				e.printStackTrace()
 			}
@@ -135,8 +136,8 @@ class ID5NotificationCenter(val notificationEvent: RHMIEvent.NotificationEvent, 
 				try {
 					notificationEvent.getIndexId()?.asRaIntModel()?.value = index
 					notificationEvent.triggerEvent(mapOf(0.toByte() to false))
-				} catch (e: BMWRemoting.ServiceException) {
-					// error showing icon
+				} catch (e: IOException) {
+					// error hiding icon
 				}
 			}
 		}

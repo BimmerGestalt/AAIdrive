@@ -72,7 +72,7 @@ class FrameUpdater(val display: VirtualDisplayScreenCapture, val modeListener: F
 			} else if (destination is RHMIModel.RaListModel) {
 				val list = RHMIModel.RaListModel.RHMIListConcrete(1)
 				list.addRow(arrayOf(BMWRemoting.RHMIResourceData(BMWRemoting.RHMIResourceType.IMAGEDATA, imageData)))
-				destination.setValue(list, 0, 1, 1)
+				destination.value = list
 			}
 		} catch (e: RuntimeException) {
 		} catch (e: org.apache.etch.util.TimeoutException) {

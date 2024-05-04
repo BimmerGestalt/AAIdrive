@@ -8,6 +8,7 @@ import me.hufman.androidautoidrive.utils.removeFirst
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationConcrete
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
+import io.bimmergestalt.idriveconnectkit.rhmi.deserialization.loadFromXML
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.cds.CDSDataProvider
 import org.junit.Assert.*

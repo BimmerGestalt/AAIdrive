@@ -8,6 +8,7 @@ import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModelLive
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runBlockingTest
 import me.hufman.androidautoidrive.carapp.RHMIApplicationEtchBackground
@@ -74,9 +75,9 @@ class RHMIApplicationEtchBackgroundTest {
 	init {
 		Whitebox.setInternalState(connection, "_async", asyncConnection)
 
-		subject.models[35] = RHMIModel.RaDataModel(subject, 35)
-		subject.models[6] = RHMIModel.RaIntModel(subject, 6)
-		subject.models[7] = RHMIModel.RaListModel(subject, 7)
+		subject.models[35] = RHMIModelLive.RaDataModel(subject, 35)
+		subject.models[6] = RHMIModelLive.RaIntModel(subject, 6)
+		subject.models[7] = RHMIModelLive.RaListModel(subject, 7)
 		subject.actions[4] = RHMIAction.RAAction(subject, 4)
 		subject.actions[5] = RHMIAction.HMIAction(subject, 5).apply {
 			targetModel = 6

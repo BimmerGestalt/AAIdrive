@@ -11,11 +11,12 @@ import de.bmw.idrive.BaseBMWRemotingClient
 import de.bmw.idrive.RemoteBMWRemotingServer
 import io.bimmergestalt.idriveconnectkit.CDS
 import io.bimmergestalt.idriveconnectkit.IDriveConnection
-import io.bimmergestalt.idriveconnectkit.Utils.rhmi_setResourceCached
+import io.bimmergestalt.idriveconnectkit.RHMIUtils.rhmi_setResourceCached
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.deserialization.loadFromXML
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.carapp.*
@@ -25,6 +26,7 @@ import me.hufman.androidautoidrive.notifications.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.Utils
 import me.hufman.androidautoidrive.utils.removeFirst
+import java.io.IOException
 import java.util.*
 
 const val TAG = "PhoneNotifications"
@@ -159,7 +161,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 						}
 					}
 				}
-			} catch (e: BMWRemoting.ServiceException) {}
+			} catch (e: IOException) {}
 		}
 	}
 

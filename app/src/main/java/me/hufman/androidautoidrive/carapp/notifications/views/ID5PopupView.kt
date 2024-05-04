@@ -27,7 +27,7 @@ class ID5PopupView(val state: RHMIState, val graphicsHelpers: GraphicsHelpers, v
 	override var currentNotification: CarNotification? = null
 
 	init {
-		val dummyLabel = RHMIModel.RaDataModel(RHMIApplicationMock(), 0)
+		val dummyLabel = RHMIModel.RaDataModel(0)
 		titleLabel = state.getTextModel()?.asRaDataModel() ?: dummyLabel
 		bodyList = state.componentsList.filterIsInstance<RHMIComponent.List>().first()
 		openButton = state.componentsList.filterIsInstance<RHMIComponent.Button>().first()

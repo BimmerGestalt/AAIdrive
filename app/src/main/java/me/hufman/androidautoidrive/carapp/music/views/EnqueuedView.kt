@@ -114,7 +114,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 
 		if (queueMetadata?.songs != null && queueMetadata?.songs?.size == newQueueMetadata?.songs?.size) {
 			// clear the previous car list, which happens to be the same size as the new list
-			listComponent.getModel()?.setValue(songsEmptyList, 0, songsEmptyList.height, songsEmptyList.height)
+			listComponent.getModel()?.value = songsEmptyList
 		}
 
 		queueMetadata = newQueueMetadata
@@ -143,7 +143,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		} else {
 			listComponent.setEnabled(false)
 			listComponent.setSelectable(false)
-			listComponent.getModel()?.setValue(songsEmptyList, 0, songsEmptyList.height, songsEmptyList.height)
+			listComponent.getModel()?.value = songsEmptyList
 			currentSong = null
 		}
 
@@ -231,7 +231,7 @@ class EnqueuedView(val state: RHMIState, val musicController: MusicController, v
 		}   // don't collapse the column if this window of data happens to not have coverart, so no else branch here
 
 		if (startIndex >= 0) {
-			listComponent.getModel()?.setValue(songsListAdapter, startIndex, numRows, songsListAdapter.height)
+			listComponent.getModel()?.value = songsListAdapter.getWindowList(startIndex, numRows)
 		}
 	}
 

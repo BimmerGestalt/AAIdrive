@@ -59,7 +59,6 @@ class RHMIApplicationEtchBackground(val remoteServer: RemoteBMWRemotingServer, v
 		}
 	}
 
-	@Throws(BMWRemoting.SecurityException::class, BMWRemoting.IllegalArgumentException::class, BMWRemoting.ServiceException::class)
 	override fun setModel(modelId: Int, value: Any?) {
 		if (value is Int || value is BMWRemoting.RHMIResourceIdentifier) {
 			modelData[modelId] = value
@@ -86,7 +85,6 @@ class RHMIApplicationEtchBackground(val remoteServer: RemoteBMWRemotingServer, v
 	}
 	override fun getModel(modelId: Int): Any? = modelData[modelId]
 
-	@Throws(BMWRemoting.SecurityException::class, BMWRemoting.IllegalArgumentException::class, BMWRemoting.ServiceException::class)
 	override fun setProperty(componentId: Int, propertyId: Int, value: Any?) {
 		propertyData.getOrPut(componentId){HashMap()}[propertyId] = value
 		if (ignoreUpdates) return
@@ -99,7 +97,6 @@ class RHMIApplicationEtchBackground(val remoteServer: RemoteBMWRemotingServer, v
 	}
 	override fun getProperty(componentId: Int, propertyId: Int): Any? = propertyData[componentId]?.get(propertyId)
 
-	@Throws(BMWRemoting.SecurityException::class, BMWRemoting.IllegalArgumentException::class, BMWRemoting.ServiceException::class)
 	override fun triggerHMIEvent(eventId: Int, args: Map<Any, Any?>) {
 		fence()
 		val mailbox = synchronized(remoteServer) {
