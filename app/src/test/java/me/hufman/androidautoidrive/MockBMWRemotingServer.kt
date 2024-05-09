@@ -102,7 +102,7 @@ class MockBMWRemotingServer: BaseBMWRemotingServer() {
 		return 1
 	}
 
-	override fun cds_addPropertyChangedEventHandler(handle: Int?, propertyName: String?, ident: String?, intervalLimit: Int?) {
+	override fun cds_addPropertyChangedEventHandler(handle: Int?, ident: String?, propertyName: String?, intervalLimit: Int?) {
 		cdsSubscriptions.add(propertyName ?: "")
 	}
 

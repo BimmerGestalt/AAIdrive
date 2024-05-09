@@ -27,14 +27,14 @@ class CDSConnectionEtch(private val carConnection: BMWRemotingServer): CDSConnec
 
 	override fun subscribeProperty(property: CDSProperty, intervalLimit: Int) {
 		synchronized(carConnection) {
-			carConnection.cds_addPropertyChangedEventHandler(_cdsHandle, property.propertyName, property.ident.toString(), intervalLimit)
+			carConnection.cds_addPropertyChangedEventHandler(_cdsHandle, property.ident.toString(), property.propertyName, intervalLimit)
 			carConnection.cds_getPropertyAsync(_cdsHandle, property.ident.toString(), property.propertyName)
 		}
 	}
 
 	override fun unsubscribeProperty(property: CDSProperty) {
 		synchronized(carConnection) {
-			carConnection.cds_removePropertyChangedEventHandler(_cdsHandle, property.propertyName, property.ident.toString())
+			carConnection.cds_removePropertyChangedEventHandler(_cdsHandle, property.ident.toString(), property.propertyName)
 		}
 	}
 }

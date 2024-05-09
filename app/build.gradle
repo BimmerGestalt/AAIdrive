@@ -304,10 +304,10 @@ dependencies {
     androidTestImplementation 'org.mockito.kotlin:mockito-kotlin:4.1.0'
     androidTestImplementation 'com.github.tmurakami:dexopener:2.0.5'
     androidTestImplementation 'org.awaitility:awaitility-scala:3.1.5'
-    implementation 'io.bimmergestalt.idriveconnectkit:idriveconnectkit:etch_split-SNAPSHOT'
+    implementation 'io.bimmergestalt.idriveconnectkit:idriveconnectkit:0.7'
     implementation 'io.bimmergestalt:IDriveConnectKitAndroid:0.6'
-    testImplementation 'io.bimmergestalt.idriveconnectkit:idriveconnectkit:etch_split-SNAPSHOT'
-    androidTestImplementation 'io.bimmergestalt.idriveconnectkit:idriveconnectkit:etch_split-SNAPSHOT'
+    testImplementation 'io.bimmergestalt.idriveconnectkit:idriveconnectkit:0.7'
+    androidTestImplementation 'io.bimmergestalt.idriveconnectkit:idriveconnectkit:0.7'
     androidTestImplementation 'io.bimmergestalt:IDriveConnectKitAndroid:0.6'
     androidTestImplementation "org.bouncycastle:bcmail-jdk16:1.46"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
