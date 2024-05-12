@@ -13,6 +13,7 @@ import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.music.MusicAppDiscovery
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
+import java.io.IOException
 
 class MusicAppService: CarAppService() {
 	var carappMusic: MusicApp? = null
@@ -59,7 +60,7 @@ class MusicAppService: CarAppService() {
 						musicAppDiscovery,
 						musicController,
 						musicAppMode)
-			} catch (e: BMWRemoting.ServiceException) {
+			} catch (e: IOException) {
 				Log.w(TAG, "Failed to initialize ID5 music, falling back to ID4", e)
 			}
 		}

@@ -252,7 +252,7 @@ class BrowsePageView(val state: RHMIState,
 				// show Filter entry while loading, until we know the list is empty
 				actions.add(BrowseAction.FILTER)
 			}
-			actionsListComponent.getModel()?.setValue(actionsListModel, 0, actionsListModel.height, actionsListModel.height)
+			actionsListComponent.getModel()?.value = actionsListModel
 		}
 	}
 
@@ -289,7 +289,7 @@ class BrowsePageView(val state: RHMIState,
 	 */
 	private fun showList(startIndex: Int = 0, numRows: Int = 20) {
 		if (startIndex >= 0) {
-			musicListComponent.getModel()?.setValue(currentListModel, startIndex, numRows, currentListModel.height)
+			musicListComponent.getModel()?.value = currentListModel.getWindowList(startIndex, numRows)
 		}
 		musicListComponent.setEnabled(currentListModel != loadingList && currentListModel != emptyList)
 	}

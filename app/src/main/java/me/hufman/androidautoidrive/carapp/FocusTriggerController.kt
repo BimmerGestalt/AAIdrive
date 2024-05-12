@@ -4,6 +4,7 @@ import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
+import java.io.IOException
 
 class FocusTriggerController(val focusEvent: RHMIEvent.FocusEvent, val recreateCallback: () -> Unit) {
 	var hasFocusedState = false     // whether we have triggered an HMI FocusEvent in the car
@@ -15,7 +16,7 @@ class FocusTriggerController(val focusEvent: RHMIEvent.FocusEvent, val recreateC
 				0.toByte() to state.id
 			))
 			true
-		} catch (e: BMWRemoting.ServiceException) {
+		} catch (e: IOException) {
 			if (recreate) {
 				recreateCallback()
 				focusState(state, false)

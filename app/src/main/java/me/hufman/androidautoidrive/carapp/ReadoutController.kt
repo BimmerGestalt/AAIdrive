@@ -59,7 +59,7 @@ class ReadoutController(val name: String, val speechEvent: RHMIEvent.ActionEvent
 		val data = RHMIModel.RaListModel.RHMIListConcrete(2)
 		data.addRow(arrayOf(lines.joinToString(".\n"), name))
 		Log.d(TAG, "Starting readout from $name: ${data[0][0]}")
-		speechList.setValue(data, 0, 1, 1)
+		speechList.value = data
 		speechEvent.triggerEvent()
 	}
 
@@ -70,7 +70,7 @@ class ReadoutController(val name: String, val speechEvent: RHMIEvent.ActionEvent
 		Log.d(TAG, "Cancelling $name readout")
 		val data = RHMIModel.RaListModel.RHMIListConcrete(2)
 		data.addRow(arrayOf("STR_READOUT_STOP", name))
-		commandList.setValue(data, 0, 1, 1)
+		commandList.value = data
 		commandEvent.triggerEvent()
 	}
 }

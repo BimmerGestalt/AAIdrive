@@ -65,7 +65,7 @@ class FullImageView(val state: RHMIState, val title: String, val config: FullIma
 		(0..2).forEach { scrollList.addRow(arrayOf("+", "", "")) }  // zoom in
 		scrollList.addRow(arrayOf(title, "", "")) // neutral
 		(4..6).forEach { scrollList.addRow(arrayOf("-", "", "")) }  // zoom out
-		inputList.getModel()?.asRaListModel()?.setValue(scrollList, 0, scrollList.height, scrollList.height)
+		inputList.getModel()?.asRaListModel()?.value = scrollList
 
 		inputList.getSelectAction()?.asRAAction()?.rhmiActionCallback = RHMIActionListCallback { listIndex ->
 			// decide which way to scroll

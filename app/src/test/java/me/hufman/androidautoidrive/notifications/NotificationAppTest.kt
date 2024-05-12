@@ -23,6 +23,7 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.deserialization.loadFromXML
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.ReadoutController
@@ -189,10 +190,12 @@ class NotificationAppTest {
 		// test speedlock
 		run {
 			// parking gear
+			app.viewDetails.state.setProperty(36, "")   // clear the idempotent cache
 			mockServer.properties[app.viewDetails.state.id]?.remove(36)
 			app.carappListener.cds_onPropertyChangedEvent(-1, "37", "driving.gear", """{"gear":3}""")
 			assertEquals(false, mockServer.properties[app.viewDetails.state.id]?.get(36))
 			// parking brake
+			app.viewDetails.state.setProperty(36, "")   // clear the idempotent cache
 			mockServer.properties[app.viewDetails.state.id]?.remove(36)
 			app.carappListener.cds_onPropertyChangedEvent(-1, "40", "driving.parkingBrake", """{"parkingBrake":2}""")
 			assertEquals(false, mockServer.properties[app.viewDetails.state.id]?.get(36))

@@ -7,6 +7,7 @@ import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.job
+import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
 const val TAG = "CarThread"
@@ -40,12 +41,13 @@ class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 		} catch (e: org.apache.etch.util.TimeoutException) {
 			// phone was unplugged during an RPC command
 			Log.i(TAG, "Shutting down thread $name due to Etch TimeoutException")
-		} catch (e: BMWRemoting.ServiceException) {
+		} catch (e: IOException) {
+			val bmwException = e.cause as? BMWRemoting.ServiceException
 			if (!iDriveConnectionObserver.isConnected) {
 				// the car is no longer connected
 				// so this is most likely a crash caused by the closed connection
 				Log.i(TAG, "Shutting down thread $name due to disconnection")
-			} else if (e.errorMsg?.contains("RHMI application was already connected") == true) {
+			} else if (bmwException?.errorMsg?.contains("RHMI application was already connected") == true) {
 				// sometimes, the BCL tunnel blips during the start of the connection
 				// and so previously-initialized apps are still "in the car" though the tunnel has since restarted
 				// and so the car complains that the app is already connected
@@ -83,15 +85,19 @@ var CarThreadExceptionHandler = CoroutineExceptionHandler { c: CoroutineContext,
 			// posted to a dead handler
 			Log.i(TAG, "Shutting down coroutine thread $c due to IllegalStateException: $e", e)
 		}
-		is RuntimeException -> {
-			// phone was unplugged during an RPC command
-			Log.i(TAG, "Shutting down coroutine thread $c due to RuntimeException: $e", e)
-		}
 		is org.apache.etch.util.TimeoutException -> {
 			// phone was unplugged during an RPC command
 			Log.i(TAG, "Shutting down coroutine thread $c due to Etch TimeoutException")
 		}
 		is BMWRemoting.ServiceException -> {
+			// probably phone was unplugged during an RPC command
+			Log.i(TAG, "Shutting down coroutine thread $c due to ServiceException: $e", e)
+		}
+		is RuntimeException -> {
+			// phone was unplugged during an RPC command
+			Log.i(TAG, "Shutting down coroutine thread $c due to RuntimeException: $e", e)
+		}
+		is IOException -> {
 			// probably phone was unplugged during an RPC command
 			Log.i(TAG, "Shutting down coroutine thread $c due to ServiceException: $e", e)
 		}

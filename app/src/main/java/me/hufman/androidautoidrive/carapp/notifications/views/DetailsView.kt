@@ -116,9 +116,9 @@ class DetailsView(val state: RHMIState, val phoneAppResources: PhoneAppResources
 
 	fun hide() {
 		val emptyList = RHMIModel.RaListModel.RHMIListConcrete(1)
-		iconWidget.getModel()?.setValue(emptyList, 0, 0, 0)
-		titleWidget.getModel()?.setValue(emptyList, 0, 0, 0)
-		listWidget.getModel()?.setValue(emptyList, 0, 0, 0)
+		iconWidget.getModel()?.value = emptyList
+		titleWidget.getModel()?.value = emptyList
+		listWidget.getModel()?.value = emptyList
 		imageWidget.setVisible(false)
 	}
 

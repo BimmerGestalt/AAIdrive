@@ -22,6 +22,7 @@ import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.deserialization.loadFromXML
 import me.hufman.androidautoidrive.carapp.L
 import org.awaitility.Awaitility.await
 import org.junit.Assert.*
@@ -2789,7 +2790,7 @@ class MusicAppTest {
 	@Test
 	fun testSearch_SearchHistory_UsingSearchHistoryQuery() {
 		val mockServer = MockBMWRemotingServer()
-		val app = RHMIApplicationEtch(mockServer, 1)
+		val app = RHMIApplicationIdempotent(RHMIApplicationEtch(mockServer, 1))
 		app.loadFromXML(carAppResources.getUiDescription()?.readBytes() as ByteArray)
 		val playbackView = PlaybackView(app.states[IDs.PLAYBACK_STATE]!!, musicController, mapOf(), phoneAppResources, graphicsHelpers, MusicImageIDsMultimedia, mock())
 		val browseView = BrowseView(listOf(app.states[IDs.BROWSE1_STATE]!!, app.states[IDs.BROWSE2_STATE]!!, app.states[IDs.BROWSE3_STATE]!!), musicController, MusicImageIDsMultimedia, graphicsHelpers)

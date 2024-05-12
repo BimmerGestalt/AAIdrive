@@ -5,8 +5,11 @@ import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModelLive
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import io.bimmergestalt.idriveconnectkit.rhmi.mocking.RHMIApplicationMock
+import io.bimmergestalt.idriveconnectkit.rhmi.mocking.RHMIComponentMock
+import io.bimmergestalt.idriveconnectkit.rhmi.mocking.RHMIStateMock
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -38,8 +41,8 @@ class PlaceSearchViewTest {
 	}
 
 	val mockApp = RHMIApplicationMock()
-	val inputState = RHMIState.MockState(mockApp, 5).asPlainState()
-	val inputComponent = RHMIComponent.MockComponent(mockApp, 10).asInput().also {
+	val inputState = RHMIStateMock(mockApp, 5).asPlainState()
+	val inputComponent = RHMIComponentMock(mockApp, 10).asInput().also {
 		it.action = 15
 		it.suggestAction = 16
 		it.resultAction = 17
@@ -52,7 +55,7 @@ class PlaceSearchViewTest {
 		mockApp.actions[16] = RHMIAction.HMIAction(mockApp, 16).apply {
 			targetModel = 20
 		}
-		mockApp.models[20] = RHMIModel.RaIntModel(mockApp, 20)
+		mockApp.models[20] = RHMIModelLive.RaIntModel(mockApp, 20)
 	}
 
 	@Test

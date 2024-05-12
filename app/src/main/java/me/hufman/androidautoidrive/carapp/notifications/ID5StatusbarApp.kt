@@ -5,11 +5,12 @@ import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
 import io.bimmergestalt.idriveconnectkit.IDriveConnection
-import io.bimmergestalt.idriveconnectkit.Utils.rhmi_setResourceCached
+import io.bimmergestalt.idriveconnectkit.RHMIUtils.rhmi_setResourceCached
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.deserialization.loadFromXML
 import me.hufman.androidautoidrive.CarAppWidgetAssetResources
 import me.hufman.androidautoidrive.carapp.FocusTriggerController
 import me.hufman.androidautoidrive.carapp.L
@@ -127,7 +128,7 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 		list.setVisible(true)
 		val data = RHMIModel.RaListModel.RHMIListConcrete(1)
 		data.addRow(arrayOf(L.NOTIFICATION_CENTER_APP + "\n"))
-		list.getModel()?.setValue(data, 0, 1, 1)
+		list.getModel()?.value = data
 
 		notificationEvent.getActionId()?.asRAAction()?.rhmiActionCallback = statusbarController
 		popupView.onClicked = {

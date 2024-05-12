@@ -42,7 +42,7 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 			onOk()
 		}
 		inputComponent.getResultModel()?.asRaDataModel()?.value = ""
-		inputComponent.getSuggestModel()?.setValue(RHMIModel.RaListModel.RHMIListConcrete(1),0,0, 0)
+		inputComponent.getSuggestModel()?.value = RHMIModel.RaListModel.RHMIListConcrete(1)
 	}
 
 	/**
@@ -60,7 +60,7 @@ abstract class InputState<T:Any>(val state: RHMIState) {
 		val outputListModel = inputComponent.getSuggestModel() ?: return
 		val outputList = RHMIModel.RaListModel.RHMIListConcrete(1)
 		newSuggestions.forEach { outputList.addRow(arrayOf(convertRow(it))) }
-		outputListModel.setValue(outputList, 0, outputList.height, outputList.height)
+		outputListModel.value = outputList
 	}
 
 	/**

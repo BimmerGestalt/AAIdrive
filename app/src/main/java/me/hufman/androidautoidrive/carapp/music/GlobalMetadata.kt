@@ -8,6 +8,7 @@ import me.hufman.androidautoidrive.music.MusicAction
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.music.MusicController
 import me.hufman.androidautoidrive.music.MusicMetadata
+import java.io.IOException
 import kotlin.math.max
 import kotlin.math.min
 
@@ -132,8 +133,8 @@ class GlobalMetadata(app: RHMIApplication, var controller: MusicController) {
 
 		try {
 			instrumentCluster.getUseCaseModel()?.asRaDataModel()?.value = "EntICPlaylist"
-			instrumentCluster.getPlaylistModel()?.asRaListModel()?.setValue(adapter, 0, adapter.height, adapter.height)
-		} catch (e: BMWRemoting.ServiceException) {
+			instrumentCluster.getPlaylistModel()?.asRaListModel()?.value = adapter
+		} catch (e: IOException) {
 			// This playlist model call has been observed to crash, for some reason
 		}
 	}

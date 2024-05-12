@@ -5,6 +5,8 @@ import org.mockito.kotlin.*
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import io.bimmergestalt.idriveconnectkit.rhmi.mocking.RHMIApplicationMock
+import io.bimmergestalt.idriveconnectkit.rhmi.mocking.RHMIComponentMock
+import io.bimmergestalt.idriveconnectkit.rhmi.mocking.RHMIStateMock
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.carapp.FullImageView
@@ -21,22 +23,22 @@ import org.junit.Test
 
 class SearchResultsViewTest {
 	val mockApp = RHMIApplicationMock()
-	val searchResultsState = RHMIState.MockState(mockApp, 5).asPlainState().also {
+	val searchResultsState = RHMIStateMock(mockApp, 5).asPlainState().also {
 		it.textModel = 20
-		mockApp.models[20] = RHMIModel.RaDataModel(mockApp, 20)
+		mockApp.models[20] = RHMIModelLive.RaDataModel(mockApp, 20)
 	}
-	val searchResultsComponent = RHMIComponent.MockComponent(mockApp, 15).asList().also {
+	val searchResultsComponent = RHMIComponentMock(mockApp, 15).asList().also {
 		it.model = 25
 		it.action = 26
 
 		searchResultsState.componentsList.add(it)
 		mockApp.states[5] = searchResultsState
-		mockApp.models[25] = RHMIModel.RaListModel(mockApp, 25)
+		mockApp.models[25] = RHMIModelLive.RaListModel(mockApp, 25)
 		mockApp.actions[26] = RHMIAction.CombinedAction(mockApp, 26,
 			RHMIAction.RAAction(mockApp, 27),
 			RHMIAction.HMIAction(mockApp, 28).apply {
 				targetModel = 29
-				mockApp.models[29] = RHMIModel.RaIntModel(mockApp, 29)
+				mockApp.models[29] = RHMIModelLive.RaIntModel(mockApp, 29)
 			}
 		)
 	}

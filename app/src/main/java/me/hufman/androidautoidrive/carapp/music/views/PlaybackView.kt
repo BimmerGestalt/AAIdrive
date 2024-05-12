@@ -7,6 +7,7 @@ import me.hufman.androidautoidrive.PhoneAppResources
 import me.hufman.androidautoidrive.UnicodeCleaner
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.carapp.RHMIActionAbort
+import me.hufman.androidautoidrive.carapp.RHMIApplicationSwappable
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterData
 import me.hufman.androidautoidrive.carapp.RHMIModelMultiSetterInt
 import me.hufman.androidautoidrive.carapp.RHMIUtils.findAdjacentComponent
@@ -21,6 +22,7 @@ import me.hufman.androidautoidrive.music.*
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import me.hufman.androidautoidrive.utils.TimeUtils.formatTime
 import me.hufman.androidautoidrive.utils.Utils
+import java.io.IOException
 
 class PlaybackView(val state: RHMIState, val controller: MusicController, val carAppImages: Map<String, ByteArray>, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val musicImageIDs: MusicImageIDs, val musicAppMode: MusicAppMode) {
 	companion object {
@@ -109,22 +111,23 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			appLogoModel = state.componentsList.filterIsInstance<RHMIComponent.Image>().first {
 				// The one single image which is visible in both wide and small screen modes
 				val property = it.properties[RHMIProperty.PropertyId.POSITION_X.id]
-				val smallPosition = (property as? RHMIProperty.LayoutBag)?.get(1)
-				val widePosition = (property as? RHMIProperty.LayoutBag)?.get(0)
+				val smallPosition = property?.getForLayout(1)
+				val widePosition = property?.getForLayout(0)
 				(smallPosition is Int && smallPosition < 1900) &&
-				(widePosition is Int && widePosition < 1900)
+				(widePosition is Int && widePosition < 1900) &&
+				it.getModel() is RHMIModel.RaImageModel
 			}.getModel()?.asRaImageModel()!!
 
 			// group the components into which widescreen state they are visible in
 			// the layout hides the components by setting their X to 2000
 			val smallComponents = state.componentsList.filter {
 				val property = it.properties[RHMIProperty.PropertyId.POSITION_X.id]
-				val smallPosition = (property as? RHMIProperty.LayoutBag)?.get(1)
+				val smallPosition = property?.getForLayout(1)
 				smallPosition is Int && smallPosition < 1900
 			}
 			val wideComponents = state.componentsList.filter {
 				val property = it.properties[RHMIProperty.PropertyId.POSITION_X.id]
-				val widePosition = (property as? RHMIProperty.LayoutBag)?.get(0)
+				val widePosition = property?.getForLayout(0)
 				widePosition is Int && widePosition < 1900
 			}
 
@@ -273,7 +276,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			// the book icon
 			try {
 				buttons[3].getImageModel()?.asImageIdModel()?.imageId = 0
-			} catch (e: BMWRemoting.ServiceException) {
+			} catch (e: IOException) {
 				buttons[3].setVisible(false)
 			}
 			buttons[3].setSelectable(false)
@@ -334,7 +337,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		if (!initialized && initializationDeferredTime < System.currentTimeMillis()) {
 			try {
 				initWidgetsLater()
-			} catch (e: BMWRemoting.ServiceException) {
+			} catch (e: IOException) {
 				// something went wrong during background initialization
 				// but don't crash, instead wait to initialize on first view
 			}
@@ -346,7 +349,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 					displayedConnected != controller.isConnected()) {
 				try {
 					redrawSong()
-				} catch (e: BMWRemoting.ServiceException) {
+				} catch (e: IOException) {
 					// something went wrong during background update
 					// sometimes seen when updating the AudioHmiState Playlist model
 					// but don't crash, instead continue on and try to redraw again on next view
@@ -359,7 +362,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			}
 			try {
 				redrawPosition()
-			} catch (e: BMWRemoting.ServiceException) {
+			} catch (e: IOException) {
 				// something went wrong during background update
 				// but don't crash about it
 			}
@@ -397,6 +400,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 		val trackText = trackTextScroller.getText()
 		redrawAudiostatePlaylist(trackText)
 		trackModel.value = trackText
+		println("Setting track to $trackText")
 	}
 
 	private fun redrawApp() {
@@ -466,7 +470,7 @@ class PlaybackView(val state: RHMIState, val controller: MusicController, val ca
 			playlist.addRow(PlaylistItem(false, skipBackEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_BACK), L.MUSIC_SKIP_PREVIOUS))
 			playlist.addRow(PlaylistItem(isBuffering, true, grayscaleNoteIcon, title))
 			playlist.addRow(PlaylistItem(false, skipNextEnabled, BMWRemoting.RHMIResourceIdentifier(BMWRemoting.RHMIResourceType.IMAGEID, musicImageIDs.SKIP_NEXT), L.MUSIC_SKIP_NEXT))
-			playlistModel?.asRaListModel()?.setValue(playlist, 0, 3, 3)
+			playlistModel?.asRaListModel()?.value = playlist
 		}
 	}
 

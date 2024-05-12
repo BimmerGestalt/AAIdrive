@@ -70,7 +70,7 @@ class CustomActionsView(val state: RHMIState, val graphicsHelpers: GraphicsHelpe
 			if (actionList != newActions) {
 				actionList.clear()
 				actionList.addAll(newActions)
-				listComponent.getModel()?.setValue(listAdapter, 0, listAdapter.height, listAdapter.height)
+				listComponent.getModel()?.value = listAdapter
 			}
 		}
 	}
