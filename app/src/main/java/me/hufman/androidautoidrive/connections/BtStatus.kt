@@ -11,6 +11,7 @@ import android.content.IntentFilter
 import android.os.ParcelUuid
 import android.util.Log
 import me.hufman.androidautoidrive.utils.getParcelableExtraCompat
+import androidx.core.content.ContextCompat
 import java.util.*
 
 val BluetoothDevice.safeName: String?
@@ -141,7 +142,7 @@ class BtStatus(val context: Context, val callback: () -> Unit) {
 			addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
 			addAction(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED)
 		}
-		context.registerReceiver(bluetoothListener, btFilter)
+		ContextCompat.registerReceiver(context, bluetoothListener, btFilter, ContextCompat.RECEIVER_NOT_EXPORTED)
 		subscribed = true
 	}
 

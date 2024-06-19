@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED
 import me.hufman.androidautoidrive.maps.LatLong
 import me.hufman.androidautoidrive.utils.getSerializableExtraCompat
 
@@ -84,7 +86,7 @@ class MapsInteractionControllerListener(val context: Context, val controller: Ma
 	private val interactionListener = InteractionListener()
 
 	fun onCreate() {
-		context.registerReceiver(interactionListener, IntentFilter(INTENT_INTERACTION))
+		ContextCompat.registerReceiver(context, interactionListener, IntentFilter(INTENT_INTERACTION), RECEIVER_NOT_EXPORTED)
 	}
 
 	inner class InteractionListener: BroadcastReceiver() {

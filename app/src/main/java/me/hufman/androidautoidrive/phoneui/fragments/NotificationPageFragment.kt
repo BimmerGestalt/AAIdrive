@@ -53,7 +53,7 @@ class NotificationPageFragment: Fragment() {
 			if (RemoteInput.getResultsFromIntent(intent) != null) {
 				val reply = RemoteInput.getResultsFromIntent(intent)
 				Log.i(TAG, "Received reply")
-				Toast.makeText(context, "Reply: ${reply.getCharSequence("reply")}", Toast.LENGTH_SHORT).show()
+				Toast.makeText(context, "Reply: ${reply?.getCharSequence("reply")}", Toast.LENGTH_SHORT).show()
 
 				// seems to not work, oh well
 				val manager = NotificationManagerCompat.from(context)

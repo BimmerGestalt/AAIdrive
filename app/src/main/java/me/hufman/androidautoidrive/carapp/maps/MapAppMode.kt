@@ -54,7 +54,7 @@ class MapAppMode(val fullDimensions: RHMIDimensions,
 		// whether the custom map is currently navigating somewhere
 		private var currentNavDestination: LatLong? = null
 			set(value) {
-				currentNavDestinationObservable.postValue(value)
+				value?.let { currentNavDestinationObservable.postValue(it) }
 				field = value
 			}
 		private val currentNavDestinationObservable = MutableLiveData<LatLong?>()

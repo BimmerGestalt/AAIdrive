@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import org.mockito.kotlin.*
 import org.junit.Test
+import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.ArgumentMatchers.anyString
 
 class CarNotificationControllerTest  {
 	val sentBroadcast = argumentCaptor<Intent>()
@@ -20,7 +22,7 @@ class CarNotificationControllerTest  {
 	@Test
 	fun testRegister() {
 		intentReceiver.register(context, mock())
-		verify(context).registerReceiver(any(), argThat {hasAction(CarNotificationControllerIntent.INTENT_INTERACTION)})
+		verify(context).registerReceiver(any(), argThat {hasAction(CarNotificationControllerIntent.INTENT_INTERACTION)}, anyString(), eq(null))
 	}
 
 	@Test

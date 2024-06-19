@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Handler
 import android.util.Log
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED
 
 interface NotificationUpdaterController {
 	/** Notify that the list has changed */
@@ -38,8 +40,8 @@ class NotificationUpdaterControllerIntent(val context: Context): NotificationUpd
 
 	class Receiver(private val receiver: NotificationUpdaterController) {
 		fun register(context: Context, broadcastReceiver: BroadcastReceiver, handler: Handler?) {
-			context.registerReceiver(broadcastReceiver, IntentFilter(INTENT_UPDATE_NOTIFICATIONS), null, handler)
-			context.registerReceiver(broadcastReceiver, IntentFilter(INTENT_NEW_NOTIFICATION), null, handler)
+			ContextCompat.registerReceiver(context, broadcastReceiver, IntentFilter(INTENT_UPDATE_NOTIFICATIONS), null, handler, RECEIVER_NOT_EXPORTED)
+			ContextCompat.registerReceiver(context, broadcastReceiver, IntentFilter(INTENT_NEW_NOTIFICATION), null, handler, RECEIVER_NOT_EXPORTED)
 		}
 
 		fun onReceive(intent: Intent) {

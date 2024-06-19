@@ -14,6 +14,7 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
@@ -104,8 +105,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		// car app listeners
 		Log.i(TAG, "Registering CarNotificationInteraction listeners")
 		carNotificationReceiver.register(this, broadcastReceiver)
-		this.registerReceiver(broadcastReceiver, IntentFilter(INTENT_STOP_LISTENER))
-		this.registerReceiver(broadcastReceiver, IntentFilter(INTENT_REQUEST_DATA))
+		ContextCompat.registerReceiver(this, broadcastReceiver, IntentFilter(INTENT_STOP_LISTENER), RECEIVER_NOT_EXPORTED)
+		ContextCompat.registerReceiver(this, broadcastReceiver, IntentFilter(INTENT_REQUEST_DATA), RECEIVER_NOT_EXPORTED)
 
 		// automatically shutdown if the car is not connected
 		// but only on phones if we can programmatically start again

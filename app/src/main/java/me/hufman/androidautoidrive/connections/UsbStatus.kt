@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.hardware.usb.UsbManager
 import android.util.Log
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED
 
 class UsbStatus(val context: Context, val callback: () -> Unit) {
 
@@ -45,9 +47,9 @@ class UsbStatus(val context: Context, val callback: () -> Unit) {
 
 		fun subscribe(manager: UsbManager) {
 			this.manager = manager
-			context.registerReceiver(this, IntentFilter(UsbManager.ACTION_USB_ACCESSORY_ATTACHED))
-			context.registerReceiver(this, IntentFilter(UsbManager.ACTION_USB_ACCESSORY_DETACHED))
-			context.registerReceiver(this, IntentFilter(ACTION_USB_STATE))
+			ContextCompat.registerReceiver(context, this, IntentFilter(UsbManager.ACTION_USB_ACCESSORY_ATTACHED), RECEIVER_NOT_EXPORTED)
+			ContextCompat.registerReceiver(context, this, IntentFilter(UsbManager.ACTION_USB_ACCESSORY_DETACHED), RECEIVER_NOT_EXPORTED)
+			ContextCompat.registerReceiver(context, this, IntentFilter(ACTION_USB_STATE), RECEIVER_NOT_EXPORTED)
 		}
 
 		fun unsubscribe() {

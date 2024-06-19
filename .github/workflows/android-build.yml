@@ -111,7 +111,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 28
-          emulator-build: 6110076
+          emulator-build: 7425822
           target: google_apis
           script: adb install external/BMW_Connected_v3.1.1.3078_apkpure.com.apk
       - name: Run instrumented tests
@@ -119,9 +119,9 @@ jobs:
         with:
           force-avd-creation: false
           api-level: 28
-          emulator-build: 6110076
+          emulator-build: 7425822
           target: google_apis
-          script: ./gradlew connected${{ matrix.map }}NonalyticsFullDebugAndroidTestCoverage --stacktrace
+          script: adb logcat -c && ./gradlew connected${{ matrix.map }}NonalyticsFullDebugAndroidTestCoverage --stacktrace || (adb logcat -d && exit 1)
       - name: Upload CodeCov report
         if: matrix.map == 'Nomap' && github.event.pull_request.title != 'New Crowdin updates' && github.event.ref != 'refs/heads/l10n_main'   # don't upload Gmap test results, which don't run during PRs
         uses: codecov/codecov-action@v4
@@ -138,7 +138,7 @@ jobs:
         with:
           force-avd-creation: false
           api-level: 28
-          emulator-build: 6110076
+          emulator-build: 7425822
           target: google_apis
           script: adb logcat -c && ./gradlew install${{ matrix.map }}NonalyticsFullDebug --stacktrace && ./gradlew install${{ matrix.map }}NonalyticsFullDebugAndroidTest --stacktrace && ( adb shell am instrument -w me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner || adb shell am instrument -w me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner ) && ./gradlew fetchScreenshots --stacktrace || adb logcat -d
       - name: Package screenshots

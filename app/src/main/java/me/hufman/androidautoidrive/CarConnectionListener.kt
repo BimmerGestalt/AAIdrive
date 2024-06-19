@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionReceiver
 
 /**
@@ -46,8 +48,8 @@ class CarConnectionListener: BroadcastReceiver() {
 	}
 
 	fun register(context: Context) {
-		context.registerReceiver(this, IntentFilter(IDriveConnectionReceiver.INTENT_ATTACHED))
-		context.registerReceiver(this, IntentFilter(IDriveConnectionReceiver.INTENT_DETACHED))
+		ContextCompat.registerReceiver(context, this, IntentFilter(IDriveConnectionReceiver.INTENT_ATTACHED), RECEIVER_NOT_EXPORTED)
+		ContextCompat.registerReceiver(context, this, IntentFilter(IDriveConnectionReceiver.INTENT_DETACHED), RECEIVER_NOT_EXPORTED)
 	}
 	fun unregister(context: Context) {
 		context.unregisterReceiver(this)

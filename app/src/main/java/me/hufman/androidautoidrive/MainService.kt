@@ -364,8 +364,11 @@ class MainService: Service() {
 		synchronized(this) {
 			try {
 				if (!moduleServiceBindings.containsKey(clsName)) {
+					val bindFlags = if (Build.VERSION.SDK_INT >= 34) {
+						Context.BIND_AUTO_CREATE or Context.BIND_ALLOW_ACTIVITY_STARTS
+					} else { Context.BIND_AUTO_CREATE }
 					val serviceConnection = ModuleServiceConnection(clsName)
-					bindService(connectionIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+					bindService(connectionIntent, serviceConnection, bindFlags)
 					moduleServiceBindings[clsName] = serviceConnection
 					moduleServiceTimes[clsName] = System.currentTimeMillis()
 				} else {

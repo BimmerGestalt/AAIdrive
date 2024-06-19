@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import org.mockito.kotlin.*
 import org.junit.Test
+import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.ArgumentMatchers.anyString
 
 class NotificationUpdaterTest {
 	val sentBroadcast = argumentCaptor<Intent>()
@@ -19,8 +21,8 @@ class NotificationUpdaterTest {
 	@Test
 	fun testRegister() {
 		listener.register(context, mock(), null)
-		verify(context).registerReceiver(any(), argThat {hasAction(NotificationUpdaterControllerIntent.INTENT_UPDATE_NOTIFICATIONS)}, eq(null), eq(null))
-		verify(context).registerReceiver(any(), argThat {hasAction(NotificationUpdaterControllerIntent.INTENT_NEW_NOTIFICATION)}, eq(null), eq(null))
+		verify(context).registerReceiver(any(), argThat {hasAction(NotificationUpdaterControllerIntent.INTENT_UPDATE_NOTIFICATIONS)}, anyString(), eq(null))
+		verify(context).registerReceiver(any(), argThat {hasAction(NotificationUpdaterControllerIntent.INTENT_NEW_NOTIFICATION)}, anyString(), eq(null))
 	}
 
 	@Test
