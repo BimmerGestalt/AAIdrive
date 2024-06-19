@@ -242,7 +242,7 @@ class GenericMusicAppController(val context: Context, val mediaController: Media
 		} } ?: LinkedList()
 	}
 
-	override suspend fun search(query: String): List<MusicMetadata>? = remoteData {
+	override suspend fun search(query: String): List<MusicMetadata>? = remoteData<List<MusicMetadata>?> {
 		val app = musicBrowser
 		return app?.search(query)?.map {
 			MusicMetadata.fromMediaItem(it)

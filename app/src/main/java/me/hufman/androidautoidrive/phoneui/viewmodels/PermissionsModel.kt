@@ -144,7 +144,7 @@ class PermissionsModel(private val notificationListenerState: LiveData<Boolean>,
 		notificationListenerState.removeObserver(this)
 	}
 
-	override fun onChanged(t: Boolean) {
+	override fun onChanged(value: Boolean) {
 		// an observed LiveData has updated
 		update()
 	}

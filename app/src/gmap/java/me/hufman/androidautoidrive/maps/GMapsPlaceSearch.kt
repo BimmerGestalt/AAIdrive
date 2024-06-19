@@ -94,7 +94,7 @@ class GMapsPlaceSearch(private val placesClient: PlacesClient, private val locat
 				result.complete(null)
 				return@addOnSuccessListener
 			}
-			val mapResult = MapResult(resultId, place.name.toString(), place.address.toString(),
+			val mapResult = MapResult(resultId, place.name ?: "", place.address ?: "",
 					LatLong(latLng.latitude, latLng.longitude))
 			result.complete(mapResult)
 		}.addOnFailureListener {

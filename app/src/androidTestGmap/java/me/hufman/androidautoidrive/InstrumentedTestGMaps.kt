@@ -48,6 +48,7 @@ class InstrumentedTestGMaps {
 		val search = GMapsPlaceSearch.getInstance(appContext, locationProvider)
 		runBlocking {
 			val results = search.searchLocationsAsync("test", LatLng(37.333, -122.416)).await()
+			assertNotNull(results)
 
 			val info = search.resultInformationAsync("ChIJDflB7BWuEmsRYPbx-Wh9AQ8").await()
 			assertNotNull(info)

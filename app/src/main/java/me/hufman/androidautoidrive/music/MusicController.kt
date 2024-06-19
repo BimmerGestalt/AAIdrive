@@ -264,7 +264,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	}
 
 	fun isShuffling(): Boolean {
-		return withController { controller ->
+		return withController<Boolean> { controller ->
 			return controller.isShuffling()
 		} ?: false
 	}
@@ -274,7 +274,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	}
 
 	fun getRepeatMode(): RepeatMode {
-		return withController { controller ->
+		return withController<RepeatMode> { controller ->
 			return controller.getRepeatMode()
 		} ?: RepeatMode.OFF
 	}
@@ -304,13 +304,13 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	/* Current state */
 	/** Gets the current queue */
 	fun getQueue(): QueueMetadata? {
-		return withController { controller ->
+		return withController<QueueMetadata?> { controller ->
 			return controller.getQueue()
 		}
 	}
 	/** Gets the current song's title and other metadata */
 	fun getMetadata(): MusicMetadata? {
-		return withController { controller ->
+		return withController<MusicMetadata?> { controller ->
 			return controller.getMetadata()
 		}
 	}
@@ -335,7 +335,7 @@ class MusicController(val context: Context, val handler: Handler): CoroutineScop
 	}
 
 	fun isSupportedAction(action: MusicAction): Boolean {
-		return withController { controller ->
+		return withController<Boolean> { controller ->
 			return controller.isSupportedAction(action) ||
 					controller.getCustomActions().any { it.providesAction == action }
 		} ?: false

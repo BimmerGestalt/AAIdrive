@@ -27,8 +27,9 @@ class GMapsProjection(val parentContext: Context, display: Display, val appSetti
 	var currentStyleId: Int? = null
 
 	val fullDimensions = display.run {
+		val small = Point()
 		val dimension = Point()
-		display.getSize(dimension)
+		display.getCurrentSizeRange(small, dimension)
 		SubsetRHMIDimensions(dimension.x, dimension.y)
 	}
 	val sidebarDimensions = SidebarRHMIDimensions(fullDimensions) {
