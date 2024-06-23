@@ -56,7 +56,7 @@ class WelcomeScreenshotTest {
 		}
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun firstStartPages() {
 		val expectedTabs = if (BuildConfig.FLAVOR_analytics == "nonalytics") {
 			5

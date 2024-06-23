@@ -42,7 +42,7 @@ class InstrumentedTestGMaps {
 		AppSettings.loadDefaultSettings()
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun testGmapSearch() {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 		val search = GMapsPlaceSearch.getInstance(appContext, locationProvider)
@@ -55,7 +55,7 @@ class InstrumentedTestGMaps {
 		}
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun testNavigation() {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 		val mapAppMode = MapAppMode.build(RHMIDimensions.create(emptyMap()), MutableAppSettingsReceiver(appContext), CDSDataProvider(), MusicAppMode.TRANSPORT_PORTS.BT)

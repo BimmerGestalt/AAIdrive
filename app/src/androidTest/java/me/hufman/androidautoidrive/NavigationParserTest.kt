@@ -24,12 +24,12 @@ class NavigationParserTest {
 		parser = NavigationParser(addressSearcher, redirector)
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun testParseUrl() {
 		Assert.assertNull(parser.parseUrl("smtp:lol"))
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun testParseGeo() {
 		val invalid = "geo:abc"
 		val incorrect = parser.parseUrl(invalid)
@@ -92,7 +92,7 @@ class NavigationParserTest {
 
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun testParsePlusCode() {
 		val addressResult = Address(Locale.ROOT).apply {
 			latitude = 37.7899375
@@ -122,7 +122,7 @@ class NavigationParserTest {
 		Assert.assertEquals(addressResult.toString(), googleShortOlc.toString())
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun testParseGoogle() {
 		val correctAnswer = Address(Locale.ROOT).apply {
 			latitude = 47.5951518
@@ -165,7 +165,7 @@ class NavigationParserTest {
 		Assert.assertEquals(correctAnswer.toString(), parser.parseUrl(nullQuery).toString())
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun testParseGoogleQueries() {
 		// without a valid address searcher
 		val emptyAddress = "http://maps.google.com/maps?q=1970+Naglee+Ave+San+Jose,+CA+95126&ie=UTF8"
@@ -211,7 +211,7 @@ class NavigationParserTest {
 		Assert.assertEquals(addressResult, parser.parseUrl(pathSearchQuery))
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun testGoogleRedirect() {
 		val correctAnswer = Address(Locale.ROOT).apply {
 			latitude = 47.5951518

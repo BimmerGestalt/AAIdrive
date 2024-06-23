@@ -87,7 +87,7 @@ class MainScreenshotTest {
 		onView(withId(R.id.pane_tiplist_expand)).perform(click())
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun homeScreenshot() {
 		Thread.sleep(1000)
 		onView(withId(R.id.drawer_layout)).check(matches(isOpen()))
@@ -97,7 +97,7 @@ class MainScreenshotTest {
 		onView(withId(R.id.drawer_layout)).check(matches(isClosed()))
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun homeMiniScreenshot() {
 		whenever(mockScenario.carInfo.capabilities) doReturn mapOf(
 				"hmi.type" to "MINI ID5",
@@ -115,7 +115,7 @@ class MainScreenshotTest {
 		onView(withId(R.id.drawer_layout)).check(matches(isClosed()))
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun disconnectedScreenshot() {
 		whenever(mockScenario.connectionDebugging.isBCLConnected) doReturn false
 		whenever(mockScenario.connectionDebugging.carBrand) doReturn null
@@ -133,7 +133,7 @@ class MainScreenshotTest {
 		screenshotTips("connection_tips")
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun connectionTab() {
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 			.navigateTo(
@@ -143,7 +143,7 @@ class MainScreenshotTest {
 		screenshot("connection")
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun assistantsTab() {
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 				.navigateTo(
@@ -153,7 +153,7 @@ class MainScreenshotTest {
 		screenshot("assistants")
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun calendarTab() {
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 				.navigateTo(
@@ -163,7 +163,7 @@ class MainScreenshotTest {
 		screenshot("calendar")
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun mapsTab() {
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 				.navigateTo(
@@ -173,7 +173,7 @@ class MainScreenshotTest {
 		screenshot("maps")
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun musicBmwTab() {
 		mockViewModels[TipsModel::class.java] = mockScenario.capabilitiesTipsModel
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
@@ -199,7 +199,7 @@ class MainScreenshotTest {
 		screenshot("music_expanded")
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun musicMiniTab() {
 		whenever(mockScenario.carInfo.capabilities) doReturn mapOf(
 				"hmi.type" to "MINI ID5",
@@ -219,7 +219,7 @@ class MainScreenshotTest {
 		screenshotTips("music_tips_mini")
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun navigationTab() {
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 				.navigateTo(
@@ -229,7 +229,7 @@ class MainScreenshotTest {
 		screenshot("navigation")
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun notificationsBmwTab() {
 		mockViewModels[TipsModel::class.java] = mockScenario.capabilitiesTipsModel
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
@@ -241,7 +241,7 @@ class MainScreenshotTest {
 
 		screenshotTips("notification_tips_bmw")
 	}
-	@Test
+	@Test(timeout=5000)
 	fun notificationsMiniTab() {
 		whenever(mockScenario.carInfo.capabilities) doReturn mapOf(
 				"hmi.type" to "MINI ID5",
@@ -261,7 +261,7 @@ class MainScreenshotTest {
 		screenshotTips("notification_tips_mini")
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun settingsTab() {
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 				.navigateTo(
@@ -271,7 +271,7 @@ class MainScreenshotTest {
 		screenshot("settings")
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun supportTab() {
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 				.navigateTo(
@@ -281,7 +281,7 @@ class MainScreenshotTest {
 		screenshot("support")
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun j29Connection() {
 		whenever(mockScenario.connectionDebugging.isJ29Installed) doReturn true
 		whenever(mockScenario.carInfo.capabilities) doReturn mapOf(

@@ -13,7 +13,7 @@ class InstrumentedTestNotificationEmoji {
 	}
 
 	/** Verifies that foreign letters don't get emoji parsed */
-	@Test
+	@Test(timeout=5000)
 	fun testEmojiForeign() {
 		run {
 			// danish
@@ -30,7 +30,7 @@ class InstrumentedTestNotificationEmoji {
 	}
 
 	/** Verifies that emoji get parsed */
-	@Test
+	@Test(timeout=5000)
 	fun testEmojiParse() {
 		run {
 			val correct = "I :cat2:!"

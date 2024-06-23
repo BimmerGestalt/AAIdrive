@@ -9,7 +9,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class CalendarTest {
-	@Test
+	@Test(timeout=5000)
 	@Ignore("Debugging")
 	fun testCalendar() {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext

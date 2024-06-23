@@ -29,7 +29,7 @@ import org.awaitility.Awaitility.await
 @RunWith(AndroidJUnit4::class)
 class InstrumentedTestNotificationApp {
 
-	@Test
+	@Test(timeout=5000)
 	fun testNotificationUpdate() {
 		/** Test that a new notification pokes the car */
 		// Context of the app under test.
@@ -54,7 +54,7 @@ class InstrumentedTestNotificationApp {
 		Log.i("Testing", "Finished the tests")
 	}
 
-	@Test
+	@Test(timeout=5000)
 	fun testNotificationControl() {
 		/** Test that a car button press pokes the phone */
 		// Context of the app under test.

@@ -24,7 +24,7 @@ class InstrumentedTestVirtualDisplay {
 
 	val frameListener = mock<ImageReader.OnImageAvailableListener> {  }
 
-	@Test
+	@Test(timeout=5000)
 	fun testLifecycle() {
 		/** Test that the VirtualDisplay can get created and destroyed */
 		// Context of the app under test.
