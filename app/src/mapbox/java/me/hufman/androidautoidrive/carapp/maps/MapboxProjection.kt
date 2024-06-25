@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Display
 import android.view.Gravity
+import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
@@ -46,6 +47,7 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 
 	val TAG = "MapboxProjection"
 	val map: MapView by lazy { findViewById(R.id.mapView) }
+	val mapWrapper: View by lazy { findViewById(R.id.mapViewWrapper) }
 	val iconAnnotations by lazy { map.annotations.createPointAnnotationManager() }
 	val lineAnnotations by lazy { map.annotations.createPolylineAnnotationManager() }
 	var mapListener: Runnable? = null
@@ -103,8 +105,8 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 	fun applySettings(settings: MapboxSettings) {
 		// the narrow-screen option centers the viewport to the middle of the display
 		// so update the map's margin to match
-		val margin = (fullDimensions.appWidth - sidebarDimensions.appWidth) / 2
-		map.setPadding(margin, fullDimensions.paddingTop, margin, 0)
+		val margin = if (settings.mapWidescreen) 0 else fullDimensions.appWidth - sidebarDimensions.appWidth
+		mapWrapper.setPadding(margin/2, fullDimensions.paddingTop, margin/2, 0)
 
 		map.getMapboxMap().loadStyle(style(settings.mapStyleUri) {
 			applyCommonSettings()
