@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data class="AssistantPermissionsBinding">
+        <variable
+            name="controller"
+            type="me.hufman.androidautoidrive.phoneui.controllers.PermissionsController" />
+        <variable
+            name="viewModel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.PermissionsModel" />
+    </data>
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:gravity="center_vertical"
+            android:visibility="@{viewModel.supportsFullScreenPermission}">
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:visibility="@{!viewModel.hasFullScreenPermission}"
+                android:onClick="@{() -> controller.promptFullscreen()}"
+                app:srcCompat="@android:drawable/checkbox_off_background" />
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:visibility="@{viewModel.hasFullScreenPermission}"
+                android:onClick="@{() -> controller.openSelfPermissions()}"
+                app:srcCompat="@android:drawable/checkbox_on_background" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="@string/lbl_assistant_fullscreen_permissions" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/lbl_grant"
+                android:textSize="12sp"
+                android:onClick="@{() -> controller.promptFullscreen()}"
+                android:visibility="@{!viewModel.hasFullScreenPermission}"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

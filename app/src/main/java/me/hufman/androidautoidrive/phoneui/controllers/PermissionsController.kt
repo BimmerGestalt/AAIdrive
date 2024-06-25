@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
@@ -20,6 +21,7 @@ class PermissionsController(val activity: Activity) {
 		const val REQUEST_LOCATION = 4000
 		const val REQUEST_BLUETOOTH = 50
 		const val REQUEST_POST_NOTIFICATIONS = 60
+		const val REQUEST_ASSISTANT = 70
 	}
 
 	private fun tryOpenActivity(intent: Intent): Boolean {
@@ -82,6 +84,13 @@ class PermissionsController(val activity: Activity) {
 		}
 	}
 
+	fun promptFullscreen() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+			ActivityCompat.requestPermissions(activity,
+				arrayOf(Manifest.permission.USE_FULL_SCREEN_INTENT),
+				REQUEST_ASSISTANT)
+		}
+	}
 
 	fun promptSms() {
 		ActivityCompat.requestPermissions(activity,

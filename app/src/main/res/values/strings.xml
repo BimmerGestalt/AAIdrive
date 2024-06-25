@@ -284,6 +284,7 @@
 
     <string name="lbl_assistant">Voice Assistant (Beta)</string>
     <string name="lbl_assistant_empty">None found</string>
+    <string name="lbl_assistant_fullscreen_permissions">Access to trigger the assistant with the screen off</string>
 
     <!-- car status -->
     <string name="lbl_carinfopage_disconnected">After your first connection, information about your car will be shown here</string>
