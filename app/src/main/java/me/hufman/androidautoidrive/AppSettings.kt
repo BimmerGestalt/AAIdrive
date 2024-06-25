@@ -207,7 +207,8 @@ class MutableAppSettingsReceiver(val context: Context, val handler: Handler? = n
 		val oldValue = this[key]
 		if (oldValue != value) {
 			AppSettings.saveSetting(context, key, value)
-			context.sendBroadcast(Intent(INTENT_SETTINGS_CHANGED))
+			context.sendBroadcast(Intent(INTENT_SETTINGS_CHANGED)
+					.setPackage(BuildConfig.APPLICATION_ID))
 		}
 	}
 }

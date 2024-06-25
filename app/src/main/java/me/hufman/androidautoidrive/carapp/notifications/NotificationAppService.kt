@@ -39,7 +39,9 @@ class NotificationAppService: CarAppService() {
 		// The service automatically loads all the data onStart if the car is connected
 		// but we also send a manual request if the service is already runnin
 		NotificationListenerServiceImpl.startService(applicationContext)
-		applicationContext.sendBroadcast(Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA))
+		val intent = Intent(NotificationListenerServiceImpl.INTENT_REQUEST_DATA)
+			.setPackage(packageName)
+		applicationContext.sendBroadcast(intent)
 
 		handler.post {
 			if (running) {

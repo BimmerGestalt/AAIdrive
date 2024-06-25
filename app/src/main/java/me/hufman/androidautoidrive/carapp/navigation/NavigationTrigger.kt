@@ -85,6 +85,7 @@ class NavigationTriggerCustomNav(val context: Context): NavigationTrigger {
 class NavigationTriggerSender(val context: Context): NavigationTrigger {
 	override fun triggerNavigation(destination: Address) {
 		val intent = Intent(NavigationTriggerReceiver.INTENT_NAVIGATION)
+				.setPackage(context.packageName)
 				.putExtra(NavigationTriggerReceiver.EXTRA_DESTINATION, destination)
 		context.sendBroadcast(intent)
 	}
