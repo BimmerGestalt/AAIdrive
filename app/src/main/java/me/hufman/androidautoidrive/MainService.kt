@@ -6,12 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.PermissionChecker
 import com.bmwgroup.connected.car.app.BrandType
 import io.bimmergestalt.idriveconnectkit.CDS
 import io.bimmergestalt.idriveconnectkit.android.CarAPIAppInfo
@@ -269,8 +271,27 @@ class MainService: Service() {
 				this.foregroundNotification?.extras?.getCharSequence(Notification.EXTRA_TEXT) !=
 				foregroundNotification.extras?.getCharSequence(Notification.EXTRA_TEXT)) {
 			Log.i(TAG, "Creating foreground notification")
-			startForeground(ONGOING_NOTIFICATION_ID, foregroundNotification)
+			startForegroundService(ONGOING_NOTIFICATION_ID, foregroundNotification)
+
 			this.foregroundNotification = foregroundNotification
+		}
+	}
+
+	fun startForegroundService(id: Int, notification: Notification) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+			val locationFlag = if (PermissionChecker.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED) {
+				ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION } else { 0 }
+			val bluetoothFlag = if (PermissionChecker.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) == PermissionChecker.PERMISSION_GRANTED) {
+				ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE } else { 0 }
+			val flags = locationFlag + bluetoothFlag + ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+			try {
+				super.startForeground(id, notification, flags)
+			} catch (e: Exception) {
+				Log.e(TAG, "Failed to startForeground", e)
+				stopSelf()      // not allowed at this time, for some reason
+			}
+		} else {
+			super.startForeground(id, notification)
 		}
 	}
 
