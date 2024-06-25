@@ -32,6 +32,8 @@
 -keep class kotlin.coroutines.intrinsics.IntrinsicsKt
 -keep class io.wax911.emojify.model.Emoji { *; }
 -keep class me.hufman.androidautoidrive.** { *; }
+-keep class scala.beans.ScalaBeanInfo { *; }
+-keep class java.beans.SimpleBeanInfo { *; }
 
 # Needed only for ConnectedTests
 -keep class androidx.drawerlayout.widget.** { boolean isDrawer*(int); }
