@@ -15,6 +15,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.screenshot.Screenshot
 import androidx.viewpager2.widget.ViewPager2
 import org.mockito.kotlin.*
+import org.awaitility.Awaitility.await
 import me.hufman.androidautoidrive.EspressoHelpers.withCustomConstraints
 import me.hufman.androidautoidrive.music.MusicAppInfo
 import me.hufman.androidautoidrive.phoneui.NavHostActivity
@@ -71,8 +72,9 @@ class MainScreenshotTest {
 	}
 
 	fun screenshotTips(name: String) {
-		onView(withId(R.id.pane_tiplist_expand)).perform(scrollTo())
-		onView(withId(R.id.pane_tiplist_expand)).perform(click())
+		await().untilAsserted {
+			onView(withId(R.id.pane_tiplist_expand)).perform(scrollTo()).perform(click())
+			onView(withId(R.id.pgrTipsList)).check(matches(isDisplayingAtLeast(75))) }
 		var count = 0
 		activityScenario.scenario.onActivity { activity ->
 			count = activity.findViewById<ViewPager2>(R.id.pgrTipsList).adapter?.itemCount ?: 1
@@ -297,20 +299,27 @@ class MainScreenshotTest {
 		// real viewmodels need to be updated for the above mocked data
 		updateViewModels()
 
+		await().untilAsserted { onView(withId(R.id.drawer_layout))
+			.perform(DrawerActions.open())
+			.check(matches(isOpen())) }
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 				.navigateTo(
 						R.id.nav_overview
 				))
 		screenshot("home_j29")
 
-		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open())
+		await().untilAsserted { onView(withId(R.id.drawer_layout))
+			.perform(DrawerActions.open())
+			.check(matches(isOpen())) }
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 				.navigateTo(
 						R.id.nav_connection
 				))
 		screenshot("connection_j29")
 
-		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open())
+		await().untilAsserted { onView(withId(R.id.drawer_layout))
+			.perform(DrawerActions.open())
+			.check(matches(isOpen())) }
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 				.navigateTo(
 						R.id.nav_navigation

@@ -122,7 +122,7 @@ jobs:
           emulator-build: 7425822
           target: google_apis
           script: >-
-            adb logcat -c && ./gradlew connected${{ matrix.map }}NonalyticsFullDebugAndroidTestCoverage --stacktrace || 
+            adb logcat -c && timeout 30m ./gradlew connected${{ matrix.map }}NonalyticsFullDebugAndroidTestCoverage --stacktrace ||
             (adb logcat -d && exit 1)
       - name: Upload CodeCov report
         if: matrix.map == 'Nomap' && github.event.pull_request.title != 'New Crowdin updates' && github.event.ref != 'refs/heads/l10n_main'   # don't upload Gmap test results, which don't run during PRs
@@ -143,10 +143,10 @@ jobs:
           emulator-build: 7425822
           target: google_apis
           script: >-
-            adb logcat -c && ./gradlew install${{ matrix.map }}NonalyticsFullDebug --stacktrace && 
-            ./gradlew install${{ matrix.map }}NonalyticsFullDebugAndroidTest --stacktrace && 
-            ( adb shell am instrument -w  -e class me.hufman.androidautoidrive.MainScreenshotTest,me.hufman.androidautoidrive.WelcomeScreenshotTest me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner || 
-            adb shell am instrument -w  -e class me.hufman.androidautoidrive.MainScreenshotTest,me.hufman.androidautoidrive.WelcomeScreenshotTest me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner ) && 
+            adb logcat -c && ./gradlew install${{ matrix.map }}NonalyticsFullDebug --stacktrace &&
+            ./gradlew install${{ matrix.map }}NonalyticsFullDebugAndroidTest --stacktrace &&
+            ( timeout 30m adb shell am instrument -w  -e class me.hufman.androidautoidrive.MainScreenshotTest,me.hufman.androidautoidrive.WelcomeScreenshotTest me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner ||
+            timeout 30m adb shell am instrument -w  -e class me.hufman.androidautoidrive.MainScreenshotTest,me.hufman.androidautoidrive.WelcomeScreenshotTest me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner ) &&
             ./gradlew fetchScreenshots --stacktrace || adb logcat -d
       - name: Package screenshots
         uses: actions/upload-artifact@v3
