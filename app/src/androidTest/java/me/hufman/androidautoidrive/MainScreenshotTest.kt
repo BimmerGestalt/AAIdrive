@@ -297,6 +297,7 @@ class MainScreenshotTest {
 		// real viewmodels need to be updated for the above mocked data
 		updateViewModels()
 
+		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open())
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 				.navigateTo(
 						R.id.nav_overview
@@ -304,12 +305,14 @@ class MainScreenshotTest {
 		screenshot("home_j29")
 
 		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open())
+		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open())
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 				.navigateTo(
 						R.id.nav_connection
 				))
 		screenshot("connection_j29")
 
+		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open())
 		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open())
 		onView(withId(R.id.nav_view)).perform(NavigationViewActions
 				.navigateTo(
