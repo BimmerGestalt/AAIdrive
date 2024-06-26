@@ -29,6 +29,7 @@
 -keep class kotlin.collections.CollectionsKt
 -keep class kotlin.collections.MapsKt
 -keep class kotlin.collections.SetsKt
+-keep class kotlin.coroutines.ExecutorsKt
 -keep class kotlin.coroutines.intrinsics.IntrinsicsKt
 -keep class io.wax911.emojify.model.Emoji { *; }
 -keep class me.hufman.androidautoidrive.** { *; }
@@ -36,7 +37,11 @@
 # Needed only for ConnectedTests
 -keep class androidx.drawerlayout.widget.** { boolean isDrawer*(int); }
 -keep class kotlin.reflect.jvm.internal.** { *; }
--keep class androidx.test.** { *; }
+-keep class scala.beans.ScalaBeanInfo { *; }
+-keep class java.beans.SimpleBeanInfo { *; }
+-keepclasseswithmembers class androidx.test.** { *; }
+-keepclasseswithmembers class androidx.tracing.** { *; }
+-keep class org.checkerframework.** { *; }
 ### keep test classes
 # (fixes `Failed loading specified test class 'com.example.benchmark.ExampleTest'`)
 -keepclasseswithmembers @org.junit.runner.RunWith class * { *; }
