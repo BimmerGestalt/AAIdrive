@@ -15,6 +15,13 @@ object Log {
 	}
 
 	@JvmStatic
+	fun i(tag: String, msg: String, e: Throwable): Int {
+		println("INFO: $tag: $msg")
+		e.printStackTrace()
+		return 0
+	}
+
+	@JvmStatic
 	fun w(tag: String, msg: String): Int {
 		println("WARN: $tag: $msg")
 		return 0
