@@ -72,9 +72,9 @@ class MainScreenshotTest {
 	}
 
 	fun screenshotTips(name: String) {
-		onView(withId(R.id.pane_tiplist_expand)).perform(scrollTo())
-		onView(withId(R.id.pane_tiplist_expand)).perform(click())
-		await().untilAsserted { onView(withId(R.id.pgrTipsList)).check(matches(isDisplayingAtLeast(75))) }
+		await().untilAsserted {
+			onView(withId(R.id.pane_tiplist_expand)).perform(scrollTo()).perform(click())
+			onView(withId(R.id.pgrTipsList)).check(matches(isDisplayingAtLeast(75))) }
 		var count = 0
 		activityScenario.scenario.onActivity { activity ->
 			count = activity.findViewById<ViewPager2>(R.id.pgrTipsList).adapter?.itemCount ?: 1
