@@ -7,28 +7,11 @@
         <variable
             name="settings"
             type="me.hufman.androidautoidrive.phoneui.viewmodels.MapSettingsModel" />
-        <variable
-            name="controller"
-            type="me.hufman.androidautoidrive.phoneui.controllers.MapsPageController" />
     </data>
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true">
-
-        <LinearLayout
-            android:orientation="vertical" android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="@{settings.showAdvancedSettings}">
-            <androidx.appcompat.widget.SwitchCompat
-                android:checked="@{settings.mapPhoneGps}"
-                android:onCheckedChanged="@{(button, checked) -> controller.onChangedPhoneGps(checked)}"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:paddingBottom="@dimen/settings_vertical_margin"
-                android:text="@string/lbl_map_phone_gps" />
-        </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
             android:checked="@={settings.mapWidescreen}"

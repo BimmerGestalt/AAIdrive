@@ -265,6 +265,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.play:feature-delivery:2.1.0' // update for api34
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -318,7 +319,6 @@ dependencies {
 
     implementation 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
     gmapImplementation 'com.google.android.gms:play-services-maps:18.0.2'
-    gmapImplementation 'com.google.android.gms:play-services-location:19.0.1'
     gmapImplementation 'com.google.android.libraries.places:places:2.5.0'
     gmapImplementation 'com.google.maps:google-maps-services:0.1.20'
     mapboxImplementation "com.mapbox.mapboxsdk:mapbox-sdk-services:5.8.0"
@@ -329,7 +329,6 @@ dependencies {
         exclude group: 'com.mapbox.plugin', module: 'maps-overlay'        // not helpful in our case
         exclude group: 'com.mapbox.plugin', module: 'maps-viewport'       // we animate the camera manually
     }
-    mapboxImplementation 'com.google.android.gms:play-services-location:19.0.1'
 
     sentryImplementation 'io.sentry:sentry-android:1.7.16'
     sentryImplementation 'org.slf4j:slf4j-nop:1.7.25'

@@ -8,9 +8,7 @@ import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.CarAppService
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 import me.hufman.androidautoidrive.cds.CDSDataProvider
-import me.hufman.androidautoidrive.maps.AndroidLocationProvider
 import me.hufman.androidautoidrive.maps.CdsLocationProvider
-import me.hufman.androidautoidrive.maps.CombinedLocationProvider
 import me.hufman.androidautoidrive.maps.MapboxPlaceSearch
 import java.lang.Exception
 
@@ -31,10 +29,7 @@ class MapAppService: CarAppService() {
 		Log.i(MainService.TAG, "Starting Mapbox")
 		val cdsData = CDSDataProvider()
 		cdsData.setConnection(CarInformation.cdsData.asConnection(cdsData))
-		val carLocationProvider = CombinedLocationProvider(
-				appSettings, AndroidLocationProvider.getInstance(this),
-				CdsLocationProvider(cdsData, CarCapabilitiesSummarized(CarInformation()).isId4)
-		)
+		val carLocationProvider = CdsLocationProvider(cdsData, CarCapabilitiesSummarized(CarInformation()).isId4)
 		val mapAppMode = MapAppMode.build(RHMIDimensions.create(carInformation.capabilities), MutableAppSettingsReceiver(this, handler), cdsData, MusicAppMode.TRANSPORT_PORTS.fromPort(iDriveConnectionStatus.port) ?: MusicAppMode.TRANSPORT_PORTS.BT)
 		this.mapAppMode = mapAppMode
 		val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode)

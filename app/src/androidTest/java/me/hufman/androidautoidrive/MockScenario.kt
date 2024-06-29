@@ -134,7 +134,6 @@ class MockScenario(context: Context) {
 
 	val mapSettingsModel = mock<MapSettingsModel>(defaultAnswer=nonNullStringAnswer) {
 		on {mapEnabled} doReturn true
-		on {mapPhoneGps} doReturn false
 		on {mapWidescreen} doReturn true
 	}
 

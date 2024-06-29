@@ -143,35 +143,3 @@ class CdsLocationProvider(val cdsData: CDSData, val id4: Boolean): CarLocationPr
 		cdsData.subscriptions[CDS.NAVIGATION.GPSEXTENDEDINFO] = null
 	}
 }
-
-class CombinedLocationProvider(val appSettings: AppSettings,
-                               val phoneLocationProvider: CarLocationProvider,
-                               val carLocationProvider: CarLocationProvider): CarLocationProvider() {
-	private val preferPhoneLocation: Boolean
-		get() = appSettings[AppSettings.KEYS.MAP_USE_PHONE_GPS].toBoolean()
-
-	init {
-		currentLocation = carLocationProvider.currentLocation ?: phoneLocationProvider.currentLocation
-		phoneLocationProvider.callback = {
-			currentLocation = it
-			sendCallback()
-		}
-		carLocationProvider.callback = {
-			currentLocation = it
-			sendCallback()
-		}
-	}
-
-	override fun start() {
-		if (preferPhoneLocation) {
-			phoneLocationProvider.start()
-		} else {
-			carLocationProvider.start()
-		}
-	}
-
-	override fun stop() {
-		phoneLocationProvider.stop()
-		carLocationProvider.stop()
-	}
-}

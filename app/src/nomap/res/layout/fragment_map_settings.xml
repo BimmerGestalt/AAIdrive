@@ -6,9 +6,6 @@
         <variable
             name="settings"
             type="me.hufman.androidautoidrive.phoneui.viewmodels.MapSettingsModel" />
-        <variable
-            name="controller"
-            type="me.hufman.androidautoidrive.phoneui.controllers.MapsPageController" />
     </data>
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"

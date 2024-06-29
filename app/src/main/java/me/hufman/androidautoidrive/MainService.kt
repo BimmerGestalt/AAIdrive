@@ -279,11 +279,9 @@ class MainService: Service() {
 
 	fun startForegroundService(id: Int, notification: Notification) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-			val locationFlag = if (PermissionChecker.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED) {
-				ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION } else { 0 }
 			val bluetoothFlag = if (PermissionChecker.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) == PermissionChecker.PERMISSION_GRANTED) {
 				ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE } else { 0 }
-			val flags = locationFlag + bluetoothFlag + ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+			val flags = bluetoothFlag + ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 			try {
 				super.startForeground(id, notification, flags)
 			} catch (e: Exception) {
