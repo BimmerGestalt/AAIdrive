@@ -256,6 +256,7 @@
     <string name="lbl_connection_probe_ips">Попробуйте подключиться к автомобилю при помощи TCP туннеля</string>
     <string name="lbl_assistant">Голосовой помощник (бета)</string>
     <string name="lbl_assistant_empty">Не найдено</string>
+    <string name="lbl_assistant_fullscreen_permissions">Доступ к ассистенту при выключенном экране</string>
     <!-- car status -->
     <string name="lbl_carinfopage_disconnected">После первого подключения здесь будет отображена информация о вашем автомобиле</string>
     <string name="lbl_carinfopage">Краткая информация о вашем автомобиле</string>
