@@ -161,9 +161,13 @@ class CDSMetrics(val carInfo: CarInformation) {
 	}
 	val tempExchanger = carInfo.cdsData.flow[CDS.CLIMATE.ACSYSTEMTEMPERATURES].mapNotNull {
 		it.tryAsJsonObject("ACSystemTemperatures")?.tryAsJsonPrimitive("heatExchanger")?.tryAsDouble
+	}.combine(units) { value, units ->
+		units.temperatureUnits.fromCarUnit(value)
 	}
 	val tempEvaporator = carInfo.cdsData.flow[CDS.CLIMATE.ACSYSTEMTEMPERATURES].mapNotNull {
 		it.tryAsJsonObject("ACSystemTemperatures")?.tryAsJsonPrimitive("evaporator")?.tryAsDouble
+	}.combine(units) { value, units ->
+		units.temperatureUnits.fromCarUnit(value)
 	}
 	val ACCompressorActualPower = carInfo.cdsData.flow[CDS.CLIMATE.AIRCONDITIONERCOMPRESSOR].mapNotNull {
 		it.tryAsJsonObject("airConditionerCompressor")?.tryAsJsonPrimitive("actualPower")?.tryAsDouble?.takeIf { it < 255 }
