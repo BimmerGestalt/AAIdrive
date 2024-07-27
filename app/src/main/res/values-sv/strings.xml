@@ -10,7 +10,7 @@
     <string name="notification_description_chassiscode">Ansluten till %s</string>
     <string name="notification_description_bmw">Ansluten till BMW</string>
     <string name="notification_description_mini">Ansluten till Mini</string>
-    <string name="notification_shutdown">Stäng av</string>
+    <string name="notification_shutdown">Shutdown</string>
     <string name="permission_cds_normal">se allmän bilinformation</string>
     <string name="permission_cds_personal">se privat bilinformation</string>
     <!-- notification channel names -->
@@ -259,6 +259,7 @@
     <string name="lbl_connection_probe_ips">Försök att ansluta till en bil genom TCP-tunnel</string>
     <string name="lbl_assistant">Röstassistent (Beta)</string>
     <string name="lbl_assistant_empty">Inget hittades</string>
+    <string name="lbl_assistant_fullscreen_permissions">Åtkomst för att utlösa assistenten med skärmen av</string>
     <!-- car status -->
     <string name="lbl_carinfopage_disconnected">Efter din första anslutning visas information om din bil här</string>
     <string name="lbl_carinfopage">Kort information om din bil finns här</string>
