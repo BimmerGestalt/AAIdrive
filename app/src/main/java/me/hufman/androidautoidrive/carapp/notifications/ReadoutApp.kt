@@ -126,7 +126,11 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 	fun createAmApp() {
 		val name = L.CARINFO_TITLE
 		val carAppImage = try {
-			Utils.convertPngToGrayscale(resources.openRawResource(R.drawable.ic_carinfo).readBytes())
+			if (iDriveConnectionStatus.brand == "mini") {
+				Utils.convertPngToGrayscale(resources.openRawResource(R.drawable.ic_carinfo_mini).readBytes())
+			} else {
+				Utils.convertPngToGrayscale(resources.openRawResource(R.drawable.ic_carinfo_common).readBytes())
+			}
 		} catch (e: NotFoundException) { "" }
 
 		val amInfo = mutableMapOf<Int, Any>(
