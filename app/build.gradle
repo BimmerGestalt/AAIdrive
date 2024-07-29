@@ -68,6 +68,10 @@ android {
         // enable async RHMI data updates
         // big performance improvement, and seemingly doesn't even cause bugs!
         buildConfigField "boolean", "ASYNC_RHMI_APPLICATION", "true"
+
+        // with custom hackery, the car HMI can accept unsigned resources
+        // if your car has this, set this option to attempt to send these unsigned resources
+        buildConfigField "boolean", "SEND_UNSIGNED_RESOURCES", (System.env.AndroidAutoIdrive_SendUnsignedResources ? System.env.AndroidAutoIdrive_SendUnsignedResources : AndroidAutoIdrive_SendUnsignedResources)
     }
 
     signingConfigs {

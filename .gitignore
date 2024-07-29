@@ -13,7 +13,6 @@
 /build
 /captures
 /external
-/app/src/main/assets/carapplications
 /app/src/test/resources/*.xml
 .externalNativeBuild
 sentry.properties
