@@ -11,6 +11,7 @@ import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import io.bimmergestalt.idriveconnectkit.rhmi.deserialization.loadFromXML
+import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.CarAppWidgetAssetResources
 import me.hufman.androidautoidrive.carapp.FocusTriggerController
 import me.hufman.androidautoidrive.carapp.L
@@ -42,6 +43,13 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 		val rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.notification.statusbar", BMWRemoting.VersionInfo(0, 1, 0),
 				"me.hufman.androidautoidrive.notification.statusbar", "me.hufman"))
 		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
+		if(BuildConfig.FLAVOR_resources == "unsigned") {
+			carConnection.rhmi_setResourceCached(
+				rhmiHandle,
+				BMWRemoting.RHMIResourceType.TEXTDB,
+				carAppAssets.getTextsDB(iDriveConnectionStatus.brand ?: "common")
+			)
+		}
 		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(iDriveConnectionStatus.brand ?: "common"))
 		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.WIDGETDB, carAppAssets.getWidgetsDB(iDriveConnectionStatus.brand ?: "common"))
 

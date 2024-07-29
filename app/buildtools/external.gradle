@@ -6,26 +6,35 @@ def RHMISources = [
                 "com.bmwgroup.connected.bmw.usa/rhmi/multimedia/id5/v2/ui_description.xml": "multimedia/rhmi/ui_description.xml",
                 "com.bmwgroup.connected.bmw.usa/rhmi/bmw/images.zip": "multimedia/rhmi/bmw/images.zip",
                 "com.bmwgroup.connected.bmw.usa/rhmi/bmw/texts.zip": "multimedia/rhmi/bmw/texts.zip",
+                "com.bmwgroup.connected.bmw.usa/rhmi/common/images.zip": "multimedia/rhmi/common/images.zip",
+                "com.bmwgroup.connected.bmw.usa/rhmi/common/texts.zip": "multimedia/rhmi/common/texts.zip",
                 // multimedia (audioplayer) (sourced from a worldwide apk)
                 "com.bmwgroup.connected.bmw/com.bmwgroup.connected.bmw.p7b": "multimedia/rhmi/bmw/multimedia.p7b",
                 "com.bmwgroup.connected.bmw/rhmi/multimedia/id5/v2/ui_description.xml": "multimedia/rhmi/ui_description.xml",
                 "com.bmwgroup.connected.bmw/rhmi/bmw/images.zip": "multimedia/rhmi/bmw/images.zip",
                 "com.bmwgroup.connected.bmw/rhmi/bmw/texts.zip": "multimedia/rhmi/bmw/texts.zip",
+                "com.bmwgroup.connected.bmw/rhmi/common/images.zip": "multimedia/rhmi/common/images.zip",
+                "com.bmwgroup.connected.bmw/rhmi/common/texts.zip": "multimedia/rhmi/common/texts.zip",
                 // news (readout)
                 "news/news.p7b": "news/rhmi/bmw/news.p7b",
                 "news/rhmi/ui_description.xml": "news/rhmi/ui_description.xml",
+                "news/rhmi/bmw/images.zip": "news/rhmi/bmw/images.zip",
+                "news/rhmi/common/images.zip": "news/rhmi/common/images.zip",
+                "news/rhmi/common/texts.zip": "news/rhmi/common/texts.zip",
         ],
         "BMW": [
                 // basecoreOnlineServices (notifications, assistant)
                 "basecore/basecore.p7b": "basecoreOnlineServices/rhmi/bmw/basecoreOnlineServices.p7b",
                 "basecore/rhmi/onlineservices/id4/v1/ui_description.xml": "basecoreOnlineServices/rhmi/ui_description.xml",
                 "basecore/rhmi/bmw/images.zip": "basecoreOnlineServices/rhmi/bmw/images.zip",
+                "basecore/rhmi/common/images.zip": "basecoreOnlineServices/rhmi/common/images.zip",
                 "basecore/rhmi/common/texts.zip": "basecoreOnlineServices/rhmi/common/texts.zip",
 
                 // bmwone (id5+ notifications)
                 "bmwone/bmwone.p7b": "bmwone/rhmi/bmw/bmwone.p7b",
                 "bmwone/rhmi/ui_description_ID5.xml": "bmwone/rhmi/ui_description.xml",
                 "bmwone/rhmi/common/images.zip": "bmwone/rhmi/common/images.zip",
+                "bmwone/rhmi/bmw/texts.zip": "bmwone/rhmi/bmw/texts.zip",
                 "bmwone/rhmi/common/bmwone_widgetdb.zip": "bmwone/rhmi/common/widgetdb.zip",
 
                 // calendar
@@ -53,19 +62,25 @@ def RHMISources = [
                 "com.bmwgroup.connected.mini/rhmi/mini/texts.zip": "multimedia/rhmi/mini/texts.zip",
 
                 "news/news.p7b": "news/rhmi/mini/news.p7b",
+                "news/rhmi/mini/images.zip": "news/rhmi/mini/images.zip",
         ],
         "MINI": [
                 "basecore/basecore.p7b": "basecoreOnlineServices/rhmi/mini/basecoreOnlineServices.p7b",
                 "basecore/rhmi/mini/images.zip": "basecoreOnlineServices/rhmi/mini/images.zip",
                 "bmwone/bmwone.p7b": "bmwone/rhmi/mini/bmwone.p7b",
+                "bmwone/rhmi/mini/texts.zip": "bmwone/rhmi/mini/texts.zip",
                 "calendar/calendar.p7b": "calendar/rhmi/mini/calendar.p7b",
                 "calendar/rhmi/mini/images.zip": "calendar/rhmi/mini/images.zip",
                 "calendar/rhmi/mini/texts.zip": "calendar/rhmi/mini/texts.zip",
         ],
         "Smartthings": [
                 "com.smartthings.android/com.smartthings.android.p7b": "smartthings/smartthings.p7b",
+                "com.smartthings.android/rhmi/bmw/images.zip": "smartthings/rhmi/bmw/images.zip",
+                "com.smartthings.android/rhmi/bmw/texts.zip": "smartthings/rhmi/bmw/texts.zip",
                 "com.smartthings.android/rhmi/common/images.zip": "smartthings/rhmi/common/images.zip",
                 "com.smartthings.android/rhmi/common/texts.zip": "smartthings/rhmi/common/texts.zip",
+                "com.smartthings.android/rhmi/mini/images.zip": "smartthings/rhmi/mini/images.zip",
+                "com.smartthings.android/rhmi/mini/texts.zip": "smartthings/rhmi/mini/texts.zip",
         ],
         "Spotify": [
                 "com.spotify.music/com.spotify.music.p7b": "spotify/spotify.p7b",
@@ -235,3 +250,4 @@ task extractRHMIResourcesTest(type: Copy, dependsOn: confirmRHMIResources) {
 
 preBuild.dependsOn extractRHMIResources
 preBuild.dependsOn extractRHMIResourcesTest
+

@@ -139,7 +139,7 @@ android {
         }
     }
 
-    flavorDimensions = ["map", "analytics", "storefront"]
+    flavorDimensions = ["map", "analytics", "resources", "storefront"]
 
     productFlavors {
         nonalytics {
@@ -161,6 +161,12 @@ android {
         mapbox {
             dimension "map"
             buildConfigField 'String', "MapboxAccessToken", '"' + (System.env.AndroidAutoIdrive_MapboxAccessToken ? System.env.AndroidAutoIdrive_MapboxAccessToken : AndroidAutoIdrive_MapboxAccessToken) + '"'
+        }
+        signed {
+            dimension "resources"
+        }
+        unsigned {
+            dimension "resources"
         }
         full {
             dimension "storefront"
