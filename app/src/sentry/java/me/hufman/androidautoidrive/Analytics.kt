@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive
 
 import android.content.Context
+import android.util.Log
 import io.sentry.Sentry
 import io.sentry.android.AndroidSentryClientFactory
 import io.sentry.event.Event
@@ -24,7 +25,11 @@ object Analytics: AnalyticsProvider {
 				.withTag("searchable", if (appInfo.searchable) "true" else "false")
 				.withTag("playsearchable", if (appInfo.playsearchable) "true" else "false")
 				.withLevel(Event.Level.DEBUG)
-		Sentry.capture(event)
+		try {
+			Sentry.capture(event)
+		} catch (e: Exception) {
+			Log.i("Sentry", "Exception while reporting music app probe", e)
+		}
 	}
 
 	override fun reportCarProbeFailure(port: Int, message: String?, throwable: Throwable?) {
@@ -32,12 +37,16 @@ object Analytics: AnalyticsProvider {
 				.withMessage("Failed to probe car: $message")
 				.withTag("port", port.toString())
 				.withLevel(Event.Level.WARNING)
-		if (throwable != null) {
-			val crash = event
-					.withSentryInterface(ExceptionInterface(throwable))
-			Sentry.capture(crash)
-		} else {
-			Sentry.capture(event)
+		try {
+			if (throwable != null) {
+				val crash = event
+						.withSentryInterface(ExceptionInterface(throwable))
+				Sentry.capture(crash)
+			} else {
+				Sentry.capture(event)
+			}
+		} catch (e: Exception) {
+			Log.i("Sentry", "Exception while reporting car probe failure", e)
 		}
 	}
 
@@ -48,7 +57,11 @@ object Analytics: AnalyticsProvider {
 				.withTag("hmiType", hmiType ?: "")
 				.withTag("port", port.toString())
 				.withLevel(Event.Level.DEBUG)
-		Sentry.capture(event)
+		try {
+			Sentry.capture(event)
+		} catch (e: Exception) {
+			Log.i("Sentry", "Exception while reporting car probe", e)
+		}
 	}
 
 	override fun reportCarCapabilities(capabilities: Map<String, String?>) {
@@ -62,7 +75,11 @@ object Analytics: AnalyticsProvider {
 				event.withTag(keyName, value.toString())
 			}
 		}
-		Sentry.capture(event)
+		try {
+			Sentry.capture(event)
+		} catch (e: Exception) {
+			Log.i("Sentry", "Exception while reporting car capabilities", e)
+		}
 	}
 
 }
