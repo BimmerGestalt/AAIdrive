@@ -55,7 +55,7 @@ class StatusbarAppTest {
 	fun testAppInit() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources, graphicsHelpers)
+		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), graphicsHelpers)
 
 		assertEquals(null, mockServer.resources[BMWRemoting.RHMIResourceType.TEXTDB])
 		assertArrayEquals(carAppResources.getImagesDB("")?.readBytes(), mockServer.resources[BMWRemoting.RHMIResourceType.IMAGEDB])
@@ -80,7 +80,7 @@ class StatusbarAppTest {
 	fun testAppEntrybutton() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources, graphicsHelpers)
+		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), graphicsHelpers)
 
 		val button = app.carApp.components.values.filterIsInstance<RHMIComponent.EntryButton>().first()
 		button.getAction()?.asRAAction()?.rhmiActionCallback?.onActionEvent(mapOf(0.toByte() to 0))
@@ -91,7 +91,7 @@ class StatusbarAppTest {
 	fun testNotificationCenterController() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources, graphicsHelpers)
+		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), graphicsHelpers)
 		val controller = app.statusbarController
 		val event = app.notificationEvent
 
