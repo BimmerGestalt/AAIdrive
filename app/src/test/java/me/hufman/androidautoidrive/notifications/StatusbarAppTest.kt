@@ -143,7 +143,7 @@ class StatusbarAppTest {
 	fun testID5Popup() {
 		val mockServer = MockBMWRemotingServer()
 		IDriveConnection.mockRemotingServer = mockServer
-		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources, graphicsHelpers)
+		val app = ID5StatusbarApp(iDriveConnectionStatus, securityAccess, carAppResources, mock(), graphicsHelpers)
 		app.showNotificationController = showNotificationController
 		val popupState = app.carApp.states.values.filterIsInstance<RHMIState.PopupState>().first()
 		val popupView = app.popupView
