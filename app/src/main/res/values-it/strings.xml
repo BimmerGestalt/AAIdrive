@@ -259,6 +259,7 @@
     <string name="lbl_connection_probe_ips">Prova a connetterti a un\'auto tramite il tunnel TCP</string>
     <string name="lbl_assistant">Assistente vocale (Beta)</string>
     <string name="lbl_assistant_empty">Non trovato</string>
+    <string name="lbl_assistant_fullscreen_permissions">Accedi per attivare l\'assistente con lo schermo spento</string>
     <!-- car status -->
     <string name="lbl_carinfopage_disconnected">Dopo la prima connessione, le informazioni sulla vostra auto saranno mostrate qui</string>
     <string name="lbl_carinfopage">Qui puoi trovare informazioni rapide sulla tua auto</string>
