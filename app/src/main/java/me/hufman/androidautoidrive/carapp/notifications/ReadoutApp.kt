@@ -19,6 +19,7 @@ import io.bimmergestalt.idriveconnectkit.rhmi.*
 import io.bimmergestalt.idriveconnectkit.rhmi.deserialization.loadFromXML
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.*
@@ -28,7 +29,7 @@ import me.hufman.androidautoidrive.carapp.carinfo.views.CategoryView
 import me.hufman.androidautoidrive.cds.*
 import me.hufman.androidautoidrive.utils.Utils
 
-class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val handler: Handler, val resources: Resources, val appSettings: AppSettings) {
+class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val unsignedCarAppAssets: CarAppResources, val handler: Handler, val resources: Resources, val appSettings: AppSettings) {
 	private val coroutineContext = handler.asCoroutineDispatcher()
 	val carConnection: BMWRemotingServer
 	var rhmiHandle: Int = -1
@@ -98,7 +99,17 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 		rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.notification.readout", BMWRemoting.VersionInfo(0, 1, 0),
 				"me.hufman.androidautoidrive.notification.readout", "me.hufman"))
 		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
-		// no icons or text, so sneaky
+		if (BuildConfig.SEND_UNSIGNED_RESOURCES) {
+			try {
+				carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, unsignedCarAppAssets.getTextsDB(iDriveConnectionStatus.brand ?: "common"))
+				carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, unsignedCarAppAssets.getImagesDB(iDriveConnectionStatus.brand ?: "common"))
+			} catch (e: Exception) {
+				Log.w(TAG, "Unsigned resources were not accepted by car")
+			}
+		} else {
+			// no icons or text, so sneaky
+		}
+
 		carConnection.rhmi_initialize(rhmiHandle)
 		carConnection.rhmi_addActionEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notification.readout", -1)
 		carConnection.rhmi_addHmiEventHandler(rhmiHandle, "me.hufman.androidautoidrive.notification.readout", -1, -1)

@@ -11,6 +11,7 @@ import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
 import io.bimmergestalt.idriveconnectkit.rhmi.*
 import io.bimmergestalt.idriveconnectkit.rhmi.deserialization.loadFromXML
+import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.CarAppWidgetAssetResources
 import me.hufman.androidautoidrive.carapp.FocusTriggerController
 import me.hufman.androidautoidrive.carapp.L
@@ -19,7 +20,7 @@ import me.hufman.androidautoidrive.carapp.notifications.views.ID5PopupView
 import me.hufman.androidautoidrive.utils.GraphicsHelpers
 import java.util.zip.ZipInputStream
 
-class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, carAppAssets: CarAppWidgetAssetResources, graphicsHelpers: GraphicsHelpers) {
+class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, carAppAssets: CarAppWidgetAssetResources, unsignedcarAppAssets: CarAppWidgetAssetResources, graphicsHelpers: GraphicsHelpers) {
 	val carConnection: BMWRemotingServer
 	val carApp: RHMIApplication
 	val infoState: RHMIState.PlainState
@@ -45,7 +46,16 @@ class ID5StatusbarApp(val iDriveConnectionStatus: IDriveConnectionStatus, val se
 		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.IMAGEDB, carAppAssets.getImagesDB(iDriveConnectionStatus.brand ?: "common"))
 		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.WIDGETDB, carAppAssets.getWidgetsDB(iDriveConnectionStatus.brand ?: "common"))
 
-		// no text, so sneaky
+		if (BuildConfig.SEND_UNSIGNED_RESOURCES) {
+			try {
+				carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.TEXTDB, unsignedcarAppAssets.getTextsDB(iDriveConnectionStatus.brand ?: "common"))
+			} catch (e: Exception) {
+				Log.w(TAG, "Unsigned resources were not accepted by car")
+			}
+		} else {
+			// no text, so sneaky
+		}
+
 		carConnection.rhmi_initialize(rhmiHandle)
 
 		carApp = RHMIApplicationSynchronized(RHMIApplicationIdempotent(RHMIApplicationEtch(carConnection, rhmiHandle)), carConnection)
