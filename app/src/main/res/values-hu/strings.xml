@@ -178,7 +178,6 @@
     <string name="txt_setup_bmw_ready">Az alkalmazás készenáll BMW-hez való kapcsolódásra</string>
     <string name="txt_setup_mini_ready">Az alkalmazás készenáll Mini-hez való kapcsolódásra</string>
     <string name="txt_setup_toyota_ready">Az alkalmazás készenáll Toyota Supra-hoz való kapcsolódásra</string>
-    <string name="txt_setup_toyota_hint">Toyoto támogatása igen csekély, jelenleg csak autó adatokat támogat</string>
     <string name="txt_setup_bmw_missing">Az alkalmazás nem áll készen BMW-hez való kapcsolódásra:</string>
     <string name="txt_setup_mini_missing">Az alkalmazás nem áll készen Mini-hez való kapcsolódásra:</string>
     <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 van telepítve, ami néha nem kapcsolódik az autóhoz. Amennyiben problémát tapasztalsz, próbáld meg telepíteni a 6.4 verziót, vagy frissíts a MyBMW alkalmazásra</string>
