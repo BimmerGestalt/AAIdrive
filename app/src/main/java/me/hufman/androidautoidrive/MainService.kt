@@ -362,6 +362,7 @@ class MainService: Service() {
 				scheduleShutdownTimeout()
 				handler.post(btfetchUuidsWithSdp)
 			}
+			carInformationUpdater.connectionBrand = iDriveConnectionReceiver.brand
 			carInformationUpdater.isConnected = iDriveConnectionReceiver.isConnected && securityAccess.isConnected()
 		}
 	}

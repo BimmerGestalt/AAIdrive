@@ -41,6 +41,7 @@ class MockScenario(context: Context) {
 		on {carBrand} doReturn "BMW"
 	}
 	val carInfo = mock<CarInformation> {
+		on {connectionBrand} doReturn "bmw"
 		on {capabilities} doReturn mapOf(
 				"hmi.type" to "BMW ID5",
 				"hmi.version" to "NBTevo_ID5_1903",
@@ -51,6 +52,7 @@ class MockScenario(context: Context) {
 	}
 	val musicAppMode = mock<MusicAppMode> {
 		on {heuristicAudioContext()} doReturn true
+		on {shouldRequestAudioContext()} doReturn true
 		on {shouldId5Playback()} doReturn true
 	}
 	val carSummaryViewModel = CarSummaryModel(carInfo, MutableLiveData(false))

@@ -182,11 +182,17 @@ class ConnectionStatusModel(val connection: CarConnectionDebugging, val carInfo:
 		}
 
 		// current car overview
-		val brand = if (connection.isBCLConnected) connection.carBrand?.uppercase(Locale.ROOT) else null
+		val brand = if (connection.isBCLConnected) {
+			// hmi.type will say the actual car brand, after loading
+			// but connection carBrand is just based on the auth cert
+			carInfo.currentCapabilities["hmi.type"]?.split(' ')?.first() ?:
+			connection.carBrand?.uppercase(Locale.ROOT)
+		} else null
 		_carBrand.value = brand
 		when (brand) {
 			"BMW" -> _carLogo.value = { ContextCompat.getDrawable(this, R.drawable.logo_bmw) }
 			"MINI" -> _carLogo.value = { ContextCompat.getDrawable(this, R.drawable.logo_mini) }
+			"J29" -> _carLogo.value = { ContextCompat.getDrawable(this, R.drawable.logo_toyota) }
 			else -> _carLogo.value = { null }
 		}
 

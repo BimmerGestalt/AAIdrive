@@ -206,7 +206,8 @@
     <string name="txt_setup_bmw_ready">The app is ready to connect to a BMW</string>
     <string name="txt_setup_mini_ready">The app is ready to connect to a Mini</string>
     <string name="txt_setup_toyota_ready">The app is ready to connect to a Toyota Supra</string>
-    <string name="txt_setup_toyota_hint">Toyota support is very limited, currently only providing car data</string>
+    <string name="txt_setup_toyota_hint">Toyota support is very limited, only providing car data by default</string>
+    <string name="txt_setup_toyota_hint2">To enable full support in the Toyota Supra, use BimmerCode to code ENTWICKLER_MENUE to aktiv</string>
     <string name="txt_setup_bmw_missing">Not ready to connect to a BMW:</string>
     <string name="txt_setup_mini_missing">Not ready to connect to a Mini:</string>
     <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 is installed, which sometimes doesn\'t start the car connection. Try downgrading to 6.4 or upgrading to MyBMW if you encounter problems</string>

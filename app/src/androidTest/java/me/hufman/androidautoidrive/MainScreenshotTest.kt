@@ -286,6 +286,7 @@ class MainScreenshotTest {
 	@Test
 	fun j29Connection() {
 		whenever(mockScenario.connectionDebugging.isJ29Installed) doReturn true
+		whenever(mockScenario.carInfo.connectionBrand) doReturn "j29"
 		whenever(mockScenario.carInfo.capabilities) doReturn mapOf(
 				"hmi.type" to "J29 ID6L",
 				"hmi.version" to "NBTevo_ID5_2111",
@@ -325,5 +326,50 @@ class MainScreenshotTest {
 						R.id.nav_navigation
 				))
 		screenshot("navigation_j29")
+	}
+
+	@Test
+	fun j29EntwicklerConnection() {
+		whenever(mockScenario.connectionDebugging.isJ29Installed) doReturn true
+		whenever(mockScenario.carInfo.connectionBrand) doReturn "bmw"
+		whenever(mockScenario.carInfo.capabilities) doReturn mapOf(
+			"hmi.type" to "J29 ID6L",
+			"hmi.version" to "NBTevo_ID5_2111",
+			"navi" to "true",
+			"tts" to "true",
+			"vehicle.type" to "J29"
+		)
+		whenever(mockScenario.navigationStatusModel.isConnected) doReturn true
+		whenever(mockScenario.navigationStatusModel.searchStatus) doReturnMutableContexted {""}
+
+		// real viewmodels need to be updated for the above mocked data
+		updateViewModels()
+
+		await().untilAsserted { onView(withId(R.id.drawer_layout))
+			.perform(DrawerActions.open())
+			.check(matches(isOpen())) }
+		onView(withId(R.id.nav_view)).perform(NavigationViewActions
+			.navigateTo(
+				R.id.nav_overview
+			))
+		screenshot("home_j29_entwickler")
+
+		await().untilAsserted { onView(withId(R.id.drawer_layout))
+			.perform(DrawerActions.open())
+			.check(matches(isOpen())) }
+		onView(withId(R.id.nav_view)).perform(NavigationViewActions
+			.navigateTo(
+				R.id.nav_connection
+			))
+		screenshot("connection_j29_entwickler")
+
+		await().untilAsserted { onView(withId(R.id.drawer_layout))
+			.perform(DrawerActions.open())
+			.check(matches(isOpen())) }
+		onView(withId(R.id.nav_view)).perform(NavigationViewActions
+			.navigateTo(
+				R.id.nav_navigation
+			))
+		screenshot("navigation_j29_entwickler")
 	}
 }
