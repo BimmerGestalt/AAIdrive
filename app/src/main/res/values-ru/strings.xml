@@ -185,7 +185,6 @@
     <string name="txt_setup_bmw_ready">Приложение готово для подключения к BMW</string>
     <string name="txt_setup_mini_ready">Приложение готово для подключения к Mini</string>
     <string name="txt_setup_toyota_ready">Приложение готово к соединению с Supra Toyota</string>
-    <string name="txt_setup_toyota_hint">Поддержка Toyota очень ограничена, в настоящее время предоставляется только данные об автомобиле</string>
     <string name="txt_setup_bmw_missing">Не готово к подключению к BMW:</string>
     <string name="txt_setup_mini_missing">Не готово к подключению к Mini:</string>
     <string name="txt_setup_bmw_connected_65">Установлено приложение BMW Connected 6.5, что может создавать проблемы запуску приложений Установлено приложение BMW Connected 6.5, что может создавать проблемы запуску приложений. Установите BMW Connected 6.4 или перейдите на MyBMW, чтобы избежать проблем. Установите BMW Connected 6.4 или перейдите на MyBMW, чтобы избежать проблем</string>
