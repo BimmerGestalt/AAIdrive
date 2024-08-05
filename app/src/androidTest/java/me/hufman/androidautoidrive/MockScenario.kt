@@ -122,6 +122,8 @@ class MockScenario(context: Context) {
 		on {hasSmsPermission} doReturn true
 		on {hasLocationPermission} doReturn true
 		on {hasBackgroundPermission} doReturn true
+		on {hasBluetoothConnectPermission} doReturn true
+		on {hasPostNotificationsPermission} doReturn true
 	}
 
 	// https://stackoverflow.com/a/60119030/169035
