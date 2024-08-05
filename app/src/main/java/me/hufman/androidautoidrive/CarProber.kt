@@ -158,6 +158,12 @@ class CarProber(val securityAccess: SecurityAccess, val settings: AppSettings, v
 					success = true
 					break
 				}
+				if (hmiType?.startsWith("J29") == true && (brand == "bmw" || brand == "mini")) {
+					// the car has ENTWICKLER_MENUE active and ignores the brand restriction on the cert
+					setConnectedState(host, port, brand)
+					success = true
+					break
+				}
 				if (brand == "j29") {
 					setConnectedState(host, port, "j29")
 					success = true

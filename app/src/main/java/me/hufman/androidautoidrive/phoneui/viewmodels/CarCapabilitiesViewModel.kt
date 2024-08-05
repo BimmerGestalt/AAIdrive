@@ -80,11 +80,12 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 		val summarized = CarCapabilitiesSummarized(carInformation)
 
 		// only these brands of cars support RHMI apps
-		val carBrandSupported = summarized.isBmw || summarized.isMini
+		// check the cert brand, in case of friendly J29s
+		val carBrandSupported = carInformation.connectionBrand?.uppercase() == "BMW" || carInformation.connectionBrand?.uppercase() == "MINI"
 		_isCarConnected.value = carInformation.capabilities.isNotEmpty() && carBrandSupported
 		_isJ29Connected.value = summarized.isJ29
 
-		_isAudioContextSupported.value = !summarized.isJ29 && musicAppMode.heuristicAudioContext()
+		_isAudioContextSupported.value = carBrandSupported && musicAppMode.heuristicAudioContext()
 		if (carBrandSupported && musicAppMode.heuristicAudioContext()) {
 			_audioContextStatus.value = { getString(R.string.txt_capabilities_audiocontext_yes) }
 			_audioContextHint.value = { "" }
@@ -98,7 +99,7 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 			}
 		}
 
-		_isAudioStateSupported.value = !summarized.isJ29 && musicAppMode.supportsId5Playback()
+		_isAudioStateSupported.value = carBrandSupported && musicAppMode.supportsId5Playback()
 		if (carBrandSupported && musicAppMode.supportsId5Playback()) {
 			_audioStateStatus.value = { getString(R.string.txt_capabilities_audiostate_yes) }
 			_audioStateHint.value = { "" }

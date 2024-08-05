@@ -92,8 +92,7 @@ class NavigationStatusModel(val carInformation: CarInformation,
 
 	fun update() {
 		// only these brands of cars support the RHMI app necessary to trigger car nav
-		val carBrandSupported = carInformation.capabilities["hmi.type"]?.startsWith("BMW") == true ||
-				carInformation.capabilities["hmi.type"]?.startsWith("MINI") == true
+		val carBrandSupported = carInformation.connectionBrand?.uppercase() == "BMW" || carInformation.connectionBrand?.uppercase() == "MINI"
 		_isConnected.value = carInformation.isConnected && carBrandSupported
 
 		val capabilities = carInformation.capabilities

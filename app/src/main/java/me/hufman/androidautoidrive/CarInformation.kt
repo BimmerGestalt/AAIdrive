@@ -37,6 +37,7 @@ open class CarInformation {
 		val listeners: Map<CarInformationObserver, Boolean> = _listeners
 
 		var isConnected = false
+		var connectionBrand: String? = null
 
 		var currentCapabilities: Map<String, String> = emptyMap()
 		var cachedCapabilities: Map<String, String> = emptyMap()
@@ -121,12 +122,17 @@ open class CarInformation {
 	open val isConnected: Boolean
 		get() = CarInformation.isConnected
 
+	open val connectionBrand: String?
+		get() = CarInformation.connectionBrand
+
 	open val capabilities: Map<String, String>
 		get() = if (currentCapabilities.isEmpty()) {
 			cachedCapabilities
 		} else {
 			currentCapabilities
 		}
+	val currentCapabilities: Map<String, String>
+		get() = CarInformation.currentCapabilities
 
 	open val cdsData: CDSData = CarInformation.cdsData
 	open val cachedCdsData: CDSData = CarInformation.cachedCdsData
@@ -142,11 +148,16 @@ open class CarInformationUpdater(val appSettings: MutableAppSettings): CarInform
 				onCarCapabilities()
 			}
 		}
+	override var connectionBrand: String?
+		get() = super.connectionBrand
+		set(value) {
+			CarInformation.connectionBrand = value
+		}
 
 	override var capabilities: Map<String, String>
 		get() = super.capabilities
 		set(value) {
-			currentCapabilities = value
+			CarInformation.currentCapabilities = value
 			cachedCapabilities = value.filterKeys { CACHED_CAPABILITY_KEYS.contains(it) }
 			onCarCapabilities()
 		}
@@ -192,25 +203,30 @@ class CarCapabilitiesSummarized(val carInformation: CarInformation) {
 	val isJ29: Boolean
 		get() = carInformation.capabilities["hmi.type"]?.startsWith("J29") == true
 
+	val isHmiSupported: Boolean
+		get() = carInformation.connectionBrand?.uppercase() == "BMW" || carInformation.connectionBrand?.uppercase() == "MINI"
+	val isHmiNotSupported: Boolean
+		get() = carInformation.connectionBrand?.uppercase() == "J29"
+
 	val isPopupSupported: Boolean
-		get() = !isJ29
+		get() = isHmiSupported
 	val isPopupNotSupported: Boolean
-		get() = isJ29
+		get() = isHmiNotSupported
 
 	val isTtsSupported: Boolean
-		get() = !isJ29 && carInformation.capabilities["tts"]?.lowercase(Locale.ROOT) == "true"
+		get() = isHmiSupported && carInformation.capabilities["tts"]?.lowercase(Locale.ROOT) == "true"
 	val isTtsNotSupported: Boolean
-		get() = isJ29 || carInformation.capabilities["tts"]?.lowercase(Locale.ROOT) == "false"
+		get() = isHmiNotSupported || carInformation.capabilities["tts"]?.lowercase(Locale.ROOT) == "false"
 
 	val isNaviSupported: Boolean
-		get() = !isJ29 && carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "true"
+		get() = isHmiSupported && carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "true"
 	val isNaviNotSupported: Boolean
-		get() = isJ29 || carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
+		get() = isHmiNotSupported || carInformation.capabilities["navi"]?.lowercase(Locale.ROOT) == "false"
 
 	val mapWidescreenSupported: Boolean
-		get() = !isJ29 && (carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 0) >= 1000
+		get() = isHmiSupported && (carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 0) >= 1000
 	val mapWidescreenUnsupported: Boolean
-		get() = isJ29 || (carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 9999) < 1000
+		get() = isHmiNotSupported || (carInformation.capabilities["hmi.display-width"]?.toIntOrNull() ?: 9999) < 1000
 	val mapWidescreenCrashes: Boolean
 		get() = carInformation.capabilities["hmi.version"]?.lowercase(Locale.ROOT)?.startsWith("entryevo_") == true
 	val isF20orF21: Boolean

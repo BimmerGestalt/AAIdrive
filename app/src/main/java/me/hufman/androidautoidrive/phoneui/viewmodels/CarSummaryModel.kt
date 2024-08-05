@@ -50,6 +50,7 @@ class CarSummaryModel(carInfoOverride: CarInformation? = null, val showAdvancedS
 		when (brand) {
 			"BMW" -> _carLogo.value = { ContextCompat.getDrawable(this, R.drawable.logo_bmw) }
 			"MINI" -> _carLogo.value = { ContextCompat.getDrawable(this, R.drawable.logo_mini) }
+			"J29" -> _carLogo.value = { ContextCompat.getDrawable(this, R.drawable.logo_toyota) }
 			else -> _carLogo.value = { null }
 		}
 

@@ -167,11 +167,15 @@
         <LinearLayout
             android:orientation="vertical" android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="@{viewModel.isJ29Connected()}">
+            android:visibility="@{viewModel.isJ29Connected() &amp;&amp; !viewModel.isCarConnected()}">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/txt_setup_toyota_hint" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_setup_toyota_hint2" />
         </LinearLayout>
     </LinearLayout>
 </layout>

@@ -28,6 +28,7 @@ class NavigationStatusModelTest {
 	val cdsData = CDSDataProvider()
 	val carInformation = mock<CarInformation> {
 		on { isConnected } doAnswer { isConnected }
+		on { connectionBrand } doReturn "bmw"
 		on { capabilities } doReturn capabilities
 		on { cdsData } doReturn cdsData
 	}
@@ -46,6 +47,7 @@ class NavigationStatusModelTest {
 
 	@Test
 	fun testJ29IsNotConnected() {
+		whenever(carInformation.connectionBrand) doReturn "j29"
 		capabilities["hmi.type"] = "J29 ID6L"
 		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false), MutableLiveData(null)).apply { update() }
 		assertEquals(false, model.isConnected.value)
@@ -53,6 +55,18 @@ class NavigationStatusModelTest {
 		isConnected = true
 		model.update()
 		assertEquals(false, model.isConnected.value)
+	}
+
+	@Test
+	fun testJ29Entwickler() {
+		whenever(carInformation.connectionBrand) doReturn "bmw"
+		capabilities["hmi.type"] = "J29 ID6L"
+		val model = NavigationStatusModel(carInformation, MutableLiveData(false), MutableLiveData(false), MutableLiveData(null)).apply { update() }
+		assertEquals(false, model.isConnected.value)
+
+		isConnected = true
+		model.update()
+		assertEquals(true, model.isConnected.value)
 	}
 
 	@Test
