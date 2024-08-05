@@ -5,8 +5,6 @@ AAIdrive
 [![Code Coverage](https://img.shields.io/codecov/c/gh/BimmerGestalt/AAIdrive/main.svg)](https://codecov.io/gh/BimmerGestalt/AAIdrive)
 [![Crowdin](https://badges.crowdin.net/androidautoidrive/localized.svg)](https://crowdin.com/project/androidautoidrive)
 [![Release Download](https://img.shields.io/github/release/BimmerGestalt/AAIdrive.svg)](https://github.com/BimmerGestalt/AAIdrive/releases/latest)
-[![Download Counter](https://img.shields.io/github/downloads/BimmerGestalt/AAIdrive/total.svg)](https://tooomm.github.io/github-release-stats/?username=BimmerGestalt&repository=AAIdrive)
-[![Weekly Users](https://img.shields.io/endpoint?url=https://bimmergestalt.s3.amazonaws.com/aaidrive/usage/weekly_users.json)](https://bimmergestalt.s3.amazonaws.com/aaidrive/usage/car_report.html)
 [![Gitter](https://badges.gitter.im/AndroidAutoIdrive/community.svg)](https://gitter.im/AndroidAutoIdrive/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Buy Me A Coffee](https://img.shields.io/badge/support-buymeacoffee-5f7fff)](https://www.buymeacoffee.com/q4JVoxz)
 ![MIT Licensed](https://img.shields.io/github/license/BimmerGestalt/AAIdrive)
