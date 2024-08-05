@@ -186,6 +186,7 @@
     <string name="txt_setup_bmw_ready">Diese App ist bereit für die Verbindung mit einem BMW</string>
     <string name="txt_setup_mini_ready">Diese App ist bereit für die Verbindung mit einem Mini</string>
     <string name="txt_setup_toyota_ready">Diese App ist bereit für die Verbindung mit einem Toyota Supra</string>
+    <string name="txt_setup_toyota_hint">Die Unterstützung für Fahrzeuge von Toyota ist nur sehr eingeschränkt umgesetzt. Deshalb werden nur Daten vom Fahrzeug angezeigt</string>
     <string name="txt_setup_bmw_missing">Nicht bereit für die Verbindung mit einem BMW:</string>
     <string name="txt_setup_mini_missing">Nicht bereit für die Verbindung mit einem Mini:</string>
     <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 ist installiert. Diese Version stellt manchmal die Verbindung zum Fahrzeug nicht zuverlässig her. Ein downgrade zur Version 6.4 oder Upgrade zur My BMW App kann hier Abhilfe schaffen</string>
