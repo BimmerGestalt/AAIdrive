@@ -78,8 +78,14 @@ To convert an AAIdrive checkout to use local submodule clones of these libraries
   - Optionally move to a separate development branch: `git checkout -b branch_name`
   - git submodule add https://github.com/BimmerGestalt/IDriveConnectKit.git
   - git submodule add https://github.com/BimmerGestalt/IDriveConnectKitAndroid.git
-  - Change the top-level `settings.gradle` file to include these new modules:
-    `include ':app', ':spotify-app-remote', ':IDriveConnectKit', ':IDriveConnectKitAndroid'`
+  - Add to the top-level `settings.gradle` file to include these new modules:
+
+```
+include ':app', ':spotify-app-remote'
+includeBuild 'IDriveConnectKit'
+includeBuild 'IDriveConnectKitAndroid'
+```
+
   - Change the `app/build.gradle` file to use the modules instead of the Gradle artifacts:
 
 ```diff
