@@ -18,4 +18,5 @@
     <string name="playstore_release_desc">Aktualisiert für Android 14</string>
     <string name="playstore_release_point1">Samsung sollte die Unterstützung für Android 14 Apps im Hintergrund verbessern</string>
     <string name="playstore_release_point2">Android 14 erlaubt keinen einfachen Zugriff auf den Standort im Hintergrund. Daher wird die Telefon-GPS-Option von der Karten-Funktion entfernt</string>
+    <string name="playstore_release_point3">Verbesserte Unterstützung für Toyota Supra</string>
 </resources>
