@@ -19,4 +19,5 @@
     <string name="playstore_release_desc">Updated for Android 14</string>
     <string name="playstore_release_point1">Samsung should provide better background execution support for Android 14 apps</string>
     <string name="playstore_release_point2">Android 14 doesn't easily allow background location access, so the Phone GPS option is removed from the Map feature</string>
+    <string name="playstore_release_point3">Improved support for Toyota Supra</string>
 </resources>
