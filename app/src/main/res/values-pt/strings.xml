@@ -186,7 +186,6 @@
     <string name="txt_setup_bmw_ready">A app está pronta a ligar-se ao BMW</string>
     <string name="txt_setup_mini_ready">A app está pronta a ligar-se ao Mini</string>
     <string name="txt_setup_toyota_ready">O aplicativo está pronto para se conectar a um Toyota Supra</string>
-    <string name="txt_setup_toyota_hint">O suporte a Toyota é muito limitado, atualmente apenas fornece dados do veículo</string>
     <string name="txt_setup_bmw_missing">A app não está pronta se ligar ao BMW:</string>
     <string name="txt_setup_mini_missing">A app não está pronta para se ligar ao Mini:</string>
     <string name="txt_setup_bmw_connected_65">O BMW Connected 6.5 está instalado, o que às vezes não inicia a conexão ao carro. Tente fazer o downgrade para a versão 6.4 ou atualize para o MyBMW se encontrar problemas</string>

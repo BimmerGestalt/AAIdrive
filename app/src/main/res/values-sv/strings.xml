@@ -187,7 +187,8 @@
     <string name="txt_setup_bmw_ready">Appen är redo att ansluta till BMW</string>
     <string name="txt_setup_mini_ready">Appen är klar att ansluta till en Mini</string>
     <string name="txt_setup_toyota_ready">Appen är redo att ansluta till en Toyota Supra</string>
-    <string name="txt_setup_toyota_hint">Toyota stöd är mycket begränsat, för närvarande endast tillhandahålla bildata</string>
+    <string name="txt_setup_toyota_hint">Toyota info är väldigt begränsad av vilka bildata som presenteras</string>
+    <string name="txt_setup_toyota_hint2">För att aktivera fullt stöd i Toyota Supra, använd BimmerCode för att koda om ENTWICKLER_MENUE till aktiv</string>
     <string name="txt_setup_bmw_missing">Ej redo att ansluta till BMW:</string>
     <string name="txt_setup_mini_missing">Ej redo att ansluta till Mini:</string>
     <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 är installerad, vilket ibland inte startar bilanslutningen. Prova att nedgradera till 6.4 eller uppgradera till nya appen MyBMW om du stöter på problem</string>
