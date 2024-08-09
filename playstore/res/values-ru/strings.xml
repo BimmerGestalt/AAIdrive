@@ -18,4 +18,5 @@
     <string name="playstore_release_desc">Обновлено для Android 14</string>
     <string name="playstore_release_point1">Samsung должен обеспечить лучшую поддержку фонового исполнения приложений для Android 14</string>
     <string name="playstore_release_point2">Android 14 не позволяет получить доступ к фоновому местоположению, поэтому опция GPS Телефона удалена с карты</string>
+    <string name="playstore_release_point3">Улучшена поддержка Toyota Supra</string>
 </resources>
