@@ -69,9 +69,11 @@
     <string name="notification_quickreplies_default">[\"👍\",\"Op mijn weg!\",\"Momenteel in de auto\",\"Kan nu niet smsen, bel me in plaats van.\",\"Ik bel je later\"]</string>
     <string name="lbl_notification_permissions">Toegang tot meldingen</string>
     <string name="lbl_notification_sms_permissions">Toegang tot SMS-afbeeldingen weergeven</string>
+    <string name="lbl_notification_permissions_hint">Je kunt later meldingsmachtigingen verlenen en ze op elk moment eenvoudig intrekken</string>
     <string name="lbl_popupVersion">Popups werken enkel met IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS wordt niet ondersteund door uw auto</string>
     <string name="lbl_smsPermission">Geef de SMS toegang om afbeeldingen weer te geven van inkomende SMS berichten in de auto. De tekst blijft altijd zichtbaar.</string>
+    <string name="lbl_postNotificationsPermission">Toegang tot het tonen van een service-melding om actief te blijven wanneer verbonden met de auto</string>
     <string name="lbl_calendarpage">Uw kalender kan in de auto worden weergegeven, waardoor u snel kunt navigeren naar afspraken</string>
     <string name="lbl_calendar_description">Gebeurtenissen in de telefoonkalender zoals deze in de Google Agenda worden weergegeven in de auto. Een werkprofielkalender is niet beschikbaar.</string>
     <string name="lbl_calendar_enabled">Toon Kalender</string>
@@ -83,6 +85,7 @@
     <string name="lbl_calendar_calendars">Kalenders:</string>
     <string name="lbl_calendar_calendars_empty">Geen agenda\'s gevonden</string>
     <string name="lbl_calendar_upcoming_events">Aankomende afspraken:</string>
+    <string name="lbl_calendar_upcoming_events_empty">Geen komende afspraken gevonden deze maand</string>
     <string name="lbl_map_bt_hint">Kaart prestaties en kwaliteit bij een Bluetooth verbinding zal slecht zijn</string>
     <string name="lbl_map_phone_gps">Telefoon GPS gebruiken in plaats van auto GPS</string>
     <string name="lbl_widescreen_map">Breedbeeld map</string>
