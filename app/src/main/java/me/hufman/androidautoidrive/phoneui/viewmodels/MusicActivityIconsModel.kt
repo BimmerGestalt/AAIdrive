@@ -18,7 +18,7 @@ class MusicActivityIconsModel(private val _icons: Map<String, Bitmap>): ViewMode
 
 		private fun loadIcons(context: Context): Map<String, Bitmap> {
 			val appAssets = CarAppAssetResources(context, "multimedia")
-			val images = Utils.loadZipfile(appAssets.getImagesDB("common"))
+			val images = Utils.loadZipfile(appAssets.getImagesDB("bmw"))
 			val icons = HashMap<String, Bitmap>()
 			for (id in listOf(ARTIST_ID, ALBUM_ID, SONG_ID, PLACEHOLDER_ID, FOLDER_ID)) {
 				icons[id] = BitmapFactory.decodeByteArray(images[id], 0, images[id]?.size ?: 0)
