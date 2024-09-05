@@ -149,7 +149,7 @@ jobs:
             timeout 30m adb shell am instrument -w  -e class me.hufman.androidautoidrive.MainScreenshotTest,me.hufman.androidautoidrive.WelcomeScreenshotTest me.hufman.androidautoidrive.test/me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner ) &&
             ./gradlew fetchScreenshots --stacktrace || adb logcat -d
       - name: Package screenshots
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: matrix.map == 'Nomap'
         with:
           retention-days: 7
@@ -194,7 +194,7 @@ jobs:
       - name: Confirm APK hashes
         run: "find app/build/outputs/apk -name '*.sha1' -exec cat {} \\; -execdir sha1sum -c {} \\;"
       - name: Upload APKs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           retention-days: 7
           name: apk
