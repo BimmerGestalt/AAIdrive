@@ -381,12 +381,14 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 				}
 
 				val played = if (notificationSettings.shouldPlaySound()) {
+					audioPlayer.requestDuck()
 					audioPlayer.playRingtone(sbn.soundUri)
 				} else false
 
-				if (notificationSettings.shouldReadoutNotificationPopup(passengerSeated) && played) {
+				if (played) {
 					Thread.sleep(3000)
 				}
+				audioPlayer.releaseDuck()
 				readoutInteractions.triggerPopupReadout(sbn)
 			}
 		}

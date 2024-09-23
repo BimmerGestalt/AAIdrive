@@ -483,6 +483,8 @@ class NotificationAppTest {
 
 		// plays the ringtone when showing statusbar icon
 		verify(audioPlayer).playRingtone(any())
+		verify(audioPlayer).requestDuck()
+		verify(audioPlayer).releaseDuck()
 
 		// reads out the new notification
 		verify(readoutController).readout(listOf("Chat: ", "Title: Text"))
@@ -513,6 +515,8 @@ class NotificationAppTest {
 
 		// plays the ringtone with the popup
 		verify(audioPlayer).playRingtone(any())
+		verify(audioPlayer).requestDuck()
+		verify(audioPlayer).releaseDuck()
 
 		// reads out the popup
 		verify(readoutController).readout(listOf("Chat: ", "Title: Text"))
