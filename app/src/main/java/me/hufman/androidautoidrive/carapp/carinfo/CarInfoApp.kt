@@ -1,35 +1,54 @@
-package me.hufman.androidautoidrive.carapp.notifications
+package me.hufman.androidautoidrive.carapp.carinfo
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
-import android.content.res.Resources.NotFoundException
 import android.os.Handler
 import android.util.Log
-import com.google.gson.Gson
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
-import io.bimmergestalt.idriveconnectkit.CDS
 import io.bimmergestalt.idriveconnectkit.IDriveConnection
 import io.bimmergestalt.idriveconnectkit.RHMIUtils.rhmi_setResourceCached
 import io.bimmergestalt.idriveconnectkit.android.CarAppResources
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionStatus
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
-import io.bimmergestalt.idriveconnectkit.rhmi.*
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplication
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationEtch
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationIdempotent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIApplicationSynchronized
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import io.bimmergestalt.idriveconnectkit.rhmi.deserialization.loadFromXML
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.R
-import me.hufman.androidautoidrive.carapp.*
-import me.hufman.androidautoidrive.carapp.carinfo.CarDetailedInfo
+import me.hufman.androidautoidrive.carapp.AMCategory
+import me.hufman.androidautoidrive.carapp.FocusTriggerController
+import me.hufman.androidautoidrive.carapp.L
+import me.hufman.androidautoidrive.carapp.RHMIActionAbort
+import me.hufman.androidautoidrive.carapp.RHMIApplicationSwappable
+import me.hufman.androidautoidrive.carapp.ReadoutCommands
+import me.hufman.androidautoidrive.carapp.ReadoutCommandsRHMI
+import me.hufman.androidautoidrive.carapp.ReadoutController
+import me.hufman.androidautoidrive.carapp.TTSState
 import me.hufman.androidautoidrive.carapp.carinfo.views.CarDetailedView
 import me.hufman.androidautoidrive.carapp.carinfo.views.CategoryView
-import me.hufman.androidautoidrive.cds.*
+import me.hufman.androidautoidrive.carapp.notifications.TAG
+import me.hufman.androidautoidrive.cds.CDSConnectionEtch
+import me.hufman.androidautoidrive.cds.CDSDataProvider
+import me.hufman.androidautoidrive.cds.CDSEventHandler
+import me.hufman.androidautoidrive.cds.CDSMetrics
+import me.hufman.androidautoidrive.cds.flow
+import me.hufman.androidautoidrive.cds.onPropertyChangedEvent
+import me.hufman.androidautoidrive.cds.subscriptions
 import me.hufman.androidautoidrive.utils.Utils
 
-class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val unsignedCarAppAssets: CarAppResources, val handler: Handler, val resources: Resources, val appSettings: AppSettings) {
+class CarInfoApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess,
+                 val carAppAssets: CarAppResources, val unsignedCarAppAssets: CarAppResources,
+                 val handler: Handler, val resources: Resources, val appSettings: AppSettings) {
 	private val coroutineContext = handler.asCoroutineDispatcher()
 	val carConnection: BMWRemotingServer
 	var rhmiHandle: Int = -1
@@ -39,11 +58,11 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 	val focusTriggerController: FocusTriggerController
 	val infoState: CarDetailedView
 	val categoryState: CategoryView
-	val readoutController: ReadoutController
+	val readoutCommands: ReadoutCommands
 
 	init {
 		val cdsData = CDSDataProvider()
-		val listener = ReadoutAppListener(cdsData)
+		val listener = CarInfoAppListener(cdsData)
 		carConnection = IDriveConnection.getEtchConnection(iDriveConnectionStatus.host ?: "127.0.0.1", iDriveConnectionStatus.port ?: 8003, listener)
 		val readoutCert = carAppAssets.getAppCertificate(iDriveConnectionStatus.brand ?: "")?.readBytes() as ByteArray
 		val sas_challenge = carConnection.sas_certificate(readoutCert)
@@ -62,7 +81,7 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 				recreateRhmiApp()
 			}
 
-			this.readoutController = ReadoutController.build(carApp, "NotificationReadout")
+			this.readoutCommands = ReadoutCommandsRHMI.build(carApp)
 
 			val carInfo = CarInformation().also {
 				cdsData.flow.defaultIntervalLimit = 100
@@ -76,20 +95,12 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 			initWidgets()
 		}
 
-		// register for readout updates
+		// register for car info updates
 		cdsData.setConnection(CDSConnectionEtch(carConnection))
-		cdsData.subscriptions[CDS.HMI.TTS] = {
-			val state = try {
-				Gson().fromJson(it["TTSState"], TTSState::class.java)
-			} catch (e: Exception) { null }
-			if (state != null) {
-				readoutController.onTTSEvent(state)
-			}
-		}
 
 		// set up the AM icon in the "Addressbook"/Communications section
 		amHandle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
-		carConnection.am_addAppEventHandler(amHandle, "me.hufman.androidautoidrive.notification.readout")
+		carConnection.am_addAppEventHandler(amHandle, "me.hufman.androidautoidrive.notification.readout")   // the old name, which might be in people's bookmarks
 		createAmApp()
 	}
 
@@ -97,7 +108,7 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 	fun createRhmiApp(): RHMIApplication {
 		// create the app in the car
 		rhmiHandle = carConnection.rhmi_create(null, BMWRemoting.RHMIMetaData("me.hufman.androidautoidrive.notification.readout", BMWRemoting.VersionInfo(0, 1, 0),
-				"me.hufman.androidautoidrive.notification.readout", "me.hufman"))
+			"me.hufman.androidautoidrive.notification.readout", "me.hufman"))
 		carConnection.rhmi_setResourceCached(rhmiHandle, BMWRemoting.RHMIResourceType.DESCRIPTION, carAppAssets.getUiDescription())
 		if (BuildConfig.SEND_UNSIGNED_RESOURCES) {
 			try {
@@ -142,16 +153,16 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 			} else {
 				Utils.convertPngToGrayscale(resources.openRawResource(R.drawable.ic_carinfo_common).readBytes())
 			}
-		} catch (e: NotFoundException) { "" }
+		} catch (e: Resources.NotFoundException) { "" }
 
 		val amInfo = mutableMapOf<Int, Any>(
-				0 to 145,   // basecore version
-				1 to name,  // app name
-				2 to carAppImage,
-				3 to AMCategory.VEHICLE_INFORMATION.value,   // section
-				4 to true,
-				5 to 800,   // weight
-				8 to infoState.state.id  // mainstateId
+			0 to 145,   // basecore version
+			1 to name,  // app name
+			2 to carAppImage,
+			3 to AMCategory.VEHICLE_INFORMATION.value,   // section
+			4 to true,
+			5 to 800,   // weight
+			8 to infoState.state.id  // mainstateId
 		)
 		// language translations, dunno which one is which
 		for (languageCode in 101..123) {
@@ -163,7 +174,7 @@ class ReadoutApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securit
 		}
 	}
 
-	inner class ReadoutAppListener(val cdsEventHandler: CDSEventHandler): BaseBMWRemotingClient() {
+	inner class CarInfoAppListener(val cdsEventHandler: CDSEventHandler): BaseBMWRemotingClient() {
 		var server: BMWRemotingServer? = null
 		var app: RHMIApplication? = null
 

@@ -17,7 +17,7 @@ import org.junit.runner.RunWith
 import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.notifications.CarNotification
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
-import me.hufman.androidautoidrive.carapp.notifications.PhoneNotifications
+import me.hufman.androidautoidrive.carapp.notifications.NotificationApp
 import me.hufman.androidautoidrive.notifications.NotificationUpdaterControllerIntent
 import org.awaitility.Awaitility.await
 
@@ -36,7 +36,7 @@ class InstrumentedTestNotificationApp {
 		val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
 		// prepare to listen to updates from the phone
-		val mockListener = mock<PhoneNotifications.PhoneNotificationListener> {}
+		val mockListener = mock<NotificationApp.PhoneNotificationListener> {}
 		val updateListener = NotificationUpdaterControllerIntent.Receiver(mockListener)
 		val updateReceiver = object: BroadcastReceiver() {
 			override fun onReceive(p0: Context?, p1: Intent?) {

@@ -1066,6 +1066,11 @@
                 <action android:name="me.hufman.androidautoidrive.carconnection.service" />
             </intent-filter>
         </service>
+        <service android:name=".carapp.carinfo.CarInfoAppService" android:exported="false">
+            <intent-filter>
+                <action android:name="me.hufman.androidautoidrive.carconnection.service" />
+            </intent-filter>
+        </service>
         <service android:name=".carapp.carinfo.CarInformationDiscoveryService" android:exported="false">
             <intent-filter>
                 <action android:name="me.hufman.androidautoidrive.carconnection.service" />

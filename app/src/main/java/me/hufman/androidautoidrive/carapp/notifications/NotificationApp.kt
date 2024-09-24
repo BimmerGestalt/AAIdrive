@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.util.Log
+import com.google.gson.Gson
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.BaseBMWRemotingClient
@@ -32,7 +33,7 @@ import java.util.*
 const val TAG = "PhoneNotifications"
 const val HMI_CONTEXT_THRESHOLD = 5000L
 
-class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val audioPlayer: AudioPlayer, val notificationSettings: NotificationSettings) {
+class NotificationApp(val iDriveConnectionStatus: IDriveConnectionStatus, val securityAccess: SecurityAccess, val carAppAssets: CarAppResources, val phoneAppResources: PhoneAppResources, val graphicsHelpers: GraphicsHelpers, val controller: CarNotificationController, val audioPlayer: AudioPlayer, val notificationSettings: NotificationSettings) {
 	val notificationListener = PhoneNotificationListener(this)
 	val notificationReceiver = NotificationUpdaterControllerIntent.Receiver(notificationListener)
 	var notificationBroadcastReceiver: BroadcastReceiver? = null
@@ -162,6 +163,15 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 					}
 				}
 			} catch (e: IOException) {}
+			// subscribe to TTS
+			cdsData.subscriptions[CDS.HMI.TTS] = {
+				val state = try {
+					Gson().fromJson(it["TTSState"], TTSState::class.java)
+				} catch (e: Exception) { null }
+				if (state != null) {
+					readoutInteractions.readoutController?.onTTSEvent(state)
+				}
+			}
 		}
 	}
 
@@ -349,7 +359,7 @@ class PhoneNotifications(val iDriveConnectionStatus: IDriveConnectionStatus, val
 	}
 
 	/** All open, so that we can mock them in tests */
-	open inner class PhoneNotificationListener(val phoneNotifications: PhoneNotifications): NotificationUpdaterController {
+	open inner class PhoneNotificationListener(val notificationApp: NotificationApp): NotificationUpdaterController {
 		override fun onNewNotification(key: String) {
 			val sbn = NotificationsState.getNotificationByKey(key) ?: return
 			onNotification(sbn)

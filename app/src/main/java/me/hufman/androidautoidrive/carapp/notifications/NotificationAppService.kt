@@ -5,6 +5,8 @@ import android.util.Log
 import io.bimmergestalt.idriveconnectkit.android.CarAppAssetResources
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.carapp.CarAppService
+import me.hufman.androidautoidrive.carapp.ReadoutCommandsSender
+import me.hufman.androidautoidrive.carapp.ReadoutController
 import me.hufman.androidautoidrive.connections.BtStatus
 import me.hufman.androidautoidrive.notifications.AudioPlayer
 import me.hufman.androidautoidrive.notifications.CarNotificationControllerIntent
@@ -13,8 +15,7 @@ import me.hufman.androidautoidrive.utils.GraphicsHelpersAndroid
 
 class NotificationAppService: CarAppService() {
 	val appSettings = AppSettingsViewer()
-	var carappNotifications: PhoneNotifications? = null
-	var carappReadout: ReadoutApp? = null
+	var carappNotifications: NotificationApp? = null
 	var carappStatusbar: ID5StatusbarApp? = null
 
 	override fun shouldStartApp(): Boolean {
@@ -26,7 +27,7 @@ class NotificationAppService: CarAppService() {
 		val handler = handler!!
 		val notificationSettings = NotificationSettings(carInformation.capabilities, BtStatus(applicationContext) {}, MutableAppSettingsReceiver(applicationContext, handler))
 		notificationSettings.btStatus.register()
-		carappNotifications = PhoneNotifications(iDriveConnectionStatus, securityAccess,
+		carappNotifications = NotificationApp(iDriveConnectionStatus, securityAccess,
 				CarAppAssetResources(applicationContext, "basecoreOnlineServices"),
 				PhoneAppResourcesAndroid(applicationContext),
 				GraphicsHelpersAndroid(),
@@ -34,6 +35,8 @@ class NotificationAppService: CarAppService() {
 				AudioPlayer(applicationContext),
 				notificationSettings)
 		carappNotifications?.onCreate(applicationContext, handler)
+		carappNotifications?.readoutInteractions?.readoutController = ReadoutController("NotificationReadout", ReadoutCommandsSender(this))
+
 		// request an initial draw
 		// API24 can turn off the service, so we ask it to start up the service
 		// The service automatically loads all the data onStart if the car is connected
@@ -43,18 +46,6 @@ class NotificationAppService: CarAppService() {
 			.setPackage(packageName)
 		applicationContext.sendBroadcast(intent)
 
-		handler.post {
-			if (running) {
-				// start up the readout app
-				// using a handler to automatically handle shutting down during init
-				val carappReadout = ReadoutApp(iDriveConnectionStatus, securityAccess,
-						CarAppAssetResources(applicationContext, "news"),
-						CarAppAssetResources(applicationContext, "carinfo_unsigned"),
-						handler, applicationContext.resources, AppSettingsViewer())
-				carappNotifications?.readoutInteractions?.readoutController = carappReadout.readoutController
-				this.carappReadout = carappReadout
-			}
-		}
 		handler.post {
 			val id4 = carInformation.capabilities["hmi.type"]?.contains("ID4")
 			if (running && id4 == false) {
@@ -83,8 +74,6 @@ class NotificationAppService: CarAppService() {
 		NotificationListenerServiceImpl.shutdownService(this)
 		carappNotifications?.disconnect()
 		carappNotifications = null
-		carappReadout?.disconnect()
-		carappReadout = null
 		carappStatusbar?.disconnect()
 		carappStatusbar = null
 	}
