@@ -216,6 +216,8 @@
     <string name="txt_setup_mini_mine_detected">The new MINI app is installed, which might cause problems with Mini Connected and is not supported</string>
     <string name="txt_setup_bmw_mine_conflict">Both the BMW Connected and My BMW apps are installed, which might cause connection instability unless connecting over USB</string>
     <string name="txt_setup_mini_mine_conflict">Both the MINI Connected and My MINI apps are installed, which might cause connection instability unless connecting over USB</string>
+    <string name="txt_setup_bmw_mine_missing_device">The MyBMW app requires Nearby Device permissions to connect to the car</string>
+    <string name="txt_setup_mini_mine_missing_device">The MINI app requires Nearby Device permissions to connect to the car</string>
     <string name="txt_setup_security_missing">Security Service is unreachable:</string>
 
     <string name="txt_setup_background_killed">The app was killed while connected to the car</string>

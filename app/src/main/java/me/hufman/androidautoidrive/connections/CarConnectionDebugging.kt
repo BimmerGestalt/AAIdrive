@@ -1,6 +1,8 @@
 package me.hufman.androidautoidrive.connections
 
 import android.content.Context
+import android.content.pm.PackageInfo.REQUESTED_PERMISSION_GRANTED
+import android.content.pm.PackageManager.GET_PERMISSIONS
 import android.content.pm.PackageManager.PackageInfoFlags
 import android.os.Build
 import android.os.SystemClock
@@ -94,11 +96,23 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 		} catch (e: Exception) { false }
 
 	val isBMWMineInstalled
-		get() = SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.BMWMine) ||
-				SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.BMWMineNA)
+		get() = KnownSecurityServices.entries.any {
+			it.name.startsWith("BMWMine") && SecurityAccess.installedSecurityServices.contains(it)
+		}
 	val isMiniMineInstalled
-		get() = SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.MiniMine) ||
-				SecurityAccess.installedSecurityServices.contains(KnownSecurityServices.MiniMineNA)
+		get() = KnownSecurityServices.entries.any {
+			it.name.startsWith("MiniMine") && SecurityAccess.installedSecurityServices.contains(it)
+		}
+
+	val isBMWMineDevicePermission
+		get() = KnownSecurityServices.entries.any {
+			it.name.startsWith("BMWMine") && isPermissionGranted(it.packageName, "android.permission.BLUETOOTH_CONNECT")
+		}
+
+	val isMiniMineDevicePermission
+		get() = KnownSecurityServices.entries.any {
+			it.name.startsWith("MiniMine") && isPermissionGranted(it.packageName, "android.permission.BLUETOOTH_CONNECT")
+		}
 
 	private val btStatus = BtStatus(context) { callback() }
 	private val usbStatus = UsbStatus(context) { callback() }
@@ -150,6 +164,22 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 
 	val btCarBrand
 		get() = btStatus.carBrand
+
+	private fun isPermissionGranted(app: String, permission: String): Boolean {
+		val packageInfo = try {
+			context.packageManager.getPackageInfo(app, GET_PERMISSIONS)
+		} catch (e: Exception) {
+			return false
+		}
+		var found = false
+		packageInfo.requestedPermissions.forEachIndexed { index, perm ->
+			val granted = (packageInfo.requestedPermissionsFlags[index] and REQUESTED_PERMISSION_GRANTED) > 0
+			if (perm == permission) {
+				found = granted
+			}
+		}
+		return found
+	}
 
 	fun register() {
 		idriveListener.callback = { callback() }

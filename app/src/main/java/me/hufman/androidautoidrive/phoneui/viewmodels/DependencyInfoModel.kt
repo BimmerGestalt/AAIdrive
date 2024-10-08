@@ -41,6 +41,11 @@ class DependencyInfoModel(val connection: CarConnectionDebugging, val interrupti
 	private val _isMiniMineInstalled = MutableLiveData<Boolean>()
 	val isMiniMineInstalled: LiveData<Boolean> = _isMiniMineInstalled
 
+	private val _isBmwMineDeviceGranted = MutableLiveData<Boolean>()
+	val isBmwMineDeviceGranted: LiveData<Boolean> = _isBmwMineDeviceGranted
+	private val _isMiniMineDeviceGranted = MutableLiveData<Boolean>()
+	val isMiniMineDeviceGranted: LiveData<Boolean> = _isMiniMineDeviceGranted
+
 	private val _isMiniInstalled = MutableLiveData<Boolean>()
 	val isMiniInstalled: LiveData<Boolean> = _isMiniInstalled
 	private val _isBmwInstalled = MutableLiveData<Boolean>()
@@ -70,6 +75,8 @@ class DependencyInfoModel(val connection: CarConnectionDebugging, val interrupti
 		_isMiniConnected65Installed.value = connection.isMiniConnected65Installed
 		_isBmwMineInstalled.value = connection.isBMWMineInstalled
 		_isMiniMineInstalled.value = connection.isMiniMineInstalled
+		_isBmwMineDeviceGranted.value = connection.isBMWMineDevicePermission
+		_isMiniMineDeviceGranted.value = connection.isMiniMineDevicePermission
 		_isBmwInstalled.value = connection.isBMWInstalled
 		_isMiniInstalled.value = connection.isMiniInstalled
 		_isBmwReady.value = connection.isBMWInstalled && connection.isConnectedSecurityConnected
