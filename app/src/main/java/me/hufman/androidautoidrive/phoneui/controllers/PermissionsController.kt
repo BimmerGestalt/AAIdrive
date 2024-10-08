@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
+import io.bimmergestalt.idriveconnectkit.android.security.KnownSecurityServices
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
@@ -66,6 +67,28 @@ class PermissionsController(val activity: Activity) {
 
 	fun openSelfPermissions() {
 		openApplicationPermissions(activity.packageName)
+	}
+
+	fun openBmwMinePermissions() {
+		for (app in KnownSecurityServices.entries) {
+			try {
+				if (activity.packageManager.getPackageInfo(app.packageName, 0) != null) {
+					openApplicationPermissions(app.packageName)
+					break
+				}
+			} catch (_: Exception) {}
+		}
+	}
+
+	fun openMiniMinePermissions() {
+		for (app in KnownSecurityServices.entries) {
+			try {
+				if (activity.packageManager.getPackageInfo(app.packageName, 0) != null) {
+					openApplicationPermissions(app.packageName)
+					break
+				}
+			} catch (_: Exception) {}
+		}
 	}
 
 	fun promptNotification() {

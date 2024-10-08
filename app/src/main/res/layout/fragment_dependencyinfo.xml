@@ -278,7 +278,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
-            android:gravity="center">
+            android:gravity="center"
+            android:onClick="@{() -> permissionsController.openBmwMinePermissions()}">
 
             <ImageView
                 android:layout_width="48dp"
@@ -404,7 +405,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingBottom="@dimen/checkbox_vertical_margin"
-            android:gravity="center">
+            android:gravity="center"
+            android:onClick="@{() -> permissionsController.openMiniMinePermissions()}">
 
             <ImageView
                 android:layout_width="48dp"
