@@ -53,15 +53,6 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 	private val _audioStateHint = MutableLiveData<Context.() -> String>()
 	val audioStateHint: LiveData<Context.() -> String> = _audioStateHint
 
-	private val _isPopupSupported = MutableLiveData(false)
-	val isPopupSupported: LiveData<Boolean> = _isPopupSupported
-	private val _isPopupNotSupported = MutableLiveData(false)
-	val isPopupNotSupported: LiveData<Boolean> = _isPopupNotSupported
-	private val _popupStatus = MutableLiveData<Context.() -> String>()
-	val popupStatus: LiveData<Context.() -> String> = _popupStatus
-	private val _popupHint = MutableLiveData<Context.() -> String>()
-	val popupHint: LiveData<Context.() -> String> = _popupHint
-
 	private val _isTtsSupported = MutableLiveData(false)
 	val isTtsSupported: LiveData<Boolean> = _isTtsSupported
 	private val _isTtsNotSupported = MutableLiveData(false)
@@ -118,15 +109,6 @@ class CarCapabilitiesViewModel(val carInformation: CarInformation, val musicAppM
 				_audioStateHint.value = { "" }
 			}
 		}
-
-		_isPopupSupported.value = summarized.isPopupSupported
-		_isPopupNotSupported.value = summarized.isPopupNotSupported
-		_popupStatus.value = if (summarized.isPopupSupported) {
-			{ getString(R.string.txt_capabilities_popup_yes) }
-		} else {
-			{ getString(R.string.txt_capabilities_popup_no) }
-		}
-		_popupHint.value = { "" }
 
 		_isTtsSupported.value = summarized.isTtsSupported
 		_isTtsNotSupported.value = summarized.isTtsNotSupported

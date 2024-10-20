@@ -64,7 +64,6 @@
     <string name="notification_quickreplies_default">[\"👍\",\"途中です！\",\"現在車内にあります\",\"テキストメッセージを送信できません。代わりに電話してください\",\"I後で電話します\"]</string>
     <string name="lbl_notification_permissions">通知を表示するためのアクセス</string>
     <string name="lbl_notification_sms_permissions">SMS画像を表示するためのアクセス</string>
-    <string name="lbl_popupVersion">ポップアップはIDrive4でのみ機能します</string>
     <string name="lbl_ttsUnsupported">TTSはお使いの車ではサポートされていません</string>
     <string name="lbl_smsPermission">車内の着信SMS画像から画像を表示するためのSMS権限を付与します。テキスト自体は常に表示されます。</string>
     <string name="lbl_widescreen_map">ワイドスクリーンマップ</string>
@@ -181,9 +180,6 @@
     <string name="txt_capabilities_audiostate_id4">ID4はこの機能をサポートしていません</string>
     <string name="txt_capabilities_audiostate_audiocontext">この機能にはオーディオコンテキストが必要です</string>
     <string name="txt_capabilities_audiostate_spotify">最新のSpotifyをインストールしてこの機能を有効にします</string>
-    <string name="txt_capabilities_popup_yes">通知ポップアップがサポートされています</string>
-    <string name="txt_capabilities_popup_no">通知ポップアップはサポートされていません</string>
-    <string name="txt_capabilities_popup_hint">通知ポップアップはID4でのみサポートされています</string>
     <string name="txt_capabilities_tts_yes">通知テキスト読み上げがサポートされています</string>
     <string name="txt_capabilities_tts_no">通知テキスト読み上げはサポートされていません</string>
     <string name="txt_capabilities_navi_yes">カーナビゲーションがサポートされています</string>

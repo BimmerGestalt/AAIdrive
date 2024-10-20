@@ -72,7 +72,6 @@
     <string name="lbl_notification_permissions">Acces vizualizare notificări</string>
     <string name="lbl_notification_sms_permissions">Acces poze SMS</string>
     <string name="lbl_notification_permissions_hint">Puteți acorda permisiuni de notificare mai târziu și să le revocați cu ușurință în orice moment</string>
-    <string name="lbl_popupVersion">Popup-urile funcționează doar cu IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS nu e suportat de mașina dvs.</string>
     <string name="lbl_smsPermission">Permisiune SMS necesară pentru a vedea imaginile din mesaje în mașină. Textul este disponibil întotdeauna.</string>
     <string name="lbl_postNotificationsPermission">Acces pentru a afișa o notificare de serviciu de a rămâne în stare de funcționare în timpul conectării la mașină</string>
@@ -243,9 +242,6 @@
     <string name="txt_capabilities_audiostate_id4">ID4 nu suportă acest feature</string>
     <string name="txt_capabilities_audiostate_audiocontext">Acest feature are nevoie de Context Audio</string>
     <string name="txt_capabilities_audiostate_spotify">Instalează ultima versiune de Spotify pentru a activa acest feature</string>
-    <string name="txt_capabilities_popup_yes">Popup-uri notificări suportate</string>
-    <string name="txt_capabilities_popup_no">Popup-uri notificări nu sunt suportate</string>
-    <string name="txt_capabilities_popup_hint">Popup-uri notificări suportate doar pe ID4</string>
     <string name="txt_capabilities_tts_yes">Text-în-vorbire pt. notificări suportat</string>
     <string name="txt_capabilities_tts_no">Text-în-vorbire pt. notificări nu este suportat</string>
     <string name="txt_capabilities_navi_yes">Navigație mașină suportat</string>

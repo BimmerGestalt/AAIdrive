@@ -70,7 +70,6 @@
     <string name="lbl_notification_permissions">查看通知权限</string>
     <string name="lbl_notification_sms_permissions">显示SMS图片权限</string>
     <string name="lbl_notification_permissions_hint">您可以稍后授予获取通知权限，并且可以在任何时候轻松撤销</string>
-    <string name="lbl_popupVersion">只有IDrive4支持弹出框</string>
     <string name="lbl_ttsUnsupported">您的车辆不支持TTS</string>
     <string name="lbl_smsPermission">允许在车上查看SMS图片，SMS文字默认可见.</string>
     <string name="lbl_calendarpage">您的日历可以显示在汽车中，为预约事件提供快速导航</string>
@@ -240,9 +239,6 @@
     <string name="txt_capabilities_audiostate_id4">ID4 不支持此功能</string>
     <string name="txt_capabilities_audiostate_audiocontext">此功能需要 Audio Context支持</string>
     <string name="txt_capabilities_audiostate_spotify">安装最新版Spotify以支持此功能</string>
-    <string name="txt_capabilities_popup_yes">支持通知弹出框</string>
-    <string name="txt_capabilities_popup_no">不支持通知弹出框</string>
-    <string name="txt_capabilities_popup_hint">仅ID4支持通知弹出框</string>
     <string name="txt_capabilities_tts_yes">支持通知文字转语音</string>
     <string name="txt_capabilities_tts_no">不支持通知文字转语音</string>
     <string name="txt_capabilities_navi_yes">支持车载导航</string>

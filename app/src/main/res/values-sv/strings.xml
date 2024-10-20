@@ -71,7 +71,6 @@
     <string name="lbl_notification_permissions">Åtkomst till aviseringar</string>
     <string name="lbl_notification_sms_permissions">Åtkomst att visa SMS-bilder</string>
     <string name="lbl_notification_permissions_hint">Du kan bevilja meddelanden senare och kan enkelt återkalla dem när som helst</string>
-    <string name="lbl_popupVersion">Popupfönster fungerar endast med IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS stöds ej av din bil</string>
     <string name="lbl_smsPermission">Ge behörighet för inkommande SMS att visa bilder i bilen. Texten är däremot alltid synlig.</string>
     <string name="lbl_postNotificationsPermission">Tillgång till att visa en serviceavisering att vara på när anslutning till bilen finns</string>
@@ -244,9 +243,6 @@
     <string name="txt_capabilities_audiostate_id4">IDrive4 stödjer ej denna funktion</string>
     <string name="txt_capabilities_audiostate_audiocontext">Denna funktion kräver ljudkontext</string>
     <string name="txt_capabilities_audiostate_spotify">Installera senaste Spotify appen för att aktivera denna funktion</string>
-    <string name="txt_capabilities_popup_yes">Meddelandepopups stöds</string>
-    <string name="txt_capabilities_popup_no">Meddelandepopups stöds ej</string>
-    <string name="txt_capabilities_popup_hint">Meddelandepopups stöds endast på IDrive4</string>
     <string name="txt_capabilities_tts_yes">Text-till-tal för avisering stöds</string>
     <string name="txt_capabilities_tts_no">Text-till-tal i avisering stöds ej</string>
     <string name="txt_capabilities_navi_yes">Bilnavigation stöds</string>

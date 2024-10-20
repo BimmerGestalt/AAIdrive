@@ -208,11 +208,6 @@ class CarCapabilitiesSummarized(val carInformation: CarInformation) {
 	val isHmiNotSupported: Boolean
 		get() = carInformation.connectionBrand?.uppercase() == "J29"
 
-	val isPopupSupported: Boolean
-		get() = isHmiSupported
-	val isPopupNotSupported: Boolean
-		get() = isHmiNotSupported
-
 	val isTtsSupported: Boolean
 		get() = isHmiSupported && carInformation.capabilities["tts"]?.lowercase(Locale.ROOT) == "true"
 	val isTtsNotSupported: Boolean

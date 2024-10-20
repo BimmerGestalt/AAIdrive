@@ -72,7 +72,6 @@
     <string name="lbl_notification_permissions">Доступ к уведомлениям</string>
     <string name="lbl_notification_sms_permissions">Доступ к отображению SMS изображений</string>
     <string name="lbl_notification_permissions_hint">Вы можете предоставить права на уведомления позже и легко отозвать их в любое время</string>
-    <string name="lbl_popupVersion">Всплывающие уведомления работают только с IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS не поддерживается вашим автомобилем</string>
     <string name="lbl_smsPermission">Доступ к смс и фотографиям. Показывать всегда текст.</string>
     <string name="lbl_postNotificationsPermission">Доступ к отображению служебного уведомления для продолжения работы во время подключения к автомобилю</string>
@@ -243,9 +242,6 @@
     <string name="txt_capabilities_audiostate_id4">ID4 не поддерживает эту функцию</string>
     <string name="txt_capabilities_audiostate_audiocontext">Эта функция требует аудио контекста</string>
     <string name="txt_capabilities_audiostate_spotify">Установите последнюю версию Spotify, чтобы включить эту функцию</string>
-    <string name="txt_capabilities_popup_yes">Поддерживаются всплывающие уведомления</string>
-    <string name="txt_capabilities_popup_no">Всплывающие уведомления не поддерживаются</string>
-    <string name="txt_capabilities_popup_hint">Всплывающие уведомления поддерживаются только в ID4</string>
     <string name="txt_capabilities_tts_yes">Поддерживается синтезатор речи для уведомлений</string>
     <string name="txt_capabilities_tts_no">Не поддерживается синтезатор речи для уведомлений</string>
     <string name="txt_capabilities_navi_yes">Автонавигация поддерживается</string>

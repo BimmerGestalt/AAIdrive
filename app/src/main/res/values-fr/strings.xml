@@ -69,7 +69,6 @@
     <string name="notification_quickreplies_default">[\"👍\",\"En route !\",\"Actuellement dans la voiture\",\"Impossible de texter, appelez-moi à la place\",\"Je vous appellerai plus tard\"]</string>
     <string name="lbl_notification_permissions">Accès pour la vue des notifications</string>
     <string name="lbl_notification_sms_permissions">Accès pour afficher les images SMS</string>
-    <string name="lbl_popupVersion">Les popups ne fonctionnent qu\'avec IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS n\'est pas pris en charge par votre voiture</string>
     <string name="lbl_smsPermission">Autorise l\'accès aux images contenues dans les SMS depuis la voiture. Le text est quant à lui toujours visible.</string>
     <string name="lbl_calendarpage">Votre calendrier peut être affiché dans la voiture, offrant une navigation rapide aux rendez-vous</string>
@@ -234,9 +233,6 @@
     <string name="txt_capabilities_audiostate_id4">ID4 ne supporte pas cette fonctionnalité</string>
     <string name="txt_capabilities_audiostate_audiocontext">Cette fonctionnalité nécessite Audio Context</string>
     <string name="txt_capabilities_audiostate_spotify">Installez la dernière version de Spotify pour activer cette fonctionnalité</string>
-    <string name="txt_capabilities_popup_yes">Les Notification Popup sont supportées</string>
-    <string name="txt_capabilities_popup_no">Les Notification Popup ne sont pas supportées</string>
-    <string name="txt_capabilities_popup_hint">Les Notification Popups ne sont supportées que sur ID4</string>
     <string name="txt_capabilities_tts_yes">La synthèse vocale des notifications est supportée</string>
     <string name="txt_capabilities_tts_no">La synthèse vocale des notifications n\'est pas supportée</string>
     <string name="txt_capabilities_navi_yes">La navigation de voiture est supportée</string>

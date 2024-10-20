@@ -67,7 +67,6 @@
     <string name="lbl_notification_permissions">Hozzáférés az értesítésekhez</string>
     <string name="lbl_notification_sms_permissions">Hozzáférés az SMS képek megjelenítéséhez</string>
     <string name="lbl_notification_permissions_hint">Később is adhatsz értesítési engedélyeket, és bármikor könnyedén visszavonhatod azokat</string>
-    <string name="lbl_popupVersion">Felugró értesítések megjelenítése csak IDrive4-en működik</string>
     <string name="lbl_ttsUnsupported">TTS nem támogatott az autódban</string>
     <string name="lbl_smsPermission">Engedélyezés a beérkező SMS üzenetekben lévő képeknek az autóban történő megjelenítésre. A szöveg állandóan látható.</string>
     <string name="lbl_calendarpage">A naptárad megjeleníthető az autóban, mely gyors útvonaltervezést tesz lehetővé találkozóidra</string>
@@ -232,9 +231,6 @@
     <string name="txt_capabilities_audiostate_id4">ID4 nem támogatja ezt a funkciót</string>
     <string name="txt_capabilities_audiostate_audiocontext">Ehhez a funkcióhoz Audio Context szükséges</string>
     <string name="txt_capabilities_audiostate_spotify">Telepítsd a legfissebb Spotify alkalmazást a funkció bekapcsolásához</string>
-    <string name="txt_capabilities_popup_yes">Felugró értesítések támogatva</string>
-    <string name="txt_capabilities_popup_no">Felugró értesítések nincsenek támogatva</string>
-    <string name="txt_capabilities_popup_hint">Felugró értesítések cak ID4-en vannak támogatva</string>
     <string name="txt_capabilities_tts_yes">Értesítések szövegfelolvasása támogatva</string>
     <string name="txt_capabilities_tts_no">Értesítések szövegfelolvasása nincsen támogatva</string>
     <string name="txt_capabilities_navi_yes">Támogatott autó navigáció</string>

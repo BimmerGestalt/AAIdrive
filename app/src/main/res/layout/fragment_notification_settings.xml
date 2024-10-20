@@ -25,7 +25,6 @@
             android:id="@+id/swNotificationPopup"
             android:checked="@={settings.notificationPopup}"
             app:animationDuration="300"
-            android:alpha="@{capabilities.isPopupNotSupported() ? 0.5f : 1.0f}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
@@ -36,19 +35,11 @@
             android:id="@+id/paneNotificationPopup"
             android:visibility="@{settings.notificationPopup}"
             app:animationDuration="300"
-            android:alpha="@{capabilities.isPopupNotSupported() ? 0.5f : 1.0f}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginStart="24dp">
 
-            <TextView
-                android:id="@+id/txtPopupVersion"
-                android:visibility="@{!capabilities.isPopupSupported()}"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="@string/lbl_popupVersion" />
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swNotificationPopupPassenger"
                 android:checked="@={settings.notificationPopupPassenger}"

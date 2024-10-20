@@ -64,7 +64,6 @@
     <string name="notification_quickreplies_default">[\"👍\",\"אני בדרך!\",\"בנהיגה לא יכול/ה לדבר\",\"לא יכול/ה לענות, תתקשר/י במקום\",\"אתקשר מאוחר יותר]</string>
     <string name="lbl_notification_permissions">הרשאה לקריאת התראות</string>
     <string name="lbl_notification_sms_permissions">הרשאה להצגת הודעות תמונה MMS</string>
-    <string name="lbl_popupVersion">התראות קופצות עובדות רק עם IDrive 4</string>
     <string name="lbl_ttsUnsupported">TTS לא נתמך על ידי הרכב שלך</string>
     <string name="lbl_smsPermission">אפשר הרשאת SMS כדי לצפות בתמונות מהודעות נכנסות ברכב. הטקסט תמיד יוצג.</string>
     <string name="lbl_widescreen_map">מפה במסך רחב</string>
@@ -154,9 +153,6 @@
     <string name="txt_capabilities_audiostate_id4">ID4 לא תומך בתכונה זו</string>
     <string name="txt_capabilities_audiostate_audiocontext">תכונה זו דורשת השמעת מוזיקה</string>
     <string name="txt_capabilities_audiostate_spotify">התקן את הגרסה האחרונה של Spotify כדי לאפשר תכונה זו</string>
-    <string name="txt_capabilities_popup_yes">התראות קופצות זמינות</string>
-    <string name="txt_capabilities_popup_no">התראות קופצות לא זמינות</string>
-    <string name="txt_capabilities_popup_hint">התראות קופצות זמינות רק ל-ID4</string>
     <string name="txt_capabilities_tts_yes">התראת טקסט-לדיבור זמין</string>
     <string name="txt_capabilities_tts_no">התראות טקסט-לדיבור לא זמין</string>
     <string name="txt_capabilities_navi_yes">ניווט ברכב זמין</string>

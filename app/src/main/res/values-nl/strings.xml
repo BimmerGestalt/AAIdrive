@@ -70,7 +70,6 @@
     <string name="lbl_notification_permissions">Toegang tot meldingen</string>
     <string name="lbl_notification_sms_permissions">Toegang tot SMS-afbeeldingen weergeven</string>
     <string name="lbl_notification_permissions_hint">Je kunt later meldingsmachtigingen verlenen en ze op elk moment eenvoudig intrekken</string>
-    <string name="lbl_popupVersion">Popups werken enkel met IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS wordt niet ondersteund door uw auto</string>
     <string name="lbl_smsPermission">Geef de SMS toegang om afbeeldingen weer te geven van inkomende SMS berichten in de auto. De tekst blijft altijd zichtbaar.</string>
     <string name="lbl_postNotificationsPermission">Toegang tot het tonen van een service-melding om actief te blijven wanneer verbonden met de auto</string>
@@ -234,9 +233,6 @@
     <string name="txt_capabilities_audiostate_id4">ID4 ondersteunt deze functie niet</string>
     <string name="txt_capabilities_audiostate_audiocontext">Voor deze functie is Audio Context vereist</string>
     <string name="txt_capabilities_audiostate_spotify">Installeer de laatste Spotify om deze functie in te schakelen</string>
-    <string name="txt_capabilities_popup_yes">Notificatie pop-ups worden ondersteund</string>
-    <string name="txt_capabilities_popup_no">Notificatie pop-ups worden niet ondersteund</string>
-    <string name="txt_capabilities_popup_hint">Notificatie pop-ups worden alleen ondersteund op ID4</string>
     <string name="txt_capabilities_tts_yes">Notificatie Text-to-Speech is ondersteund</string>
     <string name="txt_capabilities_tts_no">Notificatie Text-to-Speech wordt niet ondersteund</string>
     <string name="txt_capabilities_navi_yes">Auto navigatie wordt ondersteund</string>

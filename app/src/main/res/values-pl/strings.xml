@@ -72,7 +72,6 @@
     <string name="notification_quickreplies_default">[\"👍\",\"Tak\",\"Nie\",\"Nie mogę teraz rozmawiać, oddzwonie\",\"Oddzwonie poźniej\",]</string>
     <string name="lbl_notification_permissions">Dostęp do powiadomień</string>
     <string name="lbl_notification_sms_permissions">Dostęp do pokazywania obrazkow w SMS</string>
-    <string name="lbl_popupVersion">Wyskakujace powiadomienia działaja tylko z IDrive4</string>
     <string name="lbl_ttsUnsupported">Twój samochód nie obsługuje funkcji TTS</string>
     <string name="lbl_smsPermission">Przyznaj uprawnienia SMS aby wyświetlać obrazy z przychodzących SMS w samochodzie. Tekst jest zawsze widoczny.</string>
     <string name="lbl_calendarpage">Twój kalendarz może być wyświetlany w samochodzie, oferując szybką nawigację do miejsca spotkania</string>
@@ -237,9 +236,6 @@
     <string name="txt_capabilities_audiostate_id4">ID4 nie obsługuje tej funkcji</string>
     <string name="txt_capabilities_audiostate_audiocontext">Ta funkcja wymaga kontekstu audio</string>
     <string name="txt_capabilities_audiostate_spotify">Zainstaluj najnowszą wersję Spotify, aby włączyć tę funkcję</string>
-    <string name="txt_capabilities_popup_yes">Wyskakujące powiadomienia są obsługiwane</string>
-    <string name="txt_capabilities_popup_no">Wyskakujące powiadomienia nie są obsługiwane</string>
-    <string name="txt_capabilities_popup_hint">Wyskakujące powiadomienia są obsługiwane tylko w ID4</string>
     <string name="txt_capabilities_tts_yes">Zamiana tekstu na mowę (TTS) w powiadomieniach jest obsługiwana</string>
     <string name="txt_capabilities_tts_no">Zamiana tekstu na mowę (TTS) w powiadomieniach nie jest obsługiwana</string>
     <string name="txt_capabilities_navi_yes">Nawigacja samochodowa obsługiwana</string>

@@ -71,7 +71,6 @@
     <string name="lbl_notification_permissions">Acceso para ver notificaciones</string>
     <string name="lbl_notification_sms_permissions">Acceso para ver fotos de SMS</string>
     <string name="lbl_notification_permissions_hint">Puedes conceder permisos de notificación más tarde y fácilmente revocarlos en cualquier momento</string>
-    <string name="lbl_popupVersion">Las ventanass emergentes sólo funcionan con IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS no está soportado por tu coche</string>
     <string name="lbl_smsPermission">Otorgue el permiso de SMS para ver las imágenes entrantes de imágenes SMS en el automóvil. El texto siempre será visible.</string>
     <string name="lbl_postNotificationsPermission">Acceso para mostrar una notificación de servicio para permanecer en funcionamiento mientras está conectado al coche</string>
@@ -242,9 +241,6 @@
     <string name="txt_capabilities_audiostate_id4">ID4 no soporta esta característica</string>
     <string name="txt_capabilities_audiostate_audiocontext">Esta función requiere Audio Context</string>
     <string name="txt_capabilities_audiostate_spotify">Instalar la última versión de Spotify para activar esta función</string>
-    <string name="txt_capabilities_popup_yes">Se admiten Notificaciones Emergentes</string>
-    <string name="txt_capabilities_popup_no">No se admiten Notificaciones Emergentes</string>
-    <string name="txt_capabilities_popup_hint">Las Notificaciones Emergentes sólo están soportadas en ID4</string>
     <string name="txt_capabilities_tts_yes">Se admite Notificación de conversión Texto a Voz</string>
     <string name="txt_capabilities_tts_no">No se admite Notificación de conversión Texto a Voz</string>
     <string name="txt_capabilities_navi_yes">La Navegación del Coche está soportada</string>

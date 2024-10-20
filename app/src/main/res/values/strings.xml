@@ -78,7 +78,6 @@
     <string name="lbl_notification_permissions">Access to view notifications</string>
     <string name="lbl_notification_sms_permissions">Access to show SMS pictures</string>
     <string name="lbl_notification_permissions_hint">You may grant notification permissions later and can easily revoke them at any time</string>
-    <string name="lbl_popupVersion">Popups only work with IDrive4</string>
     <string name="lbl_ttsUnsupported">TTS is not supported by your car</string>
     <string name="lbl_smsPermission">Grant the SMS permission to view pictures from incoming SMS images in the car. The text itself is always visible.</string>
     <string name="lbl_postNotificationsPermission">Access to show a service notification to stay running while connected to the car</string>
@@ -269,9 +268,6 @@
     <string name="txt_capabilities_audiostate_id4">ID4 does not support this feature</string>
     <string name="txt_capabilities_audiostate_audiocontext">This feature requires Audio Context</string>
     <string name="txt_capabilities_audiostate_spotify">Install the latest Spotify to enable this feature</string>
-    <string name="txt_capabilities_popup_yes">Notification Popups are supported</string>
-    <string name="txt_capabilities_popup_no">Notification Popups are not supported</string>
-    <string name="txt_capabilities_popup_hint">Notification Popups are only supported on ID4</string>
     <string name="txt_capabilities_tts_yes">Notification Text-to-Speech is supported</string>
     <string name="txt_capabilities_tts_no">Notification Text-to-Speech is not supported</string>
     <string name="txt_capabilities_navi_yes">Car Navigation is supported</string>
