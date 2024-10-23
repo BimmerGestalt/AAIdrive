@@ -35,19 +35,23 @@ class CarThread(name: String, var runnable: () -> (Unit)): Thread(name) {
 		} catch (e: IllegalStateException) {
 			// posted to a dead handler
 			Log.i(TAG, "Shutting down thread $name due to IllegalStateException: $e", e)
-		} catch (e: RuntimeException) {
-			// phone was unplugged during an RPC command
-			Log.i(TAG, "Shutting down thread $name due to RuntimeException: $e", e)
 		} catch (e: org.apache.etch.util.TimeoutException) {
 			// phone was unplugged during an RPC command
 			Log.i(TAG, "Shutting down thread $name due to Etch TimeoutException")
+		} catch (e: RuntimeException) {
+			// phone was unplugged during an RPC command
+			Log.i(TAG, "Shutting down thread $name due to RuntimeException: $e", e)
 		} catch (e: IOException) {
-			val bmwException = e.cause as? BMWRemoting.ServiceException
+			val cause = e.cause
 			if (!iDriveConnectionObserver.isConnected) {
 				// the car is no longer connected
 				// so this is most likely a crash caused by the closed connection
 				Log.i(TAG, "Shutting down thread $name due to disconnection")
-			} else if (bmwException?.errorMsg?.contains("RHMI application was already connected") == true) {
+			} else if (cause is org.apache.etch.util.TimeoutException) {
+				Log.i(TAG, "Shutting down thread $name due to Etch TimeoutException")
+			} else if (cause is RuntimeException) {
+				Log.i(TAG, "Shutting down thread $name due to RuntimeException: $cause", cause)
+			} else if (cause is BMWRemoting.ServiceException && cause.errorMsg.contains("RHMI application was already connected")) {
 				// sometimes, the BCL tunnel blips during the start of the connection
 				// and so previously-initialized apps are still "in the car" though the tunnel has since restarted
 				// and so the car complains that the app is already connected
