@@ -13,6 +13,12 @@ import androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonArray
 import com.google.gson.JsonParser
+import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
 
 /**
  * This implements read-only access to a singleton of loaded settings
@@ -75,6 +81,11 @@ interface AppSettings {
 
 		private val loadedSettings = HashMap<KEYS, String>()
 
+		private val CACHED_KEY_FILENAMES = mapOf(
+			KEYS.CACHED_CAR_CAPABILITIES to "car_capabilities.json",
+			KEYS.CACHED_CAR_DATA to "car_data.json",
+		)
+
 		/**
 		 * Initialize the current settings with defaults
 		 * which will undo any loadSettings that may have happened
@@ -86,6 +97,19 @@ interface AppSettings {
 					loadedSettings[setting] = setting.default
 				}
 			}
+		}
+
+		private fun loadCachedKey(ctx: Context, key: KEYS) {
+			val filename = CACHED_KEY_FILENAMES[key] ?: return
+			val file = File(ctx.cacheDir, filename)
+			if (!file.exists()) {
+				return
+			}
+			try {
+				BufferedInputStream(FileInputStream(file)).use {
+					loadedSettings[key] = it.readBytes().decodeToString()
+				}
+			} catch (_: IOException) {}
 		}
 
 		fun loadSettings(ctx: Context) {
@@ -100,6 +124,10 @@ interface AppSettings {
 				if (loadedSettings[KEYS.NOTIFICATIONS_QUICK_REPLIES] == "[]") {
 					loadedSettings[KEYS.NOTIFICATIONS_QUICK_REPLIES] = ctx.getString(R.string.notification_quickreplies_default)
 				}
+
+				for (key in CACHED_KEY_FILENAMES.keys) {
+					loadCachedKey(ctx, key)
+				}
 			}
 		}
 
@@ -112,16 +140,39 @@ interface AppSettings {
 			}
 		}
 
+		private fun saveCachedKey(ctx: Context, key: KEYS, value: String) {
+			val filename = CACHED_KEY_FILENAMES[key] ?: return
+			val destFile = File(ctx.cacheDir, filename)
+			val tmpFile = File(ctx.cacheDir, "$filename.tmp")
+			try {
+				tmpFile.delete()
+				BufferedOutputStream(FileOutputStream(tmpFile)).use {
+					it.write(value.encodeToByteArray())
+				}
+				tmpFile.renameTo(destFile)
+			} catch (_: IOException) {}
+		}
+
 		fun tempSetSetting(key: KEYS, value: String) {
 			synchronized(loadedSettings) {
 				loadedSettings[key] = value
 			}
 		}
 		fun saveSetting(ctx: Context, key: KEYS, value: String) {
-			val preferences = ctx.getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE)
-			val editor = preferences.edit()
-			editor.putString(key.key, value)
-			editor.apply()
+			if (CACHED_KEY_FILENAMES.containsKey(key)) {
+				saveCachedKey(ctx, key, value)
+
+				// clear out this cached data from SharedPreferences
+				val preferences = ctx.getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE)
+				val editor = preferences.edit()
+				editor.remove(key.key)
+				editor.apply()
+			} else {
+				val preferences = ctx.getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE)
+				val editor = preferences.edit()
+				editor.putString(key.key, value)
+				editor.apply()
+			}
 			loadedSettings[key] = value
 		}
 	}
