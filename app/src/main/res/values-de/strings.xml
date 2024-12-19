@@ -195,8 +195,8 @@
     <string name="txt_setup_mini_mine_detected">Die neue MINI-App ist installiert, was Probleme mit Mini Connected verursachen kann und nicht unterstützt wird</string>
     <string name="txt_setup_bmw_mine_conflict">Sowohl die BMW Connected als auch My BMW App sind installiert, was zu einer instabilen Verbindung führen kann, sofern keine USB-Verbindung besteht</string>
     <string name="txt_setup_mini_mine_conflict">Sowohl die MINI Connected als auch My MINI App sind installiert, was zu einer instabilen Verbindung führen kann, sofern keine USB-Verbindung besteht</string>
-    <string name="txt_setup_bmw_mine_missing_device">Die MyBMW App benötigt das Recht für Gräte in der Nähe um sich mit dem Auto zu verbinden</string>
-    <string name="txt_setup_mini_mine_missing_device">Die MINI App benötigt das Recht für Gräte in der Nähe um sich mit dem Auto zu verbinden</string>
+    <string name="txt_setup_bmw_mine_missing_device">Die MyBMW App benötigt das Recht \"Geräte in der Nähe\", um sich mit dem Auto zu verbinden</string>
+    <string name="txt_setup_mini_mine_missing_device">Die MINI App benötigt das Recht \"Geräte in der Nähe\", um sich mit dem Auto zu verbinden</string>
     <string name="txt_setup_security_missing">Security Service ist nicht erreichbar:</string>
     <string name="txt_setup_background_killed">Die App wurde beim Verbinden mit dem Auto beendet</string>
     <string name="txt_setup_background_suspended">Die App wurde im Hintergrund angehalten, während sie mit dem Auto verbunden war</string>
