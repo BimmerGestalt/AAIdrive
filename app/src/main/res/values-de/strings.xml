@@ -380,7 +380,7 @@
     <string name="CARINFO_STEERING">Lenkung</string>
     <string name="CARINFO_RPM">U/Min</string>
     <string name="CARINFO_TORQUE">Drehmoment</string>
-    <string name="CARINFO_GFORCE">\uD835\uDC54</string>
+    <string name="CARINFO_GFORCE">g</string>
     <string name="CARINFO_SPEEDACTUAL">Aktuell</string>
     <string name="CARINFO_SPEEDGPS">GPS</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
