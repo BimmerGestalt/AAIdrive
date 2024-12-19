@@ -73,6 +73,7 @@
     <string name="lbl_notification_permissions_hint">Die Rechte für \"Benachrichtigungen\" können später erteilt und jederzeit widerrufen werden</string>
     <string name="lbl_ttsUnsupported">TTS wird von Ihrem Fahrzeug nicht unterstützt</string>
     <string name="lbl_smsPermission">Erteile Zugriff für SMS-Nachrichten um Bilder von Nachrichten im Fahrzeug zu sehen. Text ist immer sichtbar.</string>
+    <string name="lbl_postNotificationsPermission">Benachrichtigung anzeigen, während die App läuft und mit dem Auto verbunden ist</string>
     <string name="lbl_calendarpage">Ihr Kalender kann im Fahrzeug angezeigt werden und bietet eine schnelle Navigation zu Terminen</string>
     <string name="lbl_calendar_description">Termine im Kalender des Telefons werden im Auto angezeigt, sofern Sie auch in der Google Kalender-App sichtbar sind. Kalendereinträge eines Arbeitsprofils sind nicht verfügbar.</string>
     <string name="lbl_calendar_enabled">Kalender anzeigen</string>
@@ -257,6 +258,7 @@
     <string name="lbl_connection_probe_ips">Versuche mit dem Auto über einen TCP Tunnel zu verbinden</string>
     <string name="lbl_assistant">Sprachassistent (Beta)</string>
     <string name="lbl_assistant_empty">Nichts gefunden</string>
+    <string name="lbl_assistant_fullscreen_permissions">Zugriff auf Sprachassistenten bei ausgeschaltetem Bildschirm</string>
     <!-- car status -->
     <string name="lbl_carinfopage_disconnected">Nach der ersten Verbindung werden hier Informationen über Ihr Fahrzeug angezeigt</string>
     <string name="lbl_carinfopage">Hier sind Kurzinfos zu Ihrem Auto verfügbar</string>
@@ -378,7 +380,7 @@
     <string name="CARINFO_STEERING">Lenkung</string>
     <string name="CARINFO_RPM">U/Min</string>
     <string name="CARINFO_TORQUE">Drehmoment</string>
-    <string name="CARINFO_GFORCE">𝑔</string>
+    <string name="CARINFO_GFORCE">\uD835\uDC54</string>
     <string name="CARINFO_SPEEDACTUAL">Aktuell</string>
     <string name="CARINFO_SPEEDGPS">GPS</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
@@ -387,7 +389,7 @@
     <string name="CARINFO_UNIT_MI">mi</string>
     <string name="CARINFO_UNIT_GALUK">gal (UK)</string>
     <string name="CARINFO_UNIT_GALUS">gal (US)</string>
-    <string name="CARINFO_UNIT_LITER">l</string>
+    <string name="CARINFO_UNIT_LITER">\u2113</string>
     <string name="CARINFO_UNIT_KMPH">km/h</string>
     <string name="CARINFO_UNIT_MPH">mph</string>
     <string name="CARINFO_HEADING_NORTH">N</string>
