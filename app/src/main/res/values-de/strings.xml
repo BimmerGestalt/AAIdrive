@@ -412,8 +412,8 @@
     <string name="CARINFO_COMPRESSORPOWER">AC-Leistung</string>
     <string name="CARINFO_COMPRESSORDUALMODE">Dualmode</string>
     <string name="CARINFO_GPSALTITUDE">Höhe</string>
-    <string name="CARINFO_GPSLATITUDE">Breitengrad</string>
-    <string name="CARINFO_GPSLONGITUDE">Längengrad</string>
+    <string name="CARINFO_GPSLATITUDE">Breite</string>
+    <string name="CARINFO_GPSLONGITUDE">Länge</string>
     <string name="NOTIFICATIONS_TITLE">Benachrichtigungen</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Keine Benachrichtigungen</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Leeren</string>
