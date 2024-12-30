@@ -70,9 +70,10 @@
     <string name="notification_quickreplies_default">[\"👍\",\"Ich bin auf dem Weg!\",\"Momentan im Auto\",\"Kann nicht schreiben, bitte stattdessen anrufen\",\"Ich rufe dich später an\"]</string>
     <string name="lbl_notification_permissions">Zugriff auf Benachrichtigungen</string>
     <string name="lbl_notification_sms_permissions">Zugriff um SMS Bilder anzuzeigen</string>
-    <string name="lbl_notification_permissions_hint">Du kannst auch später die Rechte für \"Benachrichtigungen\" erteilen und sie auch jederzeit widerrufen</string>
+    <string name="lbl_notification_permissions_hint">Die Rechte für \"Benachrichtigungen\" können später erteilt und jederzeit widerrufen werden</string>
     <string name="lbl_ttsUnsupported">TTS wird von Ihrem Fahrzeug nicht unterstützt</string>
     <string name="lbl_smsPermission">Erteile Zugriff für SMS-Nachrichten um Bilder von Nachrichten im Fahrzeug zu sehen. Text ist immer sichtbar.</string>
+    <string name="lbl_postNotificationsPermission">Benachrichtigung anzeigen, während die App läuft und mit dem Auto verbunden ist</string>
     <string name="lbl_calendarpage">Ihr Kalender kann im Fahrzeug angezeigt werden und bietet eine schnelle Navigation zu Terminen</string>
     <string name="lbl_calendar_description">Termine im Kalender des Telefons werden im Auto angezeigt, sofern Sie auch in der Google Kalender-App sichtbar sind. Kalendereinträge eines Arbeitsprofils sind nicht verfügbar.</string>
     <string name="lbl_calendar_enabled">Kalender anzeigen</string>
@@ -99,9 +100,9 @@
     <string name="lbl_map_buildings">3D-Gebäude aktivieren</string>
     <string name="gmapStyleLabel">Kartenstil</string>
     <string name="lbl_mapbox_custom_style">Benutzerdefinierte Mapbox URL verwenden</string>
-    <string name="lbl_map_quickdestinations">Lieblingsnavigationsziele:</string>
-    <string name="lbl_gmap_invalid_apikey">Der GMaps API-Schlüssel ist ungültig und die Kartenfunktionalität wird reduziert. Bitte informieren Sie den Entwickler und halten Sie Ausschau nach einem Update</string>
-    <string name="lbl_mapbox_invalid_token">Der Mapbox Token ist ungültig und die Kartenfunktionalität wird reduziert. Bitte informieren Sie den Entwickler und halten Sie Ausschau nach einem Update</string>
+    <string name="lbl_map_quickdestinations">Bevorzugte Ziele:</string>
+    <string name="lbl_gmap_invalid_apikey">Der GMaps API-Schlüssel ist ungültig und die Kartenfunktionalität wird reduziert. Bitte informieren Sie den Entwickler und schauen Sie nach einem Update</string>
+    <string name="lbl_mapbox_invalid_token">Der Mapbox Token ist ungültig und die Kartenfunktionalität wird reduziert. Bitte informieren Sie den Entwickler und schauen Sie nach einem Update</string>
     <string name="lbl_musicpage">Die Musik-Apps Ihres Telefons können als Medienquellen im Auto ausgewählt werden</string>
     <string name="lbl_music_apps">Musik Apps</string>
     <string name="musicAppIcon">App Symbol</string>
@@ -195,8 +196,8 @@
     <string name="txt_setup_mini_mine_detected">Die neue MINI-App ist installiert, was Probleme mit Mini Connected verursachen kann und nicht unterstützt wird</string>
     <string name="txt_setup_bmw_mine_conflict">Sowohl die BMW Connected als auch My BMW App sind installiert, was zu einer instabilen Verbindung führen kann, sofern keine USB-Verbindung besteht</string>
     <string name="txt_setup_mini_mine_conflict">Sowohl die MINI Connected als auch My MINI App sind installiert, was zu einer instabilen Verbindung führen kann, sofern keine USB-Verbindung besteht</string>
-    <string name="txt_setup_bmw_mine_missing_device">Die MyBMW App benötigt das Recht für Gräte in der Nähe um sich mit dem Auto zu verbinden</string>
-    <string name="txt_setup_mini_mine_missing_device">Die MINI App benötigt das Recht für Gräte in der Nähe um sich mit dem Auto zu verbinden</string>
+    <string name="txt_setup_bmw_mine_missing_device">Die MyBMW App benötigt das Recht \"Geräte in der Nähe\", um sich mit dem Auto zu verbinden</string>
+    <string name="txt_setup_mini_mine_missing_device">Die MINI App benötigt das Recht \"Geräte in der Nähe\", um sich mit dem Auto zu verbinden</string>
     <string name="txt_setup_security_missing">Security Service ist nicht erreichbar:</string>
     <string name="txt_setup_background_killed">Die App wurde beim Verbinden mit dem Auto beendet</string>
     <string name="txt_setup_background_suspended">Die App wurde im Hintergrund angehalten, während sie mit dem Auto verbunden war</string>
@@ -257,6 +258,7 @@
     <string name="lbl_connection_probe_ips">Versuche mit dem Auto über einen TCP Tunnel zu verbinden</string>
     <string name="lbl_assistant">Sprachassistent (Beta)</string>
     <string name="lbl_assistant_empty">Nichts gefunden</string>
+    <string name="lbl_assistant_fullscreen_permissions">Zugriff auf Sprachassistenten bei ausgeschaltetem Bildschirm</string>
     <!-- car status -->
     <string name="lbl_carinfopage_disconnected">Nach der ersten Verbindung werden hier Informationen über Ihr Fahrzeug angezeigt</string>
     <string name="lbl_carinfopage">Hier sind Kurzinfos zu Ihrem Auto verfügbar</string>
@@ -359,9 +361,10 @@
     <!-- car app strings -->
     <string name="CARINFO_TITLE">Detaillierte Fahrzeuginformationen</string>
     <string name="CARINFO_TITLE_DRIVING">Fahrdetails</string>
-    <string name="CARINFO_TITLE_GPS">GPS Info</string>
-    <string name="CARINFO_TITLE_AC">Klimaanlage Info</string>
-    <string name="CARINFO_TITLE_WINDOWS">Fenster Info</string>
+    <string name="CARINFO_TITLE_SPORT">Sportanzeige</string>
+    <string name="CARINFO_TITLE_GPS">GPS-Info</string>
+    <string name="CARINFO_TITLE_AC">Klima-Info</string>
+    <string name="CARINFO_TITLE_WINDOWS">Fenster-Info</string>
     <string name="CARINFO_ENGINE">Motor</string>
     <string name="CARINFO_OIL">Öl</string>
     <string name="CARINFO_BATTERY">Batterie</string>
@@ -373,10 +376,11 @@
     <string name="CARINFO_ACC_BATTERY">Acc. Batterie</string>
     <string name="CARINFO_EV_BATTERY">EV Batterie</string>
     <string name="CARINFO_FUEL">Kraftstoff</string>
-    <string name="CARINFO_ACCEL">Fahrpedalstellung</string>
+    <string name="CARINFO_ACCEL">Fahrpedal</string>
     <string name="CARINFO_STEERING">Lenkung</string>
     <string name="CARINFO_RPM">U/Min</string>
-    <string name="CARINFO_GFORCE">g-Kräfte</string>
+    <string name="CARINFO_TORQUE">Drehmoment</string>
+    <string name="CARINFO_GFORCE">g</string>
     <string name="CARINFO_SPEEDACTUAL">Aktuell</string>
     <string name="CARINFO_SPEEDGPS">GPS</string>
     <string name="CARINFO_UNIT_C">\u2103</string>
@@ -385,7 +389,7 @@
     <string name="CARINFO_UNIT_MI">mi</string>
     <string name="CARINFO_UNIT_GALUK">gal (UK)</string>
     <string name="CARINFO_UNIT_GALUS">gal (US)</string>
-    <string name="CARINFO_UNIT_LITER">L</string>
+    <string name="CARINFO_UNIT_LITER">\u2113</string>
     <string name="CARINFO_UNIT_KMPH">km/h</string>
     <string name="CARINFO_UNIT_MPH">mph</string>
     <string name="CARINFO_HEADING_NORTH">N</string>
@@ -402,14 +406,14 @@
     <string name="CARINFO_WINDOW_OPENED">Geöffnet</string>
     <string name="CARINFO_STATE_OFF">aus</string>
     <string name="CARINFO_STATE_ON">ein</string>
-    <string name="CARINFO_COMPRESSOR">AC Kompressor</string>
+    <string name="CARINFO_COMPRESSOR">AC-Kompressor</string>
     <string name="CARINFO_COMPRESSORSTATE">AC-Status</string>
     <string name="CARINFO_COMPRESSORLEVEL">AC-Level</string>
-    <string name="CARINFO_COMPRESSORPOWER">AC Leistung</string>
+    <string name="CARINFO_COMPRESSORPOWER">AC-Leistung</string>
     <string name="CARINFO_COMPRESSORDUALMODE">Dualmode</string>
     <string name="CARINFO_GPSALTITUDE">Höhe</string>
-    <string name="CARINFO_GPSLATITUDE">Breitengrad</string>
-    <string name="CARINFO_GPSLONGITUDE">Längengrad</string>
+    <string name="CARINFO_GPSLATITUDE">Breite</string>
+    <string name="CARINFO_GPSLONGITUDE">Länge</string>
     <string name="NOTIFICATIONS_TITLE">Benachrichtigungen</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Keine Benachrichtigungen</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Leeren</string>
@@ -433,7 +437,7 @@
     <string name="MAP_ACTION_SEARCH">Ort suchen</string>
     <string name="MAP_ACTION_RECALC_NAV">Navigation neu berechnen</string>
     <string name="MAP_ACTION_CLEARNAV">Navigation leeren</string>
-    <string name="MAP_DESTINATIONS">Lieblings-Ziele</string>
+    <string name="MAP_DESTINATIONS">Bevorzugte Ziele</string>
     <string name="MAP_WIDESCREEN">Breitbild (Widescreen) Karte</string>
     <string name="MAP_INVERT_ZOOM">Zoom-Richtung umkehren</string>
     <string name="MAP_SATELLITE">Satellitenbild anzeigen</string>
