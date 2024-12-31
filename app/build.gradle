@@ -30,6 +30,8 @@ def GITHUB_BRANCH = System.env.GITHUB_REF?.replaceFirst("^refs/.*/", "")
 def runProguardInDebug = false
 def isRunningOnCI = System.getenv("CI") == "true"
 
+final BUILD_DATE = new Date().toZonedDateTime().toEpochSecond()
+
 android {
     namespace 'me.hufman.androidautoidrive'
 
@@ -54,7 +56,7 @@ android {
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunner 'me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner'
         archivesBaseName = "androidautoidrive-${androidGitVersion.name()}"
-        buildConfigField "long", "COMMIT_TIME", ((grgit != null && !androidGitVersion.name().contains("-dirty")) ? grgit.head().dateTime.toEpochSecond() : 0L) + "L"
+        buildConfigField "long", "COMMIT_TIME", ((grgit != null && !androidGitVersion.name().contains("-dirty")) ? grgit.head().dateTime.toEpochSecond() : BUILD_DATE) + "L"
         manifestPlaceholders = [
                 spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey,
                 appAuthRedirectScheme: applicationId
