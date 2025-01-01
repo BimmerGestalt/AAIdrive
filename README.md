@@ -31,8 +31,8 @@ This app requires that the MyBMW or MINI app for your car is installed and that 
 
 Download the APK of the latest stable release from the [Releases page](https://github.com/BimmerGestalt/AAIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. It is also available on the [Google Play Store](https://play.google.com/store/apps/details?id=me.hufman.androidautoidrive). After starting, the app should detect the MyBMW app and start waiting for the car connection.
 
-Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [Sentry build](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-mapbox-sentry-release.apk) to automatically report crashes.
-The [nonalytics](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-mapbox-nonalytics-release.apk) build is available too.
+Also consider trying out the nightly build! It has the latest features and is a preview of the next release, so please consider installing the [nightly sentry build](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-mapbox-sentry-release.apk) to automatically report crashes.
+The [nightly nonalytics build](https://bimmergestalt.s3.amazonaws.com/aaidrive/builds/androidautoidrive-latest-main-mapbox-nonalytics-release.apk) is available too.
 
 Check out the [FAQ](https://bimmergestalt.github.io/AAIdrive/faq.html) if you run into problems.
 
