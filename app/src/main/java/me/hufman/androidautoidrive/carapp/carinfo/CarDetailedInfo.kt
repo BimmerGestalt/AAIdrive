@@ -67,16 +67,16 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 
 	// driving detail fields, as examples
 	// real ones would need translated labels
-	val accelContact = cdsMetrics.accelerator.format("%d%%").map { "$it ${L.CARINFO_ACCEL}"}
+	val accelContact = cdsMetrics.accelerator.format("% 3d%%").map { "$it ${L.CARINFO_ACCEL}"}
 //	val clutchContact = cdsMetrics.clutch.map { "Clutch $it"}
 //	val brakeContact = cdsMetrics.brake.map { "Brake $it ${Integer.toBinaryString(it).padStart(8, '0')}"}
 	val steeringAngle = cdsMetrics.steeringAngle.map {
-		val icon = if (it < 0) {"→"} else if (it > 0) {"←"} else {""}
-		"$icon %.0f°".format(it.absoluteValue)
+		val icon = if (it <= -0.5) {"→"} else if (it >= 0.5) {"←"} else {"↔"}
+		"$icon % 3.0f°".format(it.absoluteValue)
 	}.map { "$it ${L.CARINFO_STEERING}" }
-	val speed = cdsMetrics.speedActual.format("%.0f").addPlainUnit(unitsSpeedLabel)
-	val speedGPS = cdsMetrics.speedGPS.format("%.0f").addPlainUnit(unitsSpeedLabel)
-	val torque =cdsMetrics.torque.format("%.0fNM").map { "$it ${L.CARINFO_TORQUE}" }
+	val speed = cdsMetrics.speedActual.format("% 3.0f").addPlainUnit(unitsSpeedLabel)
+	val speedGPS = cdsMetrics.speedGPS.format("% 3.0f").addPlainUnit(unitsSpeedLabel)
+	val torque =cdsMetrics.torque.format("% 3.0fNm").map { "$it ${L.CARINFO_TORQUE}" }
 	val engineRpm = cdsMetrics.engineRpm.map { "$it ${L.CARINFO_RPM}"}
 	val heading = cdsMetrics.heading.map { heading ->
 		val direction = CDSMetrics.compassDirection(heading)
@@ -84,17 +84,29 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		"$arrow $direction (${heading.toInt()}°)"
 	}
 	val gforces = cdsMetrics.accel.map { accel ->
-		val lat = accel.first?.let { "↔%.2f".format(it / 9.8) } ?: ""
-		val long = accel.second?.let { "↕%.2f".format(it / 9.8) } ?: ""
-		"$lat $long ${L.CARINFO_GFORCE}"
+		val lat = accel.first?.let {
+			(if (it > 0.048) {"→"} else if (it < -0.048) {"←"} else {"↔"}) +  // 0.048 ≈ 0.005 * 9.81
+				"%.2f".format(it.absoluteValue / 9.81)
+		} ?: ""
+		val long = accel.second?.let {
+			(if (it > 0.048) {"↓"} else if (it < -0.048) {"↑"} else {"↕"}) +  // 0.048 ≈ 0.005 * 9.81
+				"%.2f".format(it.absoluteValue / 9.81)
+		} ?: ""
+		"$lat $long${L.CARINFO_GFORCE}"
 	}
 	val gforceLat = cdsMetrics.accel.map { accel ->
-		val lat = accel.first?.let {"↔%.2f".format(it/9.8)} ?: ""
+		val lat = accel.first?.let {
+			(if (it > 0.048) {"→"} else if (it < -0.048) {"←"} else {"↔"}) +  // 0.048 ≈ 0.005 * 9.81
+				"%.2f".format(it.absoluteValue / 9.81)
+		} ?: ""
 		"$lat"
 	}
 	val gforceLong = cdsMetrics.accel.map { accel ->
-		val long = accel.second?.let {"↕%.2f".format(it/9.8)} ?: ""
-		"$long ${L.CARINFO_GFORCE}"
+		val long = accel.second?.let {
+			(if (it > 0.048) {"↓"} else if (it < -0.048) {"↑"} else {"↕"}) +  // 0.048 ≈ 0.005 * 9.81
+				"%.2f".format(it.absoluteValue / 9.81)
+		} ?: ""
+		"$long${L.CARINFO_GFORCE}"
 	}
 
 	// advanced driving fields that aren't translated
