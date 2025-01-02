@@ -28,7 +28,7 @@ AAIdrive, combined with the safety benefits of the tactile IDrive controller, bu
 Getting Started
 ---------------
 
-This app requires that the MyBMW or MINI app for your car is installed and that it can successfully enable your ID5+ car's [Apps checkbox](app/src/main/res/drawable/pic_btapp_bmw.jpg), or if your ID4 car has the [Connection Assistant option](app/src/main/res/drawable/pic_connassistant_bmw.jpg).
+This app requires that the MyBMW or MINI app for your car is installed and that it can successfully enable your ID5+ car's [Apps checkbox](app/src/main/res-facets/tips/drawable/pic_btapp_bmw.jpg), or if your ID4 car has the [Connection Assistant option](app/src/main/res-facets/tips/drawable/pic_connassistant_bmw.jpg).
 
 Download the APK of the latest stable release from the [Releases page](https://github.com/BimmerGestalt/AAIdrive/releases/latest). Choose the one that says "sentry" to automatically upload crash reports, or choose "nonalytics" otherwise. It is also available on the [Google Play Store](https://play.google.com/store/apps/details?id=me.hufman.androidautoidrive). After starting, the app should detect the MyBMW app and start waiting for the car connection.
 
@@ -264,7 +264,7 @@ The app also needs some other information to function, but does not remember any
   - If compiled into the app and then enabled, the custom map feature will use the car or phone's location while displaying the map
 
 The analytics-disabled version will never share any information, and no analytics code is compiled into this version of the app.
-The analytics-enabled version provides an option to share some anonymized information to [Sentry](https://www.sentry.io) to assist with debugging and development: If enabled, besides any rare and unfortunate crashes, the app will share any [installed music apps](app/src/sentry/java/me/hufman/androidautoidrive/Analytics.kt) and the capabilities each app provides, as well as the [model and capabilities](app/src/main/java/me/hufman/androidautoidrive/CarInformationDiscovery.kt#L36) of any connected car for usage statistics and feature prioritization.
+The analytics-enabled version provides an option to share some anonymized information to [Sentry](https://www.sentry.io) to assist with debugging and development: If enabled, besides any rare and unfortunate crashes, the app will share any [installed music apps](app/src/sentry/java/me/hufman/androidautoidrive/Analytics.kt) and the capabilities each app provides, as well as the [model and capabilities](app/src/main/java/me/hufman/androidautoidrive/carapp/carinfo/CarInformationDiscovery.kt#L36) of any connected car for usage statistics and feature prioritization.
 
 Each release provides both an analytics-enabled and analytics-disabled option.
 
