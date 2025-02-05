@@ -8,32 +8,34 @@ import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsInt
+import me.hufman.androidautoidrive.utils.GsonNullable.tryAsLong
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsString
 import kotlin.math.max
+import java.time.*
 
 class CDSMetrics(val carInfo: CarInformation) {
 	companion object {
 		fun compassDirection(heading: Float?) = when (heading) {
 			null -> "-"
-			in 0.0 .. 22.5 ->    "${L.CARINFO_HEADING_NORTH}"
-			in 22.5 .. 67.5 ->   "${L.CARINFO_HEADING_NORTHEAST}"
-			in 67.5 .. 112.5 ->  "${L.CARINFO_HEADING_EAST}"
-			in 112.5 .. 157.5 -> "${L.CARINFO_HEADING_SOUTHEAST}"
-			in 157.5 .. 202.5 -> "${L.CARINFO_HEADING_SOUTH}"
-			in 202.5 .. 247.5 -> "${L.CARINFO_HEADING_SOUTHWEST}"
-			in 247.5 .. 302.5 -> "${L.CARINFO_HEADING_WEST}"
-			in 302.5 .. 347.5 -> "${L.CARINFO_HEADING_NORTHWEST}"
-			in 347.5 .. 360.0 -> "${L.CARINFO_HEADING_NORTH}"
+			in   0.0 ..  22.5 -> L.CARINFO_HEADING_NORTH
+			in  22.5 ..  67.5 -> L.CARINFO_HEADING_NORTHEAST
+			in  67.5 .. 112.5 -> L.CARINFO_HEADING_EAST
+			in 112.5 .. 157.5 -> L.CARINFO_HEADING_SOUTHEAST
+			in 157.5 .. 202.5 -> L.CARINFO_HEADING_SOUTH
+			in 202.5 .. 247.5 -> L.CARINFO_HEADING_SOUTHWEST
+			in 247.5 .. 302.5 -> L.CARINFO_HEADING_WEST
+			in 302.5 .. 347.5 -> L.CARINFO_HEADING_NORTHWEST
+			in 347.5 .. 360.0 -> L.CARINFO_HEADING_NORTH
 			else -> "-"
 		}
 
 		fun compassArrow(heading: Float?) = when (heading) {
 			null -> ""
-			in 0.0 .. 22.5 -> "↑"
-			in 22.5 .. 67.5 -> "↗"
-			in 67.5 .. 112.5 -> "→"
+			in   0.0 ..  22.5 -> "↑"
+			in  22.5 ..  67.5 -> "↗"
+			in  67.5 .. 112.5 -> "→"
 			in 112.5 .. 157.5 -> "↘"
 			in 157.5 .. 202.5 -> "↓"
 			in 202.5 .. 247.5 -> "↙"
@@ -94,6 +96,19 @@ class CDSMetrics(val carInfo: CarInformation) {
 	val hasEngine: Flow<Boolean> = carInfo.cachedCdsData.flow[CDS.ENGINE.INFO].mapNotNull {
 		// electric-only vehicles have cylinders = 0
 		it.tryAsJsonObject("info")?.tryAsJsonPrimitive("numberOfCylinders")?.tryAsInt?.let { cyls -> cyls > 0 }
+	}
+	val carDateTime = carInfo.cachedCdsData.flow[CDS.VEHICLE.TIME].mapNotNull {
+		try {
+			val carTime = it.getAsJsonObject("time")
+			LocalDateTime.of(
+				carTime.getAsJsonPrimitive("year").asInt,
+				carTime.getAsJsonPrimitive("month").asInt,
+				carTime.getAsJsonPrimitive("date").asInt,
+				carTime.getAsJsonPrimitive("hour").asInt,
+				carTime.getAsJsonPrimitive("minute").asInt,
+				carTime.getAsJsonPrimitive("second").asInt,
+			)
+		} catch (e: Exception) { null }
 	}
 
 	/** data points */
@@ -354,5 +369,15 @@ class CDSMetrics(val carInfo: CarInformation) {
 	}
 	val gpsLon = carInfo.cachedCdsData.flow[CDS.NAVIGATION.GPSPOSITION].mapNotNull {
 		it.tryAsJsonObject("GPSPosition")?.tryAsJsonPrimitive("longitude")?.tryAsDouble
+	}
+
+	val navGuidanceStatus = carInfo.cachedCdsData.flow[CDS.NAVIGATION.GUIDANCESTATUS].mapNotNull {
+		it.tryAsJsonPrimitive("guidanceStatus")?.tryAsInt
+	}
+	val navDistNext = carInfo.cachedCdsData.flow[CDS.NAVIGATION.INFOTONEXTDESTINATION].mapNotNull {
+		it.tryAsJsonObject("infoToNextDestination")?.tryAsJsonPrimitive("distance")?.tryAsDouble
+	}
+	val navTimeNext = carInfo.cachedCdsData.flow[CDS.NAVIGATION.INFOTONEXTDESTINATION].mapNotNull {
+		it.tryAsJsonObject("infoToNextDestination")?.tryAsJsonPrimitive("remainingTime")?.tryAsLong
 	}
 }

@@ -398,6 +398,7 @@
     <string name="CARINFO_TITLE_GPS">GPS Info</string>
     <string name="CARINFO_TITLE_AC">Air Condition Info</string>
     <string name="CARINFO_TITLE_WINDOWS">Windows Info</string>
+    <string name="CARINFO_TITLE_TRAVEL">Travel Info</string>
     <string name="CARINFO_ENGINE">Engine</string>
     <string name="CARINFO_OIL">Oil</string>
     <string name="CARINFO_BATTERY">Battery</string>
@@ -409,6 +410,7 @@
     <string name="CARINFO_ACC_BATTERY">Acc. Battery</string>
     <string name="CARINFO_EV_BATTERY">EV Battery</string>
     <string name="CARINFO_FUEL">Fuel</string>
+    <string name="CARINFO_RANGE">Range</string>
     <string name="CARINFO_ACCEL">Accel</string>
     <string name="CARINFO_STEERING">Steering</string>
     <string name="CARINFO_RPM">RPM</string>
@@ -447,6 +449,8 @@
     <string name="CARINFO_GPSALTITUDE">Altitude</string>
     <string name="CARINFO_GPSLATITUDE">Lat</string>
     <string name="CARINFO_GPSLONGITUDE">Long</string>
+    <string name="CARINFO_NAV_DISTANCE">Distance</string>
+    <string name="CARINFO_NAV_ETA">ETA</string>
     <string name="NOTIFICATIONS_TITLE">Notifications</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">No Notifications</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Clear</string>
