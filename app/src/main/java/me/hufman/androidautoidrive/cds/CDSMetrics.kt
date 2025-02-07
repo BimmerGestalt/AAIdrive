@@ -1,6 +1,7 @@
 package me.hufman.androidautoidrive.cds
 
 import com.google.gson.JsonObject
+import com.soywiz.klock.DateTime
 import io.bimmergestalt.idriveconnectkit.CDS
 import kotlinx.coroutines.flow.*
 import me.hufman.androidautoidrive.CarCapabilitiesSummarized
@@ -8,12 +9,10 @@ import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.carapp.L
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsDouble
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsInt
-import me.hufman.androidautoidrive.utils.GsonNullable.tryAsLong
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsString
 import kotlin.math.max
-import java.time.*
 
 class CDSMetrics(val carInfo: CarInformation) {
 	companion object {
@@ -100,7 +99,7 @@ class CDSMetrics(val carInfo: CarInformation) {
 	val carDateTime = carInfo.cachedCdsData.flow[CDS.VEHICLE.TIME].mapNotNull {
 		try {
 			val carTime = it.getAsJsonObject("time")
-			LocalDateTime.of(
+			DateTime.createClamped(
 				carTime.getAsJsonPrimitive("year").asInt,
 				carTime.getAsJsonPrimitive("month").asInt,
 				carTime.getAsJsonPrimitive("date").asInt,
@@ -378,6 +377,6 @@ class CDSMetrics(val carInfo: CarInformation) {
 		it.tryAsJsonObject("infoToNextDestination")?.tryAsJsonPrimitive("distance")?.tryAsDouble
 	}
 	val navTimeNext = carInfo.cachedCdsData.flow[CDS.NAVIGATION.INFOTONEXTDESTINATION].mapNotNull {
-		it.tryAsJsonObject("infoToNextDestination")?.tryAsJsonPrimitive("remainingTime")?.tryAsLong
+		it.tryAsJsonObject("infoToNextDestination")?.tryAsJsonPrimitive("remainingTime")?.tryAsInt
 	}
 }
