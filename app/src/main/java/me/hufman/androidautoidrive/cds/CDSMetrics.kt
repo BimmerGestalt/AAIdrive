@@ -1,7 +1,6 @@
 package me.hufman.androidautoidrive.cds
 
 import com.google.gson.JsonObject
-import com.soywiz.klock.DateTime
 import io.bimmergestalt.idriveconnectkit.CDS
 import kotlinx.coroutines.flow.*
 import me.hufman.androidautoidrive.CarCapabilitiesSummarized
@@ -12,6 +11,7 @@ import me.hufman.androidautoidrive.utils.GsonNullable.tryAsInt
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonObject
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsJsonPrimitive
 import me.hufman.androidautoidrive.utils.GsonNullable.tryAsString
+import java.util.GregorianCalendar
 import kotlin.math.max
 
 class CDSMetrics(val carInfo: CarInformation) {
@@ -99,9 +99,9 @@ class CDSMetrics(val carInfo: CarInformation) {
 	val carDateTime = carInfo.cachedCdsData.flow[CDS.VEHICLE.TIME].mapNotNull {
 		try {
 			val carTime = it.getAsJsonObject("time")
-			DateTime.createClamped(
+			GregorianCalendar(
 				carTime.getAsJsonPrimitive("year").asInt,
-				carTime.getAsJsonPrimitive("month").asInt,
+				carTime.getAsJsonPrimitive("month").asInt - 1,
 				carTime.getAsJsonPrimitive("date").asInt,
 				carTime.getAsJsonPrimitive("hour").asInt,
 				carTime.getAsJsonPrimitive("minute").asInt,

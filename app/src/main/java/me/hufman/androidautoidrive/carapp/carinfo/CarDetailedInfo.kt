@@ -7,7 +7,7 @@ import me.hufman.androidautoidrive.cds.CDSVehicleUnits
 import me.hufman.androidautoidrive.phoneui.FlowUtils.addPlainUnit
 import me.hufman.androidautoidrive.phoneui.FlowUtils.format
 import kotlin.math.absoluteValue
-import com.soywiz.klock.minutes
+import java.text.DateFormat
 import java.util.*
 
 class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics) {
@@ -209,12 +209,14 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 
 	private val distNextDestLabel = cdsMetrics.navDistNext.format("%.1f ").addPlainUnit(unitsDistanceLabel).map { "$it ${L.CARINFO_NAV_DISTANCE}"}
 	private val distOrCityLabel = combine(cdsMetrics.navGuidanceStatus, cityLabel, distNextDestLabel, cdsMetrics.carDateTime) { status, city, distance, carTime ->
-		if (status != 0 && ((carTime.seconds % 30 < 15) || city == "")) distance else city
+		if (status != 0 && ((carTime.get(Calendar.SECOND) % 30 < 15) || city == "")) distance else city
 	}
 	private val timeOrStreetLabel = combine(cdsMetrics.navGuidanceStatus, streetLabel, cdsMetrics.navTimeNext, cdsMetrics.carDateTime) { status, street, timeLeft, carTime ->
-		if (status != 0 && ((carTime.seconds % 30 < 15) || street == ""))
+		val timeETA = carTime.clone() as GregorianCalendar
+		timeETA.add(Calendar.MINUTE, timeLeft)
+		if (status != 0 && ((carTime.get(Calendar.SECOND) % 30 < 15) || street == ""))
 			String.format("%d:%02d→", timeLeft / 60, timeLeft % 60) +
-					(carTime + timeLeft.minutes).format("HH:mm") +
+					DateFormat.getTimeInstance(DateFormat.SHORT).format(timeETA.time) +
 					" ${L.CARINFO_NAV_ETA}"
 		else street
 	}
