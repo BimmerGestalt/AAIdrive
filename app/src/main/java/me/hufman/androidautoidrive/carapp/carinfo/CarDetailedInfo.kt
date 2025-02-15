@@ -7,6 +7,8 @@ import me.hufman.androidautoidrive.cds.CDSVehicleUnits
 import me.hufman.androidautoidrive.phoneui.FlowUtils.addPlainUnit
 import me.hufman.androidautoidrive.phoneui.FlowUtils.format
 import kotlin.math.absoluteValue
+import java.text.DateFormat
+import java.util.*
 
 class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics) {
 	// general car information
@@ -49,9 +51,11 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	// data points
 	val evLevelLabel = cdsMetrics.evLevel.format("%.1f%%").map { "$it ${L.CARINFO_EV_BATTERY}"}
 
-	val fuelLevelLabel = cdsMetrics.fuelLevel.format("%.1f").addPlainUnit(unitsFuelLabel).map { "$it ${L.CARINFO_FUEL}"}
+	val fuelLevelLabel = cdsMetrics.fuelLevel.format("%.0f").addPlainUnit(unitsFuelLabel).map { "$it ${L.CARINFO_FUEL}"}
 
 	val accBatteryLevelLabel = cdsMetrics.accBatteryLevel.format("%.0f%%").map { "$it ${L.CARINFO_ACC_BATTERY}"}
+
+	private val totalRangeLabel = cdsMetrics.totalRange.format("%.0f ").addPlainUnit(unitsDistanceLabel).map { "$it ${L.CARINFO_RANGE}"}
 
 	val engineTemp = cdsMetrics.engineTemp.format("%.0f").addPlainUnit(unitsTemperatureLabel).map { "$it ${L.CARINFO_ENGINE}"}
 	val oilTemp = cdsMetrics.oilTemp.format("%.0f").addPlainUnit(unitsTemperatureLabel).map { "$it ${L.CARINFO_OIL}"}
@@ -74,9 +78,9 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		val icon = if (it <= -0.5) {"→"} else if (it >= 0.5) {"←"} else {"↔"}
 		"$icon % 3.0f°".format(it.absoluteValue)
 	}.map { "$it ${L.CARINFO_STEERING}" }
-	val speed = cdsMetrics.speedActual.format("% 3.0f").addPlainUnit(unitsSpeedLabel)
-	val speedGPS = cdsMetrics.speedGPS.format("% 3.0f").addPlainUnit(unitsSpeedLabel)
-	val torque =cdsMetrics.torque.format("% 3.0fNm").map { "$it ${L.CARINFO_TORQUE}" }
+	val speed = cdsMetrics.speedActual.format("% 3.0f ").addPlainUnit(unitsSpeedLabel)
+	val speedGPS = cdsMetrics.speedGPS.format("% 3.0f ").addPlainUnit(unitsSpeedLabel).map { "$it ${L.CARINFO_SPEEDGPS}"}
+	val torque =cdsMetrics.torque.format("% 3.0f Nm").map { "$it ${L.CARINFO_TORQUE}" }
 	val engineRpm = cdsMetrics.engineRpm.map { "$it ${L.CARINFO_RPM}"}
 	val heading = cdsMetrics.heading.map { heading ->
 		val direction = CDSMetrics.compassDirection(heading)
@@ -128,13 +132,14 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 			brakeString = "Soft"
 		}
 		// Adding the parking brake info
-		if (parkingBrakeSet) {
+		if (parkingBrakeSet || brakeContact == 16) {  // alternative value, when parkingBrakeSet is empty
 			if (brakeString == "Not braking") {
 				brakeString = "( ! )"
 			} else {
 				brakeString += " ( ! )"
 			}
 		}
+		//brakeString = brakeContact!!.toString(2).padStart(8, '0')
 		brakeString
 	}
 	val clutchState = cdsMetrics.clutch.combine(cdsMetrics.gearboxType) { clutchContact, gearboxType ->
@@ -165,7 +170,7 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		formatWindowState(name, it)
 	}
 
-	val sunroof = cdsMetrics.sunroof.format("${L.CARINFO_SUNROOF}")
+	val sunroof = cdsMetrics.sunroof.format("") //${L.CARINFO_SUNROOF}")
 	val windowDriverFront = cdsMetrics.windowDriverFront.format("")
 	val windowPassengerFront = cdsMetrics.windowPassengerFront.format("")
 	val windowDriverRear = cdsMetrics.windowDriverRear.format("")
@@ -201,6 +206,20 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 				}
 	}
 	val ACCompressorLevel = cdsMetrics.ACCompressorLevel.format("%.0f%%").map {"$it ${L.CARINFO_COMPRESSORLEVEL}"}
+
+	private val distNextDestLabel = cdsMetrics.navDistNext.format("%.1f ").addPlainUnit(unitsDistanceLabel).map { "$it ${L.CARINFO_NAV_DISTANCE}"}
+	private val distOrCityLabel = combine(cdsMetrics.navGuidanceStatus, cityLabel, distNextDestLabel, cdsMetrics.carDateTime) { status, city, distance, carTime ->
+		if (status != 0 && ((carTime.get(Calendar.SECOND) % 30 < 15) || city == "")) distance else city
+	}
+	private val timeOrStreetLabel = combine(cdsMetrics.navGuidanceStatus, streetLabel, cdsMetrics.navTimeNext, cdsMetrics.carDateTime) { status, street, timeLeft, carTime ->
+		val timeETA = carTime.clone() as GregorianCalendar
+		timeETA.add(Calendar.MINUTE, timeLeft)
+		if (status != 0 && ((carTime.get(Calendar.SECOND) % 30 < 15) || street == ""))
+			String.format("%d:%02d→", timeLeft / 60, timeLeft % 60) +
+					DateFormat.getTimeInstance(DateFormat.SHORT).format(timeETA.time) +
+					" ${L.CARINFO_NAV_ETA}"
+		else street
+	}
 
 	// categories
 	private val sportFields: List<Flow<String>> = listOf(
@@ -255,7 +274,7 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		)
 	} + listOf(
 			emptyFlow(), emptyFlow(),
-			sunroof
+			flowOf(L.CARINFO_SUNROOF), sunroof
 	)
 	private val ACFields: List<Flow<String>> = listOf(
 			tempExterior, tempInterior,
@@ -263,6 +282,13 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 			flowOf(L.CARINFO_COMPRESSOR),emptyFlow(),
 			ACCompressorState, ACCompressorDualmode,
 			ACCompressorLevel, ACCompressorActualPower,
+	)
+	private val travelFields: List<Flow<String>> = listOf(
+		speed, drivingGearLabel,
+		altitudeLabel, tempExterior,
+		accBatteryLevelLabel, tempInterior,
+		totalRangeLabel, fuelLevelLabel,
+		distOrCityLabel, timeOrStreetLabel
 	)
 
 	val basicCategories = LinkedHashMap<String, List<Flow<String>>>().apply {
@@ -279,6 +305,7 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		put(L.CARINFO_TITLE_GPS, gpsFields)
 		put (L.CARINFO_TITLE_AC, ACFields)
 		put(L.CARINFO_TITLE_WINDOWS, windowFields)
+		put(L.CARINFO_TITLE_TRAVEL, travelFields)
 	}
 	val allCategories = basicCategories + advancedCategories
 	val category = MutableStateFlow(allCategories.keys.first())
