@@ -356,6 +356,7 @@
     <string name="CARINFO_TITLE_GPS">GPS Info</string>
     <string name="CARINFO_TITLE_AC">Кондиционер</string>
     <string name="CARINFO_TITLE_WINDOWS">Окна</string>
+    <string name="CARINFO_TITLE_TRAVEL">Информация о поездке</string>
     <string name="CARINFO_ENGINE">Двигатель</string>
     <string name="CARINFO_OIL">Масло</string>
     <string name="CARINFO_BATTERY">Аккумулятор</string>
@@ -367,6 +368,7 @@
     <string name="CARINFO_ACC_BATTERY">Акт. батарея</string>
     <string name="CARINFO_EV_BATTERY">Батарея EV</string>
     <string name="CARINFO_FUEL">Топливо</string>
+    <string name="CARINFO_RANGE">Диапазон</string>
     <string name="CARINFO_ACCEL">Ускор.</string>
     <string name="CARINFO_STEERING">Поворот</string>
     <string name="CARINFO_RPM">об./мин.</string>
@@ -405,6 +407,8 @@
     <string name="CARINFO_GPSALTITUDE">Высота</string>
     <string name="CARINFO_GPSLATITUDE">Шир.</string>
     <string name="CARINFO_GPSLONGITUDE">Долг.</string>
+    <string name="CARINFO_NAV_DISTANCE">Расстояние</string>
+    <string name="CARINFO_NAV_ETA">Прибытие</string>
     <string name="NOTIFICATIONS_TITLE">Уведомления</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Нет уведомлений</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Очистить </string>
