@@ -196,6 +196,8 @@
     <string name="txt_setup_mini_mine_detected">Appen \"MINI\" är installerad, vilket kan orsaka problem med \"MINI Connected\" och stöds ej</string>
     <string name="txt_setup_bmw_mine_conflict">Både \"BMW Connected\" och \"My BMW\" appen är installerade, vilket kan orsaka instabilitet I anslutningar om det inte ansluts via USB</string>
     <string name="txt_setup_mini_mine_conflict">Både \"Mini connected\" och \"My Mini\" appar är installerade, vilket kan orsaka instabilitet i anslutning om du inte ansluter via USB</string>
+    <string name="txt_setup_bmw_mine_missing_device">Appen MyBMW kräver åtkomst till enheten i närheten för att ansluta till bilen</string>
+    <string name="txt_setup_mini_mine_missing_device">Appen MyBMW kräver åtkomst till enheter i närheten för att ansluta till bilen</string>
     <string name="txt_setup_security_missing">Säkerhetstjänsten kan ej nås:</string>
     <string name="txt_setup_background_killed">Appen stängdes av när den var ansluten till bilen</string>
     <string name="txt_setup_background_suspended">Appen pausades i bakgrunden när den var ansluten till bilen</string>
@@ -363,6 +365,7 @@
     <string name="CARINFO_TITLE_GPS">GPS Info</string>
     <string name="CARINFO_TITLE_AC">Luftkonditioneringsinformation</string>
     <string name="CARINFO_TITLE_WINDOWS">FönsterInformation</string>
+    <string name="CARINFO_TITLE_TRAVEL">Reseinformation</string>
     <string name="CARINFO_ENGINE">Motor</string>
     <string name="CARINFO_OIL">Olja</string>
     <string name="CARINFO_BATTERY">Batteri</string>
@@ -374,6 +377,7 @@
     <string name="CARINFO_ACC_BATTERY">Startbatteri</string>
     <string name="CARINFO_EV_BATTERY">Högvoltsbatteri</string>
     <string name="CARINFO_FUEL">Bränsle</string>
+    <string name="CARINFO_RANGE">Avstånd</string>
     <string name="CARINFO_ACCEL">Acceleration</string>
     <string name="CARINFO_STEERING">Styrning</string>
     <string name="CARINFO_RPM">Varvtal</string>
@@ -412,6 +416,8 @@
     <string name="CARINFO_GPSALTITUDE">Höjd</string>
     <string name="CARINFO_GPSLATITUDE">Latitud</string>
     <string name="CARINFO_GPSLONGITUDE">Longitud</string>
+    <string name="CARINFO_NAV_DISTANCE">Avstånd</string>
+    <string name="CARINFO_NAV_ETA">Beräknad sluttid</string>
     <string name="NOTIFICATIONS_TITLE">Aviseringar</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Inga aviseringar</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Töm</string>
