@@ -87,30 +87,20 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		val arrow = CDSMetrics.compassArrow(heading)
 		"$arrow $direction (${heading.toInt()}°)"
 	}
-	val gforces = cdsMetrics.accel.map { accel ->
-		val lat = accel.first?.let {
+	private val gforceLat = cdsMetrics.accel.map { accel ->
+		accel.first?.let {
 			(if (it > 0.048) {"→"} else if (it < -0.048) {"←"} else {"↔"}) +  // 0.048 ≈ 0.005 * 9.81
 				"%.2f".format(it.absoluteValue / 9.81)
 		} ?: ""
-		val long = accel.second?.let {
-			(if (it > 0.048) {"↓"} else if (it < -0.048) {"↑"} else {"↕"}) +  // 0.048 ≈ 0.005 * 9.81
-				"%.2f".format(it.absoluteValue / 9.81)
-		} ?: ""
-		"$lat $long${L.CARINFO_GFORCE}"
 	}
-	val gforceLat = cdsMetrics.accel.map { accel ->
-		val lat = accel.first?.let {
-			(if (it > 0.048) {"→"} else if (it < -0.048) {"←"} else {"↔"}) +  // 0.048 ≈ 0.005 * 9.81
-				"%.2f".format(it.absoluteValue / 9.81)
-		} ?: ""
-		"$lat"
-	}
-	val gforceLong = cdsMetrics.accel.map { accel ->
-		val long = accel.second?.let {
+	private val gforceLong = cdsMetrics.accel.map { accel ->
+		accel.second?.let {
 			(if (it > 0.048) {"↓"} else if (it < -0.048) {"↑"} else {"↕"}) +  // 0.048 ≈ 0.005 * 9.81
-				"%.2f".format(it.absoluteValue / 9.81)
+				"%.2f".format(it.absoluteValue / 9.81) + L.CARINFO_GFORCE
 		} ?: ""
-		"$long${L.CARINFO_GFORCE}"
+	}
+	private val gforces = gforceLat.combine(gforceLong) { lat, long ->
+		"$lat $long"
 	}
 
 	// advanced driving fields that aren't translated
@@ -189,21 +179,21 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	val latitudeLabel = cdsMetrics.gpsLat.map { "$it ${L.CARINFO_GPSLATITUDE}" }
 	val longitudeLabel = cdsMetrics.gpsLon.map { "$it ${L.CARINFO_GPSLONGITUDE}" }
 //	val rawHeading = cdsMetrics.rawHeading.format("%.0f Raw Heading")
-   val ACCompressorActualPower =cdsMetrics.ACCompressorActualPower.format("%.0f").map { "$it ${L.CARINFO_COMPRESSORPOWER}" }
-   val ACCompressorDualmode =cdsMetrics.ACCompressorDualMode.mapNotNull {
+	private val ACCompressorActualPower =cdsMetrics.ACCompressorActualPower.format("%.0f").map { "$it ${L.CARINFO_COMPRESSORPOWER}" }
+	private val ACCompressorDualmode =cdsMetrics.ACCompressorDualMode.mapNotNull {
 		when (it) {
-			1 -> "${L.CARINFO_STATE_OFF}"
-			2 -> "${L.CARINFO_STATE_ON}"
+			1 -> L.CARINFO_STATE_OFF
+			2 -> L.CARINFO_STATE_ON
 			else -> "?"
 		}
 	}.map { "${L.CARINFO_COMPRESSORDUALMODE}: $it" }
 //	val ACActualTorque =cdsMetrics.ACCompressorActualTorque.format("%.0f").map { "$it Torque" }
 	val ACCompressorState = cdsMetrics.ACCompressor.mapNotNull {
-				when (it) {
-					0 -> "${L.CARINFO_STATE_OFF}"
-					1 -> "${L.CARINFO_STATE_ON}"
-					else -> "?"
-				}
+		when (it) {
+			0 -> L.CARINFO_STATE_OFF
+			1 -> L.CARINFO_STATE_ON
+			else -> "?"
+		}
 	}
 	val ACCompressorLevel = cdsMetrics.ACCompressorLevel.format("%.0f%%").map {"$it ${L.CARINFO_COMPRESSORLEVEL}"}
 
