@@ -33,6 +33,8 @@ object L {
 	val CARINFO_ACC_BATTERY by StringResourceDelegate("Acc. Battery")
 	val CARINFO_EV_BATTERY by StringResourceDelegate("EV Battery")
 	val CARINFO_FUEL by StringResourceDelegate("Fuel")
+	val CARINFO_GASOLINE by StringResourceDelegate("Gasoline")
+	val CARINFO_DIESEL by StringResourceDelegate("Diesel")
 	val CARINFO_RANGE by StringResourceDelegate("Range")
 	val CARINFO_ACCEL by StringResourceDelegate("Accel")
 	val CARINFO_STEERING by StringResourceDelegate("Steering")

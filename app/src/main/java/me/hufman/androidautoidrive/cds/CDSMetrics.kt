@@ -295,6 +295,9 @@ class CDSMetrics(val carInfo: CarInformation) {
 	var gearboxType = carInfo.cdsData.flow[CDS.ENGINE.INFO].mapNotNull {
 		it.tryAsJsonObject("info")?.tryAsJsonPrimitive("gearboxType")?.tryAsInt
 	}
+	var fuelType = carInfo.cdsData.flow[CDS.ENGINE.INFO].map {
+		it.tryAsJsonObject("info")?.tryAsJsonPrimitive("fuelType")?.tryAsInt
+	}
 	val accelerator = carInfo.cdsData.flow[CDS.DRIVING.ACCELERATORPEDAL].mapNotNull {
 		it.tryAsJsonObject("acceleratorPedal")?.tryAsJsonPrimitive("position")?.tryAsInt
 	}
