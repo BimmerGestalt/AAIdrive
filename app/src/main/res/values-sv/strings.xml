@@ -377,6 +377,8 @@
     <string name="CARINFO_ACC_BATTERY">Startbatteri</string>
     <string name="CARINFO_EV_BATTERY">Högvoltsbatteri</string>
     <string name="CARINFO_FUEL">Bränsle</string>
+    <string name="CARINFO_GASOLINE">Bensin</string>
+    <string name="CARINFO_DIESEL">Diesel</string>
     <string name="CARINFO_RANGE">Avstånd</string>
     <string name="CARINFO_ACCEL">Acceleration</string>
     <string name="CARINFO_STEERING">Styrning</string>
