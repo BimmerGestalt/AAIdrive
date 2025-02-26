@@ -48,10 +48,21 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		}
 	}
 
+	private val fuelTypeLabel = cdsMetrics.fuelType.map {
+		when (it) {
+			4, 5 -> L.CARINFO_GASOLINE  // Direct Injection (4), Conventional (5)
+			6, 7 -> L.CARINFO_DIESEL    // Direct Injection (6), Conventional (7)
+			0, 15, null -> L.CARINFO_FUEL // unknown (0), invalid (15)
+			else -> "${L.CARINFO_FUEL} ($it)" // unhandled fueltype
+		}
+	}
+
 	// data points
 	val evLevelLabel = cdsMetrics.evLevel.format("%.1f%%").map { "$it ${L.CARINFO_EV_BATTERY}"}
 
-	val fuelLevelLabel = cdsMetrics.fuelLevel.format("%.0f").addPlainUnit(unitsFuelLabel).map { "$it ${L.CARINFO_FUEL}"}
+	private val fuelLevelLabel = cdsMetrics.fuelLevel.format("%.0f").addPlainUnit(unitsFuelLabel).combine(fuelTypeLabel) { fuelLevel, fuelType ->
+		"$fuelLevel $fuelType"
+	}
 
 	val accBatteryLevelLabel = cdsMetrics.accBatteryLevel.format("%.0f%%").map { "$it ${L.CARINFO_ACC_BATTERY}"}
 
@@ -74,27 +85,23 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 	val accelContact = cdsMetrics.accelerator.format("% 3d%%").map { "$it ${L.CARINFO_ACCEL}"}
 //	val clutchContact = cdsMetrics.clutch.map { "Clutch $it"}
 //	val brakeContact = cdsMetrics.brake.map { "Brake $it ${Integer.toBinaryString(it).padStart(8, '0')}"}
-	val steeringAngle = cdsMetrics.steeringAngle.map {
-		val icon = if (it <= -0.5) {"→"} else if (it >= 0.5) {"←"} else {"↔"}
-		"$icon % 3.0f°".format(it.absoluteValue)
-	}.map { "$it ${L.CARINFO_STEERING}" }
+	private val steeringAngle = cdsMetrics.steeringAngle.map {
+		(if (it <= -0.5) {"→"} else if (it >= 0.5) {"←"} else {"↔"}) +
+			" % 3.0f° ".format(it.absoluteValue) + L.CARINFO_STEERING
+	}
 	val speed = cdsMetrics.speedActual.format("% 3.0f ").addPlainUnit(unitsSpeedLabel)
 	val speedGPS = cdsMetrics.speedGPS.format("% 3.0f ").addPlainUnit(unitsSpeedLabel).map { "$it ${L.CARINFO_SPEEDGPS}"}
 	val torque =cdsMetrics.torque.format("% 3.0f Nm").map { "$it ${L.CARINFO_TORQUE}" }
 	val engineRpm = cdsMetrics.engineRpm.map { "$it ${L.CARINFO_RPM}"}
-	val heading = cdsMetrics.heading.map { heading ->
-		val direction = CDSMetrics.compassDirection(heading)
-		val arrow = CDSMetrics.compassArrow(heading)
-		"$arrow $direction (${heading.toInt()}°)"
-	}
-	private val gforceLat = cdsMetrics.accel.map { accel ->
-		accel.first?.let {
+	private val heading = cdsMetrics.heading.map { "${CDSMetrics.compassArrow(it)} ${CDSMetrics.compassDirection(it)} (${it.toInt()}°)" }
+	private val gforceLat = cdsMetrics.accel.map {
+		it.first?.let {
 			(if (it > 0.048) {"→"} else if (it < -0.048) {"←"} else {"↔"}) +  // 0.048 ≈ 0.005 * 9.81
 				"%.2f".format(it.absoluteValue / 9.81)
 		} ?: ""
 	}
-	private val gforceLong = cdsMetrics.accel.map { accel ->
-		accel.second?.let {
+	private val gforceLong = cdsMetrics.accel.map {
+		it.second?.let {
 			(if (it > 0.048) {"↓"} else if (it < -0.048) {"↑"} else {"↕"}) +  // 0.048 ≈ 0.005 * 9.81
 				"%.2f".format(it.absoluteValue / 9.81) + L.CARINFO_GFORCE
 		} ?: ""

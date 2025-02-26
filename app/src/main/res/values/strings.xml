@@ -410,6 +410,8 @@
     <string name="CARINFO_ACC_BATTERY">Acc. Battery</string>
     <string name="CARINFO_EV_BATTERY">EV Battery</string>
     <string name="CARINFO_FUEL">Fuel</string>
+    <string name="CARINFO_GASOLINE">Gasoline</string>
+    <string name="CARINFO_DIESEL">Diesel</string>
     <string name="CARINFO_RANGE">Range</string>
     <string name="CARINFO_ACCEL">Accel</string>
     <string name="CARINFO_STEERING">Steering</string>
