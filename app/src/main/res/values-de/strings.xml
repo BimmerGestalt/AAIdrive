@@ -377,6 +377,8 @@
     <string name="CARINFO_ACC_BATTERY">Batterie</string>
     <string name="CARINFO_EV_BATTERY">EV Batterie</string>
     <string name="CARINFO_FUEL">Kraftstoff</string>
+    <string name="CARINFO_GASOLINE">Benzin</string>
+    <string name="CARINFO_DIESEL">Diesel</string>
     <string name="CARINFO_RANGE">Reichweite</string>
     <string name="CARINFO_ACCEL">Gaspedal</string>
     <string name="CARINFO_STEERING">Lenkung</string>

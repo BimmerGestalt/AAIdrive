@@ -368,6 +368,8 @@
     <string name="CARINFO_ACC_BATTERY">Акт. батарея</string>
     <string name="CARINFO_EV_BATTERY">Батарея EV</string>
     <string name="CARINFO_FUEL">Топливо</string>
+    <string name="CARINFO_GASOLINE">Бензин</string>
+    <string name="CARINFO_DIESEL">Дизель</string>
     <string name="CARINFO_RANGE">Диапазон</string>
     <string name="CARINFO_ACCEL">Ускор.</string>
     <string name="CARINFO_STEERING">Поворот</string>
