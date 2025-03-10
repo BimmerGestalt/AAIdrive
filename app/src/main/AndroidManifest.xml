@@ -1132,18 +1132,34 @@
             android:readPermission="io.bimmergestalt.permission.CDS_normal"
             >
             <path-permission android:path="/cds/10" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/communication.currentCallInfo" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
             <path-permission android:path="/cds/11" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/communication.lastCallInfo" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
             <path-permission android:path="/cds/57" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/navigation.currentPositionDetailedInfo" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
             <path-permission android:path="/cds/59" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/navigation.finalDestination" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
             <path-permission android:path="/cds/60" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/navigation.finalDestinationDetailedInfo" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
             <path-permission android:path="/cds/61" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/navigation.GPSExtendedInfo" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
             <path-permission android:path="/cds/62" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/navigation.GPSPosition" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
             <path-permission android:path="/cds/63" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/navigation.guidanceStatus" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
             <path-permission android:path="/cds/64" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
             <path-permission android:path="/cds/65" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/navigation.infoToNextDestination" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
             <path-permission android:path="/cds/66" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/navigation.nextDestination" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
             <path-permission android:path="/cds/67" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/navigation.nextDestinationDetailedInfo" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
             <path-permission android:path="/cds/87" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/vehicle.VIN" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/558" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/communication.atmId" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/702" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
+            <path-permission android:path="/cds/navigation.triplist" android:readPermission="io.bimmergestalt.permission.CDS_personal" />
         </provider>
 
         <meta-data

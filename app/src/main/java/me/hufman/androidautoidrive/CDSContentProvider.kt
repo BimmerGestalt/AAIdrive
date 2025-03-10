@@ -19,6 +19,7 @@ class CDSContentProvider: ContentProvider(), CDSEventHandler {
 		private const val TAG = "CDSContentProvider"
 		private val QUERY_CAPABILITIES_ID = Regex("/capabilities/([a-z.]+)")
 		private val QUERY_CDS_ID = Regex("/cds/(\\d+)")
+		private val QUERY_CDS_NAME = Regex("/cds/([a-zA-Z0-9.]+)")
 
 		// how long to wait on first subscription before returning NULL
 		private const val INITIAL_FETCH_TIMEOUT = 1500
@@ -30,38 +31,40 @@ class CDSContentProvider: ContentProvider(), CDSEventHandler {
 		const val CONTENT_PROVIDER_CDS = "content://$CONTENT_PROVIDER_AUTHORITY/cds"
 
 		val publicCapabilties = setOf(
-				"a4axl",
-				"alignment_right",
-				"hmi.display-height",
-				"hmi.display-width",
-				"hmi.role",
-				"hmi.type",
-				"map",
-				"navi",
-				"speech2text",
-				"speedlock",
-				"tts",
-				"voice",
+			"a4axl",
+			"alignment_right",
+			"hmi.display-height",
+			"hmi.display-width",
+			"hmi.role",
+			"hmi.type",
+			"map",
+			"navi",
+			"speech2text",
+			"speedlock",
+			"tts",
+			"voice",
 		)
 		val privateCdsProperties = setOf(
-				CDSProperty.COMMUNICATION_CURRENTCALLINFO,
-				CDSProperty.COMMUNICATION_LASTCALLINFO,
-				CDSProperty.NAVIGATION_CURRENTPOSITIONDETAILEDINFO,
-				CDSProperty.NAVIGATION_FINALDESTINATION,
-				CDSProperty.NAVIGATION_FINALDESTINATIONDETAILEDINFO,
-				CDSProperty.NAVIGATION_GPSEXTENDEDINFO,
-				CDSProperty.NAVIGATION_GPSPOSITION,
-				CDSProperty.NAVIGATION_GUIDANCESTATUS,
-				CDSProperty.NAVIGATION_NEXTDESTINATION,
-				CDSProperty.NAVIGATION_NEXTDESTINATIONDETAILEDINFO,
-				CDSProperty.VEHICLE_VIN,
+			CDSProperty.COMMUNICATION_ATMID,
+			CDSProperty.COMMUNICATION_CURRENTCALLINFO,
+			CDSProperty.COMMUNICATION_LASTCALLINFO,
+			CDSProperty.NAVIGATION_CURRENTPOSITIONDETAILEDINFO,
+			CDSProperty.NAVIGATION_FINALDESTINATION,
+			CDSProperty.NAVIGATION_FINALDESTINATIONDETAILEDINFO,
+			CDSProperty.NAVIGATION_GPSEXTENDEDINFO,
+			CDSProperty.NAVIGATION_GPSPOSITION,
+			CDSProperty.NAVIGATION_GUIDANCESTATUS,
+			CDSProperty.NAVIGATION_NEXTDESTINATION,
+			CDSProperty.NAVIGATION_NEXTDESTINATIONDETAILEDINFO,
+			CDSProperty.NAVIGATION_TRIPLIST,
+			CDSProperty.VEHICLE_VIN,
 		)
 	}
 	private var carInformation = CarInformation()
 	private val cdsData = CDSDataProvider()
 
-	private val latestQuery: MutableMap<CDSProperty, Long> = EnumMap(CDSProperty::class.java)
-	private val latestUpdate: MutableMap<CDSProperty, Long> = EnumMap(CDSProperty::class.java)
+	private val latestQuery: MutableMap<CDSProperty, Long> = HashMap()
+	private val latestUpdate: MutableMap<CDSProperty, Long> = HashMap()
 
 	override fun onCreate(): Boolean {
 		cdsData.setConnection(CarInformation.cdsData.asConnection(cdsData))
@@ -78,6 +81,12 @@ class CDSContentProvider: ContentProvider(), CDSEventHandler {
 			val property = CDSProperty.fromIdent(idMatch?.groups?.get(1)?.value ?: "")
 			if (property != null) {
 				return queryCds(property)
+			}
+			// allow by name
+			val nameMatch = QUERY_CDS_NAME.matchEntire(path)
+			if (nameMatch != null) {
+				val namedProperty = CDSProperty.forName(nameMatch.groups[1]!!.value)
+				return queryCds(namedProperty)
 			}
 			throw IllegalArgumentException()
 		}
