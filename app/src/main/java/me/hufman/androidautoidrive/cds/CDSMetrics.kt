@@ -378,6 +378,8 @@ class CDSMetrics(val carInfo: CarInformation) {
 	}
 	val navDistNext = carInfo.cachedCdsData.flow[CDS.NAVIGATION.INFOTONEXTDESTINATION].mapNotNull {
 		it.tryAsJsonObject("infoToNextDestination")?.tryAsJsonPrimitive("distance")?.tryAsDouble
+	}.combine(units) { value, units ->
+		units.distanceUnits.fromCarUnit(value)
 	}
 	val navTimeNext = carInfo.cachedCdsData.flow[CDS.NAVIGATION.INFOTONEXTDESTINATION].mapNotNull {
 		it.tryAsJsonObject("infoToNextDestination")?.tryAsJsonPrimitive("remainingTime")?.tryAsInt
