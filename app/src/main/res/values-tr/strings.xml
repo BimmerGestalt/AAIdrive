@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AAIdrive</string>
     <string name="permlab_accessNotifications">IDrive Bildirim Erişimi</string>
     <string name="permlab_bindNotificationListenerService">IDrive Bildirim Erişimi</string>
     <string name="permdesc_accessNotifications">IDrive Bildirim Erişimi</string>
     <string name="permdesc_bindNotificationListenerService">IDrive Bildirim Erişimi</string>
-    <string name="notification_title">AAIdrive</string>
     <string name="notification_description">Araca Bağlandı</string>
     <string name="notification_description_chassiscode">%s\'ye Bağlandı</string>
     <string name="notification_description_bmw">BMW\'ye Bağlandı</string>
@@ -13,18 +11,15 @@
     <string name="notification_shutdown">Kapanış</string>
     <string name="permission_cds_normal">genel araç bilgilerini oku</string>
     <string name="permission_cds_personal">kişisel araç bilgilerini oku</string>
-
     <!-- notification channel names -->
     <string name="notification_channel_assistant">Asistan Başlatıcı</string>
     <string name="notification_channel_connection">Araç Bağlantı Durumu</string>
     <string name="notification_channel_donation">Bağış Talebi</string>
     <string name="notification_channel_spotify">Spotify Yetkilendirmesi</string>
     <string name="notification_channel_test">Test Bildirimi</string>
-
     <!-- The text to show in the Intent Receiver when offering apps to navigate with -->
     <string name="navigation_listener_bmw">BMW Navigasyonu</string>
     <string name="navigation_listener_mini">MINI Navigasyonu</string>
-
     <!-- Labels on the navigation trigger activity -->
     <string name="btn_search">Ara</string>
     <string name="lbl_navigation_listener_searching">Hedef arıyor</string>
@@ -32,14 +27,12 @@
     <string name="lbl_navigation_listener_pending">Navigasyona başlanıyor</string>
     <string name="lbl_navigation_listener_success">Başarılı</string>
     <string name="lbl_navigation_listener_unsuccess">Başarısız</string>
-
     <!-- Welcome pages -->
     <string name="lbl_welcome_heading">Haydi, sizi bağlayalım</string>
     <string name="lbl_welcome_intro">AAIdrive, telefonunuzun müzik uygulamalarını ve diğer özellikleri aracınıza, yerel BMW Uygulama protokolü üzerinden eklemek için kullanılan resmi olmayan bir uygulamadır</string>
     <string name="lbl_welcome_compatible">Çoğu 2014 model yılı ve sonrasındaki BMW veya MINI, NBT veya NBT Evo (IDrive 4–6 tabanlı) ve aktif bir ConnectedDrive veya BMW Online aboneliği ile uyumlu olmalıdır</string>
     <string name="lbl_welcome_dependencies">Uygulamaların araca bağlantısı, BMW/MINI Connected uygulaması veya yeni MyBMW ya da Mini uygulaması aracılığıyla sağlanır</string>
     <string name="lbl_welcome_complete">AAIdrive ayrıca aracınıza bir dizi başka özellik de ekler, göz atın!</string>
-
     <!-- Menu Titles -->
     <string name="menu_overview">Genel Bakış</string>
     <string name="menu_setup">Kurulum</string>
@@ -54,7 +47,6 @@
     <string name="menu_addons">Eklentiler</string>
     <string name="menu_settings">Ayarlar</string>
     <string name="menu_support">Destek</string>
-
     <string name="btn_next">Sonraki</string>
     <string name="lbl_overviewpage">AAIdrive, telefonunuzun müzik uygulamalarını ve bildirimlerini aracınıza, özel BMW Uygulama protokolü üzerinden entegre eder</string>
     <string name="lbl_connectionpage">Uygulamaların araca bağlantısı birkaç unsura bağlıdır, işte bunun düzgün çalıştığından emin olmanıza yardımcı olacak bazı ipuçları</string>
@@ -63,8 +55,6 @@
         <item quantity="other">Telefonunuzun sesli asistanları, aracın sesli girişi tetiklemediği durumlar için Bağlantılı bir uygulama olarak eklenmiştir</item>
     </plurals>
     <string name="lbl_assistantpage_tip">Bu uygulamalar, aracın Sesli Asistan direksiyon simidi düğmesinden bağımsızdır, bu düğme yalnızca telefonunuzun varsayılan asistanını tetikler ve ayrı olarak yapılandırılır</string>
-
-
     <string name="lbl_notificationpage">Gelen bildirimlerinizi araçtan görüntüleyebilir ve onlarla etkileşime geçebilirsiniz</string>
     <string name="spawn_test_notification">Test Bildirimi</string>
     <string name="message_notifications">Mesaj Bildirimleri</string>
@@ -82,7 +72,6 @@
     <string name="lbl_ttsUnsupported">Aracınız TTS\'yi desteklemiyor</string>
     <string name="lbl_smsPermission">Gelen SMS resimlerini araçta görüntüleyebilmek için SMS izni verin. Mesaj metni her zaman görüntülenebilir.</string>
     <string name="lbl_postNotificationsPermission">Araca bağlıyken çalışmaya devam etmek için hizmet bildirimi gösterme izni</string>
-
     <string name="lbl_calendarpage">Takviminiz araçta görüntülenebilir ve randevulara hızlı erişim sağlar</string>
     <string name="lbl_calendar_description">Google Takvim\'de görünen telefon takviminizdeki etkinlikler araçta gösterilecektir. Çalışma profili takvimi kullanılamaz.</string>
     <string name="lbl_calendar_enabled">Takvimi göster</string>
@@ -95,7 +84,6 @@
     <string name="lbl_calendar_calendars_empty">Hiçbir takvim bulunamadı</string>
     <string name="lbl_calendar_upcoming_events">Yaklaşan etkinlikler:</string>
     <string name="lbl_calendar_upcoming_events_empty">Bu ay için yaklaşan etkinlik bulunamadı</string>
-
     <string name="lbl_mapspage">AAIdrive, telefonda dahili olarak oluşturulan ve araçta gösterilen özel bir harita içerir</string>
     <string name="enable_custom_maps">Özel Haritayı Etkinleştir</string>
     <string name="lbl_map_bt_hint">Bluetooth üzerinden bağlantıdayken harita performansı ve kalitesi düşük olacaktır</string>
@@ -113,7 +101,6 @@
     <string name="lbl_map_quickdestinations">Favori navigasyon hedefleri:</string>
     <string name="lbl_gmap_invalid_apikey">GMaps API Anahtarı geçersiz, harita işlevselliği kısıtlanacaktır. Lütfen geliştiriciye bu hatayı bildirin ve bir güncelleme bekleyin</string>
     <string name="lbl_mapbox_invalid_token">Mapbox Token geçersiz, harita işlevselliği kısıtlanacaktır. Lütfen geliştiriciye bu hatayı bildirin ve bir güncelleme bekleyin</string>
-
     <string name="lbl_musicpage">Telefonunuzdaki müzik uygulamaları araçta medya kaynağı olarak seçilebilir</string>
     <string name="lbl_music_apps">Müzik Uygulamaları</string>
     <string name="musicAppIcon">Uygulama Simgesi</string>
@@ -138,7 +125,6 @@
     <string name="musicAppNotes_spotify_userDeclined">Kitaplığınızda gezinme iznini verin</string>
     <string name="musicAppNotes_spotify_apiUnavailable">İnternet bağlantınızı kontrol edin ve reklam engelleyicileri devre dışı bırakın</string>
     <string name="musicAppNotes_spotify_backgroundDisabled">Spotify açılamadı. Arka plandan başlatılmasına izin verildiğinden emin olun</string>
-
     <string name="lbl_navigationpage_address">Arabanızın navigasyon sistemini başlatmak için bir adres yapıştırın</string>
     <string name="lbl_navigationpage_intent">Bağlıyken, diğer uygulamaların Navigasyon düğmeleri bir uygulama seçici açtığında aracınızın navigasyon sistemi bir seçenek olarak görünecektir</string>
     <string name="lbl_navigation_car_status">Araç Navigasyonu:</string>
@@ -146,7 +132,6 @@
     <string name="lbl_navigationstatus_active">Şu anda navigasyon aktif</string>
     <string name="lbl_navigationstatus_inactive">Şu anda herhangi bir navigasyon yok</string>
     <string name="lbl_navigation_prefer_custom">Özel harita navigasyonunu tercih et</string>
-
     <string name="lbl_addonspage">Ek uygulamalar, aracınızla birlikte çalışarak daha fazla işlevsellik kazandırabilir</string>
     <string name="lbl_addon_apps">Eklenti Uygulamaları</string>
     <string name="lbl_addons_empty">Hiçbir şey bulunamadı</string>
@@ -161,7 +146,6 @@
     <string name="addonPersonalPermission">Kişisel Araç Verisi Erişimi</string>
     <string name="addonPersonalPermissionDeclined">Kişisel araç verisine ERİŞİLEMEZ</string>
     <string name="addonPersonalPermissionGranted">Kişisel araç verisine ERİŞİLEBİLİR</string>
-
     <string name="lbl_settingspage">Gelişmiş ayarlar; davranışları özelleştirmenizi sağlar, beklenmeyen sonuçlara yol açabilir</string>
     <string name="lbl_language_carinterface">Araçta gösterilecek dil</string>
     <string name="lbl_language_prefercar">Telefon dili yerine araç dilini tercih et</string>
@@ -170,7 +154,6 @@
     <string name="lbl_analytics_intro">AAIdrive resmi olmayan bir hobi projesidir, BMW tarafından desteklenmez veya onaylanmaz. Tersine mühendislikle geliştirilen bir protokol üzerine kuruludur. İşlevselliği ve kararlılığıyla gurur duyuyorum ama yine de çökme ihtimali vardır. Hataların giderilebilmesi için çökme raporlarının otomatik olarak gönderilmesini sağlayan analitiği etkinleştirmeyi düşünebilirsiniz.</string>
     <string name="lbl_analytics_description">Çökme raporlarına ek olarak, analitiği etkinleştirmek yüklü müzik uygulamalarının listesini ve bazı anonim araç bilgilerini de göndererek özellik geliştirme önceliklerinin belirlenmesine yardımcı olur.</string>
     <string name="lbl_analytics_enabled">Analitik ve çökme raporlamasını etkinleştir</string>
-
     <string name="lbl_donations_volunteer">AAIdrive gönüllü bir projedir</string>
     <string name="lbl_donations_request">Bu projeyi beğendiyseniz ve faydalı buluyorsanız, destek olmak için bağış yapmayı düşünebilirsiniz:</string>
     <string name="btn_donations">Bağış Yap</string>
@@ -180,24 +163,19 @@
     <string name="lbl_support_share">Projeyi yaymak</string>
     <string name="lbl_support_privacy">Gizlilik önemlidir; bu nedenle AAIdrive kişisel verileri toplamaz, saklamaz veya paylaşmaz. Daha fazla bilgi için buraya dokunun…</string>
     <string name="lbl_support_thanks">AAIdrive kullandığınız için teşekkürler!</string>
-
     <string name="lbl_ok">Tamam</string>
     <string name="lbl_cancel">İptal</string>
     <string name="btn_configure">Yapılandır …</string>
     <string name="btn_add">Ekle</string>
     <string name="lbl_error">Hata</string>
-
     <string name="connectionStatusMissingConnectedApp">Connected veya Connected Classic uygulaması bulunamadı</string>
     <string name="connectionStatusWaiting">Araç bağlantısı bekleniyor</string>
     <string name="connectionStatusConnected">%s ile bağlantı kuruldu</string>
-
     <string name="lblChassisCode">Şasi</string>
     <string name="lblHmiVersion">IDrive Türü</string>
-
     <string name="nowplaying_notconnected">&lt;Bağlı Değil&gt;</string>
     <string name="nowplaying_unknown">&lt;Bilinmiyor&gt;</string>
-
-    <!-- bağlantı kurulumu -->
+    <!-- connection setup -->
     <string name="txt_setup_background_permission">Uygulama arka planda çalışabilir</string>
     <string name="txt_setup_background_impermission">Uygulama arka planda çalışamaz</string>
     <string name="txt_setup_background_hint">Otomatik bağlantılar, arka plan etkinliği izinliyse daha iyi çalışır</string>
@@ -207,7 +185,7 @@
     <string name="txt_setup_mini_ready">Uygulama Mini ile bağlantı için hazır</string>
     <string name="txt_setup_toyota_ready">Uygulama Toyota Supra ile bağlantı için hazır</string>
     <string name="txt_setup_toyota_hint">Toyota desteği çok sınırlıdır, varsayılan olarak yalnızca araç verisi sağlar</string>
-    <string name="txt_setup_toyota_hint2">Toyota Supra\'da tam destek için BimmerCode kullanarak ENTWICKLER_MENUE\'yi "aktiv" olarak kodlayın</string>
+    <string name="txt_setup_toyota_hint2">Toyota Supra\'da tam destek için BimmerCode kullanarak ENTWICKLER_MENUE\'yi \"aktiv\" olarak kodlayın</string>
     <string name="txt_setup_bmw_missing">BMW ile bağlantı için hazır değil:</string>
     <string name="txt_setup_mini_missing">Mini ile bağlantı için hazır değil:</string>
     <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 yüklü, bu sürüm bazen araç bağlantısını başlatmıyor. Sorun yaşarsanız 6.4 sürümüne düşürmeyi veya MyBMW uygulamasına geçmeyi deneyin</string>
@@ -219,11 +197,9 @@
     <string name="txt_setup_bmw_mine_missing_device">MyBMW uygulaması, araçla bağlantı kurmak için Yakındaki Cihazlar iznine ihtiyaç duyar</string>
     <string name="txt_setup_mini_mine_missing_device">MINI uygulaması, araçla bağlantı kurmak için Yakındaki Cihazlar iznine ihtiyaç duyar</string>
     <string name="txt_setup_security_missing">Güvenlik Servisine ulaşılamıyor:</string>
-
     <string name="txt_setup_background_killed">Uygulama, araçla bağlantılıyken sonlandırıldı</string>
     <string name="txt_setup_background_suspended">Uygulama, araçla bağlantılıyken arka planda duraklatıldı</string>
     <string name="txt_setup_background_restrictions_hint">AAIdrive\'ın arka planda çalışmasına izin vermek için telefonunuzun arka plan ve pil ayarlarını kontrol edin</string>
-
     <string name="btn_install">Yükle</string>
     <string name="btn_install_bmwmine">MyBMW uygulamasını yükle</string>
     <string name="btn_install_minimine">Mini uygulamasını yükle</string>
@@ -231,8 +207,7 @@
     <string name="btn_install_mini">Mini Connected uygulamasını yükle</string>
     <string name="btn_install_bmwclassic">BMW Connected Classic uygulamasını yükle</string>
     <string name="btn_install_miniclassic">Mini Connected Classic uygulamasını yükle</string>
-
-    <!-- bağlantı durumu -->
+    <!-- connection status -->
     <string name="txt_setup_bt_disconnected">Bluetooth üzerinden araç bağlı değil</string>
     <string name="txt_setup_bt_connected">Araç Bluetooth üzerinden bağlı</string>
     <string name="txt_setup_a2dp_disconnected">Bluetooth Müzik bağlı değil</string>
@@ -257,8 +232,7 @@
     <string name="txt_setup_bcl_connecting">Uygulamalar Bağlantısı kuruluyor</string>
     <string name="txt_setup_bcl_connected">Uygulamalar Bağlantısı çalışıyor</string>
     <string name="txt_setup_bcl_connected_transport">Uygulamalar Bağlantısı %s üzerinden çalışıyor</string>
-
-    <!-- özellikler -->
+    <!-- capabilities -->
     <string name="lbl_capabilities_detected">Algılanan araç özellikleri:</string>
     <string name="txt_capabilities_audiocontext_yes">Ses Bağlamı destekleniyor</string>
     <string name="txt_capabilities_audiocontext_no">Ses Bağlamı desteklenmiyor</string>
@@ -273,20 +247,17 @@
     <string name="txt_capabilities_tts_no">Bildirim Sesli Okuma desteği yok</string>
     <string name="txt_capabilities_navi_yes">Araç Navigasyonu destekleniyor</string>
     <string name="txt_capabilities_navi_no">Araç Navigasyonu desteklenmiyor</string>
-
-    <!-- hata ayıklama durumu -->
+    <!-- debug status -->
     <string name="txt_build_info">Yapı Sürümü: %1$s %2$s</string>
     <string name="txt_bcl_report">BCL Tünel Performansı:</string>
     <string name="txt_cds_view">Araç Verisi Raporu:</string>
     <string name="txt_car_capabilities">Detaylı Araç Özellikleri:</string>
     <string name="lbl_advanced_settings">Gelişmiş Ayarları Göster</string>
     <string name="lbl_connection_probe_ips">Araçla TCP tüneli üzerinden bağlantı kurmayı dene</string>
-
     <string name="lbl_assistant">Sesli Asistan (Beta)</string>
     <string name="lbl_assistant_empty">Hiçbiri bulunamadı</string>
     <string name="lbl_assistant_fullscreen_permissions">Ekran kapalıyken asistanı tetiklemek için erişim izni</string>
-
-    <!-- araç durumu -->
+    <!-- car status -->
     <string name="lbl_carinfopage_disconnected">İlk bağlantınızdan sonra aracınıza ait bilgiler burada gösterilecektir</string>
     <string name="lbl_carinfopage">Aracınıza ait hızlı bilgilere buradan ulaşabilirsiniz</string>
     <string name="lbl_carinfo_efficiency">Verimlilik İstatistikleri</string>
@@ -313,8 +284,6 @@
     <string name="lbl_carinfo_style_accel">Hızlanma:</string>
     <string name="lbl_carinfo_style_brake">Frenleme:</string>
     <string name="lbl_carinfo_style_shift">Vites Değişimi:</string>
-
-
     <string name="lbl_carinfo_temp">Sıcaklık:</string>
     <string name="lbl_carinfo_engine_temp">Motor Sıcaklığı:</string>
     <string name="lbl_carinfo_oil_temp">Yağ Sıcaklığı:</string>
@@ -339,27 +308,11 @@
     <string name="lbl_carinfo_temp_interior">İç Sıcaklık:</string>
     <string name="lbl_carinfo_temp_exterior">Dış Sıcaklık:</string>
     <string name="lbl_carinfo_parking_brake">El Freni:</string>
-
     <!-- unit suffixes -->
-    <string name="lbl_carinfo_units_km">km</string>
-    <string name="lbl_carinfo_units_mi">mi</string>
-    <string name="lbl_carinfo_units_gal_uk">gal (UK)</string>
-    <string name="lbl_carinfo_units_gal_us">gal (US)</string>
-    <string name="lbl_carinfo_units_liter">L</string>
-    <string name="lbl_carinfo_units_L100km">L/100km</string>
-    <string name="lbl_carinfo_units_mpg">mpg</string>
-    <string name="lbl_carinfo_units_kmL">km/L</string>
-    <string name="lbl_carinfo_units_mph">mph</string>
-    <string name="lbl_carinfo_units_kmph">kmph</string>
-    <string name="lbl_carinfo_units_celcius">\u2103</string>
-    <string name="lbl_carinfo_units_fahrenheit">\u2109</string>
-    <string name="lbl_carinfo_units_masl">m.a.s.l.</string>
-
     <!-- tips -->
     <string name="lbl_tip_image">İpucu gösterim görseli</string>
     <string name="lbl_tiplist">İpuçları ve püf noktaları</string>
     <string name="lbl_tip_expand">İpuçlarını genişlet</string>
-
     <string name="tip_usb_chargingmode">Telefonun USB modu yalnızca Şarj olarak ayarlandıysa, Dosya Aktarımı moduna geçirin</string>
     <string name="tip_connassistant">IDrive4 araçlarda USB Aksesuar Modunu etkinleştirmek için Bağlantı Sihirbazı\'nı kullanın</string>
     <string name="tip_btapp">IDrive5 Bluetooth bağlantısında Uygulamalar seçeneğinin etkin olduğundan emin olun. Bağlantı takılı kaldıysa Bluetooth Ses bağlantısını kesip tekrar bağlamayı deneyin</string>
@@ -376,13 +329,11 @@
     <string name="tip_notification_bookmark_ambutton">Bildirimlerinize hızlı erişim için Bildirimler uygulamasına bir kısayol düğmesi kaydedin</string>
     <string name="tip_notification_bookmark_details">En son bildirime hızlı erişim için bildirimler listesine bakarken bir kısayol düğmesi kaydedin</string>
     <string name="tip_notification_quickaccess">Yeni bir bildirim aldıktan hemen sonra Bildirimler uygulamasına girerseniz, bu bildirim doğrudan açılır</string>
-
     <string name="notification_assistant_tap">%s uygulamasını başlatmak için dokunun</string>
     <string name="notification_assistant_description">Yalnızca ekran açık olduğu için gerekli</string>
     <string name="donation_title">Bu uygulamayı beğendiniz mi?</string>
     <string name="donation_text">Ufak bir bağışla desteğinizi gösterebilirsiniz</string>
     <string name="donation_text_onetime">Tek seferlik istek</string>
-
     <string name="txt_spotify_auth_notification">Spotify Web API\'nin yetkilendirilmesi gerekiyor. Yetkilendirmek için buraya tıklayın.</string>
     <string name="txt_spotify_app_remote_last_error">Spotify Uygulama Uzaktan Son Hata:</string>
     <string name="txt_spotify_api_authorization_needed">Spotify Web API yetkilendirmesi gerekiyor.</string>
@@ -392,7 +343,6 @@
     <string name="lbl_spotify_api_authorized">Spotify Web API Yetkilendirildi</string>
     <string name="lbl_spotify_api_authorized_user_friendly">Spotify\'da arama yapma yeteneği</string>
     <string name="btn_authorize">Yetkilendir</string>
-
     <!-- car app strings -->
     <string name="CARINFO_TITLE">Detaylı Araç Bilgisi</string>
     <string name="CARINFO_TITLE_DRIVING">Sürüş Detayları</string>
@@ -404,8 +354,6 @@
     <string name="CARINFO_ENGINE">Motor</string>
     <string name="CARINFO_OIL">Yağ</string>
     <string name="CARINFO_BATTERY">Batarya</string>
-    <string name="CARINFO_EXCHANGER">HVAC</string>
-    <string name="CARINFO_EVAPORATOR">EVAC</string>
     <string name="CARINFO_EXTERIOR">Dış</string>
     <string name="CARINFO_INTERIOR">İç</string>
     <string name="CARINFO_GEAR">Vites</string>
@@ -421,14 +369,7 @@
     <string name="CARINFO_TORQUE">Tork</string>
     <string name="CARINFO_GFORCE">G Kuvveti</string>
     <string name="CARINFO_SPEEDACTUAL">Gerçek</string>
-    <string name="CARINFO_SPEEDGPS">GPS</string>
-    <string name="CARINFO_UNIT_C">\u2103</string>
-    <string name="CARINFO_UNIT_F">\u2109</string>
-    <string name="CARINFO_UNIT_KM">km</string>
     <string name="CARINFO_UNIT_MI">mil</string>
-    <string name="CARINFO_UNIT_GALUK">gal (UK)</string>
-    <string name="CARINFO_UNIT_GALUS">gal (US)</string>
-    <string name="CARINFO_UNIT_LITER">L</string>
     <string name="CARINFO_UNIT_KMPH">km/s</string>
     <string name="CARINFO_UNIT_MPH">mil/s</string>
     <string name="CARINFO_HEADING_NORTH">K</string>
@@ -439,7 +380,6 @@
     <string name="CARINFO_HEADING_SOUTHWEST">GB</string>
     <string name="CARINFO_HEADING_WEST">B</string>
     <string name="CARINFO_HEADING_NORTHWEST">KB</string>
-    <string name="CARINFO_SUNROOF">Sunroof</string>
     <string name="CARINFO_WINDOW_CLOSED">Kapalı</string>
     <string name="CARINFO_WINDOW_TILTED">Aralıklı</string>
     <string name="CARINFO_WINDOW_OPENED">Açık</string>
@@ -469,13 +409,11 @@
     <string name="NOTIFICATION_PERMISSION_NEEDED">Bu uygulamanın Bildirim Erişimi iznine ihtiyacı var</string>
     <string name="NOTIFICATION_CENTER_APP">Bu uygulama, aracın Bildirim Merkezine bildirim göndermek için kullanılır</string>
     <string name="READOUT_DESCRIPTION">Bu uygulama sesli okuma amacıyla kullanılır</string>
-
     <string name="CALENDAR_TIME_START">Başlangıç</string>
     <string name="CALENDAR_TIME_END">Bitiş</string>
     <string name="CALENDAR_TIME_DURATION">Süre</string>
     <string name="CALENDAR_TIME_ALLDAY">Tüm Gün</string>
     <string name="CALENDAR_NAVIGATE">Git</string>
-
     <string name="MAP_ACTION_VIEWMAP">Tam Haritayı Görüntüle</string>
     <string name="MAP_ACTION_SEARCH">Yer Ara</string>
     <string name="MAP_ACTION_RECALC_NAV">Navigasyonu Yeniden Hesapla</string>
@@ -488,7 +426,6 @@
     <string name="MAP_BUILDINGS">3D binaları göster</string>
     <string name="MAP_TILT">Haritayı eğ</string>
     <string name="MAP_CUSTOM_STYLE">Özel harita stilini kullan</string>
-
     <string name="MUSIC_APPLIST_TITLE">Uygulamalar</string>
     <string name="MUSIC_APPLIST_EMPTY">&lt;Uygulama Yok&gt;</string>
     <string name="MUSIC_CUSTOMACTIONS_TITLE">Eylemler</string>
@@ -503,7 +440,6 @@
     <string name="MUSIC_BROWSE_PLAY_FROM_SEARCH">Aramadan Oynat</string>
     <string name="MUSIC_SEARCH_RESULTS_LABEL">Arama Sonuçları</string>
     <string name="MUSIC_SEARCH_RESULTS_VIEW_FULL_RESULTS">Tam Sonuçları Görüntüle</string>
-    <string name="MUSIC_SEARCH_RESULTS_ELLIPSIS">...</string>
     <string name="MUSIC_QUEUE_TITLE">Şu Anda Çalan</string>
     <string name="MUSIC_QUEUE_EMPTY">&lt;Boş Kuyruk&gt;</string>
     <string name="MUSIC_SEARCH_EMPTY">&lt;Sonuç Bulunamadı&gt;</string>
@@ -517,7 +453,6 @@
     <string name="MUSIC_TURN_REPEAT_ONE_ON">Birini Tekrar Etmeyi Aç</string>
     <string name="MUSIC_TURN_REPEAT_OFF">Tekrar Etmeyi Kapat</string>
     <string name="MUSIC_TEMPORARY_PLAYLIST_DESCRIPTION">AAIdrive geçici çalma listesi</string>
-
     <plurals name="MUSIC_ACTION_SEEK_BACK">
         <item quantity="one">%s saniye geri sar</item>
         <item quantity="other">%s saniye geri sar</item>
@@ -525,9 +460,7 @@
     <plurals name="MUSIC_ACTION_SEEK_FORWARD">
         <item quantity="one">%s saniye ileri sar</item>
         <item quantity="other">%s saniye ileri sar</item>
-
     </plurals>
-
     <string name="MUSIC_SPOTIFY_REMOVE_FROM_COLLECTION">Beğenme</string>
     <string name="MUSIC_SPOTIFY_START_RADIO">Radyo Kanalı Oluştur</string>
     <string name="MUSIC_SPOTIFY_ADD_TO_COLLECTION">Beğen</string>
