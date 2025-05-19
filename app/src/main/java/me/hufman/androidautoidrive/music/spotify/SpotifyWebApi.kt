@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.music.spotify
 
+import android.app.ActivityOptions
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -24,7 +25,6 @@ import me.hufman.androidautoidrive.music.MusicMetadata
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
 import me.hufman.androidautoidrive.phoneui.SpotifyAuthorizationActivity
 import net.openid.appauth.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -186,7 +186,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 			return@executeApiCall emptyList()
 		}
 
-		val searchResults = webApi?.search?.search(query, *SearchApi.SearchType.values(), limit=8, market=Market.FROM_TOKEN)
+		val searchResults = webApi?.search?.search(query, *SearchApi.SearchType.entries.toTypedArray(), limit=8, market=Market.FROM_TOKEN)
 
 		// run through each of the search result categories and compile full list
 		val searchResultMusicMetadata: ArrayList<SpotifyMusicMetadata> = ArrayList()
@@ -419,11 +419,16 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 		}
 		val notifyIntent = Intent(context, SpotifyAuthorizationActivity::class.java)
 		notifyIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+		val activityOptions = ActivityOptions.makeBasic()
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+			activityOptions.setPendingIntentCreatorBackgroundActivityStartMode(ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED)
+		}
+		val pendingIntent = PendingIntent.getActivity(context, NOTIFICATION_REQ_ID, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE, activityOptions.toBundle())
 		val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
 				.setContentTitle(context.getString(R.string.notification_title))
 				.setContentText(context.getString(R.string.txt_spotify_auth_notification))
 				.setSmallIcon(R.drawable.ic_notify)
-				.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQ_ID, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+				.setContentIntent(pendingIntent)
 				.build()
 		val notificationManager = context.getSystemService(NotificationManager::class.java)
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -442,7 +447,7 @@ class SpotifyWebApi private constructor(val context: Context, val appSettings: M
 	 */
 	private fun getCoverArtUri(images: List<SpotifyImage>, heightToMatch: Int = 300): String? {
 		val sortedImages = images.sortedBy { it.height }
-		var coverArtIndex = sortedImages.indexOfFirst { it.height ?: 0 >= heightToMatch }
+		var coverArtIndex = sortedImages.indexOfFirst { (it.height ?: 0) >= heightToMatch }
 		if (coverArtIndex == -1 && images.size == 1) {
 			coverArtIndex = 0
 		}

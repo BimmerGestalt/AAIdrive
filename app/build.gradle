@@ -25,13 +25,14 @@ apply from: 'buildtools/screenshots.gradle'
 
 apply from: 'buildtools/preprocess_resources.gradle'
 
-def GITHUB_BRANCH = System.env.GITHUB_REF?.replaceFirst("^refs/.*/", "")
-
 def runProguardInDebug = false
 def isRunningOnCI = System.getenv("CI") == "true"
 
 final BUILD_DATE = new Date().toZonedDateTime().toEpochSecond()
 
+base {
+    archivesName = "androidautoidrive-${androidGitVersion.name()}"
+}
 android {
     namespace 'me.hufman.androidautoidrive'
 
@@ -47,15 +48,14 @@ android {
     }
     defaultConfig {
         applicationId "me.hufman.androidautoidrive"
-        compileSdk 34
+        compileSdk 35
         minSdkVersion 23
-        targetSdkVersion 34
+        targetSdkVersion 35
         multiDexEnabled false
         versionCode androidGitVersion.code() + 1
         versionName androidGitVersion.name()
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunner 'me.hufman.androidautoidrive.DexOpenerAndroidJUnitRunner'
-        archivesBaseName = "androidautoidrive-${androidGitVersion.name()}"
         buildConfigField "long", "COMMIT_TIME", ((grgit != null && !androidGitVersion.name().contains("-dirty")) ? grgit.head().dateTime.toEpochSecond() : BUILD_DATE) + "L"
         manifestPlaceholders = [
                 spotify_api_key: System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey,
@@ -122,8 +122,9 @@ android {
                     proguardFile 'proguard-rules.pro'
                 }
             }
-            testCoverageEnabled false
             pseudoLocalesEnabled true
+            enableUnitTestCoverage false
+            enableAndroidTestCoverage false
         }
     }
     bundle {
@@ -183,37 +184,39 @@ android {
         jvmTarget = "1.8"
     }
 
-    def assertGit = tasks.create(name: "assertGitVersionRelease") { doLast {
+    def assertGit = tasks.register("assertGitVersionRelease") { doLast {
         throw new GradleException("Could not load git versionCode for release build, make sure the project is cloned from git")
     }}
 
-    applicationVariants.all { variant ->
+    applicationVariants.configureEach { variant ->
         if (!variant.buildType.isDebuggable() && variant.mergedFlavor.versionCode == 1) {
             def assembleTaskName = "assemble${variant.name.capitalize()}"
-            tasks[assembleTaskName].dependsOn(assertGit)
+            tasks.named(assembleTaskName).dependsOn(assertGit)
         }
     }
 
     if (!isRunningOnCI) {
-        def assertSpotifyKey = tasks.create(name: "assertSpotifyApiKey") { doLast {
+        tasks.register("assertSpotifyApiKey") { doLast {
             if ((System.env.AndroidAutoIdrive_SpotifyApiKey ? System.env.AndroidAutoIdrive_SpotifyApiKey : AndroidAutoIdrive_SpotifyApiKey) == "invalid") {
                 throw new GradleException("Please configure a Spotify API key in your gradle.properties, or set it to \"unset\" to disable the Spotify functionality\nSee https://bimmergestalt.github.io/AAIdrive/developers")
             }
         }}
-        preBuild.dependsOn assertSpotifyKey
+        preBuild.dependsOn 'assertSpotifyApiKey'
 
-        def assertGmapKey = tasks.create(name: "assertGmapKey") { doLast {
+        tasks.register("assertGmapKey") { doLast {
             if ((System.env.AndroidAutoIdrive_GmapsApiKey ? System.env.AndroidAutoIdrive_GmapsApiKey : AndroidAutoIdrive_GmapsApiKey) == "unset") {
                 throw new GradleException("Please configure a Google Maps API key in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
             }
         }}
-        applicationVariants.all { variant ->
+        applicationVariants.configureEach { variant ->
             if (variant.name.contains("gmap")) {
-                tasks["assemble${variant.name.capitalize()}"].dependsOn assertGmapKey
+                tasks.named("assemble${variant.name.capitalize()}").configure {
+                    dependsOn 'assertGmapKey'
+                }
             }
         }
 
-        def assertMapboxKey = tasks.create(name: "assertMapboxKey") { doLast {
+        tasks.register("assertMapboxKey") { doLast {
             if ((System.env.AndroidAutoIdrive_MapboxDownloadToken ? System.env.AndroidAutoIdrive_MapboxDownloadToken : AndroidAutoIdrive_MapboxDownloadToken) == "unset") {
                 throw new GradleException("Please configure a secret Mapbox download token in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
             }
@@ -221,16 +224,18 @@ android {
                 throw new GradleException("Please configure a Mapbox access token in your gradle.properties\nSee https://bimmergestalt.github.io/AAIdrive/developers")
             }
         }}
-        applicationVariants.all { variant ->
+        applicationVariants.configureEach { variant ->
             if (variant.name.contains("mapbox")) {
-                tasks["assemble${variant.name.capitalize()}"].dependsOn assertMapboxKey
+                tasks.named("assemble${variant.name.capitalize()}").configure {
+                    dependsOn 'assertMapboxKey'
+                }
             }
         }
     }
 }
 
 // compile all the debug variants
-task compileDebug {
+tasks.register('compileDebug') {
     dependsOn {
         android.applicationVariants.findAll { it.name.endsWith("Debug") }.collect { variant ->
             "compile${variant.name.capitalize()}Sources"
@@ -239,7 +244,7 @@ task compileDebug {
 }
 
 // lint all the debug variants
-task lintDebug {
+tasks.register('lintDebug') {
     dependsOn {
         android.applicationVariants.findAll { it.name.endsWith("Debug") }.collect { variant ->
             "lint${variant.name.capitalize()}"
@@ -248,7 +253,7 @@ task lintDebug {
 }
 
 // unit test all the debug variants
-task testDebug {
+tasks.register('testDebug') {
     dependsOn {
         android.applicationVariants.findAll { it.name.endsWith("Debug") }.collect { variant ->
             "test${variant.name.capitalize()}UnitTest"
@@ -257,7 +262,7 @@ task testDebug {
 }
 
 // like check, but only with debug variants
-task checkDebug {
+tasks.register('checkDebug') {
     dependsOn(lintDebug, testDebug)
 }
 
@@ -301,12 +306,13 @@ dependencies {
     testImplementation "org.mockito:mockito-core:5.10.0"
     testImplementation 'org.mockito.kotlin:mockito-kotlin:4.1.0'
     testImplementation 'org.awaitility:awaitility-scala:3.1.5'
-    androidTestImplementation 'androidx.test:core-ktx:1.6.0'
-    androidTestImplementation 'androidx.test:rules:1.6.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.0'
-    androidTestImplementation 'androidx.test.ext:junit-ktx:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.6.0'
+    androidTestImplementation 'androidx.test:core-ktx:1.6.1'
+    androidTestImplementation 'androidx.test:rules:1.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.ext:junit-ktx:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.6.1'
+    androidTestImplementation 'androidx.test:monitor:1.7.2'
     androidTestImplementation "org.mockito:mockito-android:3.4.4"
     androidTestImplementation 'org.mockito.kotlin:mockito-kotlin:4.1.0'
     androidTestImplementation 'com.github.tmurakami:dexopener:2.0.5'
@@ -338,4 +344,9 @@ dependencies {
 
     sentryImplementation 'io.sentry:sentry-android:1.7.16'
     sentryImplementation 'org.slf4j:slf4j-nop:1.7.25'
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
