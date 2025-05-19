@@ -1,5 +1,6 @@
 package me.hufman.androidautoidrive.phoneui
 
+import android.app.ActivityOptions
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -82,8 +83,14 @@ class DonationRequest(val context: Context) {
 	}
 	private fun triggerNotification() {
 		createNotificationChannel()
+
 		val intent = Intent(Intent.ACTION_VIEW).
 				setData(Uri.parse(DONATION_URL))
+		val activityOptions = ActivityOptions.makeBasic()
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+			activityOptions.setPendingIntentCreatorBackgroundActivityStartMode(ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED)
+		}
+		val pendingIntent = PendingIntent.getActivity(context, 50, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE, activityOptions.toBundle())
 		val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
 				.setContentTitle(context.getText(R.string.donation_title))
 				.setContentText(context.getText(R.string.donation_text))
@@ -92,7 +99,7 @@ class DonationRequest(val context: Context) {
 				.setSmallIcon(R.drawable.ic_notify)
 				.setPriority(NotificationCompat.PRIORITY_LOW)
 				.setAutoCancel(true)
-				.setContentIntent(PendingIntent.getActivity(context, 50, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+				.setContentIntent(pendingIntent)
 
 		val notificationManager = context.getSystemService(NotificationManager::class.java)
 		notificationManager.notify(50, notificationBuilder.build())

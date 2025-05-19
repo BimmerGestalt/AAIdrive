@@ -19,6 +19,7 @@ import org.mockito.kotlin.*
 import kotlinx.coroutines.runBlocking
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MockAppSettings
+import me.hufman.androidautoidrive.MockSelfReturningAnswer
 import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.music.controllers.SpotifyAppController
@@ -430,15 +431,11 @@ class SpotifyWebApiTest {
 
 		val contentIntent: PendingIntent = mock()
 		Mockito.mockStatic(PendingIntent::class.java).`when`<PendingIntent> {
-			PendingIntent.getActivity(context, SpotifyWebApi.NOTIFICATION_REQ_ID, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+			PendingIntent.getActivity(eq(context), eq(SpotifyWebApi.NOTIFICATION_REQ_ID), eq(notifyIntent), eq(PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE), any())
 		}.doReturn(contentIntent)
 
 		val notification: Notification = mock()
-		val notificationBuilder: NotificationCompat.Builder = mock()
-		whenever(notificationBuilder.setContentTitle(getStringText)).thenReturn(notificationBuilder)
-		whenever(notificationBuilder.setContentText(getStringText)).thenReturn(notificationBuilder)
-		whenever(notificationBuilder.setSmallIcon(anyInt())).thenReturn(notificationBuilder)
-		whenever(notificationBuilder.setContentIntent(contentIntent)).thenReturn(notificationBuilder)
+		val notificationBuilder: NotificationCompat.Builder = mock(defaultAnswer = MockSelfReturningAnswer())
 		whenever(notificationBuilder.build()).thenReturn(notification)
 		PowerMockito.whenNew(NotificationCompat.Builder::class.java).withArguments(context, SpotifyWebApi.NOTIFICATION_CHANNEL_ID).thenReturn(notificationBuilder)
 

@@ -20,7 +20,9 @@ class NavigationStatusModelTest {
 	@JvmField
 	val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-	val context = mock<Context>()
+	val context = mock<Context> {
+		on { getString(any()) } doReturn ""
+	}
 	var isConnected = false
 	val capabilities = HashMap<String, String>().also {
 		it["hmi.type"] = "BMW ID5"
@@ -118,7 +120,7 @@ class NavigationStatusModelTest {
 		context.run(model.carNavigationStatus.value!!)
 		verify(context).getString(R.string.lbl_navigationstatus_inactive)
 		verifyNoMoreInteractions(context)
-		reset(context)
+		clearInvocations(context)
 
 		cdsData.onPropertyChangedEvent(CDS.NAVIGATION.GUIDANCESTATUS, JsonObject()
 				.apply { addProperty("guidanceStatus", 0) })
@@ -126,7 +128,7 @@ class NavigationStatusModelTest {
 		context.run(model.carNavigationStatus.value!!)
 		verify(context).getString(R.string.lbl_navigationstatus_inactive)
 		verifyNoMoreInteractions(context)
-		reset(context)
+		clearInvocations(context)
 
 		cdsData.onPropertyChangedEvent(CDS.NAVIGATION.GUIDANCESTATUS, JsonObject()
 				.apply { addProperty("guidanceStatus", 1) })
@@ -134,7 +136,7 @@ class NavigationStatusModelTest {
 		context.run(model.carNavigationStatus.value!!)
 		verify(context).getString(R.string.lbl_navigationstatus_active)
 		verifyNoMoreInteractions(context)
-		reset(context)
+		clearInvocations(context)
 	}
 
 	@Test

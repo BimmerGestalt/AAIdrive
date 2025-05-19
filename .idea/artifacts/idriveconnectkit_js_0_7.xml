@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="idriveconnectkit-js-0.7">
+    <output-path>$PROJECT_DIR$/IDriveConnectKit/core/build/libs</output-path>
+    <root id="archive" name="idriveconnectkit-js-0.7.jar">
+      <element id="module-output" name="IDriveConnectKit.idriveconnectkit.jsMain" />
+    </root>
+  </artifact>
+</component>

@@ -1,5 +1,7 @@
 package me.hufman.androidautoidrive.carapp.assistant
 
+import android.Manifest
+import android.app.ActivityOptions
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,8 +10,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import me.hufman.androidautoidrive.ApplicationCallbacks
@@ -95,8 +99,13 @@ open class AssistantControllerAndroid(val context: Context, val phoneAppResource
 	 * and require that the user interact with it
 	 */
 	fun triggerFullScreen(assistant: AssistantAppInfo, intent: Intent) {
+		val activityOptions = ActivityOptions.makeBasic()
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+			activityOptions.setPendingIntentCreatorBackgroundActivityStartMode(ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED)
+		}
 		val pendingIntent = PendingIntent.getActivity(context.applicationContext,
-				0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+				0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+				activityOptions.toBundle())
 
 		val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
 				.setAutoCancel(true)
@@ -108,7 +117,9 @@ open class AssistantControllerAndroid(val context: Context, val phoneAppResource
 				.setCategory(NotificationCompat.CATEGORY_ALARM)     // shows even in DND mode
 				.setFullScreenIntent(pendingIntent, true)
 				.setTimeoutAfter(5000)
-		NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notificationBuilder.build())
+		if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+			NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notificationBuilder.build())
+		}
 	}
 
 	fun getSettingsIntent(assistant: AssistantAppInfo): Intent? {
