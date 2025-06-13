@@ -340,6 +340,7 @@
     <string name="notification_assistant_description">Работают только с включенным экраном</string>
     <string name="donation_title">Понравилось приложение?</string>
     <string name="donation_text">Поддержите нас</string>
+    <string name="donation_text_onetime">Разовый запрос</string>
     <string name="txt_spotify_auth_notification">Требуется авторизация в Spotify Web API. Нажмите здесь для авторизации.</string>
     <string name="txt_spotify_app_remote_last_error">Последняя ошибка Spotify:</string>
     <string name="txt_spotify_api_authorization_needed">Требуется авторизация Spotify Web API.</string>
