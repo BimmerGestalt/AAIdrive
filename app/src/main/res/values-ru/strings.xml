@@ -10,6 +10,7 @@
     <string name="notification_description_chassiscode">Подключен к %s</string>
     <string name="notification_description_bmw">Подключен к BMW</string>
     <string name="notification_description_mini">Подключен к Mini</string>
+    <string name="notification_shutdown">Выключение</string>
     <string name="permission_cds_normal">прочитать общую информацию о машине</string>
     <string name="permission_cds_personal">прочитать персональную информацию о машине</string>
     <!-- notification channel names -->
@@ -83,6 +84,8 @@
     <string name="lbl_calendar_detailed_events">Скрывать события без подробностей или местоположения</string>
     <string name="lbl_calendar_automatic_navigation">Автоматически переходить к предстоящим встречам</string>
     <string name="lbl_calendar_ignore_visibility">Включить события из скрытых календарей</string>
+    <string name="lbl_calendar_calendars">Календари:</string>
+    <string name="lbl_calendar_calendars_empty">Календари не найдены</string>
     <string name="lbl_calendar_upcoming_events">Предстоящие события:</string>
     <string name="lbl_calendar_upcoming_events_empty">В этом месяце предстоящих событий не найдено</string>
     <string name="lbl_mapspage">AAIdrive включает в себя пользовательскую карту, которая визуализируется на телефоне и отображается в автомобиле</string>
@@ -98,6 +101,7 @@
     <string name="lbl_map_satellite">Показывать снимки со спутника</string>
     <string name="lbl_map_buildings">Включить 3D здания</string>
     <string name="gmapStyleLabel">Стиль карты</string>
+    <string name="lbl_mapbox_custom_style">Укажите пользовательский Url-адрес типа Mapbox</string>
     <string name="lbl_map_quickdestinations">Избранные назначения навигации:</string>
     <string name="lbl_gmap_invalid_apikey">Ключ API GMaps недействителен и функциональность карты будет уменьшена. Пожалуйста, сообщите разработчику об этой ошибке и следите за обновлениями</string>
     <string name="lbl_mapbox_invalid_token">Токен Mapbox недействителен и функциональность карты будет уменьшена. Пожалуйста, сообщите разработчику об этой ошибке и следите за обновлениями</string>
@@ -199,6 +203,7 @@
     <string name="txt_setup_security_missing">Служба безопасности недоступна:</string>
     <string name="txt_setup_background_killed">Приложение было убито во время соединения с автомобилем</string>
     <string name="txt_setup_background_suspended">Приложение было приостановлено в фоновом режиме во время соединения с автомобилем</string>
+    <string name="txt_setup_background_restrictions_hint">Для фоновой работы AAldrive проверьте настройки выполнения в фоновом режиме и экономии заряда батареи вашего телефона</string>
     <string name="btn_install">Установить</string>
     <string name="btn_install_bmwmine">Установить MyBMW</string>
     <string name="btn_install_minimine">Установить приложение Mini</string>
@@ -332,14 +337,20 @@
     <string name="tip_batterymode_mymini">Попробуйте отключить оптимизацию батареи для приложения Mini, иногда это помогает подключиться к автомобилю</string>
     <string name="tip_audioplayer_bookmark">Сохраните ярлык приложения Audioplayer для быстрого доступа к музыке</string>
     <string name="tip_bluetooth_music">Убедитесь, что в автомобиле подключен Bluetooth Music (а не, например, радио)</string>
+    <string name="tip_audioplayer_nowplaying_bookmark">Сохранить кнопку быстрого доступа к очереди (при выбранной кнопке \"Сейчас играет\")</string>
     <string name="tip_input_emoji">Чтобы отправить эмодзи, введите двоеточие, а затем выберите из списка</string>
     <string name="tip_music_hide">Смахните приложение, чтобы оно не отображалось на экране автомобиля</string>
     <string name="tip_batterymode_music">Попробуйте отключить оптимизацию расхода для музыкальных приложений, это может помочь при их запуске в фоне на некоторых смартфонах, таких как Xiaomi</string>
     <string name="tip_popup_suppress_id5">Всплывающие уведомления отключаются во время взаимодействия с автомобилем или во время ввода текста</string>
+    <string name="tip_notification_bookmark">Сохранить кнопку быстрого доступа к приложению «Книга» (без названия) для быстрого доступа к вашим уведомлениям</string>
+    <string name="tip_notification_bookmark_ambutton">Сохранить кнопку быстрого доступа к приложению «Уведомления» для быстрого доступа к вашим уведомлениям</string>
+    <string name="tip_notification_bookmark_details">Сохранить кнопку быстрого доступа (находясь в списке уведомлений) для быстрого перехода к последнему уведомлению</string>
+    <string name="tip_notification_quickaccess">Для открытия нового уведомления достаточно быстро перейти в приложение \"Уведомления\" после его поступления</string>
     <string name="notification_assistant_tap">Нажмите, чтобы запустить %s</string>
     <string name="notification_assistant_description">Работают только с включенным экраном</string>
     <string name="donation_title">Понравилось приложение?</string>
     <string name="donation_text">Поддержите нас</string>
+    <string name="donation_text_onetime">Разовый запрос</string>
     <string name="txt_spotify_auth_notification">Требуется авторизация в Spotify Web API. Нажмите здесь для авторизации.</string>
     <string name="txt_spotify_app_remote_last_error">Последняя ошибка Spotify:</string>
     <string name="txt_spotify_api_authorization_needed">Требуется авторизация Spotify Web API.</string>
