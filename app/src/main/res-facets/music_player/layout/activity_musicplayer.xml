@@ -8,43 +8,28 @@
             name="iconsModel"
             type="me.hufman.androidautoidrive.phoneui.viewmodels.MusicActivityIconsModel" />
     </data>
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/nav_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            android:background="?attr/colorPrimary"
+
+            app:title="@{viewModel.appName}"
+            />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="15dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="0"
-                    android:contentDescription="@string/musicAppIcon"
-                    app:srcCompat="@android:drawable/alert_dark_frame"
-                    android:src="@{viewModel.appIcon}"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:textSize="18sp"
-                    android:text="@{viewModel.appName}"/>
-
-            </LinearLayout>
-
+            android:padding="15dp"
+            android:id="@+id/pgrMusicPlayerWell">
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/pgrMusicPlayer"
                 android:layout_width="match_parent"
@@ -59,5 +44,5 @@
             </androidx.viewpager.widget.ViewPager>
 
         </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

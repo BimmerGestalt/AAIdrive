@@ -1,14 +1,18 @@
 package me.hufman.androidautoidrive.phoneui
 
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.databinding.MusicPlayerBinding
@@ -43,6 +47,16 @@ class MusicPlayerActivity: AppCompatActivity() {
 		binding.viewModel = musicActivityModel
 		binding.iconsModel = musicActivityIconsModel    // need to touch this so that it's ready for the fragments, even though we don't use it here
 		setContentView(binding.root)
+
+		val navToolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.nav_toolbar)
+		setSupportActionBar(navToolbar)
+		val origPaddingTop = navToolbar.paddingTop
+		navToolbar.setOnApplyWindowInsetsListener { v, insets ->
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+				v.updatePadding(top = origPaddingTop + insets.systemWindowInsets.top)
+			}
+			insets
+		}
 
 		val pgrMusicPlayer = findViewById<ViewPager>(R.id.pgrMusicPlayer)
 		musicPlayerController.viewPager = pgrMusicPlayer
