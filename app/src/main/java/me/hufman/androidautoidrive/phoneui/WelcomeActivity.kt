@@ -1,10 +1,12 @@
 package me.hufman.androidautoidrive.phoneui
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -20,6 +22,16 @@ class WelcomeActivity: AppCompatActivity() {
 		super.onCreate(savedInstanceState)
 
 		setContentView(R.layout.activity_welcome)
+
+		val navToolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.nav_toolbar)
+		setSupportActionBar(navToolbar)
+		val origPaddingTop = navToolbar.paddingTop
+		navToolbar.setOnApplyWindowInsetsListener { v, insets ->
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+				v.updatePadding(top = origPaddingTop + insets.systemWindowInsets.top)
+			}
+			insets
+		}
 
 		val pgrWelcomeTabs = findViewById<ViewPager>(R.id.pgrWelcomeTabs)
 		val adapter = FirstStartPagerAdapter(supportFragmentManager)

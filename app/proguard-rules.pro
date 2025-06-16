@@ -31,6 +31,7 @@
 -keep class kotlin.collections.SetsKt
 -keep class kotlin.coroutines.ExecutorsKt
 -keep class kotlin.coroutines.intrinsics.IntrinsicsKt
+-keep class kotlin.LazyKt
 -keep class io.wax911.emojify.model.Emoji { *; }
 -keep class me.hufman.androidautoidrive.** { *; }
 

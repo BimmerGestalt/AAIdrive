@@ -6,6 +6,7 @@ import com.adamratzman.spotify.models.Token
 import org.mockito.kotlin.*
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.MockAppSettings
+import me.hufman.androidautoidrive.MockSelfReturningAnswer
 import me.hufman.androidautoidrive.music.spotify.SpotifyAuthStateManager
 import net.openid.appauth.*
 import org.json.JSONException
@@ -13,6 +14,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.Mockito
 import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
@@ -189,18 +191,12 @@ class SpotifyAuthStateManagerTest {
 
 		val clientId = "clientId"
 		val tokenRequest: TokenRequest = mock()
-		val tokenRequestBuilder: TokenRequest.Builder = mock()
-		whenever(tokenRequestBuilder.setRefreshToken(refreshToken)).thenReturn(tokenRequestBuilder)
-		whenever(tokenRequestBuilder.setGrantType(GrantTypeValues.REFRESH_TOKEN)).thenReturn(tokenRequestBuilder)
+		val tokenRequestBuilder: TokenRequest.Builder = mock(defaultAnswer = MockSelfReturningAnswer())
 		whenever(tokenRequestBuilder.build()).thenReturn(tokenRequest)
 		PowerMockito.whenNew(TokenRequest.Builder::class.java).withArguments(authorizationServiceConfiguration, clientId).thenReturn(tokenRequestBuilder)
 
 		val tokenResponse: TokenResponse = mock()
-		val tokenResponseBuilder: TokenResponse.Builder = mock()
-		whenever(tokenResponseBuilder.setAccessToken(accessToken)).thenReturn(tokenResponseBuilder)
-		whenever(tokenResponseBuilder.setRefreshToken(refreshToken)).thenReturn(tokenResponseBuilder)
-		whenever(tokenResponseBuilder.setAccessTokenExpirationTime(expiresAt)).thenReturn(tokenResponseBuilder)
-		whenever(tokenResponseBuilder.setScopes(listOf(SpotifyScope.USER_LIBRARY_READ.uri))).thenReturn(tokenResponseBuilder)
+		val tokenResponseBuilder: TokenResponse.Builder = mock(defaultAnswer = MockSelfReturningAnswer())
 		whenever(tokenResponseBuilder.build()).thenReturn(tokenResponse)
 		PowerMockito.whenNew(TokenResponse.Builder::class.java).withArguments(tokenRequest).thenReturn(tokenResponseBuilder)
 

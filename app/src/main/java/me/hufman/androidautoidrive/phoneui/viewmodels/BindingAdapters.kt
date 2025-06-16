@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
@@ -35,6 +36,10 @@ fun setImageViewResource(view: ImageView, resource: Int) {
 @BindingAdapter("android:src")
 fun setImageViewResource(view: ImageView, drawable: Context.() -> Drawable?) {
 	view.setImageDrawable(view.context.run(drawable))
+}
+@BindingAdapter("navigationIcon")
+fun setToolbarIcon(view: Toolbar, drawable: Drawable?) {
+	view.navigationIcon = drawable
 }
 
 @BindingAdapter("android:visibility")

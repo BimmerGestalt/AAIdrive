@@ -73,10 +73,9 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 				val version = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 					context.packageManager.getPackageInfo(it.packageName, PackageInfoFlags.of(0)).versionName
 				} else {
-					@Suppress("DEPRECATION")
 					context.packageManager.getPackageInfo(it.packageName, 0).versionName
 				}
-				version.startsWith("6.5")
+				version?.startsWith("6.5") == true
 			}
 		} catch (e: Exception) { false }
 
@@ -88,10 +87,9 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 				val version = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 					context.packageManager.getPackageInfo(it.packageName, PackageInfoFlags.of(0)).versionName
 				} else {
-					@Suppress("DEPRECATION")
 					context.packageManager.getPackageInfo(it.packageName, 0).versionName
 				}
-				version.startsWith("6.5")
+				version?.startsWith("6.5") == true
 			}
 		} catch (e: Exception) { false }
 
@@ -172,8 +170,9 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 			return false
 		}
 		var found = false
-		packageInfo.requestedPermissions.forEachIndexed { index, perm ->
-			val granted = (packageInfo.requestedPermissionsFlags[index] and REQUESTED_PERMISSION_GRANTED) > 0
+		packageInfo.requestedPermissions?.forEachIndexed { index, perm ->
+			val flags = packageInfo.requestedPermissionsFlags?.get(index) ?: 0
+			val granted = (flags and REQUESTED_PERMISSION_GRANTED) > 0
 			if (perm == permission) {
 				found = granted
 			}
