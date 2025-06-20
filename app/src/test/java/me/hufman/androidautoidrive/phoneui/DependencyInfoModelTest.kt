@@ -24,6 +24,7 @@ class DependencyInfoModelTest {
 			on { isBMWMineInstalled } doReturn bmwMine
 			on { isMiniInstalled } doReturn (miniConnected || miniMine)
 			on { isMiniConnected65Installed} doReturn false
+			on { isMiniMine56Installed } doReturn false
 			on { isMiniConnectedInstalled } doReturn miniConnected
 			on { isMiniMineInstalled } doReturn miniMine
 			on { isConnectedSecurityInstalled } doReturn (bmwConnected || bmwMine || miniConnected || miniMine)

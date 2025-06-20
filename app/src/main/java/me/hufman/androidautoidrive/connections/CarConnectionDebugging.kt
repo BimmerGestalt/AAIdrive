@@ -10,6 +10,7 @@ import android.provider.Settings
 import io.bimmergestalt.idriveconnectkit.android.IDriveConnectionObserver
 import io.bimmergestalt.idriveconnectkit.android.security.KnownSecurityServices
 import io.bimmergestalt.idriveconnectkit.android.security.SecurityAccess
+import io.github.g00fy2.versioncompare.Version
 import me.hufman.androidautoidrive.carapp.music.MusicAppMode
 
 /**
@@ -111,6 +112,20 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 		get() = KnownSecurityServices.entries.any {
 			it.name.startsWith("MiniMine") && isPermissionGranted(it.packageName, "android.permission.BLUETOOTH_CONNECT")
 		}
+
+	val isMiniMine56Installed
+		get() = try {
+			SecurityAccess.installedSecurityServices.filter {
+				it.name.startsWith("MiniMine")
+			}.any {
+				val version = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+					context.packageManager.getPackageInfo(it.packageName, PackageInfoFlags.of(0)).versionName
+				} else {
+					context.packageManager.getPackageInfo(it.packageName, 0).versionName
+				}
+				Version(version) >= Version("5.6")
+			}
+		} catch (e: Exception) { false }
 
 	private val btStatus = BtStatus(context) { callback() }
 	private val usbStatus = UsbStatus(context) { callback() }
