@@ -113,6 +113,21 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 			it.name.startsWith("MiniMine") && isPermissionGranted(it.packageName, "android.permission.BLUETOOTH_CONNECT")
 		}
 
+	val isBMWMine56Installed
+		get() = try {
+			SecurityAccess.installedSecurityServices.filter {
+				it.name.startsWith("BMWMine")
+			}.any {
+				val version = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+					context.packageManager.getPackageInfo(it.packageName, PackageInfoFlags.of(0)).versionName
+				} else {
+					context.packageManager.getPackageInfo(it.packageName, 0).versionName
+				}
+				val versionObj = Version(version)
+				versionObj >= Version("5.6") && versionObj < Version("5.6.2")
+			}
+		} catch (e: Exception) { false }
+
 	val isMiniMine56Installed
 		get() = try {
 			SecurityAccess.installedSecurityServices.filter {
@@ -123,7 +138,8 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 				} else {
 					context.packageManager.getPackageInfo(it.packageName, 0).versionName
 				}
-				Version(version) >= Version("5.6")
+				val versionObj = Version(version)
+				versionObj >= Version("5.6") && versionObj < Version("5.6.2")
 			}
 		} catch (e: Exception) { false }
 

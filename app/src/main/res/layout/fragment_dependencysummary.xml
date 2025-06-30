@@ -240,6 +240,29 @@
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="@{viewModel.isBMWMine56Installed()}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/checkbox_vertical_margin"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                app:tint="?android:attr/textColorSecondary"
+                android:src="@drawable/ic_error_outline_black_24dp" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="@string/txt_setup_bmw_mine_56" />
+        </LinearLayout>
+
+        <LinearLayout
             android:visibility="@{viewModel.isBmwConnectedInstalled() &amp;&amp; !viewModel.isBmwConnected65Installed() &amp;&amp; viewModel.isBmwMineInstalled()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -333,7 +356,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:visibility="@{viewModel.isMiniMine65Installed()}"
+            android:visibility="@{viewModel.isMiniMine56Installed()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
