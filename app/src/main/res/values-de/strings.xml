@@ -192,6 +192,7 @@
     <string name="txt_setup_mini_missing">Nicht bereit für die Verbindung mit einem Mini:</string>
     <string name="txt_setup_bmw_connected_65">BMW Connected 6.5 ist installiert. Diese Version stellt manchmal die Verbindung zum Fahrzeug nicht zuverlässig her. Ein downgrade zur Version 6.4 oder Upgrade zur My BMW App kann hier Abhilfe schaffen</string>
     <string name="txt_setup_mini_connected_65">Mini Connected 6.5 ist installiert. Diese Version stellt manchmal die Verbindung zum Fahrzeug nicht zuverlässig her. Ein downgrade zur Version 6.4 oder Upgrade zur neuen Mini App kann hier Abhilfe schaffen</string>
+    <string name="txt_setup_bmw_mine_56">Neuere Versionen der MyBMW App verbinden sich nicht mehr mit dem Auto. Versuchen Sie ein downgrade auf MyBMW 5.5 oder BMW Connected 6.4</string>
     <string name="txt_setup_bmw_mine_detected">Die neue My BMW App ist installiert, was Probleme mit BMW Connected verursachen kann und nicht unterstützt wird</string>
     <string name="txt_setup_mini_mine_detected">Die neue MINI-App ist installiert, was Probleme mit Mini Connected verursachen kann und nicht unterstützt wird</string>
     <string name="txt_setup_bmw_mine_conflict">Sowohl die BMW Connected als auch My BMW App sind installiert, was zu einer instabilen Verbindung führen kann, sofern keine USB-Verbindung besteht</string>
