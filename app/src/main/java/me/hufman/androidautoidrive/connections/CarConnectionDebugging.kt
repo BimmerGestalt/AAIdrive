@@ -124,7 +124,7 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 					context.packageManager.getPackageInfo(it.packageName, 0).versionName
 				}
 				val versionObj = Version(version)
-				versionObj >= Version("5.6") && versionObj < Version("5.6.2")
+				versionObj >= Version("5.6")
 			}
 		} catch (e: Exception) { false }
 
@@ -139,7 +139,7 @@ class CarConnectionDebugging(val context: Context, val callback: () -> Unit) {
 					context.packageManager.getPackageInfo(it.packageName, 0).versionName
 				}
 				val versionObj = Version(version)
-				versionObj >= Version("5.6") && versionObj < Version("5.6.2")
+				versionObj >= Version("5.6")
 			}
 		} catch (e: Exception) { false }
 
