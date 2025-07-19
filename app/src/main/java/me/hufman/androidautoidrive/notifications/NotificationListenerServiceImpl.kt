@@ -53,7 +53,7 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		}
 	}
 
-	val handler = Handler(Looper.getMainLooper())
+	val _handler = Handler(Looper.getMainLooper())
 	val autoShutdown = Runnable {
 		if (!iDriveConnectionReceiver.isConnected && ApplicationCallbacks.visibleWindows.get() == 0) {
 			shutdownService(this)
@@ -105,8 +105,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 		// car app listeners
 		Log.i(TAG, "Registering CarNotificationInteraction listeners")
 		carNotificationReceiver.register(this, broadcastReceiver)
-		ContextCompat.registerReceiver(this, broadcastReceiver, IntentFilter(INTENT_STOP_LISTENER), RECEIVER_NOT_EXPORTED)
-		ContextCompat.registerReceiver(this, broadcastReceiver, IntentFilter(INTENT_REQUEST_DATA), RECEIVER_NOT_EXPORTED)
+		ContextCompat.registerReceiver(this, broadcastReceiver, IntentFilter(INTENT_STOP_LISTENER), ContextCompat.RECEIVER_NOT_EXPORTED)
+		ContextCompat.registerReceiver(this, broadcastReceiver, IntentFilter(INTENT_REQUEST_DATA), ContextCompat.RECEIVER_NOT_EXPORTED)
 
 		// automatically shutdown if the car is not connected
 		// but only on phones if we can programmatically start again
@@ -123,8 +123,8 @@ class NotificationListenerServiceImpl: NotificationListenerService() {
 	}
 
 	fun scheduleAutoShutdown() {
-		handler.removeCallbacks(autoShutdown)
-		handler.postDelayed(autoShutdown, AUTO_SHUTDOWN)
+		_handler.removeCallbacks(autoShutdown)
+		_handler.postDelayed(autoShutdown, AUTO_SHUTDOWN)
 	}
 
 	override fun onDestroy() {
