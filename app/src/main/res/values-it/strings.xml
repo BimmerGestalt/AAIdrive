@@ -186,14 +186,20 @@
     <string name="txt_setup_bmw_ready">L\'app è pronta a connettersi con una BMW</string>
     <string name="txt_setup_mini_ready">L\'app è pronta a connettersi con una Mini</string>
     <string name="txt_setup_toyota_ready">L\'app è pronta a connettersi con una Toyota Supra</string>
+    <string name="txt_setup_toyota_hint">Il supporto alle Toyota è molto limitato, sono forniti solo dati auto di default</string>
+    <string name="txt_setup_toyota_hint2">Per abilitare il pieno supporto sulla Toyota Supra, utilizzare BimmerCode per codificare ENTWICKLER_MENUE su aktiv</string>
     <string name="txt_setup_bmw_missing">Non pronta a connettersi con una BMW:</string>
     <string name="txt_setup_mini_missing">Non pronta a connettersi con una Mini:</string>
     <string name="txt_setup_bmw_connected_65">È installata la versione 6.5 di BMW Connected che qualche volta non fa partire la connessione con l\'auto. Prova a fare un downgrade alla versione 6.4 o un upgrade a MyBMW se riscontri problemi</string>
     <string name="txt_setup_mini_connected_65">È installata la versione 6.5 di Mini Connected che qualche volta non fa partire la connessione con l\'auto. Prova a fare un downgrade alla versione 6.4 o un upgrade alla nuova app Mini se riscontri problemi</string>
+    <string name="txt_setup_bmw_mine_56">Le versioni recenti dell\'app MyBMW non si collegano più all\'auto. Prova a downgrade a MyBMW 5.5 o BMW Connected 6.4</string>
+    <string name="txt_setup_mini_mine_56">Le versioni recenti dell\'app MyBMW non si collegano più all\'auto. Prova a fare il downgrade a MyBMW 5.5 o BMW Connected 6.4</string>
     <string name="txt_setup_bmw_mine_detected">La nuova app My BMW è installata, può causare problemi con l\'app BMW Connected e non è supportata</string>
     <string name="txt_setup_mini_mine_detected">La nuova app MINI è installata, può causare problemi con l\'app MINI Connected e non è supportata</string>
     <string name="txt_setup_bmw_mine_conflict">Entrambe le applicazioni BMW Connected e My BMW sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non ci si connetta tramite USB</string>
     <string name="txt_setup_mini_mine_conflict">Entrambe le app MINI Connected e My MINI sono installate, il che potrebbe causare l\'instabilità della connessione a meno che non si connetta tramite USB</string>
+    <string name="txt_setup_bmw_mine_missing_device">L\'app MyBMW richiede i permessi del dispositivo nelle vicinanze per connettersi all\'auto</string>
+    <string name="txt_setup_mini_mine_missing_device">L\'app MyBMW richiede i permessi del dispositivo nelle vicinanze per connettersi all\'auto</string>
     <string name="txt_setup_security_missing">Il Security Service non è raggiungibile:</string>
     <string name="txt_setup_background_killed">L\'app è stata terminata durante la connessione all\'auto</string>
     <string name="txt_setup_background_suspended">L\'applicazione è stata in pausa in background durante la connessione all\'auto</string>
@@ -361,6 +367,7 @@
     <string name="CARINFO_TITLE_GPS">info GPS</string>
     <string name="CARINFO_TITLE_AC">Stato AC</string>
     <string name="CARINFO_TITLE_WINDOWS">Stato Finestrini</string>
+    <string name="CARINFO_TITLE_TRAVEL">Info di viaggio</string>
     <string name="CARINFO_ENGINE">Motore</string>
     <string name="CARINFO_OIL">Olio</string>
     <string name="CARINFO_BATTERY">Batteria</string>
@@ -372,6 +379,9 @@
     <string name="CARINFO_ACC_BATTERY">Batteria Acc.</string>
     <string name="CARINFO_EV_BATTERY">Batteria EV</string>
     <string name="CARINFO_FUEL">Carburante</string>
+    <string name="CARINFO_GASOLINE">Benzina</string>
+    <string name="CARINFO_DIESEL">Diesel</string>
+    <string name="CARINFO_RANGE">Autonomia</string>
     <string name="CARINFO_ACCEL">Acceleratore</string>
     <string name="CARINFO_STEERING">Sterzo</string>
     <string name="CARINFO_RPM">Giri/min</string>
@@ -410,6 +420,8 @@
     <string name="CARINFO_GPSALTITUDE">Altitudine</string>
     <string name="CARINFO_GPSLATITUDE">Lat</string>
     <string name="CARINFO_GPSLONGITUDE">Long</string>
+    <string name="CARINFO_NAV_DISTANCE">Distanza</string>
+    <string name="CARINFO_NAV_ETA">Tempo stimato di arrivo</string>
     <string name="NOTIFICATIONS_TITLE">Notifiche</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Nessuna notifica</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Pulisci</string>
