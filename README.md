@@ -57,7 +57,7 @@ Several new entries will be added to the Media section of the control screen. Th
 Development Status
 ------------------
 
-AAIdrive is feature-complete, implementing as many Android Auto features as are possible within the BMW app system, and several more. Beyond the occasional maintenance patch, this project is complete and won't see any more development.
+AAIdrive is feature-complete, implementing as many Android Auto features as are possible within the BMW app system, and several more. Beyond the occasional maintenance patch, this project is complete and won't see any more development. Additionally, the author no longer has access to a car that supports AAIdrive, so any further development will need to be contributed externally.
 
 Implemented Features
 --------------------
