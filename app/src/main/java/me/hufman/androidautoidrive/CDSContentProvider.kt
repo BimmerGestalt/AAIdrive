@@ -148,8 +148,12 @@ class CDSContentProvider: ContentProvider(), CDSEventHandler {
 			// we previously announced the change but no query happened, unsubscribe
 			cdsData.removeEventHandler(property, this)
 		}
+
 		val uri = Uri.parse("$CONTENT_PROVIDER_CDS/${property.ident}")
 		context?.contentResolver?.notifyChange(uri, null)
+		val uriByName = Uri.parse("$CONTENT_PROVIDER_CDS/${property.propertyName}")
+		context?.contentResolver?.notifyChange(uriByName, null)
+
 		latestUpdate[property] = System.currentTimeMillis()
 	}
 }
