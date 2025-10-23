@@ -194,8 +194,6 @@
     <string name="txt_setup_mini_missing">Не готово к подключению к Mini:</string>
     <string name="txt_setup_bmw_connected_65">Установлено приложение BMW Connected 6.5, что может создавать проблемы запуску приложений Установлено приложение BMW Connected 6.5, что может создавать проблемы запуску приложений. Установите BMW Connected 6.4 или перейдите на MyBMW, чтобы избежать проблем. Установите BMW Connected 6.4 или перейдите на MyBMW, чтобы избежать проблем</string>
     <string name="txt_setup_mini_connected_65">Установлено приложение Mini Connected 6.5, что может создавать проблемы запуску приложений в автомобиле. Установите Mini Connected 6.4 или перейдите на новое приложение Mini, чтобы избежать проблем</string>
-    <string name="txt_setup_bmw_mine_56">Свежие версии приложения MyBMW больше не поддерживают соединение с машиной. Попробуйте загрузить MyBMW 5.5 или BMW Connected 6.4</string>
-    <string name="txt_setup_mini_mine_56">Свежие версии приложения MINI больше не соединяются с машиной. Попробуйте установить понизить версию приложения до MINI 5.5 или Mini Connected 6.4</string>
     <string name="txt_setup_bmw_mine_detected">Установлено новое приложение My BMW, которое может быть причиной проблем с BMW Connected и не поддерживается</string>
     <string name="txt_setup_mini_mine_detected">Установлено новое приложение MINI, которое может быть причиной проблем с MINI Connected и не поддерживается</string>
     <string name="txt_setup_bmw_mine_conflict">BMW Connected и My BMW установлены одновременно. Соединение может быть нестабильно, если оно выполняется не через USB</string>
