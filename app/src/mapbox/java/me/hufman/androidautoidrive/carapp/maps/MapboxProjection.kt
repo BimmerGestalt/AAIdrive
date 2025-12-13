@@ -11,8 +11,12 @@ import android.view.Display
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import com.mapbox.maps.ImageHolder
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.StyleExtensionImpl
@@ -24,7 +28,9 @@ import com.mapbox.maps.extension.style.expressions.generated.Expression.Companio
 import com.mapbox.maps.extension.style.layers.generated.fillExtrusionLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin
-import com.mapbox.maps.extension.style.light.generated.light
+import com.mapbox.maps.extension.style.light.dynamicLight
+import com.mapbox.maps.extension.style.light.generated.ambientLight
+import com.mapbox.maps.extension.style.light.generated.directionalLight
 import com.mapbox.maps.extension.style.sources.generated.vectorSource
 import com.mapbox.maps.extension.style.style
 import com.mapbox.maps.plugin.LocationPuck2D
@@ -41,9 +47,8 @@ import io.bimmergestalt.idriveconnectkit.SubsetRHMIDimensions
 import me.hufman.androidautoidrive.*
 import me.hufman.androidautoidrive.utils.Utils
 
-@SuppressLint("Lifecycle")
 class MapboxProjection(val parentContext: Context, display: Display, private val appSettings: AppSettings,
-                       private val locationProvider: MapboxLocationSource): Presentation(parentContext, display) {
+                       private val locationProvider: MapboxLocationSource): Presentation(parentContext, display), LifecycleOwner {
 
 	val TAG = "MapboxProjection"
 	val map: MapView by lazy { findViewById(R.id.mapView) }
@@ -51,6 +56,11 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 	val iconAnnotations by lazy { map.annotations.createPointAnnotationManager() }
 	val lineAnnotations by lazy { map.annotations.createPolylineAnnotationManager() }
 	var mapListener: Runnable? = null
+
+	private lateinit var lifecycleRegistry: LifecycleRegistry
+
+	override val lifecycle: Lifecycle
+		get() = lifecycleRegistry
 
 	val fullDimensions = display.run {
 		val dimension = Point()
@@ -65,14 +75,20 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
+		lifecycleRegistry = LifecycleRegistry(this)
+		lifecycleRegistry.currentState = Lifecycle.State.CREATED
+
 		window?.setType(WindowManager.LayoutParams.TYPE_PRIVATE_PRESENTATION)
 		setContentView(R.layout.mapbox_projection)
+
+		this.findViewById<MapView>(R.id.mapView).setViewTreeLifecycleOwner(this)
 	}
 
 	override fun onStart() {
 		super.onStart()
 		Log.i(TAG, "Projection Start")
-		map.onStart()
+		lifecycleRegistry.currentState = Lifecycle.State.STARTED
+
 		applyCommonSettings()
 		mapListener?.run()
 	}
@@ -87,9 +103,10 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 		}
 		map.location.updateSettings {
 			map.location.setLocationProvider(locationProvider)
+
 			map.location.locationPuck = LocationPuck2D(
-					bearingImage = AppCompatResources.getDrawable(context, R.drawable.ic_mapbox_bearing),
-					shadowImage = AppCompatResources.getDrawable(context, R.drawable.ic_mapbox_shadow)
+					bearingImage = ImageHolder.from(R.drawable.ic_mapbox_bearing),
+					shadowImage = ImageHolder.from(R.drawable.ic_mapbox_shadow)
 			)
 			map.location.enabled = true
 		}
@@ -251,9 +268,15 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 				fillExtrusionBase(get("min_height"))
 				fillExtrusionOpacity(0.6)
 			}
-			+light {
-				position(1.15, 210.0, 30.0)
-			}
+			+dynamicLight(
+				ambientLight {
+					intensity(0.2)
+					color(Color.YELLOW)
+				},
+				directionalLight {
+					direction(listOf(210.0, 30.0))
+				}
+			)
 		}
 	}
 
@@ -283,6 +306,6 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 	override fun onStop() {
 		super.onStop()
 		Log.i(TAG, "Projection Stopped")
-		map.onStop()
+		lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
 	}
 }
