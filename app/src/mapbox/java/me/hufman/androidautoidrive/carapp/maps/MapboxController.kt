@@ -6,10 +6,10 @@ import android.location.Location
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.EdgeInsets
-import com.mapbox.maps.ResourceOptionsManager
 import com.mapbox.maps.ScreenCoordinate
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
@@ -50,7 +50,7 @@ class MapboxController(private val context: Context,
 	private var currentZoom = 15f
 
 	init {
-		ResourceOptionsManager.getDefault(context.applicationContext, BuildConfig.MapboxAccessToken)
+		MapboxOptions.accessToken = BuildConfig.MapboxAccessToken
 
 		carLocationProvider.callback = { location ->
 			handler.post {
