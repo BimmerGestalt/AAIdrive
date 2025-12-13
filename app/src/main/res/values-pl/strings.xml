@@ -72,6 +72,7 @@
     <string name="notification_quickreplies_default">[\"👍\",\"Tak\",\"Nie\",\"Nie mogę teraz rozmawiać, oddzwonie\",\"Oddzwonie poźniej\",]</string>
     <string name="lbl_notification_permissions">Dostęp do powiadomień</string>
     <string name="lbl_notification_sms_permissions">Dostęp do pokazywania obrazkow w SMS</string>
+    <string name="lbl_notification_permissions_hint">Możesz przyznać uprawnienia do powiadomień później i cofnąć je w każdej chwili</string>
     <string name="lbl_ttsUnsupported">Twój samochód nie obsługuje funkcji TTS</string>
     <string name="lbl_smsPermission">Przyznaj uprawnienia SMS aby wyświetlać obrazy z przychodzących SMS w samochodzie. Tekst jest zawsze widoczny.</string>
     <string name="lbl_calendarpage">Twój kalendarz może być wyświetlany w samochodzie, oferując szybką nawigację do miejsca spotkania</string>
@@ -181,6 +182,8 @@
     <string name="txt_setup_background_hint">Automatyczne połączanie działa lepiej, jeśli aplikacja może działać w tle</string>
     <string name="txt_setup_bmw_ready">Aplikacja gotowa do połączenia z BMW</string>
     <string name="txt_setup_mini_ready">Aplikacja gotowa do połączenia z Mini</string>
+    <string name="txt_setup_toyota_ready">Aplikacja gotowa do połączenia z Toyota Supra</string>
+    <string name="txt_setup_toyota_hint">Obsługa Toyota jest bardzo ograniczona, domyślnie podaje jedynie dane samochodu</string>
     <string name="txt_setup_bmw_missing">Nie gotowy do połączenia z BMW:</string>
     <string name="txt_setup_mini_missing">Nie gotowy do połączenia z Mini:</string>
     <string name="txt_setup_bmw_connected_65">Zainstalowane jest BMW Connected wersja 6.5, które czasami nie uruchamia połączenia z samochodem. Spróbuj obniżyć do wersji 6.4 lub zaktualizować do MyBMW, jeśli napotkasz problemy </string>
@@ -348,6 +351,24 @@
     <string name="lbl_spotify_api_authorized_user_friendly">Możliwość wyszukiwania w Spotify</string>
     <string name="btn_authorize">Autoryzacja</string>
     <!-- car app strings -->
+    <string name="CARINFO_TITLE">Szczegółowe informacje o pojeździe</string>
+    <string name="CARINFO_FUEL">Paliwo</string>
+    <string name="CARINFO_GASOLINE">Benzyna</string>
+    <string name="CARINFO_DIESEL">Diesel</string>
+    <string name="CARINFO_RANGE">Zasięg</string>
+    <string name="CARINFO_RPM">Obr./min.</string>
+    <string name="CARINFO_TORQUE">Moment obrotowy</string>
+    <string name="CARINFO_UNIT_LITER">L</string>
+    <string name="CARINFO_UNIT_MPH">mil/h</string>
+    <string name="CARINFO_HEADING_NORTH">Płn</string>
+    <string name="CARINFO_HEADING_NORTHEAST">Płn/Wsch</string>
+    <string name="CARINFO_HEADING_EAST">Wsch</string>
+    <string name="CARINFO_SUNROOF">Szyber dach</string>
+    <string name="CARINFO_WINDOW_CLOSED">Zamknięty</string>
+    <string name="CARINFO_WINDOW_TILTED">Uchylony</string>
+    <string name="CARINFO_WINDOW_OPENED">Otwarty</string>
+    <string name="CARINFO_COMPRESSOR">Sprężarka klimatyzacji</string>
+    <string name="CARINFO_COMPRESSORSTATE">Status klimatyzacji</string>
     <string name="NOTIFICATIONS_TITLE">Powiadomienia</string>
     <string name="NOTIFICATIONS_EMPTY_LIST">Brak powiadomień</string>
     <string name="NOTIFICATION_CLEAR_ACTION">Wyczyść</string>
