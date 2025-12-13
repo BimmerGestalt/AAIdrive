@@ -51,6 +51,7 @@
 -dontwarn com.fasterxml.jackson.databind.ser.std.StdSerializer
 -dontwarn com.google.errorprone.annotations.FormatMethod
 -dontwarn com.google.errorprone.annotations.Immutable
+-dontwarn com.google.gson.internal.$Gson$Types
 -dontwarn org.bouncycastle.jsse.BCSSLParameters
 -dontwarn org.bouncycastle.jsse.BCSSLSocket
 -dontwarn org.bouncycastle.jsse.provider.BouncyCastleJsseProvider
