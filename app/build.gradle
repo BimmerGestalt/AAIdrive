@@ -335,7 +335,7 @@ dependencies {
     gmapImplementation 'com.google.android.libraries.places:places:2.5.0'
     gmapImplementation 'com.google.maps:google-maps-services:0.1.20'
     mapboxImplementation "com.mapbox.mapboxsdk:mapbox-sdk-services:5.8.0"
-    mapboxImplementation 'com.mapbox.maps:android-ndk27:11.16.0', {
+    mapboxImplementation 'com.mapbox.maps:android-ndk27:11.14.0', {
         exclude group: 'com.mapbox.plugin', module: 'maps-attribution'    // can't click the (i) button from the car screen
         exclude group: 'com.mapbox.plugin', module: 'maps-gesture'        // no touch input provided by the car
         exclude group: 'com.mapbox.plugin', module: 'maps-overlay'        // not helpful in our case

@@ -44,14 +44,12 @@
 ### keep test classes
 # (fixes `Failed loading specified test class 'com.example.benchmark.ExampleTest'`)
 -keepclasseswithmembers @org.junit.runner.RunWith class * { *; }
-
 # Please add these rules to your existing keep rules in order to suppress warnings.
 # This is generated automatically by the Android Gradle plugin.
 -dontwarn com.fasterxml.jackson.databind.deser.std.StdDeserializer
 -dontwarn com.fasterxml.jackson.databind.ser.std.StdSerializer
 -dontwarn com.google.errorprone.annotations.FormatMethod
 -dontwarn com.google.errorprone.annotations.Immutable
--dontwarn com.google.gson.internal.$Gson$Types
 -dontwarn org.bouncycastle.jsse.BCSSLParameters
 -dontwarn org.bouncycastle.jsse.BCSSLSocket
 -dontwarn org.bouncycastle.jsse.provider.BouncyCastleJsseProvider
