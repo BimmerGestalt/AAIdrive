@@ -101,14 +101,14 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 			position = Gravity.BOTTOM or Gravity.RIGHT
 			enabled = true
 		}
-		map.location.updateSettings {
-			map.location.setLocationProvider(locationProvider)
+		map.location.apply {
+			setLocationProvider(locationProvider)
 
-			map.location.locationPuck = LocationPuck2D(
-					bearingImage = ImageHolder.from(R.drawable.ic_mapbox_bearing),
-					shadowImage = ImageHolder.from(R.drawable.ic_mapbox_shadow)
+			locationPuck = LocationPuck2D(
+				bearingImage = ImageHolder.from(R.drawable.ic_mapbox_bearing),
+				shadowImage = ImageHolder.from(R.drawable.ic_mapbox_shadow)
 			)
-			map.location.enabled = true
+			enabled = true
 		}
 		map.scalebar.updateSettings {
 			// it seems that the scalebar ignores the map padding, so we must center it
