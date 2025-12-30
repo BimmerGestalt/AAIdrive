@@ -104,6 +104,7 @@ class MapboxProjection(val parentContext: Context, display: Display, private val
 		map.location.apply {
 			setLocationProvider(locationProvider)
 
+			puckBearingEnabled = true
 			locationPuck = LocationPuck2D(
 				bearingImage = ImageHolder.from(R.drawable.ic_mapbox_bearing),
 				shadowImage = ImageHolder.from(R.drawable.ic_mapbox_shadow)
