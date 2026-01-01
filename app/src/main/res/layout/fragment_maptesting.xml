@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+    <data class="MapTestingBinding">
+        <variable
+            name="controller"
+            type="me.hufman.androidautoidrive.carapp.maps.MapInteractionController" />
+    </data>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingEnd="@dimen/default_margin"
+        android:paddingStart="@dimen/default_margin"
+        android:paddingTop="@dimen/default_margin"
+        android:animateLayoutChanges="true">
+
+        <SurfaceView
+            android:id="@+id/imgMapTest"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/settings_vertical_margin">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_map_testing_zoom_in"
+                android:onClick="@{() -> controller.zoomIn(1)}" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_map_testing_zoom_out"
+                android:onClick="@{() -> controller.zoomOut(1)}" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

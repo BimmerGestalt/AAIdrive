@@ -1058,6 +1058,12 @@
             </intent-filter>
         </service>
 
+        <service android:name=".MapTestingService"
+            android:label="@string/lbl_map_testing"
+            android:exported="false"
+            android:foregroundServiceType="dataSync">
+        </service>
+
         <service android:name=".carapp.assistant.AssistantAppService" android:exported="false">
             <intent-filter>
                 <action android:name="me.hufman.androidautoidrive.carconnection.service" />
