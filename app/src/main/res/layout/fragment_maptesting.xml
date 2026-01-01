@@ -4,7 +4,7 @@
     <data class="MapTestingBinding">
         <variable
             name="controller"
-            type="me.hufman.androidautoidrive.carapp.maps.MapInteractionController" />
+            type="me.hufman.androidautoidrive.phoneui.controllers.MapTestingController" />
     </data>
     <LinearLayout
         android:orientation="vertical"
@@ -35,6 +35,28 @@
                 android:layout_height="wrap_content"
                 android:text="@string/btn_map_testing_zoom_out"
                 android:onClick="@{() -> controller.zoomOut(1)}" />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/settings_vertical_margin">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_map_testing_move_forward"
+                android:onClick="@{() -> controller.moveForward()}" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_map_testing_steer_left"
+                android:onClick="@{() -> controller.steerLeft()}" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_map_testing_steer_right"
+                android:onClick="@{() -> controller.steerRight()}" />
         </LinearLayout>
     </LinearLayout>
 </layout>

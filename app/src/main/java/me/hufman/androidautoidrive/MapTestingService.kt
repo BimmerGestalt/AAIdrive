@@ -159,13 +159,14 @@ class MapTestingService: Service() {
 	private fun createMap(width: Int, height: Int) {
 		val appSettingsObserver = MutableAppSettingsReceiver(applicationContext, null /* specifically main thread */)
 		val cdsData = CDSDataProvider()
-		cdsData.onPropertyChangedEvent(CDSProperty.NAVIGATION_GPSPOSITION, JsonObject().apply {
+		cdsData.setConnection(CarInformation.cdsData.asConnection(cdsData))
+		CarInformation.cdsData.onPropertyChangedEvent(CDSProperty.NAVIGATION_GPSPOSITION, JsonObject().apply {
 			add("GPSPosition", JsonObject().apply {
-				add("longitude",  JsonPrimitive(4.893611))
 				add("latitude", JsonPrimitive(52.372778))
+				add("longitude",  JsonPrimitive(4.893611))
 			})
 		})
-		cdsData.onPropertyChangedEvent(CDSProperty.NAVIGATION_GPSEXTENDEDINFO, JsonObject().apply {
+		CarInformation.cdsData.onPropertyChangedEvent(CDSProperty.NAVIGATION_GPSEXTENDEDINFO, JsonObject().apply {
 			add("GPSExtendedInfo", JsonObject().apply {
 				add("heading", JsonPrimitive(60))
 			})

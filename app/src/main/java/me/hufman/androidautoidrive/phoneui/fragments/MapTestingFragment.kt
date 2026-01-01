@@ -9,13 +9,18 @@ import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import me.hufman.androidautoidrive.CarInformation
 import me.hufman.androidautoidrive.MapTestingService
 import me.hufman.androidautoidrive.R
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionControllerIntent
 import me.hufman.androidautoidrive.databinding.MapTestingBinding
+import me.hufman.androidautoidrive.phoneui.controllers.MapTestingController
 
 class MapTestingFragment: Fragment() {
-	private val controller by lazy { MapInteractionControllerIntent(this.requireContext()) }
+	private val controller by lazy { MapTestingController(
+		MapInteractionControllerIntent(this.requireContext()),
+		CarInformation.cdsData
+	) }
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 		val binding = MapTestingBinding.inflate(inflater, container, false)
