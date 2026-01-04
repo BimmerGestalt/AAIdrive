@@ -1,11 +1,13 @@
 package me.hufman.androidautoidrive.phoneui.controllers
 
-import android.util.Log
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.view.Surface
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import io.bimmergestalt.idriveconnectkit.CDS
 import io.bimmergestalt.idriveconnectkit.CDSProperty
-import me.hufman.androidautoidrive.MapTestingService
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
 import me.hufman.androidautoidrive.cds.CDSDataProvider
 
@@ -13,6 +15,31 @@ class MapTestingController(
 	val mapInteractionController: MapInteractionController,
 	val cdsData: CDSDataProvider
 ) {
+
+	private val ACTION_START = "me.hufman.androidautoidrive.MapTestingService.start"
+	private val ACTION_PAUSE = "me.hufman.androidautoidrive.MapTestingService.pause"
+	private val EXTRA_SURFACE = "me.hufman.androidautoidrive.MapTestingService.SURFACE"
+	private val EXTRA_WIDTH = "me.hufman.androidautoidrive.MapTestingService.WIDTH"
+	private val EXTRA_HEIGHT = "me.hufman.androidautoidrive.MapTestingService.HEIGHT"
+
+	fun start(context: Context, surface: Surface, width: Int, height: Int) {
+		val intent = Intent(ACTION_START).apply {
+			setPackage(context.packageName)
+			putExtra(EXTRA_SURFACE, surface)
+			putExtra(EXTRA_WIDTH, width)
+			putExtra(EXTRA_HEIGHT, height)
+		}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			context.startForegroundService(intent)
+		} else {
+			context.startService(intent)
+		}
+	}
+
+	fun pause(context: Context) {
+		context.startService(Intent(ACTION_PAUSE).setPackage(context.packageName))
+	}
+
 	fun zoomIn(steps: Int = 1) = mapInteractionController.zoomIn(steps)
 	fun zoomOut(steps: Int = 1) = mapInteractionController.zoomOut(steps)
 
@@ -36,7 +63,6 @@ class MapTestingController(
 		val newLatitude = currentLatitude + (180/Math.PI) * (distance / 6378137) * Math.sin(headingRads)
 		val newLongitude = currentLongitude + (180/Math.PI) * (distance / 6378137)/Math.cos(currentLatitude) * Math.cos(headingRads)
 
-		Log.i(MapTestingService.TAG, "Moving from ${currentLatitude}x${currentLongitude} to ${newLatitude}x${newLongitude}")
 		cdsData.onPropertyChangedEvent(CDSProperty.NAVIGATION_GPSPOSITION, JsonObject().apply {
 			add("GPSPosition", JsonObject().apply {
 				add("latitude", JsonPrimitive(newLatitude))
