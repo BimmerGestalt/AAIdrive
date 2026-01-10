@@ -160,6 +160,12 @@ class MapTestingService: Service() {
 		val appSettingsObserver = MutableAppSettingsReceiver(applicationContext, null /* specifically main thread */)
 		val cdsData = CDSDataProvider()
 		cdsData.setConnection(CarInformation.cdsData.asConnection(cdsData))
+		CarInformation.cachedCdsData[CDSProperty.NAVIGATION_GPSPOSITION]?.let {
+			CarInformation.cdsData.onPropertyChangedEvent(CDSProperty.NAVIGATION_GPSPOSITION, it)
+		}
+		CarInformation.cachedCdsData[CDSProperty.NAVIGATION_GPSEXTENDEDINFO]?.let {
+			CarInformation.cdsData.onPropertyChangedEvent(CDSProperty.NAVIGATION_GPSEXTENDEDINFO, it)
+		}
 		val carLocationProvider = CdsLocationProvider(cdsData, false)
 		val mapAppMode = MapAppMode.build(SubsetRHMIDimensions(width, height), appSettingsObserver, cdsData, MusicAppMode.TRANSPORT_PORTS.USB)
 		val mapScreenCapture = VirtualDisplayScreenCapture.build(mapAppMode)
