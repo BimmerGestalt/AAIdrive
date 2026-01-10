@@ -60,13 +60,38 @@
                     android:text="@string/lbl_map_bt_hint" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/checkbox_vertical_margin"
+                android:orientation="vertical"
+                android:visibility="@{viewmodel.testMapSupported}">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/swTestMapEnabled"
+                    android:checked="@={viewmodel.testMapEnabled}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:paddingBottom="@dimen/settings_vertical_margin"
+                    android:text="@string/enable_map_testing" />
+            </LinearLayout>
+
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/paneMaps"
-                android:visibility="@{viewmodel.mapEnabled}"
+                android:visibility="@{viewmodel.mapSettingsShowing}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:name="me.hufman.androidautoidrive.phoneui.fragments.MapSettingsFragment"/>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/paneTesetMap"
+                android:visibility="@{viewmodel.testMapEnabled}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="me.hufman.androidautoidrive.phoneui.fragments.MapTestingFragment"/>
+
         </LinearLayout>
     </ScrollView>
 </layout>
