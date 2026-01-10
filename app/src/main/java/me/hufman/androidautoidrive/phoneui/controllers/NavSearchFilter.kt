@@ -17,7 +17,7 @@ open class NavSearchFilter(val api: MapPlaceSearch, val output: MutableList<MapR
 			}
 		}
 		return runBlocking {
-			delay(1500)     // debounce input, will be cancelled by the FilterResults processing if new input arrives
+			delay(700)     // debounce input, will be cancelled by the FilterResults processing if new input arrives
 			val results = api.searchLocationsAsync(constraint.toString()).await()
 			FilterResults().also {
 				it.count = results.size

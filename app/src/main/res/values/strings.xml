@@ -120,6 +120,8 @@
     <string name="btn_map_testing_move_forward">Move Forward</string>
     <string name="btn_map_testing_steer_left">Steer Left</string>
     <string name="btn_map_testing_steer_right">Steer Right</string>
+    <string name="btn_set_location">Set location</string>
+    <string name="btn_start_navigation">Start navigation</string>
 
     <string name="lbl_musicpage">Your phone\'s music apps are selectable as media sources in the car</string>
     <string name="lbl_music_apps">Music Apps</string>

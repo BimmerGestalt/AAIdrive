@@ -8,19 +8,33 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import io.bimmergestalt.idriveconnectkit.CDS
 import io.bimmergestalt.idriveconnectkit.CDSProperty
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import me.hufman.androidautoidrive.DefaultDispatcherProvider
+import me.hufman.androidautoidrive.DispatcherProvider
 import me.hufman.androidautoidrive.carapp.maps.MapInteractionController
 import me.hufman.androidautoidrive.cds.CDSDataProvider
+import me.hufman.androidautoidrive.maps.MapPlaceSearch
+import me.hufman.androidautoidrive.maps.MapResult
+import me.hufman.androidautoidrive.phoneui.viewmodels.MapTestingModel
 
 class MapTestingController(
+	val scope: CoroutineScope,
+	val viewModel: MapTestingModel,
 	val mapInteractionController: MapInteractionController,
-	val cdsData: CDSDataProvider
+	val cdsData: CDSDataProvider,
+	val mapPlaceSearch: MapPlaceSearch,
+	val dispatchers: DispatcherProvider = DefaultDispatcherProvider()
 ) {
-
 	private val ACTION_START = "me.hufman.androidautoidrive.MapTestingService.start"
 	private val ACTION_PAUSE = "me.hufman.androidautoidrive.MapTestingService.pause"
 	private val EXTRA_SURFACE = "me.hufman.androidautoidrive.MapTestingService.SURFACE"
 	private val EXTRA_WIDTH = "me.hufman.androidautoidrive.MapTestingService.WIDTH"
 	private val EXTRA_HEIGHT = "me.hufman.androidautoidrive.MapTestingService.HEIGHT"
+
+	private var locationJob: Job? = null
+	private var navigationJob: Job? = null
 
 	fun start(context: Context, surface: Surface, width: Int, height: Int) {
 		val intent = Intent(ACTION_START).apply {
@@ -96,4 +110,91 @@ class MapTestingController(
 
 	fun steerLeft() = steer(30.0)
 	fun steerRight() = steer(-30.0)
+
+	fun setLocation() {
+		setLocation(viewModel.locationQuery.value ?: "")
+	}
+
+	fun setLocation(query: CharSequence): Boolean {
+		locationJob?.cancel()   // cancel a previous search or pending state
+		locationJob = scope.launch(dispatchers.Main) {
+			viewModel.isSearchingLocation.value = true
+			val results = mapPlaceSearch.searchLocationsAsync(query.toString()).await()
+			if (results.isEmpty()) {
+				viewModel.isSearchingLocation.value = false
+			} else {
+				setLocation(results[0])
+			}
+		}
+		return false    // hide the keyboard after clicking the search button
+	}
+
+	fun setLocation(result: MapResult) {
+		locationJob?.cancel()   // cancel a previous search or pending state
+		locationJob = scope.launch(dispatchers.Main) {
+			// show that we are searching while resolving the full MapResult
+			viewModel.isSearchingLocation.value = true
+
+			val expandedResult = if (result.location != null) {
+				result
+			} else {
+				mapPlaceSearch.resultInformationAsync(result.id).await() ?: result
+			}
+			if (expandedResult.address != null) {
+				viewModel.locationQuery.value = expandedResult.toString()
+			}
+
+			viewModel.isSearchingLocation.value = false
+
+			expandedResult.location?.let {
+				cdsData.onPropertyChangedEvent(CDSProperty.NAVIGATION_GPSPOSITION, JsonObject().apply {
+					add("GPSPosition", JsonObject().apply {
+						add("latitude", JsonPrimitive(it.latitude))
+						add("longitude",  JsonPrimitive(it.longitude))
+					})
+				})
+			}
+		}
+	}
+
+	fun startNavigation() {
+		startNavigation(viewModel.navigationQuery.value ?: "")
+	}
+
+	fun startNavigation(query: CharSequence): Boolean {
+		navigationJob?.cancel()   // cancel a previous search or pending state
+		navigationJob = scope.launch(dispatchers.Main) {
+			viewModel.isSearchingNavigation.value = true
+			val results = mapPlaceSearch.searchLocationsAsync(query.toString()).await()
+			if (results.isEmpty()) {
+				viewModel.isSearchingNavigation.value = false
+			} else {
+				startNavigation(results[0])
+			}
+		}
+		return false    // hide the keyboard after clicking the search button
+	}
+
+	fun startNavigation(result: MapResult) {
+		navigationJob?.cancel()   // cancel a previous search or pending state
+		navigationJob = scope.launch(dispatchers.Main) {
+			// show that we are searching while resolving the full MapResult
+			viewModel.isSearchingNavigation.value = true
+
+			val expandedResult = if (result.location != null) {
+				result
+			} else {
+				mapPlaceSearch.resultInformationAsync(result.id).await() ?: result
+			}
+			if (expandedResult.address != null) {
+				viewModel.navigationQuery.value = expandedResult.toString()
+			}
+
+			viewModel.isSearchingNavigation.value = false
+
+			expandedResult.location?.let {
+				mapInteractionController.navigateTo(it)
+			}
+		}
+	}
 }

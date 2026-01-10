@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import me.hufman.androidautoidrive.AppSettings
 import me.hufman.androidautoidrive.BooleanLiveSetting
 import me.hufman.androidautoidrive.BuildConfig
+import me.hufman.androidautoidrive.phoneui.LiveDataHelpers.combine
 
 class MapPageModel(appContext: Context): ViewModel() {
 	class Factory(val appContext: Context): ViewModelProvider.Factory {
@@ -18,4 +19,7 @@ class MapPageModel(appContext: Context): ViewModel() {
 	val testMapSupported
 		get() = BuildConfig.DEBUG && BuildConfig.FLAVOR_map == "mapbox"
 	val testMapEnabled = BooleanLiveSetting(appContext, AppSettings.KEYS.MAP_TESTING_ENABLED)
+	val mapSettingsShowing = mapEnabled.combine(testMapEnabled) { mapEnabled, testMapEnabled ->
+		mapEnabled || testMapEnabled
+	}
 }

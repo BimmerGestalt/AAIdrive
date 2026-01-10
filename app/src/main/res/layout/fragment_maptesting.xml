@@ -2,9 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" >
     <data class="MapTestingBinding">
+        <import type="android.view.View"/>
         <variable
             name="controller"
             type="me.hufman.androidautoidrive.phoneui.controllers.MapTestingController" />
+        <variable
+            name="viewModel"
+            type="me.hufman.androidautoidrive.phoneui.viewmodels.MapTestingModel" />
     </data>
     <LinearLayout
         android:orientation="vertical"
@@ -57,6 +61,92 @@
                 android:layout_height="wrap_content"
                 android:text="@string/btn_map_testing_steer_right"
                 android:onClick="@{() -> controller.steerRight()}" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <FrameLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp">
+                <AutoCompleteTextView
+                    android:id="@+id/txtLocationQuery"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:paddingEnd="24dp"
+                    android:inputType="text"
+                    android:imeOptions="actionSearch"
+                    android:hint="@string/btn_set_location"
+                    android:text="@={viewModel.locationQuery}"
+                    android:onEditorAction="@{(v, id, event) -> event != null ? controller.setLocation(v.text) : false}"/>
+                <ProgressBar
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:visibility="@{viewModel.isSearchingLocation() ? View.VISIBLE : View.INVISIBLE}"
+                    android:indeterminate="true"
+                    android:max="100" />
+            </FrameLayout>
+
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="0"
+                android:drawablePadding="8dp"
+                android:contentDescription="@string/btn_set_location"
+                app:tint="?android:attr/textColorSecondary"
+                android:src="@drawable/ic_search_black_24dp"
+                android:onClick="@{() -> controller.setLocation()}"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <FrameLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp">
+                <AutoCompleteTextView
+                    android:id="@+id/txtNavigationQuery"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:paddingEnd="24dp"
+                    android:inputType="text"
+                    android:imeOptions="actionSearch"
+                    android:hint="@string/btn_start_navigation"
+                    android:text="@={viewModel.navigationQuery}"
+                    android:onEditorAction="@{(v, id, event) -> event != null ? controller.startNavigation(v.text) : false}"/>
+                <ProgressBar
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:visibility="@{viewModel.isSearchingNavigation() ? View.VISIBLE : View.INVISIBLE}"
+                    android:indeterminate="true"
+                    android:max="100" />
+            </FrameLayout>
+
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="0"
+                android:drawablePadding="8dp"
+                android:contentDescription="@string/btn_start_navigation"
+                app:tint="?android:attr/textColorSecondary"
+                android:src="@drawable/ic_search_black_24dp"
+                android:onClick="@{() -> controller.startNavigation()}"/>
+
         </LinearLayout>
     </LinearLayout>
 </layout>
