@@ -58,11 +58,11 @@ class MapTestingController(
 			?: 0.0
 
 		// https://stackoverflow.com/a/47572447
-		val headingRads = -Math.toRadians(heading - 90)
 		val distance = 100.0
+		val headingRads = Math.toRadians(heading + 90)
+		val lat0 = Math.cos(Math.PI / 180.0 * currentLatitude)
 		val newLatitude = currentLatitude + (180/Math.PI) * (distance / 6378137) * Math.sin(headingRads)
-		val newLongitude = currentLongitude + (180/Math.PI) * (distance / 6378137)/Math.cos(currentLatitude) * Math.cos(headingRads)
-
+		val newLongitude = currentLongitude + (180/Math.PI) * (distance / 6378137)/Math.cos(lat0) * Math.cos(headingRads)
 		cdsData.onPropertyChangedEvent(CDSProperty.NAVIGATION_GPSPOSITION, JsonObject().apply {
 			add("GPSPosition", JsonObject().apply {
 				add("latitude", JsonPrimitive(newLatitude))
