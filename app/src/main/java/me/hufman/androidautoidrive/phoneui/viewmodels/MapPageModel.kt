@@ -20,6 +20,6 @@ class MapPageModel(appContext: Context): ViewModel() {
 		get() = BuildConfig.DEBUG && BuildConfig.FLAVOR_map == "mapbox"
 	val testMapEnabled = BooleanLiveSetting(appContext, AppSettings.KEYS.MAP_TESTING_ENABLED)
 	val mapSettingsShowing = mapEnabled.combine(testMapEnabled) { mapEnabled, testMapEnabled ->
-		mapEnabled || testMapEnabled
+		mapEnabled || (testMapSupported && testMapEnabled)
 	}
 }
