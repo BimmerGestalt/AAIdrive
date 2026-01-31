@@ -183,8 +183,8 @@ class CarDetailedInfo(carCapabilities: Map<String, Any?>, cdsMetrics: CDSMetrics
 		if (it.isBlank()) "" else "and $it"
 	}
 	val altitudeLabel = cdsMetrics.gpsAltitude.map { "${it}m ${L.CARINFO_GPSALTITUDE}" }
-	val latitudeLabel = cdsMetrics.gpsLat.map { "$it ${L.CARINFO_GPSLATITUDE}" }
-	val longitudeLabel = cdsMetrics.gpsLon.map { "$it ${L.CARINFO_GPSLONGITUDE}" }
+	val latitudeLabel = cdsMetrics.gpsLat.format("%.6f°").map { "$it ${L.CARINFO_GPSLATITUDE}" }
+	val longitudeLabel = cdsMetrics.gpsLon.format("%.6f°").map { "$it ${L.CARINFO_GPSLONGITUDE}" }
 //	val rawHeading = cdsMetrics.rawHeading.format("%.0f Raw Heading")
 	private val ACCompressorActualPower =cdsMetrics.ACCompressorActualPower.format("%.0f").map { "$it ${L.CARINFO_COMPRESSORPOWER}" }
 	private val ACCompressorDualmode =cdsMetrics.ACCompressorDualMode.mapNotNull {
