@@ -121,6 +121,7 @@ Implemented Features
         - [Black Player](https://play.google.com/store/apps/details?id=com.musicplayer.blackplayerfree)
         - [DSub](https://play.google.com/store/apps/details?id=github.daneren2005.dsub)
         - [HiBy Music](https://play.google.com/store/apps/details?id=com.hiby.music)
+        - [Jellyfin](https://play.google.com/store/apps/details?id=org.jellyfin.mobile)
         - [jetAudio HD](https://play.google.com/store/apps/details?id=com.jetappfactory.jetaudio)
         - [Media Monkey](https://play.google.com/store/apps/details?id=com.ventismedia.android.mediamonkey)
         - [Musicolet Music Player](https://play.google.com/store/apps/details?id=in.krosbits.musicolet)
