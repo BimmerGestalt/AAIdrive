@@ -72,3 +72,6 @@
 
 # And from Sentry
 -dontwarn javax.**
+
+# And Spotify SDK
+-dontwarn com.spotify.base.annotations.NotNull
