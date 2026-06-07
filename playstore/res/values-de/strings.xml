@@ -16,6 +16,4 @@
     <string name="playstore_desc_depends_mybmw">BMW/Mini Connected Apps erfordert, dass die MyBMW oder MINI App für dein Auto installiert ist und dass sie erfolgreich die IDrive5+ Auto-App-Checkbox aktivieren kann oder dass dein IDrive4 Auto über den ConnectedDrive Connection Assistant verfügt.</string>
     <string name="playstore_desc_depends_bmw_subscription">Dies erfordert in der Regel ein aktives BMW ConnectedDrive-Abonnement, das normalerweise für ein paar Jahre nach dem Kauf des neuen Autos enthalten ist.</string>
     <string name="playstore_release_desc">Wartungsupdates</string>
-    <string name="playstore_release_point1">Für Android 15 kompilieren</string>
-    <string name="playstore_release_point2">Fix für Android 16 auf Pixel</string>
 </resources>
