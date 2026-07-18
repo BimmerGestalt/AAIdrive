@@ -16,6 +16,4 @@
     <string name="playstore_desc_depends_mybmw">Для успешной работы требуется, чтобы было установлено приложение для вашего автомобиля MyBMW или MINI и был отмечен чекбокс IDrive5+ \"Приложения\" или у вашего авто IDrive4 была опция ConnectedDrive Connection Assistant.</string>
     <string name="playstore_desc_depends_bmw_subscription">Для этого требуется наличие активной подписки BMW ConnectedDrive, которая обычно включена на несколько лет при покупке новой машины.</string>
     <string name="playstore_release_desc">Обновления обслуживания</string>
-    <string name="playstore_release_point1">Поддержка Android 15</string>
-    <string name="playstore_release_point2">Исправление для Android 16 на Pixel</string>
 </resources>
