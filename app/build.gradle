@@ -50,7 +50,7 @@ android {
         applicationId "me.hufman.androidautoidrive"
         compileSdk 35
         minSdkVersion 23
-        targetSdkVersion 35
+        targetSdkVersion 36
         multiDexEnabled false
         versionCode androidGitVersion.code() + 1
         versionName androidGitVersion.name()
