@@ -157,7 +157,6 @@
     <string name="lbl_analytics_description">Oltre ai report dei crash, attivando le statistiche verranno inviate anche l\'elenco delle applicazioni musicali installate e alcune informazioni anonime sull\'auto per aiutare a dare priorità allo sviluppo delle funzionalità dell\'app.</string>
     <string name="lbl_analytics_enabled">Abilita le statistiche e la segnalazione dei crash</string>
     <string name="lbl_donations_volunteer">AAIdrive è un progetto gratuito</string>
-    <string name="lbl_donations_request">Se ti piace questo progetto e lo trovi utile, considera di sostenerlo</string>
     <string name="btn_donations">Effettua una donazione</string>
     <string name="lbl_support_other_ways">Puoi anche supportare il progetto in altri modi:</string>
     <string name="lbl_support_feedback">Dando un feedback</string>
