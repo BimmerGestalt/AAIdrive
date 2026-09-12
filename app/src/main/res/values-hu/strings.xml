@@ -148,7 +148,7 @@
     <string name="lbl_analytics_intro">Az AAIdrive egy nem hivatalos hobbiprojekt, amelyet a BMW semmilyen módon nem támogat, és egy visszafejtett protokollra épít. Büszke vagyok a funkcionalitására és stabilitására, de még mindig előfordulhatnak összeomlások. Vedd fontolóra annak engedélyezését, hogy az analitika automatikusan küldjön hibajelentéseket hibakeresés és hibajavítás céljából.</string>
     <string name="lbl_analytics_enabled">Analitika és hibajelentés engedélyezése</string>
     <string name="lbl_donations_volunteer">AAIdrive egy önkéntes projekt</string>
-    <string name="lbl_donations_request">Amennyiben kedveled ezt a projektet és hasznosnak találod, gondold meg, hogy támogassad azt:</string>
+    <string name="lbl_donations_request">Amennyiben kedveled ezt a projektet és hasznosnak találod, gondold meg, hogy támogassad azt</string>
     <string name="btn_donations">Támogatás</string>
     <string name="lbl_support_other_ways">Támogatni tudod a projektet még a következő módokon:</string>
     <string name="lbl_support_feedback">Visszajelzés küldése</string>

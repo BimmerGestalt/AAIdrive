@@ -105,7 +105,7 @@
     <string name="lbl_language_prefercar_code">電話の言語よりも車の言語（%s）を優先する</string>
     <string name="lbl_language_forcelanguage">特定の言語を強制する</string>
     <string name="lbl_donations_volunteer">AAIdriveはボランティアプロジェクトです</string>
-    <string name="lbl_donations_request">このプロジェクトが気に入って役に立った場合は、寄付してサポートを示すことを検討してください：</string>
+    <string name="lbl_donations_request">このプロジェクトが気に入って役に立った場合は、寄付してサポートを示すことを検討してください</string>
     <string name="btn_donations">寄付</string>
     <string name="lbl_support_other_ways">他の方法でプロジェクトをサポートすることもできます：</string>
     <string name="lbl_support_feedback">フィードバックの提供</string>

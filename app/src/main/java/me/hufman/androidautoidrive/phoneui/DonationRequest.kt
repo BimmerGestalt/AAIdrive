@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import me.hufman.androidautoidrive.AppSettings
+import me.hufman.androidautoidrive.BuildConfig
 import me.hufman.androidautoidrive.MutableAppSettings
 import me.hufman.androidautoidrive.MutableAppSettingsReceiver
 import me.hufman.androidautoidrive.R
@@ -65,7 +66,7 @@ class DonationRequest(val context: Context) {
 	}
 
 	private fun onDayIncremented() {
-		if (dayCounter.daysCounted() == DONATION_DAYS_THRESHOLD) {
+		if (BuildConfig.SHOW_DONATION && dayCounter.daysCounted() == DONATION_DAYS_THRESHOLD) {
 			triggerNotification()
 		}
 	}

@@ -181,7 +181,7 @@
     <string name="lbl_analytics_enabled">Enable analytics and crash reporting</string>
 
     <string name="lbl_donations_volunteer">AAIdrive is a volunteer project</string>
-    <string name="lbl_donations_request">If you like this project and find it useful, consider showing your support by donating:</string>
+    <string name="lbl_donations_request">If you like this project and find it useful, consider showing your support by donating</string>
     <string name="btn_donations">Donate</string>
     <string name="lbl_support_other_ways">You can also support the project in other ways:</string>
     <string name="lbl_support_feedback">Providing feedback</string>

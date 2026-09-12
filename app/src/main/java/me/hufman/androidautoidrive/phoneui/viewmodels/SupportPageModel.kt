@@ -19,4 +19,6 @@ class SupportPageModel: ViewModel() {
 		getString(R.string.txt_build_info, BuildConfig.VERSION_NAME, commitTime)
 	}
 	val buildInfo: LiveData<Context.() -> String> = _buildInfo
+
+	val showDonation: Boolean = BuildConfig.SHOW_DONATION
 }

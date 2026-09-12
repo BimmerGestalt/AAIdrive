@@ -155,7 +155,7 @@
     <string name="lbl_analytics_description">Çökme raporlarına ek olarak, analitiği etkinleştirmek yüklü müzik uygulamalarının listesini ve bazı anonim araç bilgilerini de göndererek özellik geliştirme önceliklerinin belirlenmesine yardımcı olur.</string>
     <string name="lbl_analytics_enabled">Analitik ve çökme raporlamasını etkinleştir</string>
     <string name="lbl_donations_volunteer">AAIdrive gönüllü bir projedir</string>
-    <string name="lbl_donations_request">Bu projeyi beğendiyseniz ve faydalı buluyorsanız, destek olmak için bağış yapmayı düşünebilirsiniz:</string>
+    <string name="lbl_donations_request">Bu projeyi beğendiyseniz ve faydalı buluyorsanız, destek olmak için bağış yapmayı düşünebilirsiniz</string>
     <string name="btn_donations">Bağış Yap</string>
     <string name="lbl_support_other_ways">Projeye başka şekillerde de destek olabilirsiniz:</string>
     <string name="lbl_support_feedback">Geri bildirim sağlamak</string>

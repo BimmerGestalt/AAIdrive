@@ -157,7 +157,7 @@
     <string name="lbl_analytics_description">Förutom \"buggrapport\" laddas även upp en lista över installerade musikappar och annan anonym bilinformation för att prioritera utveckling av nya funktioner i framtiden.</string>
     <string name="lbl_analytics_enabled">Aktivera buggrapport</string>
     <string name="lbl_donations_volunteer">AAIdrive är ett volontärprojekt</string>
-    <string name="lbl_donations_request">Om du gillar detta projekt och tycker att det är användbart så visa gärna ditt stöd genom att donera:</string>
+    <string name="lbl_donations_request">Om du gillar detta projekt och tycker att det är användbart så visa gärna ditt stöd genom att donera</string>
     <string name="btn_donations">Donera</string>
     <string name="lbl_support_other_ways">Du kan också stödja projektet på andra sätt:</string>
     <string name="lbl_support_feedback">Ge feedback</string>

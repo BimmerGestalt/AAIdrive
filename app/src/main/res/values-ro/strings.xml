@@ -158,7 +158,7 @@
     <string name="lbl_analytics_description">Pe lângă rapoartele de defecțiune, activarea analitică va încărca, de asemenea, lista de aplicații muzicale instalate și unele informații anonime despre automobile, pentru a ajuta la prioritizarea dezvoltării caracteristicilor.</string>
     <string name="lbl_analytics_enabled">Activați analiza și raportarea erorilor</string>
     <string name="lbl_donations_volunteer">AAIdrive este un proiect voluntar</string>
-    <string name="lbl_donations_request">Dacă îți place proiectul și ți se pare util, consideră să îți arăți suportul donând:</string>
+    <string name="lbl_donations_request">Dacă îți place proiectul și ți se pare util, consideră să îți arăți suportul donând</string>
     <string name="btn_donations">Donează</string>
     <string name="lbl_support_other_ways">Poți ajuta proiectul și în alte moduri:</string>
     <string name="lbl_support_feedback">Oferă feedback</string>

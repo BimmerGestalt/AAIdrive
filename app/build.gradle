@@ -74,6 +74,9 @@ android {
         // with custom hackery, the car HMI can accept unsigned resources
         // if your car has this, set this option to attempt to send these unsigned resources
         buildConfigField "boolean", "SEND_UNSIGNED_RESOURCES", (System.env.AndroidAutoIdrive_SendUnsignedResources ? System.env.AndroidAutoIdrive_SendUnsignedResources : AndroidAutoIdrive_SendUnsignedResources)
+
+        // show the donation information, which is not allowed in the play store
+        buildConfigField "boolean", "SHOW_DONATION", "true"
     }
 
     signingConfigs {
@@ -174,6 +177,9 @@ android {
         }
         play {
             dimension "storefront"
+
+            // donation information is not allowed in the play store
+            buildConfigField "boolean", "SHOW_DONATION", "false"
         }
     }
     compileOptions {

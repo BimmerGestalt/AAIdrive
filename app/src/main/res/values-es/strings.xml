@@ -157,7 +157,7 @@
     <string name="lbl_analytics_description">Además de los informes de fallos, activar el análisis también cargará la lista de aplicaciones de música instaladas y alguna información anónima del coche para ayudar a priorizar el desarrollo de funciones.</string>
     <string name="lbl_analytics_enabled">Habilitar análisis y reporte de errores</string>
     <string name="lbl_donations_volunteer">AAIdrive es un proyecto de voluntariado</string>
-    <string name="lbl_donations_request">Si te gusta este proyecto y lo encuentras útil, considera mostrar tu apoyo donando:</string>
+    <string name="lbl_donations_request">Si te gusta este proyecto y lo encuentras útil, considera mostrar tu apoyo donando</string>
     <string name="btn_donations">Donar</string>
     <string name="lbl_support_other_ways">También puedes apoyar el proyecto de otras maneras:</string>
     <string name="lbl_support_feedback">Enviar comentarios</string>

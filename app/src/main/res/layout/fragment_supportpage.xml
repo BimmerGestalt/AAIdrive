@@ -33,20 +33,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/pane_vertical_margin"
                 android:text="@string/lbl_donations_request" />
-    
-            <Button
-                android:layout_width="wrap_content"
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/pane_vertical_margin"
-                android:drawableStart="@drawable/ic_heart_feather"
-                android:drawableTint="?android:attr/colorControlNormal"
-                android:drawablePadding="8dp"
-                android:text="@string/btn_donations"
-                android:onClick="@{controller::onClickDonations}"/>
-    
-            <View style="@style/Divider"
-                android:layout_marginBottom="@dimen/pane_vertical_margin"/>
+                android:orientation="vertical"
+                android:visibility="@{viewModel.showDonation}">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/pane_vertical_margin"
+                    android:drawableStart="@drawable/ic_heart_feather"
+                    android:drawableTint="?android:attr/colorControlNormal"
+                    android:drawablePadding="8dp"
+                    android:text="@string/btn_donations"
+                    android:onClick="@{controller::onClickDonations}"/>
+
+                <View style="@style/Divider"
+                    android:layout_marginBottom="@dimen/pane_vertical_margin"/>
+            </LinearLayout>
     
             <TextView
                 android:layout_width="match_parent"
