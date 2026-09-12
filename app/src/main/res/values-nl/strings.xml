@@ -152,7 +152,6 @@
     <string name="lbl_analytics_description">Naast crash rapporten zal analytics inschakelen ook de lijst van geïnstalleerde muziek apps en enkele anonieme informatie over auto\'s uploaden om prioriteit te geven aan feature ontwikkeling.</string>
     <string name="lbl_analytics_enabled">Schakel analytics en crash-rapportage in</string>
     <string name="lbl_donations_volunteer">AAIdrive is een vrijwilligers project</string>
-    <string name="lbl_donations_request">Als u dit project leuk vindt en het nuttig vindt, overweeg dan om uw steun te tonen door te doneren:</string>
     <string name="btn_donations">Doneren</string>
     <string name="lbl_support_other_ways">U kunt het project ook op andere manieren ondersteunen:</string>
     <string name="lbl_support_feedback">Feedback geven</string>
