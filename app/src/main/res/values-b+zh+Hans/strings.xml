@@ -155,7 +155,6 @@
     <string name="lbl_analytics_description">开启分析功能，除了崩溃报告外，还会上传已安装音乐应用列表和一些匿名的车辆信息，以帮助开发应用功能。</string>
     <string name="lbl_analytics_enabled">启用分析和崩溃报告上传功能</string>
     <string name="lbl_donations_volunteer">AAIdrive是一个非盈利项目</string>
-    <string name="lbl_donations_request">如果你喜欢使用，请通过捐款支持我们:</string>
     <string name="btn_donations">捐款</string>
     <string name="lbl_support_other_ways">其他支持我们的方式:</string>
     <string name="lbl_support_feedback">提供反馈</string>
