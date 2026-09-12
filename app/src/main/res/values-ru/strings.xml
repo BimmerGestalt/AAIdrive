@@ -159,7 +159,6 @@
     <string name="lbl_analytics_description">Помимо отчетов о сбое, включение аналитики также загрузит список установленных музыкальных приложений и некоторую анонимную информацию о автомобиле, чтобы помочь в разработке приложения.</string>
     <string name="lbl_analytics_enabled">Включить автоматическое отправление отчётов о сбоях</string>
     <string name="lbl_donations_volunteer">AAIdrive — волонтерский проект</string>
-    <string name="lbl_donations_request">Если вам нравится этот проект и вы считаете его полезным, выразите поддержку пожертвованием</string>
     <string name="btn_donations">Пожертвовать</string>
     <string name="lbl_support_other_ways">Вы также можете поддержать проект другими способами:</string>
     <string name="lbl_support_feedback">Предоставление обратной связи</string>
