@@ -152,7 +152,6 @@
     <string name="lbl_analytics_description">En plus des rapports de plantage, l\'activation des analytiques va également télécharger la liste des applications de musique installées et quelques informations de voiture anonymes pour aider à prioriser le développement de fonctionnalités.</string>
     <string name="lbl_analytics_enabled">Activer les statistiques et les rapports de plantage</string>
     <string name="lbl_donations_volunteer">AAIdrive est un projet bénévole</string>
-    <string name="lbl_donations_request">Si vous aimez ce projet et que vous le trouvez utile, pensez à montrer votre soutien en faisant un don</string>
     <string name="btn_donations">Faire un don</string>
     <string name="lbl_support_other_ways">Vous pouvez également soutenir le projet d\'autres manières:</string>
     <string name="lbl_support_feedback">Donnez votre avis</string>
