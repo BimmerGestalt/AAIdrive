@@ -242,6 +242,11 @@ Developer Guide
 
 To build your own test versions of the app and help contribute to the project, follow [this Developer Guide](https://bimmergestalt.github.io/AAIdrive/developers) to set up your development environment.
 
+Contribution Notes
+------------------
+
+LLM contributions are not welcome in this project. The point of a hobby project is to have fun and learn something, and an LLM can do neither.
+
 Privacy
 -------
 
